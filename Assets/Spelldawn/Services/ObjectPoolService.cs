@@ -22,7 +22,7 @@ namespace Spelldawn.Services
 {
   public sealed class ObjectPoolService
   {
-    readonly Dictionary<int, List<GameObject>> _pools = new Dictionary<int, List<GameObject>>();
+    readonly Dictionary<int, List<GameObject>> _pools = new();
 
     public T Create<T>(T prefab, Vector3 position, Transform? parent = null) where T : Component =>
       ComponentUtils.GetComponent<T>(Create(prefab.gameObject, position, parent));

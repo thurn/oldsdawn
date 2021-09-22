@@ -27,5 +27,60 @@ namespace Spelldawn.Services
     [SerializeField] UIDocument _document = null!;
     public UIDocument Document => _document;
     public VisualElement RootElement => _document.rootVisualElement;
+
+    void Start()
+    {
+      var x = 781;
+      var y = 360;
+      PositionAt(RootElement, 0, 0);
+      PositionAt(RootElement, x, 0);
+      PositionAt(RootElement, 0, y);
+      PositionAt(RootElement, x, y);
+    }
+
+    void PositionAt(VisualElement parent, int x, int y)
+    {
+      var size = 100;
+      parent.Add(new VisualElement
+      {
+        style =
+        {
+          position = Position.Absolute,
+          left = x - size / 2f,
+          top = y - size / 2f,
+          width = size,
+          height = size,
+          backgroundColor = Color.red
+        }
+      });
+
+      size = 50;
+      parent.Add(new VisualElement
+      {
+        style =
+        {
+          position = Position.Absolute,
+          left = x - size / 2f,
+          top = y - size / 2f,
+          width = size,
+          height = size,
+          backgroundColor = Color.green
+        }
+      });
+
+      size = 25;
+      parent.Add(new VisualElement
+      {
+        style =
+        {
+          position = Position.Absolute,
+          left = x - size / 2f,
+          top = y - size / 2f,
+          width = size,
+          height = size,
+          backgroundColor = Color.blue
+        }
+      });
+    }
   }
 }

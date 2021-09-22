@@ -52,3 +52,7 @@ sysinfo.txt
 Assets/src/.lsp
 Temp
 out_BurstDebugInformation_DoNotShip/
+
+proto/bin
+proto/obj
+!proto/*.csproj

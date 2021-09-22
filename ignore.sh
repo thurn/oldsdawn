@@ -1,5 +1,12 @@
 #!/bin/sh
 
+mkdir -p Library
+mkdir -p Logs
+mkdir -p obj
+mkdir -p UserSettings
+mkdir -p Temp
+mkdir -p out
+
 xattr -w com.dropbox.ignored 1 Library/
 xattr -w com.dropbox.ignored 1 Logs/
 xattr -w com.dropbox.ignored 1 obj/

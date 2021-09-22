@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package spelldawn;
+option csharp_namespace = "Spelldawn.Protos";
+
+message SpriteAddress {
+  string address = 1;
+}
+
+message CardIcon {
+  SpriteAddress background = 1;
+  string text = 2;
+}
+
+message CardText {
+  string text = 1;
+}
+
+message CardView {
+    SpriteAddress card_back = 1;
+    SpriteAddress card_frame = 2;
+    SpriteAddress webbing = 3;
+    SpriteAddress jewel = 4;
+    CardIcon top_left_icon = 5;
+    CardIcon top_right_icon = 6;
+    CardIcon bottom_left_icon = 7;
+    CardIcon bottom_right_icon = 8;
+    CardText card_text = 9;
+    bool can_play = 10;
+}
