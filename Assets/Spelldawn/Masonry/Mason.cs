@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
@@ -36,25 +36,25 @@ namespace Spelldawn.Masonry
 {
   public static class Mason
   {
-    public static UniTask<VisualElement?> Render(Registry registry, Node? node)
+    public static Task<VisualElement?> Render(Registry registry, Node? node)
     {
       registry.CheckIsMainThread();
 
       return node?.NodeCase switch
       {
         Node.NodeOneofCase.Flexbox => RenderFlexbox(registry, node.Flexbox),
-        _ => UniTask.FromResult<VisualElement?>(null)
+        _ => Task.FromResult<VisualElement?>(null)
       };
     }
 
-    public static async UniTask<VisualElement?> RenderFlexbox(Registry registry, Flexbox flexbox)
+    public static async Task<VisualElement?> RenderFlexbox(Registry registry, Flexbox flexbox)
     {
       var result = new VisualElement
       {
         name = flexbox.Name
       };
 
-      var children = await UniTask.WhenAll(flexbox.Children.Select(node => Render(registry, node)));
+      var children = await Task.WhenAll(flexbox.Children.Select(node => Render(registry, node)));
 
       foreach (var child in children)
       {
@@ -80,17 +80,14 @@ namespace Spelldawn.Masonry
 
     static Length AdaptDimensionNonNull(Dimension dimension) => dimension.Unit switch
     {
-      DimensionUnit.Pixel => new Length(dimension.Value),
+      DimensionUnit.Dip => new Length(dimension.Value),
       DimensionUnit.Percentage => Length.Percent(dimension.Value),
+      DimensionUnit.Vmin => new Length(MasonUtil.VMinToDip(dimension.Value)),
       _ => new Length()
     };
 
-    static StyleLength AdaptDimension(Dimension? dimension) => dimension?.Unit switch
-    {
-      DimensionUnit.Pixel => new Length(dimension.Value),
-      DimensionUnit.Percentage => Length.Percent(dimension.Value),
-      _ => new StyleLength(StyleKeyword.Null)
-    };
+    static StyleLength AdaptDimension(Dimension? dimension) =>
+      dimension is { } d ? AdaptDimensionNonNull(d) : new StyleLength(StyleKeyword.Null);
 
     static StyleEnum<Align> AdaptAlign(FlexAlign input) => input switch
     {
@@ -107,7 +104,7 @@ namespace Spelldawn.Masonry
         ? new StyleList<TResult>(StyleKeyword.Null)
         : new StyleList<TResult>(field.Select(selector).ToList());
 
-    public static async UniTask<VisualElement> ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
+    public static async Task<VisualElement> ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
     {
       registry.CheckIsMainThread();
 
@@ -120,10 +117,6 @@ namespace Spelldawn.Masonry
       e.style.alignItems = AdaptAlign(input.AlignItems);
       e.style.alignSelf = AdaptAlign(input.AlignSelf);
       e.style.backgroundColor = AdaptColor(input.BackgroundColor);
-      e.style.backgroundImage =
-        input.BackgroundImage is { } bi
-          ? await registry.AssetService.LoadSprite(bi)
-          : new StyleBackground(StyleKeyword.Null);
       e.style.borderTopColor = AdaptColor(input.BorderColor?.Top);
       e.style.borderRightColor = AdaptColor(input.BorderColor?.Right);
       e.style.borderBottomColor = AdaptColor(input.BorderColor?.Bottom);
@@ -324,6 +317,22 @@ namespace Spelldawn.Masonry
       };
       e.style.width = AdaptDimension(input.Width);
       e.style.wordSpacing = AdaptDimension(input.WordSpacing);
+
+      if (input.BackgroundImage is { } bi)
+      {
+        var sprite = await registry.AssetService.LoadSprite(bi);
+        e.style.backgroundImage = sprite;
+
+        if (input.BackgroundImageScaleMultiplier is { } multiplier && sprite.value.sprite is { } sp)
+        {
+          e.style.width = MasonUtil.ScreenPxToDip(sp.rect.width * multiplier);
+          e.style.height = MasonUtil.ScreenPxToDip(sp.rect.height * multiplier);
+        }
+      }
+      else
+      {
+        e.style.backgroundImage = new StyleBackground(StyleKeyword.Null);
+      }
 
       return e;
     }

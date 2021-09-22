@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using Spelldawn.Protos;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 #nullable enable
 
@@ -28,45 +29,69 @@ namespace Spelldawn.Services
     readonly Dictionary<string, StyleBackground> _sprites = new();
     readonly Dictionary<string, StyleFontDefinition> _fonts = new();
 
-    public async UniTask<StyleBackground> LoadSprite(SpriteAddress spriteAddress)
+    public Task<StyleBackground> LoadSprite(SpriteAddress spriteAddress)
     {
       if (_sprites.ContainsKey(spriteAddress.Address))
       {
-        return _sprites[spriteAddress.Address];
+        return Task.FromResult(_sprites[spriteAddress.Address]);
       }
 
-      var result = await Resources.LoadAsync<Sprite>(spriteAddress.Address);
-      if (result is Sprite s)
+      TaskCompletionSource<StyleBackground> result = new();
+      StartCoroutine(LoadResourceAsync<Sprite>(spriteAddress.Address, s =>
       {
-        var background = new StyleBackground(s);
-        _sprites[spriteAddress.Address] = background;
-        return background;
-      }
-      else
-      {
-        Debug.LogError($"Sprite not found: {spriteAddress.Address}");
-        return new StyleBackground(StyleKeyword.Null);
-      }
+        if (s == null)
+        {
+          Debug.LogError($"Sprite not found: {spriteAddress.Address}");
+          result.SetResult(new StyleBackground(StyleKeyword.Null));
+        }
+        else
+        {
+          var background = new StyleBackground(s);
+          _sprites[spriteAddress.Address] = background;
+          result.SetResult(background);
+        }
+      }));
+
+      return result.Task;
     }
 
-    public async UniTask<StyleFontDefinition> LoadFont(FontAddress fontAddress)
+    public Task<StyleFontDefinition> LoadFont(FontAddress fontAddress)
     {
       if (_fonts.ContainsKey(fontAddress.Address))
       {
-        return _fonts[fontAddress.Address];
+        return Task.FromResult(_fonts[fontAddress.Address]);
       }
 
-      var result = await Resources.LoadAsync<Font>(fontAddress.Address);
-      if (result is Font f)
+      TaskCompletionSource<StyleFontDefinition> result = new();
+      StartCoroutine(LoadResourceAsync<Font>(fontAddress.Address, f =>
       {
-        var font = new StyleFontDefinition(f);
-        _fonts[fontAddress.Address] = font;
-        return font;
+        if (f == null)
+        {
+          Debug.LogError($"Font not found: {fontAddress.Address}");
+          result.SetResult(new StyleFontDefinition(StyleKeyword.Null));
+        }
+        else
+        {
+          var font = new StyleFontDefinition(f);
+          _fonts[fontAddress.Address] = font;
+          result.SetResult(font);
+        }
+      }));
+
+      return result.Task;
+    }
+
+    IEnumerator<YieldInstruction> LoadResourceAsync<T>(string address, Action<T?> onComplete) where T : Object
+    {
+      var load = Resources.LoadAsync<T>(address);
+      yield return load;
+      if (load.asset is T result)
+      {
+        onComplete(result);
       }
       else
       {
-        Debug.LogError($"Font not found: {fontAddress.Address}");
-        return new StyleFontDefinition(StyleKeyword.Null);
+        onComplete(null);
       }
     }
   }

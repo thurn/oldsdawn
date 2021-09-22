@@ -184,8 +184,10 @@ message FlexVector3 {
 
 enum DimensionUnit {
     DIMENSION_UNIT_UNSPECIFIED = 0;
-    DIMENSION_UNIT_PIXEL = 1;
+    /** Density-independent pixels, which unity also calls "pixels". */
+    DIMENSION_UNIT_DIP = 1;
     DIMENSION_UNIT_PERCENTAGE = 2;
+    DIMENSION_UNIT_VMIN = 3;
 }
 
 message Dimension {
@@ -307,17 +309,24 @@ message FlexStyle {
     WhiteSpace white_space = 52;
     Dimension width = 53;
     Dimension word_spacing = 54;
-}
 
-message Text {
-    FlexStyle style = 1;
-    string text = 2;
+    /**
+     * Overwrites both 'width' and 'height' by multiplying the dimensions of
+     * the provided 'background_image' (in units of raw pixels) by this
+     * constant.
+     */
+    google.protobuf.FloatValue background_image_scale_multiplier = 55;
 }
 
 message Flexbox {
     string name = 1;
     FlexStyle style = 2;
     repeated Node children = 3;
+}
+
+message Text {
+    FlexStyle style = 1;
+    string text = 2;
 }
 
 message Node {

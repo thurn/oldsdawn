@@ -14,7 +14,6 @@
 
 using System.Linq;
 using Spelldawn.Protos;
-using UnityEditor;
 using UnityEngine;
 using Node = Spelldawn.Protos.Node;
 
@@ -24,9 +23,11 @@ namespace Spelldawn.Masonry
 {
   public static class MasonUtil
   {
-    public static Dimension Px(float value) => new()
+    const float ReferenceDpi = 155f;
+
+    public static Dimension Dip(float value) => new()
     {
-      Unit = DimensionUnit.Pixel,
+      Unit = DimensionUnit.Dip,
       Value = value
     };
 
@@ -36,20 +37,41 @@ namespace Spelldawn.Masonry
       Value = value
     };
 
-    public static DimensionGroup GroupPx(float all) => GroupPx(all, all);
-
-    public static DimensionGroup GroupPx(float topBottom, float leftRight) =>
-      GroupPx(topBottom, leftRight, topBottom, leftRight);
-
-    public static DimensionGroup GroupPx(float top, float right, float bottom, float left) => new()
+    public static Dimension VMin(float value) => new()
     {
-      Top = Px(top),
-      Right = Px(right),
-      Bottom = Px(bottom),
-      Left = Px(left)
+      Unit = DimensionUnit.Vmin,
+      Value = value
     };
 
-    public static FlexColor Color(Color color) => new()
+    public static DimensionGroup LeftTopDip(float left, float top) => GroupDip(top, 0, 0, left);
+
+    public static DimensionGroup GroupDip(float all) => GroupDip(all, all);
+
+    public static DimensionGroup GroupDip(float topBottom, float leftRight) =>
+      GroupDip(topBottom, leftRight, topBottom, leftRight);
+
+    public static DimensionGroup GroupDip(float top, float right, float bottom, float left) => new()
+    {
+      Top = Dip(top),
+      Right = Dip(right),
+      Bottom = Dip(bottom),
+      Left = Dip(left)
+    };
+
+    public static DimensionGroup GroupVMin(float all) => GroupVMin(all, all);
+
+    public static DimensionGroup GroupVMin(float topBottom, float leftRight) =>
+      GroupVMin(topBottom, leftRight, topBottom, leftRight);
+
+    public static DimensionGroup GroupVMin(float top, float right, float bottom, float left) => new()
+    {
+      Top = VMin(top),
+      Right = VMin(right),
+      Bottom = VMin(bottom),
+      Left = VMin(left)
+    };
+
+    public static FlexColor MakeColor(Color color) => new()
     {
       Red = color.r,
       Green = color.g,
@@ -78,6 +100,38 @@ namespace Spelldawn.Masonry
       style.FlexDirection = FlexDirection.Column;
       return MakeFlexbox(name, style, children);
     }
+
+    public static float ScreenPxToDip(float value) => value * ReferenceDpi / Screen.dpi;
+
+    public static float VMinToScreenPx(float vmin) => Screen.width < Screen.height
+      ? vmin * Screen.width / 100f
+      : vmin * Screen.height / 100f;
+
+    public static float VMinToDip(float vmin) => ScreenPxToDip(VMinToScreenPx(vmin));
+
+    /// <summary>
+    /// Given a value in units of screen pixels, returns a ratio x such that screenPixels * x = targetVMin
+    /// </summary>
+    public static float MultiplerForTargetVMin(float targetVMin, float screenPixels) =>
+      VMinToScreenPx(targetVMin) / screenPixels;
+
+    /// <summary>
+    /// Given a value in units of screen pixels, returns a ratio x such that screenPixels * x = targetDips
+    /// </summary>
+    public static float MultiplerForTargetDip(float targetDips, float screenPixels) =>
+      targetDips / ScreenPxToDip(screenPixels);
+
+    public static FlexScale Scale(float amount) => Scale(amount, amount);
+
+    public static FlexScale Scale(float x, float y) => new()
+    {
+      Amount = new FlexVector3
+      {
+        X = x,
+        Y = y,
+        Z = 0
+      }
+    };
 
     static Node MakeFlexbox(string name, FlexStyle style, params Node?[] children)
     {

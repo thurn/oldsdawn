@@ -50,7 +50,7 @@ namespace Spelldawn.Protos {
             "EhMKC2JsdXJfcmFkaXVzGAIgASgCEhwKBWNvbG9yGAMgASgLMg0uc2QuRmxl",
             "eENvbG9yIiEKCVRpbWVWYWx1ZRIUCgxtaWxsaXNlY29uZHMYASABKAIiRgoK",
             "SW1hZ2VTbGljZRILCgN0b3AYASABKAUSDQoFcmlnaHQYAiABKAUSDgoGYm90",
-            "dG9tGAMgASgFEgwKBGxlZnQYBCABKAUi2RAKCUZsZXhTdHlsZRIkCg1hbGln",
+            "dG9tGAMgASgFEgwKBGxlZnQYBCABKAUioREKCUZsZXhTdHlsZRIkCg1hbGln",
             "bl9jb250ZW50GAEgASgOMg0uc2QuRmxleEFsaWduEiIKC2FsaWduX2l0ZW1z",
             "GAIgASgOMg0uc2QuRmxleEFsaWduEiEKCmFsaWduX3NlbGYYAyABKA4yDS5z",
             "ZC5GbGV4QWxpZ24SJwoQYmFja2dyb3VuZF9jb2xvchgEIAEoCzINLnNkLkZs",
@@ -98,79 +98,81 @@ namespace Spelldawn.Protos {
             "c2liaWxpdHkYMyABKA4yEi5zZC5GbGV4VmlzaWJpbGl0eRIjCgt3aGl0ZV9z",
             "cGFjZRg0IAEoDjIOLnNkLldoaXRlU3BhY2USHAoFd2lkdGgYNSABKAsyDS5z",
             "ZC5EaW1lbnNpb24SIwoMd29yZF9zcGFjaW5nGDYgASgLMg0uc2QuRGltZW5z",
-            "aW9uIjIKBFRleHQSHAoFc3R5bGUYASABKAsyDS5zZC5GbGV4U3R5bGUSDAoE",
-            "dGV4dBgCIAEoCSJRCgdGbGV4Ym94EgwKBG5hbWUYASABKAkSHAoFc3R5bGUY",
-            "AiABKAsyDS5zZC5GbGV4U3R5bGUSGgoIY2hpbGRyZW4YAyADKAsyCC5zZC5O",
-            "b2RlIkgKBE5vZGUSHgoHZmxleGJveBgBIAEoCzILLnNkLkZsZXhib3hIABIY",
-            "CgR0ZXh0GAIgASgLMgguc2QuVGV4dEgAQgYKBG5vZGUqnwEKCUZsZXhBbGln",
-            "bhIaChZGTEVYX0FMSUdOX1VOU1BFQ0lGSUVEEAASEwoPRkxFWF9BTElHTl9B",
-            "VVRPEAESGQoVRkxFWF9BTElHTl9GTEVYX1NUQVJUEAISFQoRRkxFWF9BTElH",
-            "Tl9DRU5URVIQAxIXChNGTEVYX0FMSUdOX0ZMRVhfRU5EEAQSFgoSRkxFWF9B",
-            "TElHTl9TVFJFVENIEAUqcAoQRmxleERpc3BsYXlTdHlsZRIiCh5GTEVYX0RJ",
-            "U1BMQVlfU1RZTEVfVU5TUEVDSUZJRUQQABIbChdGTEVYX0RJU1BMQVlfU1RZ",
-            "TEVfRkxFWBABEhsKF0ZMRVhfRElTUExBWV9TVFlMRV9OT05FEAIqpQEKDUZs",
-            "ZXhEaXJlY3Rpb24SHgoaRkxFWF9ESVJFQ1RJT05fVU5TUEVDSUZJRUQQABIZ",
-            "ChVGTEVYX0RJUkVDVElPTl9DT0xVTU4QARIhCh1GTEVYX0RJUkVDVElPTl9D",
-            "T0xVTU5fUkVWRVJTRRACEhYKEkZMRVhfRElSRUNUSU9OX1JPVxADEh4KGkZM",
-            "RVhfRElSRUNUSU9OX1JPV19SRVZFUlNFEAQqbAoIRmxleFdyYXASGQoVRkxF",
-            "WF9XUkFQX1VOU1BFQ0lGSUVEEAASFQoRRkxFWF9XUkFQX05PX1dSQVAQARIS",
-            "Cg5GTEVYX1dSQVBfV1JBUBACEhoKFkZMRVhfV1JBUF9XUkFQX1JFVkVSU0UQ",
-            "Ayq7AQoLRmxleEp1c3RpZnkSHAoYRkxFWF9KVVNUSUZZX1VOU1BFQ0lGSUVE",
-            "EAASGwoXRkxFWF9KVVNUSUZZX0ZMRVhfU1RBUlQQARIXChNGTEVYX0pVU1RJ",
-            "RllfQ0VOVEVSEAISGQoVRkxFWF9KVVNUSUZZX0ZMRVhfRU5EEAMSHgoaRkxF",
-            "WF9KVVNUSUZZX1NQQUNFX0JFVFdFRU4QBBIdChlGTEVYX0pVU1RJRllfU1BB",
-            "Q0VfQVJPVU5EEAUqYgoMRmxleE92ZXJmbG93Eh0KGUZMRVhfT1ZFUkZMT1df",
-            "VU5TUEVDSUZJRUQQABIZChVGTEVYX09WRVJGTE9XX1ZJU0lCTEUQARIYChRG",
-            "TEVYX09WRVJGTE9XX0hJRERFThACKmUKDEZsZXhQb3NpdGlvbhIdChlGTEVY",
-            "X1BPU0lUSU9OX1VOU1BFQ0lGSUVEEAASGgoWRkxFWF9QT1NJVElPTl9SRUxB",
-            "VElWRRABEhoKFkZMRVhfUE9TSVRJT05fQUJTT0xVVEUQAiphCgxUZXh0T3Zl",
-            "cmZsb3cSHQoZVEVYVF9PVkVSRkxPV19VTlNQRUNJRklFRBAAEhYKElRFWFRf",
-            "T1ZFUkZMT1dfQ0xJUBABEhoKFlRFWFRfT1ZFUkZMT1dfRUxMSVBTSVMQAirz",
-            "BQoKRWFzaW5nTW9kZRIbChdFQVNJTkdfTU9ERV9VTlNQRUNJRklFRBAAEhQK",
-            "EEVBU0lOR19NT0RFX0VBU0UQARIXChNFQVNJTkdfTU9ERV9FQVNFX0lOEAIS",
-            "GAoURUFTSU5HX01PREVfRUFTRV9PVVQQAxIbChdFQVNJTkdfTU9ERV9FQVNF",
-            "X0lOX09VVBAEEhYKEkVBU0lOR19NT0RFX0xJTkVBUhAFEhwKGEVBU0lOR19N",
-            "T0RFX0VBU0VfSU5fU0lORRAGEh0KGUVBU0lOR19NT0RFX0VBU0VfT1VUX1NJ",
-            "TkUQBxIgChxFQVNJTkdfTU9ERV9FQVNFX0lOX09VVF9TSU5FEAgSHQoZRUFT",
-            "SU5HX01PREVfRUFTRV9JTl9DVUJJQxAJEh4KGkVBU0lOR19NT0RFX0VBU0Vf",
-            "T1VUX0NVQklDEAoSIQodRUFTSU5HX01PREVfRUFTRV9JTl9PVVRfQ1VCSUMQ",
-            "CxIcChhFQVNJTkdfTU9ERV9FQVNFX0lOX0NJUkMQDBIdChlFQVNJTkdfTU9E",
-            "RV9FQVNFX09VVF9DSVJDEA0SIAocRUFTSU5HX01PREVfRUFTRV9JTl9PVVRf",
-            "Q0lSQxAOEh8KG0VBU0lOR19NT0RFX0VBU0VfSU5fRUxBU1RJQxAPEiAKHEVB",
-            "U0lOR19NT0RFX0VBU0VfT1VUX0VMQVNUSUMQEBIjCh9FQVNJTkdfTU9ERV9F",
-            "QVNFX0lOX09VVF9FTEFTVElDEBESHAoYRUFTSU5HX01PREVfRUFTRV9JTl9C",
-            "QUNLEBISHQoZRUFTSU5HX01PREVfRUFTRV9PVVRfQkFDSxATEiAKHEVBU0lO",
-            "R19NT0RFX0VBU0VfSU5fT1VUX0JBQ0sQFBIeChpFQVNJTkdfTU9ERV9FQVNF",
-            "X0lOX0JPVU5DRRAVEh8KG0VBU0lOR19NT0RFX0VBU0VfT1VUX0JPVU5DRRAW",
-            "EiIKHkVBU0lOR19NT0RFX0VBU0VfSU5fT1VUX0JPVU5DRRAXKqABCg5JbWFn",
-            "ZVNjYWxlTW9kZRIgChxJTUFHRV9TQ0FMRV9NT0RFX1VOU1BFQ0lGSUVEEAAS",
-            "JAogSU1BR0VfU0NBTEVfTU9ERV9TVFJFVENIX1RPX0ZJTEwQARIjCh9JTUFH",
-            "RV9TQ0FMRV9NT0RFX1NDQUxFX0FORF9DUk9QEAISIQodSU1BR0VfU0NBTEVf",
-            "TU9ERV9TQ0FMRV9UT19GSVQQAyqKAQoJRm9udFN0eWxlEhoKFkZPTlRfU1RZ",
-            "TEVfVU5TUEVDSUZJRUQQABIVChFGT05UX1NUWUxFX05PUk1BTBABEhMKD0ZP",
-            "TlRfU1RZTEVfQk9MRBACEhUKEUZPTlRfU1RZTEVfSVRBTElDEAMSHgoaRk9O",
-            "VF9TVFlMRV9CT0xEX0FORF9JVEFMSUMQBCp6Cg9PdmVyZmxvd0NsaXBCb3gS",
-            "IQodT1ZFUkZMT1dfQ0xJUF9CT1hfVU5TUEVDSUZJRUQQABIhCh1PVkVSRkxP",
-            "V19DTElQX0JPWF9QQURESU5HX0JPWBABEiEKHU9WRVJGTE9XX0NMSVBfQk9Y",
-            "X0NPTlRFTlRfQk9YEAIqpgIKCVRleHRBbGlnbhIaChZURVhUX0FMSUdOX1VO",
-            "U1BFQ0lGSUVEEAASGQoVVEVYVF9BTElHTl9VUFBFUl9MRUZUEAESGwoXVEVY",
-            "VF9BTElHTl9VUFBFUl9DRU5URVIQAhIaChZURVhUX0FMSUdOX1VQUEVSX1JJ",
-            "R0hUEAMSGgoWVEVYVF9BTElHTl9NSURETEVfTEVGVBAEEhwKGFRFWFRfQUxJ",
-            "R05fTUlERExFX0NFTlRFUhAFEhsKF1RFWFRfQUxJR05fTUlERExFX1JJR0hU",
-            "EAYSGQoVVEVYVF9BTElHTl9MT1dFUl9MRUZUEAcSGwoXVEVYVF9BTElHTl9M",
-            "T1dFUl9DRU5URVIQCBIaChZURVhUX0FMSUdOX0xPV0VSX1JJR0hUEAkqowEK",
-            "FFRleHRPdmVyZmxvd1Bvc2l0aW9uEiYKIlRFWFRfT1ZFUkZMT1dfUE9TSVRJ",
-            "T05fVU5TUEVDSUZJRUQQABIeChpURVhUX09WRVJGTE9XX1BPU0lUSU9OX0VO",
-            "RBABEiAKHFRFWFRfT1ZFUkZMT1dfUE9TSVRJT05fU1RBUlQQAhIhCh1URVhU",
-            "X09WRVJGTE9XX1BPU0lUSU9OX01JRERMRRADKmoKDkZsZXhWaXNpYmlsaXR5",
-            "Eh8KG0ZMRVhfVklTSUJJTElUWV9VTlNQRUNJRklFRBAAEhsKF0ZMRVhfVklT",
-            "SUJJTElUWV9WSVNJQkxFEAESGgoWRkxFWF9WSVNJQklMSVRZX0hJRERFThAC",
-            "KloKCldoaXRlU3BhY2USGwoXV0hJVEVfU1BBQ0VfVU5TUEVDSUZJRUQQABIW",
-            "ChJXSElURV9TUEFDRV9OT1JNQUwQARIXChNXSElURV9TUEFDRV9OT19XUkFQ",
-            "EAIqaAoNRGltZW5zaW9uVW5pdBIeChpESU1FTlNJT05fVU5JVF9VTlNQRUNJ",
-            "RklFRBAAEhgKFERJTUVOU0lPTl9VTklUX1BJWEVMEAESHQoZRElNRU5TSU9O",
-            "X1VOSVRfUEVSQ0VOVEFHRRACQhOqAhBTcGVsbGRhd24uUHJvdG9zYgZwcm90",
-            "bzM="));
+            "aW9uEkYKIWJhY2tncm91bmRfaW1hZ2Vfc2NhbGVfbXVsdGlwbGllchg3IAEo",
+            "CzIbLmdvb2dsZS5wcm90b2J1Zi5GbG9hdFZhbHVlIlEKB0ZsZXhib3gSDAoE",
+            "bmFtZRgBIAEoCRIcCgVzdHlsZRgCIAEoCzINLnNkLkZsZXhTdHlsZRIaCghj",
+            "aGlsZHJlbhgDIAMoCzIILnNkLk5vZGUiMgoEVGV4dBIcCgVzdHlsZRgBIAEo",
+            "CzINLnNkLkZsZXhTdHlsZRIMCgR0ZXh0GAIgASgJIkgKBE5vZGUSHgoHZmxl",
+            "eGJveBgBIAEoCzILLnNkLkZsZXhib3hIABIYCgR0ZXh0GAIgASgLMgguc2Qu",
+            "VGV4dEgAQgYKBG5vZGUqnwEKCUZsZXhBbGlnbhIaChZGTEVYX0FMSUdOX1VO",
+            "U1BFQ0lGSUVEEAASEwoPRkxFWF9BTElHTl9BVVRPEAESGQoVRkxFWF9BTElH",
+            "Tl9GTEVYX1NUQVJUEAISFQoRRkxFWF9BTElHTl9DRU5URVIQAxIXChNGTEVY",
+            "X0FMSUdOX0ZMRVhfRU5EEAQSFgoSRkxFWF9BTElHTl9TVFJFVENIEAUqcAoQ",
+            "RmxleERpc3BsYXlTdHlsZRIiCh5GTEVYX0RJU1BMQVlfU1RZTEVfVU5TUEVD",
+            "SUZJRUQQABIbChdGTEVYX0RJU1BMQVlfU1RZTEVfRkxFWBABEhsKF0ZMRVhf",
+            "RElTUExBWV9TVFlMRV9OT05FEAIqpQEKDUZsZXhEaXJlY3Rpb24SHgoaRkxF",
+            "WF9ESVJFQ1RJT05fVU5TUEVDSUZJRUQQABIZChVGTEVYX0RJUkVDVElPTl9D",
+            "T0xVTU4QARIhCh1GTEVYX0RJUkVDVElPTl9DT0xVTU5fUkVWRVJTRRACEhYK",
+            "EkZMRVhfRElSRUNUSU9OX1JPVxADEh4KGkZMRVhfRElSRUNUSU9OX1JPV19S",
+            "RVZFUlNFEAQqbAoIRmxleFdyYXASGQoVRkxFWF9XUkFQX1VOU1BFQ0lGSUVE",
+            "EAASFQoRRkxFWF9XUkFQX05PX1dSQVAQARISCg5GTEVYX1dSQVBfV1JBUBAC",
+            "EhoKFkZMRVhfV1JBUF9XUkFQX1JFVkVSU0UQAyq7AQoLRmxleEp1c3RpZnkS",
+            "HAoYRkxFWF9KVVNUSUZZX1VOU1BFQ0lGSUVEEAASGwoXRkxFWF9KVVNUSUZZ",
+            "X0ZMRVhfU1RBUlQQARIXChNGTEVYX0pVU1RJRllfQ0VOVEVSEAISGQoVRkxF",
+            "WF9KVVNUSUZZX0ZMRVhfRU5EEAMSHgoaRkxFWF9KVVNUSUZZX1NQQUNFX0JF",
+            "VFdFRU4QBBIdChlGTEVYX0pVU1RJRllfU1BBQ0VfQVJPVU5EEAUqYgoMRmxl",
+            "eE92ZXJmbG93Eh0KGUZMRVhfT1ZFUkZMT1dfVU5TUEVDSUZJRUQQABIZChVG",
+            "TEVYX09WRVJGTE9XX1ZJU0lCTEUQARIYChRGTEVYX09WRVJGTE9XX0hJRERF",
+            "ThACKmUKDEZsZXhQb3NpdGlvbhIdChlGTEVYX1BPU0lUSU9OX1VOU1BFQ0lG",
+            "SUVEEAASGgoWRkxFWF9QT1NJVElPTl9SRUxBVElWRRABEhoKFkZMRVhfUE9T",
+            "SVRJT05fQUJTT0xVVEUQAiphCgxUZXh0T3ZlcmZsb3cSHQoZVEVYVF9PVkVS",
+            "RkxPV19VTlNQRUNJRklFRBAAEhYKElRFWFRfT1ZFUkZMT1dfQ0xJUBABEhoK",
+            "FlRFWFRfT1ZFUkZMT1dfRUxMSVBTSVMQAirzBQoKRWFzaW5nTW9kZRIbChdF",
+            "QVNJTkdfTU9ERV9VTlNQRUNJRklFRBAAEhQKEEVBU0lOR19NT0RFX0VBU0UQ",
+            "ARIXChNFQVNJTkdfTU9ERV9FQVNFX0lOEAISGAoURUFTSU5HX01PREVfRUFT",
+            "RV9PVVQQAxIbChdFQVNJTkdfTU9ERV9FQVNFX0lOX09VVBAEEhYKEkVBU0lO",
+            "R19NT0RFX0xJTkVBUhAFEhwKGEVBU0lOR19NT0RFX0VBU0VfSU5fU0lORRAG",
+            "Eh0KGUVBU0lOR19NT0RFX0VBU0VfT1VUX1NJTkUQBxIgChxFQVNJTkdfTU9E",
+            "RV9FQVNFX0lOX09VVF9TSU5FEAgSHQoZRUFTSU5HX01PREVfRUFTRV9JTl9D",
+            "VUJJQxAJEh4KGkVBU0lOR19NT0RFX0VBU0VfT1VUX0NVQklDEAoSIQodRUFT",
+            "SU5HX01PREVfRUFTRV9JTl9PVVRfQ1VCSUMQCxIcChhFQVNJTkdfTU9ERV9F",
+            "QVNFX0lOX0NJUkMQDBIdChlFQVNJTkdfTU9ERV9FQVNFX09VVF9DSVJDEA0S",
+            "IAocRUFTSU5HX01PREVfRUFTRV9JTl9PVVRfQ0lSQxAOEh8KG0VBU0lOR19N",
+            "T0RFX0VBU0VfSU5fRUxBU1RJQxAPEiAKHEVBU0lOR19NT0RFX0VBU0VfT1VU",
+            "X0VMQVNUSUMQEBIjCh9FQVNJTkdfTU9ERV9FQVNFX0lOX09VVF9FTEFTVElD",
+            "EBESHAoYRUFTSU5HX01PREVfRUFTRV9JTl9CQUNLEBISHQoZRUFTSU5HX01P",
+            "REVfRUFTRV9PVVRfQkFDSxATEiAKHEVBU0lOR19NT0RFX0VBU0VfSU5fT1VU",
+            "X0JBQ0sQFBIeChpFQVNJTkdfTU9ERV9FQVNFX0lOX0JPVU5DRRAVEh8KG0VB",
+            "U0lOR19NT0RFX0VBU0VfT1VUX0JPVU5DRRAWEiIKHkVBU0lOR19NT0RFX0VB",
+            "U0VfSU5fT1VUX0JPVU5DRRAXKqABCg5JbWFnZVNjYWxlTW9kZRIgChxJTUFH",
+            "RV9TQ0FMRV9NT0RFX1VOU1BFQ0lGSUVEEAASJAogSU1BR0VfU0NBTEVfTU9E",
+            "RV9TVFJFVENIX1RPX0ZJTEwQARIjCh9JTUFHRV9TQ0FMRV9NT0RFX1NDQUxF",
+            "X0FORF9DUk9QEAISIQodSU1BR0VfU0NBTEVfTU9ERV9TQ0FMRV9UT19GSVQQ",
+            "AyqKAQoJRm9udFN0eWxlEhoKFkZPTlRfU1RZTEVfVU5TUEVDSUZJRUQQABIV",
+            "ChFGT05UX1NUWUxFX05PUk1BTBABEhMKD0ZPTlRfU1RZTEVfQk9MRBACEhUK",
+            "EUZPTlRfU1RZTEVfSVRBTElDEAMSHgoaRk9OVF9TVFlMRV9CT0xEX0FORF9J",
+            "VEFMSUMQBCp6Cg9PdmVyZmxvd0NsaXBCb3gSIQodT1ZFUkZMT1dfQ0xJUF9C",
+            "T1hfVU5TUEVDSUZJRUQQABIhCh1PVkVSRkxPV19DTElQX0JPWF9QQURESU5H",
+            "X0JPWBABEiEKHU9WRVJGTE9XX0NMSVBfQk9YX0NPTlRFTlRfQk9YEAIqpgIK",
+            "CVRleHRBbGlnbhIaChZURVhUX0FMSUdOX1VOU1BFQ0lGSUVEEAASGQoVVEVY",
+            "VF9BTElHTl9VUFBFUl9MRUZUEAESGwoXVEVYVF9BTElHTl9VUFBFUl9DRU5U",
+            "RVIQAhIaChZURVhUX0FMSUdOX1VQUEVSX1JJR0hUEAMSGgoWVEVYVF9BTElH",
+            "Tl9NSURETEVfTEVGVBAEEhwKGFRFWFRfQUxJR05fTUlERExFX0NFTlRFUhAF",
+            "EhsKF1RFWFRfQUxJR05fTUlERExFX1JJR0hUEAYSGQoVVEVYVF9BTElHTl9M",
+            "T1dFUl9MRUZUEAcSGwoXVEVYVF9BTElHTl9MT1dFUl9DRU5URVIQCBIaChZU",
+            "RVhUX0FMSUdOX0xPV0VSX1JJR0hUEAkqowEKFFRleHRPdmVyZmxvd1Bvc2l0",
+            "aW9uEiYKIlRFWFRfT1ZFUkZMT1dfUE9TSVRJT05fVU5TUEVDSUZJRUQQABIe",
+            "ChpURVhUX09WRVJGTE9XX1BPU0lUSU9OX0VORBABEiAKHFRFWFRfT1ZFUkZM",
+            "T1dfUE9TSVRJT05fU1RBUlQQAhIhCh1URVhUX09WRVJGTE9XX1BPU0lUSU9O",
+            "X01JRERMRRADKmoKDkZsZXhWaXNpYmlsaXR5Eh8KG0ZMRVhfVklTSUJJTElU",
+            "WV9VTlNQRUNJRklFRBAAEhsKF0ZMRVhfVklTSUJJTElUWV9WSVNJQkxFEAES",
+            "GgoWRkxFWF9WSVNJQklMSVRZX0hJRERFThACKloKCldoaXRlU3BhY2USGwoX",
+            "V0hJVEVfU1BBQ0VfVU5TUEVDSUZJRUQQABIWChJXSElURV9TUEFDRV9OT1JN",
+            "QUwQARIXChNXSElURV9TUEFDRV9OT19XUkFQEAIqfwoNRGltZW5zaW9uVW5p",
+            "dBIeChpESU1FTlNJT05fVU5JVF9VTlNQRUNJRklFRBAAEhYKEkRJTUVOU0lP",
+            "Tl9VTklUX0RJUBABEh0KGURJTUVOU0lPTl9VTklUX1BFUkNFTlRBR0UQAhIX",
+            "ChNESU1FTlNJT05fVU5JVF9WTUlOEANCE6oCEFNwZWxsZGF3bi5Qcm90b3Ni",
+            "BnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.FlexAlign), typeof(global::Spelldawn.Protos.FlexDisplayStyle), typeof(global::Spelldawn.Protos.FlexDirection), typeof(global::Spelldawn.Protos.FlexWrap), typeof(global::Spelldawn.Protos.FlexJustify), typeof(global::Spelldawn.Protos.FlexOverflow), typeof(global::Spelldawn.Protos.FlexPosition), typeof(global::Spelldawn.Protos.TextOverflow), typeof(global::Spelldawn.Protos.EasingMode), typeof(global::Spelldawn.Protos.ImageScaleMode), typeof(global::Spelldawn.Protos.FontStyle), typeof(global::Spelldawn.Protos.OverflowClipBox), typeof(global::Spelldawn.Protos.TextAlign), typeof(global::Spelldawn.Protos.TextOverflowPosition), typeof(global::Spelldawn.Protos.FlexVisibility), typeof(global::Spelldawn.Protos.WhiteSpace), typeof(global::Spelldawn.Protos.DimensionUnit), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -190,9 +192,9 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.TextShadow), global::Spelldawn.Protos.TextShadow.Parser, new[]{ "Offset", "BlurRadius", "Color" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.TimeValue), global::Spelldawn.Protos.TimeValue.Parser, new[]{ "Milliseconds" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ImageSlice), global::Spelldawn.Protos.ImageSlice.Parser, new[]{ "Top", "Right", "Bottom", "Left" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexStyle), global::Spelldawn.Protos.FlexStyle.Parser, new[]{ "AlignContent", "AlignItems", "AlignSelf", "BackgroundColor", "BackgroundImage", "BorderColor", "BorderRadius", "BorderWidth", "Inset", "Color", "Display", "FlexBasis", "FlexDirection", "FlexGrow", "FlexShrink", "Wrap", "FontSize", "Height", "JustifyContent", "LetterSpacing", "Margin", "MaxHeight", "MaxWidth", "MinHeight", "MinWidth", "Opacity", "Overflow", "Padding", "Position", "Rotate", "Scale", "TextOverflow", "TextShadow", "TransformOrigin", "TransitionDelays", "TransitionDurations", "TransitionProperties", "TransitionEasingModes", "Translate", "BackgroundImageTintColor", "BackgroundImageScaleMode", "Font", "FontStyle", "OverflowClipBox", "ParagraphSpacing", "ImageSlice", "TextAlign", "TextOutlineColor", "TextOutlineWidth", "TextOverflowPosition", "Visibility", "WhiteSpace", "Width", "WordSpacing" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Text), global::Spelldawn.Protos.Text.Parser, new[]{ "Style", "Text_" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexStyle), global::Spelldawn.Protos.FlexStyle.Parser, new[]{ "AlignContent", "AlignItems", "AlignSelf", "BackgroundColor", "BackgroundImage", "BorderColor", "BorderRadius", "BorderWidth", "Inset", "Color", "Display", "FlexBasis", "FlexDirection", "FlexGrow", "FlexShrink", "Wrap", "FontSize", "Height", "JustifyContent", "LetterSpacing", "Margin", "MaxHeight", "MaxWidth", "MinHeight", "MinWidth", "Opacity", "Overflow", "Padding", "Position", "Rotate", "Scale", "TextOverflow", "TextShadow", "TransformOrigin", "TransitionDelays", "TransitionDurations", "TransitionProperties", "TransitionEasingModes", "Translate", "BackgroundImageTintColor", "BackgroundImageScaleMode", "Font", "FontStyle", "OverflowClipBox", "ParagraphSpacing", "ImageSlice", "TextAlign", "TextOutlineColor", "TextOutlineWidth", "TextOverflowPosition", "Visibility", "WhiteSpace", "Width", "WordSpacing", "BackgroundImageScaleMultiplier" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Flexbox), global::Spelldawn.Protos.Flexbox.Parser, new[]{ "Name", "Style", "Children" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Text), global::Spelldawn.Protos.Text.Parser, new[]{ "Style", "Text_" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Node), global::Spelldawn.Protos.Node.Parser, new[]{ "Flexbox", "Text" }, new[]{ "Node" }, null, null, null)
           }));
     }
@@ -339,8 +341,12 @@ namespace Spelldawn.Protos {
 
   public enum DimensionUnit {
     [pbr::OriginalName("DIMENSION_UNIT_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("DIMENSION_UNIT_PIXEL")] Pixel = 1,
+    /// <summary>
+    ///* Density-independent pixels, which unity also calls "pixels". 
+    /// </summary>
+    [pbr::OriginalName("DIMENSION_UNIT_DIP")] Dip = 1,
     [pbr::OriginalName("DIMENSION_UNIT_PERCENTAGE")] Percentage = 2,
+    [pbr::OriginalName("DIMENSION_UNIT_VMIN")] Vmin = 3,
   }
 
   #endregion
@@ -4270,6 +4276,7 @@ namespace Spelldawn.Protos {
       whiteSpace_ = other.whiteSpace_;
       width_ = other.width_ != null ? other.width_.Clone() : null;
       wordSpacing_ = other.wordSpacing_ != null ? other.wordSpacing_.Clone() : null;
+      BackgroundImageScaleMultiplier = other.BackgroundImageScaleMultiplier;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -4876,6 +4883,25 @@ namespace Spelldawn.Protos {
       }
     }
 
+    /// <summary>Field number for the "background_image_scale_multiplier" field.</summary>
+    public const int BackgroundImageScaleMultiplierFieldNumber = 55;
+    private static readonly pb::FieldCodec<float?> _single_backgroundImageScaleMultiplier_codec = pb::FieldCodec.ForStructWrapper<float>(442);
+    private float? backgroundImageScaleMultiplier_;
+    /// <summary>
+    ///*
+    /// Overwrites both 'width' and 'height' by multiplying the dimensions of
+    /// the provided 'background_image' (in units of raw pixels) by this
+    /// constant.
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float? BackgroundImageScaleMultiplier {
+      get { return backgroundImageScaleMultiplier_; }
+      set {
+        backgroundImageScaleMultiplier_ = value;
+      }
+    }
+
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as FlexStyle);
@@ -4943,6 +4969,7 @@ namespace Spelldawn.Protos {
       if (WhiteSpace != other.WhiteSpace) return false;
       if (!object.Equals(Width, other.Width)) return false;
       if (!object.Equals(WordSpacing, other.WordSpacing)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.Equals(BackgroundImageScaleMultiplier, other.BackgroundImageScaleMultiplier)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -5003,6 +5030,7 @@ namespace Spelldawn.Protos {
       if (WhiteSpace != global::Spelldawn.Protos.WhiteSpace.Unspecified) hash ^= WhiteSpace.GetHashCode();
       if (width_ != null) hash ^= Width.GetHashCode();
       if (wordSpacing_ != null) hash ^= WordSpacing.GetHashCode();
+      if (backgroundImageScaleMultiplier_ != null) hash ^= pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.GetHashCode(BackgroundImageScaleMultiplier);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -5219,6 +5247,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(178, 3);
         output.WriteMessage(WordSpacing);
       }
+      if (backgroundImageScaleMultiplier_ != null) {
+        _single_backgroundImageScaleMultiplier_codec.WriteTagAndValue(output, BackgroundImageScaleMultiplier);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -5428,6 +5459,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(178, 3);
         output.WriteMessage(WordSpacing);
       }
+      if (backgroundImageScaleMultiplier_ != null) {
+        _single_backgroundImageScaleMultiplier_codec.WriteTagAndValue(ref output, BackgroundImageScaleMultiplier);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -5590,6 +5624,9 @@ namespace Spelldawn.Protos {
       }
       if (wordSpacing_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(WordSpacing);
+      }
+      if (backgroundImageScaleMultiplier_ != null) {
+        size += _single_backgroundImageScaleMultiplier_codec.CalculateSizeWithTag(BackgroundImageScaleMultiplier);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -5850,6 +5887,11 @@ namespace Spelldawn.Protos {
           WordSpacing = new global::Spelldawn.Protos.Dimension();
         }
         WordSpacing.MergeFrom(other.WordSpacing);
+      }
+      if (other.backgroundImageScaleMultiplier_ != null) {
+        if (backgroundImageScaleMultiplier_ == null || other.BackgroundImageScaleMultiplier != 0F) {
+          BackgroundImageScaleMultiplier = other.BackgroundImageScaleMultiplier;
+        }
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -6179,6 +6221,13 @@ namespace Spelldawn.Protos {
               WordSpacing = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(WordSpacing);
+            break;
+          }
+          case 442: {
+            float? value = _single_backgroundImageScaleMultiplier_codec.Read(input);
+            if (backgroundImageScaleMultiplier_ == null || value != 0F) {
+              BackgroundImageScaleMultiplier = value;
+            }
             break;
           }
         }
@@ -6511,221 +6560,11 @@ namespace Spelldawn.Protos {
             input.ReadMessage(WordSpacing);
             break;
           }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  public sealed partial class Text : pb::IMessage<Text>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<Text> _parser = new pb::MessageParser<Text>(() => new Text());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Text> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[17]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Text() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Text(Text other) : this() {
-      style_ = other.style_ != null ? other.style_.Clone() : null;
-      text_ = other.text_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Text Clone() {
-      return new Text(this);
-    }
-
-    /// <summary>Field number for the "style" field.</summary>
-    public const int StyleFieldNumber = 1;
-    private global::Spelldawn.Protos.FlexStyle style_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.FlexStyle Style {
-      get { return style_; }
-      set {
-        style_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "text" field.</summary>
-    public const int Text_FieldNumber = 2;
-    private string text_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Text_ {
-      get { return text_; }
-      set {
-        text_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as Text);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Text other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (!object.Equals(Style, other.Style)) return false;
-      if (Text_ != other.Text_) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (style_ != null) hash ^= Style.GetHashCode();
-      if (Text_.Length != 0) hash ^= Text_.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (style_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Style);
-      }
-      if (Text_.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Text_);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (style_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Style);
-      }
-      if (Text_.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Text_);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (style_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Style);
-      }
-      if (Text_.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Text_);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Text other) {
-      if (other == null) {
-        return;
-      }
-      if (other.style_ != null) {
-        if (style_ == null) {
-          Style = new global::Spelldawn.Protos.FlexStyle();
-        }
-        Style.MergeFrom(other.Style);
-      }
-      if (other.Text_.Length != 0) {
-        Text_ = other.Text_;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            if (style_ == null) {
-              Style = new global::Spelldawn.Protos.FlexStyle();
+          case 442: {
+            float? value = _single_backgroundImageScaleMultiplier_codec.Read(ref input);
+            if (backgroundImageScaleMultiplier_ == null || value != 0F) {
+              BackgroundImageScaleMultiplier = value;
             }
-            input.ReadMessage(Style);
-            break;
-          }
-          case 18: {
-            Text_ = input.ReadString();
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            if (style_ == null) {
-              Style = new global::Spelldawn.Protos.FlexStyle();
-            }
-            input.ReadMessage(Style);
-            break;
-          }
-          case 18: {
-            Text_ = input.ReadString();
             break;
           }
         }
@@ -6747,7 +6586,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[18]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[17]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6968,6 +6807,223 @@ namespace Spelldawn.Protos {
           }
           case 26: {
             children_.AddEntriesFrom(ref input, _repeated_children_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class Text : pb::IMessage<Text>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<Text> _parser = new pb::MessageParser<Text>(() => new Text());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<Text> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[18]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Text() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Text(Text other) : this() {
+      style_ = other.style_ != null ? other.style_.Clone() : null;
+      text_ = other.text_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Text Clone() {
+      return new Text(this);
+    }
+
+    /// <summary>Field number for the "style" field.</summary>
+    public const int StyleFieldNumber = 1;
+    private global::Spelldawn.Protos.FlexStyle style_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.FlexStyle Style {
+      get { return style_; }
+      set {
+        style_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "text" field.</summary>
+    public const int Text_FieldNumber = 2;
+    private string text_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Text_ {
+      get { return text_; }
+      set {
+        text_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as Text);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(Text other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(Style, other.Style)) return false;
+      if (Text_ != other.Text_) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (style_ != null) hash ^= Style.GetHashCode();
+      if (Text_.Length != 0) hash ^= Text_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (style_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Style);
+      }
+      if (Text_.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Text_);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (style_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Style);
+      }
+      if (Text_.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Text_);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (style_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Style);
+      }
+      if (Text_.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Text_);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(Text other) {
+      if (other == null) {
+        return;
+      }
+      if (other.style_ != null) {
+        if (style_ == null) {
+          Style = new global::Spelldawn.Protos.FlexStyle();
+        }
+        Style.MergeFrom(other.Style);
+      }
+      if (other.Text_.Length != 0) {
+        Text_ = other.Text_;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (style_ == null) {
+              Style = new global::Spelldawn.Protos.FlexStyle();
+            }
+            input.ReadMessage(Style);
+            break;
+          }
+          case 18: {
+            Text_ = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (style_ == null) {
+              Style = new global::Spelldawn.Protos.FlexStyle();
+            }
+            input.ReadMessage(Style);
+            break;
+          }
+          case 18: {
+            Text_ = input.ReadString();
             break;
           }
         }

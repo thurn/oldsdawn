@@ -24,7 +24,11 @@ message CardIcon {
   string text = 2;
 }
 
-message CardText {
+message CardTitle {
+  string text = 1;
+}
+
+message RulesText {
   string text = 1;
 }
 
@@ -33,10 +37,13 @@ message CardView {
   sd.SpriteAddress card_frame = 2;
   sd.SpriteAddress webbing = 3;
   sd.SpriteAddress jewel = 4;
-  CardIcon top_left_icon = 5;
-  CardIcon top_right_icon = 6;
-  CardIcon bottom_left_icon = 7;
-  CardIcon bottom_right_icon = 8;
-  CardText card_text = 9;
-  bool can_play = 10;
+  sd.SpriteAddress image_background = 5;
+  sd.SpriteAddress image = 6;
+  CardIcon top_left_icon = 7;
+  CardIcon top_right_icon = 8;
+  CardIcon bottom_right_icon = 9;
+  CardIcon bottom_left_icon = 10;
+  CardTitle title = 11;
+  RulesText rules_text = 12;
+  bool can_play = 13;
 }
