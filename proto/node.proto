@@ -1,0 +1,311 @@
+// Copyright © Spelldawn 2021-present
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//    https://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package sd;
+option csharp_namespace = "Spelldawn.Protos";
+
+message Color {
+    float red = 1;
+    float green = 2;
+    float blue = 3;
+    float alpha = 4;
+}
+
+enum Align {
+    ALIGN_UNSPECIFIED = 0;
+    ALIGN_AUTO = 1;
+    ALIGN_FLEX_START = 2;
+    ALIGN_CENTER = 3;
+    ALIGN_FLEX_END = 4;
+    ALIGN_STRETCH = 5;
+}
+
+enum DisplayStyle {
+    DISPLAY_STYLE_UNSPECIFIED = 0;
+    DISPLAY_STYLE_FLEX = 1;
+    DISPLAY_STYLE_NONE = 2;
+}
+
+enum FlexDirection {
+    FLEX_DIRECTION_UNSPECIFIED = 0;
+    FLEX_DIRECTION_COLUMN = 1;
+    FLEX_DIRECTION_COLUMN_REVERSE = 2;
+    FLEX_DIRECTION_ROW = 3;
+    FLEX_DIRECTION_ROW_REVERSE = 4;
+}
+
+enum FlexWrap {
+    FLEX_WRAP_UNSPECIFIED = 0;
+    FLEX_WRAP_NO_WRAP = 1;
+    FLEX_WRAP_WRAP = 2;
+    FLEX_WRAP_WRAP_REVERSE = 3;
+}
+
+enum Justify {
+    JUSTIFY_UNSPECIFIED = 0;
+    JUSTIFY_FLEX_START = 1;
+    JUSTIFY_CENTER = 2;
+    JUSTIFY_FLEX_END = 3;
+    JUSTIFY_SPACE_BETWEEN = 4;
+    JUSTIFY_SPACE_AROUND = 5;
+}
+
+enum Overflow {
+    OVERFLOW_UNSPECIFIED = 0;
+    OVERFLOW_VISIBLE = 1;
+    OVERFLOW_HIDDEN = 2;
+}
+
+enum FlexPosition {
+    FLEX_POSITION_UNSPECIFIED = 0;
+    FLEX_POSITION_RELATIVE = 1;
+    FLEX_POSITION_ABSOLUTE = 2;
+}
+
+enum TextOverflow {
+    TEXT_OVERFLOW_UNSPECIFIED = 0;
+    TEXT_OVERFLOW_CLIP = 1;
+    TEXT_OVERFLOW_ELLIPSIS = 2;
+}
+
+enum EasingMode {
+    EASING_MODE_UNSPECIFIED = 0;
+    EASING_MODE_EASE = 1;
+    EASING_MODE_EASE_IN = 2;
+    EASING_MODE_EASE_OUT = 3;
+    EASING_MODE_EASE_IN_OUT = 4;
+    EASING_MODE_LINEAR = 5;
+    EASING_MODE_EASE_IN_SINE = 6;
+    EASING_MODE_EASE_OUT_SINE = 7;
+    EASING_MODE_EASE_IN_OUT_SINE = 8;
+    EASING_MODE_EASE_IN_CUBIC = 9;
+    EASING_MODE_EASE_OUT_CUBIC = 10;
+    EASING_MODE_EASE_IN_OUT_CUBIC = 11;
+    EASING_MODE_EASE_IN_CIRC = 12;
+    EASING_MODE_EASE_OUT_CIRC = 13;
+    EASING_MODE_EASE_IN_OUT_CIRC = 14;
+    EASING_MODE_EASE_IN_ELASTIC = 15;
+    EASING_MODE_EASE_OUT_ELASTIC = 16;
+    EASING_MODE_EASE_IN_OUT_ELASTIC = 17;
+    EASING_MODE_EASE_IN_BACK = 18;
+    EASING_MODE_EASE_OUT_BACK = 19;
+    EASING_MODE_EASE_IN_OUT_BACK = 20;
+    EASING_MODE_EASE_IN_BOUNCE = 21;
+    EASING_MODE_EASE_OUT_BOUNCE = 22;
+    EASING_MODE_EASE_IN_OUT_BOUNCE = 23;
+}
+
+enum ImageScaleMode {
+    IMAGE_SCALE_MODE_UNSPECIFIED = 0;
+    IMAGE_SCALE_MODE_STRETCH_TO_FILL = 1;
+    IMAGE_SCALE_MODE_SCALE_AND_CROP = 2;
+    IMAGE_SCALE_MODE_SCALE_TO_FIT = 3;
+}
+
+enum FontStyle {
+    FONT_STYLE_UNSPECIFIED = 0;
+    FONT_STYLE_NORMAL = 1;
+    FONT_STYLE_BOLD = 2;
+    FONT_STYLE_ITALIC = 3;
+    FONT_STYLE_BOLD_AND_ITALIC = 4;
+}
+
+enum OverflowClipBox {
+    OVERFLOW_CLIP_BOX_UNSPECIFIED = 0;
+    OVERFLOW_CLIP_BOX_PADDING_BOX = 1;
+    OVERFLOW_CLIP_BOX_CONTENT_BOX = 2;
+}
+
+enum TextAlign {
+    TEXT_ALIGN_UNSPECIFIED = 0;
+    TEXT_ALIGN_UPPER_LEFT = 1;
+    TEXT_ALIGN_UPPER_CENTER = 2;
+    TEXT_ALIGN_UPPER_RIGHT = 3;
+    TEXT_ALIGN_MIDDLE_LEFT = 4;
+    TEXT_ALIGN_MIDDLE_CENTER = 5;
+    TEXT_ALIGN_MIDDLE_RIGHT = 6;
+    TEXT_ALIGN_LOWER_LEFT = 7;
+    TEXT_ALIGN_LOWER_CENTER = 8;
+    TEXT_ALIGN_LOWER_RIGHT = 9;
+}
+
+enum TextOverflowPosition {
+    TEXT_OVERFLOW_POSITION_UNSPECIFIED = 0;
+    TEXT_OVERFLOW_POSITION_END = 1;
+    TEXT_OVERFLOW_POSITION_START = 2;
+    TEXT_OVERFLOW_POSITION_MIDDLE = 3;
+}
+
+enum Visibility {
+    VISIBILITY_UNSPECIFIED = 0;
+    VISIBILITY_VISIBLE = 1;
+    VISIBILITY_HIDDEn = 2;
+}
+
+enum WhiteSpace {
+    WHITE_SPACE_UNSPECIFIED = 0;
+    WHITE_SPACE_NORMAL = 1;
+    WHITE_SPACE_NO_WRAP = 2;
+}
+
+message SpriteAddress {
+    string address = 1;
+}
+
+message FontAddress {
+    string address = 1;
+}
+
+message Vector2 {
+    float x = 1;
+    float y = 2;
+}
+
+message Vector3 {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+enum LengthUnit {
+    LENGTH_UNIT_UNSPECIFIED = 0;
+    LENGTH_UNIT_PIXEL = 1;
+    LENGTH_UNIT_PERCENTAGE = 2;
+}
+
+message Length {
+    LengthUnit unit = 1;
+    float value = 2;
+}
+
+message LengthGroup {
+    Length top = 1;
+    Length right = 2;
+    Length bottom = 3;
+    Length left = 4;
+}
+
+message BorderColor {
+    Color top = 1;
+    Color right = 2;
+    Color bottom = 3;
+    Color left = 4;
+}
+
+message BorderRadius {
+    Length top_left = 1;
+    Length top_right = 2;
+    Length bottom_right = 3;
+    Length bottom_left = 4;
+}
+
+message Rotate {
+    float degrees = 1;
+}
+
+message Translate {
+    Length x = 1;
+    Length y = 2;
+    float z = 3;
+}
+
+message Scale {
+    Vector3 amount = 1;
+}
+
+message TextShadow {
+    Vector2 offset = 1;
+    float blur_radius = 2;
+    Color color = 3;
+}
+
+message TimeValue {
+    float milliseconds = 1;
+}
+
+message Style {
+    Align align_content = 1;
+    Align align_items = 2;
+    Align align_self = 3;
+    Color background_color = 4;
+    SpriteAddress background_image = 5;
+    BorderColor border_color = 6;
+    BorderRadius border_radius = 7;
+    LengthGroup border_width = 8;
+    LengthGroup inset = 9;
+    Color color = 10;
+    DisplayStyle display = 11;
+    Length flex_basis = 12;
+    FlexDirection flex_direction = 13;
+    float flex_grow = 14;
+    float flex_shrink = 15;
+    FlexWrap wrap = 16;
+    Length font_size = 17;
+    Length height = 18;
+    Justify justify_content = 19;
+    Length letter_spacing = 20;
+    LengthGroup margin = 21;
+    Length max_height = 22;
+    Length max_width = 23;
+    Length min_height = 24;
+    Length min_width = 25;
+    float opacity = 26;
+    Overflow overflow = 27;
+    LengthGroup padding = 28;
+    FlexPosition position = 29;
+    Rotate rotate = 30;
+    Scale scale = 31;
+    TextOverflow text_overflow = 32;
+    TextShadow text_shadow = 33;
+    Translate transform_origin = 34;
+    TimeValue transition_delay = 35;
+    TimeValue transition_duration = 36;
+    string transition_property = 37;
+    EasingMode transition_easing_mode = 38;
+    Translate translate = 39;
+    Color background_image_tint_color = 40;
+    ImageScaleMode image_scale_mode = 41;
+    FontAddress font = 42;
+    FontStyle font_style = 43;
+    OverflowClipBox overflow_clip_box = 44;
+    Length paragraph_spacing = 45;
+    LengthGroup image_slice = 46;
+    TextAlign text_align = 47;
+    Color text_outline_color = 48;
+    float text_outline_width = 49;
+    TextOverflowPosition text_overflow_position = 50;
+    Visibility visibility = 51;
+    WhiteSpace white_space = 52;
+    Length width = 53;
+    Length word_spacing = 54;
+}
+
+message Text {
+    Style style = 1;
+    string text = 2;
+}
+
+message Flexbox {
+    Style style = 1;
+    repeated Node children = 2;
+}
+
+message Node {
+    oneof node {
+        Flexbox flexbox = 1;
+        Text text = 2;
+    }
+}

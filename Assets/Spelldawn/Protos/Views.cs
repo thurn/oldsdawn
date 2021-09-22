@@ -24,24 +24,21 @@ namespace Spelldawn.Protos {
     static ViewsReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cgt2aWV3cy5wcm90bxIJc3BlbGxkYXduIiAKDVNwcml0ZUFkZHJlc3MSDwoH",
-            "YWRkcmVzcxgBIAEoCSJGCghDYXJkSWNvbhIsCgpiYWNrZ3JvdW5kGAEgASgL",
-            "Mhguc3BlbGxkYXduLlNwcml0ZUFkZHJlc3MSDAoEdGV4dBgCIAEoCSIYCghD",
-            "YXJkVGV4dBIMCgR0ZXh0GAEgASgJIqsDCghDYXJkVmlldxIrCgljYXJkX2Jh",
-            "Y2sYASABKAsyGC5zcGVsbGRhd24uU3ByaXRlQWRkcmVzcxIsCgpjYXJkX2Zy",
-            "YW1lGAIgASgLMhguc3BlbGxkYXduLlNwcml0ZUFkZHJlc3MSKQoHd2ViYmlu",
-            "ZxgDIAEoCzIYLnNwZWxsZGF3bi5TcHJpdGVBZGRyZXNzEicKBWpld2VsGAQg",
-            "ASgLMhguc3BlbGxkYXduLlNwcml0ZUFkZHJlc3MSKgoNdG9wX2xlZnRfaWNv",
-            "bhgFIAEoCzITLnNwZWxsZGF3bi5DYXJkSWNvbhIrCg50b3BfcmlnaHRfaWNv",
-            "bhgGIAEoCzITLnNwZWxsZGF3bi5DYXJkSWNvbhItChBib3R0b21fbGVmdF9p",
-            "Y29uGAcgASgLMhMuc3BlbGxkYXduLkNhcmRJY29uEi4KEWJvdHRvbV9yaWdo",
-            "dF9pY29uGAggASgLMhMuc3BlbGxkYXduLkNhcmRJY29uEiYKCWNhcmRfdGV4",
-            "dBgJIAEoCzITLnNwZWxsZGF3bi5DYXJkVGV4dBIQCghjYW5fcGxheRgKIAEo",
-            "CEITqgIQU3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
+            "Cgt2aWV3cy5wcm90bxICc2QaCm5vZGUucHJvdG8iPwoIQ2FyZEljb24SJQoK",
+            "YmFja2dyb3VuZBgBIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSDAoEdGV4dBgC",
+            "IAEoCSIYCghDYXJkVGV4dBIMCgR0ZXh0GAEgASgJIuwCCghDYXJkVmlldxIk",
+            "CgljYXJkX2JhY2sYASABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiUKCmNhcmRf",
+            "ZnJhbWUYAiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiIKB3dlYmJpbmcYAyAB",
+            "KAsyES5zZC5TcHJpdGVBZGRyZXNzEiAKBWpld2VsGAQgASgLMhEuc2QuU3By",
+            "aXRlQWRkcmVzcxIjCg10b3BfbGVmdF9pY29uGAUgASgLMgwuc2QuQ2FyZElj",
+            "b24SJAoOdG9wX3JpZ2h0X2ljb24YBiABKAsyDC5zZC5DYXJkSWNvbhImChBi",
+            "b3R0b21fbGVmdF9pY29uGAcgASgLMgwuc2QuQ2FyZEljb24SJwoRYm90dG9t",
+            "X3JpZ2h0X2ljb24YCCABKAsyDC5zZC5DYXJkSWNvbhIfCgljYXJkX3RleHQY",
+            "CSABKAsyDC5zZC5DYXJkVGV4dBIQCghjYW5fcGxheRgKIAEoCEITqgIQU3Bl",
+            "bGxkYXduLlByb3Rvc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::Spelldawn.Protos.NodeReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.SpriteAddress), global::Spelldawn.Protos.SpriteAddress.Parser, new[]{ "Address" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardIcon), global::Spelldawn.Protos.CardIcon.Parser, new[]{ "Background", "Text" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardText), global::Spelldawn.Protos.CardText.Parser, new[]{ "Text" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardView), global::Spelldawn.Protos.CardView.Parser, new[]{ "CardBack", "CardFrame", "Webbing", "Jewel", "TopLeftIcon", "TopRightIcon", "BottomLeftIcon", "BottomRightIcon", "CardText", "CanPlay" }, null, null, null, null)
@@ -51,178 +48,6 @@ namespace Spelldawn.Protos {
 
   }
   #region Messages
-  public sealed partial class SpriteAddress : pb::IMessage<SpriteAddress>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<SpriteAddress> _parser = new pb::MessageParser<SpriteAddress>(() => new SpriteAddress());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<SpriteAddress> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[0]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SpriteAddress() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SpriteAddress(SpriteAddress other) : this() {
-      address_ = other.address_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SpriteAddress Clone() {
-      return new SpriteAddress(this);
-    }
-
-    /// <summary>Field number for the "address" field.</summary>
-    public const int AddressFieldNumber = 1;
-    private string address_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Address {
-      get { return address_; }
-      set {
-        address_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as SpriteAddress);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(SpriteAddress other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Address != other.Address) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Address.Length != 0) hash ^= Address.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (Address.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Address);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Address.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Address);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (Address.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Address);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(SpriteAddress other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Address.Length != 0) {
-        Address = other.Address;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            Address = input.ReadString();
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            Address = input.ReadString();
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
   public sealed partial class CardIcon : pb::IMessage<CardIcon>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -235,7 +60,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[0]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -452,7 +277,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[1]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -624,7 +449,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

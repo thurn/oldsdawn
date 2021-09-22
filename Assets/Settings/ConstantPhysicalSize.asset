@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19101, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: ScaleWithScreenSize
+  m_Name: ConstantPhysicalSize
   m_EditorClassIdentifier: 
   themeUss: {fileID: -4733365628477956816, guid: a3b10f0a35e194020a02612355278437, type: 3}
   m_TargetTexture: {fileID: 0}
-  m_ScaleMode: 2
+  m_ScaleMode: 1
   m_Scale: 1
-  m_ReferenceDpi: 300
+  m_ReferenceDpi: 155
   m_FallbackDpi: 96
   m_ReferenceResolution: {x: 780, y: 360}
   m_ScreenMatchMode: 0
   m_Match: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_TargetDisplay: 0
   m_ClearDepthStencil: 1
   m_ClearColor: 0

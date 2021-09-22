@@ -21,24 +21,32 @@ namespace Spelldawn.Services
 {
   public sealed class Registry : MonoBehaviour
   {
-    [SerializeField] Camera _mainCamera = null!;
     public Camera MainCamera => _mainCamera;
+    [SerializeField] Camera _mainCamera = null!;
 
-    [SerializeField] UIDocument _document = null!;
-    public UIDocument Document => _document;
-    public VisualElement RootElement => _document.rootVisualElement;
+    /// <summary>Scaled with screen size document for rendering cards</summary>
+    public UIDocument GameDocument => _gameDocument;
+    [SerializeField] UIDocument _gameDocument = null!;
+
+    /// <summary>Constant physical size document for rendering UI windows</summary>
+    public UIDocument InterfaceDocument => _interfaceDocument;
+    [SerializeField] UIDocument _interfaceDocument = null!;
+
+    public AssetService AssetService => _assetService;
+    [SerializeField] AssetService _assetService = null!;
 
     void Start()
     {
       var x = 781;
       var y = 360;
-      PositionAt(RootElement, 0, 0);
-      PositionAt(RootElement, x, 0);
-      PositionAt(RootElement, 0, y);
-      PositionAt(RootElement, x, y);
+
+      PositionAt(_gameDocument.rootVisualElement, 0, 0);
+      PositionAt(_gameDocument.rootVisualElement, x, 0);
+      PositionAt(_gameDocument.rootVisualElement, 0, y);
+      PositionAt(_gameDocument.rootVisualElement, x, y);
     }
 
-    void PositionAt(VisualElement parent, int x, int y)
+    void PositionAt(VisualElement parent, int x, int y, bool red = false)
     {
       var size = 100;
       parent.Add(new VisualElement
@@ -50,7 +58,7 @@ namespace Spelldawn.Services
           top = y - size / 2f,
           width = size,
           height = size,
-          backgroundColor = Color.red
+          backgroundColor = red ? Color.red : Color.yellow
         }
       });
 

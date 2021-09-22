@@ -1,14 +1,26 @@
+// Copyright © Spelldawn 2021-present
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//    https://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 syntax = "proto3";
 
-package spelldawn;
+package sd;
 option csharp_namespace = "Spelldawn.Protos";
 
-message SpriteAddress {
-  string address = 1;
-}
+import "node.proto";
 
 message CardIcon {
-  SpriteAddress background = 1;
+  sd.SpriteAddress background = 1;
   string text = 2;
 }
 
@@ -17,14 +29,14 @@ message CardText {
 }
 
 message CardView {
-    SpriteAddress card_back = 1;
-    SpriteAddress card_frame = 2;
-    SpriteAddress webbing = 3;
-    SpriteAddress jewel = 4;
-    CardIcon top_left_icon = 5;
-    CardIcon top_right_icon = 6;
-    CardIcon bottom_left_icon = 7;
-    CardIcon bottom_right_icon = 8;
-    CardText card_text = 9;
-    bool can_play = 10;
+  sd.SpriteAddress card_back = 1;
+  sd.SpriteAddress card_frame = 2;
+  sd.SpriteAddress webbing = 3;
+  sd.SpriteAddress jewel = 4;
+  CardIcon top_left_icon = 5;
+  CardIcon top_right_icon = 6;
+  CardIcon bottom_left_icon = 7;
+  CardIcon bottom_right_icon = 8;
+  CardText card_text = 9;
+  bool can_play = 10;
 }
