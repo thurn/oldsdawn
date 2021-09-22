@@ -13,3 +13,4 @@ xattr -w com.dropbox.ignored 1 obj/
 xattr -w com.dropbox.ignored 1 UserSettings/
 xattr -w com.dropbox.ignored 1 Temp/
 xattr -w com.dropbox.ignored 1 out/
+xattr -w com.dropbox.ignored 1 out_BurstDebugInformation_DoNotShip/

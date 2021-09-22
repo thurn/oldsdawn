@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -26,17 +28,23 @@ namespace Spelldawn.Services
 
     /// <summary>Scaled with screen size document for rendering cards</summary>
     public UIDocument GameDocument => _gameDocument;
+
     [SerializeField] UIDocument _gameDocument = null!;
 
     /// <summary>Constant physical size document for rendering UI windows</summary>
     public UIDocument InterfaceDocument => _interfaceDocument;
+
     [SerializeField] UIDocument _interfaceDocument = null!;
 
     public AssetService AssetService => _assetService;
     [SerializeField] AssetService _assetService = null!;
 
+    Thread _mainThread = null!;
+
     void Start()
     {
+      _mainThread = Thread.CurrentThread;
+
       var x = 781;
       var y = 360;
 
@@ -44,6 +52,16 @@ namespace Spelldawn.Services
       PositionAt(_gameDocument.rootVisualElement, x, 0);
       PositionAt(_gameDocument.rootVisualElement, 0, y);
       PositionAt(_gameDocument.rootVisualElement, x, y);
+    }
+
+    public void CheckIsMainThread()
+    {
+      if (Thread.CurrentThread != _mainThread)
+      {
+        const string msg = "Error: Expected code to be run on the main thread!";
+        Debug.LogError(msg);
+        throw new InvalidOperationException(msg);
+      }
     }
 
     void PositionAt(VisualElement parent, int x, int y, bool red = false)

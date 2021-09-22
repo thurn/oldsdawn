@@ -24,158 +24,175 @@ namespace Spelldawn.Protos {
     static NodeReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cgpub2RlLnByb3RvEgJzZCJACgVDb2xvchILCgNyZWQYASABKAISDQoFZ3Jl",
-            "ZW4YAiABKAISDAoEYmx1ZRgDIAEoAhINCgVhbHBoYRgEIAEoAiIgCg1TcHJp",
-            "dGVBZGRyZXNzEg8KB2FkZHJlc3MYASABKAkiHgoLRm9udEFkZHJlc3MSDwoH",
-            "YWRkcmVzcxgBIAEoCSIfCgdWZWN0b3IyEgkKAXgYASABKAISCQoBeRgCIAEo",
-            "AiIqCgdWZWN0b3IzEgkKAXgYASABKAISCQoBeRgCIAEoAhIJCgF6GAMgASgC",
-            "IjUKBkxlbmd0aBIcCgR1bml0GAEgASgOMg4uc2QuTGVuZ3RoVW5pdBINCgV2",
-            "YWx1ZRgCIAEoAiJ3CgtMZW5ndGhHcm91cBIXCgN0b3AYASABKAsyCi5zZC5M",
-            "ZW5ndGgSGQoFcmlnaHQYAiABKAsyCi5zZC5MZW5ndGgSGgoGYm90dG9tGAMg",
-            "ASgLMgouc2QuTGVuZ3RoEhgKBGxlZnQYBCABKAsyCi5zZC5MZW5ndGgicwoL",
-            "Qm9yZGVyQ29sb3ISFgoDdG9wGAEgASgLMgkuc2QuQ29sb3ISGAoFcmlnaHQY",
-            "AiABKAsyCS5zZC5Db2xvchIZCgZib3R0b20YAyABKAsyCS5zZC5Db2xvchIX",
-            "CgRsZWZ0GAQgASgLMgkuc2QuQ29sb3IijgEKDEJvcmRlclJhZGl1cxIcCgh0",
-            "b3BfbGVmdBgBIAEoCzIKLnNkLkxlbmd0aBIdCgl0b3BfcmlnaHQYAiABKAsy",
-            "Ci5zZC5MZW5ndGgSIAoMYm90dG9tX3JpZ2h0GAMgASgLMgouc2QuTGVuZ3Ro",
-            "Eh8KC2JvdHRvbV9sZWZ0GAQgASgLMgouc2QuTGVuZ3RoIhkKBlJvdGF0ZRIP",
-            "CgdkZWdyZWVzGAEgASgCIkQKCVRyYW5zbGF0ZRIVCgF4GAEgASgLMgouc2Qu",
-            "TGVuZ3RoEhUKAXkYAiABKAsyCi5zZC5MZW5ndGgSCQoBehgDIAEoAiIkCgVT",
-            "Y2FsZRIbCgZhbW91bnQYASABKAsyCy5zZC5WZWN0b3IzIlgKClRleHRTaGFk",
-            "b3cSGwoGb2Zmc2V0GAEgASgLMgsuc2QuVmVjdG9yMhITCgtibHVyX3JhZGl1",
-            "cxgCIAEoAhIYCgVjb2xvchgDIAEoCzIJLnNkLkNvbG9yIiEKCVRpbWVWYWx1",
-            "ZRIUCgxtaWxsaXNlY29uZHMYASABKAIi7A4KBVN0eWxlEiAKDWFsaWduX2Nv",
-            "bnRlbnQYASABKA4yCS5zZC5BbGlnbhIeCgthbGlnbl9pdGVtcxgCIAEoDjIJ",
-            "LnNkLkFsaWduEh0KCmFsaWduX3NlbGYYAyABKA4yCS5zZC5BbGlnbhIjChBi",
-            "YWNrZ3JvdW5kX2NvbG9yGAQgASgLMgkuc2QuQ29sb3ISKwoQYmFja2dyb3Vu",
-            "ZF9pbWFnZRgFIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSJQoMYm9yZGVyX2Nv",
-            "bG9yGAYgASgLMg8uc2QuQm9yZGVyQ29sb3ISJwoNYm9yZGVyX3JhZGl1cxgH",
-            "IAEoCzIQLnNkLkJvcmRlclJhZGl1cxIlCgxib3JkZXJfd2lkdGgYCCABKAsy",
-            "Dy5zZC5MZW5ndGhHcm91cBIeCgVpbnNldBgJIAEoCzIPLnNkLkxlbmd0aEdy",
-            "b3VwEhgKBWNvbG9yGAogASgLMgkuc2QuQ29sb3ISIQoHZGlzcGxheRgLIAEo",
-            "DjIQLnNkLkRpc3BsYXlTdHlsZRIeCgpmbGV4X2Jhc2lzGAwgASgLMgouc2Qu",
-            "TGVuZ3RoEikKDmZsZXhfZGlyZWN0aW9uGA0gASgOMhEuc2QuRmxleERpcmVj",
-            "dGlvbhIRCglmbGV4X2dyb3cYDiABKAISEwoLZmxleF9zaHJpbmsYDyABKAIS",
-            "GgoEd3JhcBgQIAEoDjIMLnNkLkZsZXhXcmFwEh0KCWZvbnRfc2l6ZRgRIAEo",
-            "CzIKLnNkLkxlbmd0aBIaCgZoZWlnaHQYEiABKAsyCi5zZC5MZW5ndGgSJAoP",
-            "anVzdGlmeV9jb250ZW50GBMgASgOMgsuc2QuSnVzdGlmeRIiCg5sZXR0ZXJf",
-            "c3BhY2luZxgUIAEoCzIKLnNkLkxlbmd0aBIfCgZtYXJnaW4YFSABKAsyDy5z",
-            "ZC5MZW5ndGhHcm91cBIeCgptYXhfaGVpZ2h0GBYgASgLMgouc2QuTGVuZ3Ro",
-            "Eh0KCW1heF93aWR0aBgXIAEoCzIKLnNkLkxlbmd0aBIeCgptaW5faGVpZ2h0",
-            "GBggASgLMgouc2QuTGVuZ3RoEh0KCW1pbl93aWR0aBgZIAEoCzIKLnNkLkxl",
-            "bmd0aBIPCgdvcGFjaXR5GBogASgCEh4KCG92ZXJmbG93GBsgASgOMgwuc2Qu",
-            "T3ZlcmZsb3cSIAoHcGFkZGluZxgcIAEoCzIPLnNkLkxlbmd0aEdyb3VwEiIK",
-            "CHBvc2l0aW9uGB0gASgOMhAuc2QuRmxleFBvc2l0aW9uEhoKBnJvdGF0ZRge",
-            "IAEoCzIKLnNkLlJvdGF0ZRIYCgVzY2FsZRgfIAEoCzIJLnNkLlNjYWxlEicK",
-            "DXRleHRfb3ZlcmZsb3cYICABKA4yEC5zZC5UZXh0T3ZlcmZsb3cSIwoLdGV4",
-            "dF9zaGFkb3cYISABKAsyDi5zZC5UZXh0U2hhZG93EicKEHRyYW5zZm9ybV9v",
-            "cmlnaW4YIiABKAsyDS5zZC5UcmFuc2xhdGUSJwoQdHJhbnNpdGlvbl9kZWxh",
-            "eRgjIAEoCzINLnNkLlRpbWVWYWx1ZRIqChN0cmFuc2l0aW9uX2R1cmF0aW9u",
-            "GCQgASgLMg0uc2QuVGltZVZhbHVlEhsKE3RyYW5zaXRpb25fcHJvcGVydHkY",
-            "JSABKAkSLgoWdHJhbnNpdGlvbl9lYXNpbmdfbW9kZRgmIAEoDjIOLnNkLkVh",
-            "c2luZ01vZGUSIAoJdHJhbnNsYXRlGCcgASgLMg0uc2QuVHJhbnNsYXRlEi4K",
-            "G2JhY2tncm91bmRfaW1hZ2VfdGludF9jb2xvchgoIAEoCzIJLnNkLkNvbG9y",
-            "EiwKEGltYWdlX3NjYWxlX21vZGUYKSABKA4yEi5zZC5JbWFnZVNjYWxlTW9k",
-            "ZRIdCgRmb250GCogASgLMg8uc2QuRm9udEFkZHJlc3MSIQoKZm9udF9zdHls",
-            "ZRgrIAEoDjINLnNkLkZvbnRTdHlsZRIuChFvdmVyZmxvd19jbGlwX2JveBgs",
-            "IAEoDjITLnNkLk92ZXJmbG93Q2xpcEJveBIlChFwYXJhZ3JhcGhfc3BhY2lu",
-            "ZxgtIAEoCzIKLnNkLkxlbmd0aBIkCgtpbWFnZV9zbGljZRguIAEoCzIPLnNk",
-            "Lkxlbmd0aEdyb3VwEiEKCnRleHRfYWxpZ24YLyABKA4yDS5zZC5UZXh0QWxp",
-            "Z24SJQoSdGV4dF9vdXRsaW5lX2NvbG9yGDAgASgLMgkuc2QuQ29sb3ISGgoS",
-            "dGV4dF9vdXRsaW5lX3dpZHRoGDEgASgCEjgKFnRleHRfb3ZlcmZsb3dfcG9z",
-            "aXRpb24YMiABKA4yGC5zZC5UZXh0T3ZlcmZsb3dQb3NpdGlvbhIiCgp2aXNp",
-            "YmlsaXR5GDMgASgOMg4uc2QuVmlzaWJpbGl0eRIjCgt3aGl0ZV9zcGFjZRg0",
-            "IAEoDjIOLnNkLldoaXRlU3BhY2USGQoFd2lkdGgYNSABKAsyCi5zZC5MZW5n",
-            "dGgSIAoMd29yZF9zcGFjaW5nGDYgASgLMgouc2QuTGVuZ3RoIi4KBFRleHQS",
-            "GAoFc3R5bGUYASABKAsyCS5zZC5TdHlsZRIMCgR0ZXh0GAIgASgJIj8KB0Zs",
-            "ZXhib3gSGAoFc3R5bGUYASABKAsyCS5zZC5TdHlsZRIaCghjaGlsZHJlbhgC",
-            "IAMoCzIILnNkLk5vZGUiSAoETm9kZRIeCgdmbGV4Ym94GAEgASgLMgsuc2Qu",
-            "RmxleGJveEgAEhgKBHRleHQYAiABKAsyCC5zZC5UZXh0SABCBgoEbm9kZSp9",
-            "CgVBbGlnbhIVChFBTElHTl9VTlNQRUNJRklFRBAAEg4KCkFMSUdOX0FVVE8Q",
-            "ARIUChBBTElHTl9GTEVYX1NUQVJUEAISEAoMQUxJR05fQ0VOVEVSEAMSEgoO",
-            "QUxJR05fRkxFWF9FTkQQBBIRCg1BTElHTl9TVFJFVENIEAUqXQoMRGlzcGxh",
-            "eVN0eWxlEh0KGURJU1BMQVlfU1RZTEVfVU5TUEVDSUZJRUQQABIWChJESVNQ",
-            "TEFZX1NUWUxFX0ZMRVgQARIWChJESVNQTEFZX1NUWUxFX05PTkUQAiqlAQoN",
-            "RmxleERpcmVjdGlvbhIeChpGTEVYX0RJUkVDVElPTl9VTlNQRUNJRklFRBAA",
-            "EhkKFUZMRVhfRElSRUNUSU9OX0NPTFVNThABEiEKHUZMRVhfRElSRUNUSU9O",
-            "X0NPTFVNTl9SRVZFUlNFEAISFgoSRkxFWF9ESVJFQ1RJT05fUk9XEAMSHgoa",
-            "RkxFWF9ESVJFQ1RJT05fUk9XX1JFVkVSU0UQBCpsCghGbGV4V3JhcBIZChVG",
-            "TEVYX1dSQVBfVU5TUEVDSUZJRUQQABIVChFGTEVYX1dSQVBfTk9fV1JBUBAB",
-            "EhIKDkZMRVhfV1JBUF9XUkFQEAISGgoWRkxFWF9XUkFQX1dSQVBfUkVWRVJT",
-            "RRADKpkBCgdKdXN0aWZ5EhcKE0pVU1RJRllfVU5TUEVDSUZJRUQQABIWChJK",
-            "VVNUSUZZX0ZMRVhfU1RBUlQQARISCg5KVVNUSUZZX0NFTlRFUhACEhQKEEpV",
-            "U1RJRllfRkxFWF9FTkQQAxIZChVKVVNUSUZZX1NQQUNFX0JFVFdFRU4QBBIY",
-            "ChRKVVNUSUZZX1NQQUNFX0FST1VORBAFKk8KCE92ZXJmbG93EhgKFE9WRVJG",
-            "TE9XX1VOU1BFQ0lGSUVEEAASFAoQT1ZFUkZMT1dfVklTSUJMRRABEhMKD09W",
-            "RVJGTE9XX0hJRERFThACKmUKDEZsZXhQb3NpdGlvbhIdChlGTEVYX1BPU0lU",
-            "SU9OX1VOU1BFQ0lGSUVEEAASGgoWRkxFWF9QT1NJVElPTl9SRUxBVElWRRAB",
-            "EhoKFkZMRVhfUE9TSVRJT05fQUJTT0xVVEUQAiphCgxUZXh0T3ZlcmZsb3cS",
-            "HQoZVEVYVF9PVkVSRkxPV19VTlNQRUNJRklFRBAAEhYKElRFWFRfT1ZFUkZM",
-            "T1dfQ0xJUBABEhoKFlRFWFRfT1ZFUkZMT1dfRUxMSVBTSVMQAirzBQoKRWFz",
-            "aW5nTW9kZRIbChdFQVNJTkdfTU9ERV9VTlNQRUNJRklFRBAAEhQKEEVBU0lO",
-            "R19NT0RFX0VBU0UQARIXChNFQVNJTkdfTU9ERV9FQVNFX0lOEAISGAoURUFT",
-            "SU5HX01PREVfRUFTRV9PVVQQAxIbChdFQVNJTkdfTU9ERV9FQVNFX0lOX09V",
-            "VBAEEhYKEkVBU0lOR19NT0RFX0xJTkVBUhAFEhwKGEVBU0lOR19NT0RFX0VB",
-            "U0VfSU5fU0lORRAGEh0KGUVBU0lOR19NT0RFX0VBU0VfT1VUX1NJTkUQBxIg",
-            "ChxFQVNJTkdfTU9ERV9FQVNFX0lOX09VVF9TSU5FEAgSHQoZRUFTSU5HX01P",
-            "REVfRUFTRV9JTl9DVUJJQxAJEh4KGkVBU0lOR19NT0RFX0VBU0VfT1VUX0NV",
-            "QklDEAoSIQodRUFTSU5HX01PREVfRUFTRV9JTl9PVVRfQ1VCSUMQCxIcChhF",
-            "QVNJTkdfTU9ERV9FQVNFX0lOX0NJUkMQDBIdChlFQVNJTkdfTU9ERV9FQVNF",
-            "X09VVF9DSVJDEA0SIAocRUFTSU5HX01PREVfRUFTRV9JTl9PVVRfQ0lSQxAO",
-            "Eh8KG0VBU0lOR19NT0RFX0VBU0VfSU5fRUxBU1RJQxAPEiAKHEVBU0lOR19N",
-            "T0RFX0VBU0VfT1VUX0VMQVNUSUMQEBIjCh9FQVNJTkdfTU9ERV9FQVNFX0lO",
-            "X09VVF9FTEFTVElDEBESHAoYRUFTSU5HX01PREVfRUFTRV9JTl9CQUNLEBIS",
-            "HQoZRUFTSU5HX01PREVfRUFTRV9PVVRfQkFDSxATEiAKHEVBU0lOR19NT0RF",
-            "X0VBU0VfSU5fT1VUX0JBQ0sQFBIeChpFQVNJTkdfTU9ERV9FQVNFX0lOX0JP",
-            "VU5DRRAVEh8KG0VBU0lOR19NT0RFX0VBU0VfT1VUX0JPVU5DRRAWEiIKHkVB",
-            "U0lOR19NT0RFX0VBU0VfSU5fT1VUX0JPVU5DRRAXKqABCg5JbWFnZVNjYWxl",
-            "TW9kZRIgChxJTUFHRV9TQ0FMRV9NT0RFX1VOU1BFQ0lGSUVEEAASJAogSU1B",
-            "R0VfU0NBTEVfTU9ERV9TVFJFVENIX1RPX0ZJTEwQARIjCh9JTUFHRV9TQ0FM",
-            "RV9NT0RFX1NDQUxFX0FORF9DUk9QEAISIQodSU1BR0VfU0NBTEVfTU9ERV9T",
-            "Q0FMRV9UT19GSVQQAyqKAQoJRm9udFN0eWxlEhoKFkZPTlRfU1RZTEVfVU5T",
-            "UEVDSUZJRUQQABIVChFGT05UX1NUWUxFX05PUk1BTBABEhMKD0ZPTlRfU1RZ",
-            "TEVfQk9MRBACEhUKEUZPTlRfU1RZTEVfSVRBTElDEAMSHgoaRk9OVF9TVFlM",
-            "RV9CT0xEX0FORF9JVEFMSUMQBCp6Cg9PdmVyZmxvd0NsaXBCb3gSIQodT1ZF",
-            "UkZMT1dfQ0xJUF9CT1hfVU5TUEVDSUZJRUQQABIhCh1PVkVSRkxPV19DTElQ",
-            "X0JPWF9QQURESU5HX0JPWBABEiEKHU9WRVJGTE9XX0NMSVBfQk9YX0NPTlRF",
-            "TlRfQk9YEAIqpgIKCVRleHRBbGlnbhIaChZURVhUX0FMSUdOX1VOU1BFQ0lG",
-            "SUVEEAASGQoVVEVYVF9BTElHTl9VUFBFUl9MRUZUEAESGwoXVEVYVF9BTElH",
-            "Tl9VUFBFUl9DRU5URVIQAhIaChZURVhUX0FMSUdOX1VQUEVSX1JJR0hUEAMS",
-            "GgoWVEVYVF9BTElHTl9NSURETEVfTEVGVBAEEhwKGFRFWFRfQUxJR05fTUlE",
-            "RExFX0NFTlRFUhAFEhsKF1RFWFRfQUxJR05fTUlERExFX1JJR0hUEAYSGQoV",
-            "VEVYVF9BTElHTl9MT1dFUl9MRUZUEAcSGwoXVEVYVF9BTElHTl9MT1dFUl9D",
-            "RU5URVIQCBIaChZURVhUX0FMSUdOX0xPV0VSX1JJR0hUEAkqowEKFFRleHRP",
-            "dmVyZmxvd1Bvc2l0aW9uEiYKIlRFWFRfT1ZFUkZMT1dfUE9TSVRJT05fVU5T",
-            "UEVDSUZJRUQQABIeChpURVhUX09WRVJGTE9XX1BPU0lUSU9OX0VORBABEiAK",
-            "HFRFWFRfT1ZFUkZMT1dfUE9TSVRJT05fU1RBUlQQAhIhCh1URVhUX09WRVJG",
-            "TE9XX1BPU0lUSU9OX01JRERMRRADKlcKClZpc2liaWxpdHkSGgoWVklTSUJJ",
-            "TElUWV9VTlNQRUNJRklFRBAAEhYKElZJU0lCSUxJVFlfVklTSUJMRRABEhUK",
-            "EVZJU0lCSUxJVFlfSElEREVuEAIqWgoKV2hpdGVTcGFjZRIbChdXSElURV9T",
-            "UEFDRV9VTlNQRUNJRklFRBAAEhYKEldISVRFX1NQQUNFX05PUk1BTBABEhcK",
-            "E1dISVRFX1NQQUNFX05PX1dSQVAQAipcCgpMZW5ndGhVbml0EhsKF0xFTkdU",
-            "SF9VTklUX1VOU1BFQ0lGSUVEEAASFQoRTEVOR1RIX1VOSVRfUElYRUwQARIa",
-            "ChZMRU5HVEhfVU5JVF9QRVJDRU5UQUdFEAJCE6oCEFNwZWxsZGF3bi5Qcm90",
-            "b3NiBnByb3RvMw=="));
+            "Cgpub2RlLnByb3RvEgJzZBoeZ29vZ2xlL3Byb3RvYnVmL3dyYXBwZXJzLnBy",
+            "b3RvIkQKCUZsZXhDb2xvchILCgNyZWQYASABKAISDQoFZ3JlZW4YAiABKAIS",
+            "DAoEYmx1ZRgDIAEoAhINCgVhbHBoYRgEIAEoAiIgCg1TcHJpdGVBZGRyZXNz",
+            "Eg8KB2FkZHJlc3MYASABKAkiHgoLRm9udEFkZHJlc3MSDwoHYWRkcmVzcxgB",
+            "IAEoCSIjCgtGbGV4VmVjdG9yMhIJCgF4GAEgASgCEgkKAXkYAiABKAIiLgoL",
+            "RmxleFZlY3RvcjMSCQoBeBgBIAEoAhIJCgF5GAIgASgCEgkKAXoYAyABKAIi",
+            "OwoJRGltZW5zaW9uEh8KBHVuaXQYASABKA4yES5zZC5EaW1lbnNpb25Vbml0",
+            "Eg0KBXZhbHVlGAIgASgCIoYBCg5EaW1lbnNpb25Hcm91cBIaCgN0b3AYASAB",
+            "KAsyDS5zZC5EaW1lbnNpb24SHAoFcmlnaHQYAiABKAsyDS5zZC5EaW1lbnNp",
+            "b24SHQoGYm90dG9tGAMgASgLMg0uc2QuRGltZW5zaW9uEhsKBGxlZnQYBCAB",
+            "KAsyDS5zZC5EaW1lbnNpb24iRwoLQm9yZGVyV2lkdGgSCwoDdG9wGAEgASgC",
+            "Eg0KBXJpZ2h0GAIgASgCEg4KBmJvdHRvbRgDIAEoAhIMCgRsZWZ0GAQgASgC",
+            "IoMBCgtCb3JkZXJDb2xvchIaCgN0b3AYASABKAsyDS5zZC5GbGV4Q29sb3IS",
+            "HAoFcmlnaHQYAiABKAsyDS5zZC5GbGV4Q29sb3ISHQoGYm90dG9tGAMgASgL",
+            "Mg0uc2QuRmxleENvbG9yEhsKBGxlZnQYBCABKAsyDS5zZC5GbGV4Q29sb3Ii",
+            "mgEKDEJvcmRlclJhZGl1cxIfCgh0b3BfbGVmdBgBIAEoCzINLnNkLkRpbWVu",
+            "c2lvbhIgCgl0b3BfcmlnaHQYAiABKAsyDS5zZC5EaW1lbnNpb24SIwoMYm90",
+            "dG9tX3JpZ2h0GAMgASgLMg0uc2QuRGltZW5zaW9uEiIKC2JvdHRvbV9sZWZ0",
+            "GAQgASgLMg0uc2QuRGltZW5zaW9uIh0KCkZsZXhSb3RhdGUSDwoHZGVncmVl",
+            "cxgBIAEoAiJOCg1GbGV4VHJhbnNsYXRlEhgKAXgYASABKAsyDS5zZC5EaW1l",
+            "bnNpb24SGAoBeRgCIAEoCzINLnNkLkRpbWVuc2lvbhIJCgF6GAMgASgCIiwK",
+            "CUZsZXhTY2FsZRIfCgZhbW91bnQYASABKAsyDy5zZC5GbGV4VmVjdG9yMyJg",
+            "CgpUZXh0U2hhZG93Eh8KBm9mZnNldBgBIAEoCzIPLnNkLkZsZXhWZWN0b3Iy",
+            "EhMKC2JsdXJfcmFkaXVzGAIgASgCEhwKBWNvbG9yGAMgASgLMg0uc2QuRmxl",
+            "eENvbG9yIiEKCVRpbWVWYWx1ZRIUCgxtaWxsaXNlY29uZHMYASABKAIiRgoK",
+            "SW1hZ2VTbGljZRILCgN0b3AYASABKAUSDQoFcmlnaHQYAiABKAUSDgoGYm90",
+            "dG9tGAMgASgFEgwKBGxlZnQYBCABKAUi2RAKCUZsZXhTdHlsZRIkCg1hbGln",
+            "bl9jb250ZW50GAEgASgOMg0uc2QuRmxleEFsaWduEiIKC2FsaWduX2l0ZW1z",
+            "GAIgASgOMg0uc2QuRmxleEFsaWduEiEKCmFsaWduX3NlbGYYAyABKA4yDS5z",
+            "ZC5GbGV4QWxpZ24SJwoQYmFja2dyb3VuZF9jb2xvchgEIAEoCzINLnNkLkZs",
+            "ZXhDb2xvchIrChBiYWNrZ3JvdW5kX2ltYWdlGAUgASgLMhEuc2QuU3ByaXRl",
+            "QWRkcmVzcxIlCgxib3JkZXJfY29sb3IYBiABKAsyDy5zZC5Cb3JkZXJDb2xv",
+            "chInCg1ib3JkZXJfcmFkaXVzGAcgASgLMhAuc2QuQm9yZGVyUmFkaXVzEiUK",
+            "DGJvcmRlcl93aWR0aBgIIAEoCzIPLnNkLkJvcmRlcldpZHRoEiEKBWluc2V0",
+            "GAkgASgLMhIuc2QuRGltZW5zaW9uR3JvdXASHAoFY29sb3IYCiABKAsyDS5z",
+            "ZC5GbGV4Q29sb3ISJQoHZGlzcGxheRgLIAEoDjIULnNkLkZsZXhEaXNwbGF5",
+            "U3R5bGUSIQoKZmxleF9iYXNpcxgMIAEoCzINLnNkLkRpbWVuc2lvbhIpCg5m",
+            "bGV4X2RpcmVjdGlvbhgNIAEoDjIRLnNkLkZsZXhEaXJlY3Rpb24SLgoJZmxl",
+            "eF9ncm93GA4gASgLMhsuZ29vZ2xlLnByb3RvYnVmLkZsb2F0VmFsdWUSMAoL",
+            "ZmxleF9zaHJpbmsYDyABKAsyGy5nb29nbGUucHJvdG9idWYuRmxvYXRWYWx1",
+            "ZRIaCgR3cmFwGBAgASgOMgwuc2QuRmxleFdyYXASIAoJZm9udF9zaXplGBEg",
+            "ASgLMg0uc2QuRGltZW5zaW9uEh0KBmhlaWdodBgSIAEoCzINLnNkLkRpbWVu",
+            "c2lvbhIoCg9qdXN0aWZ5X2NvbnRlbnQYEyABKA4yDy5zZC5GbGV4SnVzdGlm",
+            "eRIlCg5sZXR0ZXJfc3BhY2luZxgUIAEoCzINLnNkLkRpbWVuc2lvbhIiCgZt",
+            "YXJnaW4YFSABKAsyEi5zZC5EaW1lbnNpb25Hcm91cBIhCgptYXhfaGVpZ2h0",
+            "GBYgASgLMg0uc2QuRGltZW5zaW9uEiAKCW1heF93aWR0aBgXIAEoCzINLnNk",
+            "LkRpbWVuc2lvbhIhCgptaW5faGVpZ2h0GBggASgLMg0uc2QuRGltZW5zaW9u",
+            "EiAKCW1pbl93aWR0aBgZIAEoCzINLnNkLkRpbWVuc2lvbhIsCgdvcGFjaXR5",
+            "GBogASgLMhsuZ29vZ2xlLnByb3RvYnVmLkZsb2F0VmFsdWUSIgoIb3ZlcmZs",
+            "b3cYGyABKA4yEC5zZC5GbGV4T3ZlcmZsb3cSIwoHcGFkZGluZxgcIAEoCzIS",
+            "LnNkLkRpbWVuc2lvbkdyb3VwEiIKCHBvc2l0aW9uGB0gASgOMhAuc2QuRmxl",
+            "eFBvc2l0aW9uEh4KBnJvdGF0ZRgeIAEoCzIOLnNkLkZsZXhSb3RhdGUSHAoF",
+            "c2NhbGUYHyABKAsyDS5zZC5GbGV4U2NhbGUSJwoNdGV4dF9vdmVyZmxvdxgg",
+            "IAEoDjIQLnNkLlRleHRPdmVyZmxvdxIjCgt0ZXh0X3NoYWRvdxghIAEoCzIO",
+            "LnNkLlRleHRTaGFkb3cSKwoQdHJhbnNmb3JtX29yaWdpbhgiIAEoCzIRLnNk",
+            "LkZsZXhUcmFuc2xhdGUSKAoRdHJhbnNpdGlvbl9kZWxheXMYIyADKAsyDS5z",
+            "ZC5UaW1lVmFsdWUSKwoUdHJhbnNpdGlvbl9kdXJhdGlvbnMYJCADKAsyDS5z",
+            "ZC5UaW1lVmFsdWUSHQoVdHJhbnNpdGlvbl9wcm9wZXJ0aWVzGCUgAygJEi8K",
+            "F3RyYW5zaXRpb25fZWFzaW5nX21vZGVzGCYgAygOMg4uc2QuRWFzaW5nTW9k",
+            "ZRIkCgl0cmFuc2xhdGUYJyABKAsyES5zZC5GbGV4VHJhbnNsYXRlEjIKG2Jh",
+            "Y2tncm91bmRfaW1hZ2VfdGludF9jb2xvchgoIAEoCzINLnNkLkZsZXhDb2xv",
+            "chI3ChtiYWNrZ3JvdW5kX2ltYWdlX3NjYWxlX21vZGUYKSABKA4yEi5zZC5J",
+            "bWFnZVNjYWxlTW9kZRIdCgRmb250GCogASgLMg8uc2QuRm9udEFkZHJlc3MS",
+            "IQoKZm9udF9zdHlsZRgrIAEoDjINLnNkLkZvbnRTdHlsZRIuChFvdmVyZmxv",
+            "d19jbGlwX2JveBgsIAEoDjITLnNkLk92ZXJmbG93Q2xpcEJveBIoChFwYXJh",
+            "Z3JhcGhfc3BhY2luZxgtIAEoCzINLnNkLkRpbWVuc2lvbhIjCgtpbWFnZV9z",
+            "bGljZRguIAEoCzIOLnNkLkltYWdlU2xpY2USIQoKdGV4dF9hbGlnbhgvIAEo",
+            "DjINLnNkLlRleHRBbGlnbhIpChJ0ZXh0X291dGxpbmVfY29sb3IYMCABKAsy",
+            "DS5zZC5GbGV4Q29sb3ISNwoSdGV4dF9vdXRsaW5lX3dpZHRoGDEgASgLMhsu",
+            "Z29vZ2xlLnByb3RvYnVmLkZsb2F0VmFsdWUSOAoWdGV4dF9vdmVyZmxvd19w",
+            "b3NpdGlvbhgyIAEoDjIYLnNkLlRleHRPdmVyZmxvd1Bvc2l0aW9uEiYKCnZp",
+            "c2liaWxpdHkYMyABKA4yEi5zZC5GbGV4VmlzaWJpbGl0eRIjCgt3aGl0ZV9z",
+            "cGFjZRg0IAEoDjIOLnNkLldoaXRlU3BhY2USHAoFd2lkdGgYNSABKAsyDS5z",
+            "ZC5EaW1lbnNpb24SIwoMd29yZF9zcGFjaW5nGDYgASgLMg0uc2QuRGltZW5z",
+            "aW9uIjIKBFRleHQSHAoFc3R5bGUYASABKAsyDS5zZC5GbGV4U3R5bGUSDAoE",
+            "dGV4dBgCIAEoCSJRCgdGbGV4Ym94EgwKBG5hbWUYASABKAkSHAoFc3R5bGUY",
+            "AiABKAsyDS5zZC5GbGV4U3R5bGUSGgoIY2hpbGRyZW4YAyADKAsyCC5zZC5O",
+            "b2RlIkgKBE5vZGUSHgoHZmxleGJveBgBIAEoCzILLnNkLkZsZXhib3hIABIY",
+            "CgR0ZXh0GAIgASgLMgguc2QuVGV4dEgAQgYKBG5vZGUqnwEKCUZsZXhBbGln",
+            "bhIaChZGTEVYX0FMSUdOX1VOU1BFQ0lGSUVEEAASEwoPRkxFWF9BTElHTl9B",
+            "VVRPEAESGQoVRkxFWF9BTElHTl9GTEVYX1NUQVJUEAISFQoRRkxFWF9BTElH",
+            "Tl9DRU5URVIQAxIXChNGTEVYX0FMSUdOX0ZMRVhfRU5EEAQSFgoSRkxFWF9B",
+            "TElHTl9TVFJFVENIEAUqcAoQRmxleERpc3BsYXlTdHlsZRIiCh5GTEVYX0RJ",
+            "U1BMQVlfU1RZTEVfVU5TUEVDSUZJRUQQABIbChdGTEVYX0RJU1BMQVlfU1RZ",
+            "TEVfRkxFWBABEhsKF0ZMRVhfRElTUExBWV9TVFlMRV9OT05FEAIqpQEKDUZs",
+            "ZXhEaXJlY3Rpb24SHgoaRkxFWF9ESVJFQ1RJT05fVU5TUEVDSUZJRUQQABIZ",
+            "ChVGTEVYX0RJUkVDVElPTl9DT0xVTU4QARIhCh1GTEVYX0RJUkVDVElPTl9D",
+            "T0xVTU5fUkVWRVJTRRACEhYKEkZMRVhfRElSRUNUSU9OX1JPVxADEh4KGkZM",
+            "RVhfRElSRUNUSU9OX1JPV19SRVZFUlNFEAQqbAoIRmxleFdyYXASGQoVRkxF",
+            "WF9XUkFQX1VOU1BFQ0lGSUVEEAASFQoRRkxFWF9XUkFQX05PX1dSQVAQARIS",
+            "Cg5GTEVYX1dSQVBfV1JBUBACEhoKFkZMRVhfV1JBUF9XUkFQX1JFVkVSU0UQ",
+            "Ayq7AQoLRmxleEp1c3RpZnkSHAoYRkxFWF9KVVNUSUZZX1VOU1BFQ0lGSUVE",
+            "EAASGwoXRkxFWF9KVVNUSUZZX0ZMRVhfU1RBUlQQARIXChNGTEVYX0pVU1RJ",
+            "RllfQ0VOVEVSEAISGQoVRkxFWF9KVVNUSUZZX0ZMRVhfRU5EEAMSHgoaRkxF",
+            "WF9KVVNUSUZZX1NQQUNFX0JFVFdFRU4QBBIdChlGTEVYX0pVU1RJRllfU1BB",
+            "Q0VfQVJPVU5EEAUqYgoMRmxleE92ZXJmbG93Eh0KGUZMRVhfT1ZFUkZMT1df",
+            "VU5TUEVDSUZJRUQQABIZChVGTEVYX09WRVJGTE9XX1ZJU0lCTEUQARIYChRG",
+            "TEVYX09WRVJGTE9XX0hJRERFThACKmUKDEZsZXhQb3NpdGlvbhIdChlGTEVY",
+            "X1BPU0lUSU9OX1VOU1BFQ0lGSUVEEAASGgoWRkxFWF9QT1NJVElPTl9SRUxB",
+            "VElWRRABEhoKFkZMRVhfUE9TSVRJT05fQUJTT0xVVEUQAiphCgxUZXh0T3Zl",
+            "cmZsb3cSHQoZVEVYVF9PVkVSRkxPV19VTlNQRUNJRklFRBAAEhYKElRFWFRf",
+            "T1ZFUkZMT1dfQ0xJUBABEhoKFlRFWFRfT1ZFUkZMT1dfRUxMSVBTSVMQAirz",
+            "BQoKRWFzaW5nTW9kZRIbChdFQVNJTkdfTU9ERV9VTlNQRUNJRklFRBAAEhQK",
+            "EEVBU0lOR19NT0RFX0VBU0UQARIXChNFQVNJTkdfTU9ERV9FQVNFX0lOEAIS",
+            "GAoURUFTSU5HX01PREVfRUFTRV9PVVQQAxIbChdFQVNJTkdfTU9ERV9FQVNF",
+            "X0lOX09VVBAEEhYKEkVBU0lOR19NT0RFX0xJTkVBUhAFEhwKGEVBU0lOR19N",
+            "T0RFX0VBU0VfSU5fU0lORRAGEh0KGUVBU0lOR19NT0RFX0VBU0VfT1VUX1NJ",
+            "TkUQBxIgChxFQVNJTkdfTU9ERV9FQVNFX0lOX09VVF9TSU5FEAgSHQoZRUFT",
+            "SU5HX01PREVfRUFTRV9JTl9DVUJJQxAJEh4KGkVBU0lOR19NT0RFX0VBU0Vf",
+            "T1VUX0NVQklDEAoSIQodRUFTSU5HX01PREVfRUFTRV9JTl9PVVRfQ1VCSUMQ",
+            "CxIcChhFQVNJTkdfTU9ERV9FQVNFX0lOX0NJUkMQDBIdChlFQVNJTkdfTU9E",
+            "RV9FQVNFX09VVF9DSVJDEA0SIAocRUFTSU5HX01PREVfRUFTRV9JTl9PVVRf",
+            "Q0lSQxAOEh8KG0VBU0lOR19NT0RFX0VBU0VfSU5fRUxBU1RJQxAPEiAKHEVB",
+            "U0lOR19NT0RFX0VBU0VfT1VUX0VMQVNUSUMQEBIjCh9FQVNJTkdfTU9ERV9F",
+            "QVNFX0lOX09VVF9FTEFTVElDEBESHAoYRUFTSU5HX01PREVfRUFTRV9JTl9C",
+            "QUNLEBISHQoZRUFTSU5HX01PREVfRUFTRV9PVVRfQkFDSxATEiAKHEVBU0lO",
+            "R19NT0RFX0VBU0VfSU5fT1VUX0JBQ0sQFBIeChpFQVNJTkdfTU9ERV9FQVNF",
+            "X0lOX0JPVU5DRRAVEh8KG0VBU0lOR19NT0RFX0VBU0VfT1VUX0JPVU5DRRAW",
+            "EiIKHkVBU0lOR19NT0RFX0VBU0VfSU5fT1VUX0JPVU5DRRAXKqABCg5JbWFn",
+            "ZVNjYWxlTW9kZRIgChxJTUFHRV9TQ0FMRV9NT0RFX1VOU1BFQ0lGSUVEEAAS",
+            "JAogSU1BR0VfU0NBTEVfTU9ERV9TVFJFVENIX1RPX0ZJTEwQARIjCh9JTUFH",
+            "RV9TQ0FMRV9NT0RFX1NDQUxFX0FORF9DUk9QEAISIQodSU1BR0VfU0NBTEVf",
+            "TU9ERV9TQ0FMRV9UT19GSVQQAyqKAQoJRm9udFN0eWxlEhoKFkZPTlRfU1RZ",
+            "TEVfVU5TUEVDSUZJRUQQABIVChFGT05UX1NUWUxFX05PUk1BTBABEhMKD0ZP",
+            "TlRfU1RZTEVfQk9MRBACEhUKEUZPTlRfU1RZTEVfSVRBTElDEAMSHgoaRk9O",
+            "VF9TVFlMRV9CT0xEX0FORF9JVEFMSUMQBCp6Cg9PdmVyZmxvd0NsaXBCb3gS",
+            "IQodT1ZFUkZMT1dfQ0xJUF9CT1hfVU5TUEVDSUZJRUQQABIhCh1PVkVSRkxP",
+            "V19DTElQX0JPWF9QQURESU5HX0JPWBABEiEKHU9WRVJGTE9XX0NMSVBfQk9Y",
+            "X0NPTlRFTlRfQk9YEAIqpgIKCVRleHRBbGlnbhIaChZURVhUX0FMSUdOX1VO",
+            "U1BFQ0lGSUVEEAASGQoVVEVYVF9BTElHTl9VUFBFUl9MRUZUEAESGwoXVEVY",
+            "VF9BTElHTl9VUFBFUl9DRU5URVIQAhIaChZURVhUX0FMSUdOX1VQUEVSX1JJ",
+            "R0hUEAMSGgoWVEVYVF9BTElHTl9NSURETEVfTEVGVBAEEhwKGFRFWFRfQUxJ",
+            "R05fTUlERExFX0NFTlRFUhAFEhsKF1RFWFRfQUxJR05fTUlERExFX1JJR0hU",
+            "EAYSGQoVVEVYVF9BTElHTl9MT1dFUl9MRUZUEAcSGwoXVEVYVF9BTElHTl9M",
+            "T1dFUl9DRU5URVIQCBIaChZURVhUX0FMSUdOX0xPV0VSX1JJR0hUEAkqowEK",
+            "FFRleHRPdmVyZmxvd1Bvc2l0aW9uEiYKIlRFWFRfT1ZFUkZMT1dfUE9TSVRJ",
+            "T05fVU5TUEVDSUZJRUQQABIeChpURVhUX09WRVJGTE9XX1BPU0lUSU9OX0VO",
+            "RBABEiAKHFRFWFRfT1ZFUkZMT1dfUE9TSVRJT05fU1RBUlQQAhIhCh1URVhU",
+            "X09WRVJGTE9XX1BPU0lUSU9OX01JRERMRRADKmoKDkZsZXhWaXNpYmlsaXR5",
+            "Eh8KG0ZMRVhfVklTSUJJTElUWV9VTlNQRUNJRklFRBAAEhsKF0ZMRVhfVklT",
+            "SUJJTElUWV9WSVNJQkxFEAESGgoWRkxFWF9WSVNJQklMSVRZX0hJRERFThAC",
+            "KloKCldoaXRlU3BhY2USGwoXV0hJVEVfU1BBQ0VfVU5TUEVDSUZJRUQQABIW",
+            "ChJXSElURV9TUEFDRV9OT1JNQUwQARIXChNXSElURV9TUEFDRV9OT19XUkFQ",
+            "EAIqaAoNRGltZW5zaW9uVW5pdBIeChpESU1FTlNJT05fVU5JVF9VTlNQRUNJ",
+            "RklFRBAAEhgKFERJTUVOU0lPTl9VTklUX1BJWEVMEAESHQoZRElNRU5TSU9O",
+            "X1VOSVRfUEVSQ0VOVEFHRRACQhOqAhBTcGVsbGRhd24uUHJvdG9zYgZwcm90",
+            "bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.Align), typeof(global::Spelldawn.Protos.DisplayStyle), typeof(global::Spelldawn.Protos.FlexDirection), typeof(global::Spelldawn.Protos.FlexWrap), typeof(global::Spelldawn.Protos.Justify), typeof(global::Spelldawn.Protos.Overflow), typeof(global::Spelldawn.Protos.FlexPosition), typeof(global::Spelldawn.Protos.TextOverflow), typeof(global::Spelldawn.Protos.EasingMode), typeof(global::Spelldawn.Protos.ImageScaleMode), typeof(global::Spelldawn.Protos.FontStyle), typeof(global::Spelldawn.Protos.OverflowClipBox), typeof(global::Spelldawn.Protos.TextAlign), typeof(global::Spelldawn.Protos.TextOverflowPosition), typeof(global::Spelldawn.Protos.Visibility), typeof(global::Spelldawn.Protos.WhiteSpace), typeof(global::Spelldawn.Protos.LengthUnit), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Color), global::Spelldawn.Protos.Color.Parser, new[]{ "Red", "Green", "Blue", "Alpha" }, null, null, null, null),
+          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, },
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.FlexAlign), typeof(global::Spelldawn.Protos.FlexDisplayStyle), typeof(global::Spelldawn.Protos.FlexDirection), typeof(global::Spelldawn.Protos.FlexWrap), typeof(global::Spelldawn.Protos.FlexJustify), typeof(global::Spelldawn.Protos.FlexOverflow), typeof(global::Spelldawn.Protos.FlexPosition), typeof(global::Spelldawn.Protos.TextOverflow), typeof(global::Spelldawn.Protos.EasingMode), typeof(global::Spelldawn.Protos.ImageScaleMode), typeof(global::Spelldawn.Protos.FontStyle), typeof(global::Spelldawn.Protos.OverflowClipBox), typeof(global::Spelldawn.Protos.TextAlign), typeof(global::Spelldawn.Protos.TextOverflowPosition), typeof(global::Spelldawn.Protos.FlexVisibility), typeof(global::Spelldawn.Protos.WhiteSpace), typeof(global::Spelldawn.Protos.DimensionUnit), }, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexColor), global::Spelldawn.Protos.FlexColor.Parser, new[]{ "Red", "Green", "Blue", "Alpha" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.SpriteAddress), global::Spelldawn.Protos.SpriteAddress.Parser, new[]{ "Address" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FontAddress), global::Spelldawn.Protos.FontAddress.Parser, new[]{ "Address" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Vector2), global::Spelldawn.Protos.Vector2.Parser, new[]{ "X", "Y" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Vector3), global::Spelldawn.Protos.Vector3.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Length), global::Spelldawn.Protos.Length.Parser, new[]{ "Unit", "Value" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.LengthGroup), global::Spelldawn.Protos.LengthGroup.Parser, new[]{ "Top", "Right", "Bottom", "Left" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexVector2), global::Spelldawn.Protos.FlexVector2.Parser, new[]{ "X", "Y" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexVector3), global::Spelldawn.Protos.FlexVector3.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Dimension), global::Spelldawn.Protos.Dimension.Parser, new[]{ "Unit", "Value" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DimensionGroup), global::Spelldawn.Protos.DimensionGroup.Parser, new[]{ "Top", "Right", "Bottom", "Left" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.BorderWidth), global::Spelldawn.Protos.BorderWidth.Parser, new[]{ "Top", "Right", "Bottom", "Left" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.BorderColor), global::Spelldawn.Protos.BorderColor.Parser, new[]{ "Top", "Right", "Bottom", "Left" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.BorderRadius), global::Spelldawn.Protos.BorderRadius.Parser, new[]{ "TopLeft", "TopRight", "BottomRight", "BottomLeft" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Rotate), global::Spelldawn.Protos.Rotate.Parser, new[]{ "Degrees" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Translate), global::Spelldawn.Protos.Translate.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Scale), global::Spelldawn.Protos.Scale.Parser, new[]{ "Amount" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexRotate), global::Spelldawn.Protos.FlexRotate.Parser, new[]{ "Degrees" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexTranslate), global::Spelldawn.Protos.FlexTranslate.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexScale), global::Spelldawn.Protos.FlexScale.Parser, new[]{ "Amount" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.TextShadow), global::Spelldawn.Protos.TextShadow.Parser, new[]{ "Offset", "BlurRadius", "Color" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.TimeValue), global::Spelldawn.Protos.TimeValue.Parser, new[]{ "Milliseconds" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Style), global::Spelldawn.Protos.Style.Parser, new[]{ "AlignContent", "AlignItems", "AlignSelf", "BackgroundColor", "BackgroundImage", "BorderColor", "BorderRadius", "BorderWidth", "Inset", "Color", "Display", "FlexBasis", "FlexDirection", "FlexGrow", "FlexShrink", "Wrap", "FontSize", "Height", "JustifyContent", "LetterSpacing", "Margin", "MaxHeight", "MaxWidth", "MinHeight", "MinWidth", "Opacity", "Overflow", "Padding", "Position", "Rotate", "Scale", "TextOverflow", "TextShadow", "TransformOrigin", "TransitionDelay", "TransitionDuration", "TransitionProperty", "TransitionEasingMode", "Translate", "BackgroundImageTintColor", "ImageScaleMode", "Font", "FontStyle", "OverflowClipBox", "ParagraphSpacing", "ImageSlice", "TextAlign", "TextOutlineColor", "TextOutlineWidth", "TextOverflowPosition", "Visibility", "WhiteSpace", "Width", "WordSpacing" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ImageSlice), global::Spelldawn.Protos.ImageSlice.Parser, new[]{ "Top", "Right", "Bottom", "Left" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FlexStyle), global::Spelldawn.Protos.FlexStyle.Parser, new[]{ "AlignContent", "AlignItems", "AlignSelf", "BackgroundColor", "BackgroundImage", "BorderColor", "BorderRadius", "BorderWidth", "Inset", "Color", "Display", "FlexBasis", "FlexDirection", "FlexGrow", "FlexShrink", "Wrap", "FontSize", "Height", "JustifyContent", "LetterSpacing", "Margin", "MaxHeight", "MaxWidth", "MinHeight", "MinWidth", "Opacity", "Overflow", "Padding", "Position", "Rotate", "Scale", "TextOverflow", "TextShadow", "TransformOrigin", "TransitionDelays", "TransitionDurations", "TransitionProperties", "TransitionEasingModes", "Translate", "BackgroundImageTintColor", "BackgroundImageScaleMode", "Font", "FontStyle", "OverflowClipBox", "ParagraphSpacing", "ImageSlice", "TextAlign", "TextOutlineColor", "TextOutlineWidth", "TextOverflowPosition", "Visibility", "WhiteSpace", "Width", "WordSpacing" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Text), global::Spelldawn.Protos.Text.Parser, new[]{ "Style", "Text_" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Flexbox), global::Spelldawn.Protos.Flexbox.Parser, new[]{ "Style", "Children" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Flexbox), global::Spelldawn.Protos.Flexbox.Parser, new[]{ "Name", "Style", "Children" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.Node), global::Spelldawn.Protos.Node.Parser, new[]{ "Flexbox", "Text" }, new[]{ "Node" }, null, null, null)
           }));
     }
@@ -183,19 +200,19 @@ namespace Spelldawn.Protos {
 
   }
   #region Enums
-  public enum Align {
-    [pbr::OriginalName("ALIGN_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("ALIGN_AUTO")] Auto = 1,
-    [pbr::OriginalName("ALIGN_FLEX_START")] FlexStart = 2,
-    [pbr::OriginalName("ALIGN_CENTER")] Center = 3,
-    [pbr::OriginalName("ALIGN_FLEX_END")] FlexEnd = 4,
-    [pbr::OriginalName("ALIGN_STRETCH")] Stretch = 5,
+  public enum FlexAlign {
+    [pbr::OriginalName("FLEX_ALIGN_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("FLEX_ALIGN_AUTO")] Auto = 1,
+    [pbr::OriginalName("FLEX_ALIGN_FLEX_START")] FlexStart = 2,
+    [pbr::OriginalName("FLEX_ALIGN_CENTER")] Center = 3,
+    [pbr::OriginalName("FLEX_ALIGN_FLEX_END")] FlexEnd = 4,
+    [pbr::OriginalName("FLEX_ALIGN_STRETCH")] Stretch = 5,
   }
 
-  public enum DisplayStyle {
-    [pbr::OriginalName("DISPLAY_STYLE_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("DISPLAY_STYLE_FLEX")] Flex = 1,
-    [pbr::OriginalName("DISPLAY_STYLE_NONE")] None = 2,
+  public enum FlexDisplayStyle {
+    [pbr::OriginalName("FLEX_DISPLAY_STYLE_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("FLEX_DISPLAY_STYLE_FLEX")] Flex = 1,
+    [pbr::OriginalName("FLEX_DISPLAY_STYLE_NONE")] None = 2,
   }
 
   public enum FlexDirection {
@@ -213,19 +230,19 @@ namespace Spelldawn.Protos {
     [pbr::OriginalName("FLEX_WRAP_WRAP_REVERSE")] WrapReverse = 3,
   }
 
-  public enum Justify {
-    [pbr::OriginalName("JUSTIFY_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("JUSTIFY_FLEX_START")] FlexStart = 1,
-    [pbr::OriginalName("JUSTIFY_CENTER")] Center = 2,
-    [pbr::OriginalName("JUSTIFY_FLEX_END")] FlexEnd = 3,
-    [pbr::OriginalName("JUSTIFY_SPACE_BETWEEN")] SpaceBetween = 4,
-    [pbr::OriginalName("JUSTIFY_SPACE_AROUND")] SpaceAround = 5,
+  public enum FlexJustify {
+    [pbr::OriginalName("FLEX_JUSTIFY_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("FLEX_JUSTIFY_FLEX_START")] FlexStart = 1,
+    [pbr::OriginalName("FLEX_JUSTIFY_CENTER")] Center = 2,
+    [pbr::OriginalName("FLEX_JUSTIFY_FLEX_END")] FlexEnd = 3,
+    [pbr::OriginalName("FLEX_JUSTIFY_SPACE_BETWEEN")] SpaceBetween = 4,
+    [pbr::OriginalName("FLEX_JUSTIFY_SPACE_AROUND")] SpaceAround = 5,
   }
 
-  public enum Overflow {
-    [pbr::OriginalName("OVERFLOW_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("OVERFLOW_VISIBLE")] Visible = 1,
-    [pbr::OriginalName("OVERFLOW_HIDDEN")] Hidden = 2,
+  public enum FlexOverflow {
+    [pbr::OriginalName("FLEX_OVERFLOW_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("FLEX_OVERFLOW_VISIBLE")] Visible = 1,
+    [pbr::OriginalName("FLEX_OVERFLOW_HIDDEN")] Hidden = 2,
   }
 
   public enum FlexPosition {
@@ -308,10 +325,10 @@ namespace Spelldawn.Protos {
     [pbr::OriginalName("TEXT_OVERFLOW_POSITION_MIDDLE")] Middle = 3,
   }
 
-  public enum Visibility {
-    [pbr::OriginalName("VISIBILITY_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("VISIBILITY_VISIBLE")] Visible = 1,
-    [pbr::OriginalName("VISIBILITY_HIDDEn")] Hidden = 2,
+  public enum FlexVisibility {
+    [pbr::OriginalName("FLEX_VISIBILITY_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("FLEX_VISIBILITY_VISIBLE")] Visible = 1,
+    [pbr::OriginalName("FLEX_VISIBILITY_HIDDEN")] Hidden = 2,
   }
 
   public enum WhiteSpace {
@@ -320,24 +337,24 @@ namespace Spelldawn.Protos {
     [pbr::OriginalName("WHITE_SPACE_NO_WRAP")] NoWrap = 2,
   }
 
-  public enum LengthUnit {
-    [pbr::OriginalName("LENGTH_UNIT_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("LENGTH_UNIT_PIXEL")] Pixel = 1,
-    [pbr::OriginalName("LENGTH_UNIT_PERCENTAGE")] Percentage = 2,
+  public enum DimensionUnit {
+    [pbr::OriginalName("DIMENSION_UNIT_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("DIMENSION_UNIT_PIXEL")] Pixel = 1,
+    [pbr::OriginalName("DIMENSION_UNIT_PERCENTAGE")] Percentage = 2,
   }
 
   #endregion
 
   #region Messages
-  public sealed partial class Color : pb::IMessage<Color>
+  public sealed partial class FlexColor : pb::IMessage<FlexColor>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Color> _parser = new pb::MessageParser<Color>(() => new Color());
+    private static readonly pb::MessageParser<FlexColor> _parser = new pb::MessageParser<FlexColor>(() => new FlexColor());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Color> Parser { get { return _parser; } }
+    public static pb::MessageParser<FlexColor> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -350,14 +367,14 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Color() {
+    public FlexColor() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Color(Color other) : this() {
+    public FlexColor(FlexColor other) : this() {
       red_ = other.red_;
       green_ = other.green_;
       blue_ = other.blue_;
@@ -366,8 +383,8 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Color Clone() {
-      return new Color(this);
+    public FlexColor Clone() {
+      return new FlexColor(this);
     }
 
     /// <summary>Field number for the "red" field.</summary>
@@ -416,11 +433,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Color);
+      return Equals(other as FlexColor);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Color other) {
+    public bool Equals(FlexColor other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -526,7 +543,7 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Color other) {
+    public void MergeFrom(FlexColor other) {
       if (other == null) {
         return;
       }
@@ -953,15 +970,15 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class Vector2 : pb::IMessage<Vector2>
+  public sealed partial class FlexVector2 : pb::IMessage<FlexVector2>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Vector2> _parser = new pb::MessageParser<Vector2>(() => new Vector2());
+    private static readonly pb::MessageParser<FlexVector2> _parser = new pb::MessageParser<FlexVector2>(() => new FlexVector2());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Vector2> Parser { get { return _parser; } }
+    public static pb::MessageParser<FlexVector2> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -974,22 +991,22 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Vector2() {
+    public FlexVector2() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Vector2(Vector2 other) : this() {
+    public FlexVector2(FlexVector2 other) : this() {
       x_ = other.x_;
       y_ = other.y_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Vector2 Clone() {
-      return new Vector2(this);
+    public FlexVector2 Clone() {
+      return new FlexVector2(this);
     }
 
     /// <summary>Field number for the "x" field.</summary>
@@ -1016,11 +1033,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Vector2);
+      return Equals(other as FlexVector2);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Vector2 other) {
+    public bool Equals(FlexVector2 other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1100,7 +1117,7 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Vector2 other) {
+    public void MergeFrom(FlexVector2 other) {
       if (other == null) {
         return;
       }
@@ -1161,15 +1178,15 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class Vector3 : pb::IMessage<Vector3>
+  public sealed partial class FlexVector3 : pb::IMessage<FlexVector3>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Vector3> _parser = new pb::MessageParser<Vector3>(() => new Vector3());
+    private static readonly pb::MessageParser<FlexVector3> _parser = new pb::MessageParser<FlexVector3>(() => new FlexVector3());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Vector3> Parser { get { return _parser; } }
+    public static pb::MessageParser<FlexVector3> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -1182,14 +1199,14 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Vector3() {
+    public FlexVector3() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Vector3(Vector3 other) : this() {
+    public FlexVector3(FlexVector3 other) : this() {
       x_ = other.x_;
       y_ = other.y_;
       z_ = other.z_;
@@ -1197,8 +1214,8 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Vector3 Clone() {
-      return new Vector3(this);
+    public FlexVector3 Clone() {
+      return new FlexVector3(this);
     }
 
     /// <summary>Field number for the "x" field.</summary>
@@ -1236,11 +1253,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Vector3);
+      return Equals(other as FlexVector3);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Vector3 other) {
+    public bool Equals(FlexVector3 other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1333,7 +1350,7 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Vector3 other) {
+    public void MergeFrom(FlexVector3 other) {
       if (other == null) {
         return;
       }
@@ -1405,15 +1422,15 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class Length : pb::IMessage<Length>
+  public sealed partial class Dimension : pb::IMessage<Dimension>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Length> _parser = new pb::MessageParser<Length>(() => new Length());
+    private static readonly pb::MessageParser<Dimension> _parser = new pb::MessageParser<Dimension>(() => new Dimension());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Length> Parser { get { return _parser; } }
+    public static pb::MessageParser<Dimension> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -1426,29 +1443,29 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Length() {
+    public Dimension() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Length(Length other) : this() {
+    public Dimension(Dimension other) : this() {
       unit_ = other.unit_;
       value_ = other.value_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Length Clone() {
-      return new Length(this);
+    public Dimension Clone() {
+      return new Dimension(this);
     }
 
     /// <summary>Field number for the "unit" field.</summary>
     public const int UnitFieldNumber = 1;
-    private global::Spelldawn.Protos.LengthUnit unit_ = global::Spelldawn.Protos.LengthUnit.Unspecified;
+    private global::Spelldawn.Protos.DimensionUnit unit_ = global::Spelldawn.Protos.DimensionUnit.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.LengthUnit Unit {
+    public global::Spelldawn.Protos.DimensionUnit Unit {
       get { return unit_; }
       set {
         unit_ = value;
@@ -1468,11 +1485,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Length);
+      return Equals(other as Dimension);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Length other) {
+    public bool Equals(Dimension other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1487,7 +1504,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (Unit != global::Spelldawn.Protos.LengthUnit.Unspecified) hash ^= Unit.GetHashCode();
+      if (Unit != global::Spelldawn.Protos.DimensionUnit.Unspecified) hash ^= Unit.GetHashCode();
       if (Value != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Value);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1505,7 +1522,7 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Unit != global::Spelldawn.Protos.LengthUnit.Unspecified) {
+      if (Unit != global::Spelldawn.Protos.DimensionUnit.Unspecified) {
         output.WriteRawTag(8);
         output.WriteEnum((int) Unit);
       }
@@ -1522,7 +1539,7 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Unit != global::Spelldawn.Protos.LengthUnit.Unspecified) {
+      if (Unit != global::Spelldawn.Protos.DimensionUnit.Unspecified) {
         output.WriteRawTag(8);
         output.WriteEnum((int) Unit);
       }
@@ -1539,7 +1556,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (Unit != global::Spelldawn.Protos.LengthUnit.Unspecified) {
+      if (Unit != global::Spelldawn.Protos.DimensionUnit.Unspecified) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Unit);
       }
       if (Value != 0F) {
@@ -1552,11 +1569,11 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Length other) {
+    public void MergeFrom(Dimension other) {
       if (other == null) {
         return;
       }
-      if (other.Unit != global::Spelldawn.Protos.LengthUnit.Unspecified) {
+      if (other.Unit != global::Spelldawn.Protos.DimensionUnit.Unspecified) {
         Unit = other.Unit;
       }
       if (other.Value != 0F) {
@@ -1577,7 +1594,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            Unit = (global::Spelldawn.Protos.LengthUnit) input.ReadEnum();
+            Unit = (global::Spelldawn.Protos.DimensionUnit) input.ReadEnum();
             break;
           }
           case 21: {
@@ -1599,7 +1616,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            Unit = (global::Spelldawn.Protos.LengthUnit) input.ReadEnum();
+            Unit = (global::Spelldawn.Protos.DimensionUnit) input.ReadEnum();
             break;
           }
           case 21: {
@@ -1613,15 +1630,15 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class LengthGroup : pb::IMessage<LengthGroup>
+  public sealed partial class DimensionGroup : pb::IMessage<DimensionGroup>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<LengthGroup> _parser = new pb::MessageParser<LengthGroup>(() => new LengthGroup());
+    private static readonly pb::MessageParser<DimensionGroup> _parser = new pb::MessageParser<DimensionGroup>(() => new DimensionGroup());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<LengthGroup> Parser { get { return _parser; } }
+    public static pb::MessageParser<DimensionGroup> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -1634,14 +1651,14 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public LengthGroup() {
+    public DimensionGroup() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public LengthGroup(LengthGroup other) : this() {
+    public DimensionGroup(DimensionGroup other) : this() {
       top_ = other.top_ != null ? other.top_.Clone() : null;
       right_ = other.right_ != null ? other.right_.Clone() : null;
       bottom_ = other.bottom_ != null ? other.bottom_.Clone() : null;
@@ -1650,15 +1667,15 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public LengthGroup Clone() {
-      return new LengthGroup(this);
+    public DimensionGroup Clone() {
+      return new DimensionGroup(this);
     }
 
     /// <summary>Field number for the "top" field.</summary>
     public const int TopFieldNumber = 1;
-    private global::Spelldawn.Protos.Length top_;
+    private global::Spelldawn.Protos.Dimension top_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length Top {
+    public global::Spelldawn.Protos.Dimension Top {
       get { return top_; }
       set {
         top_ = value;
@@ -1667,9 +1684,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "right" field.</summary>
     public const int RightFieldNumber = 2;
-    private global::Spelldawn.Protos.Length right_;
+    private global::Spelldawn.Protos.Dimension right_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length Right {
+    public global::Spelldawn.Protos.Dimension Right {
       get { return right_; }
       set {
         right_ = value;
@@ -1678,9 +1695,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "bottom" field.</summary>
     public const int BottomFieldNumber = 3;
-    private global::Spelldawn.Protos.Length bottom_;
+    private global::Spelldawn.Protos.Dimension bottom_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length Bottom {
+    public global::Spelldawn.Protos.Dimension Bottom {
       get { return bottom_; }
       set {
         bottom_ = value;
@@ -1689,9 +1706,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "left" field.</summary>
     public const int LeftFieldNumber = 4;
-    private global::Spelldawn.Protos.Length left_;
+    private global::Spelldawn.Protos.Dimension left_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length Left {
+    public global::Spelldawn.Protos.Dimension Left {
       get { return left_; }
       set {
         left_ = value;
@@ -1700,11 +1717,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as LengthGroup);
+      return Equals(other as DimensionGroup);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(LengthGroup other) {
+    public bool Equals(DimensionGroup other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1810,31 +1827,31 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(LengthGroup other) {
+    public void MergeFrom(DimensionGroup other) {
       if (other == null) {
         return;
       }
       if (other.top_ != null) {
         if (top_ == null) {
-          Top = new global::Spelldawn.Protos.Length();
+          Top = new global::Spelldawn.Protos.Dimension();
         }
         Top.MergeFrom(other.Top);
       }
       if (other.right_ != null) {
         if (right_ == null) {
-          Right = new global::Spelldawn.Protos.Length();
+          Right = new global::Spelldawn.Protos.Dimension();
         }
         Right.MergeFrom(other.Right);
       }
       if (other.bottom_ != null) {
         if (bottom_ == null) {
-          Bottom = new global::Spelldawn.Protos.Length();
+          Bottom = new global::Spelldawn.Protos.Dimension();
         }
         Bottom.MergeFrom(other.Bottom);
       }
       if (other.left_ != null) {
         if (left_ == null) {
-          Left = new global::Spelldawn.Protos.Length();
+          Left = new global::Spelldawn.Protos.Dimension();
         }
         Left.MergeFrom(other.Left);
       }
@@ -1854,28 +1871,28 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (top_ == null) {
-              Top = new global::Spelldawn.Protos.Length();
+              Top = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Top);
             break;
           }
           case 18: {
             if (right_ == null) {
-              Right = new global::Spelldawn.Protos.Length();
+              Right = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Right);
             break;
           }
           case 26: {
             if (bottom_ == null) {
-              Bottom = new global::Spelldawn.Protos.Length();
+              Bottom = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Bottom);
             break;
           }
           case 34: {
             if (left_ == null) {
-              Left = new global::Spelldawn.Protos.Length();
+              Left = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Left);
             break;
@@ -1896,30 +1913,310 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (top_ == null) {
-              Top = new global::Spelldawn.Protos.Length();
+              Top = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Top);
             break;
           }
           case 18: {
             if (right_ == null) {
-              Right = new global::Spelldawn.Protos.Length();
+              Right = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Right);
             break;
           }
           case 26: {
             if (bottom_ == null) {
-              Bottom = new global::Spelldawn.Protos.Length();
+              Bottom = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Bottom);
             break;
           }
           case 34: {
             if (left_ == null) {
-              Left = new global::Spelldawn.Protos.Length();
+              Left = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Left);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class BorderWidth : pb::IMessage<BorderWidth>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<BorderWidth> _parser = new pb::MessageParser<BorderWidth>(() => new BorderWidth());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<BorderWidth> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[7]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public BorderWidth() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public BorderWidth(BorderWidth other) : this() {
+      top_ = other.top_;
+      right_ = other.right_;
+      bottom_ = other.bottom_;
+      left_ = other.left_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public BorderWidth Clone() {
+      return new BorderWidth(this);
+    }
+
+    /// <summary>Field number for the "top" field.</summary>
+    public const int TopFieldNumber = 1;
+    private float top_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Top {
+      get { return top_; }
+      set {
+        top_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "right" field.</summary>
+    public const int RightFieldNumber = 2;
+    private float right_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Right {
+      get { return right_; }
+      set {
+        right_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "bottom" field.</summary>
+    public const int BottomFieldNumber = 3;
+    private float bottom_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Bottom {
+      get { return bottom_; }
+      set {
+        bottom_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "left" field.</summary>
+    public const int LeftFieldNumber = 4;
+    private float left_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Left {
+      get { return left_; }
+      set {
+        left_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as BorderWidth);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(BorderWidth other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Top, other.Top)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Right, other.Right)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Bottom, other.Bottom)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Left, other.Left)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Top != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Top);
+      if (Right != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Right);
+      if (Bottom != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Bottom);
+      if (Left != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Left);
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Top != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(Top);
+      }
+      if (Right != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(Right);
+      }
+      if (Bottom != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Bottom);
+      }
+      if (Left != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Left);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Top != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(Top);
+      }
+      if (Right != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(Right);
+      }
+      if (Bottom != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Bottom);
+      }
+      if (Left != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Left);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Top != 0F) {
+        size += 1 + 4;
+      }
+      if (Right != 0F) {
+        size += 1 + 4;
+      }
+      if (Bottom != 0F) {
+        size += 1 + 4;
+      }
+      if (Left != 0F) {
+        size += 1 + 4;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(BorderWidth other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Top != 0F) {
+        Top = other.Top;
+      }
+      if (other.Right != 0F) {
+        Right = other.Right;
+      }
+      if (other.Bottom != 0F) {
+        Bottom = other.Bottom;
+      }
+      if (other.Left != 0F) {
+        Left = other.Left;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 13: {
+            Top = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            Right = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            Bottom = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            Left = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 13: {
+            Top = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            Right = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            Bottom = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            Left = input.ReadFloat();
             break;
           }
         }
@@ -1941,7 +2238,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[7]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[8]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1972,9 +2269,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "top" field.</summary>
     public const int TopFieldNumber = 1;
-    private global::Spelldawn.Protos.Color top_;
+    private global::Spelldawn.Protos.FlexColor top_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color Top {
+    public global::Spelldawn.Protos.FlexColor Top {
       get { return top_; }
       set {
         top_ = value;
@@ -1983,9 +2280,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "right" field.</summary>
     public const int RightFieldNumber = 2;
-    private global::Spelldawn.Protos.Color right_;
+    private global::Spelldawn.Protos.FlexColor right_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color Right {
+    public global::Spelldawn.Protos.FlexColor Right {
       get { return right_; }
       set {
         right_ = value;
@@ -1994,9 +2291,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "bottom" field.</summary>
     public const int BottomFieldNumber = 3;
-    private global::Spelldawn.Protos.Color bottom_;
+    private global::Spelldawn.Protos.FlexColor bottom_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color Bottom {
+    public global::Spelldawn.Protos.FlexColor Bottom {
       get { return bottom_; }
       set {
         bottom_ = value;
@@ -2005,9 +2302,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "left" field.</summary>
     public const int LeftFieldNumber = 4;
-    private global::Spelldawn.Protos.Color left_;
+    private global::Spelldawn.Protos.FlexColor left_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color Left {
+    public global::Spelldawn.Protos.FlexColor Left {
       get { return left_; }
       set {
         left_ = value;
@@ -2132,25 +2429,25 @@ namespace Spelldawn.Protos {
       }
       if (other.top_ != null) {
         if (top_ == null) {
-          Top = new global::Spelldawn.Protos.Color();
+          Top = new global::Spelldawn.Protos.FlexColor();
         }
         Top.MergeFrom(other.Top);
       }
       if (other.right_ != null) {
         if (right_ == null) {
-          Right = new global::Spelldawn.Protos.Color();
+          Right = new global::Spelldawn.Protos.FlexColor();
         }
         Right.MergeFrom(other.Right);
       }
       if (other.bottom_ != null) {
         if (bottom_ == null) {
-          Bottom = new global::Spelldawn.Protos.Color();
+          Bottom = new global::Spelldawn.Protos.FlexColor();
         }
         Bottom.MergeFrom(other.Bottom);
       }
       if (other.left_ != null) {
         if (left_ == null) {
-          Left = new global::Spelldawn.Protos.Color();
+          Left = new global::Spelldawn.Protos.FlexColor();
         }
         Left.MergeFrom(other.Left);
       }
@@ -2170,28 +2467,28 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (top_ == null) {
-              Top = new global::Spelldawn.Protos.Color();
+              Top = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Top);
             break;
           }
           case 18: {
             if (right_ == null) {
-              Right = new global::Spelldawn.Protos.Color();
+              Right = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Right);
             break;
           }
           case 26: {
             if (bottom_ == null) {
-              Bottom = new global::Spelldawn.Protos.Color();
+              Bottom = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Bottom);
             break;
           }
           case 34: {
             if (left_ == null) {
-              Left = new global::Spelldawn.Protos.Color();
+              Left = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Left);
             break;
@@ -2212,28 +2509,28 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (top_ == null) {
-              Top = new global::Spelldawn.Protos.Color();
+              Top = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Top);
             break;
           }
           case 18: {
             if (right_ == null) {
-              Right = new global::Spelldawn.Protos.Color();
+              Right = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Right);
             break;
           }
           case 26: {
             if (bottom_ == null) {
-              Bottom = new global::Spelldawn.Protos.Color();
+              Bottom = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Bottom);
             break;
           }
           case 34: {
             if (left_ == null) {
-              Left = new global::Spelldawn.Protos.Color();
+              Left = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Left);
             break;
@@ -2257,7 +2554,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[8]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2288,9 +2585,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "top_left" field.</summary>
     public const int TopLeftFieldNumber = 1;
-    private global::Spelldawn.Protos.Length topLeft_;
+    private global::Spelldawn.Protos.Dimension topLeft_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length TopLeft {
+    public global::Spelldawn.Protos.Dimension TopLeft {
       get { return topLeft_; }
       set {
         topLeft_ = value;
@@ -2299,9 +2596,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "top_right" field.</summary>
     public const int TopRightFieldNumber = 2;
-    private global::Spelldawn.Protos.Length topRight_;
+    private global::Spelldawn.Protos.Dimension topRight_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length TopRight {
+    public global::Spelldawn.Protos.Dimension TopRight {
       get { return topRight_; }
       set {
         topRight_ = value;
@@ -2310,9 +2607,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "bottom_right" field.</summary>
     public const int BottomRightFieldNumber = 3;
-    private global::Spelldawn.Protos.Length bottomRight_;
+    private global::Spelldawn.Protos.Dimension bottomRight_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length BottomRight {
+    public global::Spelldawn.Protos.Dimension BottomRight {
       get { return bottomRight_; }
       set {
         bottomRight_ = value;
@@ -2321,9 +2618,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "bottom_left" field.</summary>
     public const int BottomLeftFieldNumber = 4;
-    private global::Spelldawn.Protos.Length bottomLeft_;
+    private global::Spelldawn.Protos.Dimension bottomLeft_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length BottomLeft {
+    public global::Spelldawn.Protos.Dimension BottomLeft {
       get { return bottomLeft_; }
       set {
         bottomLeft_ = value;
@@ -2448,25 +2745,25 @@ namespace Spelldawn.Protos {
       }
       if (other.topLeft_ != null) {
         if (topLeft_ == null) {
-          TopLeft = new global::Spelldawn.Protos.Length();
+          TopLeft = new global::Spelldawn.Protos.Dimension();
         }
         TopLeft.MergeFrom(other.TopLeft);
       }
       if (other.topRight_ != null) {
         if (topRight_ == null) {
-          TopRight = new global::Spelldawn.Protos.Length();
+          TopRight = new global::Spelldawn.Protos.Dimension();
         }
         TopRight.MergeFrom(other.TopRight);
       }
       if (other.bottomRight_ != null) {
         if (bottomRight_ == null) {
-          BottomRight = new global::Spelldawn.Protos.Length();
+          BottomRight = new global::Spelldawn.Protos.Dimension();
         }
         BottomRight.MergeFrom(other.BottomRight);
       }
       if (other.bottomLeft_ != null) {
         if (bottomLeft_ == null) {
-          BottomLeft = new global::Spelldawn.Protos.Length();
+          BottomLeft = new global::Spelldawn.Protos.Dimension();
         }
         BottomLeft.MergeFrom(other.BottomLeft);
       }
@@ -2486,28 +2783,28 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (topLeft_ == null) {
-              TopLeft = new global::Spelldawn.Protos.Length();
+              TopLeft = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(TopLeft);
             break;
           }
           case 18: {
             if (topRight_ == null) {
-              TopRight = new global::Spelldawn.Protos.Length();
+              TopRight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(TopRight);
             break;
           }
           case 26: {
             if (bottomRight_ == null) {
-              BottomRight = new global::Spelldawn.Protos.Length();
+              BottomRight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(BottomRight);
             break;
           }
           case 34: {
             if (bottomLeft_ == null) {
-              BottomLeft = new global::Spelldawn.Protos.Length();
+              BottomLeft = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(BottomLeft);
             break;
@@ -2528,28 +2825,28 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (topLeft_ == null) {
-              TopLeft = new global::Spelldawn.Protos.Length();
+              TopLeft = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(TopLeft);
             break;
           }
           case 18: {
             if (topRight_ == null) {
-              TopRight = new global::Spelldawn.Protos.Length();
+              TopRight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(TopRight);
             break;
           }
           case 26: {
             if (bottomRight_ == null) {
-              BottomRight = new global::Spelldawn.Protos.Length();
+              BottomRight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(BottomRight);
             break;
           }
           case 34: {
             if (bottomLeft_ == null) {
-              BottomLeft = new global::Spelldawn.Protos.Length();
+              BottomLeft = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(BottomLeft);
             break;
@@ -2561,19 +2858,19 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class Rotate : pb::IMessage<Rotate>
+  public sealed partial class FlexRotate : pb::IMessage<FlexRotate>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Rotate> _parser = new pb::MessageParser<Rotate>(() => new Rotate());
+    private static readonly pb::MessageParser<FlexRotate> _parser = new pb::MessageParser<FlexRotate>(() => new FlexRotate());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Rotate> Parser { get { return _parser; } }
+    public static pb::MessageParser<FlexRotate> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[9]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2582,21 +2879,21 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Rotate() {
+    public FlexRotate() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Rotate(Rotate other) : this() {
+    public FlexRotate(FlexRotate other) : this() {
       degrees_ = other.degrees_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Rotate Clone() {
-      return new Rotate(this);
+    public FlexRotate Clone() {
+      return new FlexRotate(this);
     }
 
     /// <summary>Field number for the "degrees" field.</summary>
@@ -2612,11 +2909,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Rotate);
+      return Equals(other as FlexRotate);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Rotate other) {
+    public bool Equals(FlexRotate other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -2683,7 +2980,7 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Rotate other) {
+    public void MergeFrom(FlexRotate other) {
       if (other == null) {
         return;
       }
@@ -2733,19 +3030,19 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class Translate : pb::IMessage<Translate>
+  public sealed partial class FlexTranslate : pb::IMessage<FlexTranslate>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Translate> _parser = new pb::MessageParser<Translate>(() => new Translate());
+    private static readonly pb::MessageParser<FlexTranslate> _parser = new pb::MessageParser<FlexTranslate>(() => new FlexTranslate());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Translate> Parser { get { return _parser; } }
+    public static pb::MessageParser<FlexTranslate> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[10]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2754,14 +3051,14 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Translate() {
+    public FlexTranslate() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Translate(Translate other) : this() {
+    public FlexTranslate(FlexTranslate other) : this() {
       x_ = other.x_ != null ? other.x_.Clone() : null;
       y_ = other.y_ != null ? other.y_.Clone() : null;
       z_ = other.z_;
@@ -2769,15 +3066,15 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Translate Clone() {
-      return new Translate(this);
+    public FlexTranslate Clone() {
+      return new FlexTranslate(this);
     }
 
     /// <summary>Field number for the "x" field.</summary>
     public const int XFieldNumber = 1;
-    private global::Spelldawn.Protos.Length x_;
+    private global::Spelldawn.Protos.Dimension x_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length X {
+    public global::Spelldawn.Protos.Dimension X {
       get { return x_; }
       set {
         x_ = value;
@@ -2786,9 +3083,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "y" field.</summary>
     public const int YFieldNumber = 2;
-    private global::Spelldawn.Protos.Length y_;
+    private global::Spelldawn.Protos.Dimension y_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length Y {
+    public global::Spelldawn.Protos.Dimension Y {
       get { return y_; }
       set {
         y_ = value;
@@ -2808,11 +3105,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Translate);
+      return Equals(other as FlexTranslate);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Translate other) {
+    public bool Equals(FlexTranslate other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -2905,19 +3202,19 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Translate other) {
+    public void MergeFrom(FlexTranslate other) {
       if (other == null) {
         return;
       }
       if (other.x_ != null) {
         if (x_ == null) {
-          X = new global::Spelldawn.Protos.Length();
+          X = new global::Spelldawn.Protos.Dimension();
         }
         X.MergeFrom(other.X);
       }
       if (other.y_ != null) {
         if (y_ == null) {
-          Y = new global::Spelldawn.Protos.Length();
+          Y = new global::Spelldawn.Protos.Dimension();
         }
         Y.MergeFrom(other.Y);
       }
@@ -2940,14 +3237,14 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (x_ == null) {
-              X = new global::Spelldawn.Protos.Length();
+              X = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(X);
             break;
           }
           case 18: {
             if (y_ == null) {
-              Y = new global::Spelldawn.Protos.Length();
+              Y = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Y);
             break;
@@ -2972,14 +3269,14 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (x_ == null) {
-              X = new global::Spelldawn.Protos.Length();
+              X = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(X);
             break;
           }
           case 18: {
             if (y_ == null) {
-              Y = new global::Spelldawn.Protos.Length();
+              Y = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Y);
             break;
@@ -2995,19 +3292,19 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class Scale : pb::IMessage<Scale>
+  public sealed partial class FlexScale : pb::IMessage<FlexScale>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Scale> _parser = new pb::MessageParser<Scale>(() => new Scale());
+    private static readonly pb::MessageParser<FlexScale> _parser = new pb::MessageParser<FlexScale>(() => new FlexScale());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Scale> Parser { get { return _parser; } }
+    public static pb::MessageParser<FlexScale> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[11]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3016,28 +3313,28 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Scale() {
+    public FlexScale() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Scale(Scale other) : this() {
+    public FlexScale(FlexScale other) : this() {
       amount_ = other.amount_ != null ? other.amount_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Scale Clone() {
-      return new Scale(this);
+    public FlexScale Clone() {
+      return new FlexScale(this);
     }
 
     /// <summary>Field number for the "amount" field.</summary>
     public const int AmountFieldNumber = 1;
-    private global::Spelldawn.Protos.Vector3 amount_;
+    private global::Spelldawn.Protos.FlexVector3 amount_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Vector3 Amount {
+    public global::Spelldawn.Protos.FlexVector3 Amount {
       get { return amount_; }
       set {
         amount_ = value;
@@ -3046,11 +3343,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Scale);
+      return Equals(other as FlexScale);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Scale other) {
+    public bool Equals(FlexScale other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -3117,13 +3414,13 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Scale other) {
+    public void MergeFrom(FlexScale other) {
       if (other == null) {
         return;
       }
       if (other.amount_ != null) {
         if (amount_ == null) {
-          Amount = new global::Spelldawn.Protos.Vector3();
+          Amount = new global::Spelldawn.Protos.FlexVector3();
         }
         Amount.MergeFrom(other.Amount);
       }
@@ -3143,7 +3440,7 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (amount_ == null) {
-              Amount = new global::Spelldawn.Protos.Vector3();
+              Amount = new global::Spelldawn.Protos.FlexVector3();
             }
             input.ReadMessage(Amount);
             break;
@@ -3164,7 +3461,7 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (amount_ == null) {
-              Amount = new global::Spelldawn.Protos.Vector3();
+              Amount = new global::Spelldawn.Protos.FlexVector3();
             }
             input.ReadMessage(Amount);
             break;
@@ -3188,7 +3485,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[12]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[13]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3218,9 +3515,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "offset" field.</summary>
     public const int OffsetFieldNumber = 1;
-    private global::Spelldawn.Protos.Vector2 offset_;
+    private global::Spelldawn.Protos.FlexVector2 offset_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Vector2 Offset {
+    public global::Spelldawn.Protos.FlexVector2 Offset {
       get { return offset_; }
       set {
         offset_ = value;
@@ -3240,9 +3537,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "color" field.</summary>
     public const int ColorFieldNumber = 3;
-    private global::Spelldawn.Protos.Color color_;
+    private global::Spelldawn.Protos.FlexColor color_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color Color {
+    public global::Spelldawn.Protos.FlexColor Color {
       get { return color_; }
       set {
         color_ = value;
@@ -3354,7 +3651,7 @@ namespace Spelldawn.Protos {
       }
       if (other.offset_ != null) {
         if (offset_ == null) {
-          Offset = new global::Spelldawn.Protos.Vector2();
+          Offset = new global::Spelldawn.Protos.FlexVector2();
         }
         Offset.MergeFrom(other.Offset);
       }
@@ -3363,7 +3660,7 @@ namespace Spelldawn.Protos {
       }
       if (other.color_ != null) {
         if (color_ == null) {
-          Color = new global::Spelldawn.Protos.Color();
+          Color = new global::Spelldawn.Protos.FlexColor();
         }
         Color.MergeFrom(other.Color);
       }
@@ -3383,7 +3680,7 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (offset_ == null) {
-              Offset = new global::Spelldawn.Protos.Vector2();
+              Offset = new global::Spelldawn.Protos.FlexVector2();
             }
             input.ReadMessage(Offset);
             break;
@@ -3394,7 +3691,7 @@ namespace Spelldawn.Protos {
           }
           case 26: {
             if (color_ == null) {
-              Color = new global::Spelldawn.Protos.Color();
+              Color = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Color);
             break;
@@ -3415,7 +3712,7 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (offset_ == null) {
-              Offset = new global::Spelldawn.Protos.Vector2();
+              Offset = new global::Spelldawn.Protos.FlexVector2();
             }
             input.ReadMessage(Offset);
             break;
@@ -3426,7 +3723,7 @@ namespace Spelldawn.Protos {
           }
           case 26: {
             if (color_ == null) {
-              Color = new global::Spelldawn.Protos.Color();
+              Color = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Color);
             break;
@@ -3450,7 +3747,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[13]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[14]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3610,19 +3907,19 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class Style : pb::IMessage<Style>
+  public sealed partial class ImageSlice : pb::IMessage<ImageSlice>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Style> _parser = new pb::MessageParser<Style>(() => new Style());
+    private static readonly pb::MessageParser<ImageSlice> _parser = new pb::MessageParser<ImageSlice>(() => new ImageSlice());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Style> Parser { get { return _parser; } }
+    public static pb::MessageParser<ImageSlice> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[14]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[15]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3631,14 +3928,294 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Style() {
+    public ImageSlice() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Style(Style other) : this() {
+    public ImageSlice(ImageSlice other) : this() {
+      top_ = other.top_;
+      right_ = other.right_;
+      bottom_ = other.bottom_;
+      left_ = other.left_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ImageSlice Clone() {
+      return new ImageSlice(this);
+    }
+
+    /// <summary>Field number for the "top" field.</summary>
+    public const int TopFieldNumber = 1;
+    private int top_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Top {
+      get { return top_; }
+      set {
+        top_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "right" field.</summary>
+    public const int RightFieldNumber = 2;
+    private int right_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Right {
+      get { return right_; }
+      set {
+        right_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "bottom" field.</summary>
+    public const int BottomFieldNumber = 3;
+    private int bottom_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Bottom {
+      get { return bottom_; }
+      set {
+        bottom_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "left" field.</summary>
+    public const int LeftFieldNumber = 4;
+    private int left_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Left {
+      get { return left_; }
+      set {
+        left_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ImageSlice);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ImageSlice other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Top != other.Top) return false;
+      if (Right != other.Right) return false;
+      if (Bottom != other.Bottom) return false;
+      if (Left != other.Left) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Top != 0) hash ^= Top.GetHashCode();
+      if (Right != 0) hash ^= Right.GetHashCode();
+      if (Bottom != 0) hash ^= Bottom.GetHashCode();
+      if (Left != 0) hash ^= Left.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Top != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Top);
+      }
+      if (Right != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(Right);
+      }
+      if (Bottom != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Bottom);
+      }
+      if (Left != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(Left);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Top != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Top);
+      }
+      if (Right != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(Right);
+      }
+      if (Bottom != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Bottom);
+      }
+      if (Left != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(Left);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Top != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Top);
+      }
+      if (Right != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Right);
+      }
+      if (Bottom != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Bottom);
+      }
+      if (Left != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Left);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ImageSlice other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Top != 0) {
+        Top = other.Top;
+      }
+      if (other.Right != 0) {
+        Right = other.Right;
+      }
+      if (other.Bottom != 0) {
+        Bottom = other.Bottom;
+      }
+      if (other.Left != 0) {
+        Left = other.Left;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Top = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            Right = input.ReadInt32();
+            break;
+          }
+          case 24: {
+            Bottom = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            Left = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Top = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            Right = input.ReadInt32();
+            break;
+          }
+          case 24: {
+            Bottom = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            Left = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class FlexStyle : pb::IMessage<FlexStyle>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FlexStyle> _parser = new pb::MessageParser<FlexStyle>(() => new FlexStyle());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<FlexStyle> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[16]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public FlexStyle() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public FlexStyle(FlexStyle other) : this() {
       alignContent_ = other.alignContent_;
       alignItems_ = other.alignItems_;
       alignSelf_ = other.alignSelf_;
@@ -3652,8 +4229,8 @@ namespace Spelldawn.Protos {
       display_ = other.display_;
       flexBasis_ = other.flexBasis_ != null ? other.flexBasis_.Clone() : null;
       flexDirection_ = other.flexDirection_;
-      flexGrow_ = other.flexGrow_;
-      flexShrink_ = other.flexShrink_;
+      FlexGrow = other.FlexGrow;
+      FlexShrink = other.FlexShrink;
       wrap_ = other.wrap_;
       fontSize_ = other.fontSize_ != null ? other.fontSize_.Clone() : null;
       height_ = other.height_ != null ? other.height_.Clone() : null;
@@ -3664,7 +4241,7 @@ namespace Spelldawn.Protos {
       maxWidth_ = other.maxWidth_ != null ? other.maxWidth_.Clone() : null;
       minHeight_ = other.minHeight_ != null ? other.minHeight_.Clone() : null;
       minWidth_ = other.minWidth_ != null ? other.minWidth_.Clone() : null;
-      opacity_ = other.opacity_;
+      Opacity = other.Opacity;
       overflow_ = other.overflow_;
       padding_ = other.padding_ != null ? other.padding_.Clone() : null;
       position_ = other.position_;
@@ -3673,13 +4250,13 @@ namespace Spelldawn.Protos {
       textOverflow_ = other.textOverflow_;
       textShadow_ = other.textShadow_ != null ? other.textShadow_.Clone() : null;
       transformOrigin_ = other.transformOrigin_ != null ? other.transformOrigin_.Clone() : null;
-      transitionDelay_ = other.transitionDelay_ != null ? other.transitionDelay_.Clone() : null;
-      transitionDuration_ = other.transitionDuration_ != null ? other.transitionDuration_.Clone() : null;
-      transitionProperty_ = other.transitionProperty_;
-      transitionEasingMode_ = other.transitionEasingMode_;
+      transitionDelays_ = other.transitionDelays_.Clone();
+      transitionDurations_ = other.transitionDurations_.Clone();
+      transitionProperties_ = other.transitionProperties_.Clone();
+      transitionEasingModes_ = other.transitionEasingModes_.Clone();
       translate_ = other.translate_ != null ? other.translate_.Clone() : null;
       backgroundImageTintColor_ = other.backgroundImageTintColor_ != null ? other.backgroundImageTintColor_.Clone() : null;
-      imageScaleMode_ = other.imageScaleMode_;
+      backgroundImageScaleMode_ = other.backgroundImageScaleMode_;
       font_ = other.font_ != null ? other.font_.Clone() : null;
       fontStyle_ = other.fontStyle_;
       overflowClipBox_ = other.overflowClipBox_;
@@ -3687,7 +4264,7 @@ namespace Spelldawn.Protos {
       imageSlice_ = other.imageSlice_ != null ? other.imageSlice_.Clone() : null;
       textAlign_ = other.textAlign_;
       textOutlineColor_ = other.textOutlineColor_ != null ? other.textOutlineColor_.Clone() : null;
-      textOutlineWidth_ = other.textOutlineWidth_;
+      TextOutlineWidth = other.TextOutlineWidth;
       textOverflowPosition_ = other.textOverflowPosition_;
       visibility_ = other.visibility_;
       whiteSpace_ = other.whiteSpace_;
@@ -3697,15 +4274,15 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Style Clone() {
-      return new Style(this);
+    public FlexStyle Clone() {
+      return new FlexStyle(this);
     }
 
     /// <summary>Field number for the "align_content" field.</summary>
     public const int AlignContentFieldNumber = 1;
-    private global::Spelldawn.Protos.Align alignContent_ = global::Spelldawn.Protos.Align.Unspecified;
+    private global::Spelldawn.Protos.FlexAlign alignContent_ = global::Spelldawn.Protos.FlexAlign.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Align AlignContent {
+    public global::Spelldawn.Protos.FlexAlign AlignContent {
       get { return alignContent_; }
       set {
         alignContent_ = value;
@@ -3714,9 +4291,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "align_items" field.</summary>
     public const int AlignItemsFieldNumber = 2;
-    private global::Spelldawn.Protos.Align alignItems_ = global::Spelldawn.Protos.Align.Unspecified;
+    private global::Spelldawn.Protos.FlexAlign alignItems_ = global::Spelldawn.Protos.FlexAlign.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Align AlignItems {
+    public global::Spelldawn.Protos.FlexAlign AlignItems {
       get { return alignItems_; }
       set {
         alignItems_ = value;
@@ -3725,9 +4302,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "align_self" field.</summary>
     public const int AlignSelfFieldNumber = 3;
-    private global::Spelldawn.Protos.Align alignSelf_ = global::Spelldawn.Protos.Align.Unspecified;
+    private global::Spelldawn.Protos.FlexAlign alignSelf_ = global::Spelldawn.Protos.FlexAlign.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Align AlignSelf {
+    public global::Spelldawn.Protos.FlexAlign AlignSelf {
       get { return alignSelf_; }
       set {
         alignSelf_ = value;
@@ -3736,9 +4313,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "background_color" field.</summary>
     public const int BackgroundColorFieldNumber = 4;
-    private global::Spelldawn.Protos.Color backgroundColor_;
+    private global::Spelldawn.Protos.FlexColor backgroundColor_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color BackgroundColor {
+    public global::Spelldawn.Protos.FlexColor BackgroundColor {
       get { return backgroundColor_; }
       set {
         backgroundColor_ = value;
@@ -3780,9 +4357,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "border_width" field.</summary>
     public const int BorderWidthFieldNumber = 8;
-    private global::Spelldawn.Protos.LengthGroup borderWidth_;
+    private global::Spelldawn.Protos.BorderWidth borderWidth_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.LengthGroup BorderWidth {
+    public global::Spelldawn.Protos.BorderWidth BorderWidth {
       get { return borderWidth_; }
       set {
         borderWidth_ = value;
@@ -3791,9 +4368,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "inset" field.</summary>
     public const int InsetFieldNumber = 9;
-    private global::Spelldawn.Protos.LengthGroup inset_;
+    private global::Spelldawn.Protos.DimensionGroup inset_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.LengthGroup Inset {
+    public global::Spelldawn.Protos.DimensionGroup Inset {
       get { return inset_; }
       set {
         inset_ = value;
@@ -3802,9 +4379,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "color" field.</summary>
     public const int ColorFieldNumber = 10;
-    private global::Spelldawn.Protos.Color color_;
+    private global::Spelldawn.Protos.FlexColor color_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color Color {
+    public global::Spelldawn.Protos.FlexColor Color {
       get { return color_; }
       set {
         color_ = value;
@@ -3813,9 +4390,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "display" field.</summary>
     public const int DisplayFieldNumber = 11;
-    private global::Spelldawn.Protos.DisplayStyle display_ = global::Spelldawn.Protos.DisplayStyle.Unspecified;
+    private global::Spelldawn.Protos.FlexDisplayStyle display_ = global::Spelldawn.Protos.FlexDisplayStyle.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.DisplayStyle Display {
+    public global::Spelldawn.Protos.FlexDisplayStyle Display {
       get { return display_; }
       set {
         display_ = value;
@@ -3824,9 +4401,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "flex_basis" field.</summary>
     public const int FlexBasisFieldNumber = 12;
-    private global::Spelldawn.Protos.Length flexBasis_;
+    private global::Spelldawn.Protos.Dimension flexBasis_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length FlexBasis {
+    public global::Spelldawn.Protos.Dimension FlexBasis {
       get { return flexBasis_; }
       set {
         flexBasis_ = value;
@@ -3846,25 +4423,29 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "flex_grow" field.</summary>
     public const int FlexGrowFieldNumber = 14;
-    private float flexGrow_;
+    private static readonly pb::FieldCodec<float?> _single_flexGrow_codec = pb::FieldCodec.ForStructWrapper<float>(114);
+    private float? flexGrow_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public float FlexGrow {
+    public float? FlexGrow {
       get { return flexGrow_; }
       set {
         flexGrow_ = value;
       }
     }
 
+
     /// <summary>Field number for the "flex_shrink" field.</summary>
     public const int FlexShrinkFieldNumber = 15;
-    private float flexShrink_;
+    private static readonly pb::FieldCodec<float?> _single_flexShrink_codec = pb::FieldCodec.ForStructWrapper<float>(122);
+    private float? flexShrink_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public float FlexShrink {
+    public float? FlexShrink {
       get { return flexShrink_; }
       set {
         flexShrink_ = value;
       }
     }
+
 
     /// <summary>Field number for the "wrap" field.</summary>
     public const int WrapFieldNumber = 16;
@@ -3879,9 +4460,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "font_size" field.</summary>
     public const int FontSizeFieldNumber = 17;
-    private global::Spelldawn.Protos.Length fontSize_;
+    private global::Spelldawn.Protos.Dimension fontSize_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length FontSize {
+    public global::Spelldawn.Protos.Dimension FontSize {
       get { return fontSize_; }
       set {
         fontSize_ = value;
@@ -3890,9 +4471,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "height" field.</summary>
     public const int HeightFieldNumber = 18;
-    private global::Spelldawn.Protos.Length height_;
+    private global::Spelldawn.Protos.Dimension height_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length Height {
+    public global::Spelldawn.Protos.Dimension Height {
       get { return height_; }
       set {
         height_ = value;
@@ -3901,9 +4482,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "justify_content" field.</summary>
     public const int JustifyContentFieldNumber = 19;
-    private global::Spelldawn.Protos.Justify justifyContent_ = global::Spelldawn.Protos.Justify.Unspecified;
+    private global::Spelldawn.Protos.FlexJustify justifyContent_ = global::Spelldawn.Protos.FlexJustify.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Justify JustifyContent {
+    public global::Spelldawn.Protos.FlexJustify JustifyContent {
       get { return justifyContent_; }
       set {
         justifyContent_ = value;
@@ -3912,9 +4493,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "letter_spacing" field.</summary>
     public const int LetterSpacingFieldNumber = 20;
-    private global::Spelldawn.Protos.Length letterSpacing_;
+    private global::Spelldawn.Protos.Dimension letterSpacing_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length LetterSpacing {
+    public global::Spelldawn.Protos.Dimension LetterSpacing {
       get { return letterSpacing_; }
       set {
         letterSpacing_ = value;
@@ -3923,9 +4504,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "margin" field.</summary>
     public const int MarginFieldNumber = 21;
-    private global::Spelldawn.Protos.LengthGroup margin_;
+    private global::Spelldawn.Protos.DimensionGroup margin_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.LengthGroup Margin {
+    public global::Spelldawn.Protos.DimensionGroup Margin {
       get { return margin_; }
       set {
         margin_ = value;
@@ -3934,9 +4515,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "max_height" field.</summary>
     public const int MaxHeightFieldNumber = 22;
-    private global::Spelldawn.Protos.Length maxHeight_;
+    private global::Spelldawn.Protos.Dimension maxHeight_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length MaxHeight {
+    public global::Spelldawn.Protos.Dimension MaxHeight {
       get { return maxHeight_; }
       set {
         maxHeight_ = value;
@@ -3945,9 +4526,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "max_width" field.</summary>
     public const int MaxWidthFieldNumber = 23;
-    private global::Spelldawn.Protos.Length maxWidth_;
+    private global::Spelldawn.Protos.Dimension maxWidth_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length MaxWidth {
+    public global::Spelldawn.Protos.Dimension MaxWidth {
       get { return maxWidth_; }
       set {
         maxWidth_ = value;
@@ -3956,9 +4537,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "min_height" field.</summary>
     public const int MinHeightFieldNumber = 24;
-    private global::Spelldawn.Protos.Length minHeight_;
+    private global::Spelldawn.Protos.Dimension minHeight_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length MinHeight {
+    public global::Spelldawn.Protos.Dimension MinHeight {
       get { return minHeight_; }
       set {
         minHeight_ = value;
@@ -3967,9 +4548,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "min_width" field.</summary>
     public const int MinWidthFieldNumber = 25;
-    private global::Spelldawn.Protos.Length minWidth_;
+    private global::Spelldawn.Protos.Dimension minWidth_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length MinWidth {
+    public global::Spelldawn.Protos.Dimension MinWidth {
       get { return minWidth_; }
       set {
         minWidth_ = value;
@@ -3978,20 +4559,22 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "opacity" field.</summary>
     public const int OpacityFieldNumber = 26;
-    private float opacity_;
+    private static readonly pb::FieldCodec<float?> _single_opacity_codec = pb::FieldCodec.ForStructWrapper<float>(210);
+    private float? opacity_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public float Opacity {
+    public float? Opacity {
       get { return opacity_; }
       set {
         opacity_ = value;
       }
     }
 
+
     /// <summary>Field number for the "overflow" field.</summary>
     public const int OverflowFieldNumber = 27;
-    private global::Spelldawn.Protos.Overflow overflow_ = global::Spelldawn.Protos.Overflow.Unspecified;
+    private global::Spelldawn.Protos.FlexOverflow overflow_ = global::Spelldawn.Protos.FlexOverflow.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Overflow Overflow {
+    public global::Spelldawn.Protos.FlexOverflow Overflow {
       get { return overflow_; }
       set {
         overflow_ = value;
@@ -4000,9 +4583,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "padding" field.</summary>
     public const int PaddingFieldNumber = 28;
-    private global::Spelldawn.Protos.LengthGroup padding_;
+    private global::Spelldawn.Protos.DimensionGroup padding_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.LengthGroup Padding {
+    public global::Spelldawn.Protos.DimensionGroup Padding {
       get { return padding_; }
       set {
         padding_ = value;
@@ -4022,9 +4605,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "rotate" field.</summary>
     public const int RotateFieldNumber = 30;
-    private global::Spelldawn.Protos.Rotate rotate_;
+    private global::Spelldawn.Protos.FlexRotate rotate_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Rotate Rotate {
+    public global::Spelldawn.Protos.FlexRotate Rotate {
       get { return rotate_; }
       set {
         rotate_ = value;
@@ -4033,9 +4616,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "scale" field.</summary>
     public const int ScaleFieldNumber = 31;
-    private global::Spelldawn.Protos.Scale scale_;
+    private global::Spelldawn.Protos.FlexScale scale_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Scale Scale {
+    public global::Spelldawn.Protos.FlexScale Scale {
       get { return scale_; }
       set {
         scale_ = value;
@@ -4066,64 +4649,60 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "transform_origin" field.</summary>
     public const int TransformOriginFieldNumber = 34;
-    private global::Spelldawn.Protos.Translate transformOrigin_;
+    private global::Spelldawn.Protos.FlexTranslate transformOrigin_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Translate TransformOrigin {
+    public global::Spelldawn.Protos.FlexTranslate TransformOrigin {
       get { return transformOrigin_; }
       set {
         transformOrigin_ = value;
       }
     }
 
-    /// <summary>Field number for the "transition_delay" field.</summary>
-    public const int TransitionDelayFieldNumber = 35;
-    private global::Spelldawn.Protos.TimeValue transitionDelay_;
+    /// <summary>Field number for the "transition_delays" field.</summary>
+    public const int TransitionDelaysFieldNumber = 35;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.TimeValue> _repeated_transitionDelays_codec
+        = pb::FieldCodec.ForMessage(282, global::Spelldawn.Protos.TimeValue.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.TimeValue> transitionDelays_ = new pbc::RepeatedField<global::Spelldawn.Protos.TimeValue>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.TimeValue TransitionDelay {
-      get { return transitionDelay_; }
-      set {
-        transitionDelay_ = value;
-      }
+    public pbc::RepeatedField<global::Spelldawn.Protos.TimeValue> TransitionDelays {
+      get { return transitionDelays_; }
     }
 
-    /// <summary>Field number for the "transition_duration" field.</summary>
-    public const int TransitionDurationFieldNumber = 36;
-    private global::Spelldawn.Protos.TimeValue transitionDuration_;
+    /// <summary>Field number for the "transition_durations" field.</summary>
+    public const int TransitionDurationsFieldNumber = 36;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.TimeValue> _repeated_transitionDurations_codec
+        = pb::FieldCodec.ForMessage(290, global::Spelldawn.Protos.TimeValue.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.TimeValue> transitionDurations_ = new pbc::RepeatedField<global::Spelldawn.Protos.TimeValue>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.TimeValue TransitionDuration {
-      get { return transitionDuration_; }
-      set {
-        transitionDuration_ = value;
-      }
+    public pbc::RepeatedField<global::Spelldawn.Protos.TimeValue> TransitionDurations {
+      get { return transitionDurations_; }
     }
 
-    /// <summary>Field number for the "transition_property" field.</summary>
-    public const int TransitionPropertyFieldNumber = 37;
-    private string transitionProperty_ = "";
+    /// <summary>Field number for the "transition_properties" field.</summary>
+    public const int TransitionPropertiesFieldNumber = 37;
+    private static readonly pb::FieldCodec<string> _repeated_transitionProperties_codec
+        = pb::FieldCodec.ForString(298);
+    private readonly pbc::RepeatedField<string> transitionProperties_ = new pbc::RepeatedField<string>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string TransitionProperty {
-      get { return transitionProperty_; }
-      set {
-        transitionProperty_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
+    public pbc::RepeatedField<string> TransitionProperties {
+      get { return transitionProperties_; }
     }
 
-    /// <summary>Field number for the "transition_easing_mode" field.</summary>
-    public const int TransitionEasingModeFieldNumber = 38;
-    private global::Spelldawn.Protos.EasingMode transitionEasingMode_ = global::Spelldawn.Protos.EasingMode.Unspecified;
+    /// <summary>Field number for the "transition_easing_modes" field.</summary>
+    public const int TransitionEasingModesFieldNumber = 38;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.EasingMode> _repeated_transitionEasingModes_codec
+        = pb::FieldCodec.ForEnum(306, x => (int) x, x => (global::Spelldawn.Protos.EasingMode) x);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.EasingMode> transitionEasingModes_ = new pbc::RepeatedField<global::Spelldawn.Protos.EasingMode>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.EasingMode TransitionEasingMode {
-      get { return transitionEasingMode_; }
-      set {
-        transitionEasingMode_ = value;
-      }
+    public pbc::RepeatedField<global::Spelldawn.Protos.EasingMode> TransitionEasingModes {
+      get { return transitionEasingModes_; }
     }
 
     /// <summary>Field number for the "translate" field.</summary>
     public const int TranslateFieldNumber = 39;
-    private global::Spelldawn.Protos.Translate translate_;
+    private global::Spelldawn.Protos.FlexTranslate translate_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Translate Translate {
+    public global::Spelldawn.Protos.FlexTranslate Translate {
       get { return translate_; }
       set {
         translate_ = value;
@@ -4132,23 +4711,23 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "background_image_tint_color" field.</summary>
     public const int BackgroundImageTintColorFieldNumber = 40;
-    private global::Spelldawn.Protos.Color backgroundImageTintColor_;
+    private global::Spelldawn.Protos.FlexColor backgroundImageTintColor_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color BackgroundImageTintColor {
+    public global::Spelldawn.Protos.FlexColor BackgroundImageTintColor {
       get { return backgroundImageTintColor_; }
       set {
         backgroundImageTintColor_ = value;
       }
     }
 
-    /// <summary>Field number for the "image_scale_mode" field.</summary>
-    public const int ImageScaleModeFieldNumber = 41;
-    private global::Spelldawn.Protos.ImageScaleMode imageScaleMode_ = global::Spelldawn.Protos.ImageScaleMode.Unspecified;
+    /// <summary>Field number for the "background_image_scale_mode" field.</summary>
+    public const int BackgroundImageScaleModeFieldNumber = 41;
+    private global::Spelldawn.Protos.ImageScaleMode backgroundImageScaleMode_ = global::Spelldawn.Protos.ImageScaleMode.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.ImageScaleMode ImageScaleMode {
-      get { return imageScaleMode_; }
+    public global::Spelldawn.Protos.ImageScaleMode BackgroundImageScaleMode {
+      get { return backgroundImageScaleMode_; }
       set {
-        imageScaleMode_ = value;
+        backgroundImageScaleMode_ = value;
       }
     }
 
@@ -4187,9 +4766,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "paragraph_spacing" field.</summary>
     public const int ParagraphSpacingFieldNumber = 45;
-    private global::Spelldawn.Protos.Length paragraphSpacing_;
+    private global::Spelldawn.Protos.Dimension paragraphSpacing_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length ParagraphSpacing {
+    public global::Spelldawn.Protos.Dimension ParagraphSpacing {
       get { return paragraphSpacing_; }
       set {
         paragraphSpacing_ = value;
@@ -4198,9 +4777,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "image_slice" field.</summary>
     public const int ImageSliceFieldNumber = 46;
-    private global::Spelldawn.Protos.LengthGroup imageSlice_;
+    private global::Spelldawn.Protos.ImageSlice imageSlice_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.LengthGroup ImageSlice {
+    public global::Spelldawn.Protos.ImageSlice ImageSlice {
       get { return imageSlice_; }
       set {
         imageSlice_ = value;
@@ -4220,9 +4799,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "text_outline_color" field.</summary>
     public const int TextOutlineColorFieldNumber = 48;
-    private global::Spelldawn.Protos.Color textOutlineColor_;
+    private global::Spelldawn.Protos.FlexColor textOutlineColor_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Color TextOutlineColor {
+    public global::Spelldawn.Protos.FlexColor TextOutlineColor {
       get { return textOutlineColor_; }
       set {
         textOutlineColor_ = value;
@@ -4231,14 +4810,16 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "text_outline_width" field.</summary>
     public const int TextOutlineWidthFieldNumber = 49;
-    private float textOutlineWidth_;
+    private static readonly pb::FieldCodec<float?> _single_textOutlineWidth_codec = pb::FieldCodec.ForStructWrapper<float>(394);
+    private float? textOutlineWidth_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public float TextOutlineWidth {
+    public float? TextOutlineWidth {
       get { return textOutlineWidth_; }
       set {
         textOutlineWidth_ = value;
       }
     }
+
 
     /// <summary>Field number for the "text_overflow_position" field.</summary>
     public const int TextOverflowPositionFieldNumber = 50;
@@ -4253,9 +4834,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "visibility" field.</summary>
     public const int VisibilityFieldNumber = 51;
-    private global::Spelldawn.Protos.Visibility visibility_ = global::Spelldawn.Protos.Visibility.Unspecified;
+    private global::Spelldawn.Protos.FlexVisibility visibility_ = global::Spelldawn.Protos.FlexVisibility.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Visibility Visibility {
+    public global::Spelldawn.Protos.FlexVisibility Visibility {
       get { return visibility_; }
       set {
         visibility_ = value;
@@ -4275,9 +4856,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "width" field.</summary>
     public const int WidthFieldNumber = 53;
-    private global::Spelldawn.Protos.Length width_;
+    private global::Spelldawn.Protos.Dimension width_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length Width {
+    public global::Spelldawn.Protos.Dimension Width {
       get { return width_; }
       set {
         width_ = value;
@@ -4286,9 +4867,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "word_spacing" field.</summary>
     public const int WordSpacingFieldNumber = 54;
-    private global::Spelldawn.Protos.Length wordSpacing_;
+    private global::Spelldawn.Protos.Dimension wordSpacing_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Length WordSpacing {
+    public global::Spelldawn.Protos.Dimension WordSpacing {
       get { return wordSpacing_; }
       set {
         wordSpacing_ = value;
@@ -4297,11 +4878,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as Style);
+      return Equals(other as FlexStyle);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Style other) {
+    public bool Equals(FlexStyle other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -4321,8 +4902,8 @@ namespace Spelldawn.Protos {
       if (Display != other.Display) return false;
       if (!object.Equals(FlexBasis, other.FlexBasis)) return false;
       if (FlexDirection != other.FlexDirection) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(FlexGrow, other.FlexGrow)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(FlexShrink, other.FlexShrink)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.Equals(FlexGrow, other.FlexGrow)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.Equals(FlexShrink, other.FlexShrink)) return false;
       if (Wrap != other.Wrap) return false;
       if (!object.Equals(FontSize, other.FontSize)) return false;
       if (!object.Equals(Height, other.Height)) return false;
@@ -4333,7 +4914,7 @@ namespace Spelldawn.Protos {
       if (!object.Equals(MaxWidth, other.MaxWidth)) return false;
       if (!object.Equals(MinHeight, other.MinHeight)) return false;
       if (!object.Equals(MinWidth, other.MinWidth)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Opacity, other.Opacity)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.Equals(Opacity, other.Opacity)) return false;
       if (Overflow != other.Overflow) return false;
       if (!object.Equals(Padding, other.Padding)) return false;
       if (Position != other.Position) return false;
@@ -4342,13 +4923,13 @@ namespace Spelldawn.Protos {
       if (TextOverflow != other.TextOverflow) return false;
       if (!object.Equals(TextShadow, other.TextShadow)) return false;
       if (!object.Equals(TransformOrigin, other.TransformOrigin)) return false;
-      if (!object.Equals(TransitionDelay, other.TransitionDelay)) return false;
-      if (!object.Equals(TransitionDuration, other.TransitionDuration)) return false;
-      if (TransitionProperty != other.TransitionProperty) return false;
-      if (TransitionEasingMode != other.TransitionEasingMode) return false;
+      if(!transitionDelays_.Equals(other.transitionDelays_)) return false;
+      if(!transitionDurations_.Equals(other.transitionDurations_)) return false;
+      if(!transitionProperties_.Equals(other.transitionProperties_)) return false;
+      if(!transitionEasingModes_.Equals(other.transitionEasingModes_)) return false;
       if (!object.Equals(Translate, other.Translate)) return false;
       if (!object.Equals(BackgroundImageTintColor, other.BackgroundImageTintColor)) return false;
-      if (ImageScaleMode != other.ImageScaleMode) return false;
+      if (BackgroundImageScaleMode != other.BackgroundImageScaleMode) return false;
       if (!object.Equals(Font, other.Font)) return false;
       if (FontStyle != other.FontStyle) return false;
       if (OverflowClipBox != other.OverflowClipBox) return false;
@@ -4356,7 +4937,7 @@ namespace Spelldawn.Protos {
       if (!object.Equals(ImageSlice, other.ImageSlice)) return false;
       if (TextAlign != other.TextAlign) return false;
       if (!object.Equals(TextOutlineColor, other.TextOutlineColor)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TextOutlineWidth, other.TextOutlineWidth)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.Equals(TextOutlineWidth, other.TextOutlineWidth)) return false;
       if (TextOverflowPosition != other.TextOverflowPosition) return false;
       if (Visibility != other.Visibility) return false;
       if (WhiteSpace != other.WhiteSpace) return false;
@@ -4368,9 +4949,9 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (AlignContent != global::Spelldawn.Protos.Align.Unspecified) hash ^= AlignContent.GetHashCode();
-      if (AlignItems != global::Spelldawn.Protos.Align.Unspecified) hash ^= AlignItems.GetHashCode();
-      if (AlignSelf != global::Spelldawn.Protos.Align.Unspecified) hash ^= AlignSelf.GetHashCode();
+      if (AlignContent != global::Spelldawn.Protos.FlexAlign.Unspecified) hash ^= AlignContent.GetHashCode();
+      if (AlignItems != global::Spelldawn.Protos.FlexAlign.Unspecified) hash ^= AlignItems.GetHashCode();
+      if (AlignSelf != global::Spelldawn.Protos.FlexAlign.Unspecified) hash ^= AlignSelf.GetHashCode();
       if (backgroundColor_ != null) hash ^= BackgroundColor.GetHashCode();
       if (backgroundImage_ != null) hash ^= BackgroundImage.GetHashCode();
       if (borderColor_ != null) hash ^= BorderColor.GetHashCode();
@@ -4378,23 +4959,23 @@ namespace Spelldawn.Protos {
       if (borderWidth_ != null) hash ^= BorderWidth.GetHashCode();
       if (inset_ != null) hash ^= Inset.GetHashCode();
       if (color_ != null) hash ^= Color.GetHashCode();
-      if (Display != global::Spelldawn.Protos.DisplayStyle.Unspecified) hash ^= Display.GetHashCode();
+      if (Display != global::Spelldawn.Protos.FlexDisplayStyle.Unspecified) hash ^= Display.GetHashCode();
       if (flexBasis_ != null) hash ^= FlexBasis.GetHashCode();
       if (FlexDirection != global::Spelldawn.Protos.FlexDirection.Unspecified) hash ^= FlexDirection.GetHashCode();
-      if (FlexGrow != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(FlexGrow);
-      if (FlexShrink != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(FlexShrink);
+      if (flexGrow_ != null) hash ^= pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.GetHashCode(FlexGrow);
+      if (flexShrink_ != null) hash ^= pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.GetHashCode(FlexShrink);
       if (Wrap != global::Spelldawn.Protos.FlexWrap.Unspecified) hash ^= Wrap.GetHashCode();
       if (fontSize_ != null) hash ^= FontSize.GetHashCode();
       if (height_ != null) hash ^= Height.GetHashCode();
-      if (JustifyContent != global::Spelldawn.Protos.Justify.Unspecified) hash ^= JustifyContent.GetHashCode();
+      if (JustifyContent != global::Spelldawn.Protos.FlexJustify.Unspecified) hash ^= JustifyContent.GetHashCode();
       if (letterSpacing_ != null) hash ^= LetterSpacing.GetHashCode();
       if (margin_ != null) hash ^= Margin.GetHashCode();
       if (maxHeight_ != null) hash ^= MaxHeight.GetHashCode();
       if (maxWidth_ != null) hash ^= MaxWidth.GetHashCode();
       if (minHeight_ != null) hash ^= MinHeight.GetHashCode();
       if (minWidth_ != null) hash ^= MinWidth.GetHashCode();
-      if (Opacity != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Opacity);
-      if (Overflow != global::Spelldawn.Protos.Overflow.Unspecified) hash ^= Overflow.GetHashCode();
+      if (opacity_ != null) hash ^= pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.GetHashCode(Opacity);
+      if (Overflow != global::Spelldawn.Protos.FlexOverflow.Unspecified) hash ^= Overflow.GetHashCode();
       if (padding_ != null) hash ^= Padding.GetHashCode();
       if (Position != global::Spelldawn.Protos.FlexPosition.Unspecified) hash ^= Position.GetHashCode();
       if (rotate_ != null) hash ^= Rotate.GetHashCode();
@@ -4402,13 +4983,13 @@ namespace Spelldawn.Protos {
       if (TextOverflow != global::Spelldawn.Protos.TextOverflow.Unspecified) hash ^= TextOverflow.GetHashCode();
       if (textShadow_ != null) hash ^= TextShadow.GetHashCode();
       if (transformOrigin_ != null) hash ^= TransformOrigin.GetHashCode();
-      if (transitionDelay_ != null) hash ^= TransitionDelay.GetHashCode();
-      if (transitionDuration_ != null) hash ^= TransitionDuration.GetHashCode();
-      if (TransitionProperty.Length != 0) hash ^= TransitionProperty.GetHashCode();
-      if (TransitionEasingMode != global::Spelldawn.Protos.EasingMode.Unspecified) hash ^= TransitionEasingMode.GetHashCode();
+      hash ^= transitionDelays_.GetHashCode();
+      hash ^= transitionDurations_.GetHashCode();
+      hash ^= transitionProperties_.GetHashCode();
+      hash ^= transitionEasingModes_.GetHashCode();
       if (translate_ != null) hash ^= Translate.GetHashCode();
       if (backgroundImageTintColor_ != null) hash ^= BackgroundImageTintColor.GetHashCode();
-      if (ImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) hash ^= ImageScaleMode.GetHashCode();
+      if (BackgroundImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) hash ^= BackgroundImageScaleMode.GetHashCode();
       if (font_ != null) hash ^= Font.GetHashCode();
       if (FontStyle != global::Spelldawn.Protos.FontStyle.Unspecified) hash ^= FontStyle.GetHashCode();
       if (OverflowClipBox != global::Spelldawn.Protos.OverflowClipBox.Unspecified) hash ^= OverflowClipBox.GetHashCode();
@@ -4416,9 +4997,9 @@ namespace Spelldawn.Protos {
       if (imageSlice_ != null) hash ^= ImageSlice.GetHashCode();
       if (TextAlign != global::Spelldawn.Protos.TextAlign.Unspecified) hash ^= TextAlign.GetHashCode();
       if (textOutlineColor_ != null) hash ^= TextOutlineColor.GetHashCode();
-      if (TextOutlineWidth != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TextOutlineWidth);
+      if (textOutlineWidth_ != null) hash ^= pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.GetHashCode(TextOutlineWidth);
       if (TextOverflowPosition != global::Spelldawn.Protos.TextOverflowPosition.Unspecified) hash ^= TextOverflowPosition.GetHashCode();
-      if (Visibility != global::Spelldawn.Protos.Visibility.Unspecified) hash ^= Visibility.GetHashCode();
+      if (Visibility != global::Spelldawn.Protos.FlexVisibility.Unspecified) hash ^= Visibility.GetHashCode();
       if (WhiteSpace != global::Spelldawn.Protos.WhiteSpace.Unspecified) hash ^= WhiteSpace.GetHashCode();
       if (width_ != null) hash ^= Width.GetHashCode();
       if (wordSpacing_ != null) hash ^= WordSpacing.GetHashCode();
@@ -4438,15 +5019,15 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (AlignContent != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignContent != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         output.WriteRawTag(8);
         output.WriteEnum((int) AlignContent);
       }
-      if (AlignItems != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignItems != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         output.WriteRawTag(16);
         output.WriteEnum((int) AlignItems);
       }
-      if (AlignSelf != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignSelf != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         output.WriteRawTag(24);
         output.WriteEnum((int) AlignSelf);
       }
@@ -4478,7 +5059,7 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(82);
         output.WriteMessage(Color);
       }
-      if (Display != global::Spelldawn.Protos.DisplayStyle.Unspecified) {
+      if (Display != global::Spelldawn.Protos.FlexDisplayStyle.Unspecified) {
         output.WriteRawTag(88);
         output.WriteEnum((int) Display);
       }
@@ -4490,13 +5071,11 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(104);
         output.WriteEnum((int) FlexDirection);
       }
-      if (FlexGrow != 0F) {
-        output.WriteRawTag(117);
-        output.WriteFloat(FlexGrow);
+      if (flexGrow_ != null) {
+        _single_flexGrow_codec.WriteTagAndValue(output, FlexGrow);
       }
-      if (FlexShrink != 0F) {
-        output.WriteRawTag(125);
-        output.WriteFloat(FlexShrink);
+      if (flexShrink_ != null) {
+        _single_flexShrink_codec.WriteTagAndValue(output, FlexShrink);
       }
       if (Wrap != global::Spelldawn.Protos.FlexWrap.Unspecified) {
         output.WriteRawTag(128, 1);
@@ -4510,7 +5089,7 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(146, 1);
         output.WriteMessage(Height);
       }
-      if (JustifyContent != global::Spelldawn.Protos.Justify.Unspecified) {
+      if (JustifyContent != global::Spelldawn.Protos.FlexJustify.Unspecified) {
         output.WriteRawTag(152, 1);
         output.WriteEnum((int) JustifyContent);
       }
@@ -4538,11 +5117,10 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(202, 1);
         output.WriteMessage(MinWidth);
       }
-      if (Opacity != 0F) {
-        output.WriteRawTag(213, 1);
-        output.WriteFloat(Opacity);
+      if (opacity_ != null) {
+        _single_opacity_codec.WriteTagAndValue(output, Opacity);
       }
-      if (Overflow != global::Spelldawn.Protos.Overflow.Unspecified) {
+      if (Overflow != global::Spelldawn.Protos.FlexOverflow.Unspecified) {
         output.WriteRawTag(216, 1);
         output.WriteEnum((int) Overflow);
       }
@@ -4574,22 +5152,10 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(146, 2);
         output.WriteMessage(TransformOrigin);
       }
-      if (transitionDelay_ != null) {
-        output.WriteRawTag(154, 2);
-        output.WriteMessage(TransitionDelay);
-      }
-      if (transitionDuration_ != null) {
-        output.WriteRawTag(162, 2);
-        output.WriteMessage(TransitionDuration);
-      }
-      if (TransitionProperty.Length != 0) {
-        output.WriteRawTag(170, 2);
-        output.WriteString(TransitionProperty);
-      }
-      if (TransitionEasingMode != global::Spelldawn.Protos.EasingMode.Unspecified) {
-        output.WriteRawTag(176, 2);
-        output.WriteEnum((int) TransitionEasingMode);
-      }
+      transitionDelays_.WriteTo(output, _repeated_transitionDelays_codec);
+      transitionDurations_.WriteTo(output, _repeated_transitionDurations_codec);
+      transitionProperties_.WriteTo(output, _repeated_transitionProperties_codec);
+      transitionEasingModes_.WriteTo(output, _repeated_transitionEasingModes_codec);
       if (translate_ != null) {
         output.WriteRawTag(186, 2);
         output.WriteMessage(Translate);
@@ -4598,9 +5164,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(194, 2);
         output.WriteMessage(BackgroundImageTintColor);
       }
-      if (ImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
+      if (BackgroundImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
         output.WriteRawTag(200, 2);
-        output.WriteEnum((int) ImageScaleMode);
+        output.WriteEnum((int) BackgroundImageScaleMode);
       }
       if (font_ != null) {
         output.WriteRawTag(210, 2);
@@ -4630,15 +5196,14 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(130, 3);
         output.WriteMessage(TextOutlineColor);
       }
-      if (TextOutlineWidth != 0F) {
-        output.WriteRawTag(141, 3);
-        output.WriteFloat(TextOutlineWidth);
+      if (textOutlineWidth_ != null) {
+        _single_textOutlineWidth_codec.WriteTagAndValue(output, TextOutlineWidth);
       }
       if (TextOverflowPosition != global::Spelldawn.Protos.TextOverflowPosition.Unspecified) {
         output.WriteRawTag(144, 3);
         output.WriteEnum((int) TextOverflowPosition);
       }
-      if (Visibility != global::Spelldawn.Protos.Visibility.Unspecified) {
+      if (Visibility != global::Spelldawn.Protos.FlexVisibility.Unspecified) {
         output.WriteRawTag(152, 3);
         output.WriteEnum((int) Visibility);
       }
@@ -4663,15 +5228,15 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (AlignContent != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignContent != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         output.WriteRawTag(8);
         output.WriteEnum((int) AlignContent);
       }
-      if (AlignItems != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignItems != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         output.WriteRawTag(16);
         output.WriteEnum((int) AlignItems);
       }
-      if (AlignSelf != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignSelf != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         output.WriteRawTag(24);
         output.WriteEnum((int) AlignSelf);
       }
@@ -4703,7 +5268,7 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(82);
         output.WriteMessage(Color);
       }
-      if (Display != global::Spelldawn.Protos.DisplayStyle.Unspecified) {
+      if (Display != global::Spelldawn.Protos.FlexDisplayStyle.Unspecified) {
         output.WriteRawTag(88);
         output.WriteEnum((int) Display);
       }
@@ -4715,13 +5280,11 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(104);
         output.WriteEnum((int) FlexDirection);
       }
-      if (FlexGrow != 0F) {
-        output.WriteRawTag(117);
-        output.WriteFloat(FlexGrow);
+      if (flexGrow_ != null) {
+        _single_flexGrow_codec.WriteTagAndValue(ref output, FlexGrow);
       }
-      if (FlexShrink != 0F) {
-        output.WriteRawTag(125);
-        output.WriteFloat(FlexShrink);
+      if (flexShrink_ != null) {
+        _single_flexShrink_codec.WriteTagAndValue(ref output, FlexShrink);
       }
       if (Wrap != global::Spelldawn.Protos.FlexWrap.Unspecified) {
         output.WriteRawTag(128, 1);
@@ -4735,7 +5298,7 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(146, 1);
         output.WriteMessage(Height);
       }
-      if (JustifyContent != global::Spelldawn.Protos.Justify.Unspecified) {
+      if (JustifyContent != global::Spelldawn.Protos.FlexJustify.Unspecified) {
         output.WriteRawTag(152, 1);
         output.WriteEnum((int) JustifyContent);
       }
@@ -4763,11 +5326,10 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(202, 1);
         output.WriteMessage(MinWidth);
       }
-      if (Opacity != 0F) {
-        output.WriteRawTag(213, 1);
-        output.WriteFloat(Opacity);
+      if (opacity_ != null) {
+        _single_opacity_codec.WriteTagAndValue(ref output, Opacity);
       }
-      if (Overflow != global::Spelldawn.Protos.Overflow.Unspecified) {
+      if (Overflow != global::Spelldawn.Protos.FlexOverflow.Unspecified) {
         output.WriteRawTag(216, 1);
         output.WriteEnum((int) Overflow);
       }
@@ -4799,22 +5361,10 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(146, 2);
         output.WriteMessage(TransformOrigin);
       }
-      if (transitionDelay_ != null) {
-        output.WriteRawTag(154, 2);
-        output.WriteMessage(TransitionDelay);
-      }
-      if (transitionDuration_ != null) {
-        output.WriteRawTag(162, 2);
-        output.WriteMessage(TransitionDuration);
-      }
-      if (TransitionProperty.Length != 0) {
-        output.WriteRawTag(170, 2);
-        output.WriteString(TransitionProperty);
-      }
-      if (TransitionEasingMode != global::Spelldawn.Protos.EasingMode.Unspecified) {
-        output.WriteRawTag(176, 2);
-        output.WriteEnum((int) TransitionEasingMode);
-      }
+      transitionDelays_.WriteTo(ref output, _repeated_transitionDelays_codec);
+      transitionDurations_.WriteTo(ref output, _repeated_transitionDurations_codec);
+      transitionProperties_.WriteTo(ref output, _repeated_transitionProperties_codec);
+      transitionEasingModes_.WriteTo(ref output, _repeated_transitionEasingModes_codec);
       if (translate_ != null) {
         output.WriteRawTag(186, 2);
         output.WriteMessage(Translate);
@@ -4823,9 +5373,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(194, 2);
         output.WriteMessage(BackgroundImageTintColor);
       }
-      if (ImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
+      if (BackgroundImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
         output.WriteRawTag(200, 2);
-        output.WriteEnum((int) ImageScaleMode);
+        output.WriteEnum((int) BackgroundImageScaleMode);
       }
       if (font_ != null) {
         output.WriteRawTag(210, 2);
@@ -4855,15 +5405,14 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(130, 3);
         output.WriteMessage(TextOutlineColor);
       }
-      if (TextOutlineWidth != 0F) {
-        output.WriteRawTag(141, 3);
-        output.WriteFloat(TextOutlineWidth);
+      if (textOutlineWidth_ != null) {
+        _single_textOutlineWidth_codec.WriteTagAndValue(ref output, TextOutlineWidth);
       }
       if (TextOverflowPosition != global::Spelldawn.Protos.TextOverflowPosition.Unspecified) {
         output.WriteRawTag(144, 3);
         output.WriteEnum((int) TextOverflowPosition);
       }
-      if (Visibility != global::Spelldawn.Protos.Visibility.Unspecified) {
+      if (Visibility != global::Spelldawn.Protos.FlexVisibility.Unspecified) {
         output.WriteRawTag(152, 3);
         output.WriteEnum((int) Visibility);
       }
@@ -4888,13 +5437,13 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (AlignContent != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignContent != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) AlignContent);
       }
-      if (AlignItems != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignItems != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) AlignItems);
       }
-      if (AlignSelf != global::Spelldawn.Protos.Align.Unspecified) {
+      if (AlignSelf != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) AlignSelf);
       }
       if (backgroundColor_ != null) {
@@ -4918,7 +5467,7 @@ namespace Spelldawn.Protos {
       if (color_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Color);
       }
-      if (Display != global::Spelldawn.Protos.DisplayStyle.Unspecified) {
+      if (Display != global::Spelldawn.Protos.FlexDisplayStyle.Unspecified) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Display);
       }
       if (flexBasis_ != null) {
@@ -4927,11 +5476,11 @@ namespace Spelldawn.Protos {
       if (FlexDirection != global::Spelldawn.Protos.FlexDirection.Unspecified) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) FlexDirection);
       }
-      if (FlexGrow != 0F) {
-        size += 1 + 4;
+      if (flexGrow_ != null) {
+        size += _single_flexGrow_codec.CalculateSizeWithTag(FlexGrow);
       }
-      if (FlexShrink != 0F) {
-        size += 1 + 4;
+      if (flexShrink_ != null) {
+        size += _single_flexShrink_codec.CalculateSizeWithTag(FlexShrink);
       }
       if (Wrap != global::Spelldawn.Protos.FlexWrap.Unspecified) {
         size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) Wrap);
@@ -4942,7 +5491,7 @@ namespace Spelldawn.Protos {
       if (height_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(Height);
       }
-      if (JustifyContent != global::Spelldawn.Protos.Justify.Unspecified) {
+      if (JustifyContent != global::Spelldawn.Protos.FlexJustify.Unspecified) {
         size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) JustifyContent);
       }
       if (letterSpacing_ != null) {
@@ -4963,10 +5512,10 @@ namespace Spelldawn.Protos {
       if (minWidth_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(MinWidth);
       }
-      if (Opacity != 0F) {
-        size += 2 + 4;
+      if (opacity_ != null) {
+        size += _single_opacity_codec.CalculateSizeWithTag(Opacity);
       }
-      if (Overflow != global::Spelldawn.Protos.Overflow.Unspecified) {
+      if (Overflow != global::Spelldawn.Protos.FlexOverflow.Unspecified) {
         size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) Overflow);
       }
       if (padding_ != null) {
@@ -4990,26 +5539,18 @@ namespace Spelldawn.Protos {
       if (transformOrigin_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(TransformOrigin);
       }
-      if (transitionDelay_ != null) {
-        size += 2 + pb::CodedOutputStream.ComputeMessageSize(TransitionDelay);
-      }
-      if (transitionDuration_ != null) {
-        size += 2 + pb::CodedOutputStream.ComputeMessageSize(TransitionDuration);
-      }
-      if (TransitionProperty.Length != 0) {
-        size += 2 + pb::CodedOutputStream.ComputeStringSize(TransitionProperty);
-      }
-      if (TransitionEasingMode != global::Spelldawn.Protos.EasingMode.Unspecified) {
-        size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) TransitionEasingMode);
-      }
+      size += transitionDelays_.CalculateSize(_repeated_transitionDelays_codec);
+      size += transitionDurations_.CalculateSize(_repeated_transitionDurations_codec);
+      size += transitionProperties_.CalculateSize(_repeated_transitionProperties_codec);
+      size += transitionEasingModes_.CalculateSize(_repeated_transitionEasingModes_codec);
       if (translate_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(Translate);
       }
       if (backgroundImageTintColor_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(BackgroundImageTintColor);
       }
-      if (ImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
-        size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) ImageScaleMode);
+      if (BackgroundImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
+        size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) BackgroundImageScaleMode);
       }
       if (font_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(Font);
@@ -5032,13 +5573,13 @@ namespace Spelldawn.Protos {
       if (textOutlineColor_ != null) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(TextOutlineColor);
       }
-      if (TextOutlineWidth != 0F) {
-        size += 2 + 4;
+      if (textOutlineWidth_ != null) {
+        size += _single_textOutlineWidth_codec.CalculateSizeWithTag(TextOutlineWidth);
       }
       if (TextOverflowPosition != global::Spelldawn.Protos.TextOverflowPosition.Unspecified) {
         size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) TextOverflowPosition);
       }
-      if (Visibility != global::Spelldawn.Protos.Visibility.Unspecified) {
+      if (Visibility != global::Spelldawn.Protos.FlexVisibility.Unspecified) {
         size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) Visibility);
       }
       if (WhiteSpace != global::Spelldawn.Protos.WhiteSpace.Unspecified) {
@@ -5057,22 +5598,22 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Style other) {
+    public void MergeFrom(FlexStyle other) {
       if (other == null) {
         return;
       }
-      if (other.AlignContent != global::Spelldawn.Protos.Align.Unspecified) {
+      if (other.AlignContent != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         AlignContent = other.AlignContent;
       }
-      if (other.AlignItems != global::Spelldawn.Protos.Align.Unspecified) {
+      if (other.AlignItems != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         AlignItems = other.AlignItems;
       }
-      if (other.AlignSelf != global::Spelldawn.Protos.Align.Unspecified) {
+      if (other.AlignSelf != global::Spelldawn.Protos.FlexAlign.Unspecified) {
         AlignSelf = other.AlignSelf;
       }
       if (other.backgroundColor_ != null) {
         if (backgroundColor_ == null) {
-          BackgroundColor = new global::Spelldawn.Protos.Color();
+          BackgroundColor = new global::Spelldawn.Protos.FlexColor();
         }
         BackgroundColor.MergeFrom(other.BackgroundColor);
       }
@@ -5096,103 +5637,109 @@ namespace Spelldawn.Protos {
       }
       if (other.borderWidth_ != null) {
         if (borderWidth_ == null) {
-          BorderWidth = new global::Spelldawn.Protos.LengthGroup();
+          BorderWidth = new global::Spelldawn.Protos.BorderWidth();
         }
         BorderWidth.MergeFrom(other.BorderWidth);
       }
       if (other.inset_ != null) {
         if (inset_ == null) {
-          Inset = new global::Spelldawn.Protos.LengthGroup();
+          Inset = new global::Spelldawn.Protos.DimensionGroup();
         }
         Inset.MergeFrom(other.Inset);
       }
       if (other.color_ != null) {
         if (color_ == null) {
-          Color = new global::Spelldawn.Protos.Color();
+          Color = new global::Spelldawn.Protos.FlexColor();
         }
         Color.MergeFrom(other.Color);
       }
-      if (other.Display != global::Spelldawn.Protos.DisplayStyle.Unspecified) {
+      if (other.Display != global::Spelldawn.Protos.FlexDisplayStyle.Unspecified) {
         Display = other.Display;
       }
       if (other.flexBasis_ != null) {
         if (flexBasis_ == null) {
-          FlexBasis = new global::Spelldawn.Protos.Length();
+          FlexBasis = new global::Spelldawn.Protos.Dimension();
         }
         FlexBasis.MergeFrom(other.FlexBasis);
       }
       if (other.FlexDirection != global::Spelldawn.Protos.FlexDirection.Unspecified) {
         FlexDirection = other.FlexDirection;
       }
-      if (other.FlexGrow != 0F) {
-        FlexGrow = other.FlexGrow;
+      if (other.flexGrow_ != null) {
+        if (flexGrow_ == null || other.FlexGrow != 0F) {
+          FlexGrow = other.FlexGrow;
+        }
       }
-      if (other.FlexShrink != 0F) {
-        FlexShrink = other.FlexShrink;
+      if (other.flexShrink_ != null) {
+        if (flexShrink_ == null || other.FlexShrink != 0F) {
+          FlexShrink = other.FlexShrink;
+        }
       }
       if (other.Wrap != global::Spelldawn.Protos.FlexWrap.Unspecified) {
         Wrap = other.Wrap;
       }
       if (other.fontSize_ != null) {
         if (fontSize_ == null) {
-          FontSize = new global::Spelldawn.Protos.Length();
+          FontSize = new global::Spelldawn.Protos.Dimension();
         }
         FontSize.MergeFrom(other.FontSize);
       }
       if (other.height_ != null) {
         if (height_ == null) {
-          Height = new global::Spelldawn.Protos.Length();
+          Height = new global::Spelldawn.Protos.Dimension();
         }
         Height.MergeFrom(other.Height);
       }
-      if (other.JustifyContent != global::Spelldawn.Protos.Justify.Unspecified) {
+      if (other.JustifyContent != global::Spelldawn.Protos.FlexJustify.Unspecified) {
         JustifyContent = other.JustifyContent;
       }
       if (other.letterSpacing_ != null) {
         if (letterSpacing_ == null) {
-          LetterSpacing = new global::Spelldawn.Protos.Length();
+          LetterSpacing = new global::Spelldawn.Protos.Dimension();
         }
         LetterSpacing.MergeFrom(other.LetterSpacing);
       }
       if (other.margin_ != null) {
         if (margin_ == null) {
-          Margin = new global::Spelldawn.Protos.LengthGroup();
+          Margin = new global::Spelldawn.Protos.DimensionGroup();
         }
         Margin.MergeFrom(other.Margin);
       }
       if (other.maxHeight_ != null) {
         if (maxHeight_ == null) {
-          MaxHeight = new global::Spelldawn.Protos.Length();
+          MaxHeight = new global::Spelldawn.Protos.Dimension();
         }
         MaxHeight.MergeFrom(other.MaxHeight);
       }
       if (other.maxWidth_ != null) {
         if (maxWidth_ == null) {
-          MaxWidth = new global::Spelldawn.Protos.Length();
+          MaxWidth = new global::Spelldawn.Protos.Dimension();
         }
         MaxWidth.MergeFrom(other.MaxWidth);
       }
       if (other.minHeight_ != null) {
         if (minHeight_ == null) {
-          MinHeight = new global::Spelldawn.Protos.Length();
+          MinHeight = new global::Spelldawn.Protos.Dimension();
         }
         MinHeight.MergeFrom(other.MinHeight);
       }
       if (other.minWidth_ != null) {
         if (minWidth_ == null) {
-          MinWidth = new global::Spelldawn.Protos.Length();
+          MinWidth = new global::Spelldawn.Protos.Dimension();
         }
         MinWidth.MergeFrom(other.MinWidth);
       }
-      if (other.Opacity != 0F) {
-        Opacity = other.Opacity;
+      if (other.opacity_ != null) {
+        if (opacity_ == null || other.Opacity != 0F) {
+          Opacity = other.Opacity;
+        }
       }
-      if (other.Overflow != global::Spelldawn.Protos.Overflow.Unspecified) {
+      if (other.Overflow != global::Spelldawn.Protos.FlexOverflow.Unspecified) {
         Overflow = other.Overflow;
       }
       if (other.padding_ != null) {
         if (padding_ == null) {
-          Padding = new global::Spelldawn.Protos.LengthGroup();
+          Padding = new global::Spelldawn.Protos.DimensionGroup();
         }
         Padding.MergeFrom(other.Padding);
       }
@@ -5201,13 +5748,13 @@ namespace Spelldawn.Protos {
       }
       if (other.rotate_ != null) {
         if (rotate_ == null) {
-          Rotate = new global::Spelldawn.Protos.Rotate();
+          Rotate = new global::Spelldawn.Protos.FlexRotate();
         }
         Rotate.MergeFrom(other.Rotate);
       }
       if (other.scale_ != null) {
         if (scale_ == null) {
-          Scale = new global::Spelldawn.Protos.Scale();
+          Scale = new global::Spelldawn.Protos.FlexScale();
         }
         Scale.MergeFrom(other.Scale);
       }
@@ -5222,42 +5769,28 @@ namespace Spelldawn.Protos {
       }
       if (other.transformOrigin_ != null) {
         if (transformOrigin_ == null) {
-          TransformOrigin = new global::Spelldawn.Protos.Translate();
+          TransformOrigin = new global::Spelldawn.Protos.FlexTranslate();
         }
         TransformOrigin.MergeFrom(other.TransformOrigin);
       }
-      if (other.transitionDelay_ != null) {
-        if (transitionDelay_ == null) {
-          TransitionDelay = new global::Spelldawn.Protos.TimeValue();
-        }
-        TransitionDelay.MergeFrom(other.TransitionDelay);
-      }
-      if (other.transitionDuration_ != null) {
-        if (transitionDuration_ == null) {
-          TransitionDuration = new global::Spelldawn.Protos.TimeValue();
-        }
-        TransitionDuration.MergeFrom(other.TransitionDuration);
-      }
-      if (other.TransitionProperty.Length != 0) {
-        TransitionProperty = other.TransitionProperty;
-      }
-      if (other.TransitionEasingMode != global::Spelldawn.Protos.EasingMode.Unspecified) {
-        TransitionEasingMode = other.TransitionEasingMode;
-      }
+      transitionDelays_.Add(other.transitionDelays_);
+      transitionDurations_.Add(other.transitionDurations_);
+      transitionProperties_.Add(other.transitionProperties_);
+      transitionEasingModes_.Add(other.transitionEasingModes_);
       if (other.translate_ != null) {
         if (translate_ == null) {
-          Translate = new global::Spelldawn.Protos.Translate();
+          Translate = new global::Spelldawn.Protos.FlexTranslate();
         }
         Translate.MergeFrom(other.Translate);
       }
       if (other.backgroundImageTintColor_ != null) {
         if (backgroundImageTintColor_ == null) {
-          BackgroundImageTintColor = new global::Spelldawn.Protos.Color();
+          BackgroundImageTintColor = new global::Spelldawn.Protos.FlexColor();
         }
         BackgroundImageTintColor.MergeFrom(other.BackgroundImageTintColor);
       }
-      if (other.ImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
-        ImageScaleMode = other.ImageScaleMode;
+      if (other.BackgroundImageScaleMode != global::Spelldawn.Protos.ImageScaleMode.Unspecified) {
+        BackgroundImageScaleMode = other.BackgroundImageScaleMode;
       }
       if (other.font_ != null) {
         if (font_ == null) {
@@ -5273,13 +5806,13 @@ namespace Spelldawn.Protos {
       }
       if (other.paragraphSpacing_ != null) {
         if (paragraphSpacing_ == null) {
-          ParagraphSpacing = new global::Spelldawn.Protos.Length();
+          ParagraphSpacing = new global::Spelldawn.Protos.Dimension();
         }
         ParagraphSpacing.MergeFrom(other.ParagraphSpacing);
       }
       if (other.imageSlice_ != null) {
         if (imageSlice_ == null) {
-          ImageSlice = new global::Spelldawn.Protos.LengthGroup();
+          ImageSlice = new global::Spelldawn.Protos.ImageSlice();
         }
         ImageSlice.MergeFrom(other.ImageSlice);
       }
@@ -5288,17 +5821,19 @@ namespace Spelldawn.Protos {
       }
       if (other.textOutlineColor_ != null) {
         if (textOutlineColor_ == null) {
-          TextOutlineColor = new global::Spelldawn.Protos.Color();
+          TextOutlineColor = new global::Spelldawn.Protos.FlexColor();
         }
         TextOutlineColor.MergeFrom(other.TextOutlineColor);
       }
-      if (other.TextOutlineWidth != 0F) {
-        TextOutlineWidth = other.TextOutlineWidth;
+      if (other.textOutlineWidth_ != null) {
+        if (textOutlineWidth_ == null || other.TextOutlineWidth != 0F) {
+          TextOutlineWidth = other.TextOutlineWidth;
+        }
       }
       if (other.TextOverflowPosition != global::Spelldawn.Protos.TextOverflowPosition.Unspecified) {
         TextOverflowPosition = other.TextOverflowPosition;
       }
-      if (other.Visibility != global::Spelldawn.Protos.Visibility.Unspecified) {
+      if (other.Visibility != global::Spelldawn.Protos.FlexVisibility.Unspecified) {
         Visibility = other.Visibility;
       }
       if (other.WhiteSpace != global::Spelldawn.Protos.WhiteSpace.Unspecified) {
@@ -5306,13 +5841,13 @@ namespace Spelldawn.Protos {
       }
       if (other.width_ != null) {
         if (width_ == null) {
-          Width = new global::Spelldawn.Protos.Length();
+          Width = new global::Spelldawn.Protos.Dimension();
         }
         Width.MergeFrom(other.Width);
       }
       if (other.wordSpacing_ != null) {
         if (wordSpacing_ == null) {
-          WordSpacing = new global::Spelldawn.Protos.Length();
+          WordSpacing = new global::Spelldawn.Protos.Dimension();
         }
         WordSpacing.MergeFrom(other.WordSpacing);
       }
@@ -5331,20 +5866,20 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            AlignContent = (global::Spelldawn.Protos.Align) input.ReadEnum();
+            AlignContent = (global::Spelldawn.Protos.FlexAlign) input.ReadEnum();
             break;
           }
           case 16: {
-            AlignItems = (global::Spelldawn.Protos.Align) input.ReadEnum();
+            AlignItems = (global::Spelldawn.Protos.FlexAlign) input.ReadEnum();
             break;
           }
           case 24: {
-            AlignSelf = (global::Spelldawn.Protos.Align) input.ReadEnum();
+            AlignSelf = (global::Spelldawn.Protos.FlexAlign) input.ReadEnum();
             break;
           }
           case 34: {
             if (backgroundColor_ == null) {
-              BackgroundColor = new global::Spelldawn.Protos.Color();
+              BackgroundColor = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(BackgroundColor);
             break;
@@ -5372,32 +5907,32 @@ namespace Spelldawn.Protos {
           }
           case 66: {
             if (borderWidth_ == null) {
-              BorderWidth = new global::Spelldawn.Protos.LengthGroup();
+              BorderWidth = new global::Spelldawn.Protos.BorderWidth();
             }
             input.ReadMessage(BorderWidth);
             break;
           }
           case 74: {
             if (inset_ == null) {
-              Inset = new global::Spelldawn.Protos.LengthGroup();
+              Inset = new global::Spelldawn.Protos.DimensionGroup();
             }
             input.ReadMessage(Inset);
             break;
           }
           case 82: {
             if (color_ == null) {
-              Color = new global::Spelldawn.Protos.Color();
+              Color = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Color);
             break;
           }
           case 88: {
-            Display = (global::Spelldawn.Protos.DisplayStyle) input.ReadEnum();
+            Display = (global::Spelldawn.Protos.FlexDisplayStyle) input.ReadEnum();
             break;
           }
           case 98: {
             if (flexBasis_ == null) {
-              FlexBasis = new global::Spelldawn.Protos.Length();
+              FlexBasis = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(FlexBasis);
             break;
@@ -5406,12 +5941,18 @@ namespace Spelldawn.Protos {
             FlexDirection = (global::Spelldawn.Protos.FlexDirection) input.ReadEnum();
             break;
           }
-          case 117: {
-            FlexGrow = input.ReadFloat();
+          case 114: {
+            float? value = _single_flexGrow_codec.Read(input);
+            if (flexGrow_ == null || value != 0F) {
+              FlexGrow = value;
+            }
             break;
           }
-          case 125: {
-            FlexShrink = input.ReadFloat();
+          case 122: {
+            float? value = _single_flexShrink_codec.Read(input);
+            if (flexShrink_ == null || value != 0F) {
+              FlexShrink = value;
+            }
             break;
           }
           case 128: {
@@ -5420,75 +5961,78 @@ namespace Spelldawn.Protos {
           }
           case 138: {
             if (fontSize_ == null) {
-              FontSize = new global::Spelldawn.Protos.Length();
+              FontSize = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(FontSize);
             break;
           }
           case 146: {
             if (height_ == null) {
-              Height = new global::Spelldawn.Protos.Length();
+              Height = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Height);
             break;
           }
           case 152: {
-            JustifyContent = (global::Spelldawn.Protos.Justify) input.ReadEnum();
+            JustifyContent = (global::Spelldawn.Protos.FlexJustify) input.ReadEnum();
             break;
           }
           case 162: {
             if (letterSpacing_ == null) {
-              LetterSpacing = new global::Spelldawn.Protos.Length();
+              LetterSpacing = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(LetterSpacing);
             break;
           }
           case 170: {
             if (margin_ == null) {
-              Margin = new global::Spelldawn.Protos.LengthGroup();
+              Margin = new global::Spelldawn.Protos.DimensionGroup();
             }
             input.ReadMessage(Margin);
             break;
           }
           case 178: {
             if (maxHeight_ == null) {
-              MaxHeight = new global::Spelldawn.Protos.Length();
+              MaxHeight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MaxHeight);
             break;
           }
           case 186: {
             if (maxWidth_ == null) {
-              MaxWidth = new global::Spelldawn.Protos.Length();
+              MaxWidth = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MaxWidth);
             break;
           }
           case 194: {
             if (minHeight_ == null) {
-              MinHeight = new global::Spelldawn.Protos.Length();
+              MinHeight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MinHeight);
             break;
           }
           case 202: {
             if (minWidth_ == null) {
-              MinWidth = new global::Spelldawn.Protos.Length();
+              MinWidth = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MinWidth);
             break;
           }
-          case 213: {
-            Opacity = input.ReadFloat();
+          case 210: {
+            float? value = _single_opacity_codec.Read(input);
+            if (opacity_ == null || value != 0F) {
+              Opacity = value;
+            }
             break;
           }
           case 216: {
-            Overflow = (global::Spelldawn.Protos.Overflow) input.ReadEnum();
+            Overflow = (global::Spelldawn.Protos.FlexOverflow) input.ReadEnum();
             break;
           }
           case 226: {
             if (padding_ == null) {
-              Padding = new global::Spelldawn.Protos.LengthGroup();
+              Padding = new global::Spelldawn.Protos.DimensionGroup();
             }
             input.ReadMessage(Padding);
             break;
@@ -5499,14 +6043,14 @@ namespace Spelldawn.Protos {
           }
           case 242: {
             if (rotate_ == null) {
-              Rotate = new global::Spelldawn.Protos.Rotate();
+              Rotate = new global::Spelldawn.Protos.FlexRotate();
             }
             input.ReadMessage(Rotate);
             break;
           }
           case 250: {
             if (scale_ == null) {
-              Scale = new global::Spelldawn.Protos.Scale();
+              Scale = new global::Spelldawn.Protos.FlexScale();
             }
             input.ReadMessage(Scale);
             break;
@@ -5524,49 +6068,44 @@ namespace Spelldawn.Protos {
           }
           case 274: {
             if (transformOrigin_ == null) {
-              TransformOrigin = new global::Spelldawn.Protos.Translate();
+              TransformOrigin = new global::Spelldawn.Protos.FlexTranslate();
             }
             input.ReadMessage(TransformOrigin);
             break;
           }
           case 282: {
-            if (transitionDelay_ == null) {
-              TransitionDelay = new global::Spelldawn.Protos.TimeValue();
-            }
-            input.ReadMessage(TransitionDelay);
+            transitionDelays_.AddEntriesFrom(input, _repeated_transitionDelays_codec);
             break;
           }
           case 290: {
-            if (transitionDuration_ == null) {
-              TransitionDuration = new global::Spelldawn.Protos.TimeValue();
-            }
-            input.ReadMessage(TransitionDuration);
+            transitionDurations_.AddEntriesFrom(input, _repeated_transitionDurations_codec);
             break;
           }
           case 298: {
-            TransitionProperty = input.ReadString();
+            transitionProperties_.AddEntriesFrom(input, _repeated_transitionProperties_codec);
             break;
           }
+          case 306:
           case 304: {
-            TransitionEasingMode = (global::Spelldawn.Protos.EasingMode) input.ReadEnum();
+            transitionEasingModes_.AddEntriesFrom(input, _repeated_transitionEasingModes_codec);
             break;
           }
           case 314: {
             if (translate_ == null) {
-              Translate = new global::Spelldawn.Protos.Translate();
+              Translate = new global::Spelldawn.Protos.FlexTranslate();
             }
             input.ReadMessage(Translate);
             break;
           }
           case 322: {
             if (backgroundImageTintColor_ == null) {
-              BackgroundImageTintColor = new global::Spelldawn.Protos.Color();
+              BackgroundImageTintColor = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(BackgroundImageTintColor);
             break;
           }
           case 328: {
-            ImageScaleMode = (global::Spelldawn.Protos.ImageScaleMode) input.ReadEnum();
+            BackgroundImageScaleMode = (global::Spelldawn.Protos.ImageScaleMode) input.ReadEnum();
             break;
           }
           case 338: {
@@ -5586,14 +6125,14 @@ namespace Spelldawn.Protos {
           }
           case 362: {
             if (paragraphSpacing_ == null) {
-              ParagraphSpacing = new global::Spelldawn.Protos.Length();
+              ParagraphSpacing = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(ParagraphSpacing);
             break;
           }
           case 370: {
             if (imageSlice_ == null) {
-              ImageSlice = new global::Spelldawn.Protos.LengthGroup();
+              ImageSlice = new global::Spelldawn.Protos.ImageSlice();
             }
             input.ReadMessage(ImageSlice);
             break;
@@ -5604,13 +6143,16 @@ namespace Spelldawn.Protos {
           }
           case 386: {
             if (textOutlineColor_ == null) {
-              TextOutlineColor = new global::Spelldawn.Protos.Color();
+              TextOutlineColor = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(TextOutlineColor);
             break;
           }
-          case 397: {
-            TextOutlineWidth = input.ReadFloat();
+          case 394: {
+            float? value = _single_textOutlineWidth_codec.Read(input);
+            if (textOutlineWidth_ == null || value != 0F) {
+              TextOutlineWidth = value;
+            }
             break;
           }
           case 400: {
@@ -5618,7 +6160,7 @@ namespace Spelldawn.Protos {
             break;
           }
           case 408: {
-            Visibility = (global::Spelldawn.Protos.Visibility) input.ReadEnum();
+            Visibility = (global::Spelldawn.Protos.FlexVisibility) input.ReadEnum();
             break;
           }
           case 416: {
@@ -5627,14 +6169,14 @@ namespace Spelldawn.Protos {
           }
           case 426: {
             if (width_ == null) {
-              Width = new global::Spelldawn.Protos.Length();
+              Width = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Width);
             break;
           }
           case 434: {
             if (wordSpacing_ == null) {
-              WordSpacing = new global::Spelldawn.Protos.Length();
+              WordSpacing = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(WordSpacing);
             break;
@@ -5654,20 +6196,20 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            AlignContent = (global::Spelldawn.Protos.Align) input.ReadEnum();
+            AlignContent = (global::Spelldawn.Protos.FlexAlign) input.ReadEnum();
             break;
           }
           case 16: {
-            AlignItems = (global::Spelldawn.Protos.Align) input.ReadEnum();
+            AlignItems = (global::Spelldawn.Protos.FlexAlign) input.ReadEnum();
             break;
           }
           case 24: {
-            AlignSelf = (global::Spelldawn.Protos.Align) input.ReadEnum();
+            AlignSelf = (global::Spelldawn.Protos.FlexAlign) input.ReadEnum();
             break;
           }
           case 34: {
             if (backgroundColor_ == null) {
-              BackgroundColor = new global::Spelldawn.Protos.Color();
+              BackgroundColor = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(BackgroundColor);
             break;
@@ -5695,32 +6237,32 @@ namespace Spelldawn.Protos {
           }
           case 66: {
             if (borderWidth_ == null) {
-              BorderWidth = new global::Spelldawn.Protos.LengthGroup();
+              BorderWidth = new global::Spelldawn.Protos.BorderWidth();
             }
             input.ReadMessage(BorderWidth);
             break;
           }
           case 74: {
             if (inset_ == null) {
-              Inset = new global::Spelldawn.Protos.LengthGroup();
+              Inset = new global::Spelldawn.Protos.DimensionGroup();
             }
             input.ReadMessage(Inset);
             break;
           }
           case 82: {
             if (color_ == null) {
-              Color = new global::Spelldawn.Protos.Color();
+              Color = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(Color);
             break;
           }
           case 88: {
-            Display = (global::Spelldawn.Protos.DisplayStyle) input.ReadEnum();
+            Display = (global::Spelldawn.Protos.FlexDisplayStyle) input.ReadEnum();
             break;
           }
           case 98: {
             if (flexBasis_ == null) {
-              FlexBasis = new global::Spelldawn.Protos.Length();
+              FlexBasis = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(FlexBasis);
             break;
@@ -5729,12 +6271,18 @@ namespace Spelldawn.Protos {
             FlexDirection = (global::Spelldawn.Protos.FlexDirection) input.ReadEnum();
             break;
           }
-          case 117: {
-            FlexGrow = input.ReadFloat();
+          case 114: {
+            float? value = _single_flexGrow_codec.Read(ref input);
+            if (flexGrow_ == null || value != 0F) {
+              FlexGrow = value;
+            }
             break;
           }
-          case 125: {
-            FlexShrink = input.ReadFloat();
+          case 122: {
+            float? value = _single_flexShrink_codec.Read(ref input);
+            if (flexShrink_ == null || value != 0F) {
+              FlexShrink = value;
+            }
             break;
           }
           case 128: {
@@ -5743,75 +6291,78 @@ namespace Spelldawn.Protos {
           }
           case 138: {
             if (fontSize_ == null) {
-              FontSize = new global::Spelldawn.Protos.Length();
+              FontSize = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(FontSize);
             break;
           }
           case 146: {
             if (height_ == null) {
-              Height = new global::Spelldawn.Protos.Length();
+              Height = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Height);
             break;
           }
           case 152: {
-            JustifyContent = (global::Spelldawn.Protos.Justify) input.ReadEnum();
+            JustifyContent = (global::Spelldawn.Protos.FlexJustify) input.ReadEnum();
             break;
           }
           case 162: {
             if (letterSpacing_ == null) {
-              LetterSpacing = new global::Spelldawn.Protos.Length();
+              LetterSpacing = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(LetterSpacing);
             break;
           }
           case 170: {
             if (margin_ == null) {
-              Margin = new global::Spelldawn.Protos.LengthGroup();
+              Margin = new global::Spelldawn.Protos.DimensionGroup();
             }
             input.ReadMessage(Margin);
             break;
           }
           case 178: {
             if (maxHeight_ == null) {
-              MaxHeight = new global::Spelldawn.Protos.Length();
+              MaxHeight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MaxHeight);
             break;
           }
           case 186: {
             if (maxWidth_ == null) {
-              MaxWidth = new global::Spelldawn.Protos.Length();
+              MaxWidth = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MaxWidth);
             break;
           }
           case 194: {
             if (minHeight_ == null) {
-              MinHeight = new global::Spelldawn.Protos.Length();
+              MinHeight = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MinHeight);
             break;
           }
           case 202: {
             if (minWidth_ == null) {
-              MinWidth = new global::Spelldawn.Protos.Length();
+              MinWidth = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(MinWidth);
             break;
           }
-          case 213: {
-            Opacity = input.ReadFloat();
+          case 210: {
+            float? value = _single_opacity_codec.Read(ref input);
+            if (opacity_ == null || value != 0F) {
+              Opacity = value;
+            }
             break;
           }
           case 216: {
-            Overflow = (global::Spelldawn.Protos.Overflow) input.ReadEnum();
+            Overflow = (global::Spelldawn.Protos.FlexOverflow) input.ReadEnum();
             break;
           }
           case 226: {
             if (padding_ == null) {
-              Padding = new global::Spelldawn.Protos.LengthGroup();
+              Padding = new global::Spelldawn.Protos.DimensionGroup();
             }
             input.ReadMessage(Padding);
             break;
@@ -5822,14 +6373,14 @@ namespace Spelldawn.Protos {
           }
           case 242: {
             if (rotate_ == null) {
-              Rotate = new global::Spelldawn.Protos.Rotate();
+              Rotate = new global::Spelldawn.Protos.FlexRotate();
             }
             input.ReadMessage(Rotate);
             break;
           }
           case 250: {
             if (scale_ == null) {
-              Scale = new global::Spelldawn.Protos.Scale();
+              Scale = new global::Spelldawn.Protos.FlexScale();
             }
             input.ReadMessage(Scale);
             break;
@@ -5847,49 +6398,44 @@ namespace Spelldawn.Protos {
           }
           case 274: {
             if (transformOrigin_ == null) {
-              TransformOrigin = new global::Spelldawn.Protos.Translate();
+              TransformOrigin = new global::Spelldawn.Protos.FlexTranslate();
             }
             input.ReadMessage(TransformOrigin);
             break;
           }
           case 282: {
-            if (transitionDelay_ == null) {
-              TransitionDelay = new global::Spelldawn.Protos.TimeValue();
-            }
-            input.ReadMessage(TransitionDelay);
+            transitionDelays_.AddEntriesFrom(ref input, _repeated_transitionDelays_codec);
             break;
           }
           case 290: {
-            if (transitionDuration_ == null) {
-              TransitionDuration = new global::Spelldawn.Protos.TimeValue();
-            }
-            input.ReadMessage(TransitionDuration);
+            transitionDurations_.AddEntriesFrom(ref input, _repeated_transitionDurations_codec);
             break;
           }
           case 298: {
-            TransitionProperty = input.ReadString();
+            transitionProperties_.AddEntriesFrom(ref input, _repeated_transitionProperties_codec);
             break;
           }
+          case 306:
           case 304: {
-            TransitionEasingMode = (global::Spelldawn.Protos.EasingMode) input.ReadEnum();
+            transitionEasingModes_.AddEntriesFrom(ref input, _repeated_transitionEasingModes_codec);
             break;
           }
           case 314: {
             if (translate_ == null) {
-              Translate = new global::Spelldawn.Protos.Translate();
+              Translate = new global::Spelldawn.Protos.FlexTranslate();
             }
             input.ReadMessage(Translate);
             break;
           }
           case 322: {
             if (backgroundImageTintColor_ == null) {
-              BackgroundImageTintColor = new global::Spelldawn.Protos.Color();
+              BackgroundImageTintColor = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(BackgroundImageTintColor);
             break;
           }
           case 328: {
-            ImageScaleMode = (global::Spelldawn.Protos.ImageScaleMode) input.ReadEnum();
+            BackgroundImageScaleMode = (global::Spelldawn.Protos.ImageScaleMode) input.ReadEnum();
             break;
           }
           case 338: {
@@ -5909,14 +6455,14 @@ namespace Spelldawn.Protos {
           }
           case 362: {
             if (paragraphSpacing_ == null) {
-              ParagraphSpacing = new global::Spelldawn.Protos.Length();
+              ParagraphSpacing = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(ParagraphSpacing);
             break;
           }
           case 370: {
             if (imageSlice_ == null) {
-              ImageSlice = new global::Spelldawn.Protos.LengthGroup();
+              ImageSlice = new global::Spelldawn.Protos.ImageSlice();
             }
             input.ReadMessage(ImageSlice);
             break;
@@ -5927,13 +6473,16 @@ namespace Spelldawn.Protos {
           }
           case 386: {
             if (textOutlineColor_ == null) {
-              TextOutlineColor = new global::Spelldawn.Protos.Color();
+              TextOutlineColor = new global::Spelldawn.Protos.FlexColor();
             }
             input.ReadMessage(TextOutlineColor);
             break;
           }
-          case 397: {
-            TextOutlineWidth = input.ReadFloat();
+          case 394: {
+            float? value = _single_textOutlineWidth_codec.Read(ref input);
+            if (textOutlineWidth_ == null || value != 0F) {
+              TextOutlineWidth = value;
+            }
             break;
           }
           case 400: {
@@ -5941,7 +6490,7 @@ namespace Spelldawn.Protos {
             break;
           }
           case 408: {
-            Visibility = (global::Spelldawn.Protos.Visibility) input.ReadEnum();
+            Visibility = (global::Spelldawn.Protos.FlexVisibility) input.ReadEnum();
             break;
           }
           case 416: {
@@ -5950,14 +6499,14 @@ namespace Spelldawn.Protos {
           }
           case 426: {
             if (width_ == null) {
-              Width = new global::Spelldawn.Protos.Length();
+              Width = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(Width);
             break;
           }
           case 434: {
             if (wordSpacing_ == null) {
-              WordSpacing = new global::Spelldawn.Protos.Length();
+              WordSpacing = new global::Spelldawn.Protos.Dimension();
             }
             input.ReadMessage(WordSpacing);
             break;
@@ -5981,7 +6530,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[15]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[17]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6010,9 +6559,9 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "style" field.</summary>
     public const int StyleFieldNumber = 1;
-    private global::Spelldawn.Protos.Style style_;
+    private global::Spelldawn.Protos.FlexStyle style_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Style Style {
+    public global::Spelldawn.Protos.FlexStyle Style {
       get { return style_; }
       set {
         style_ = value;
@@ -6122,7 +6671,7 @@ namespace Spelldawn.Protos {
       }
       if (other.style_ != null) {
         if (style_ == null) {
-          Style = new global::Spelldawn.Protos.Style();
+          Style = new global::Spelldawn.Protos.FlexStyle();
         }
         Style.MergeFrom(other.Style);
       }
@@ -6145,7 +6694,7 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (style_ == null) {
-              Style = new global::Spelldawn.Protos.Style();
+              Style = new global::Spelldawn.Protos.FlexStyle();
             }
             input.ReadMessage(Style);
             break;
@@ -6170,7 +6719,7 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (style_ == null) {
-              Style = new global::Spelldawn.Protos.Style();
+              Style = new global::Spelldawn.Protos.FlexStyle();
             }
             input.ReadMessage(Style);
             break;
@@ -6198,7 +6747,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[16]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[18]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6215,6 +6764,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public Flexbox(Flexbox other) : this() {
+      name_ = other.name_;
       style_ = other.style_ != null ? other.style_.Clone() : null;
       children_ = other.children_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -6225,11 +6775,22 @@ namespace Spelldawn.Protos {
       return new Flexbox(this);
     }
 
-    /// <summary>Field number for the "style" field.</summary>
-    public const int StyleFieldNumber = 1;
-    private global::Spelldawn.Protos.Style style_;
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.Style Style {
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "style" field.</summary>
+    public const int StyleFieldNumber = 2;
+    private global::Spelldawn.Protos.FlexStyle style_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.FlexStyle Style {
       get { return style_; }
       set {
         style_ = value;
@@ -6237,9 +6798,9 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "children" field.</summary>
-    public const int ChildrenFieldNumber = 2;
+    public const int ChildrenFieldNumber = 3;
     private static readonly pb::FieldCodec<global::Spelldawn.Protos.Node> _repeated_children_codec
-        = pb::FieldCodec.ForMessage(18, global::Spelldawn.Protos.Node.Parser);
+        = pb::FieldCodec.ForMessage(26, global::Spelldawn.Protos.Node.Parser);
     private readonly pbc::RepeatedField<global::Spelldawn.Protos.Node> children_ = new pbc::RepeatedField<global::Spelldawn.Protos.Node>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public pbc::RepeatedField<global::Spelldawn.Protos.Node> Children {
@@ -6259,6 +6820,7 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Name != other.Name) return false;
       if (!object.Equals(Style, other.Style)) return false;
       if(!children_.Equals(other.children_)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -6267,6 +6829,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (style_ != null) hash ^= Style.GetHashCode();
       hash ^= children_.GetHashCode();
       if (_unknownFields != null) {
@@ -6285,8 +6848,12 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (style_ != null) {
+      if (Name.Length != 0) {
         output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (style_ != null) {
+        output.WriteRawTag(18);
         output.WriteMessage(Style);
       }
       children_.WriteTo(output, _repeated_children_codec);
@@ -6299,8 +6866,12 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (style_ != null) {
+      if (Name.Length != 0) {
         output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (style_ != null) {
+        output.WriteRawTag(18);
         output.WriteMessage(Style);
       }
       children_.WriteTo(ref output, _repeated_children_codec);
@@ -6313,6 +6884,9 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
       if (style_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Style);
       }
@@ -6328,9 +6902,12 @@ namespace Spelldawn.Protos {
       if (other == null) {
         return;
       }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
       if (other.style_ != null) {
         if (style_ == null) {
-          Style = new global::Spelldawn.Protos.Style();
+          Style = new global::Spelldawn.Protos.FlexStyle();
         }
         Style.MergeFrom(other.Style);
       }
@@ -6350,13 +6927,17 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
+            Name = input.ReadString();
+            break;
+          }
+          case 18: {
             if (style_ == null) {
-              Style = new global::Spelldawn.Protos.Style();
+              Style = new global::Spelldawn.Protos.FlexStyle();
             }
             input.ReadMessage(Style);
             break;
           }
-          case 18: {
+          case 26: {
             children_.AddEntriesFrom(input, _repeated_children_codec);
             break;
           }
@@ -6375,13 +6956,17 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
+            Name = input.ReadString();
+            break;
+          }
+          case 18: {
             if (style_ == null) {
-              Style = new global::Spelldawn.Protos.Style();
+              Style = new global::Spelldawn.Protos.FlexStyle();
             }
             input.ReadMessage(Style);
             break;
           }
-          case 18: {
+          case 26: {
             children_.AddEntriesFrom(ref input, _repeated_children_codec);
             break;
           }
@@ -6404,7 +6989,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[17]; }
+      get { return global::Spelldawn.Protos.NodeReflection.Descriptor.MessageTypes[19]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

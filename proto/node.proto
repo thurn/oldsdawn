@@ -17,26 +17,21 @@ syntax = "proto3";
 package sd;
 option csharp_namespace = "Spelldawn.Protos";
 
-message Color {
-    float red = 1;
-    float green = 2;
-    float blue = 3;
-    float alpha = 4;
+import "google/protobuf/wrappers.proto";
+
+enum FlexAlign {
+    FLEX_ALIGN_UNSPECIFIED = 0;
+    FLEX_ALIGN_AUTO = 1;
+    FLEX_ALIGN_FLEX_START = 2;
+    FLEX_ALIGN_CENTER = 3;
+    FLEX_ALIGN_FLEX_END = 4;
+    FLEX_ALIGN_STRETCH = 5;
 }
 
-enum Align {
-    ALIGN_UNSPECIFIED = 0;
-    ALIGN_AUTO = 1;
-    ALIGN_FLEX_START = 2;
-    ALIGN_CENTER = 3;
-    ALIGN_FLEX_END = 4;
-    ALIGN_STRETCH = 5;
-}
-
-enum DisplayStyle {
-    DISPLAY_STYLE_UNSPECIFIED = 0;
-    DISPLAY_STYLE_FLEX = 1;
-    DISPLAY_STYLE_NONE = 2;
+enum FlexDisplayStyle {
+    FLEX_DISPLAY_STYLE_UNSPECIFIED = 0;
+    FLEX_DISPLAY_STYLE_FLEX = 1;
+    FLEX_DISPLAY_STYLE_NONE = 2;
 }
 
 enum FlexDirection {
@@ -54,19 +49,19 @@ enum FlexWrap {
     FLEX_WRAP_WRAP_REVERSE = 3;
 }
 
-enum Justify {
-    JUSTIFY_UNSPECIFIED = 0;
-    JUSTIFY_FLEX_START = 1;
-    JUSTIFY_CENTER = 2;
-    JUSTIFY_FLEX_END = 3;
-    JUSTIFY_SPACE_BETWEEN = 4;
-    JUSTIFY_SPACE_AROUND = 5;
+enum FlexJustify {
+    FLEX_JUSTIFY_UNSPECIFIED = 0;
+    FLEX_JUSTIFY_FLEX_START = 1;
+    FLEX_JUSTIFY_CENTER = 2;
+    FLEX_JUSTIFY_FLEX_END = 3;
+    FLEX_JUSTIFY_SPACE_BETWEEN = 4;
+    FLEX_JUSTIFY_SPACE_AROUND = 5;
 }
 
-enum Overflow {
-    OVERFLOW_UNSPECIFIED = 0;
-    OVERFLOW_VISIBLE = 1;
-    OVERFLOW_HIDDEN = 2;
+enum FlexOverflow {
+    FLEX_OVERFLOW_UNSPECIFIED = 0;
+    FLEX_OVERFLOW_VISIBLE = 1;
+    FLEX_OVERFLOW_HIDDEN = 2;
 }
 
 enum FlexPosition {
@@ -149,16 +144,23 @@ enum TextOverflowPosition {
     TEXT_OVERFLOW_POSITION_MIDDLE = 3;
 }
 
-enum Visibility {
-    VISIBILITY_UNSPECIFIED = 0;
-    VISIBILITY_VISIBLE = 1;
-    VISIBILITY_HIDDEn = 2;
+enum FlexVisibility {
+    FLEX_VISIBILITY_UNSPECIFIED = 0;
+    FLEX_VISIBILITY_VISIBLE = 1;
+    FLEX_VISIBILITY_HIDDEN = 2;
 }
 
 enum WhiteSpace {
     WHITE_SPACE_UNSPECIFIED = 0;
     WHITE_SPACE_NORMAL = 1;
     WHITE_SPACE_NO_WRAP = 2;
+}
+
+message FlexColor {
+    float red = 1;
+    float green = 2;
+    float blue = 3;
+    float alpha = 4;
 }
 
 message SpriteAddress {
@@ -169,138 +171,153 @@ message FontAddress {
     string address = 1;
 }
 
-message Vector2 {
+message FlexVector2 {
     float x = 1;
     float y = 2;
 }
 
-message Vector3 {
+message FlexVector3 {
     float x = 1;
     float y = 2;
     float z = 3;
 }
 
-enum LengthUnit {
-    LENGTH_UNIT_UNSPECIFIED = 0;
-    LENGTH_UNIT_PIXEL = 1;
-    LENGTH_UNIT_PERCENTAGE = 2;
+enum DimensionUnit {
+    DIMENSION_UNIT_UNSPECIFIED = 0;
+    DIMENSION_UNIT_PIXEL = 1;
+    DIMENSION_UNIT_PERCENTAGE = 2;
 }
 
-message Length {
-    LengthUnit unit = 1;
+message Dimension {
+    DimensionUnit unit = 1;
     float value = 2;
 }
 
-message LengthGroup {
-    Length top = 1;
-    Length right = 2;
-    Length bottom = 3;
-    Length left = 4;
+message DimensionGroup {
+    Dimension top = 1;
+    Dimension right = 2;
+    Dimension bottom = 3;
+    Dimension left = 4;
+}
+
+message BorderWidth {
+    float top = 1;
+    float right = 2;
+    float bottom = 3;
+    float left = 4;
 }
 
 message BorderColor {
-    Color top = 1;
-    Color right = 2;
-    Color bottom = 3;
-    Color left = 4;
+    FlexColor top = 1;
+    FlexColor right = 2;
+    FlexColor bottom = 3;
+    FlexColor left = 4;
 }
 
 message BorderRadius {
-    Length top_left = 1;
-    Length top_right = 2;
-    Length bottom_right = 3;
-    Length bottom_left = 4;
+    Dimension top_left = 1;
+    Dimension top_right = 2;
+    Dimension bottom_right = 3;
+    Dimension bottom_left = 4;
 }
 
-message Rotate {
+message FlexRotate {
     float degrees = 1;
 }
 
-message Translate {
-    Length x = 1;
-    Length y = 2;
+message FlexTranslate {
+    Dimension x = 1;
+    Dimension y = 2;
     float z = 3;
 }
 
-message Scale {
-    Vector3 amount = 1;
+message FlexScale {
+    FlexVector3 amount = 1;
 }
 
 message TextShadow {
-    Vector2 offset = 1;
+    FlexVector2 offset = 1;
     float blur_radius = 2;
-    Color color = 3;
+    FlexColor color = 3;
 }
 
 message TimeValue {
     float milliseconds = 1;
 }
 
-message Style {
-    Align align_content = 1;
-    Align align_items = 2;
-    Align align_self = 3;
-    Color background_color = 4;
+message ImageSlice {
+    int32 top = 1;
+    int32 right = 2;
+    int32 bottom = 3;
+    int32 left = 4;
+}
+
+message FlexStyle {
+    FlexAlign align_content = 1;
+    FlexAlign align_items = 2;
+    FlexAlign align_self = 3;
+    FlexColor background_color = 4;
     SpriteAddress background_image = 5;
     BorderColor border_color = 6;
     BorderRadius border_radius = 7;
-    LengthGroup border_width = 8;
-    LengthGroup inset = 9;
-    Color color = 10;
-    DisplayStyle display = 11;
-    Length flex_basis = 12;
+    BorderWidth border_width = 8;
+    DimensionGroup inset = 9;
+    FlexColor color = 10;
+    FlexDisplayStyle display = 11;
+    Dimension flex_basis = 12;
     FlexDirection flex_direction = 13;
-    float flex_grow = 14;
-    float flex_shrink = 15;
+    google.protobuf.FloatValue flex_grow = 14;
+    google.protobuf.FloatValue flex_shrink = 15;
     FlexWrap wrap = 16;
-    Length font_size = 17;
-    Length height = 18;
-    Justify justify_content = 19;
-    Length letter_spacing = 20;
-    LengthGroup margin = 21;
-    Length max_height = 22;
-    Length max_width = 23;
-    Length min_height = 24;
-    Length min_width = 25;
-    float opacity = 26;
-    Overflow overflow = 27;
-    LengthGroup padding = 28;
+    Dimension font_size = 17;
+    Dimension height = 18;
+    FlexJustify justify_content = 19;
+    Dimension letter_spacing = 20;
+    DimensionGroup margin = 21;
+    Dimension max_height = 22;
+    Dimension max_width = 23;
+    Dimension min_height = 24;
+    Dimension min_width = 25;
+    google.protobuf.FloatValue opacity = 26;
+    FlexOverflow overflow = 27;
+    DimensionGroup padding = 28;
     FlexPosition position = 29;
-    Rotate rotate = 30;
-    Scale scale = 31;
+    FlexRotate rotate = 30;
+    FlexScale scale = 31;
     TextOverflow text_overflow = 32;
     TextShadow text_shadow = 33;
-    Translate transform_origin = 34;
-    TimeValue transition_delay = 35;
-    TimeValue transition_duration = 36;
-    string transition_property = 37;
-    EasingMode transition_easing_mode = 38;
-    Translate translate = 39;
-    Color background_image_tint_color = 40;
-    ImageScaleMode image_scale_mode = 41;
+    FlexTranslate transform_origin = 34;
+    repeated TimeValue transition_delays = 35;
+    repeated TimeValue transition_durations = 36;
+    repeated string transition_properties = 37;
+    repeated EasingMode transition_easing_modes = 38;
+    FlexTranslate translate = 39;
+    FlexColor background_image_tint_color = 40;
+    ImageScaleMode background_image_scale_mode = 41;
     FontAddress font = 42;
     FontStyle font_style = 43;
     OverflowClipBox overflow_clip_box = 44;
-    Length paragraph_spacing = 45;
-    LengthGroup image_slice = 46;
+    Dimension paragraph_spacing = 45;
+    ImageSlice image_slice = 46;
     TextAlign text_align = 47;
-    Color text_outline_color = 48;
-    float text_outline_width = 49;
+    FlexColor text_outline_color = 48;
+    google.protobuf.FloatValue text_outline_width = 49;
     TextOverflowPosition text_overflow_position = 50;
-    Visibility visibility = 51;
+    FlexVisibility visibility = 51;
     WhiteSpace white_space = 52;
-    Length width = 53;
-    Length word_spacing = 54;
+    Dimension width = 53;
+    Dimension word_spacing = 54;
 }
 
 message Text {
-    Style style = 1;
+    FlexStyle style = 1;
     string text = 2;
 }
 
 message Flexbox {
-    Style style = 1;
-    repeated Node children = 2;
+    string name = 1;
+    FlexStyle style = 2;
+    repeated Node children = 3;
 }
 
 message Node {
