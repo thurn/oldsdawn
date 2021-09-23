@@ -269,13 +269,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 531094917}
-  _imagePosition:
-    Top: 7
+  _bodyPosition:
+    Top: 67
     Right: 0
     Bottom: 0
-    Left: 4
-  _imageWidth: 57
-  _imageHeight: 57
+    Left: 4.9
+  _bodyFontSize: 4
+  _bodyWidth: 53
+  _textColor: '#d7ccc8'
+  _bodyHeight: 25
+  _lineSpacing: 4
+  _paragraphSpacing: 25
+  _textNumber: 2
 --- !u!114 &531094919
 MonoBehaviour:
   m_ObjectHideFlags: 0

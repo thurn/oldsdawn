@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using Spelldawn.Protos;
 using UnityEngine;
@@ -71,6 +72,18 @@ namespace Spelldawn.Masonry
       Left = VMin(left)
     };
 
+    public static FlexColor MakeColor(string hexString)
+    {
+      if (ColorUtility.TryParseHtmlString(hexString, out var color))
+      {
+        return MakeColor(color);
+      }
+      else
+      {
+        throw new ArgumentException($"Invalid color: {hexString}");
+      }
+    }
+
     public static FlexColor MakeColor(Color color) => new()
     {
       Red = color.r,
@@ -100,6 +113,15 @@ namespace Spelldawn.Masonry
       style.FlexDirection = FlexDirection.Column;
       return MakeFlexbox(name, style, children);
     }
+
+    public static Node Text(string label, FlexStyle style) => new()
+    {
+      Text = new Text
+      {
+        Label = label,
+        Style = style
+      }
+    };
 
     public static float ScreenPxToDip(float value) => value * ReferenceDpi / Screen.dpi;
 

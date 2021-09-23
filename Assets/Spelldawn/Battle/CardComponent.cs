@@ -18,6 +18,7 @@ using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
 using UnityEngine.UIElements;
+using WhiteSpace = Spelldawn.Protos.WhiteSpace;
 
 #nullable enable
 
@@ -26,11 +27,51 @@ namespace Spelldawn.Battle
   public sealed class CardComponent : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] DebugGroupDip _imagePosition = null!;
-    [SerializeField] float _imageWidth;
-    [SerializeField] float _imageHeight;
+    [SerializeField] int _textNumber;
     CardView _cardView = null!;
     VisualElement? _element;
+
+    static readonly string Text1 = @"If another item would be destroyed, this item is destroyed instead
+";
+
+    static readonly string Text2 = @"★, 2❋: Destroy this token. Add another line of text to this card.
+<b>↯Play</b>: Give the Overlord the <u>Shatter</u> ability";
+
+    static readonly string Text3 = @"<b>↯Play:</b> <b>Store</b> 12❋
+★: <b>Take</b> 2❋
+";
+
+    static readonly string Text4 =
+      @"Search your deck for a weapon. If you made a successful raid this turn you may play it <i>(paying its costs)</i>, otherwise put it into your hand
+";
+
+    static readonly string Text5 =
+      @"Choose a minion. That minion gains the <b>Infernal</b>, <b>Human</b>, and <b>Abyssal</b> subtypes until end of turn.
+";
+
+    static readonly string Text6 = @"<b>Choose One:</b>
+• Gain 2❋
+• Reveal one card
+";
+
+    static readonly string Text7 = @"1❋ <b>Recurring</b> <i>(Refill up to 1❋ each turn)</i>
+Use this ❋ to pay for using Weapons or equipping Silver items 
+";
+
+    static readonly string Text8 = @"<b>Attack:</b> 2❋ → 1 damage
+<b>Strike</b> 2 <i>(deal 2 damage at the start of combat)</i>
+<b>↯Play:</b> Pick a minion in play. Whenever you pay that minion’s shield cost, kill it
+";
+
+    static readonly string Text9 = @"<b>Attack:</b> 1❋ → 1 damage
+★: Place a ◈ on this item
+When you use this item, remove a ◈ or sacrifice it
+";
+
+    static readonly string Text10 = @"<b>Attack:</b> 1❋ → 1 damage
+<b>Strike</b> 2 <i>(deal 2 damage at the start of combat)</i>
+<b>Area</b> <i>(this item’s damage persists for the duration of the raid)</i>
+";
 
     void Start()
     {
@@ -47,11 +88,11 @@ namespace Spelldawn.Battle
         Image = Sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_06"),
         Title = new CardTitle
         {
-          Text = "Boom!"
+          Text = "Meteor Shower"
         },
         RulesText = new RulesText
         {
-          Text = "Hello, world!"
+          Text = Text1
         },
         CanPlay = false
       };
@@ -67,16 +108,31 @@ namespace Spelldawn.Battle
       var sprite = await _registry.AssetService.LoadSprite(_cardView.CardBack);
       var rect = sprite.value.sprite.rect;
       var imageScale = MultiplerForTargetDip(100, rect.height);
+      var cardWidth = Dip(100 * rect.width / rect.height);
+      var rulesText = _textNumber switch
+      {
+        1 => Text1,
+        2 => Text2,
+        3 => Text3,
+        4 => Text4,
+        5 => Text5,
+        6 => Text6,
+        7 => Text7,
+        8 => Text8,
+        9 => Text9,
+        10 => Text10,
+        _ => Text1
+      };
 
       _element = await Mason.Render(_registry, Column("Card",
         new FlexStyle
         {
           BackgroundImageScaleMultiplier = imageScale,
           Position = FlexPosition.Absolute,
-          Width = Dip(100 * rect.width / rect.height),
+          Width = cardWidth,
           Height = Dip(100),
           Scale = Scale(3f),
-          Inset = LeftTopDip(150f, 150f),
+          Inset = LeftTopDip(150f, 125f)
         },
         Row(
           "CardImage",
@@ -84,9 +140,9 @@ namespace Spelldawn.Battle
           {
             BackgroundImage = _cardView.Image,
             Position = FlexPosition.Absolute,
-            Inset = LeftTopDip(4f, 7f),
-            Width = Dip(57f),
-            Height = Dip(57f)
+            Inset = LeftTopDip(4f, 6.5f),
+            Width = Dip(58f),
+            Height = Dip(58f)
           }),
         Row(
           "CardFrame",
@@ -104,7 +160,7 @@ namespace Spelldawn.Battle
             BackgroundImage = _cardView.Webbing,
             BackgroundImageScaleMultiplier = imageScale,
             Position = FlexPosition.Absolute,
-            Inset = LeftTopDip(-2.15f, -2f)
+            Inset = LeftTopDip(-2.15f, -4f)
           }),
         Row(
           "Jewel",
@@ -114,6 +170,44 @@ namespace Spelldawn.Battle
             BackgroundImageScaleMultiplier = imageScale,
             Position = FlexPosition.Absolute,
             Inset = LeftTopDip(31f, 65f)
+          }),
+        Text(_cardView.Title.Text,
+          new FlexStyle
+          {
+            Position = FlexPosition.Absolute,
+            Inset = LeftTopDip(0, -7.3f),
+            Width = cardWidth,
+            Height = Dip(0f),
+            TextAlign = TextAlign.MiddleCenter,
+            Color = MakeColor(Color.white),
+            TextOutlineColor = MakeColor(Color.black),
+            TextOutlineWidth = 0.1f,
+            FontSize = Dip(5f),
+            Font = Font("Fonts/Impact"),
+            TextShadow = new Protos.TextShadow
+            {
+              Color = MakeColor(Color.black),
+              Offset = new FlexVector2
+              {
+                X = 0.1f,
+                Y = 0.1f
+              },
+              BlurRadius = 0.5f
+            }
+          }),
+        Text($"<line-height=4>{rulesText}</line-height>",
+          new FlexStyle
+          {
+            Position = FlexPosition.Absolute,
+            Inset = LeftTopDip(4.9f, 67f),
+            Width = Dip(53f),
+            Height = Dip(25f),
+            TextAlign = TextAlign.MiddleCenter,
+            Color = MakeColor("#d7ccc8"),
+            FontSize = Dip(4f),
+            Font = Font("Fonts/Roboto"),
+            WhiteSpace = WhiteSpace.Normal,
+            ParagraphSpacing = Dip(25f)
           })
       ));
 

@@ -43,6 +43,7 @@ namespace Spelldawn.Masonry
       return node?.NodeCase switch
       {
         Node.NodeOneofCase.Flexbox => RenderFlexbox(registry, node.Flexbox),
+        Node.NodeOneofCase.Text => RenderText(registry, node.Text),
         _ => Task.FromResult<VisualElement?>(null)
       };
     }
@@ -62,6 +63,16 @@ namespace Spelldawn.Masonry
       }
 
       return await ApplyStyle(registry, result, flexbox.Style);
+    }
+
+    public static async Task<VisualElement?> RenderText(Registry registry, Text text)
+    {
+      var result = new Label
+      {
+        text = text.Label
+      };
+
+      return await ApplyStyle(registry, result, text.Style);
     }
 
     static Color AdaptColorNonNull(FlexColor color) =>

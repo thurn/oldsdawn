@@ -326,7 +326,7 @@ message Flexbox {
 
 message Text {
     FlexStyle style = 1;
-    string text = 2;
+    string label = 2;
 }
 
 message Node {
