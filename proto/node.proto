@@ -316,22 +316,40 @@ message FlexStyle {
      * constant.
      */
     google.protobuf.FloatValue background_image_scale_multiplier = 55;
+
+    /**
+     * Calculates the aspect ratio of the provided 'background_image' and uses
+     * it to set dimensions. If 'width' is set, the 'height' will be set based
+     * on the aspect ratio and vice versa. Does not support percentage values.
+     */
+    bool fixed_background_image_aspect_ratio = 56;
 }
 
 message Flexbox {
-    string name = 1;
-    FlexStyle style = 2;
-    repeated Node children = 3;
 }
 
 message Text {
-    FlexStyle style = 1;
-    string label = 2;
+    string label = 1;
 }
 
 message Node {
+    /**
+     * Used to identify this node in the hierarchy, should be unique among
+     * sibilings. If not provided, index will be used instead.
+     */
+    string key = 1;
+
+    /**
+     * Used to identify this node in debugging tools
+     */
+    string name = 2;
+
+    FlexStyle style = 3;
+
+    repeated Node children = 4;
+
     oneof node {
-        Flexbox flexbox = 1;
-        Text text = 2;
+        Flexbox flexbox = 5;
+        Text text = 6;
     }
 }

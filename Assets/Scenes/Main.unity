@@ -123,6 +123,54 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &304913896
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 304913898}
+  - component: {fileID: 304913897}
+  m_Layer: 0
+  m_Name: InterfaceDocument
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &304913897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304913896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: dad292fba4fb74161a57f4375346a681, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+--- !u!4 &304913898
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304913896}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,6 +267,8 @@ GameObject:
   - component: {fileID: 531094917}
   - component: {fileID: 531094918}
   - component: {fileID: 531094919}
+  - component: {fileID: 531094920}
+  - component: {fileID: 531094921}
   m_Layer: 0
   m_Name: Registry
   m_TagString: Untagged
@@ -254,7 +304,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 519420031}
-  _document: {fileID: 1049969482}
+  _gameDocument: {fileID: 1049969482}
+  _interfaceDocument: {fileID: 304913897}
   _assetService: {fileID: 531094919}
 --- !u!114 &531094918
 MonoBehaviour:
@@ -269,18 +320,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 531094917}
-  _bodyPosition:
-    Top: 67
-    Right: 0
-    Bottom: 0
-    Left: 4.9
-  _bodyFontSize: 4
-  _bodyWidth: 53
-  _textColor: '#d7ccc8'
-  _bodyHeight: 25
-  _lineSpacing: 4
-  _paragraphSpacing: 25
-  _textNumber: 2
 --- !u!114 &531094919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,6 +332,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fc51058f0b74ece8e210d1e6c56a92d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &531094920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531094914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 410174cb96f94583ae18cd64d5236528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 531094917}
+  _position:
+    Top: 50
+    Right: 0
+    Bottom: 0
+    Left: 50
+  _size: 44
+--- !u!114 &531094921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531094914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76d15bb18231496e97495e11886232de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 531094917}
 --- !u!1 &616357037
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +480,7 @@ Transform:
   - {fileID: 616357038}
   - {fileID: 1688689612}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1049969480
 GameObject:
@@ -422,7 +493,7 @@ GameObject:
   - component: {fileID: 1049969481}
   - component: {fileID: 1049969482}
   m_Layer: 0
-  m_Name: Document
+  m_Name: GameDocument
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -455,7 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: dad292fba4fb74161a57f4375346a681, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: b968e09c2e0884c81bd47ae2a7ea1c49, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 0}
   m_SortingOrder: 0

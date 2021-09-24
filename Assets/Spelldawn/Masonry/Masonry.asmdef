@@ -2,8 +2,7 @@
     "name": "Masonry",
     "rootNamespace": "",
     "references": [
-        "GUID:e8ed0e97d7bd8408da700e3369ed0ee9",
-        "GUID:b55d8f32967d8469b858dec0273baed6"
+        "GUID:e8ed0e97d7bd8408da700e3369ed0ee9"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Spelldawn.Masonry;
 using Spelldawn.Protos;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -24,7 +25,7 @@ using Object = UnityEngine.Object;
 
 namespace Spelldawn.Services
 {
-  public sealed class AssetService : MonoBehaviour
+  public sealed class AssetService : MonoBehaviour, IAssetFetcher
   {
     readonly Dictionary<string, StyleBackground> _sprites = new();
     readonly Dictionary<string, StyleFontDefinition> _fonts = new();

@@ -24,28 +24,74 @@ namespace Spelldawn.Protos {
     static ViewsReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cgt2aWV3cy5wcm90bxICc2QaCm5vZGUucHJvdG8iPwoIQ2FyZEljb24SJQoK",
+            "Cgt2aWV3cy5wcm90bxICc2QaCm5vZGUucHJvdG8iVwoIQ2FyZEljb24SJQoK",
             "YmFja2dyb3VuZBgBIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSDAoEdGV4dBgC",
-            "IAEoCSIZCglDYXJkVGl0bGUSDAoEdGV4dBgBIAEoCSIZCglSdWxlc1RleHQS",
-            "DAoEdGV4dBgBIAEoCSLbAwoIQ2FyZFZpZXcSJAoJY2FyZF9iYWNrGAEgASgL",
-            "MhEuc2QuU3ByaXRlQWRkcmVzcxIlCgpjYXJkX2ZyYW1lGAIgASgLMhEuc2Qu",
-            "U3ByaXRlQWRkcmVzcxIiCgd3ZWJiaW5nGAMgASgLMhEuc2QuU3ByaXRlQWRk",
-            "cmVzcxIgCgVqZXdlbBgEIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSKwoQaW1h",
-            "Z2VfYmFja2dyb3VuZBgFIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSIAoFaW1h",
-            "Z2UYBiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiMKDXRvcF9sZWZ0X2ljb24Y",
-            "ByABKAsyDC5zZC5DYXJkSWNvbhIkCg50b3BfcmlnaHRfaWNvbhgIIAEoCzIM",
-            "LnNkLkNhcmRJY29uEicKEWJvdHRvbV9yaWdodF9pY29uGAkgASgLMgwuc2Qu",
-            "Q2FyZEljb24SJgoQYm90dG9tX2xlZnRfaWNvbhgKIAEoCzIMLnNkLkNhcmRJ",
-            "Y29uEhwKBXRpdGxlGAsgASgLMg0uc2QuQ2FyZFRpdGxlEiEKCnJ1bGVzX3Rl",
-            "eHQYDCABKAsyDS5zZC5SdWxlc1RleHQSEAoIY2FuX3BsYXkYDSABKAhCE6oC",
-            "EFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
+            "IAEoCRIWCg5zaG93bl9pbl9hcmVuYRgDIAEoCCLKAQoJQ2FyZEljb25zEiMK",
+            "DXRvcF9sZWZ0X2ljb24YDCABKAsyDC5zZC5DYXJkSWNvbhIkCg50b3Bfcmln",
+            "aHRfaWNvbhgNIAEoCzIMLnNkLkNhcmRJY29uEicKEWJvdHRvbV9yaWdodF9p",
+            "Y29uGA4gASgLMgwuc2QuQ2FyZEljb24SJgoQYm90dG9tX2xlZnRfaWNvbhgP",
+            "IAEoCzIMLnNkLkNhcmRJY29uEiEKC2NlbnRlcl9pY29uGBAgASgLMgwuc2Qu",
+            "Q2FyZEljb24iGQoJQ2FyZFRpdGxlEgwKBHRleHQYASABKAkiGQoJUnVsZXNU",
+            "ZXh0EgwKBHRleHQYASABKAkikgMKEFJldmVhbGVkQ2FyZFZpZXcSJAoJY2Fy",
+            "ZF9iYWNrGAEgASgLMhEuc2QuU3ByaXRlQWRkcmVzcxIlCgpjYXJkX2ZyYW1l",
+            "GAIgASgLMhEuc2QuU3ByaXRlQWRkcmVzcxIiCgd3ZWJiaW5nGAMgASgLMhEu",
+            "c2QuU3ByaXRlQWRkcmVzcxIgCgVqZXdlbBgEIAEoCzIRLnNkLlNwcml0ZUFk",
+            "ZHJlc3MSKwoQaW1hZ2VfYmFja2dyb3VuZBgFIAEoCzIRLnNkLlNwcml0ZUFk",
+            "ZHJlc3MSIAoFaW1hZ2UYBiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEhwKBXRp",
+            "dGxlGAcgASgLMg0uc2QuQ2FyZFRpdGxlEiEKCnJ1bGVzX3RleHQYCCABKAsy",
+            "DS5zZC5SdWxlc1RleHQSEAoIY2FuX3BsYXkYCSABKAgSJgoLYXJlbmFfZnJh",
+            "bWUYCiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiEKCmNhcmRfaWNvbnMYCyAB",
+            "KAsyDS5zZC5DYXJkSWNvbnMigQEKDkhpZGRlbkNhcmRWaWV3EiQKCWNhcmRf",
+            "YmFjaxgBIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSIQoKY2FyZF9pY29ucxgC",
+            "IAEoCzINLnNkLkNhcmRJY29ucxImCgthcmVuYV9mcmFtZRgDIAEoCzIRLnNk",
+            "LlNwcml0ZUFkZHJlc3MifQoIQ2FyZFZpZXcSDwoHY2FyZF9pZBgBIAEoBRIt",
+            "Cg1yZXZlYWxlZF9jYXJkGAIgASgLMhQuc2QuUmV2ZWFsZWRDYXJkVmlld0gA",
+            "EikKC2hpZGRlbl9jYXJkGAMgASgLMhIuc2QuSGlkZGVuQ2FyZFZpZXdIAEIG",
+            "CgRjYXJkIicKCEhhbmRWaWV3EhsKBWNhcmRzGAEgAygLMgwuc2QuQ2FyZFZp",
+            "ZXciLgoPRGlzY2FyZFBpbGVWaWV3EhsKBWNhcmRzGAEgAygLMgwuc2QuQ2Fy",
+            "ZFZpZXciZAoKUGxheWVySW5mbxIMCgRuYW1lGAEgASgJEiMKCHBvcnRyYWl0",
+            "GAIgASgLMhEuc2QuU3ByaXRlQWRkcmVzcxIjCg1pZGVudGl0eV9jYXJkGAMg",
+            "ASgLMgwuc2QuQ2FyZFZpZXciGgoITWFuYVZpZXcSDgoGYW1vdW50GAEgASgF",
+            "Ij4KCVNjb3JlVmlldxINCgVzY29yZRgBIAEoBRIiCgxzY29yZWRfY2FyZHMY",
+            "AiADKAsyDC5zZC5DYXJkVmlldyIwCghSb29tSWNvbhIkCglyb29tX2ljb24Y",
+            "ASABKAsyES5zZC5TcHJpdGVBZGRyZXNzIokBCghSb29tVmlldxIfCglyb29t",
+            "X2ljb24YASABKAsyDC5zZC5Sb29tSWNvbhIeCghwcm9qZWN0cxgCIAMoCzIM",
+            "LnNkLkNhcmRWaWV3Eh0KB21pbmlvbnMYAyADKAsyDC5zZC5DYXJkVmlldxId",
+            "Cgdhbm5leGVzGAQgAygLMgwuc2QuQ2FyZFZpZXciowEKCUFyZW5hVmlldxIc",
+            "ChRvdmVybG9yZF9wZXJzcGVjdGl2ZRgBIAEoCBIbCgVyb29tcxgCIAMoCzIM",
+            "LnNkLlJvb21WaWV3Eh0KB3dlYXBvbnMYAyADKAsyDC5zZC5DYXJkVmlldxIb",
+            "CgVhcm1vchgEIAMoCzIMLnNkLkNhcmRWaWV3Eh8KCWFydGlmYWN0cxgFIAMo",
+            "CzIMLnNkLkNhcmRWaWV3IjMKEUFjdGlvblRyYWNrZXJWaWV3Eh4KFmF2YWls",
+            "YWJsZV9hY3Rpb25fY291bnQYASABKAUi4QEKClBsYXllclZpZXcSIwoLcGxh",
+            "eWVyX2luZm8YASABKAsyDi5zZC5QbGF5ZXJJbmZvEhwKBXNjb3JlGAIgASgL",
+            "Mg0uc2QuU2NvcmVWaWV3EhoKBGhhbmQYAyABKAsyDC5zZC5IYW5kVmlldxIa",
+            "CgRtYW5hGAQgASgLMgwuc2QuTWFuYVZpZXcSKQoMZGlzY2FyZF9waWxlGAUg",
+            "ASgLMhMuc2QuRGlzY2FyZFBpbGVWaWV3Ei0KDmFjdGlvbl90cmFja2VyGAYg",
+            "ASgLMhUuc2QuQWN0aW9uVHJhY2tlclZpZXciaAoIR2FtZVZpZXcSHAoEdXNl",
+            "chgBIAEoCzIOLnNkLlBsYXllclZpZXcSIAoIb3Bwb25lbnQYAiABKAsyDi5z",
+            "ZC5QbGF5ZXJWaWV3EhwKBWFyZW5hGAMgASgLMg0uc2QuQXJlbmFWaWV3QhOq",
+            "AhBTcGVsbGRhd24uUHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.NodeReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardIcon), global::Spelldawn.Protos.CardIcon.Parser, new[]{ "Background", "Text" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardIcon), global::Spelldawn.Protos.CardIcon.Parser, new[]{ "Background", "Text", "ShownInArena" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardIcons), global::Spelldawn.Protos.CardIcons.Parser, new[]{ "TopLeftIcon", "TopRightIcon", "BottomRightIcon", "BottomLeftIcon", "CenterIcon" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardTitle), global::Spelldawn.Protos.CardTitle.Parser, new[]{ "Text" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RulesText), global::Spelldawn.Protos.RulesText.Parser, new[]{ "Text" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardView), global::Spelldawn.Protos.CardView.Parser, new[]{ "CardBack", "CardFrame", "Webbing", "Jewel", "ImageBackground", "Image", "TopLeftIcon", "TopRightIcon", "BottomRightIcon", "BottomLeftIcon", "Title", "RulesText", "CanPlay" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RevealedCardView), global::Spelldawn.Protos.RevealedCardView.Parser, new[]{ "CardBack", "CardFrame", "Webbing", "Jewel", "ImageBackground", "Image", "Title", "RulesText", "CanPlay", "ArenaFrame", "CardIcons" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.HiddenCardView), global::Spelldawn.Protos.HiddenCardView.Parser, new[]{ "CardBack", "CardIcons", "ArenaFrame" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardView), global::Spelldawn.Protos.CardView.Parser, new[]{ "CardId", "RevealedCard", "HiddenCard" }, new[]{ "Card" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.HandView), global::Spelldawn.Protos.HandView.Parser, new[]{ "Cards" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DiscardPileView), global::Spelldawn.Protos.DiscardPileView.Parser, new[]{ "Cards" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayerInfo), global::Spelldawn.Protos.PlayerInfo.Parser, new[]{ "Name", "Portrait", "IdentityCard" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ManaView), global::Spelldawn.Protos.ManaView.Parser, new[]{ "Amount" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ScoreView), global::Spelldawn.Protos.ScoreView.Parser, new[]{ "Score", "ScoredCards" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RoomIcon), global::Spelldawn.Protos.RoomIcon.Parser, new[]{ "RoomIcon_" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RoomView), global::Spelldawn.Protos.RoomView.Parser, new[]{ "RoomIcon", "Projects", "Minions", "Annexes" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ArenaView), global::Spelldawn.Protos.ArenaView.Parser, new[]{ "OverlordPerspective", "Rooms", "Weapons", "Armor", "Artifacts" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ActionTrackerView), global::Spelldawn.Protos.ActionTrackerView.Parser, new[]{ "AvailableActionCount" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayerView), global::Spelldawn.Protos.PlayerView.Parser, new[]{ "PlayerInfo", "Score", "Hand", "Mana", "DiscardPile", "ActionTracker" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameView), global::Spelldawn.Protos.GameView.Parser, new[]{ "User", "Opponent", "Arena" }, null, null, null, null)
           }));
     }
     #endregion
@@ -83,6 +129,7 @@ namespace Spelldawn.Protos {
     public CardIcon(CardIcon other) : this() {
       background_ = other.background_ != null ? other.background_.Clone() : null;
       text_ = other.text_;
+      shownInArena_ = other.shownInArena_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -113,6 +160,17 @@ namespace Spelldawn.Protos {
       }
     }
 
+    /// <summary>Field number for the "shown_in_arena" field.</summary>
+    public const int ShownInArenaFieldNumber = 3;
+    private bool shownInArena_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool ShownInArena {
+      get { return shownInArena_; }
+      set {
+        shownInArena_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as CardIcon);
@@ -128,6 +186,7 @@ namespace Spelldawn.Protos {
       }
       if (!object.Equals(Background, other.Background)) return false;
       if (Text != other.Text) return false;
+      if (ShownInArena != other.ShownInArena) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -136,6 +195,7 @@ namespace Spelldawn.Protos {
       int hash = 1;
       if (background_ != null) hash ^= Background.GetHashCode();
       if (Text.Length != 0) hash ^= Text.GetHashCode();
+      if (ShownInArena != false) hash ^= ShownInArena.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -160,6 +220,10 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(18);
         output.WriteString(Text);
       }
+      if (ShownInArena != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(ShownInArena);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -177,6 +241,10 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(18);
         output.WriteString(Text);
       }
+      if (ShownInArena != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(ShownInArena);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -191,6 +259,9 @@ namespace Spelldawn.Protos {
       }
       if (Text.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Text);
+      }
+      if (ShownInArena != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -211,6 +282,9 @@ namespace Spelldawn.Protos {
       }
       if (other.Text.Length != 0) {
         Text = other.Text;
+      }
+      if (other.ShownInArena != false) {
+        ShownInArena = other.ShownInArena;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -235,6 +309,10 @@ namespace Spelldawn.Protos {
           }
           case 18: {
             Text = input.ReadString();
+            break;
+          }
+          case 24: {
+            ShownInArena = input.ReadBool();
             break;
           }
         }
@@ -262,6 +340,371 @@ namespace Spelldawn.Protos {
             Text = input.ReadString();
             break;
           }
+          case 24: {
+            ShownInArena = input.ReadBool();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class CardIcons : pb::IMessage<CardIcons>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<CardIcons> _parser = new pb::MessageParser<CardIcons>(() => new CardIcons());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<CardIcons> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CardIcons() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CardIcons(CardIcons other) : this() {
+      topLeftIcon_ = other.topLeftIcon_ != null ? other.topLeftIcon_.Clone() : null;
+      topRightIcon_ = other.topRightIcon_ != null ? other.topRightIcon_.Clone() : null;
+      bottomRightIcon_ = other.bottomRightIcon_ != null ? other.bottomRightIcon_.Clone() : null;
+      bottomLeftIcon_ = other.bottomLeftIcon_ != null ? other.bottomLeftIcon_.Clone() : null;
+      centerIcon_ = other.centerIcon_ != null ? other.centerIcon_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CardIcons Clone() {
+      return new CardIcons(this);
+    }
+
+    /// <summary>Field number for the "top_left_icon" field.</summary>
+    public const int TopLeftIconFieldNumber = 12;
+    private global::Spelldawn.Protos.CardIcon topLeftIcon_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcon TopLeftIcon {
+      get { return topLeftIcon_; }
+      set {
+        topLeftIcon_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "top_right_icon" field.</summary>
+    public const int TopRightIconFieldNumber = 13;
+    private global::Spelldawn.Protos.CardIcon topRightIcon_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcon TopRightIcon {
+      get { return topRightIcon_; }
+      set {
+        topRightIcon_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "bottom_right_icon" field.</summary>
+    public const int BottomRightIconFieldNumber = 14;
+    private global::Spelldawn.Protos.CardIcon bottomRightIcon_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcon BottomRightIcon {
+      get { return bottomRightIcon_; }
+      set {
+        bottomRightIcon_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "bottom_left_icon" field.</summary>
+    public const int BottomLeftIconFieldNumber = 15;
+    private global::Spelldawn.Protos.CardIcon bottomLeftIcon_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcon BottomLeftIcon {
+      get { return bottomLeftIcon_; }
+      set {
+        bottomLeftIcon_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "center_icon" field.</summary>
+    public const int CenterIconFieldNumber = 16;
+    private global::Spelldawn.Protos.CardIcon centerIcon_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcon CenterIcon {
+      get { return centerIcon_; }
+      set {
+        centerIcon_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as CardIcons);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(CardIcons other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(TopLeftIcon, other.TopLeftIcon)) return false;
+      if (!object.Equals(TopRightIcon, other.TopRightIcon)) return false;
+      if (!object.Equals(BottomRightIcon, other.BottomRightIcon)) return false;
+      if (!object.Equals(BottomLeftIcon, other.BottomLeftIcon)) return false;
+      if (!object.Equals(CenterIcon, other.CenterIcon)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (topLeftIcon_ != null) hash ^= TopLeftIcon.GetHashCode();
+      if (topRightIcon_ != null) hash ^= TopRightIcon.GetHashCode();
+      if (bottomRightIcon_ != null) hash ^= BottomRightIcon.GetHashCode();
+      if (bottomLeftIcon_ != null) hash ^= BottomLeftIcon.GetHashCode();
+      if (centerIcon_ != null) hash ^= CenterIcon.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (topLeftIcon_ != null) {
+        output.WriteRawTag(98);
+        output.WriteMessage(TopLeftIcon);
+      }
+      if (topRightIcon_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(TopRightIcon);
+      }
+      if (bottomRightIcon_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(BottomRightIcon);
+      }
+      if (bottomLeftIcon_ != null) {
+        output.WriteRawTag(122);
+        output.WriteMessage(BottomLeftIcon);
+      }
+      if (centerIcon_ != null) {
+        output.WriteRawTag(130, 1);
+        output.WriteMessage(CenterIcon);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (topLeftIcon_ != null) {
+        output.WriteRawTag(98);
+        output.WriteMessage(TopLeftIcon);
+      }
+      if (topRightIcon_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(TopRightIcon);
+      }
+      if (bottomRightIcon_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(BottomRightIcon);
+      }
+      if (bottomLeftIcon_ != null) {
+        output.WriteRawTag(122);
+        output.WriteMessage(BottomLeftIcon);
+      }
+      if (centerIcon_ != null) {
+        output.WriteRawTag(130, 1);
+        output.WriteMessage(CenterIcon);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (topLeftIcon_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(TopLeftIcon);
+      }
+      if (topRightIcon_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(TopRightIcon);
+      }
+      if (bottomRightIcon_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(BottomRightIcon);
+      }
+      if (bottomLeftIcon_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(BottomLeftIcon);
+      }
+      if (centerIcon_ != null) {
+        size += 2 + pb::CodedOutputStream.ComputeMessageSize(CenterIcon);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(CardIcons other) {
+      if (other == null) {
+        return;
+      }
+      if (other.topLeftIcon_ != null) {
+        if (topLeftIcon_ == null) {
+          TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
+        }
+        TopLeftIcon.MergeFrom(other.TopLeftIcon);
+      }
+      if (other.topRightIcon_ != null) {
+        if (topRightIcon_ == null) {
+          TopRightIcon = new global::Spelldawn.Protos.CardIcon();
+        }
+        TopRightIcon.MergeFrom(other.TopRightIcon);
+      }
+      if (other.bottomRightIcon_ != null) {
+        if (bottomRightIcon_ == null) {
+          BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
+        }
+        BottomRightIcon.MergeFrom(other.BottomRightIcon);
+      }
+      if (other.bottomLeftIcon_ != null) {
+        if (bottomLeftIcon_ == null) {
+          BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
+        }
+        BottomLeftIcon.MergeFrom(other.BottomLeftIcon);
+      }
+      if (other.centerIcon_ != null) {
+        if (centerIcon_ == null) {
+          CenterIcon = new global::Spelldawn.Protos.CardIcon();
+        }
+        CenterIcon.MergeFrom(other.CenterIcon);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 98: {
+            if (topLeftIcon_ == null) {
+              TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(TopLeftIcon);
+            break;
+          }
+          case 106: {
+            if (topRightIcon_ == null) {
+              TopRightIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(TopRightIcon);
+            break;
+          }
+          case 114: {
+            if (bottomRightIcon_ == null) {
+              BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(BottomRightIcon);
+            break;
+          }
+          case 122: {
+            if (bottomLeftIcon_ == null) {
+              BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(BottomLeftIcon);
+            break;
+          }
+          case 130: {
+            if (centerIcon_ == null) {
+              CenterIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(CenterIcon);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 98: {
+            if (topLeftIcon_ == null) {
+              TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(TopLeftIcon);
+            break;
+          }
+          case 106: {
+            if (topRightIcon_ == null) {
+              TopRightIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(TopRightIcon);
+            break;
+          }
+          case 114: {
+            if (bottomRightIcon_ == null) {
+              BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(BottomRightIcon);
+            break;
+          }
+          case 122: {
+            if (bottomLeftIcon_ == null) {
+              BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(BottomLeftIcon);
+            break;
+          }
+          case 130: {
+            if (centerIcon_ == null) {
+              CenterIcon = new global::Spelldawn.Protos.CardIcon();
+            }
+            input.ReadMessage(CenterIcon);
+            break;
+          }
         }
       }
     }
@@ -281,7 +724,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -453,7 +896,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -613,19 +1056,19 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class CardView : pb::IMessage<CardView>
+  public sealed partial class RevealedCardView : pb::IMessage<RevealedCardView>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<CardView> _parser = new pb::MessageParser<CardView>(() => new CardView());
+    private static readonly pb::MessageParser<RevealedCardView> _parser = new pb::MessageParser<RevealedCardView>(() => new RevealedCardView());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<CardView> Parser { get { return _parser; } }
+    public static pb::MessageParser<RevealedCardView> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -634,33 +1077,31 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public CardView() {
+    public RevealedCardView() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public CardView(CardView other) : this() {
+    public RevealedCardView(RevealedCardView other) : this() {
       cardBack_ = other.cardBack_ != null ? other.cardBack_.Clone() : null;
       cardFrame_ = other.cardFrame_ != null ? other.cardFrame_.Clone() : null;
       webbing_ = other.webbing_ != null ? other.webbing_.Clone() : null;
       jewel_ = other.jewel_ != null ? other.jewel_.Clone() : null;
       imageBackground_ = other.imageBackground_ != null ? other.imageBackground_.Clone() : null;
       image_ = other.image_ != null ? other.image_.Clone() : null;
-      topLeftIcon_ = other.topLeftIcon_ != null ? other.topLeftIcon_.Clone() : null;
-      topRightIcon_ = other.topRightIcon_ != null ? other.topRightIcon_.Clone() : null;
-      bottomRightIcon_ = other.bottomRightIcon_ != null ? other.bottomRightIcon_.Clone() : null;
-      bottomLeftIcon_ = other.bottomLeftIcon_ != null ? other.bottomLeftIcon_.Clone() : null;
       title_ = other.title_ != null ? other.title_.Clone() : null;
       rulesText_ = other.rulesText_ != null ? other.rulesText_.Clone() : null;
       canPlay_ = other.canPlay_;
+      arenaFrame_ = other.arenaFrame_ != null ? other.arenaFrame_.Clone() : null;
+      cardIcons_ = other.cardIcons_ != null ? other.cardIcons_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public CardView Clone() {
-      return new CardView(this);
+    public RevealedCardView Clone() {
+      return new RevealedCardView(this);
     }
 
     /// <summary>Field number for the "card_back" field.</summary>
@@ -729,52 +1170,8 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "top_left_icon" field.</summary>
-    public const int TopLeftIconFieldNumber = 7;
-    private global::Spelldawn.Protos.CardIcon topLeftIcon_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardIcon TopLeftIcon {
-      get { return topLeftIcon_; }
-      set {
-        topLeftIcon_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "top_right_icon" field.</summary>
-    public const int TopRightIconFieldNumber = 8;
-    private global::Spelldawn.Protos.CardIcon topRightIcon_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardIcon TopRightIcon {
-      get { return topRightIcon_; }
-      set {
-        topRightIcon_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "bottom_right_icon" field.</summary>
-    public const int BottomRightIconFieldNumber = 9;
-    private global::Spelldawn.Protos.CardIcon bottomRightIcon_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardIcon BottomRightIcon {
-      get { return bottomRightIcon_; }
-      set {
-        bottomRightIcon_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "bottom_left_icon" field.</summary>
-    public const int BottomLeftIconFieldNumber = 10;
-    private global::Spelldawn.Protos.CardIcon bottomLeftIcon_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardIcon BottomLeftIcon {
-      get { return bottomLeftIcon_; }
-      set {
-        bottomLeftIcon_ = value;
-      }
-    }
-
     /// <summary>Field number for the "title" field.</summary>
-    public const int TitleFieldNumber = 11;
+    public const int TitleFieldNumber = 7;
     private global::Spelldawn.Protos.CardTitle title_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardTitle Title {
@@ -785,7 +1182,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "rules_text" field.</summary>
-    public const int RulesTextFieldNumber = 12;
+    public const int RulesTextFieldNumber = 8;
     private global::Spelldawn.Protos.RulesText rulesText_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RulesText RulesText {
@@ -796,7 +1193,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "can_play" field.</summary>
-    public const int CanPlayFieldNumber = 13;
+    public const int CanPlayFieldNumber = 9;
     private bool canPlay_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool CanPlay {
@@ -806,13 +1203,35 @@ namespace Spelldawn.Protos {
       }
     }
 
+    /// <summary>Field number for the "arena_frame" field.</summary>
+    public const int ArenaFrameFieldNumber = 10;
+    private global::Spelldawn.Protos.SpriteAddress arenaFrame_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as CardView);
+    public global::Spelldawn.Protos.SpriteAddress ArenaFrame {
+      get { return arenaFrame_; }
+      set {
+        arenaFrame_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "card_icons" field.</summary>
+    public const int CardIconsFieldNumber = 11;
+    private global::Spelldawn.Protos.CardIcons cardIcons_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcons CardIcons {
+      get { return cardIcons_; }
+      set {
+        cardIcons_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(CardView other) {
+    public override bool Equals(object other) {
+      return Equals(other as RevealedCardView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RevealedCardView other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -825,13 +1244,11 @@ namespace Spelldawn.Protos {
       if (!object.Equals(Jewel, other.Jewel)) return false;
       if (!object.Equals(ImageBackground, other.ImageBackground)) return false;
       if (!object.Equals(Image, other.Image)) return false;
-      if (!object.Equals(TopLeftIcon, other.TopLeftIcon)) return false;
-      if (!object.Equals(TopRightIcon, other.TopRightIcon)) return false;
-      if (!object.Equals(BottomRightIcon, other.BottomRightIcon)) return false;
-      if (!object.Equals(BottomLeftIcon, other.BottomLeftIcon)) return false;
       if (!object.Equals(Title, other.Title)) return false;
       if (!object.Equals(RulesText, other.RulesText)) return false;
       if (CanPlay != other.CanPlay) return false;
+      if (!object.Equals(ArenaFrame, other.ArenaFrame)) return false;
+      if (!object.Equals(CardIcons, other.CardIcons)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -844,13 +1261,11 @@ namespace Spelldawn.Protos {
       if (jewel_ != null) hash ^= Jewel.GetHashCode();
       if (imageBackground_ != null) hash ^= ImageBackground.GetHashCode();
       if (image_ != null) hash ^= Image.GetHashCode();
-      if (topLeftIcon_ != null) hash ^= TopLeftIcon.GetHashCode();
-      if (topRightIcon_ != null) hash ^= TopRightIcon.GetHashCode();
-      if (bottomRightIcon_ != null) hash ^= BottomRightIcon.GetHashCode();
-      if (bottomLeftIcon_ != null) hash ^= BottomLeftIcon.GetHashCode();
       if (title_ != null) hash ^= Title.GetHashCode();
       if (rulesText_ != null) hash ^= RulesText.GetHashCode();
       if (CanPlay != false) hash ^= CanPlay.GetHashCode();
+      if (arenaFrame_ != null) hash ^= ArenaFrame.GetHashCode();
+      if (cardIcons_ != null) hash ^= CardIcons.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -891,33 +1306,25 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(50);
         output.WriteMessage(Image);
       }
-      if (topLeftIcon_ != null) {
-        output.WriteRawTag(58);
-        output.WriteMessage(TopLeftIcon);
-      }
-      if (topRightIcon_ != null) {
-        output.WriteRawTag(66);
-        output.WriteMessage(TopRightIcon);
-      }
-      if (bottomRightIcon_ != null) {
-        output.WriteRawTag(74);
-        output.WriteMessage(BottomRightIcon);
-      }
-      if (bottomLeftIcon_ != null) {
-        output.WriteRawTag(82);
-        output.WriteMessage(BottomLeftIcon);
-      }
       if (title_ != null) {
-        output.WriteRawTag(90);
+        output.WriteRawTag(58);
         output.WriteMessage(Title);
       }
       if (rulesText_ != null) {
-        output.WriteRawTag(98);
+        output.WriteRawTag(66);
         output.WriteMessage(RulesText);
       }
       if (CanPlay != false) {
-        output.WriteRawTag(104);
+        output.WriteRawTag(72);
         output.WriteBool(CanPlay);
+      }
+      if (arenaFrame_ != null) {
+        output.WriteRawTag(82);
+        output.WriteMessage(ArenaFrame);
+      }
+      if (cardIcons_ != null) {
+        output.WriteRawTag(90);
+        output.WriteMessage(CardIcons);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -952,33 +1359,25 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(50);
         output.WriteMessage(Image);
       }
-      if (topLeftIcon_ != null) {
-        output.WriteRawTag(58);
-        output.WriteMessage(TopLeftIcon);
-      }
-      if (topRightIcon_ != null) {
-        output.WriteRawTag(66);
-        output.WriteMessage(TopRightIcon);
-      }
-      if (bottomRightIcon_ != null) {
-        output.WriteRawTag(74);
-        output.WriteMessage(BottomRightIcon);
-      }
-      if (bottomLeftIcon_ != null) {
-        output.WriteRawTag(82);
-        output.WriteMessage(BottomLeftIcon);
-      }
       if (title_ != null) {
-        output.WriteRawTag(90);
+        output.WriteRawTag(58);
         output.WriteMessage(Title);
       }
       if (rulesText_ != null) {
-        output.WriteRawTag(98);
+        output.WriteRawTag(66);
         output.WriteMessage(RulesText);
       }
       if (CanPlay != false) {
-        output.WriteRawTag(104);
+        output.WriteRawTag(72);
         output.WriteBool(CanPlay);
+      }
+      if (arenaFrame_ != null) {
+        output.WriteRawTag(82);
+        output.WriteMessage(ArenaFrame);
+      }
+      if (cardIcons_ != null) {
+        output.WriteRawTag(90);
+        output.WriteMessage(CardIcons);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1007,18 +1406,6 @@ namespace Spelldawn.Protos {
       if (image_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Image);
       }
-      if (topLeftIcon_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(TopLeftIcon);
-      }
-      if (topRightIcon_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(TopRightIcon);
-      }
-      if (bottomRightIcon_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(BottomRightIcon);
-      }
-      if (bottomLeftIcon_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(BottomLeftIcon);
-      }
       if (title_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Title);
       }
@@ -1028,6 +1415,12 @@ namespace Spelldawn.Protos {
       if (CanPlay != false) {
         size += 1 + 1;
       }
+      if (arenaFrame_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ArenaFrame);
+      }
+      if (cardIcons_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardIcons);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1035,7 +1428,7 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(CardView other) {
+    public void MergeFrom(RevealedCardView other) {
       if (other == null) {
         return;
       }
@@ -1075,30 +1468,6 @@ namespace Spelldawn.Protos {
         }
         Image.MergeFrom(other.Image);
       }
-      if (other.topLeftIcon_ != null) {
-        if (topLeftIcon_ == null) {
-          TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
-        }
-        TopLeftIcon.MergeFrom(other.TopLeftIcon);
-      }
-      if (other.topRightIcon_ != null) {
-        if (topRightIcon_ == null) {
-          TopRightIcon = new global::Spelldawn.Protos.CardIcon();
-        }
-        TopRightIcon.MergeFrom(other.TopRightIcon);
-      }
-      if (other.bottomRightIcon_ != null) {
-        if (bottomRightIcon_ == null) {
-          BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
-        }
-        BottomRightIcon.MergeFrom(other.BottomRightIcon);
-      }
-      if (other.bottomLeftIcon_ != null) {
-        if (bottomLeftIcon_ == null) {
-          BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
-        }
-        BottomLeftIcon.MergeFrom(other.BottomLeftIcon);
-      }
       if (other.title_ != null) {
         if (title_ == null) {
           Title = new global::Spelldawn.Protos.CardTitle();
@@ -1113,6 +1482,18 @@ namespace Spelldawn.Protos {
       }
       if (other.CanPlay != false) {
         CanPlay = other.CanPlay;
+      }
+      if (other.arenaFrame_ != null) {
+        if (arenaFrame_ == null) {
+          ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+        }
+        ArenaFrame.MergeFrom(other.ArenaFrame);
+      }
+      if (other.cardIcons_ != null) {
+        if (cardIcons_ == null) {
+          CardIcons = new global::Spelldawn.Protos.CardIcons();
+        }
+        CardIcons.MergeFrom(other.CardIcons);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1171,49 +1552,35 @@ namespace Spelldawn.Protos {
             break;
           }
           case 58: {
-            if (topLeftIcon_ == null) {
-              TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(TopLeftIcon);
-            break;
-          }
-          case 66: {
-            if (topRightIcon_ == null) {
-              TopRightIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(TopRightIcon);
-            break;
-          }
-          case 74: {
-            if (bottomRightIcon_ == null) {
-              BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(BottomRightIcon);
-            break;
-          }
-          case 82: {
-            if (bottomLeftIcon_ == null) {
-              BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(BottomLeftIcon);
-            break;
-          }
-          case 90: {
             if (title_ == null) {
               Title = new global::Spelldawn.Protos.CardTitle();
             }
             input.ReadMessage(Title);
             break;
           }
-          case 98: {
+          case 66: {
             if (rulesText_ == null) {
               RulesText = new global::Spelldawn.Protos.RulesText();
             }
             input.ReadMessage(RulesText);
             break;
           }
-          case 104: {
+          case 72: {
             CanPlay = input.ReadBool();
+            break;
+          }
+          case 82: {
+            if (arenaFrame_ == null) {
+              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(ArenaFrame);
+            break;
+          }
+          case 90: {
+            if (cardIcons_ == null) {
+              CardIcons = new global::Spelldawn.Protos.CardIcons();
+            }
+            input.ReadMessage(CardIcons);
             break;
           }
         }
@@ -1273,49 +1640,3123 @@ namespace Spelldawn.Protos {
             break;
           }
           case 58: {
-            if (topLeftIcon_ == null) {
-              TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(TopLeftIcon);
-            break;
-          }
-          case 66: {
-            if (topRightIcon_ == null) {
-              TopRightIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(TopRightIcon);
-            break;
-          }
-          case 74: {
-            if (bottomRightIcon_ == null) {
-              BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(BottomRightIcon);
-            break;
-          }
-          case 82: {
-            if (bottomLeftIcon_ == null) {
-              BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
-            }
-            input.ReadMessage(BottomLeftIcon);
-            break;
-          }
-          case 90: {
             if (title_ == null) {
               Title = new global::Spelldawn.Protos.CardTitle();
             }
             input.ReadMessage(Title);
             break;
           }
-          case 98: {
+          case 66: {
             if (rulesText_ == null) {
               RulesText = new global::Spelldawn.Protos.RulesText();
             }
             input.ReadMessage(RulesText);
             break;
           }
-          case 104: {
+          case 72: {
             CanPlay = input.ReadBool();
+            break;
+          }
+          case 82: {
+            if (arenaFrame_ == null) {
+              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(ArenaFrame);
+            break;
+          }
+          case 90: {
+            if (cardIcons_ == null) {
+              CardIcons = new global::Spelldawn.Protos.CardIcons();
+            }
+            input.ReadMessage(CardIcons);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class HiddenCardView : pb::IMessage<HiddenCardView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<HiddenCardView> _parser = new pb::MessageParser<HiddenCardView>(() => new HiddenCardView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<HiddenCardView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[5]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public HiddenCardView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public HiddenCardView(HiddenCardView other) : this() {
+      cardBack_ = other.cardBack_ != null ? other.cardBack_.Clone() : null;
+      cardIcons_ = other.cardIcons_ != null ? other.cardIcons_.Clone() : null;
+      arenaFrame_ = other.arenaFrame_ != null ? other.arenaFrame_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public HiddenCardView Clone() {
+      return new HiddenCardView(this);
+    }
+
+    /// <summary>Field number for the "card_back" field.</summary>
+    public const int CardBackFieldNumber = 1;
+    private global::Spelldawn.Protos.SpriteAddress cardBack_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.SpriteAddress CardBack {
+      get { return cardBack_; }
+      set {
+        cardBack_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "card_icons" field.</summary>
+    public const int CardIconsFieldNumber = 2;
+    private global::Spelldawn.Protos.CardIcons cardIcons_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcons CardIcons {
+      get { return cardIcons_; }
+      set {
+        cardIcons_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "arena_frame" field.</summary>
+    public const int ArenaFrameFieldNumber = 3;
+    private global::Spelldawn.Protos.SpriteAddress arenaFrame_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.SpriteAddress ArenaFrame {
+      get { return arenaFrame_; }
+      set {
+        arenaFrame_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as HiddenCardView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(HiddenCardView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(CardBack, other.CardBack)) return false;
+      if (!object.Equals(CardIcons, other.CardIcons)) return false;
+      if (!object.Equals(ArenaFrame, other.ArenaFrame)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (cardBack_ != null) hash ^= CardBack.GetHashCode();
+      if (cardIcons_ != null) hash ^= CardIcons.GetHashCode();
+      if (arenaFrame_ != null) hash ^= ArenaFrame.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (cardBack_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(CardBack);
+      }
+      if (cardIcons_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(CardIcons);
+      }
+      if (arenaFrame_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(ArenaFrame);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (cardBack_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(CardBack);
+      }
+      if (cardIcons_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(CardIcons);
+      }
+      if (arenaFrame_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(ArenaFrame);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (cardBack_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardBack);
+      }
+      if (cardIcons_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardIcons);
+      }
+      if (arenaFrame_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ArenaFrame);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(HiddenCardView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.cardBack_ != null) {
+        if (cardBack_ == null) {
+          CardBack = new global::Spelldawn.Protos.SpriteAddress();
+        }
+        CardBack.MergeFrom(other.CardBack);
+      }
+      if (other.cardIcons_ != null) {
+        if (cardIcons_ == null) {
+          CardIcons = new global::Spelldawn.Protos.CardIcons();
+        }
+        CardIcons.MergeFrom(other.CardIcons);
+      }
+      if (other.arenaFrame_ != null) {
+        if (arenaFrame_ == null) {
+          ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+        }
+        ArenaFrame.MergeFrom(other.ArenaFrame);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (cardBack_ == null) {
+              CardBack = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(CardBack);
+            break;
+          }
+          case 18: {
+            if (cardIcons_ == null) {
+              CardIcons = new global::Spelldawn.Protos.CardIcons();
+            }
+            input.ReadMessage(CardIcons);
+            break;
+          }
+          case 26: {
+            if (arenaFrame_ == null) {
+              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(ArenaFrame);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (cardBack_ == null) {
+              CardBack = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(CardBack);
+            break;
+          }
+          case 18: {
+            if (cardIcons_ == null) {
+              CardIcons = new global::Spelldawn.Protos.CardIcons();
+            }
+            input.ReadMessage(CardIcons);
+            break;
+          }
+          case 26: {
+            if (arenaFrame_ == null) {
+              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(ArenaFrame);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class CardView : pb::IMessage<CardView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<CardView> _parser = new pb::MessageParser<CardView>(() => new CardView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<CardView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[6]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CardView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CardView(CardView other) : this() {
+      cardId_ = other.cardId_;
+      switch (other.CardCase) {
+        case CardOneofCase.RevealedCard:
+          RevealedCard = other.RevealedCard.Clone();
+          break;
+        case CardOneofCase.HiddenCard:
+          HiddenCard = other.HiddenCard.Clone();
+          break;
+      }
+
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CardView Clone() {
+      return new CardView(this);
+    }
+
+    /// <summary>Field number for the "card_id" field.</summary>
+    public const int CardIdFieldNumber = 1;
+    private int cardId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CardId {
+      get { return cardId_; }
+      set {
+        cardId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "revealed_card" field.</summary>
+    public const int RevealedCardFieldNumber = 2;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.RevealedCardView RevealedCard {
+      get { return cardCase_ == CardOneofCase.RevealedCard ? (global::Spelldawn.Protos.RevealedCardView) card_ : null; }
+      set {
+        card_ = value;
+        cardCase_ = value == null ? CardOneofCase.None : CardOneofCase.RevealedCard;
+      }
+    }
+
+    /// <summary>Field number for the "hidden_card" field.</summary>
+    public const int HiddenCardFieldNumber = 3;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.HiddenCardView HiddenCard {
+      get { return cardCase_ == CardOneofCase.HiddenCard ? (global::Spelldawn.Protos.HiddenCardView) card_ : null; }
+      set {
+        card_ = value;
+        cardCase_ = value == null ? CardOneofCase.None : CardOneofCase.HiddenCard;
+      }
+    }
+
+    private object card_;
+    /// <summary>Enum of possible cases for the "card" oneof.</summary>
+    public enum CardOneofCase {
+      None = 0,
+      RevealedCard = 2,
+      HiddenCard = 3,
+    }
+    private CardOneofCase cardCase_ = CardOneofCase.None;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CardOneofCase CardCase {
+      get { return cardCase_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearCard() {
+      cardCase_ = CardOneofCase.None;
+      card_ = null;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as CardView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(CardView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (CardId != other.CardId) return false;
+      if (!object.Equals(RevealedCard, other.RevealedCard)) return false;
+      if (!object.Equals(HiddenCard, other.HiddenCard)) return false;
+      if (CardCase != other.CardCase) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (CardId != 0) hash ^= CardId.GetHashCode();
+      if (cardCase_ == CardOneofCase.RevealedCard) hash ^= RevealedCard.GetHashCode();
+      if (cardCase_ == CardOneofCase.HiddenCard) hash ^= HiddenCard.GetHashCode();
+      hash ^= (int) cardCase_;
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (CardId != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(CardId);
+      }
+      if (cardCase_ == CardOneofCase.RevealedCard) {
+        output.WriteRawTag(18);
+        output.WriteMessage(RevealedCard);
+      }
+      if (cardCase_ == CardOneofCase.HiddenCard) {
+        output.WriteRawTag(26);
+        output.WriteMessage(HiddenCard);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (CardId != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(CardId);
+      }
+      if (cardCase_ == CardOneofCase.RevealedCard) {
+        output.WriteRawTag(18);
+        output.WriteMessage(RevealedCard);
+      }
+      if (cardCase_ == CardOneofCase.HiddenCard) {
+        output.WriteRawTag(26);
+        output.WriteMessage(HiddenCard);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (CardId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CardId);
+      }
+      if (cardCase_ == CardOneofCase.RevealedCard) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RevealedCard);
+      }
+      if (cardCase_ == CardOneofCase.HiddenCard) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(HiddenCard);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(CardView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.CardId != 0) {
+        CardId = other.CardId;
+      }
+      switch (other.CardCase) {
+        case CardOneofCase.RevealedCard:
+          if (RevealedCard == null) {
+            RevealedCard = new global::Spelldawn.Protos.RevealedCardView();
+          }
+          RevealedCard.MergeFrom(other.RevealedCard);
+          break;
+        case CardOneofCase.HiddenCard:
+          if (HiddenCard == null) {
+            HiddenCard = new global::Spelldawn.Protos.HiddenCardView();
+          }
+          HiddenCard.MergeFrom(other.HiddenCard);
+          break;
+      }
+
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            CardId = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            global::Spelldawn.Protos.RevealedCardView subBuilder = new global::Spelldawn.Protos.RevealedCardView();
+            if (cardCase_ == CardOneofCase.RevealedCard) {
+              subBuilder.MergeFrom(RevealedCard);
+            }
+            input.ReadMessage(subBuilder);
+            RevealedCard = subBuilder;
+            break;
+          }
+          case 26: {
+            global::Spelldawn.Protos.HiddenCardView subBuilder = new global::Spelldawn.Protos.HiddenCardView();
+            if (cardCase_ == CardOneofCase.HiddenCard) {
+              subBuilder.MergeFrom(HiddenCard);
+            }
+            input.ReadMessage(subBuilder);
+            HiddenCard = subBuilder;
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            CardId = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            global::Spelldawn.Protos.RevealedCardView subBuilder = new global::Spelldawn.Protos.RevealedCardView();
+            if (cardCase_ == CardOneofCase.RevealedCard) {
+              subBuilder.MergeFrom(RevealedCard);
+            }
+            input.ReadMessage(subBuilder);
+            RevealedCard = subBuilder;
+            break;
+          }
+          case 26: {
+            global::Spelldawn.Protos.HiddenCardView subBuilder = new global::Spelldawn.Protos.HiddenCardView();
+            if (cardCase_ == CardOneofCase.HiddenCard) {
+              subBuilder.MergeFrom(HiddenCard);
+            }
+            input.ReadMessage(subBuilder);
+            HiddenCard = subBuilder;
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class HandView : pb::IMessage<HandView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<HandView> _parser = new pb::MessageParser<HandView>(() => new HandView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<HandView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[7]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public HandView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public HandView(HandView other) : this() {
+      cards_ = other.cards_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public HandView Clone() {
+      return new HandView(this);
+    }
+
+    /// <summary>Field number for the "cards" field.</summary>
+    public const int CardsFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_cards_codec
+        = pb::FieldCodec.ForMessage(10, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> cards_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Cards {
+      get { return cards_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as HandView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(HandView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if(!cards_.Equals(other.cards_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= cards_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      cards_.WriteTo(output, _repeated_cards_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      cards_.WriteTo(ref output, _repeated_cards_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      size += cards_.CalculateSize(_repeated_cards_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(HandView other) {
+      if (other == null) {
+        return;
+      }
+      cards_.Add(other.cards_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            cards_.AddEntriesFrom(input, _repeated_cards_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            cards_.AddEntriesFrom(ref input, _repeated_cards_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class DiscardPileView : pb::IMessage<DiscardPileView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DiscardPileView> _parser = new pb::MessageParser<DiscardPileView>(() => new DiscardPileView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<DiscardPileView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[8]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DiscardPileView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DiscardPileView(DiscardPileView other) : this() {
+      cards_ = other.cards_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DiscardPileView Clone() {
+      return new DiscardPileView(this);
+    }
+
+    /// <summary>Field number for the "cards" field.</summary>
+    public const int CardsFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_cards_codec
+        = pb::FieldCodec.ForMessage(10, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> cards_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Cards {
+      get { return cards_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as DiscardPileView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(DiscardPileView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if(!cards_.Equals(other.cards_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= cards_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      cards_.WriteTo(output, _repeated_cards_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      cards_.WriteTo(ref output, _repeated_cards_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      size += cards_.CalculateSize(_repeated_cards_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(DiscardPileView other) {
+      if (other == null) {
+        return;
+      }
+      cards_.Add(other.cards_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            cards_.AddEntriesFrom(input, _repeated_cards_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            cards_.AddEntriesFrom(ref input, _repeated_cards_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class PlayerInfo : pb::IMessage<PlayerInfo>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PlayerInfo> _parser = new pb::MessageParser<PlayerInfo>(() => new PlayerInfo());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<PlayerInfo> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[9]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PlayerInfo() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PlayerInfo(PlayerInfo other) : this() {
+      name_ = other.name_;
+      portrait_ = other.portrait_ != null ? other.portrait_.Clone() : null;
+      identityCard_ = other.identityCard_ != null ? other.identityCard_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PlayerInfo Clone() {
+      return new PlayerInfo(this);
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "portrait" field.</summary>
+    public const int PortraitFieldNumber = 2;
+    private global::Spelldawn.Protos.SpriteAddress portrait_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.SpriteAddress Portrait {
+      get { return portrait_; }
+      set {
+        portrait_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "identity_card" field.</summary>
+    public const int IdentityCardFieldNumber = 3;
+    private global::Spelldawn.Protos.CardView identityCard_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardView IdentityCard {
+      get { return identityCard_; }
+      set {
+        identityCard_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as PlayerInfo);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(PlayerInfo other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Name != other.Name) return false;
+      if (!object.Equals(Portrait, other.Portrait)) return false;
+      if (!object.Equals(IdentityCard, other.IdentityCard)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (portrait_ != null) hash ^= Portrait.GetHashCode();
+      if (identityCard_ != null) hash ^= IdentityCard.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (portrait_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Portrait);
+      }
+      if (identityCard_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(IdentityCard);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (portrait_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Portrait);
+      }
+      if (identityCard_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(IdentityCard);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (portrait_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Portrait);
+      }
+      if (identityCard_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(IdentityCard);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(PlayerInfo other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      if (other.portrait_ != null) {
+        if (portrait_ == null) {
+          Portrait = new global::Spelldawn.Protos.SpriteAddress();
+        }
+        Portrait.MergeFrom(other.Portrait);
+      }
+      if (other.identityCard_ != null) {
+        if (identityCard_ == null) {
+          IdentityCard = new global::Spelldawn.Protos.CardView();
+        }
+        IdentityCard.MergeFrom(other.IdentityCard);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+          case 18: {
+            if (portrait_ == null) {
+              Portrait = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(Portrait);
+            break;
+          }
+          case 26: {
+            if (identityCard_ == null) {
+              IdentityCard = new global::Spelldawn.Protos.CardView();
+            }
+            input.ReadMessage(IdentityCard);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+          case 18: {
+            if (portrait_ == null) {
+              Portrait = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(Portrait);
+            break;
+          }
+          case 26: {
+            if (identityCard_ == null) {
+              IdentityCard = new global::Spelldawn.Protos.CardView();
+            }
+            input.ReadMessage(IdentityCard);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class ManaView : pb::IMessage<ManaView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<ManaView> _parser = new pb::MessageParser<ManaView>(() => new ManaView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<ManaView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[10]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ManaView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ManaView(ManaView other) : this() {
+      amount_ = other.amount_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ManaView Clone() {
+      return new ManaView(this);
+    }
+
+    /// <summary>Field number for the "amount" field.</summary>
+    public const int AmountFieldNumber = 1;
+    private int amount_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Amount {
+      get { return amount_; }
+      set {
+        amount_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ManaView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ManaView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Amount != other.Amount) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Amount != 0) hash ^= Amount.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Amount != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Amount);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Amount != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Amount);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Amount != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Amount);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ManaView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Amount != 0) {
+        Amount = other.Amount;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Amount = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Amount = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class ScoreView : pb::IMessage<ScoreView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<ScoreView> _parser = new pb::MessageParser<ScoreView>(() => new ScoreView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<ScoreView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[11]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ScoreView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ScoreView(ScoreView other) : this() {
+      score_ = other.score_;
+      scoredCards_ = other.scoredCards_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ScoreView Clone() {
+      return new ScoreView(this);
+    }
+
+    /// <summary>Field number for the "score" field.</summary>
+    public const int ScoreFieldNumber = 1;
+    private int score_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Score {
+      get { return score_; }
+      set {
+        score_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "scored_cards" field.</summary>
+    public const int ScoredCardsFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_scoredCards_codec
+        = pb::FieldCodec.ForMessage(18, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> scoredCards_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> ScoredCards {
+      get { return scoredCards_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ScoreView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ScoreView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Score != other.Score) return false;
+      if(!scoredCards_.Equals(other.scoredCards_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Score != 0) hash ^= Score.GetHashCode();
+      hash ^= scoredCards_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Score != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Score);
+      }
+      scoredCards_.WriteTo(output, _repeated_scoredCards_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Score != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Score);
+      }
+      scoredCards_.WriteTo(ref output, _repeated_scoredCards_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Score != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Score);
+      }
+      size += scoredCards_.CalculateSize(_repeated_scoredCards_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ScoreView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Score != 0) {
+        Score = other.Score;
+      }
+      scoredCards_.Add(other.scoredCards_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Score = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            scoredCards_.AddEntriesFrom(input, _repeated_scoredCards_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Score = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            scoredCards_.AddEntriesFrom(ref input, _repeated_scoredCards_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class RoomIcon : pb::IMessage<RoomIcon>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<RoomIcon> _parser = new pb::MessageParser<RoomIcon>(() => new RoomIcon());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<RoomIcon> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[12]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomIcon() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomIcon(RoomIcon other) : this() {
+      roomIcon_ = other.roomIcon_ != null ? other.roomIcon_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomIcon Clone() {
+      return new RoomIcon(this);
+    }
+
+    /// <summary>Field number for the "room_icon" field.</summary>
+    public const int RoomIcon_FieldNumber = 1;
+    private global::Spelldawn.Protos.SpriteAddress roomIcon_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.SpriteAddress RoomIcon_ {
+      get { return roomIcon_; }
+      set {
+        roomIcon_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as RoomIcon);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RoomIcon other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(RoomIcon_, other.RoomIcon_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (roomIcon_ != null) hash ^= RoomIcon_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (roomIcon_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(RoomIcon_);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (roomIcon_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(RoomIcon_);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (roomIcon_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomIcon_);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(RoomIcon other) {
+      if (other == null) {
+        return;
+      }
+      if (other.roomIcon_ != null) {
+        if (roomIcon_ == null) {
+          RoomIcon_ = new global::Spelldawn.Protos.SpriteAddress();
+        }
+        RoomIcon_.MergeFrom(other.RoomIcon_);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (roomIcon_ == null) {
+              RoomIcon_ = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(RoomIcon_);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (roomIcon_ == null) {
+              RoomIcon_ = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(RoomIcon_);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class RoomView : pb::IMessage<RoomView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<RoomView> _parser = new pb::MessageParser<RoomView>(() => new RoomView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<RoomView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[13]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomView(RoomView other) : this() {
+      roomIcon_ = other.roomIcon_ != null ? other.roomIcon_.Clone() : null;
+      projects_ = other.projects_.Clone();
+      minions_ = other.minions_.Clone();
+      annexes_ = other.annexes_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomView Clone() {
+      return new RoomView(this);
+    }
+
+    /// <summary>Field number for the "room_icon" field.</summary>
+    public const int RoomIconFieldNumber = 1;
+    private global::Spelldawn.Protos.RoomIcon roomIcon_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.RoomIcon RoomIcon {
+      get { return roomIcon_; }
+      set {
+        roomIcon_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "projects" field.</summary>
+    public const int ProjectsFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_projects_codec
+        = pb::FieldCodec.ForMessage(18, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> projects_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Projects {
+      get { return projects_; }
+    }
+
+    /// <summary>Field number for the "minions" field.</summary>
+    public const int MinionsFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_minions_codec
+        = pb::FieldCodec.ForMessage(26, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> minions_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Minions {
+      get { return minions_; }
+    }
+
+    /// <summary>Field number for the "annexes" field.</summary>
+    public const int AnnexesFieldNumber = 4;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_annexes_codec
+        = pb::FieldCodec.ForMessage(34, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> annexes_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Annexes {
+      get { return annexes_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as RoomView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RoomView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(RoomIcon, other.RoomIcon)) return false;
+      if(!projects_.Equals(other.projects_)) return false;
+      if(!minions_.Equals(other.minions_)) return false;
+      if(!annexes_.Equals(other.annexes_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (roomIcon_ != null) hash ^= RoomIcon.GetHashCode();
+      hash ^= projects_.GetHashCode();
+      hash ^= minions_.GetHashCode();
+      hash ^= annexes_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (roomIcon_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(RoomIcon);
+      }
+      projects_.WriteTo(output, _repeated_projects_codec);
+      minions_.WriteTo(output, _repeated_minions_codec);
+      annexes_.WriteTo(output, _repeated_annexes_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (roomIcon_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(RoomIcon);
+      }
+      projects_.WriteTo(ref output, _repeated_projects_codec);
+      minions_.WriteTo(ref output, _repeated_minions_codec);
+      annexes_.WriteTo(ref output, _repeated_annexes_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (roomIcon_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomIcon);
+      }
+      size += projects_.CalculateSize(_repeated_projects_codec);
+      size += minions_.CalculateSize(_repeated_minions_codec);
+      size += annexes_.CalculateSize(_repeated_annexes_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(RoomView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.roomIcon_ != null) {
+        if (roomIcon_ == null) {
+          RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+        }
+        RoomIcon.MergeFrom(other.RoomIcon);
+      }
+      projects_.Add(other.projects_);
+      minions_.Add(other.minions_);
+      annexes_.Add(other.annexes_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (roomIcon_ == null) {
+              RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+            }
+            input.ReadMessage(RoomIcon);
+            break;
+          }
+          case 18: {
+            projects_.AddEntriesFrom(input, _repeated_projects_codec);
+            break;
+          }
+          case 26: {
+            minions_.AddEntriesFrom(input, _repeated_minions_codec);
+            break;
+          }
+          case 34: {
+            annexes_.AddEntriesFrom(input, _repeated_annexes_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (roomIcon_ == null) {
+              RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+            }
+            input.ReadMessage(RoomIcon);
+            break;
+          }
+          case 18: {
+            projects_.AddEntriesFrom(ref input, _repeated_projects_codec);
+            break;
+          }
+          case 26: {
+            minions_.AddEntriesFrom(ref input, _repeated_minions_codec);
+            break;
+          }
+          case 34: {
+            annexes_.AddEntriesFrom(ref input, _repeated_annexes_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class ArenaView : pb::IMessage<ArenaView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<ArenaView> _parser = new pb::MessageParser<ArenaView>(() => new ArenaView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<ArenaView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[14]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ArenaView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ArenaView(ArenaView other) : this() {
+      overlordPerspective_ = other.overlordPerspective_;
+      rooms_ = other.rooms_.Clone();
+      weapons_ = other.weapons_.Clone();
+      armor_ = other.armor_.Clone();
+      artifacts_ = other.artifacts_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ArenaView Clone() {
+      return new ArenaView(this);
+    }
+
+    /// <summary>Field number for the "overlord_perspective" field.</summary>
+    public const int OverlordPerspectiveFieldNumber = 1;
+    private bool overlordPerspective_;
+    /// <summary>
+    ///*
+    /// If true, render rooms at the bottom of the screen, if false, render items
+    /// at the bottom.
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool OverlordPerspective {
+      get { return overlordPerspective_; }
+      set {
+        overlordPerspective_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "rooms" field.</summary>
+    public const int RoomsFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.RoomView> _repeated_rooms_codec
+        = pb::FieldCodec.ForMessage(18, global::Spelldawn.Protos.RoomView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.RoomView> rooms_ = new pbc::RepeatedField<global::Spelldawn.Protos.RoomView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.RoomView> Rooms {
+      get { return rooms_; }
+    }
+
+    /// <summary>Field number for the "weapons" field.</summary>
+    public const int WeaponsFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_weapons_codec
+        = pb::FieldCodec.ForMessage(26, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> weapons_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Weapons {
+      get { return weapons_; }
+    }
+
+    /// <summary>Field number for the "armor" field.</summary>
+    public const int ArmorFieldNumber = 4;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_armor_codec
+        = pb::FieldCodec.ForMessage(34, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> armor_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Armor {
+      get { return armor_; }
+    }
+
+    /// <summary>Field number for the "artifacts" field.</summary>
+    public const int ArtifactsFieldNumber = 5;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardView> _repeated_artifacts_codec
+        = pb::FieldCodec.ForMessage(42, global::Spelldawn.Protos.CardView.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardView> artifacts_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardView>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardView> Artifacts {
+      get { return artifacts_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ArenaView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ArenaView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (OverlordPerspective != other.OverlordPerspective) return false;
+      if(!rooms_.Equals(other.rooms_)) return false;
+      if(!weapons_.Equals(other.weapons_)) return false;
+      if(!armor_.Equals(other.armor_)) return false;
+      if(!artifacts_.Equals(other.artifacts_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (OverlordPerspective != false) hash ^= OverlordPerspective.GetHashCode();
+      hash ^= rooms_.GetHashCode();
+      hash ^= weapons_.GetHashCode();
+      hash ^= armor_.GetHashCode();
+      hash ^= artifacts_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (OverlordPerspective != false) {
+        output.WriteRawTag(8);
+        output.WriteBool(OverlordPerspective);
+      }
+      rooms_.WriteTo(output, _repeated_rooms_codec);
+      weapons_.WriteTo(output, _repeated_weapons_codec);
+      armor_.WriteTo(output, _repeated_armor_codec);
+      artifacts_.WriteTo(output, _repeated_artifacts_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (OverlordPerspective != false) {
+        output.WriteRawTag(8);
+        output.WriteBool(OverlordPerspective);
+      }
+      rooms_.WriteTo(ref output, _repeated_rooms_codec);
+      weapons_.WriteTo(ref output, _repeated_weapons_codec);
+      armor_.WriteTo(ref output, _repeated_armor_codec);
+      artifacts_.WriteTo(ref output, _repeated_artifacts_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (OverlordPerspective != false) {
+        size += 1 + 1;
+      }
+      size += rooms_.CalculateSize(_repeated_rooms_codec);
+      size += weapons_.CalculateSize(_repeated_weapons_codec);
+      size += armor_.CalculateSize(_repeated_armor_codec);
+      size += artifacts_.CalculateSize(_repeated_artifacts_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ArenaView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.OverlordPerspective != false) {
+        OverlordPerspective = other.OverlordPerspective;
+      }
+      rooms_.Add(other.rooms_);
+      weapons_.Add(other.weapons_);
+      armor_.Add(other.armor_);
+      artifacts_.Add(other.artifacts_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            OverlordPerspective = input.ReadBool();
+            break;
+          }
+          case 18: {
+            rooms_.AddEntriesFrom(input, _repeated_rooms_codec);
+            break;
+          }
+          case 26: {
+            weapons_.AddEntriesFrom(input, _repeated_weapons_codec);
+            break;
+          }
+          case 34: {
+            armor_.AddEntriesFrom(input, _repeated_armor_codec);
+            break;
+          }
+          case 42: {
+            artifacts_.AddEntriesFrom(input, _repeated_artifacts_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            OverlordPerspective = input.ReadBool();
+            break;
+          }
+          case 18: {
+            rooms_.AddEntriesFrom(ref input, _repeated_rooms_codec);
+            break;
+          }
+          case 26: {
+            weapons_.AddEntriesFrom(ref input, _repeated_weapons_codec);
+            break;
+          }
+          case 34: {
+            armor_.AddEntriesFrom(ref input, _repeated_armor_codec);
+            break;
+          }
+          case 42: {
+            artifacts_.AddEntriesFrom(ref input, _repeated_artifacts_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class ActionTrackerView : pb::IMessage<ActionTrackerView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<ActionTrackerView> _parser = new pb::MessageParser<ActionTrackerView>(() => new ActionTrackerView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<ActionTrackerView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[15]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ActionTrackerView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ActionTrackerView(ActionTrackerView other) : this() {
+      availableActionCount_ = other.availableActionCount_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ActionTrackerView Clone() {
+      return new ActionTrackerView(this);
+    }
+
+    /// <summary>Field number for the "available_action_count" field.</summary>
+    public const int AvailableActionCountFieldNumber = 1;
+    private int availableActionCount_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int AvailableActionCount {
+      get { return availableActionCount_; }
+      set {
+        availableActionCount_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ActionTrackerView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ActionTrackerView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (AvailableActionCount != other.AvailableActionCount) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (AvailableActionCount != 0) hash ^= AvailableActionCount.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (AvailableActionCount != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(AvailableActionCount);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (AvailableActionCount != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(AvailableActionCount);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (AvailableActionCount != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(AvailableActionCount);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ActionTrackerView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.AvailableActionCount != 0) {
+        AvailableActionCount = other.AvailableActionCount;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            AvailableActionCount = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            AvailableActionCount = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class PlayerView : pb::IMessage<PlayerView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PlayerView> _parser = new pb::MessageParser<PlayerView>(() => new PlayerView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<PlayerView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[16]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PlayerView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PlayerView(PlayerView other) : this() {
+      playerInfo_ = other.playerInfo_ != null ? other.playerInfo_.Clone() : null;
+      score_ = other.score_ != null ? other.score_.Clone() : null;
+      hand_ = other.hand_ != null ? other.hand_.Clone() : null;
+      mana_ = other.mana_ != null ? other.mana_.Clone() : null;
+      discardPile_ = other.discardPile_ != null ? other.discardPile_.Clone() : null;
+      actionTracker_ = other.actionTracker_ != null ? other.actionTracker_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public PlayerView Clone() {
+      return new PlayerView(this);
+    }
+
+    /// <summary>Field number for the "player_info" field.</summary>
+    public const int PlayerInfoFieldNumber = 1;
+    private global::Spelldawn.Protos.PlayerInfo playerInfo_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.PlayerInfo PlayerInfo {
+      get { return playerInfo_; }
+      set {
+        playerInfo_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "score" field.</summary>
+    public const int ScoreFieldNumber = 2;
+    private global::Spelldawn.Protos.ScoreView score_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.ScoreView Score {
+      get { return score_; }
+      set {
+        score_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "hand" field.</summary>
+    public const int HandFieldNumber = 3;
+    private global::Spelldawn.Protos.HandView hand_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.HandView Hand {
+      get { return hand_; }
+      set {
+        hand_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "mana" field.</summary>
+    public const int ManaFieldNumber = 4;
+    private global::Spelldawn.Protos.ManaView mana_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.ManaView Mana {
+      get { return mana_; }
+      set {
+        mana_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "discard_pile" field.</summary>
+    public const int DiscardPileFieldNumber = 5;
+    private global::Spelldawn.Protos.DiscardPileView discardPile_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.DiscardPileView DiscardPile {
+      get { return discardPile_; }
+      set {
+        discardPile_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "action_tracker" field.</summary>
+    public const int ActionTrackerFieldNumber = 6;
+    private global::Spelldawn.Protos.ActionTrackerView actionTracker_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.ActionTrackerView ActionTracker {
+      get { return actionTracker_; }
+      set {
+        actionTracker_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as PlayerView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(PlayerView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(PlayerInfo, other.PlayerInfo)) return false;
+      if (!object.Equals(Score, other.Score)) return false;
+      if (!object.Equals(Hand, other.Hand)) return false;
+      if (!object.Equals(Mana, other.Mana)) return false;
+      if (!object.Equals(DiscardPile, other.DiscardPile)) return false;
+      if (!object.Equals(ActionTracker, other.ActionTracker)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (playerInfo_ != null) hash ^= PlayerInfo.GetHashCode();
+      if (score_ != null) hash ^= Score.GetHashCode();
+      if (hand_ != null) hash ^= Hand.GetHashCode();
+      if (mana_ != null) hash ^= Mana.GetHashCode();
+      if (discardPile_ != null) hash ^= DiscardPile.GetHashCode();
+      if (actionTracker_ != null) hash ^= ActionTracker.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (playerInfo_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(PlayerInfo);
+      }
+      if (score_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Score);
+      }
+      if (hand_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Hand);
+      }
+      if (mana_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Mana);
+      }
+      if (discardPile_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(DiscardPile);
+      }
+      if (actionTracker_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(ActionTracker);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (playerInfo_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(PlayerInfo);
+      }
+      if (score_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Score);
+      }
+      if (hand_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Hand);
+      }
+      if (mana_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Mana);
+      }
+      if (discardPile_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(DiscardPile);
+      }
+      if (actionTracker_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(ActionTracker);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (playerInfo_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerInfo);
+      }
+      if (score_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Score);
+      }
+      if (hand_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Hand);
+      }
+      if (mana_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Mana);
+      }
+      if (discardPile_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(DiscardPile);
+      }
+      if (actionTracker_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ActionTracker);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(PlayerView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.playerInfo_ != null) {
+        if (playerInfo_ == null) {
+          PlayerInfo = new global::Spelldawn.Protos.PlayerInfo();
+        }
+        PlayerInfo.MergeFrom(other.PlayerInfo);
+      }
+      if (other.score_ != null) {
+        if (score_ == null) {
+          Score = new global::Spelldawn.Protos.ScoreView();
+        }
+        Score.MergeFrom(other.Score);
+      }
+      if (other.hand_ != null) {
+        if (hand_ == null) {
+          Hand = new global::Spelldawn.Protos.HandView();
+        }
+        Hand.MergeFrom(other.Hand);
+      }
+      if (other.mana_ != null) {
+        if (mana_ == null) {
+          Mana = new global::Spelldawn.Protos.ManaView();
+        }
+        Mana.MergeFrom(other.Mana);
+      }
+      if (other.discardPile_ != null) {
+        if (discardPile_ == null) {
+          DiscardPile = new global::Spelldawn.Protos.DiscardPileView();
+        }
+        DiscardPile.MergeFrom(other.DiscardPile);
+      }
+      if (other.actionTracker_ != null) {
+        if (actionTracker_ == null) {
+          ActionTracker = new global::Spelldawn.Protos.ActionTrackerView();
+        }
+        ActionTracker.MergeFrom(other.ActionTracker);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (playerInfo_ == null) {
+              PlayerInfo = new global::Spelldawn.Protos.PlayerInfo();
+            }
+            input.ReadMessage(PlayerInfo);
+            break;
+          }
+          case 18: {
+            if (score_ == null) {
+              Score = new global::Spelldawn.Protos.ScoreView();
+            }
+            input.ReadMessage(Score);
+            break;
+          }
+          case 26: {
+            if (hand_ == null) {
+              Hand = new global::Spelldawn.Protos.HandView();
+            }
+            input.ReadMessage(Hand);
+            break;
+          }
+          case 34: {
+            if (mana_ == null) {
+              Mana = new global::Spelldawn.Protos.ManaView();
+            }
+            input.ReadMessage(Mana);
+            break;
+          }
+          case 42: {
+            if (discardPile_ == null) {
+              DiscardPile = new global::Spelldawn.Protos.DiscardPileView();
+            }
+            input.ReadMessage(DiscardPile);
+            break;
+          }
+          case 50: {
+            if (actionTracker_ == null) {
+              ActionTracker = new global::Spelldawn.Protos.ActionTrackerView();
+            }
+            input.ReadMessage(ActionTracker);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (playerInfo_ == null) {
+              PlayerInfo = new global::Spelldawn.Protos.PlayerInfo();
+            }
+            input.ReadMessage(PlayerInfo);
+            break;
+          }
+          case 18: {
+            if (score_ == null) {
+              Score = new global::Spelldawn.Protos.ScoreView();
+            }
+            input.ReadMessage(Score);
+            break;
+          }
+          case 26: {
+            if (hand_ == null) {
+              Hand = new global::Spelldawn.Protos.HandView();
+            }
+            input.ReadMessage(Hand);
+            break;
+          }
+          case 34: {
+            if (mana_ == null) {
+              Mana = new global::Spelldawn.Protos.ManaView();
+            }
+            input.ReadMessage(Mana);
+            break;
+          }
+          case 42: {
+            if (discardPile_ == null) {
+              DiscardPile = new global::Spelldawn.Protos.DiscardPileView();
+            }
+            input.ReadMessage(DiscardPile);
+            break;
+          }
+          case 50: {
+            if (actionTracker_ == null) {
+              ActionTracker = new global::Spelldawn.Protos.ActionTrackerView();
+            }
+            input.ReadMessage(ActionTracker);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class GameView : pb::IMessage<GameView>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<GameView> _parser = new pb::MessageParser<GameView>(() => new GameView());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<GameView> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.ViewsReflection.Descriptor.MessageTypes[17]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public GameView() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public GameView(GameView other) : this() {
+      user_ = other.user_ != null ? other.user_.Clone() : null;
+      opponent_ = other.opponent_ != null ? other.opponent_.Clone() : null;
+      arena_ = other.arena_ != null ? other.arena_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public GameView Clone() {
+      return new GameView(this);
+    }
+
+    /// <summary>Field number for the "user" field.</summary>
+    public const int UserFieldNumber = 1;
+    private global::Spelldawn.Protos.PlayerView user_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.PlayerView User {
+      get { return user_; }
+      set {
+        user_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "opponent" field.</summary>
+    public const int OpponentFieldNumber = 2;
+    private global::Spelldawn.Protos.PlayerView opponent_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.PlayerView Opponent {
+      get { return opponent_; }
+      set {
+        opponent_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "arena" field.</summary>
+    public const int ArenaFieldNumber = 3;
+    private global::Spelldawn.Protos.ArenaView arena_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.ArenaView Arena {
+      get { return arena_; }
+      set {
+        arena_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as GameView);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(GameView other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(User, other.User)) return false;
+      if (!object.Equals(Opponent, other.Opponent)) return false;
+      if (!object.Equals(Arena, other.Arena)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (user_ != null) hash ^= User.GetHashCode();
+      if (opponent_ != null) hash ^= Opponent.GetHashCode();
+      if (arena_ != null) hash ^= Arena.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (user_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(User);
+      }
+      if (opponent_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Opponent);
+      }
+      if (arena_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Arena);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (user_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(User);
+      }
+      if (opponent_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Opponent);
+      }
+      if (arena_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Arena);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (user_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(User);
+      }
+      if (opponent_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Opponent);
+      }
+      if (arena_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Arena);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(GameView other) {
+      if (other == null) {
+        return;
+      }
+      if (other.user_ != null) {
+        if (user_ == null) {
+          User = new global::Spelldawn.Protos.PlayerView();
+        }
+        User.MergeFrom(other.User);
+      }
+      if (other.opponent_ != null) {
+        if (opponent_ == null) {
+          Opponent = new global::Spelldawn.Protos.PlayerView();
+        }
+        Opponent.MergeFrom(other.Opponent);
+      }
+      if (other.arena_ != null) {
+        if (arena_ == null) {
+          Arena = new global::Spelldawn.Protos.ArenaView();
+        }
+        Arena.MergeFrom(other.Arena);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (user_ == null) {
+              User = new global::Spelldawn.Protos.PlayerView();
+            }
+            input.ReadMessage(User);
+            break;
+          }
+          case 18: {
+            if (opponent_ == null) {
+              Opponent = new global::Spelldawn.Protos.PlayerView();
+            }
+            input.ReadMessage(Opponent);
+            break;
+          }
+          case 26: {
+            if (arena_ == null) {
+              Arena = new global::Spelldawn.Protos.ArenaView();
+            }
+            input.ReadMessage(Arena);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (user_ == null) {
+              User = new global::Spelldawn.Protos.PlayerView();
+            }
+            input.ReadMessage(User);
+            break;
+          }
+          case 18: {
+            if (opponent_ == null) {
+              Opponent = new global::Spelldawn.Protos.PlayerView();
+            }
+            input.ReadMessage(Opponent);
+            break;
+          }
+          case 26: {
+            if (arena_ == null) {
+              Arena = new global::Spelldawn.Protos.ArenaView();
+            }
+            input.ReadMessage(Arena);
             break;
           }
         }

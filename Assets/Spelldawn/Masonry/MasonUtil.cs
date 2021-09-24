@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Spelldawn.Protos;
 using UnityEngine;
@@ -44,9 +45,21 @@ namespace Spelldawn.Masonry
       Value = value
     };
 
-    public static DimensionGroup LeftTopDip(float left, float top) => GroupDip(top, 0, 0, left);
+    public static DimensionGroup PositionDip(float left, float top) => GroupDip(top, 0, 0, left);
 
     public static DimensionGroup GroupDip(float all) => GroupDip(all, all);
+
+    public static DimensionGroup LeftRightDip(float leftRight) => GroupDip(0, leftRight, 0, leftRight);
+
+    public static DimensionGroup TopBottomDip(float topBottom) => GroupDip(topBottom, 0, topBottom, 0);
+
+    public static DimensionGroup TopDip(float top) => GroupDip(top, 0, 0, 0);
+
+    public static DimensionGroup RightDip(float right) => GroupDip(0, right, 0, 0);
+
+    public static DimensionGroup BottomDip(float bottom) => GroupDip(0, 0, bottom, 0);
+
+    public static DimensionGroup LeftDip(float left) => GroupDip(0, 0, 0, left);
 
     public static DimensionGroup GroupDip(float topBottom, float leftRight) =>
       GroupDip(topBottom, leftRight, topBottom, leftRight);
@@ -92,6 +105,22 @@ namespace Spelldawn.Masonry
       Alpha = color.a
     };
 
+    public static BorderColor AllBordersColor(Color color) => new()
+    {
+      Top = MakeColor(color),
+      Right = MakeColor(color),
+      Bottom = MakeColor(color),
+      Left = MakeColor(color)
+    };
+
+    public static BorderWidth AllBordersWidth(float width) => new()
+    {
+      Top = width,
+      Right = width,
+      Bottom = width,
+      Left = width
+    };
+
     public static SpriteAddress Sprite(string address) => new()
     {
       Address = address
@@ -102,24 +131,42 @@ namespace Spelldawn.Masonry
       Address = address
     };
 
-    public static Node Row(string name, FlexStyle style, params Node?[] children)
+    public static Node Row(string name, FlexStyle? style, IEnumerable<Node?> children) =>
+      Row(name, style, children.ToArray());
+
+    public static Node Row(string name, FlexStyle? style = null, params Node?[] children)
     {
+      style ??= new FlexStyle();
       style.FlexDirection = FlexDirection.Row;
       return MakeFlexbox(name, style, children);
     }
 
-    public static Node Column(string name, FlexStyle style, params Node?[] children)
+    public static Node Column(string name, FlexStyle? style, IEnumerable<Node?> children) =>
+      Column(name, style, children.ToArray());
+
+    public static Node Column(string name, FlexStyle? style = null, params Node?[] children)
     {
+      style ??= new FlexStyle();
       style.FlexDirection = FlexDirection.Column;
       return MakeFlexbox(name, style, children);
     }
 
+    public static Node? WithStyle(Node? input, Action<FlexStyle> styleFn)
+    {
+      if (input != null)
+      {
+        styleFn(input.Style);
+      }
+
+      return input;
+    }
+
     public static Node Text(string label, FlexStyle style) => new()
     {
+      Style = style,
       Text = new Text
       {
         Label = label,
-        Style = style
       }
     };
 
@@ -155,20 +202,21 @@ namespace Spelldawn.Masonry
       }
     };
 
+    public static FlexRotate Rotate(float degrees) => new()
+    {
+      Degrees = degrees
+    };
+
     static Node MakeFlexbox(string name, FlexStyle style, params Node?[] children)
     {
-      var flexbox = new Flexbox
+      var result = new Node
       {
         Style = style,
-        Name = name
+        Name = name,
+        Flexbox = new Flexbox()
       };
-
-      flexbox.Children.AddRange(children.Where(child => child != null));
-
-      return new Node
-      {
-        Flexbox = flexbox
-      };
+      result.Children.AddRange(children.Where(child => child != null));
+      return result;
     }
   }
 }

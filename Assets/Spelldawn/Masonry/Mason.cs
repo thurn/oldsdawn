@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Spelldawn.Protos;
-using Spelldawn.Services;
 using UnityEngine;
 using UnityEngine.UIElements;
 using EasingMode = UnityEngine.UIElements.EasingMode;
@@ -36,43 +35,49 @@ namespace Spelldawn.Masonry
 {
   public static class Mason
   {
-    public static Task<VisualElement?> Render(Registry registry, Node? node)
+    /// <summary>
+    /// Renders the provided Node into a VisualElement.
+    /// </summary>
+    public static Task<VisualElement> Render(IAssetFetcher assetFetcher, Node node)
     {
-      registry.CheckIsMainThread();
-
-      return node?.NodeCase switch
-      {
-        Node.NodeOneofCase.Flexbox => RenderFlexbox(registry, node.Flexbox),
-        Node.NodeOneofCase.Text => RenderText(registry, node.Text),
-        _ => Task.FromResult<VisualElement?>(null)
-      };
+      var element = CreateElement(node);
+      return ApplyToElement(assetFetcher, node, element);
     }
 
-    public static async Task<VisualElement?> RenderFlexbox(Registry registry, Flexbox flexbox)
+    public static VisualElement CreateElement(Node node) => node.NodeCase switch
     {
-      var result = new VisualElement
-      {
-        name = flexbox.Name
-      };
+      Node.NodeOneofCase.Text => new Label(),
+      _ => new VisualElement()
+    };
 
-      var children = await Task.WhenAll(flexbox.Children.Select(node => Render(registry, node)));
+    public static Task<VisualElement> ApplyToElement(IAssetFetcher assetFetcher, Node node, VisualElement element)
+    {
+      switch (node.NodeCase)
+      {
+        case Node.NodeOneofCase.Text:
+          ApplyText(assetFetcher, node.Text, (Label)element);
+          break;
+      }
+
+      return ApplyNode(assetFetcher, node, element);
+    }
+
+    static async Task<VisualElement> ApplyNode(IAssetFetcher assetFetcher, Node node, VisualElement element)
+    {
+      element.name = node.Name;
+      var children = await Task.WhenAll(node.Children.Select(n => Render(assetFetcher, n)));
 
       foreach (var child in children)
       {
-        result.Add(child);
+        element.Add(child);
       }
 
-      return await ApplyStyle(registry, result, flexbox.Style);
+      return await ApplyStyle(assetFetcher, element, node.Style);
     }
 
-    public static async Task<VisualElement?> RenderText(Registry registry, Text text)
+    static void ApplyText(IAssetFetcher registry, Text text, Label label)
     {
-      var result = new Label
-      {
-        text = text.Label
-      };
-
-      return await ApplyStyle(registry, result, text.Style);
+      label.text = text.Label;
     }
 
     static Color AdaptColorNonNull(FlexColor color) =>
@@ -89,11 +94,11 @@ namespace Spelldawn.Masonry
 
     static Vector3 AdaptVector3(FlexVector3? input) => input is { } v ? new Vector3(v.X, v.Y, v.Z) : Vector2.zero;
 
-    static Length AdaptDimensionNonNull(Dimension dimension) => dimension.Unit switch
+    static Length AdaptDimensionNonNull(Dimension dimension, float multiplier = 1f) => dimension.Unit switch
     {
-      DimensionUnit.Dip => new Length(dimension.Value),
-      DimensionUnit.Percentage => Length.Percent(dimension.Value),
-      DimensionUnit.Vmin => new Length(MasonUtil.VMinToDip(dimension.Value)),
+      DimensionUnit.Dip => new Length(dimension.Value * multiplier),
+      DimensionUnit.Percentage => Length.Percent(dimension.Value * multiplier),
+      DimensionUnit.Vmin => new Length(MasonUtil.VMinToDip(dimension.Value * multiplier)),
       _ => new Length()
     };
 
@@ -115,10 +120,8 @@ namespace Spelldawn.Masonry
         ? new StyleList<TResult>(StyleKeyword.Null)
         : new StyleList<TResult>(field.Select(selector).ToList());
 
-    public static async Task<VisualElement> ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
+    public static async Task<VisualElement> ApplyStyle(IAssetFetcher assetFetcher, VisualElement e, FlexStyle? input)
     {
-      registry.CheckIsMainThread();
-
       if (input == null)
       {
         return e;
@@ -271,7 +274,7 @@ namespace Spelldawn.Masonry
         _ => new StyleEnum<ScaleMode>(StyleKeyword.Null)
       };
       e.style.unityFontDefinition = input.Font is { } font
-        ? await registry.AssetService.LoadFont(font)
+        ? await assetFetcher.LoadFont(font)
         : new StyleFontDefinition(StyleKeyword.Null);
       e.style.unityFontStyleAndWeight = input.FontStyle switch
       {
@@ -331,13 +334,24 @@ namespace Spelldawn.Masonry
 
       if (input.BackgroundImage is { } bi)
       {
-        var sprite = await registry.AssetService.LoadSprite(bi);
+        var sprite = await assetFetcher.LoadSprite(bi);
         e.style.backgroundImage = sprite;
+        var rect = sprite.value.sprite.rect;
 
-        if (input.BackgroundImageScaleMultiplier is { } multiplier && sprite.value.sprite is { } sp)
+        if (input.BackgroundImageScaleMultiplier is { } multiplier)
         {
-          e.style.width = MasonUtil.ScreenPxToDip(sp.rect.width * multiplier);
-          e.style.height = MasonUtil.ScreenPxToDip(sp.rect.height * multiplier);
+          e.style.width = MasonUtil.ScreenPxToDip(rect.width * multiplier);
+          e.style.height = MasonUtil.ScreenPxToDip(rect.height * multiplier);
+        }
+
+        switch (input.FixedBackgroundImageAspectRatio)
+        {
+          case true when input.Width is { } width:
+            e.style.height = AdaptDimensionNonNull(width, rect.height / rect.width);
+            break;
+          case true when input.Height is { } height:
+            e.style.width = AdaptDimensionNonNull(height, rect.width / rect.height);
+            break;
         }
       }
       else

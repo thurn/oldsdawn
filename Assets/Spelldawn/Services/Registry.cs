@@ -26,35 +26,26 @@ namespace Spelldawn.Services
     public Camera MainCamera => _mainCamera;
     [SerializeField] Camera _mainCamera = null!;
 
-    /// <summary>Scaled with screen size document for rendering cards</summary>
-    public UIDocument Document => _document;
+    /// <summary>'Scaled with Screen Size' document for rendering gameplay</summary>
+    public UIDocument GameDocument => _gameDocument;
+    [SerializeField] UIDocument _gameDocument = null!;
 
-    [SerializeField] UIDocument _document = null!;
+    /// <summary>'Constant Physical Size' document for rendering gameplay</summary>
+    public UIDocument InterfaceDocument => _interfaceDocument;
+    [SerializeField] UIDocument _interfaceDocument = null!;
 
     public AssetService AssetService => _assetService;
     [SerializeField] AssetService _assetService = null!;
 
-    Thread _mainThread = null!;
-
     void Start()
     {
-      _mainThread = Thread.CurrentThread;
+      var x = 667;
+      var y = 375;
 
-      var x = 780;
-      var y = 360;
-
-      PositionAt(_document.rootVisualElement, 0, 0);
-      PositionAt(_document.rootVisualElement, x, 0);
-      PositionAt(_document.rootVisualElement, 0, y);
-      PositionAt(_document.rootVisualElement, x, y);
-    }
-
-    public void CheckIsMainThread()
-    {
-      if (Thread.CurrentThread != _mainThread)
-      {
-        throw new InvalidOperationException("Error: Expected code to be run on the main thread!");
-      }
+      PositionAt(_gameDocument.rootVisualElement, 0, 0);
+      PositionAt(_gameDocument.rootVisualElement, x, 0);
+      PositionAt(_gameDocument.rootVisualElement, 0, y);
+      PositionAt(_gameDocument.rootVisualElement, x, y);
     }
 
     void PositionAt(VisualElement parent, int x, int y, bool red = false)
