@@ -68,6 +68,14 @@ When you use this item, remove a ◈ or sacrifice it
       {
         User = new PlayerView
         {
+          PlayerInfo = new PlayerInfo
+          {
+            Name = "User"
+          },
+          Score = new ScoreView
+          {
+            Score = 0
+          },
           Hand = new HandView
           {
             Cards =
@@ -79,6 +87,25 @@ When you use this item, remove a ◈ or sacrifice it
               RevealedCard(5, "Secret Key", Text5),
               RevealedCard(6, "Femme Fatale", Text6),
             }
+          },
+          Mana = new ManaView
+          {
+            Amount = 5
+          },
+          DiscardPile = new DiscardPileView
+          {
+            Cards =
+            {
+              RevealedCard(7, "Magic Missile", Text7),
+            }
+          },
+          ActionTracker = new ActionTrackerView
+          {
+            AvailableActionCount = 3
+          },
+          Deck = new DeckView
+          {
+            CardsRemaining = 39
           }
         },
         Opponent = new PlayerView(),
@@ -94,7 +121,7 @@ When you use this item, remove a ◈ or sacrifice it
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
         CardFrame = Sprite(
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"),
-        Webbing = Sprite(
+        TitleBackground = Sprite(
           "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"),
         Jewel = Sprite(
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"),

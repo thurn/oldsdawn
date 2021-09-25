@@ -27,10 +27,10 @@ namespace Spelldawn.Battle
         new FlexStyle
         {
           Position = FlexPosition.Absolute,
-          Inset = GroupDip(0),
+          Inset = AllDip(0),
           JustifyContent = FlexJustify.SpaceBetween
         },
-        WithStyle(PlayerNode.Render("Opponent", gameView.Opponent), style =>
+        WithStyle(OpponentNode.Render(gameView.Opponent), style =>
         {
           style.Width = Percent(100);
           style.Height = Dip(50);
@@ -40,7 +40,7 @@ namespace Spelldawn.Battle
           style.Width = Percent(100);
           style.FlexGrow = 1;
         }),
-        WithStyle(PlayerNode.Render("User", gameView.User), style =>
+        WithStyle(UserNode.Render(gameView.User), style =>
         {
           style.Width = Percent(100);
           style.Height = Dip(80);

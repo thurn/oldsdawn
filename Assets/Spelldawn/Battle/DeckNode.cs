@@ -13,25 +13,24 @@
 // limitations under the License.
 
 using Spelldawn.Protos;
+using static Spelldawn.Masonry.MasonUtil;
 
 #nullable enable
 
 namespace Spelldawn.Battle
 {
-  public sealed record CardProps
+  public static class DeckNode
   {
-    public float Scale { get; init; } = 1.0f;
-    public float? HandPosition { get; init; }
-    public bool OverlayDim { get; init; }
-  }
-
-  public static class CardNode
-  {
-    public static Node? Render(CardView? cardView, CardProps props) => cardView?.CardCase switch
-    {
-      CardView.CardOneofCase.RevealedCard => RevealedCardNode.Render(cardView.RevealedCard, props),
-      CardView.CardOneofCase.HiddenCard => HiddenCardNode.Render(cardView.HiddenCard),
-      _ => null
-    };
+    public static Node? Render(DeckView? deck) => deck is null
+      ? null
+      : Column("Deck",
+        new FlexStyle
+        {
+          Width = Dip(44),
+          Height = Dip(44 / RevealedCardNode.CardAspectRatio),
+          FlexShrink = 0,
+          FixedBackgroundImageAspectRatio = true,
+          BackgroundImage = Sprite("LittleSweetDaemon/TCG_Card_Design/Customized/ChampionDeck"),
+        });
   }
 }

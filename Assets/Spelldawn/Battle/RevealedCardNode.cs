@@ -15,7 +15,6 @@
 using Spelldawn.Protos;
 using UnityEngine;
 using static Spelldawn.Masonry.MasonUtil;
-using Rotate = UnityEngine.UIElements.Rotate;
 
 #nullable enable
 
@@ -23,29 +22,30 @@ namespace Spelldawn.Battle
 {
   public static class RevealedCardNode
   {
-    public static Node? Render(RevealedCardView? view, float handPosition)
+    public const float CardAspectRatio = 0.6676575505f;
+
+    public static Node? Render(RevealedCardView? view, CardProps props)
     {
       if (view is null)
       {
         return null;
       }
 
-      var angle = Mathf.Lerp(-5, 5, handPosition);
+      var angle = props.HandPosition.HasValue ? Mathf.Lerp(-5, 5, props.HandPosition.Value) : 0;
       const float cardHeight = 250f;
-      const float aspectRatio = 0.6676575505f;
       const float titleBackgroundHeight = 50f;
       const float titleBackgroundAspectRatio = 3.1484375f;
       const float jewelHeight = 12f;
       const float jewelAspectRatio = 0.9312169312f;
-      var cardWidth = cardHeight * aspectRatio;
+      const float cardWidth = cardHeight * CardAspectRatio;
+      var tintColor = MakeColor(Color.gray);
 
-      return Column("Card",
+      var result = Column("Card",
         new FlexStyle
         {
-          Margin = TopDip(Mathf.Abs(Mathf.Lerp(-25, 25, handPosition)) + 50f),
-          Width = Dip(cardWidth),
-          Height = Dip(cardHeight),
-          Scale = Scale(0.5f),
+          Width = Dip(cardWidth * props.Scale),
+          Height = Dip(cardHeight * props.Scale),
+          FlexShrink = 0,
           Rotate = Rotate(angle)
         },
         Row(
@@ -53,68 +53,86 @@ namespace Spelldawn.Battle
           new FlexStyle
           {
             BackgroundImage = view.Image,
+            BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
             Position = FlexPosition.Absolute,
-            Inset = PositionDip(10f, 16f),
-            Width = Dip(144f),
-            Height = Dip(144f)
+            Inset = PositionDip(10f * props.Scale, 16f * props.Scale),
+            Width = Dip(144f * props.Scale),
+            Height = Dip(144f * props.Scale)
           }),
         Row(
           "CardFrame",
           new FlexStyle
           {
             BackgroundImage = view.CardFrame,
-            Width = Dip(cardWidth),
-            Height = Dip(cardHeight),
+            BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
+            Width = Dip(cardWidth * props.Scale),
+            Height = Dip(cardHeight * props.Scale),
             Position = FlexPosition.Absolute,
-            Inset = GroupDip(0)
+            Inset = AllDip(0)
           }),
         Row(
           "TitleBackground",
           new FlexStyle
           {
-            BackgroundImage = view.Webbing,
-            Width = Dip(titleBackgroundHeight * titleBackgroundAspectRatio),
-            Height = Dip(titleBackgroundHeight),
+            BackgroundImage = view.TitleBackground,
+            BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
+            Width = Dip(titleBackgroundHeight * titleBackgroundAspectRatio * props.Scale),
+            Height = Dip(titleBackgroundHeight * props.Scale),
             Position = FlexPosition.Absolute,
-            Inset = PositionDip(4, -12f)
+            Inset = PositionDip(4 * props.Scale, -12f * props.Scale)
           }),
         Row(
           "Jewel",
           new FlexStyle
           {
             BackgroundImage = view.Jewel,
-            Width = Dip(jewelHeight * jewelAspectRatio),
-            Height = Dip(jewelHeight),
+            BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
+            Width = Dip(jewelHeight * jewelAspectRatio * props.Scale),
+            Height = Dip(jewelHeight * props.Scale),
             Position = FlexPosition.Absolute,
-            Inset = PositionDip(78f, 163f)
+            Inset = PositionDip(78f * props.Scale, 163f * props.Scale)
           }),
         Text(view.Title.Text,
           new FlexStyle
           {
             Position = FlexPosition.Absolute,
-            Inset = PositionDip(0, -8f),
-            Width = Dip(cardWidth),
-            Height = Dip(15f),
+            Inset = PositionDip(0, -8f * props.Scale),
+            Width = Dip(cardWidth * props.Scale),
+            Height = Dip(22f * props.Scale),
             TextAlign = TextAlign.MiddleCenter,
             Color = MakeColor("#4e342e"),
-            FontSize = Dip(15f),
-            Font = Font("Fonts/Roboto")
+            FontSize = Dip(15f * props.Scale),
+            Font = Font("Fonts/Roboto"),
+            Padding = AllDip(0),
+            Margin = AllDip(0)
           }),
-        Text($"<line-height=9>{view.RulesText.Text}</line-height>",
+        Text($"<line-height={9 * props.Scale}>{view.RulesText.Text}</line-height>",
           new FlexStyle
           {
             Position = FlexPosition.Absolute,
-            Inset = PositionDip(15f, 178f),
-            Width = Dip(130f),
-            Height = Dip(55f),
+            Inset = PositionDip(18f * props.Scale, 180f * props.Scale),
+            Width = Dip(130f * props.Scale),
+            Height = Dip(55f * props.Scale),
             TextAlign = TextAlign.MiddleCenter,
             Color = MakeColor("#d7ccc8"),
-            FontSize = Dip(10f),
+            FontSize = Dip(10f * props.Scale),
             Font = Font("Fonts/Roboto"),
             WhiteSpace = WhiteSpace.Normal,
-            ParagraphSpacing = Dip(25f)
+            ParagraphSpacing = Dip(25f * props.Scale),
+            Padding = AllDip(0),
+            Margin = AllDip(0)
           })
       );
+
+      return Row("CardWrapper",
+        new FlexStyle
+        {
+          Margin = props.HandPosition.HasValue
+            ? TopDip(Mathf.Abs(Mathf.Lerp(-25, 25, props.HandPosition.Value)) + 50f)
+            : AllDip(0),
+          JustifyContent = FlexJustify.Center,
+        },
+        result);
     }
   }
 }

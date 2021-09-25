@@ -47,7 +47,7 @@ namespace Spelldawn.Masonry
 
     public static DimensionGroup PositionDip(float left, float top) => GroupDip(top, 0, 0, left);
 
-    public static DimensionGroup GroupDip(float all) => GroupDip(all, all);
+    public static DimensionGroup AllDip(float all) => GroupDip(all, all, all, all);
 
     public static DimensionGroup LeftRightDip(float leftRight) => GroupDip(0, leftRight, 0, leftRight);
 
@@ -60,9 +60,6 @@ namespace Spelldawn.Masonry
     public static DimensionGroup BottomDip(float bottom) => GroupDip(0, 0, bottom, 0);
 
     public static DimensionGroup LeftDip(float left) => GroupDip(0, 0, 0, left);
-
-    public static DimensionGroup GroupDip(float topBottom, float leftRight) =>
-      GroupDip(topBottom, leftRight, topBottom, leftRight);
 
     public static DimensionGroup GroupDip(float top, float right, float bottom, float left) => new()
     {
@@ -119,6 +116,14 @@ namespace Spelldawn.Masonry
       Right = width,
       Bottom = width,
       Left = width
+    };
+
+    public static BorderRadius AllBordersRadiusDip(float radius) => new()
+    {
+      TopLeft = Dip(radius),
+      TopRight = Dip(radius),
+      BottomRight = Dip(radius),
+      BottomLeft = Dip(radius)
     };
 
     public static SpriteAddress Sprite(string address) => new()
@@ -205,6 +210,13 @@ namespace Spelldawn.Masonry
     public static FlexRotate Rotate(float degrees) => new()
     {
       Degrees = degrees
+    };
+
+    public static FlexTranslate TranslateDip(float x, float y, float z = 0) => new()
+    {
+      X = Dip(x),
+      Y = Dip(y),
+      Z = z
     };
 
     static Node MakeFlexbox(string name, FlexStyle style, params Node?[] children)

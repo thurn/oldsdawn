@@ -31,9 +31,12 @@ namespace Spelldawn.Battle
           {
             JustifyContent = FlexJustify.SpaceBetween,
             AlignItems = FlexAlign.Center,
-            Margin = LeftRightDip(150),
             FlexGrow = 1
           },
-          handView.Cards.Select((c, i) => CardNode.Render(c, (i + 1f) / (handView.Cards.Count + 1f))));
+          handView.Cards.Select((c, i) => CardNode.Render(c, new CardProps
+          {
+            Scale = 0.5f,
+            HandPosition = i / (handView.Cards.Count - 1f)
+          })));
   }
 }

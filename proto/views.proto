@@ -44,7 +44,7 @@ message RulesText {
 message RevealedCardView {
   sd.SpriteAddress card_back = 1;
   sd.SpriteAddress card_frame = 2;
-  sd.SpriteAddress webbing = 3;
+  sd.SpriteAddress title_background = 3;
   sd.SpriteAddress jewel = 4;
   sd.SpriteAddress image_background = 5;
   sd.SpriteAddress image = 6;
@@ -119,6 +119,10 @@ message ActionTrackerView {
   int32 available_action_count = 1;
 }
 
+message DeckView {
+  int32 cards_remaining = 1;
+}
+
 message PlayerView {
   PlayerInfo player_info = 1;
   ScoreView score = 2;
@@ -126,6 +130,7 @@ message PlayerView {
   ManaView mana = 4;
   DiscardPileView discard_pile = 5;
   ActionTrackerView action_tracker = 6;
+  DeckView deck = 7;
 }
 
 message GameView {

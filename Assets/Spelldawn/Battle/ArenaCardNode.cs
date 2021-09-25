@@ -13,22 +13,14 @@
 // limitations under the License.
 
 using Spelldawn.Protos;
-using UnityEngine;
 using static Spelldawn.Masonry.MasonUtil;
 
 #nullable enable
 
 namespace Spelldawn.Battle
 {
-  public static class PlayerNode
+  public static class ArenaCardNode
   {
-    public static Node? Render(string playerName, PlayerView? playerView) =>
-      playerView is null
-        ? null
-        : Row(playerName, new FlexStyle
-          {
-            Margin = GroupDip(2)
-          },
-          HandNode.Render(playerName, playerView.Hand));
+    public static Node? Render(CardView? card) => card is null ? null : Row("ArenaCard");
   }
 }

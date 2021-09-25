@@ -13,25 +13,22 @@
 // limitations under the License.
 
 using Spelldawn.Protos;
+using UnityEngine;
+using static Spelldawn.Masonry.MasonUtil;
 
 #nullable enable
 
 namespace Spelldawn.Battle
 {
-  public sealed record CardProps
+  public static class MenuButtonNode
   {
-    public float Scale { get; init; } = 1.0f;
-    public float? HandPosition { get; init; }
-    public bool OverlayDim { get; init; }
-  }
-
-  public static class CardNode
-  {
-    public static Node? Render(CardView? cardView, CardProps props) => cardView?.CardCase switch
+    public static Node Render(string name) => Column(name, new FlexStyle
     {
-      CardView.CardOneofCase.RevealedCard => RevealedCardNode.Render(cardView.RevealedCard, props),
-      CardView.CardOneofCase.HiddenCard => HiddenCardNode.Render(cardView.HiddenCard),
-      _ => null
-    };
+      Width = Dip(44),
+      Height = Dip(44),
+      FlexShrink = 0,
+      BorderRadius = AllBordersRadiusDip(8),
+      BackgroundColor = MakeColor(Color.gray)
+    });
   }
 }

@@ -12,26 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
+
+using System.Collections.Generic;
 using Spelldawn.Protos;
+using static Spelldawn.Masonry.MasonUtil;
 
 #nullable enable
 
 namespace Spelldawn.Battle
 {
-  public sealed record CardProps
+  public static class ItemsSectionNode
   {
-    public float Scale { get; init; } = 1.0f;
-    public float? HandPosition { get; init; }
-    public bool OverlayDim { get; init; }
-  }
-
-  public static class CardNode
-  {
-    public static Node? Render(CardView? cardView, CardProps props) => cardView?.CardCase switch
-    {
-      CardView.CardOneofCase.RevealedCard => RevealedCardNode.Render(cardView.RevealedCard, props),
-      CardView.CardOneofCase.HiddenCard => HiddenCardNode.Render(cardView.HiddenCard),
-      _ => null
-    };
+    public static Node Render(
+      IEnumerable<CardView> weapons,
+      IEnumerable<CardView> armor,
+      IEnumerable<CardView> artifacts) => Row("ItemsSection");
   }
 }
