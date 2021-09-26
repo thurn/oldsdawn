@@ -22,6 +22,7 @@ namespace Spelldawn.Battle
 {
   public static class RevealedCardNode
   {
+    public const float ReferenceCardHeight = 250f;
     public const float CardAspectRatio = 0.6676575505f;
 
     public static Node? Render(RevealedCardView? view, CardProps props)
@@ -32,22 +33,32 @@ namespace Spelldawn.Battle
       }
 
       var angle = props.HandPosition.HasValue ? Mathf.Lerp(-5, 5, props.HandPosition.Value) : 0;
-      const float cardHeight = 250f;
       const float titleBackgroundHeight = 50f;
       const float titleBackgroundAspectRatio = 3.1484375f;
       const float jewelHeight = 12f;
       const float jewelAspectRatio = 0.9312169312f;
-      const float cardWidth = cardHeight * CardAspectRatio;
+      const float cardWidth = ReferenceCardHeight * CardAspectRatio;
       var tintColor = MakeColor(Color.gray);
 
       var result = Column("Card",
         new FlexStyle
         {
           Width = Dip(cardWidth * props.Scale),
-          Height = Dip(cardHeight * props.Scale),
+          Height = Dip(ReferenceCardHeight * props.Scale),
           FlexShrink = 0,
           Rotate = Rotate(angle)
         },
+        view.ImageBackground is null ? null : Row(
+          "CardImageBackground",
+          new FlexStyle
+          {
+            BackgroundImage = view.ImageBackground,
+            BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
+            Position = FlexPosition.Absolute,
+            Inset = PositionDip(10f * props.Scale, 16f * props.Scale),
+            Width = Dip(144f * props.Scale),
+            Height = Dip(144f * props.Scale)
+          }),
         Row(
           "CardImage",
           new FlexStyle
@@ -66,7 +77,7 @@ namespace Spelldawn.Battle
             BackgroundImage = view.CardFrame,
             BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
             Width = Dip(cardWidth * props.Scale),
-            Height = Dip(cardHeight * props.Scale),
+            Height = Dip(ReferenceCardHeight * props.Scale),
             Position = FlexPosition.Absolute,
             Inset = AllDip(0)
           }),

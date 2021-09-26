@@ -12,22 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
-using Spelldawn.Protos;
-using static Spelldawn.Masonry.MasonUtil;
-
 #nullable enable
 
 namespace Spelldawn.Battle
 {
-  public static class DiscardPileNode
+  public static class NodeNames
   {
-    public static Node? Render(DiscardPileView? discardPile) => discardPile is null
-      ? null
-      : Column("DiscardPile", new FlexStyle
-        {
-          FlexShrink = 0,
-        },
-        CardNode.Render(discardPile.Cards.FirstOrDefault(), new CardProps { Scale = 0.25f, OverlayDim = true }));
+    public static readonly string Deck = "Deck";
   }
 }

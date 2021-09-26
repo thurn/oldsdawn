@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Spelldawn.Protos;
+using Spelldawn.Services;
 using UnityEngine;
 using UnityEngine.UIElements;
 using EasingMode = UnityEngine.UIElements.EasingMode;
@@ -38,44 +39,107 @@ namespace Spelldawn.Masonry
     /// <summary>
     /// Renders the provided Node into a VisualElement.
     /// </summary>
-    public static Task<VisualElement> Render(IAssetFetcher assetFetcher, Node node)
+    public static Task<VisualElement> Render(Registry registry, Node node)
     {
       var element = CreateElement(node);
-      return ApplyToElement(assetFetcher, node, element);
+      return ApplyToElement(registry, node, element);
     }
 
-    public static VisualElement CreateElement(Node node) => node.NodeCase switch
+    public static VisualElement CreateElement(Node node) => node.NodeType?.TypeCase switch
     {
-      Node.NodeOneofCase.Text => new Label(),
-      _ => new VisualElement()
+      NodeType.TypeOneofCase.Text => new NodeLabel(),
+      _ => new NodeVisualElement()
     };
 
-    public static Task<VisualElement> ApplyToElement(IAssetFetcher assetFetcher, Node node, VisualElement element)
+    public static Task<VisualElement> ApplyToElement(Registry registry, Node node, VisualElement element)
     {
-      switch (node.NodeCase)
+      switch (node.NodeType?.TypeCase)
       {
-        case Node.NodeOneofCase.Text:
-          ApplyText(assetFetcher, node.Text, (Label)element);
+        case NodeType.TypeOneofCase.Text:
+          ApplyText(node.NodeType.Text, (NodeLabel)element);
           break;
       }
 
-      return ApplyNode(assetFetcher, node, element);
+      return ApplyNode(registry, node, element);
     }
 
-    static async Task<VisualElement> ApplyNode(IAssetFetcher assetFetcher, Node node, VisualElement element)
+    static async Task<VisualElement> ApplyNode(Registry registry, Node node, VisualElement element)
     {
       element.name = node.Name;
-      var children = await Task.WhenAll(node.Children.Select(n => Render(assetFetcher, n)));
+      var children = await Task.WhenAll(node.Children.Select(n => Render(registry, n)));
 
       foreach (var child in children)
       {
         element.Add(child);
       }
 
-      return await ApplyStyle(assetFetcher, element, node.Style);
+      var result = await ApplyStyle(registry, element, node.Style);
+      var callbacks = ((INodeCallbacks)element);
+
+      if (node.HoverStyle != null)
+      {
+        var hoverStyle = new FlexStyle();
+        hoverStyle.MergeFrom(node.Style);
+        hoverStyle.MergeFrom(node.HoverStyle);
+        callbacks.SetCallback(new EventCallback<MouseEnterEvent>(_ =>
+        {
+          ApplyStyle(registry, element, hoverStyle);
+        }));
+        callbacks.SetCallback(new EventCallback<MouseLeaveEvent>(_ =>
+        {
+          ApplyStyle(registry, element, node.Style);
+        }));
+      }
+      else
+      {
+        callbacks.SetCallback<MouseEnterEvent>(null);
+        callbacks.SetCallback<MouseLeaveEvent>(null);
+      }
+
+      if (node.PressedStyle != null)
+      {
+        var pressedStyle = new FlexStyle();
+        pressedStyle.MergeFrom(node.Style);
+        pressedStyle.MergeFrom(node.PressedStyle);
+        callbacks.SetCallback(new EventCallback<MouseDownEvent>(_ =>
+        {
+          ApplyStyle(registry, element, pressedStyle);
+        }));
+        callbacks.SetCallback(new EventCallback<MouseUpEvent>(_ =>
+        {
+          var style = node.Style;
+          if (node.HoverStyle != null)
+          {
+            style = new FlexStyle();
+            style.MergeFrom(node.Style);
+            style.MergeFrom(node.HoverStyle);
+          }
+
+          ApplyStyle(registry, element, style);
+        }));
+      }
+      else
+      {
+        callbacks.SetCallback<MouseDownEvent>(null);
+        callbacks.SetCallback<MouseUpEvent>(null);
+      }
+
+      if (node.EventHandlers?.ClickAction is {} clickAction)
+      {
+        callbacks.SetCallback(new EventCallback<ClickEvent>(_ =>
+        {
+          registry.ActionService.HandleAction(clickAction);
+        }));
+      }
+      else
+      {
+        callbacks.SetCallback<ClickEvent>(null);
+      }
+
+      return result;
     }
 
-    static void ApplyText(IAssetFetcher registry, Text text, Label label)
+    static void ApplyText(Text text, Label label)
     {
       label.text = text.Label;
     }
@@ -120,7 +184,7 @@ namespace Spelldawn.Masonry
         ? new StyleList<TResult>(StyleKeyword.Null)
         : new StyleList<TResult>(field.Select(selector).ToList());
 
-    public static async Task<VisualElement> ApplyStyle(IAssetFetcher assetFetcher, VisualElement e, FlexStyle? input)
+    public static async Task<VisualElement> ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
     {
       if (input == null)
       {
@@ -274,7 +338,7 @@ namespace Spelldawn.Masonry
         _ => new StyleEnum<ScaleMode>(StyleKeyword.Null)
       };
       e.style.unityFontDefinition = input.Font is { } font
-        ? await assetFetcher.LoadFont(font)
+        ? await registry.AssetService.LoadFont(font)
         : new StyleFontDefinition(StyleKeyword.Null);
       e.style.unityFontStyleAndWeight = input.FontStyle switch
       {
@@ -334,7 +398,7 @@ namespace Spelldawn.Masonry
 
       if (input.BackgroundImage is { } bi)
       {
-        var sprite = await assetFetcher.LoadSprite(bi);
+        var sprite = await registry.AssetService.LoadSprite(bi);
         e.style.backgroundImage = sprite;
         var rect = sprite.value.sprite.rect;
 

@@ -17,7 +17,8 @@ syntax = "proto3";
 package sd;
 option csharp_namespace = "Spelldawn.Protos";
 
-import "node.proto";
+import "masonry.proto";
+import "game_primitives.proto";
 
 message CardIcon {
   sd.SpriteAddress background = 1;
@@ -41,6 +42,56 @@ message RulesText {
   string text = 1;
 }
 
+message ValidTargets {
+  repeated CardTarget targets = 1;
+}
+
+message ValidRooms {
+  repeated RoomId rooms = 2;
+}
+
+message PlayAsItem {
+}
+
+message AwaitResponse {
+}
+
+message CardTargeting {
+  oneof targeting {
+    /** Pick one of these targets and then animate to the display area when played. */
+    ValidTargets pick_first_target = 1;
+
+    /** Add this card to a room when played. */
+    ValidRooms play_in_room = 2;
+
+    /** Add this card to the items in the arena when played */
+    PlayAsItem play_as_item = 3;
+
+    /** Animate this card to the 'display' area when played */
+    AwaitResponse await_response = 4;
+  }
+}
+
+/** How to determine whether the card can be played. */
+enum CanPlay {
+  CAN_PLAY_UNSPECIFIED = 0;
+
+  /** The card can be played if mana & actions are available. */
+  CAN_PLAY_DEFAULT = 1;
+
+  /** Never display this card optimistically as a valid play */
+  CAN_PLAY_NO = 2;
+
+  /** Always display this card optimistically as a valid play */
+  CAN_PLAY_YES = 3;
+}
+
+message CardCost {
+  CanPlay can_play = 1;
+  int32 mana_cost = 2;
+  int32 action_cost = 3;
+}
+
 message RevealedCardView {
   sd.SpriteAddress card_back = 1;
   sd.SpriteAddress card_frame = 2;
@@ -50,9 +101,10 @@ message RevealedCardView {
   sd.SpriteAddress image = 6;
   CardTitle title = 7;
   RulesText rules_text = 8;
-  bool can_play = 9;
-  sd.SpriteAddress arena_frame = 10;
-  CardIcons card_icons = 11;
+  sd.SpriteAddress arena_frame = 9;
+  CardIcons card_icons = 10;
+  CardTargeting targeting = 11;
+  CardCost cost = 12;
 }
 
 message HiddenCardView {
@@ -61,11 +113,23 @@ message HiddenCardView {
   sd.SpriteAddress arena_frame = 3;
 }
 
+/** Where in the arena should this card be displayed? */
+enum ArenaPosition {
+  ARENA_POSITION_UNSPECIFIED = 0;
+  ARENA_POSITION_IN_ROOM = 1;
+  ARENA_POSITION_ROOM_DEFENDER = 2;
+  ARENA_POSITION_ITEMS_LEFT = 3;
+  ARENA_POSITION_ITEMS_CENTER = 4;
+  ARENA_POSITION_ITEMS_RIGHT = 5;
+}
+
 message CardView {
-  int32 card_id = 1;
+  CardId card_id = 1;
+  ArenaPosition arena_position = 2;
+
   oneof card {
-    RevealedCardView revealed_card = 2;
-    HiddenCardView hidden_card = 3;
+    RevealedCardView revealed_card = 3;
+    HiddenCardView hidden_card = 4;
   }
 }
 
@@ -97,10 +161,9 @@ message RoomIcon {
 }
 
 message RoomView {
-  RoomIcon room_icon = 1;
-  repeated CardView projects = 2;
-  repeated CardView minions = 3;
-  repeated CardView annexes = 4;
+  RoomId room_id = 1;
+  RoomIcon room_icon = 2;
+  repeated CardView cards = 3;
 }
 
 message ArenaView {
@@ -109,10 +172,9 @@ message ArenaView {
    * at the bottom.
    */
   bool overlord_perspective = 1;
+
   repeated RoomView rooms = 2;
-  repeated CardView weapons = 3;
-  repeated CardView armor = 4;
-  repeated CardView artifacts = 5;
+  repeated CardView items = 3;
 }
 
 message ActionTrackerView {
@@ -120,7 +182,6 @@ message ActionTrackerView {
 }
 
 message DeckView {
-  int32 cards_remaining = 1;
 }
 
 message PlayerView {

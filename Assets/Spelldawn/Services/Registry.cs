@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -36,5 +34,17 @@ namespace Spelldawn.Services
 
     public AssetService AssetService => _assetService;
     [SerializeField] AssetService _assetService = null!;
+
+    public ActionService ActionService => _actionService;
+    [SerializeField] ActionService _actionService = null!;
+
+    public CardService CardService => _cardService;
+    [SerializeField] CardService _cardService = null!;
+
+    public CommandService CommandService => _commandService;
+    [SerializeField] CommandService _commandService = null!;
+
+    public DocumentService DocumentService => _documentService;
+    [SerializeField] DocumentService _documentService = null!;
   }
 }

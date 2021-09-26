@@ -168,11 +168,14 @@ namespace Spelldawn.Masonry
 
     public static Node Text(string label, FlexStyle style) => new()
     {
-      Style = style,
-      Text = new Text
+      NodeType = new NodeType
       {
-        Label = label,
-      }
+        Text = new Text
+        {
+          Label = label,
+        }
+      },
+      Style = style,
     };
 
     public static float ScreenPxToDip(float value) => value * ReferenceDpi / Screen.dpi;
@@ -224,8 +227,7 @@ namespace Spelldawn.Masonry
       var result = new Node
       {
         Style = style,
-        Name = name,
-        Flexbox = new Flexbox()
+        Name = name
       };
       result.Children.AddRange(children.Where(child => child != null));
       return result;

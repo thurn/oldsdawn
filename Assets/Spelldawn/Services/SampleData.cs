@@ -17,7 +17,7 @@ using static Spelldawn.Masonry.MasonUtil;
 
 #nullable enable
 
-namespace Spelldawn.Battle
+namespace Spelldawn.Services
 {
   public static class SampleData
   {
@@ -80,12 +80,12 @@ When you use this item, remove a ◈ or sacrifice it
           {
             Cards =
             {
-              RevealedCard(1, "Meteor Shower", Text1),
-              RevealedCard(2, "The Maker's Eye", Text2),
-              RevealedCard(3, "Gordian Blade", Text3),
-              RevealedCard(4, "Personal Touch", Text4),
-              RevealedCard(5, "Secret Key", Text5),
-              RevealedCard(6, "Femme Fatale", Text6),
+              RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21"),
+              RevealedCard(2, "The Maker's Eye", Text2, "Poneti/4000_Fantasy_Icons/Weapons/500_weapons/Axe_11", "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_blue"),
+              RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13"),
+              RevealedCard(4, "Personal Touch", Text4, "Poneti/4000_Fantasy_Icons/Weapons/500_weapons/Hammer_06", "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_green"),
+              RevealedCard(5, "Secret Key", Text5, "Poneti/4000_Fantasy_Icons/Weapons/WeaponIcons_2/Sword_v2_10", "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_grey"),
+              RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37"),
             }
           },
           Mana = new ManaView
@@ -96,46 +96,46 @@ When you use this item, remove a ◈ or sacrifice it
           {
             Cards =
             {
-              RevealedCard(7, "Magic Missile", Text7),
+              RevealedCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40")
             }
           },
           ActionTracker = new ActionTrackerView
           {
             AvailableActionCount = 3
           },
-          Deck = new DeckView
-          {
-            CardsRemaining = 39
-          }
+          Deck = new DeckView()
         },
         Opponent = new PlayerView(),
         Arena = new ArenaView()
       };
 
-    static CardView RevealedCard(int cardId, string title, string text) => new()
-    {
-      CardId = cardId,
-      RevealedCard = new RevealedCardView
+    static CardId CardId(int id) => new CardId { Value = id };
+
+    static CardView RevealedCard(int cardId, string title, string text, string image, string? imageBackground = null) =>
+      new()
       {
-        CardBack = Sprite(
-          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
-        CardFrame = Sprite(
-          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"),
-        TitleBackground = Sprite(
-          "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"),
-        Jewel = Sprite(
-          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"),
-        Image = Sprite($"Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_2{cardId}"),
-        Title = new CardTitle
+        CardId = CardId(cardId),
+        RevealedCard = new RevealedCardView
         {
-          Text = title
-        },
-        RulesText = new RulesText
-        {
-          Text = text
-        },
-        CanPlay = false
-      }
-    };
+          CardBack = Sprite(
+            "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
+          CardFrame = Sprite(
+            "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"),
+          TitleBackground = Sprite(
+            "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"),
+          Jewel = Sprite(
+            "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"),
+          ImageBackground = imageBackground is null ? null : Sprite(imageBackground),
+          Image = Sprite(image),
+          Title = new CardTitle
+          {
+            Text = title
+          },
+          RulesText = new RulesText
+          {
+            Text = text
+          },
+        }
+      };
   }
 }

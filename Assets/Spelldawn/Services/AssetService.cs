@@ -25,7 +25,7 @@ using Object = UnityEngine.Object;
 
 namespace Spelldawn.Services
 {
-  public sealed class AssetService : MonoBehaviour, IAssetFetcher
+  public sealed class AssetService : MonoBehaviour
   {
     readonly Dictionary<string, StyleBackground> _sprites = new();
     readonly Dictionary<string, StyleFontDefinition> _fonts = new();

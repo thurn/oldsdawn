@@ -18,6 +18,7 @@ package sd;
 option csharp_namespace = "Spelldawn.Protos";
 
 import "google/protobuf/wrappers.proto";
+import "actions.proto";
 
 enum FlexAlign {
     FLEX_ALIGN_UNSPECIFIED = 0;
@@ -332,24 +333,35 @@ message Text {
     string label = 1;
 }
 
+message EventHandlers {
+    sd.GameAction click_action = 1;
+}
+
+message NodeType {
+    oneof type {
+        Text text = 1;
+    }
+}
+
 message Node {
     /**
      * Used to identify this node in the hierarchy, should be unique among
      * sibilings. If not provided, index will be used instead.
      */
-    string key = 1;
+    string id = 1;
 
     /**
      * Used to identify this node in debugging tools
      */
     string name = 2;
 
-    FlexStyle style = 3;
+    NodeType node_type = 3;
 
     repeated Node children = 4;
 
-    oneof node {
-        Flexbox flexbox = 5;
-        Text text = 6;
-    }
+    EventHandlers event_handlers = 5;
+
+    FlexStyle style = 6;
+    FlexStyle hover_style = 7;
+    FlexStyle pressed_style = 8;
 }

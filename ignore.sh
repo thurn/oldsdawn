@@ -1,11 +1,14 @@
 #!/bin/sh
 
+find . -name '*conflicted*' -delete
+
 mkdir -p Library
 mkdir -p Logs
 mkdir -p obj
 mkdir -p UserSettings
 mkdir -p Temp
 mkdir -p out
+mkdir -p out_BurstDebugInformation_DoNotShip/
 
 xattr -w com.dropbox.ignored 1 Library/
 xattr -w com.dropbox.ignored 1 Logs/

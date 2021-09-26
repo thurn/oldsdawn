@@ -14,6 +14,7 @@
 
 using System.Threading.Tasks;
 using Spelldawn.Protos;
+using Spelldawn.Services;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -30,7 +31,7 @@ namespace Spelldawn.Masonry
     /// This algorithm handles two cases: it generates a new VisualElement hierarchy from a Node, and it mutates
     /// a previously-generated VisualElement hierarchy to match a new Node.
     /// </para>
-    /// <param name="assetFetcher">Service registry for asset fetching during rendering</param>
+    /// <param name="registry">Service registry for asset fetching during rendering</param>
     /// <param name="node">The node to render</param>
     /// <param name="previousElement">Optionally, a previously-rendered VisualElement which should be updated to match
     /// the new Node state</param>
@@ -38,7 +39,7 @@ namespace Spelldawn.Masonry
     /// <returns>Either a new VisualElement matching the provided node, or null if <paramref name="previousElement"/>
     /// was mutated to match the provided node instead.</returns>
     public static async Task<VisualElement?> Update(
-      IAssetFetcher assetFetcher,
+      Registry registry,
       Node node,
       VisualElement? previousElement = null,
       Node? previousNode = null)
@@ -47,7 +48,7 @@ namespace Spelldawn.Masonry
       VisualElement? result;
       var createdNewElement = false;
 
-      if (previousElement != null && previousNode != null && previousNode.NodeCase == node.NodeCase)
+      if (previousElement != null && previousNode != null && previousNode.NodeType?.TypeCase == node.NodeType?.TypeCase)
       {
         // If the previous node was of the same type as this node, mutate its VisualElement to match
         addedChildrenCount = previousNode.Children.Count;
@@ -59,7 +60,7 @@ namespace Spelldawn.Masonry
             var child = node.Children[i];
             // Element exists in new tree, update it
             var updated = await Update(
-              assetFetcher,
+              registry,
               child,
               previousElement[i],
               i < previousNode.Children.Count ? previousNode.Children[i] : null);
@@ -90,7 +91,7 @@ namespace Spelldawn.Masonry
       for (var j = addedChildrenCount; j < node.Children.Count; ++j)
       {
         var child = node.Children[j];
-        var updated = await Update(assetFetcher, child);
+        var updated = await Update(registry, child);
         if (updated == null)
         {
           Debug.LogError($"Expected update for {child} to return a value");
@@ -101,7 +102,7 @@ namespace Spelldawn.Masonry
         }
       }
 
-      result = result is { } r ? await Mason.ApplyToElement(assetFetcher, node, r) : null;
+      result = result is { } r ? await Mason.ApplyToElement(registry, node, r) : null;
       return createdNewElement ? result : null;
     }
   }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Spelldawn.Protos;
+using UnityEngine;
 using static Spelldawn.Masonry.MasonUtil;
 
 #nullable enable
@@ -23,14 +24,28 @@ namespace Spelldawn.Battle
   {
     public static Node? Render(DeckView? deck) => deck is null
       ? null
-      : Column("Deck",
-        new FlexStyle
+      : new Node
+      {
+        Name = NodeNames.Deck,
+        Style = new FlexStyle
         {
           Width = Dip(44),
           Height = Dip(44 / RevealedCardNode.CardAspectRatio),
           FlexShrink = 0,
           FixedBackgroundImageAspectRatio = true,
-          BackgroundImage = Sprite("LittleSweetDaemon/TCG_Card_Design/Customized/ChampionDeck"),
-        });
+          BackgroundImage = Sprite("LittleSweetDaemon/TCG_Card_Design/Customized/ChampionDeck")
+        },
+        PressedStyle = new FlexStyle
+        {
+          BackgroundImageTintColor = MakeColor(Color.gray)
+        },
+        EventHandlers = new EventHandlers
+        {
+          ClickAction = new GameAction
+          {
+            DrawCard = new DrawCardAction()
+          }
+        }
+      };
   }
 }

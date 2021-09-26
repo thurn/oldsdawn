@@ -12,18 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
-using Spelldawn.Protos;
-using UnityEngine.UIElements;
+syntax = "proto3";
 
-#nullable enable
+package sd;
+option csharp_namespace = "Spelldawn.Protos";
 
-namespace Spelldawn.Masonry
-{
-  public interface IAssetFetcher
-  {
-    Task<StyleFontDefinition> LoadFont(FontAddress fontAddress);
+enum PlayerName {
+  PLAYER_NAME_UNSPECIFIED = 0;
+  PLAYER_NAME_USER = 1;
+  PLAYER_NAME_OPPONENT = 2;
+}
 
-    Task<StyleBackground> LoadSprite(SpriteAddress spriteAddress);
+message CardId {
+  int32 value = 1;
+}
+
+message RoomId {
+  int32 value = 1;
+}
+
+message CardTarget {
+  oneof target {
+    CardId card_id = 1;
+    RoomId room_id = 2;
+    PlayerName player_name = 3;
   }
 }

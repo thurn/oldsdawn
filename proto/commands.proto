@@ -1,0 +1,112 @@
+// Copyright © Spelldawn 2021-present
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//    https://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package sd;
+option csharp_namespace = "Spelldawn.Protos";
+
+import "game_primitives.proto";
+import "game_view.proto";
+
+/**
+ * Many of the below commands are specific cases of RenderGame. They are
+ * differentiated in order to simplify the diffing logic the client needs
+ * to perform to detect changes.
+ */
+ message RenderGameCommand {
+    GameView game = 1;
+  }
+
+  message InitiateRaidCommand {
+    RoomId room_id = 1;
+  }
+
+  enum CreateCardPosition {
+    CREATE_CARD_POSITION_UNSPECIFIED = 0;
+
+    /**
+     * Creates card on top of the user's deck. If an optimistic card has already
+     * been moved to the staging area, that card is used instead.
+     */
+    CREATE_CARD_POSITION_USER_DECK = 1;
+
+    /**
+     * Creates a card in the staging area.
+     */
+    CREATE_CARD_POSITION_SPAWN = 2;
+  }
+
+  message CreateCardCommand {
+    CreateCardPosition position = 1;
+    CardView card = 2;
+  }
+
+  message UpdateCardCommand {
+    CardView card = 1;
+  }
+
+  message RevealCardCommand {
+    CardView card = 1;
+  }
+
+  enum GameZone {
+    GAME_ZONE_UNSPECIFIED = 0;
+    GAME_ZONE_HAND = 1;
+    GAME_ZONE_ARENA = 2;
+    GAME_ZONE_DECK = 3;
+    GAME_ZONE_DISCARD = 4;
+    GAME_ZONE_BANISHED = 5;
+  }
+
+  message MoveCardCommand {
+    CardId card_id = 1;
+    PlayerName target_player = 2;
+    GameZone zone = 3;
+  }
+
+  message DestroyCardCommand {
+    CardId card_id = 1;
+  }
+
+  message UpdatePlayerStateCommand {
+    PlayerName player_name = 1;
+    PlayerInfo info = 2;
+    ScoreView score = 3;
+    ActionTrackerView action_tracker = 4;
+  }
+
+  message CreateOrUpdateRoomCommand {
+    RoomId room_id = 1;
+    RoomIcon room_icon = 2;
+  }
+
+  message DestroyRoomCommand {
+    RoomId room_id = 1;
+  }
+
+  message GameCommand {
+    oneof command {
+      RenderGameCommand render_game = 1;
+      InitiateRaidCommand initiate_raid = 2;
+      CreateCardCommand create_card = 3;
+      UpdateCardCommand update_card = 4;
+      RevealCardCommand reveal_card = 5;
+      MoveCardCommand move_card = 6;
+      DestroyCardCommand destroy_card = 7;
+      UpdatePlayerStateCommand update_player_state = 8;
+      CreateOrUpdateRoomCommand create_or_update_room = 9;
+      DestroyRoomCommand destroy_room = 10;
+    }
+  }
