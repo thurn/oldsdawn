@@ -44,6 +44,7 @@ namespace Spelldawn.Battle
         {
           style.Width = Percent(100);
           style.Height = Dip(80);
-        }));
+        }),
+        CardStagingNode.Render());
   }
 }

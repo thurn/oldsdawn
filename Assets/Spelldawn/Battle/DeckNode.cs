@@ -22,6 +22,8 @@ namespace Spelldawn.Battle
 {
   public static class DeckNode
   {
+    const float DeckAspectRatio = 0.72761194f;
+
     public static Node? Render(DeckView? deck) => deck is null
       ? null
       : new Node
@@ -30,7 +32,7 @@ namespace Spelldawn.Battle
         Style = new FlexStyle
         {
           Width = Dip(44),
-          Height = Dip(44 / RevealedCardNode.CardAspectRatio),
+          Height = Dip(44 / DeckAspectRatio),
           FlexShrink = 0,
           FixedBackgroundImageAspectRatio = true,
           BackgroundImage = Sprite("LittleSweetDaemon/TCG_Card_Design/Customized/ChampionDeck")

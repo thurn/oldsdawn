@@ -19,5 +19,6 @@ namespace Spelldawn.Battle
   public static class NodeNames
   {
     public static readonly string Deck = "Deck";
+    public static readonly string CardStaging = "CardStaging";
   }
 }

@@ -222,6 +222,19 @@ namespace Spelldawn.Masonry
       Z = z
     };
 
+    public static FlexTranslate TranslatePercent(float x, float y, float z = 0) => new()
+    {
+      X = Percent(x),
+      Y = Percent(y),
+      Z = z
+    };
+
+
+    public static TimeValue DurationMs(float ms) => new()
+    {
+      Milliseconds = ms
+    };
+
     static Node MakeFlexbox(string name, FlexStyle style, params Node?[] children)
     {
       var result = new Node

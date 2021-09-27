@@ -40,25 +40,29 @@ namespace Spelldawn.Battle
       const float cardWidth = ReferenceCardHeight * CardAspectRatio;
       var tintColor = MakeColor(Color.gray);
 
-      var result = Column("Card",
+      var result = Column($"Card{props.Id.Value}",
         new FlexStyle
         {
           Width = Dip(cardWidth * props.Scale),
           Height = Dip(ReferenceCardHeight * props.Scale),
           FlexShrink = 0,
-          Rotate = Rotate(angle)
+          Rotate = Rotate(angle),
+          TransitionProperties = { "all" },
+          TransitionDurations = { DurationMs(1000) }
         },
-        view.ImageBackground is null ? null : Row(
-          "CardImageBackground",
-          new FlexStyle
-          {
-            BackgroundImage = view.ImageBackground,
-            BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
-            Position = FlexPosition.Absolute,
-            Inset = PositionDip(10f * props.Scale, 16f * props.Scale),
-            Width = Dip(144f * props.Scale),
-            Height = Dip(144f * props.Scale)
-          }),
+        view.ImageBackground is null
+          ? null
+          : Row(
+            "CardImageBackground",
+            new FlexStyle
+            {
+              BackgroundImage = view.ImageBackground,
+              BackgroundImageTintColor = props.OverlayDim ? tintColor : null,
+              Position = FlexPosition.Absolute,
+              Inset = PositionDip(10f * props.Scale, 16f * props.Scale),
+              Width = Dip(144f * props.Scale),
+              Height = Dip(144f * props.Scale)
+            }),
         Row(
           "CardImage",
           new FlexStyle
@@ -142,6 +146,8 @@ namespace Spelldawn.Battle
             ? TopDip(Mathf.Abs(Mathf.Lerp(-25, 25, props.HandPosition.Value)) + 50f)
             : AllDip(0),
           JustifyContent = FlexJustify.Center,
+          TransitionProperties = { "all" },
+          TransitionDurations = { DurationMs(1000) }
         },
         result);
     }

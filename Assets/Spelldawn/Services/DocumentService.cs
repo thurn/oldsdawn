@@ -32,7 +32,7 @@ namespace Spelldawn.Services
     }
 
     public VisualElement Find(string elementName) =>
-      Errors.CheckNotNull(_registry.GameDocument.rootVisualElement.Q(elementName));
+      Errors.CheckNotNull(_registry.GameDocument.rootVisualElement.Q(elementName), $"Name not found: {elementName}");
 
     async void Render()
     {

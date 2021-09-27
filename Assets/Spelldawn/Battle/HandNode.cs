@@ -33,7 +33,7 @@ namespace Spelldawn.Battle
             AlignItems = FlexAlign.Center,
             FlexGrow = 1
           },
-          handView.Cards.Select((c, i) => CardNode.Render(c, new CardProps
+          handView.Cards.Select((c, i) => CardNode.Render(c, new CardProps(c.CardId)
           {
             Scale = 0.5f,
             HandPosition = i / (handView.Cards.Count - 1f)

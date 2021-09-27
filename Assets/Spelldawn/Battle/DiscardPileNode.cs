@@ -22,12 +22,21 @@ namespace Spelldawn.Battle
 {
   public static class DiscardPileNode
   {
-    public static Node? Render(DiscardPileView? discardPile) => discardPile is null
-      ? null
-      : Column("DiscardPile", new FlexStyle
-        {
-          FlexShrink = 0,
-        },
-        CardNode.Render(discardPile.Cards.FirstOrDefault(), new CardProps { Scale = 0.25f, OverlayDim = true }));
+    public static Node? Render(DiscardPileView? discardPile)
+    {
+      if (discardPile != null && discardPile.Cards.FirstOrDefault() is { } card)
+      {
+        return Column("DiscardPile", new FlexStyle
+          {
+            FlexShrink = 0,
+          },
+          CardNode.Render(card,
+            new CardProps(card.CardId) { Scale = 0.25f, OverlayDim = true }));
+      }
+      else
+      {
+        return null;
+      }
+    }
   }
 }
