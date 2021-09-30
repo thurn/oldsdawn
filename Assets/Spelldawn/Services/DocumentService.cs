@@ -25,23 +25,5 @@ namespace Spelldawn.Services
   public sealed class DocumentService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-
-    void Start()
-    {
-      Render();
-    }
-
-    public VisualElement Find(string elementName) =>
-      Errors.CheckNotNull(_registry.GameDocument.rootVisualElement.Q(elementName), $"Name not found: {elementName}");
-
-    async void Render()
-    {
-      var node = GameNode.Render(SampleData.SampleView());
-      if (node != null)
-      {
-        var element = await Mason.Render(_registry, node);
-        _registry.GameDocument.rootVisualElement.Add(element);
-      }
-    }
   }
 }
