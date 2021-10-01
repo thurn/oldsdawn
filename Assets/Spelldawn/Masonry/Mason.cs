@@ -15,20 +15,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
 using UnityEngine.UIElements;
-using EasingMode = UnityEngine.UIElements.EasingMode;
-using FlexDirection = UnityEngine.UIElements.FlexDirection;
-using FontStyle = UnityEngine.FontStyle;
-using TextOverflow = UnityEngine.UIElements.TextOverflow;
+using EasingMode = Spelldawn.Protos.EasingMode;
+using FlexDirection = Spelldawn.Protos.FlexDirection;
+using FontStyle = Spelldawn.Protos.FontStyle;
+using OverflowClipBox = Spelldawn.Protos.OverflowClipBox;
+using TextOverflow = Spelldawn.Protos.TextOverflow;
+using TextOverflowPosition = Spelldawn.Protos.TextOverflowPosition;
 using TextShadow = UnityEngine.UIElements.TextShadow;
 using TimeValue = UnityEngine.UIElements.TimeValue;
-using OverflowClipBox = UnityEngine.UIElements.OverflowClipBox;
-using TextOverflowPosition = UnityEngine.UIElements.TextOverflowPosition;
-using WhiteSpace = UnityEngine.UIElements.WhiteSpace;
+using WhiteSpace = Spelldawn.Protos.WhiteSpace;
 
 #nullable enable
 
@@ -39,7 +38,7 @@ namespace Spelldawn.Masonry
     /// <summary>
     /// Renders the provided Node into a VisualElement.
     /// </summary>
-    public static Task<VisualElement> Render(Registry registry, Node node)
+    public static VisualElement Render(Registry registry, Node node)
     {
       var element = CreateElement(node);
       return ApplyToElement(registry, node, element);
@@ -51,7 +50,7 @@ namespace Spelldawn.Masonry
       _ => new NodeVisualElement()
     };
 
-    public static Task<VisualElement> ApplyToElement(Registry registry, Node node, VisualElement element)
+    public static VisualElement ApplyToElement(Registry registry, Node node, VisualElement element)
     {
       switch (node.NodeType?.TypeCase)
       {
@@ -63,17 +62,16 @@ namespace Spelldawn.Masonry
       return ApplyNode(registry, node, element);
     }
 
-    static async Task<VisualElement> ApplyNode(Registry registry, Node node, VisualElement element)
+    static VisualElement ApplyNode(Registry registry, Node node, VisualElement element)
     {
       element.name = node.Name;
-      var children = await Task.WhenAll(node.Children.Select(n => Render(registry, n)));
 
-      foreach (var child in children)
+      foreach (var child in node.Children)
       {
-        element.Add(child);
+        element.Add(Render(registry, child));
       }
 
-      var result = await ApplyStyle(registry, element, node.Style);
+      var result = ApplyStyle(registry, element, node.Style);
       var callbacks = ((INodeCallbacks)element);
 
       if (node.HoverStyle != null)
@@ -184,7 +182,7 @@ namespace Spelldawn.Masonry
         ? new StyleList<TResult>(StyleKeyword.Null)
         : new StyleList<TResult>(field.Select(selector).ToList());
 
-    public static async Task<VisualElement> ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
+    public static VisualElement ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
     {
       if (input == null)
       {
@@ -221,11 +219,11 @@ namespace Spelldawn.Masonry
       e.style.flexBasis = AdaptDimension(input.FlexBasis);
       e.style.flexDirection = input.FlexDirection switch
       {
-        Protos.FlexDirection.Column => FlexDirection.Column,
-        Protos.FlexDirection.ColumnReverse => FlexDirection.ColumnReverse,
-        Protos.FlexDirection.Row => FlexDirection.Row,
-        Protos.FlexDirection.RowReverse => FlexDirection.RowReverse,
-        _ => new StyleEnum<FlexDirection>(StyleKeyword.Null)
+        FlexDirection.Column => UnityEngine.UIElements.FlexDirection.Column,
+        FlexDirection.ColumnReverse => UnityEngine.UIElements.FlexDirection.ColumnReverse,
+        FlexDirection.Row => UnityEngine.UIElements.FlexDirection.Row,
+        FlexDirection.RowReverse => UnityEngine.UIElements.FlexDirection.RowReverse,
+        _ => new StyleEnum<UnityEngine.UIElements.FlexDirection>(StyleKeyword.Null)
       };
       e.style.flexGrow = AdaptFloat(input.FlexGrow);
       e.style.flexShrink = AdaptFloat(input.FlexShrink);
@@ -279,9 +277,9 @@ namespace Spelldawn.Masonry
       e.style.scale = input.Scale is { } s ? new Scale(AdaptVector3(s.Amount)) : new StyleScale(StyleKeyword.Null);
       e.style.textOverflow = input.TextOverflow switch
       {
-        Protos.TextOverflow.Clip => TextOverflow.Clip,
-        Protos.TextOverflow.Ellipsis => TextOverflow.Ellipsis,
-        _ => new StyleEnum<TextOverflow>(StyleKeyword.Null)
+        TextOverflow.Clip => UnityEngine.UIElements.TextOverflow.Clip,
+        TextOverflow.Ellipsis => UnityEngine.UIElements.TextOverflow.Ellipsis,
+        _ => new StyleEnum<UnityEngine.UIElements.TextOverflow>(StyleKeyword.Null)
       };
       e.style.textShadow = input.TextShadow is { } ts
         ? new TextShadow
@@ -301,30 +299,30 @@ namespace Spelldawn.Masonry
       e.style.transitionProperty = AdaptList(input.TransitionProperties, p => new StylePropertyName(p));
       e.style.transitionTimingFunction = AdaptList(input.TransitionEasingModes, mode => new EasingFunction(mode switch
       {
-        Protos.EasingMode.Ease => EasingMode.Ease,
-        Protos.EasingMode.EaseIn => EasingMode.EaseIn,
-        Protos.EasingMode.EaseOut => EasingMode.EaseOut,
-        Protos.EasingMode.EaseInOut => EasingMode.EaseInOut,
-        Protos.EasingMode.Linear => EasingMode.Linear,
-        Protos.EasingMode.EaseInSine => EasingMode.EaseInSine,
-        Protos.EasingMode.EaseOutSine => EasingMode.EaseOutSine,
-        Protos.EasingMode.EaseInOutSine => EasingMode.EaseInOutSine,
-        Protos.EasingMode.EaseInCubic => EasingMode.EaseInCubic,
-        Protos.EasingMode.EaseOutCubic => EasingMode.EaseOutCubic,
-        Protos.EasingMode.EaseInOutCubic => EasingMode.EaseInOutCubic,
-        Protos.EasingMode.EaseInCirc => EasingMode.EaseInCirc,
-        Protos.EasingMode.EaseOutCirc => EasingMode.EaseOutCirc,
-        Protos.EasingMode.EaseInOutCirc => EasingMode.EaseInOutCirc,
-        Protos.EasingMode.EaseInElastic => EasingMode.EaseInElastic,
-        Protos.EasingMode.EaseOutElastic => EasingMode.EaseOutElastic,
-        Protos.EasingMode.EaseInOutElastic => EasingMode.EaseInOutElastic,
-        Protos.EasingMode.EaseInBack => EasingMode.EaseInBack,
-        Protos.EasingMode.EaseOutBack => EasingMode.EaseOutBack,
-        Protos.EasingMode.EaseInOutBack => EasingMode.EaseInOutBack,
-        Protos.EasingMode.EaseInBounce => EasingMode.EaseInBounce,
-        Protos.EasingMode.EaseOutBounce => EasingMode.EaseOutBounce,
-        Protos.EasingMode.EaseInOutBounce => EasingMode.EaseInOutBounce,
-        _ => EasingMode.Ease
+        EasingMode.Ease => UnityEngine.UIElements.EasingMode.Ease,
+        EasingMode.EaseIn => UnityEngine.UIElements.EasingMode.EaseIn,
+        EasingMode.EaseOut => UnityEngine.UIElements.EasingMode.EaseOut,
+        EasingMode.EaseInOut => UnityEngine.UIElements.EasingMode.EaseInOut,
+        EasingMode.Linear => UnityEngine.UIElements.EasingMode.Linear,
+        EasingMode.EaseInSine => UnityEngine.UIElements.EasingMode.EaseInSine,
+        EasingMode.EaseOutSine => UnityEngine.UIElements.EasingMode.EaseOutSine,
+        EasingMode.EaseInOutSine => UnityEngine.UIElements.EasingMode.EaseInOutSine,
+        EasingMode.EaseInCubic => UnityEngine.UIElements.EasingMode.EaseInCubic,
+        EasingMode.EaseOutCubic => UnityEngine.UIElements.EasingMode.EaseOutCubic,
+        EasingMode.EaseInOutCubic => UnityEngine.UIElements.EasingMode.EaseInOutCubic,
+        EasingMode.EaseInCirc => UnityEngine.UIElements.EasingMode.EaseInCirc,
+        EasingMode.EaseOutCirc => UnityEngine.UIElements.EasingMode.EaseOutCirc,
+        EasingMode.EaseInOutCirc => UnityEngine.UIElements.EasingMode.EaseInOutCirc,
+        EasingMode.EaseInElastic => UnityEngine.UIElements.EasingMode.EaseInElastic,
+        EasingMode.EaseOutElastic => UnityEngine.UIElements.EasingMode.EaseOutElastic,
+        EasingMode.EaseInOutElastic => UnityEngine.UIElements.EasingMode.EaseInOutElastic,
+        EasingMode.EaseInBack => UnityEngine.UIElements.EasingMode.EaseInBack,
+        EasingMode.EaseOutBack => UnityEngine.UIElements.EasingMode.EaseOutBack,
+        EasingMode.EaseInOutBack => UnityEngine.UIElements.EasingMode.EaseInOutBack,
+        EasingMode.EaseInBounce => UnityEngine.UIElements.EasingMode.EaseInBounce,
+        EasingMode.EaseOutBounce => UnityEngine.UIElements.EasingMode.EaseOutBounce,
+        EasingMode.EaseInOutBounce => UnityEngine.UIElements.EasingMode.EaseInOutBounce,
+        _ => UnityEngine.UIElements.EasingMode.Ease
       }));
       e.style.translate = input.Translate is { } translate
         ? new Translate(AdaptDimensionNonNull(translate.X), AdaptDimensionNonNull(translate.Y), translate.Z)
@@ -338,21 +336,21 @@ namespace Spelldawn.Masonry
         _ => new StyleEnum<ScaleMode>(StyleKeyword.Null)
       };
       e.style.unityFontDefinition = input.Font is { } font
-        ? await registry.AssetService.LoadFont(font)
+        ? new StyleFontDefinition(registry.AssetService.GetFont(font))
         : new StyleFontDefinition(StyleKeyword.Null);
       e.style.unityFontStyleAndWeight = input.FontStyle switch
       {
-        Protos.FontStyle.Normal => FontStyle.Normal,
-        Protos.FontStyle.Bold => FontStyle.Bold,
-        Protos.FontStyle.Italic => FontStyle.Italic,
-        Protos.FontStyle.BoldAndItalic => FontStyle.BoldAndItalic,
-        _ => new StyleEnum<FontStyle>(StyleKeyword.Null)
+        FontStyle.Normal => UnityEngine.FontStyle.Normal,
+        FontStyle.Bold => UnityEngine.FontStyle.Bold,
+        FontStyle.Italic => UnityEngine.FontStyle.Italic,
+        FontStyle.BoldAndItalic => UnityEngine.FontStyle.BoldAndItalic,
+        _ => new StyleEnum<UnityEngine.FontStyle>(StyleKeyword.Null)
       };
       e.style.unityOverflowClipBox = input.OverflowClipBox switch
       {
-        Protos.OverflowClipBox.PaddingBox => OverflowClipBox.PaddingBox,
-        Protos.OverflowClipBox.ContentBox => OverflowClipBox.ContentBox,
-        _ => new StyleEnum<OverflowClipBox>(StyleKeyword.Null)
+        OverflowClipBox.PaddingBox => UnityEngine.UIElements.OverflowClipBox.PaddingBox,
+        OverflowClipBox.ContentBox => UnityEngine.UIElements.OverflowClipBox.ContentBox,
+        _ => new StyleEnum<UnityEngine.UIElements.OverflowClipBox>(StyleKeyword.Null)
       };
       e.style.unityParagraphSpacing = AdaptDimension(input.ParagraphSpacing);
       e.style.unitySliceTop = AdaptInt(input.ImageSlice?.Top);
@@ -376,10 +374,10 @@ namespace Spelldawn.Masonry
       e.style.unityTextOutlineWidth = AdaptFloat(input.TextOutlineWidth);
       e.style.unityTextOverflowPosition = input.TextOverflowPosition switch
       {
-        Protos.TextOverflowPosition.End => TextOverflowPosition.End,
-        Protos.TextOverflowPosition.Start => TextOverflowPosition.Start,
-        Protos.TextOverflowPosition.Middle => TextOverflowPosition.Middle,
-        _ => new StyleEnum<TextOverflowPosition>(StyleKeyword.Null)
+        TextOverflowPosition.End => UnityEngine.UIElements.TextOverflowPosition.End,
+        TextOverflowPosition.Start => UnityEngine.UIElements.TextOverflowPosition.Start,
+        TextOverflowPosition.Middle => UnityEngine.UIElements.TextOverflowPosition.Middle,
+        _ => new StyleEnum<UnityEngine.UIElements.TextOverflowPosition>(StyleKeyword.Null)
       };
       e.style.visibility = input.Visibility switch
       {
@@ -389,32 +387,31 @@ namespace Spelldawn.Masonry
       };
       e.style.whiteSpace = input.WhiteSpace switch
       {
-        Protos.WhiteSpace.Normal => WhiteSpace.Normal,
-        Protos.WhiteSpace.NoWrap => WhiteSpace.NoWrap,
-        _ => new StyleEnum<WhiteSpace>(StyleKeyword.Null)
+        WhiteSpace.Normal => UnityEngine.UIElements.WhiteSpace.Normal,
+        WhiteSpace.NoWrap => UnityEngine.UIElements.WhiteSpace.NoWrap,
+        _ => new StyleEnum<UnityEngine.UIElements.WhiteSpace>(StyleKeyword.Null)
       };
       e.style.width = AdaptDimension(input.Width);
       e.style.wordSpacing = AdaptDimension(input.WordSpacing);
 
       if (input.BackgroundImage is { } bi)
       {
-        var sprite = await registry.AssetService.LoadSprite(bi);
-        e.style.backgroundImage = sprite;
-        var rect = sprite.value.sprite.rect;
+        var sprite = registry.AssetService.GetSprite(bi);
+        e.style.backgroundImage = new StyleBackground(sprite);
 
-        if (input.BackgroundImageScaleMultiplier is { } multiplier)
+        if (input.BackgroundImageScaleMultiplier is { } multiplier && sprite && sprite != null)
         {
-          e.style.width = MasonUtil.ScreenPxToDip(rect.width * multiplier);
-          e.style.height = MasonUtil.ScreenPxToDip(rect.height * multiplier);
+          e.style.width = MasonUtil.ScreenPxToDip(sprite.rect.width * multiplier);
+          e.style.height = MasonUtil.ScreenPxToDip(sprite.rect.height * multiplier);
         }
 
         switch (input.FixedBackgroundImageAspectRatio)
         {
-          case true when input.Width is { } width:
-            e.style.height = AdaptDimensionNonNull(width, rect.height / rect.width);
+          case true when input.Width is { } width && sprite && sprite != null:
+            e.style.height = AdaptDimensionNonNull(width, sprite.rect.height / sprite.rect.width);
             break;
-          case true when input.Height is { } height:
-            e.style.width = AdaptDimensionNonNull(height, rect.width / rect.height);
+          case true when input.Height is { } height && sprite && sprite != null:
+            e.style.width = AdaptDimensionNonNull(height, sprite.rect.width / sprite.rect.height);
             break;
         }
       }

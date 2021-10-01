@@ -56,3 +56,5 @@ out_BurstDebugInformation_DoNotShip/
 proto/bin
 proto/obj
 !proto/*.csproj
+
+todo.md

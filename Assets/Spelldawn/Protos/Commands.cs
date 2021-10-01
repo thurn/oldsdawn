@@ -30,37 +30,35 @@ namespace Spelldawn.Protos {
             "B3Jvb21faWQYASABKAsyCi5zZC5Sb29tSWQiWQoRQ3JlYXRlQ2FyZENvbW1h",
             "bmQSKAoIcG9zaXRpb24YASABKA4yFi5zZC5DcmVhdGVDYXJkUG9zaXRpb24S",
             "GgoEY2FyZBgCIAEoCzIMLnNkLkNhcmRWaWV3Ii8KEVVwZGF0ZUNhcmRDb21t",
-            "YW5kEhoKBGNhcmQYASABKAsyDC5zZC5DYXJkVmlldyIvChFSZXZlYWxDYXJk",
-            "Q29tbWFuZBIaCgRjYXJkGAEgASgLMgwuc2QuQ2FyZFZpZXcicQoPTW92ZUNh",
-            "cmRDb21tYW5kEhsKB2NhcmRfaWQYASABKAsyCi5zZC5DYXJkSWQSJQoNdGFy",
-            "Z2V0X3BsYXllchgCIAEoDjIOLnNkLlBsYXllck5hbWUSGgoEem9uZRgDIAEo",
-            "DjIMLnNkLkdhbWVab25lIjEKEkRlc3Ryb3lDYXJkQ29tbWFuZBIbCgdjYXJk",
-            "X2lkGAEgASgLMgouc2QuQ2FyZElkIqoBChhVcGRhdGVQbGF5ZXJTdGF0ZUNv",
-            "bW1hbmQSIwoLcGxheWVyX25hbWUYASABKA4yDi5zZC5QbGF5ZXJOYW1lEhwK",
-            "BGluZm8YAiABKAsyDi5zZC5QbGF5ZXJJbmZvEhwKBXNjb3JlGAMgASgLMg0u",
-            "c2QuU2NvcmVWaWV3Ei0KDmFjdGlvbl90cmFja2VyGAQgASgLMhUuc2QuQWN0",
-            "aW9uVHJhY2tlclZpZXciWQoZQ3JlYXRlT3JVcGRhdGVSb29tQ29tbWFuZBIb",
-            "Cgdyb29tX2lkGAEgASgLMgouc2QuUm9vbUlkEh8KCXJvb21faWNvbhgCIAEo",
-            "CzIMLnNkLlJvb21JY29uIjEKEkRlc3Ryb3lSb29tQ29tbWFuZBIbCgdyb29t",
-            "X2lkGAEgASgLMgouc2QuUm9vbUlkIokECgtHYW1lQ29tbWFuZBIsCgtyZW5k",
-            "ZXJfZ2FtZRgBIAEoCzIVLnNkLlJlbmRlckdhbWVDb21tYW5kSAASMAoNaW5p",
-            "dGlhdGVfcmFpZBgCIAEoCzIXLnNkLkluaXRpYXRlUmFpZENvbW1hbmRIABIs",
-            "CgtjcmVhdGVfY2FyZBgDIAEoCzIVLnNkLkNyZWF0ZUNhcmRDb21tYW5kSAAS",
-            "LAoLdXBkYXRlX2NhcmQYBCABKAsyFS5zZC5VcGRhdGVDYXJkQ29tbWFuZEgA",
-            "EiwKC3JldmVhbF9jYXJkGAUgASgLMhUuc2QuUmV2ZWFsQ2FyZENvbW1hbmRI",
-            "ABIoCgltb3ZlX2NhcmQYBiABKAsyEy5zZC5Nb3ZlQ2FyZENvbW1hbmRIABIu",
-            "CgxkZXN0cm95X2NhcmQYByABKAsyFi5zZC5EZXN0cm95Q2FyZENvbW1hbmRI",
-            "ABI7ChN1cGRhdGVfcGxheWVyX3N0YXRlGAggASgLMhwuc2QuVXBkYXRlUGxh",
-            "eWVyU3RhdGVDb21tYW5kSAASPgoVY3JlYXRlX29yX3VwZGF0ZV9yb29tGAkg",
-            "ASgLMh0uc2QuQ3JlYXRlT3JVcGRhdGVSb29tQ29tbWFuZEgAEi4KDGRlc3Ry",
-            "b3lfcm9vbRgKIAEoCzIWLnNkLkRlc3Ryb3lSb29tQ29tbWFuZEgAQgkKB2Nv",
-            "bW1hbmQqfgoSQ3JlYXRlQ2FyZFBvc2l0aW9uEiQKIENSRUFURV9DQVJEX1BP",
-            "U0lUSU9OX1VOU1BFQ0lGSUVEEAASIgoeQ1JFQVRFX0NBUkRfUE9TSVRJT05f",
-            "VVNFUl9ERUNLEAESHgoaQ1JFQVRFX0NBUkRfUE9TSVRJT05fU1BBV04QAiqR",
-            "AQoIR2FtZVpvbmUSGQoVR0FNRV9aT05FX1VOU1BFQ0lGSUVEEAASEgoOR0FN",
-            "RV9aT05FX0hBTkQQARITCg9HQU1FX1pPTkVfQVJFTkEQAhISCg5HQU1FX1pP",
-            "TkVfREVDSxADEhUKEUdBTUVfWk9ORV9ESVNDQVJEEAQSFgoSR0FNRV9aT05F",
-            "X0JBTklTSEVEEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
+            "YW5kEhoKBGNhcmQYASABKAsyDC5zZC5DYXJkVmlldyJxCg9Nb3ZlQ2FyZENv",
+            "bW1hbmQSGwoHY2FyZF9pZBgBIAEoCzIKLnNkLkNhcmRJZBIlCg10YXJnZXRf",
+            "cGxheWVyGAIgASgOMg4uc2QuUGxheWVyTmFtZRIaCgR6b25lGAMgASgOMgwu",
+            "c2QuR2FtZVpvbmUiMQoSRGVzdHJveUNhcmRDb21tYW5kEhsKB2NhcmRfaWQY",
+            "ASABKAsyCi5zZC5DYXJkSWQiqgEKGFVwZGF0ZVBsYXllclN0YXRlQ29tbWFu",
+            "ZBIjCgtwbGF5ZXJfbmFtZRgBIAEoDjIOLnNkLlBsYXllck5hbWUSHAoEaW5m",
+            "bxgCIAEoCzIOLnNkLlBsYXllckluZm8SHAoFc2NvcmUYAyABKAsyDS5zZC5T",
+            "Y29yZVZpZXcSLQoOYWN0aW9uX3RyYWNrZXIYBCABKAsyFS5zZC5BY3Rpb25U",
+            "cmFja2VyVmlldyJZChlDcmVhdGVPclVwZGF0ZVJvb21Db21tYW5kEhsKB3Jv",
+            "b21faWQYASABKAsyCi5zZC5Sb29tSWQSHwoJcm9vbV9pbmZvGAIgASgLMgwu",
+            "c2QuUm9vbUluZm8iMQoSRGVzdHJveVJvb21Db21tYW5kEhsKB3Jvb21faWQY",
+            "ASABKAsyCi5zZC5Sb29tSWQi2wMKC0dhbWVDb21tYW5kEiwKC3JlbmRlcl9n",
+            "YW1lGAEgASgLMhUuc2QuUmVuZGVyR2FtZUNvbW1hbmRIABIwCg1pbml0aWF0",
+            "ZV9yYWlkGAIgASgLMhcuc2QuSW5pdGlhdGVSYWlkQ29tbWFuZEgAEiwKC2Ny",
+            "ZWF0ZV9jYXJkGAMgASgLMhUuc2QuQ3JlYXRlQ2FyZENvbW1hbmRIABIsCgt1",
+            "cGRhdGVfY2FyZBgEIAEoCzIVLnNkLlVwZGF0ZUNhcmRDb21tYW5kSAASKAoJ",
+            "bW92ZV9jYXJkGAUgASgLMhMuc2QuTW92ZUNhcmRDb21tYW5kSAASLgoMZGVz",
+            "dHJveV9jYXJkGAYgASgLMhYuc2QuRGVzdHJveUNhcmRDb21tYW5kSAASOwoT",
+            "dXBkYXRlX3BsYXllcl9zdGF0ZRgHIAEoCzIcLnNkLlVwZGF0ZVBsYXllclN0",
+            "YXRlQ29tbWFuZEgAEj4KFWNyZWF0ZV9vcl91cGRhdGVfcm9vbRgIIAEoCzId",
+            "LnNkLkNyZWF0ZU9yVXBkYXRlUm9vbUNvbW1hbmRIABIuCgxkZXN0cm95X3Jv",
+            "b20YCSABKAsyFi5zZC5EZXN0cm95Um9vbUNvbW1hbmRIAEIJCgdjb21tYW5k",
+            "Kn4KEkNyZWF0ZUNhcmRQb3NpdGlvbhIkCiBDUkVBVEVfQ0FSRF9QT1NJVElP",
+            "Tl9VTlNQRUNJRklFRBAAEiIKHkNSRUFURV9DQVJEX1BPU0lUSU9OX1VTRVJf",
+            "REVDSxABEh4KGkNSRUFURV9DQVJEX1BPU0lUSU9OX1NQQVdOEAIqkQEKCEdh",
+            "bWVab25lEhkKFUdBTUVfWk9ORV9VTlNQRUNJRklFRBAAEhIKDkdBTUVfWk9O",
+            "RV9IQU5EEAESEwoPR0FNRV9aT05FX0FSRU5BEAISEgoOR0FNRV9aT05FX0RF",
+            "Q0sQAxIVChFHQU1FX1pPTkVfRElTQ0FSRBAEEhYKEkdBTUVfWk9ORV9CQU5J",
+            "U0hFRBAFQhOqAhBTcGVsbGRhd24uUHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, global::Spelldawn.Protos.GameViewReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CreateCardPosition), typeof(global::Spelldawn.Protos.GameZone), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -68,13 +66,12 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.InitiateRaidCommand), global::Spelldawn.Protos.InitiateRaidCommand.Parser, new[]{ "RoomId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CreateCardCommand), global::Spelldawn.Protos.CreateCardCommand.Parser, new[]{ "Position", "Card" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.UpdateCardCommand), global::Spelldawn.Protos.UpdateCardCommand.Parser, new[]{ "Card" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RevealCardCommand), global::Spelldawn.Protos.RevealCardCommand.Parser, new[]{ "Card" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.MoveCardCommand), global::Spelldawn.Protos.MoveCardCommand.Parser, new[]{ "CardId", "TargetPlayer", "Zone" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DestroyCardCommand), global::Spelldawn.Protos.DestroyCardCommand.Parser, new[]{ "CardId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.UpdatePlayerStateCommand), global::Spelldawn.Protos.UpdatePlayerStateCommand.Parser, new[]{ "PlayerName", "Info", "Score", "ActionTracker" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CreateOrUpdateRoomCommand), global::Spelldawn.Protos.CreateOrUpdateRoomCommand.Parser, new[]{ "RoomId", "RoomIcon" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CreateOrUpdateRoomCommand), global::Spelldawn.Protos.CreateOrUpdateRoomCommand.Parser, new[]{ "RoomId", "RoomInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DestroyRoomCommand), global::Spelldawn.Protos.DestroyRoomCommand.Parser, new[]{ "RoomId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameCommand), global::Spelldawn.Protos.GameCommand.Parser, new[]{ "RenderGame", "InitiateRaid", "CreateCard", "UpdateCard", "RevealCard", "MoveCard", "DestroyCard", "UpdatePlayerState", "CreateOrUpdateRoom", "DestroyRoom" }, new[]{ "Command" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameCommand), global::Spelldawn.Protos.GameCommand.Parser, new[]{ "RenderGame", "InitiateRaid", "CreateCard", "UpdateCard", "MoveCard", "DestroyCard", "UpdatePlayerState", "CreateOrUpdateRoom", "DestroyRoom" }, new[]{ "Command" }, null, null, null)
           }));
     }
     #endregion
@@ -112,7 +109,7 @@ namespace Spelldawn.Protos {
   ///*
   /// Many of the below commands are specific cases of RenderGame. They are
   /// differentiated in order to simplify the diffing logic the client needs
-  /// to perform to detect changes.
+  /// to perform to detect and animate changes.
   /// </summary>
   public sealed partial class RenderGameCommand : pb::IMessage<RenderGameCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -874,187 +871,6 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class RevealCardCommand : pb::IMessage<RevealCardCommand>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<RevealCardCommand> _parser = new pb::MessageParser<RevealCardCommand>(() => new RevealCardCommand());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<RevealCardCommand> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[4]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RevealCardCommand() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RevealCardCommand(RevealCardCommand other) : this() {
-      card_ = other.card_ != null ? other.card_.Clone() : null;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RevealCardCommand Clone() {
-      return new RevealCardCommand(this);
-    }
-
-    /// <summary>Field number for the "card" field.</summary>
-    public const int CardFieldNumber = 1;
-    private global::Spelldawn.Protos.CardView card_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardView Card {
-      get { return card_; }
-      set {
-        card_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as RevealCardCommand);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(RevealCardCommand other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (!object.Equals(Card, other.Card)) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (card_ != null) hash ^= Card.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (card_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Card);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (card_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Card);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (card_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Card);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(RevealCardCommand other) {
-      if (other == null) {
-        return;
-      }
-      if (other.card_ != null) {
-        if (card_ == null) {
-          Card = new global::Spelldawn.Protos.CardView();
-        }
-        Card.MergeFrom(other.Card);
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            if (card_ == null) {
-              Card = new global::Spelldawn.Protos.CardView();
-            }
-            input.ReadMessage(Card);
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            if (card_ == null) {
-              Card = new global::Spelldawn.Protos.CardView();
-            }
-            input.ReadMessage(Card);
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
   public sealed partial class MoveCardCommand : pb::IMessage<MoveCardCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -1067,7 +883,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[5]; }
+      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1320,7 +1136,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[6]; }
+      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1501,7 +1317,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[7]; }
+      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[6]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1808,7 +1624,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[8]; }
+      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[7]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1826,7 +1642,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public CreateOrUpdateRoomCommand(CreateOrUpdateRoomCommand other) : this() {
       roomId_ = other.roomId_ != null ? other.roomId_.Clone() : null;
-      roomIcon_ = other.roomIcon_ != null ? other.roomIcon_.Clone() : null;
+      roomInfo_ = other.roomInfo_ != null ? other.roomInfo_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1846,14 +1662,14 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "room_icon" field.</summary>
-    public const int RoomIconFieldNumber = 2;
-    private global::Spelldawn.Protos.RoomIcon roomIcon_;
+    /// <summary>Field number for the "room_info" field.</summary>
+    public const int RoomInfoFieldNumber = 2;
+    private global::Spelldawn.Protos.RoomInfo roomInfo_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.RoomIcon RoomIcon {
-      get { return roomIcon_; }
+    public global::Spelldawn.Protos.RoomInfo RoomInfo {
+      get { return roomInfo_; }
       set {
-        roomIcon_ = value;
+        roomInfo_ = value;
       }
     }
 
@@ -1871,7 +1687,7 @@ namespace Spelldawn.Protos {
         return true;
       }
       if (!object.Equals(RoomId, other.RoomId)) return false;
-      if (!object.Equals(RoomIcon, other.RoomIcon)) return false;
+      if (!object.Equals(RoomInfo, other.RoomInfo)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1879,7 +1695,7 @@ namespace Spelldawn.Protos {
     public override int GetHashCode() {
       int hash = 1;
       if (roomId_ != null) hash ^= RoomId.GetHashCode();
-      if (roomIcon_ != null) hash ^= RoomIcon.GetHashCode();
+      if (roomInfo_ != null) hash ^= RoomInfo.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1900,9 +1716,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(RoomId);
       }
-      if (roomIcon_ != null) {
+      if (roomInfo_ != null) {
         output.WriteRawTag(18);
-        output.WriteMessage(RoomIcon);
+        output.WriteMessage(RoomInfo);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1917,9 +1733,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(RoomId);
       }
-      if (roomIcon_ != null) {
+      if (roomInfo_ != null) {
         output.WriteRawTag(18);
-        output.WriteMessage(RoomIcon);
+        output.WriteMessage(RoomInfo);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1933,8 +1749,8 @@ namespace Spelldawn.Protos {
       if (roomId_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomId);
       }
-      if (roomIcon_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomIcon);
+      if (roomInfo_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomInfo);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1953,11 +1769,11 @@ namespace Spelldawn.Protos {
         }
         RoomId.MergeFrom(other.RoomId);
       }
-      if (other.roomIcon_ != null) {
-        if (roomIcon_ == null) {
-          RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+      if (other.roomInfo_ != null) {
+        if (roomInfo_ == null) {
+          RoomInfo = new global::Spelldawn.Protos.RoomInfo();
         }
-        RoomIcon.MergeFrom(other.RoomIcon);
+        RoomInfo.MergeFrom(other.RoomInfo);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1981,10 +1797,10 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            if (roomIcon_ == null) {
-              RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+            if (roomInfo_ == null) {
+              RoomInfo = new global::Spelldawn.Protos.RoomInfo();
             }
-            input.ReadMessage(RoomIcon);
+            input.ReadMessage(RoomInfo);
             break;
           }
         }
@@ -2009,10 +1825,10 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            if (roomIcon_ == null) {
-              RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+            if (roomInfo_ == null) {
+              RoomInfo = new global::Spelldawn.Protos.RoomInfo();
             }
-            input.ReadMessage(RoomIcon);
+            input.ReadMessage(RoomInfo);
             break;
           }
         }
@@ -2034,7 +1850,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[9]; }
+      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[8]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2215,7 +2031,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[10]; }
+      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2244,9 +2060,6 @@ namespace Spelldawn.Protos {
           break;
         case CommandOneofCase.UpdateCard:
           UpdateCard = other.UpdateCard.Clone();
-          break;
-        case CommandOneofCase.RevealCard:
-          RevealCard = other.RevealCard.Clone();
           break;
         case CommandOneofCase.MoveCard:
           MoveCard = other.MoveCard.Clone();
@@ -2317,19 +2130,8 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "reveal_card" field.</summary>
-    public const int RevealCardFieldNumber = 5;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.RevealCardCommand RevealCard {
-      get { return commandCase_ == CommandOneofCase.RevealCard ? (global::Spelldawn.Protos.RevealCardCommand) command_ : null; }
-      set {
-        command_ = value;
-        commandCase_ = value == null ? CommandOneofCase.None : CommandOneofCase.RevealCard;
-      }
-    }
-
     /// <summary>Field number for the "move_card" field.</summary>
-    public const int MoveCardFieldNumber = 6;
+    public const int MoveCardFieldNumber = 5;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.MoveCardCommand MoveCard {
       get { return commandCase_ == CommandOneofCase.MoveCard ? (global::Spelldawn.Protos.MoveCardCommand) command_ : null; }
@@ -2340,7 +2142,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "destroy_card" field.</summary>
-    public const int DestroyCardFieldNumber = 7;
+    public const int DestroyCardFieldNumber = 6;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.DestroyCardCommand DestroyCard {
       get { return commandCase_ == CommandOneofCase.DestroyCard ? (global::Spelldawn.Protos.DestroyCardCommand) command_ : null; }
@@ -2351,7 +2153,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "update_player_state" field.</summary>
-    public const int UpdatePlayerStateFieldNumber = 8;
+    public const int UpdatePlayerStateFieldNumber = 7;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.UpdatePlayerStateCommand UpdatePlayerState {
       get { return commandCase_ == CommandOneofCase.UpdatePlayerState ? (global::Spelldawn.Protos.UpdatePlayerStateCommand) command_ : null; }
@@ -2362,7 +2164,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "create_or_update_room" field.</summary>
-    public const int CreateOrUpdateRoomFieldNumber = 9;
+    public const int CreateOrUpdateRoomFieldNumber = 8;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CreateOrUpdateRoomCommand CreateOrUpdateRoom {
       get { return commandCase_ == CommandOneofCase.CreateOrUpdateRoom ? (global::Spelldawn.Protos.CreateOrUpdateRoomCommand) command_ : null; }
@@ -2373,7 +2175,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "destroy_room" field.</summary>
-    public const int DestroyRoomFieldNumber = 10;
+    public const int DestroyRoomFieldNumber = 9;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.DestroyRoomCommand DestroyRoom {
       get { return commandCase_ == CommandOneofCase.DestroyRoom ? (global::Spelldawn.Protos.DestroyRoomCommand) command_ : null; }
@@ -2391,12 +2193,11 @@ namespace Spelldawn.Protos {
       InitiateRaid = 2,
       CreateCard = 3,
       UpdateCard = 4,
-      RevealCard = 5,
-      MoveCard = 6,
-      DestroyCard = 7,
-      UpdatePlayerState = 8,
-      CreateOrUpdateRoom = 9,
-      DestroyRoom = 10,
+      MoveCard = 5,
+      DestroyCard = 6,
+      UpdatePlayerState = 7,
+      CreateOrUpdateRoom = 8,
+      DestroyRoom = 9,
     }
     private CommandOneofCase commandCase_ = CommandOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2427,7 +2228,6 @@ namespace Spelldawn.Protos {
       if (!object.Equals(InitiateRaid, other.InitiateRaid)) return false;
       if (!object.Equals(CreateCard, other.CreateCard)) return false;
       if (!object.Equals(UpdateCard, other.UpdateCard)) return false;
-      if (!object.Equals(RevealCard, other.RevealCard)) return false;
       if (!object.Equals(MoveCard, other.MoveCard)) return false;
       if (!object.Equals(DestroyCard, other.DestroyCard)) return false;
       if (!object.Equals(UpdatePlayerState, other.UpdatePlayerState)) return false;
@@ -2444,7 +2244,6 @@ namespace Spelldawn.Protos {
       if (commandCase_ == CommandOneofCase.InitiateRaid) hash ^= InitiateRaid.GetHashCode();
       if (commandCase_ == CommandOneofCase.CreateCard) hash ^= CreateCard.GetHashCode();
       if (commandCase_ == CommandOneofCase.UpdateCard) hash ^= UpdateCard.GetHashCode();
-      if (commandCase_ == CommandOneofCase.RevealCard) hash ^= RevealCard.GetHashCode();
       if (commandCase_ == CommandOneofCase.MoveCard) hash ^= MoveCard.GetHashCode();
       if (commandCase_ == CommandOneofCase.DestroyCard) hash ^= DestroyCard.GetHashCode();
       if (commandCase_ == CommandOneofCase.UpdatePlayerState) hash ^= UpdatePlayerState.GetHashCode();
@@ -2483,28 +2282,24 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(34);
         output.WriteMessage(UpdateCard);
       }
-      if (commandCase_ == CommandOneofCase.RevealCard) {
-        output.WriteRawTag(42);
-        output.WriteMessage(RevealCard);
-      }
       if (commandCase_ == CommandOneofCase.MoveCard) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(42);
         output.WriteMessage(MoveCard);
       }
       if (commandCase_ == CommandOneofCase.DestroyCard) {
-        output.WriteRawTag(58);
+        output.WriteRawTag(50);
         output.WriteMessage(DestroyCard);
       }
       if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
-        output.WriteRawTag(66);
+        output.WriteRawTag(58);
         output.WriteMessage(UpdatePlayerState);
       }
       if (commandCase_ == CommandOneofCase.CreateOrUpdateRoom) {
-        output.WriteRawTag(74);
+        output.WriteRawTag(66);
         output.WriteMessage(CreateOrUpdateRoom);
       }
       if (commandCase_ == CommandOneofCase.DestroyRoom) {
-        output.WriteRawTag(82);
+        output.WriteRawTag(74);
         output.WriteMessage(DestroyRoom);
       }
       if (_unknownFields != null) {
@@ -2532,28 +2327,24 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(34);
         output.WriteMessage(UpdateCard);
       }
-      if (commandCase_ == CommandOneofCase.RevealCard) {
-        output.WriteRawTag(42);
-        output.WriteMessage(RevealCard);
-      }
       if (commandCase_ == CommandOneofCase.MoveCard) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(42);
         output.WriteMessage(MoveCard);
       }
       if (commandCase_ == CommandOneofCase.DestroyCard) {
-        output.WriteRawTag(58);
+        output.WriteRawTag(50);
         output.WriteMessage(DestroyCard);
       }
       if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
-        output.WriteRawTag(66);
+        output.WriteRawTag(58);
         output.WriteMessage(UpdatePlayerState);
       }
       if (commandCase_ == CommandOneofCase.CreateOrUpdateRoom) {
-        output.WriteRawTag(74);
+        output.WriteRawTag(66);
         output.WriteMessage(CreateOrUpdateRoom);
       }
       if (commandCase_ == CommandOneofCase.DestroyRoom) {
-        output.WriteRawTag(82);
+        output.WriteRawTag(74);
         output.WriteMessage(DestroyRoom);
       }
       if (_unknownFields != null) {
@@ -2576,9 +2367,6 @@ namespace Spelldawn.Protos {
       }
       if (commandCase_ == CommandOneofCase.UpdateCard) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(UpdateCard);
-      }
-      if (commandCase_ == CommandOneofCase.RevealCard) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RevealCard);
       }
       if (commandCase_ == CommandOneofCase.MoveCard) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(MoveCard);
@@ -2630,12 +2418,6 @@ namespace Spelldawn.Protos {
             UpdateCard = new global::Spelldawn.Protos.UpdateCardCommand();
           }
           UpdateCard.MergeFrom(other.UpdateCard);
-          break;
-        case CommandOneofCase.RevealCard:
-          if (RevealCard == null) {
-            RevealCard = new global::Spelldawn.Protos.RevealCardCommand();
-          }
-          RevealCard.MergeFrom(other.RevealCard);
           break;
         case CommandOneofCase.MoveCard:
           if (MoveCard == null) {
@@ -2720,15 +2502,6 @@ namespace Spelldawn.Protos {
             break;
           }
           case 42: {
-            global::Spelldawn.Protos.RevealCardCommand subBuilder = new global::Spelldawn.Protos.RevealCardCommand();
-            if (commandCase_ == CommandOneofCase.RevealCard) {
-              subBuilder.MergeFrom(RevealCard);
-            }
-            input.ReadMessage(subBuilder);
-            RevealCard = subBuilder;
-            break;
-          }
-          case 50: {
             global::Spelldawn.Protos.MoveCardCommand subBuilder = new global::Spelldawn.Protos.MoveCardCommand();
             if (commandCase_ == CommandOneofCase.MoveCard) {
               subBuilder.MergeFrom(MoveCard);
@@ -2737,7 +2510,7 @@ namespace Spelldawn.Protos {
             MoveCard = subBuilder;
             break;
           }
-          case 58: {
+          case 50: {
             global::Spelldawn.Protos.DestroyCardCommand subBuilder = new global::Spelldawn.Protos.DestroyCardCommand();
             if (commandCase_ == CommandOneofCase.DestroyCard) {
               subBuilder.MergeFrom(DestroyCard);
@@ -2746,7 +2519,7 @@ namespace Spelldawn.Protos {
             DestroyCard = subBuilder;
             break;
           }
-          case 66: {
+          case 58: {
             global::Spelldawn.Protos.UpdatePlayerStateCommand subBuilder = new global::Spelldawn.Protos.UpdatePlayerStateCommand();
             if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
               subBuilder.MergeFrom(UpdatePlayerState);
@@ -2755,7 +2528,7 @@ namespace Spelldawn.Protos {
             UpdatePlayerState = subBuilder;
             break;
           }
-          case 74: {
+          case 66: {
             global::Spelldawn.Protos.CreateOrUpdateRoomCommand subBuilder = new global::Spelldawn.Protos.CreateOrUpdateRoomCommand();
             if (commandCase_ == CommandOneofCase.CreateOrUpdateRoom) {
               subBuilder.MergeFrom(CreateOrUpdateRoom);
@@ -2764,7 +2537,7 @@ namespace Spelldawn.Protos {
             CreateOrUpdateRoom = subBuilder;
             break;
           }
-          case 82: {
+          case 74: {
             global::Spelldawn.Protos.DestroyRoomCommand subBuilder = new global::Spelldawn.Protos.DestroyRoomCommand();
             if (commandCase_ == CommandOneofCase.DestroyRoom) {
               subBuilder.MergeFrom(DestroyRoom);
@@ -2824,15 +2597,6 @@ namespace Spelldawn.Protos {
             break;
           }
           case 42: {
-            global::Spelldawn.Protos.RevealCardCommand subBuilder = new global::Spelldawn.Protos.RevealCardCommand();
-            if (commandCase_ == CommandOneofCase.RevealCard) {
-              subBuilder.MergeFrom(RevealCard);
-            }
-            input.ReadMessage(subBuilder);
-            RevealCard = subBuilder;
-            break;
-          }
-          case 50: {
             global::Spelldawn.Protos.MoveCardCommand subBuilder = new global::Spelldawn.Protos.MoveCardCommand();
             if (commandCase_ == CommandOneofCase.MoveCard) {
               subBuilder.MergeFrom(MoveCard);
@@ -2841,7 +2605,7 @@ namespace Spelldawn.Protos {
             MoveCard = subBuilder;
             break;
           }
-          case 58: {
+          case 50: {
             global::Spelldawn.Protos.DestroyCardCommand subBuilder = new global::Spelldawn.Protos.DestroyCardCommand();
             if (commandCase_ == CommandOneofCase.DestroyCard) {
               subBuilder.MergeFrom(DestroyCard);
@@ -2850,7 +2614,7 @@ namespace Spelldawn.Protos {
             DestroyCard = subBuilder;
             break;
           }
-          case 66: {
+          case 58: {
             global::Spelldawn.Protos.UpdatePlayerStateCommand subBuilder = new global::Spelldawn.Protos.UpdatePlayerStateCommand();
             if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
               subBuilder.MergeFrom(UpdatePlayerState);
@@ -2859,7 +2623,7 @@ namespace Spelldawn.Protos {
             UpdatePlayerState = subBuilder;
             break;
           }
-          case 74: {
+          case 66: {
             global::Spelldawn.Protos.CreateOrUpdateRoomCommand subBuilder = new global::Spelldawn.Protos.CreateOrUpdateRoomCommand();
             if (commandCase_ == CommandOneofCase.CreateOrUpdateRoom) {
               subBuilder.MergeFrom(CreateOrUpdateRoom);
@@ -2868,7 +2632,7 @@ namespace Spelldawn.Protos {
             CreateOrUpdateRoom = subBuilder;
             break;
           }
-          case 82: {
+          case 74: {
             global::Spelldawn.Protos.DestroyRoomCommand subBuilder = new global::Spelldawn.Protos.DestroyRoomCommand();
             if (commandCase_ == CommandOneofCase.DestroyRoom) {
               subBuilder.MergeFrom(DestroyRoom);

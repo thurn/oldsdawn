@@ -42,53 +42,49 @@ namespace Spelldawn.Protos {
             "Cg5hd2FpdF9yZXNwb25zZRgEIAEoCzIRLnNkLkF3YWl0UmVzcG9uc2VIAEIL",
             "Cgl0YXJnZXRpbmciUQoIQ2FyZENvc3QSHQoIY2FuX3BsYXkYASABKA4yCy5z",
             "ZC5DYW5QbGF5EhEKCW1hbmFfY29zdBgCIAEoBRITCgthY3Rpb25fY29zdBgD",
-            "IAEoBSLLAwoQUmV2ZWFsZWRDYXJkVmlldxIkCgljYXJkX2JhY2sYASABKAsy",
-            "ES5zZC5TcHJpdGVBZGRyZXNzEiUKCmNhcmRfZnJhbWUYAiABKAsyES5zZC5T",
-            "cHJpdGVBZGRyZXNzEisKEHRpdGxlX2JhY2tncm91bmQYAyABKAsyES5zZC5T",
-            "cHJpdGVBZGRyZXNzEiAKBWpld2VsGAQgASgLMhEuc2QuU3ByaXRlQWRkcmVz",
-            "cxIrChBpbWFnZV9iYWNrZ3JvdW5kGAUgASgLMhEuc2QuU3ByaXRlQWRkcmVz",
-            "cxIgCgVpbWFnZRgGIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSHAoFdGl0bGUY",
-            "ByABKAsyDS5zZC5DYXJkVGl0bGUSIQoKcnVsZXNfdGV4dBgIIAEoCzINLnNk",
-            "LlJ1bGVzVGV4dBImCgthcmVuYV9mcmFtZRgJIAEoCzIRLnNkLlNwcml0ZUFk",
-            "ZHJlc3MSIQoKY2FyZF9pY29ucxgKIAEoCzINLnNkLkNhcmRJY29ucxIkCgl0",
-            "YXJnZXRpbmcYCyABKAsyES5zZC5DYXJkVGFyZ2V0aW5nEhoKBGNvc3QYDCAB",
-            "KAsyDC5zZC5DYXJkQ29zdCKBAQoOSGlkZGVuQ2FyZFZpZXcSJAoJY2FyZF9i",
-            "YWNrGAEgASgLMhEuc2QuU3ByaXRlQWRkcmVzcxIhCgpjYXJkX2ljb25zGAIg",
-            "ASgLMg0uc2QuQ2FyZEljb25zEiYKC2FyZW5hX2ZyYW1lGAMgASgLMhEuc2Qu",
-            "U3ByaXRlQWRkcmVzcyK0AQoIQ2FyZFZpZXcSGwoHY2FyZF9pZBgBIAEoCzIK",
-            "LnNkLkNhcmRJZBIpCg5hcmVuYV9wb3NpdGlvbhgCIAEoDjIRLnNkLkFyZW5h",
-            "UG9zaXRpb24SLQoNcmV2ZWFsZWRfY2FyZBgDIAEoCzIULnNkLlJldmVhbGVk",
-            "Q2FyZFZpZXdIABIpCgtoaWRkZW5fY2FyZBgEIAEoCzISLnNkLkhpZGRlbkNh",
-            "cmRWaWV3SABCBgoEY2FyZCInCghIYW5kVmlldxIbCgVjYXJkcxgBIAMoCzIM",
-            "LnNkLkNhcmRWaWV3Ii4KD0Rpc2NhcmRQaWxlVmlldxIbCgVjYXJkcxgBIAMo",
-            "CzIMLnNkLkNhcmRWaWV3ImQKClBsYXllckluZm8SDAoEbmFtZRgBIAEoCRIj",
-            "Cghwb3J0cmFpdBgCIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSIwoNaWRlbnRp",
-            "dHlfY2FyZBgDIAEoCzIMLnNkLkNhcmRWaWV3IhoKCE1hbmFWaWV3Eg4KBmFt",
-            "b3VudBgBIAEoBSI+CglTY29yZVZpZXcSDQoFc2NvcmUYASABKAUSIgoMc2Nv",
-            "cmVkX2NhcmRzGAIgAygLMgwuc2QuQ2FyZFZpZXciMAoIUm9vbUljb24SJAoJ",
-            "cm9vbV9pY29uGAEgASgLMhEuc2QuU3ByaXRlQWRkcmVzcyJlCghSb29tVmll",
-            "dxIbCgdyb29tX2lkGAEgASgLMgouc2QuUm9vbUlkEh8KCXJvb21faWNvbhgC",
-            "IAEoCzIMLnNkLlJvb21JY29uEhsKBWNhcmRzGAMgAygLMgwuc2QuQ2FyZFZp",
-            "ZXciYwoJQXJlbmFWaWV3EhwKFG92ZXJsb3JkX3BlcnNwZWN0aXZlGAEgASgI",
-            "EhsKBXJvb21zGAIgAygLMgwuc2QuUm9vbVZpZXcSGwoFaXRlbXMYAyADKAsy",
-            "DC5zZC5DYXJkVmlldyIzChFBY3Rpb25UcmFja2VyVmlldxIeChZhdmFpbGFi",
-            "bGVfYWN0aW9uX2NvdW50GAEgASgFIgoKCERlY2tWaWV3Iv0BCgpQbGF5ZXJW",
-            "aWV3EiMKC3BsYXllcl9pbmZvGAEgASgLMg4uc2QuUGxheWVySW5mbxIcCgVz",
-            "Y29yZRgCIAEoCzINLnNkLlNjb3JlVmlldxIaCgRoYW5kGAMgASgLMgwuc2Qu",
-            "SGFuZFZpZXcSGgoEbWFuYRgEIAEoCzIMLnNkLk1hbmFWaWV3EikKDGRpc2Nh",
-            "cmRfcGlsZRgFIAEoCzITLnNkLkRpc2NhcmRQaWxlVmlldxItCg5hY3Rpb25f",
-            "dHJhY2tlchgGIAEoCzIVLnNkLkFjdGlvblRyYWNrZXJWaWV3EhoKBGRlY2sY",
-            "ByABKAsyDC5zZC5EZWNrVmlldyJoCghHYW1lVmlldxIcCgR1c2VyGAEgASgL",
-            "Mg4uc2QuUGxheWVyVmlldxIgCghvcHBvbmVudBgCIAEoCzIOLnNkLlBsYXll",
-            "clZpZXcSHAoFYXJlbmEYAyABKAsyDS5zZC5BcmVuYVZpZXcqXAoHQ2FuUGxh",
-            "eRIYChRDQU5fUExBWV9VTlNQRUNJRklFRBAAEhQKEENBTl9QTEFZX0RFRkFV",
-            "TFQQARIPCgtDQU5fUExBWV9OTxACEhAKDENBTl9QTEFZX1lFUxADKs0BCg1B",
-            "cmVuYVBvc2l0aW9uEh4KGkFSRU5BX1BPU0lUSU9OX1VOU1BFQ0lGSUVEEAAS",
-            "GgoWQVJFTkFfUE9TSVRJT05fSU5fUk9PTRABEiAKHEFSRU5BX1BPU0lUSU9O",
-            "X1JPT01fREVGRU5ERVIQAhIdChlBUkVOQV9QT1NJVElPTl9JVEVNU19MRUZU",
-            "EAMSHwobQVJFTkFfUE9TSVRJT05fSVRFTVNfQ0VOVEVSEAQSHgoaQVJFTkFf",
-            "UE9TSVRJT05fSVRFTVNfUklHSFQQBUITqgIQU3BlbGxkYXduLlByb3Rvc2IG",
-            "cHJvdG8z"));
+            "IAEoBSLaAgoQUmV2ZWFsZWRDYXJkVmlldxIlCgpjYXJkX2ZyYW1lGAEgASgL",
+            "MhEuc2QuU3ByaXRlQWRkcmVzcxIrChB0aXRsZV9iYWNrZ3JvdW5kGAIgASgL",
+            "MhEuc2QuU3ByaXRlQWRkcmVzcxIgCgVqZXdlbBgDIAEoCzIRLnNkLlNwcml0",
+            "ZUFkZHJlc3MSKwoQaW1hZ2VfYmFja2dyb3VuZBgEIAEoCzIRLnNkLlNwcml0",
+            "ZUFkZHJlc3MSIAoFaW1hZ2UYBSABKAsyES5zZC5TcHJpdGVBZGRyZXNzEhwK",
+            "BXRpdGxlGAYgASgLMg0uc2QuQ2FyZFRpdGxlEiEKCnJ1bGVzX3RleHQYByAB",
+            "KAsyDS5zZC5SdWxlc1RleHQSJAoJdGFyZ2V0aW5nGAggASgLMhEuc2QuQ2Fy",
+            "ZFRhcmdldGluZxIaCgRjb3N0GAkgASgLMgwuc2QuQ2FyZENvc3Qi8AEKCENh",
+            "cmRWaWV3EhsKB2NhcmRfaWQYASABKAsyCi5zZC5DYXJkSWQSKQoOYXJlbmFf",
+            "cG9zaXRpb24YAiABKA4yES5zZC5BcmVuYVBvc2l0aW9uEiQKCWNhcmRfYmFj",
+            "axgDIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSIQoKY2FyZF9pY29ucxgEIAEo",
+            "CzINLnNkLkNhcmRJY29ucxImCgthcmVuYV9mcmFtZRgFIAEoCzIRLnNkLlNw",
+            "cml0ZUFkZHJlc3MSKwoNcmV2ZWFsZWRfY2FyZBgGIAEoCzIULnNkLlJldmVh",
+            "bGVkQ2FyZFZpZXciJwoISGFuZFZpZXcSGwoFY2FyZHMYASADKAsyDC5zZC5D",
+            "YXJkVmlldyIuCg9EaXNjYXJkUGlsZVZpZXcSGwoFY2FyZHMYASADKAsyDC5z",
+            "ZC5DYXJkVmlldyJkCgpQbGF5ZXJJbmZvEgwKBG5hbWUYASABKAkSIwoIcG9y",
+            "dHJhaXQYAiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiMKDWlkZW50aXR5X2Nh",
+            "cmQYAyABKAsyDC5zZC5DYXJkVmlldyIaCghNYW5hVmlldxIOCgZhbW91bnQY",
+            "ASABKAUiPgoJU2NvcmVWaWV3Eg0KBXNjb3JlGAEgASgFEiIKDHNjb3JlZF9j",
+            "YXJkcxgCIAMoCzIMLnNkLkNhcmRWaWV3IjAKCFJvb21JbmZvEiQKCXJvb21f",
+            "aWNvbhgBIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MiZQoIUm9vbVZpZXcSGwoH",
+            "cm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZBIfCglyb29tX2luZm8YAiABKAsy",
+            "DC5zZC5Sb29tSW5mbxIbCgVjYXJkcxgDIAMoCzIMLnNkLkNhcmRWaWV3ImMK",
+            "CUFyZW5hVmlldxIcChRvdmVybG9yZF9wZXJzcGVjdGl2ZRgBIAEoCBIbCgVy",
+            "b29tcxgCIAMoCzIMLnNkLlJvb21WaWV3EhsKBWl0ZW1zGAMgAygLMgwuc2Qu",
+            "Q2FyZFZpZXciMwoRQWN0aW9uVHJhY2tlclZpZXcSHgoWYXZhaWxhYmxlX2Fj",
+            "dGlvbl9jb3VudBgBIAEoBSIKCghEZWNrVmlldyL9AQoKUGxheWVyVmlldxIj",
+            "CgtwbGF5ZXJfaW5mbxgBIAEoCzIOLnNkLlBsYXllckluZm8SHAoFc2NvcmUY",
+            "AiABKAsyDS5zZC5TY29yZVZpZXcSGgoEaGFuZBgDIAEoCzIMLnNkLkhhbmRW",
+            "aWV3EhoKBG1hbmEYBCABKAsyDC5zZC5NYW5hVmlldxIpCgxkaXNjYXJkX3Bp",
+            "bGUYBSABKAsyEy5zZC5EaXNjYXJkUGlsZVZpZXcSLQoOYWN0aW9uX3RyYWNr",
+            "ZXIYBiABKAsyFS5zZC5BY3Rpb25UcmFja2VyVmlldxIaCgRkZWNrGAcgASgL",
+            "Mgwuc2QuRGVja1ZpZXciaAoIR2FtZVZpZXcSHAoEdXNlchgBIAEoCzIOLnNk",
+            "LlBsYXllclZpZXcSIAoIb3Bwb25lbnQYAiABKAsyDi5zZC5QbGF5ZXJWaWV3",
+            "EhwKBWFyZW5hGAMgASgLMg0uc2QuQXJlbmFWaWV3KlwKB0NhblBsYXkSGAoU",
+            "Q0FOX1BMQVlfVU5TUEVDSUZJRUQQABIUChBDQU5fUExBWV9ERUZBVUxUEAES",
+            "DwoLQ0FOX1BMQVlfTk8QAhIQCgxDQU5fUExBWV9ZRVMQAyrNAQoNQXJlbmFQ",
+            "b3NpdGlvbhIeChpBUkVOQV9QT1NJVElPTl9VTlNQRUNJRklFRBAAEhoKFkFS",
+            "RU5BX1BPU0lUSU9OX0lOX1JPT00QARIgChxBUkVOQV9QT1NJVElPTl9ST09N",
+            "X0RFRkVOREVSEAISHQoZQVJFTkFfUE9TSVRJT05fSVRFTVNfTEVGVBADEh8K",
+            "G0FSRU5BX1BPU0lUSU9OX0lURU1TX0NFTlRFUhAEEh4KGkFSRU5BX1BPU0lU",
+            "SU9OX0lURU1TX1JJR0hUEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3Rv",
+            "Mw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.MasonryReflection.Descriptor, global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CanPlay), typeof(global::Spelldawn.Protos.ArenaPosition), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -102,16 +98,15 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.AwaitResponse), global::Spelldawn.Protos.AwaitResponse.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardTargeting), global::Spelldawn.Protos.CardTargeting.Parser, new[]{ "PickFirstTarget", "PlayInRoom", "PlayAsItem", "AwaitResponse" }, new[]{ "Targeting" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardCost), global::Spelldawn.Protos.CardCost.Parser, new[]{ "CanPlay", "ManaCost", "ActionCost" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RevealedCardView), global::Spelldawn.Protos.RevealedCardView.Parser, new[]{ "CardBack", "CardFrame", "TitleBackground", "Jewel", "ImageBackground", "Image", "Title", "RulesText", "ArenaFrame", "CardIcons", "Targeting", "Cost" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.HiddenCardView), global::Spelldawn.Protos.HiddenCardView.Parser, new[]{ "CardBack", "CardIcons", "ArenaFrame" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardView), global::Spelldawn.Protos.CardView.Parser, new[]{ "CardId", "ArenaPosition", "RevealedCard", "HiddenCard" }, new[]{ "Card" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RevealedCardView), global::Spelldawn.Protos.RevealedCardView.Parser, new[]{ "CardFrame", "TitleBackground", "Jewel", "ImageBackground", "Image", "Title", "RulesText", "Targeting", "Cost" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardView), global::Spelldawn.Protos.CardView.Parser, new[]{ "CardId", "ArenaPosition", "CardBack", "CardIcons", "ArenaFrame", "RevealedCard" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.HandView), global::Spelldawn.Protos.HandView.Parser, new[]{ "Cards" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DiscardPileView), global::Spelldawn.Protos.DiscardPileView.Parser, new[]{ "Cards" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayerInfo), global::Spelldawn.Protos.PlayerInfo.Parser, new[]{ "Name", "Portrait", "IdentityCard" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ManaView), global::Spelldawn.Protos.ManaView.Parser, new[]{ "Amount" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ScoreView), global::Spelldawn.Protos.ScoreView.Parser, new[]{ "Score", "ScoredCards" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RoomIcon), global::Spelldawn.Protos.RoomIcon.Parser, new[]{ "RoomIcon_" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RoomView), global::Spelldawn.Protos.RoomView.Parser, new[]{ "RoomId", "RoomIcon", "Cards" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RoomInfo), global::Spelldawn.Protos.RoomInfo.Parser, new[]{ "RoomIcon" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RoomView), global::Spelldawn.Protos.RoomView.Parser, new[]{ "RoomId", "RoomInfo", "Cards" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ArenaView), global::Spelldawn.Protos.ArenaView.Parser, new[]{ "OverlordPerspective", "Rooms", "Items" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ActionTrackerView), global::Spelldawn.Protos.ActionTrackerView.Parser, new[]{ "AvailableActionCount" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DeckView), global::Spelldawn.Protos.DeckView.Parser, null, null, null, null, null),
@@ -2363,7 +2358,6 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public RevealedCardView(RevealedCardView other) : this() {
-      cardBack_ = other.cardBack_ != null ? other.cardBack_.Clone() : null;
       cardFrame_ = other.cardFrame_ != null ? other.cardFrame_.Clone() : null;
       titleBackground_ = other.titleBackground_ != null ? other.titleBackground_.Clone() : null;
       jewel_ = other.jewel_ != null ? other.jewel_.Clone() : null;
@@ -2371,8 +2365,6 @@ namespace Spelldawn.Protos {
       image_ = other.image_ != null ? other.image_.Clone() : null;
       title_ = other.title_ != null ? other.title_.Clone() : null;
       rulesText_ = other.rulesText_ != null ? other.rulesText_.Clone() : null;
-      arenaFrame_ = other.arenaFrame_ != null ? other.arenaFrame_.Clone() : null;
-      cardIcons_ = other.cardIcons_ != null ? other.cardIcons_.Clone() : null;
       targeting_ = other.targeting_ != null ? other.targeting_.Clone() : null;
       cost_ = other.cost_ != null ? other.cost_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -2383,19 +2375,8 @@ namespace Spelldawn.Protos {
       return new RevealedCardView(this);
     }
 
-    /// <summary>Field number for the "card_back" field.</summary>
-    public const int CardBackFieldNumber = 1;
-    private global::Spelldawn.Protos.SpriteAddress cardBack_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.SpriteAddress CardBack {
-      get { return cardBack_; }
-      set {
-        cardBack_ = value;
-      }
-    }
-
     /// <summary>Field number for the "card_frame" field.</summary>
-    public const int CardFrameFieldNumber = 2;
+    public const int CardFrameFieldNumber = 1;
     private global::Spelldawn.Protos.SpriteAddress cardFrame_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.SpriteAddress CardFrame {
@@ -2406,7 +2387,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "title_background" field.</summary>
-    public const int TitleBackgroundFieldNumber = 3;
+    public const int TitleBackgroundFieldNumber = 2;
     private global::Spelldawn.Protos.SpriteAddress titleBackground_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.SpriteAddress TitleBackground {
@@ -2417,7 +2398,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "jewel" field.</summary>
-    public const int JewelFieldNumber = 4;
+    public const int JewelFieldNumber = 3;
     private global::Spelldawn.Protos.SpriteAddress jewel_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.SpriteAddress Jewel {
@@ -2428,7 +2409,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "image_background" field.</summary>
-    public const int ImageBackgroundFieldNumber = 5;
+    public const int ImageBackgroundFieldNumber = 4;
     private global::Spelldawn.Protos.SpriteAddress imageBackground_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.SpriteAddress ImageBackground {
@@ -2439,7 +2420,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "image" field.</summary>
-    public const int ImageFieldNumber = 6;
+    public const int ImageFieldNumber = 5;
     private global::Spelldawn.Protos.SpriteAddress image_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.SpriteAddress Image {
@@ -2450,7 +2431,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "title" field.</summary>
-    public const int TitleFieldNumber = 7;
+    public const int TitleFieldNumber = 6;
     private global::Spelldawn.Protos.CardTitle title_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardTitle Title {
@@ -2461,7 +2442,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "rules_text" field.</summary>
-    public const int RulesTextFieldNumber = 8;
+    public const int RulesTextFieldNumber = 7;
     private global::Spelldawn.Protos.RulesText rulesText_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RulesText RulesText {
@@ -2471,30 +2452,8 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "arena_frame" field.</summary>
-    public const int ArenaFrameFieldNumber = 9;
-    private global::Spelldawn.Protos.SpriteAddress arenaFrame_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.SpriteAddress ArenaFrame {
-      get { return arenaFrame_; }
-      set {
-        arenaFrame_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "card_icons" field.</summary>
-    public const int CardIconsFieldNumber = 10;
-    private global::Spelldawn.Protos.CardIcons cardIcons_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardIcons CardIcons {
-      get { return cardIcons_; }
-      set {
-        cardIcons_ = value;
-      }
-    }
-
     /// <summary>Field number for the "targeting" field.</summary>
-    public const int TargetingFieldNumber = 11;
+    public const int TargetingFieldNumber = 8;
     private global::Spelldawn.Protos.CardTargeting targeting_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardTargeting Targeting {
@@ -2505,7 +2464,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "cost" field.</summary>
-    public const int CostFieldNumber = 12;
+    public const int CostFieldNumber = 9;
     private global::Spelldawn.Protos.CardCost cost_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardCost Cost {
@@ -2528,7 +2487,6 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(CardBack, other.CardBack)) return false;
       if (!object.Equals(CardFrame, other.CardFrame)) return false;
       if (!object.Equals(TitleBackground, other.TitleBackground)) return false;
       if (!object.Equals(Jewel, other.Jewel)) return false;
@@ -2536,8 +2494,6 @@ namespace Spelldawn.Protos {
       if (!object.Equals(Image, other.Image)) return false;
       if (!object.Equals(Title, other.Title)) return false;
       if (!object.Equals(RulesText, other.RulesText)) return false;
-      if (!object.Equals(ArenaFrame, other.ArenaFrame)) return false;
-      if (!object.Equals(CardIcons, other.CardIcons)) return false;
       if (!object.Equals(Targeting, other.Targeting)) return false;
       if (!object.Equals(Cost, other.Cost)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -2546,7 +2502,6 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (cardBack_ != null) hash ^= CardBack.GetHashCode();
       if (cardFrame_ != null) hash ^= CardFrame.GetHashCode();
       if (titleBackground_ != null) hash ^= TitleBackground.GetHashCode();
       if (jewel_ != null) hash ^= Jewel.GetHashCode();
@@ -2554,8 +2509,6 @@ namespace Spelldawn.Protos {
       if (image_ != null) hash ^= Image.GetHashCode();
       if (title_ != null) hash ^= Title.GetHashCode();
       if (rulesText_ != null) hash ^= RulesText.GetHashCode();
-      if (arenaFrame_ != null) hash ^= ArenaFrame.GetHashCode();
-      if (cardIcons_ != null) hash ^= CardIcons.GetHashCode();
       if (targeting_ != null) hash ^= Targeting.GetHashCode();
       if (cost_ != null) hash ^= Cost.GetHashCode();
       if (_unknownFields != null) {
@@ -2574,52 +2527,40 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (cardBack_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(CardBack);
-      }
       if (cardFrame_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(CardFrame);
       }
       if (titleBackground_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(18);
         output.WriteMessage(TitleBackground);
       }
       if (jewel_ != null) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteMessage(Jewel);
       }
       if (imageBackground_ != null) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(34);
         output.WriteMessage(ImageBackground);
       }
       if (image_ != null) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(42);
         output.WriteMessage(Image);
       }
       if (title_ != null) {
-        output.WriteRawTag(58);
+        output.WriteRawTag(50);
         output.WriteMessage(Title);
       }
       if (rulesText_ != null) {
-        output.WriteRawTag(66);
+        output.WriteRawTag(58);
         output.WriteMessage(RulesText);
       }
-      if (arenaFrame_ != null) {
-        output.WriteRawTag(74);
-        output.WriteMessage(ArenaFrame);
-      }
-      if (cardIcons_ != null) {
-        output.WriteRawTag(82);
-        output.WriteMessage(CardIcons);
-      }
       if (targeting_ != null) {
-        output.WriteRawTag(90);
+        output.WriteRawTag(66);
         output.WriteMessage(Targeting);
       }
       if (cost_ != null) {
-        output.WriteRawTag(98);
+        output.WriteRawTag(74);
         output.WriteMessage(Cost);
       }
       if (_unknownFields != null) {
@@ -2631,52 +2572,40 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (cardBack_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(CardBack);
-      }
       if (cardFrame_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(CardFrame);
       }
       if (titleBackground_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(18);
         output.WriteMessage(TitleBackground);
       }
       if (jewel_ != null) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteMessage(Jewel);
       }
       if (imageBackground_ != null) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(34);
         output.WriteMessage(ImageBackground);
       }
       if (image_ != null) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(42);
         output.WriteMessage(Image);
       }
       if (title_ != null) {
-        output.WriteRawTag(58);
+        output.WriteRawTag(50);
         output.WriteMessage(Title);
       }
       if (rulesText_ != null) {
-        output.WriteRawTag(66);
+        output.WriteRawTag(58);
         output.WriteMessage(RulesText);
       }
-      if (arenaFrame_ != null) {
-        output.WriteRawTag(74);
-        output.WriteMessage(ArenaFrame);
-      }
-      if (cardIcons_ != null) {
-        output.WriteRawTag(82);
-        output.WriteMessage(CardIcons);
-      }
       if (targeting_ != null) {
-        output.WriteRawTag(90);
+        output.WriteRawTag(66);
         output.WriteMessage(Targeting);
       }
       if (cost_ != null) {
-        output.WriteRawTag(98);
+        output.WriteRawTag(74);
         output.WriteMessage(Cost);
       }
       if (_unknownFields != null) {
@@ -2688,9 +2617,6 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (cardBack_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardBack);
-      }
       if (cardFrame_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardFrame);
       }
@@ -2712,12 +2638,6 @@ namespace Spelldawn.Protos {
       if (rulesText_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(RulesText);
       }
-      if (arenaFrame_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ArenaFrame);
-      }
-      if (cardIcons_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardIcons);
-      }
       if (targeting_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Targeting);
       }
@@ -2734,12 +2654,6 @@ namespace Spelldawn.Protos {
     public void MergeFrom(RevealedCardView other) {
       if (other == null) {
         return;
-      }
-      if (other.cardBack_ != null) {
-        if (cardBack_ == null) {
-          CardBack = new global::Spelldawn.Protos.SpriteAddress();
-        }
-        CardBack.MergeFrom(other.CardBack);
       }
       if (other.cardFrame_ != null) {
         if (cardFrame_ == null) {
@@ -2783,18 +2697,6 @@ namespace Spelldawn.Protos {
         }
         RulesText.MergeFrom(other.RulesText);
       }
-      if (other.arenaFrame_ != null) {
-        if (arenaFrame_ == null) {
-          ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
-        }
-        ArenaFrame.MergeFrom(other.ArenaFrame);
-      }
-      if (other.cardIcons_ != null) {
-        if (cardIcons_ == null) {
-          CardIcons = new global::Spelldawn.Protos.CardIcons();
-        }
-        CardIcons.MergeFrom(other.CardIcons);
-      }
       if (other.targeting_ != null) {
         if (targeting_ == null) {
           Targeting = new global::Spelldawn.Protos.CardTargeting();
@@ -2822,83 +2724,62 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            if (cardBack_ == null) {
-              CardBack = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(CardBack);
-            break;
-          }
-          case 18: {
             if (cardFrame_ == null) {
               CardFrame = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(CardFrame);
             break;
           }
-          case 26: {
+          case 18: {
             if (titleBackground_ == null) {
               TitleBackground = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(TitleBackground);
             break;
           }
-          case 34: {
+          case 26: {
             if (jewel_ == null) {
               Jewel = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(Jewel);
             break;
           }
-          case 42: {
+          case 34: {
             if (imageBackground_ == null) {
               ImageBackground = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(ImageBackground);
             break;
           }
-          case 50: {
+          case 42: {
             if (image_ == null) {
               Image = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(Image);
             break;
           }
-          case 58: {
+          case 50: {
             if (title_ == null) {
               Title = new global::Spelldawn.Protos.CardTitle();
             }
             input.ReadMessage(Title);
             break;
           }
-          case 66: {
+          case 58: {
             if (rulesText_ == null) {
               RulesText = new global::Spelldawn.Protos.RulesText();
             }
             input.ReadMessage(RulesText);
             break;
           }
-          case 74: {
-            if (arenaFrame_ == null) {
-              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(ArenaFrame);
-            break;
-          }
-          case 82: {
-            if (cardIcons_ == null) {
-              CardIcons = new global::Spelldawn.Protos.CardIcons();
-            }
-            input.ReadMessage(CardIcons);
-            break;
-          }
-          case 90: {
+          case 66: {
             if (targeting_ == null) {
               Targeting = new global::Spelldawn.Protos.CardTargeting();
             }
             input.ReadMessage(Targeting);
             break;
           }
-          case 98: {
+          case 74: {
             if (cost_ == null) {
               Cost = new global::Spelldawn.Protos.CardCost();
             }
@@ -2920,358 +2801,66 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            if (cardBack_ == null) {
-              CardBack = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(CardBack);
-            break;
-          }
-          case 18: {
             if (cardFrame_ == null) {
               CardFrame = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(CardFrame);
             break;
           }
-          case 26: {
+          case 18: {
             if (titleBackground_ == null) {
               TitleBackground = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(TitleBackground);
             break;
           }
-          case 34: {
+          case 26: {
             if (jewel_ == null) {
               Jewel = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(Jewel);
             break;
           }
-          case 42: {
+          case 34: {
             if (imageBackground_ == null) {
               ImageBackground = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(ImageBackground);
             break;
           }
-          case 50: {
+          case 42: {
             if (image_ == null) {
               Image = new global::Spelldawn.Protos.SpriteAddress();
             }
             input.ReadMessage(Image);
             break;
           }
-          case 58: {
+          case 50: {
             if (title_ == null) {
               Title = new global::Spelldawn.Protos.CardTitle();
             }
             input.ReadMessage(Title);
             break;
           }
-          case 66: {
+          case 58: {
             if (rulesText_ == null) {
               RulesText = new global::Spelldawn.Protos.RulesText();
             }
             input.ReadMessage(RulesText);
             break;
           }
-          case 74: {
-            if (arenaFrame_ == null) {
-              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(ArenaFrame);
-            break;
-          }
-          case 82: {
-            if (cardIcons_ == null) {
-              CardIcons = new global::Spelldawn.Protos.CardIcons();
-            }
-            input.ReadMessage(CardIcons);
-            break;
-          }
-          case 90: {
+          case 66: {
             if (targeting_ == null) {
               Targeting = new global::Spelldawn.Protos.CardTargeting();
             }
             input.ReadMessage(Targeting);
             break;
           }
-          case 98: {
+          case 74: {
             if (cost_ == null) {
               Cost = new global::Spelldawn.Protos.CardCost();
             }
             input.ReadMessage(Cost);
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  public sealed partial class HiddenCardView : pb::IMessage<HiddenCardView>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<HiddenCardView> _parser = new pb::MessageParser<HiddenCardView>(() => new HiddenCardView());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<HiddenCardView> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[11]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HiddenCardView() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HiddenCardView(HiddenCardView other) : this() {
-      cardBack_ = other.cardBack_ != null ? other.cardBack_.Clone() : null;
-      cardIcons_ = other.cardIcons_ != null ? other.cardIcons_.Clone() : null;
-      arenaFrame_ = other.arenaFrame_ != null ? other.arenaFrame_.Clone() : null;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HiddenCardView Clone() {
-      return new HiddenCardView(this);
-    }
-
-    /// <summary>Field number for the "card_back" field.</summary>
-    public const int CardBackFieldNumber = 1;
-    private global::Spelldawn.Protos.SpriteAddress cardBack_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.SpriteAddress CardBack {
-      get { return cardBack_; }
-      set {
-        cardBack_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "card_icons" field.</summary>
-    public const int CardIconsFieldNumber = 2;
-    private global::Spelldawn.Protos.CardIcons cardIcons_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardIcons CardIcons {
-      get { return cardIcons_; }
-      set {
-        cardIcons_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "arena_frame" field.</summary>
-    public const int ArenaFrameFieldNumber = 3;
-    private global::Spelldawn.Protos.SpriteAddress arenaFrame_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.SpriteAddress ArenaFrame {
-      get { return arenaFrame_; }
-      set {
-        arenaFrame_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as HiddenCardView);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(HiddenCardView other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (!object.Equals(CardBack, other.CardBack)) return false;
-      if (!object.Equals(CardIcons, other.CardIcons)) return false;
-      if (!object.Equals(ArenaFrame, other.ArenaFrame)) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (cardBack_ != null) hash ^= CardBack.GetHashCode();
-      if (cardIcons_ != null) hash ^= CardIcons.GetHashCode();
-      if (arenaFrame_ != null) hash ^= ArenaFrame.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (cardBack_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(CardBack);
-      }
-      if (cardIcons_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(CardIcons);
-      }
-      if (arenaFrame_ != null) {
-        output.WriteRawTag(26);
-        output.WriteMessage(ArenaFrame);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (cardBack_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(CardBack);
-      }
-      if (cardIcons_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(CardIcons);
-      }
-      if (arenaFrame_ != null) {
-        output.WriteRawTag(26);
-        output.WriteMessage(ArenaFrame);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (cardBack_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardBack);
-      }
-      if (cardIcons_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardIcons);
-      }
-      if (arenaFrame_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ArenaFrame);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(HiddenCardView other) {
-      if (other == null) {
-        return;
-      }
-      if (other.cardBack_ != null) {
-        if (cardBack_ == null) {
-          CardBack = new global::Spelldawn.Protos.SpriteAddress();
-        }
-        CardBack.MergeFrom(other.CardBack);
-      }
-      if (other.cardIcons_ != null) {
-        if (cardIcons_ == null) {
-          CardIcons = new global::Spelldawn.Protos.CardIcons();
-        }
-        CardIcons.MergeFrom(other.CardIcons);
-      }
-      if (other.arenaFrame_ != null) {
-        if (arenaFrame_ == null) {
-          ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
-        }
-        ArenaFrame.MergeFrom(other.ArenaFrame);
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            if (cardBack_ == null) {
-              CardBack = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(CardBack);
-            break;
-          }
-          case 18: {
-            if (cardIcons_ == null) {
-              CardIcons = new global::Spelldawn.Protos.CardIcons();
-            }
-            input.ReadMessage(CardIcons);
-            break;
-          }
-          case 26: {
-            if (arenaFrame_ == null) {
-              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(ArenaFrame);
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            if (cardBack_ == null) {
-              CardBack = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(CardBack);
-            break;
-          }
-          case 18: {
-            if (cardIcons_ == null) {
-              CardIcons = new global::Spelldawn.Protos.CardIcons();
-            }
-            input.ReadMessage(CardIcons);
-            break;
-          }
-          case 26: {
-            if (arenaFrame_ == null) {
-              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
-            }
-            input.ReadMessage(ArenaFrame);
             break;
           }
         }
@@ -3293,7 +2882,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[12]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3312,15 +2901,10 @@ namespace Spelldawn.Protos {
     public CardView(CardView other) : this() {
       cardId_ = other.cardId_ != null ? other.cardId_.Clone() : null;
       arenaPosition_ = other.arenaPosition_;
-      switch (other.CardCase) {
-        case CardOneofCase.RevealedCard:
-          RevealedCard = other.RevealedCard.Clone();
-          break;
-        case CardOneofCase.HiddenCard:
-          HiddenCard = other.HiddenCard.Clone();
-          break;
-      }
-
+      cardBack_ = other.cardBack_ != null ? other.cardBack_.Clone() : null;
+      cardIcons_ = other.cardIcons_ != null ? other.cardIcons_.Clone() : null;
+      arenaFrame_ = other.arenaFrame_ != null ? other.arenaFrame_.Clone() : null;
+      revealedCard_ = other.revealedCard_ != null ? other.revealedCard_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3351,45 +2935,48 @@ namespace Spelldawn.Protos {
       }
     }
 
+    /// <summary>Field number for the "card_back" field.</summary>
+    public const int CardBackFieldNumber = 3;
+    private global::Spelldawn.Protos.SpriteAddress cardBack_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.SpriteAddress CardBack {
+      get { return cardBack_; }
+      set {
+        cardBack_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "card_icons" field.</summary>
+    public const int CardIconsFieldNumber = 4;
+    private global::Spelldawn.Protos.CardIcons cardIcons_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardIcons CardIcons {
+      get { return cardIcons_; }
+      set {
+        cardIcons_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "arena_frame" field.</summary>
+    public const int ArenaFrameFieldNumber = 5;
+    private global::Spelldawn.Protos.SpriteAddress arenaFrame_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.SpriteAddress ArenaFrame {
+      get { return arenaFrame_; }
+      set {
+        arenaFrame_ = value;
+      }
+    }
+
     /// <summary>Field number for the "revealed_card" field.</summary>
-    public const int RevealedCardFieldNumber = 3;
+    public const int RevealedCardFieldNumber = 6;
+    private global::Spelldawn.Protos.RevealedCardView revealedCard_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RevealedCardView RevealedCard {
-      get { return cardCase_ == CardOneofCase.RevealedCard ? (global::Spelldawn.Protos.RevealedCardView) card_ : null; }
+      get { return revealedCard_; }
       set {
-        card_ = value;
-        cardCase_ = value == null ? CardOneofCase.None : CardOneofCase.RevealedCard;
+        revealedCard_ = value;
       }
-    }
-
-    /// <summary>Field number for the "hidden_card" field.</summary>
-    public const int HiddenCardFieldNumber = 4;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.HiddenCardView HiddenCard {
-      get { return cardCase_ == CardOneofCase.HiddenCard ? (global::Spelldawn.Protos.HiddenCardView) card_ : null; }
-      set {
-        card_ = value;
-        cardCase_ = value == null ? CardOneofCase.None : CardOneofCase.HiddenCard;
-      }
-    }
-
-    private object card_;
-    /// <summary>Enum of possible cases for the "card" oneof.</summary>
-    public enum CardOneofCase {
-      None = 0,
-      RevealedCard = 3,
-      HiddenCard = 4,
-    }
-    private CardOneofCase cardCase_ = CardOneofCase.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public CardOneofCase CardCase {
-      get { return cardCase_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearCard() {
-      cardCase_ = CardOneofCase.None;
-      card_ = null;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3407,9 +2994,10 @@ namespace Spelldawn.Protos {
       }
       if (!object.Equals(CardId, other.CardId)) return false;
       if (ArenaPosition != other.ArenaPosition) return false;
+      if (!object.Equals(CardBack, other.CardBack)) return false;
+      if (!object.Equals(CardIcons, other.CardIcons)) return false;
+      if (!object.Equals(ArenaFrame, other.ArenaFrame)) return false;
       if (!object.Equals(RevealedCard, other.RevealedCard)) return false;
-      if (!object.Equals(HiddenCard, other.HiddenCard)) return false;
-      if (CardCase != other.CardCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3418,9 +3006,10 @@ namespace Spelldawn.Protos {
       int hash = 1;
       if (cardId_ != null) hash ^= CardId.GetHashCode();
       if (ArenaPosition != global::Spelldawn.Protos.ArenaPosition.Unspecified) hash ^= ArenaPosition.GetHashCode();
-      if (cardCase_ == CardOneofCase.RevealedCard) hash ^= RevealedCard.GetHashCode();
-      if (cardCase_ == CardOneofCase.HiddenCard) hash ^= HiddenCard.GetHashCode();
-      hash ^= (int) cardCase_;
+      if (cardBack_ != null) hash ^= CardBack.GetHashCode();
+      if (cardIcons_ != null) hash ^= CardIcons.GetHashCode();
+      if (arenaFrame_ != null) hash ^= ArenaFrame.GetHashCode();
+      if (revealedCard_ != null) hash ^= RevealedCard.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3445,13 +3034,21 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(16);
         output.WriteEnum((int) ArenaPosition);
       }
-      if (cardCase_ == CardOneofCase.RevealedCard) {
+      if (cardBack_ != null) {
         output.WriteRawTag(26);
-        output.WriteMessage(RevealedCard);
+        output.WriteMessage(CardBack);
       }
-      if (cardCase_ == CardOneofCase.HiddenCard) {
+      if (cardIcons_ != null) {
         output.WriteRawTag(34);
-        output.WriteMessage(HiddenCard);
+        output.WriteMessage(CardIcons);
+      }
+      if (arenaFrame_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(ArenaFrame);
+      }
+      if (revealedCard_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(RevealedCard);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -3470,13 +3067,21 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(16);
         output.WriteEnum((int) ArenaPosition);
       }
-      if (cardCase_ == CardOneofCase.RevealedCard) {
+      if (cardBack_ != null) {
         output.WriteRawTag(26);
-        output.WriteMessage(RevealedCard);
+        output.WriteMessage(CardBack);
       }
-      if (cardCase_ == CardOneofCase.HiddenCard) {
+      if (cardIcons_ != null) {
         output.WriteRawTag(34);
-        output.WriteMessage(HiddenCard);
+        output.WriteMessage(CardIcons);
+      }
+      if (arenaFrame_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(ArenaFrame);
+      }
+      if (revealedCard_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(RevealedCard);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -3493,11 +3098,17 @@ namespace Spelldawn.Protos {
       if (ArenaPosition != global::Spelldawn.Protos.ArenaPosition.Unspecified) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ArenaPosition);
       }
-      if (cardCase_ == CardOneofCase.RevealedCard) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RevealedCard);
+      if (cardBack_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardBack);
       }
-      if (cardCase_ == CardOneofCase.HiddenCard) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(HiddenCard);
+      if (cardIcons_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardIcons);
+      }
+      if (arenaFrame_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ArenaFrame);
+      }
+      if (revealedCard_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RevealedCard);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3519,21 +3130,30 @@ namespace Spelldawn.Protos {
       if (other.ArenaPosition != global::Spelldawn.Protos.ArenaPosition.Unspecified) {
         ArenaPosition = other.ArenaPosition;
       }
-      switch (other.CardCase) {
-        case CardOneofCase.RevealedCard:
-          if (RevealedCard == null) {
-            RevealedCard = new global::Spelldawn.Protos.RevealedCardView();
-          }
-          RevealedCard.MergeFrom(other.RevealedCard);
-          break;
-        case CardOneofCase.HiddenCard:
-          if (HiddenCard == null) {
-            HiddenCard = new global::Spelldawn.Protos.HiddenCardView();
-          }
-          HiddenCard.MergeFrom(other.HiddenCard);
-          break;
+      if (other.cardBack_ != null) {
+        if (cardBack_ == null) {
+          CardBack = new global::Spelldawn.Protos.SpriteAddress();
+        }
+        CardBack.MergeFrom(other.CardBack);
       }
-
+      if (other.cardIcons_ != null) {
+        if (cardIcons_ == null) {
+          CardIcons = new global::Spelldawn.Protos.CardIcons();
+        }
+        CardIcons.MergeFrom(other.CardIcons);
+      }
+      if (other.arenaFrame_ != null) {
+        if (arenaFrame_ == null) {
+          ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+        }
+        ArenaFrame.MergeFrom(other.ArenaFrame);
+      }
+      if (other.revealedCard_ != null) {
+        if (revealedCard_ == null) {
+          RevealedCard = new global::Spelldawn.Protos.RevealedCardView();
+        }
+        RevealedCard.MergeFrom(other.RevealedCard);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -3560,21 +3180,31 @@ namespace Spelldawn.Protos {
             break;
           }
           case 26: {
-            global::Spelldawn.Protos.RevealedCardView subBuilder = new global::Spelldawn.Protos.RevealedCardView();
-            if (cardCase_ == CardOneofCase.RevealedCard) {
-              subBuilder.MergeFrom(RevealedCard);
+            if (cardBack_ == null) {
+              CardBack = new global::Spelldawn.Protos.SpriteAddress();
             }
-            input.ReadMessage(subBuilder);
-            RevealedCard = subBuilder;
+            input.ReadMessage(CardBack);
             break;
           }
           case 34: {
-            global::Spelldawn.Protos.HiddenCardView subBuilder = new global::Spelldawn.Protos.HiddenCardView();
-            if (cardCase_ == CardOneofCase.HiddenCard) {
-              subBuilder.MergeFrom(HiddenCard);
+            if (cardIcons_ == null) {
+              CardIcons = new global::Spelldawn.Protos.CardIcons();
             }
-            input.ReadMessage(subBuilder);
-            HiddenCard = subBuilder;
+            input.ReadMessage(CardIcons);
+            break;
+          }
+          case 42: {
+            if (arenaFrame_ == null) {
+              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(ArenaFrame);
+            break;
+          }
+          case 50: {
+            if (revealedCard_ == null) {
+              RevealedCard = new global::Spelldawn.Protos.RevealedCardView();
+            }
+            input.ReadMessage(RevealedCard);
             break;
           }
         }
@@ -3603,21 +3233,31 @@ namespace Spelldawn.Protos {
             break;
           }
           case 26: {
-            global::Spelldawn.Protos.RevealedCardView subBuilder = new global::Spelldawn.Protos.RevealedCardView();
-            if (cardCase_ == CardOneofCase.RevealedCard) {
-              subBuilder.MergeFrom(RevealedCard);
+            if (cardBack_ == null) {
+              CardBack = new global::Spelldawn.Protos.SpriteAddress();
             }
-            input.ReadMessage(subBuilder);
-            RevealedCard = subBuilder;
+            input.ReadMessage(CardBack);
             break;
           }
           case 34: {
-            global::Spelldawn.Protos.HiddenCardView subBuilder = new global::Spelldawn.Protos.HiddenCardView();
-            if (cardCase_ == CardOneofCase.HiddenCard) {
-              subBuilder.MergeFrom(HiddenCard);
+            if (cardIcons_ == null) {
+              CardIcons = new global::Spelldawn.Protos.CardIcons();
             }
-            input.ReadMessage(subBuilder);
-            HiddenCard = subBuilder;
+            input.ReadMessage(CardIcons);
+            break;
+          }
+          case 42: {
+            if (arenaFrame_ == null) {
+              ArenaFrame = new global::Spelldawn.Protos.SpriteAddress();
+            }
+            input.ReadMessage(ArenaFrame);
+            break;
+          }
+          case 50: {
+            if (revealedCard_ == null) {
+              RevealedCard = new global::Spelldawn.Protos.RevealedCardView();
+            }
+            input.ReadMessage(RevealedCard);
             break;
           }
         }
@@ -3639,7 +3279,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[13]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3800,7 +3440,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[14]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[13]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3961,7 +3601,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[15]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[14]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -4223,7 +3863,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[16]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[15]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -4395,7 +4035,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[17]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[16]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -4580,19 +4220,19 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class RoomIcon : pb::IMessage<RoomIcon>
+  public sealed partial class RoomInfo : pb::IMessage<RoomInfo>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<RoomIcon> _parser = new pb::MessageParser<RoomIcon>(() => new RoomIcon());
+    private static readonly pb::MessageParser<RoomInfo> _parser = new pb::MessageParser<RoomInfo>(() => new RoomInfo());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<RoomIcon> Parser { get { return _parser; } }
+    public static pb::MessageParser<RoomInfo> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[18]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[17]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -4601,28 +4241,28 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RoomIcon() {
+    public RoomInfo() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RoomIcon(RoomIcon other) : this() {
+    public RoomInfo(RoomInfo other) : this() {
       roomIcon_ = other.roomIcon_ != null ? other.roomIcon_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RoomIcon Clone() {
-      return new RoomIcon(this);
+    public RoomInfo Clone() {
+      return new RoomInfo(this);
     }
 
     /// <summary>Field number for the "room_icon" field.</summary>
-    public const int RoomIcon_FieldNumber = 1;
+    public const int RoomIconFieldNumber = 1;
     private global::Spelldawn.Protos.SpriteAddress roomIcon_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.SpriteAddress RoomIcon_ {
+    public global::Spelldawn.Protos.SpriteAddress RoomIcon {
       get { return roomIcon_; }
       set {
         roomIcon_ = value;
@@ -4631,25 +4271,25 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as RoomIcon);
+      return Equals(other as RoomInfo);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(RoomIcon other) {
+    public bool Equals(RoomInfo other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(RoomIcon_, other.RoomIcon_)) return false;
+      if (!object.Equals(RoomIcon, other.RoomIcon)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (roomIcon_ != null) hash ^= RoomIcon_.GetHashCode();
+      if (roomIcon_ != null) hash ^= RoomIcon.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -4668,7 +4308,7 @@ namespace Spelldawn.Protos {
     #else
       if (roomIcon_ != null) {
         output.WriteRawTag(10);
-        output.WriteMessage(RoomIcon_);
+        output.WriteMessage(RoomIcon);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -4681,7 +4321,7 @@ namespace Spelldawn.Protos {
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (roomIcon_ != null) {
         output.WriteRawTag(10);
-        output.WriteMessage(RoomIcon_);
+        output.WriteMessage(RoomIcon);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -4693,7 +4333,7 @@ namespace Spelldawn.Protos {
     public int CalculateSize() {
       int size = 0;
       if (roomIcon_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomIcon_);
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomIcon);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -4702,15 +4342,15 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(RoomIcon other) {
+    public void MergeFrom(RoomInfo other) {
       if (other == null) {
         return;
       }
       if (other.roomIcon_ != null) {
         if (roomIcon_ == null) {
-          RoomIcon_ = new global::Spelldawn.Protos.SpriteAddress();
+          RoomIcon = new global::Spelldawn.Protos.SpriteAddress();
         }
-        RoomIcon_.MergeFrom(other.RoomIcon_);
+        RoomIcon.MergeFrom(other.RoomIcon);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -4728,9 +4368,9 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (roomIcon_ == null) {
-              RoomIcon_ = new global::Spelldawn.Protos.SpriteAddress();
+              RoomIcon = new global::Spelldawn.Protos.SpriteAddress();
             }
-            input.ReadMessage(RoomIcon_);
+            input.ReadMessage(RoomIcon);
             break;
           }
         }
@@ -4749,9 +4389,9 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             if (roomIcon_ == null) {
-              RoomIcon_ = new global::Spelldawn.Protos.SpriteAddress();
+              RoomIcon = new global::Spelldawn.Protos.SpriteAddress();
             }
-            input.ReadMessage(RoomIcon_);
+            input.ReadMessage(RoomIcon);
             break;
           }
         }
@@ -4773,7 +4413,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[19]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[18]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -4791,7 +4431,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public RoomView(RoomView other) : this() {
       roomId_ = other.roomId_ != null ? other.roomId_.Clone() : null;
-      roomIcon_ = other.roomIcon_ != null ? other.roomIcon_.Clone() : null;
+      roomInfo_ = other.roomInfo_ != null ? other.roomInfo_.Clone() : null;
       cards_ = other.cards_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -4812,14 +4452,14 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "room_icon" field.</summary>
-    public const int RoomIconFieldNumber = 2;
-    private global::Spelldawn.Protos.RoomIcon roomIcon_;
+    /// <summary>Field number for the "room_info" field.</summary>
+    public const int RoomInfoFieldNumber = 2;
+    private global::Spelldawn.Protos.RoomInfo roomInfo_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.RoomIcon RoomIcon {
-      get { return roomIcon_; }
+    public global::Spelldawn.Protos.RoomInfo RoomInfo {
+      get { return roomInfo_; }
       set {
-        roomIcon_ = value;
+        roomInfo_ = value;
       }
     }
 
@@ -4847,7 +4487,7 @@ namespace Spelldawn.Protos {
         return true;
       }
       if (!object.Equals(RoomId, other.RoomId)) return false;
-      if (!object.Equals(RoomIcon, other.RoomIcon)) return false;
+      if (!object.Equals(RoomInfo, other.RoomInfo)) return false;
       if(!cards_.Equals(other.cards_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -4856,7 +4496,7 @@ namespace Spelldawn.Protos {
     public override int GetHashCode() {
       int hash = 1;
       if (roomId_ != null) hash ^= RoomId.GetHashCode();
-      if (roomIcon_ != null) hash ^= RoomIcon.GetHashCode();
+      if (roomInfo_ != null) hash ^= RoomInfo.GetHashCode();
       hash ^= cards_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -4878,9 +4518,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(RoomId);
       }
-      if (roomIcon_ != null) {
+      if (roomInfo_ != null) {
         output.WriteRawTag(18);
-        output.WriteMessage(RoomIcon);
+        output.WriteMessage(RoomInfo);
       }
       cards_.WriteTo(output, _repeated_cards_codec);
       if (_unknownFields != null) {
@@ -4896,9 +4536,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(RoomId);
       }
-      if (roomIcon_ != null) {
+      if (roomInfo_ != null) {
         output.WriteRawTag(18);
-        output.WriteMessage(RoomIcon);
+        output.WriteMessage(RoomInfo);
       }
       cards_.WriteTo(ref output, _repeated_cards_codec);
       if (_unknownFields != null) {
@@ -4913,8 +4553,8 @@ namespace Spelldawn.Protos {
       if (roomId_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomId);
       }
-      if (roomIcon_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomIcon);
+      if (roomInfo_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomInfo);
       }
       size += cards_.CalculateSize(_repeated_cards_codec);
       if (_unknownFields != null) {
@@ -4934,11 +4574,11 @@ namespace Spelldawn.Protos {
         }
         RoomId.MergeFrom(other.RoomId);
       }
-      if (other.roomIcon_ != null) {
-        if (roomIcon_ == null) {
-          RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+      if (other.roomInfo_ != null) {
+        if (roomInfo_ == null) {
+          RoomInfo = new global::Spelldawn.Protos.RoomInfo();
         }
-        RoomIcon.MergeFrom(other.RoomIcon);
+        RoomInfo.MergeFrom(other.RoomInfo);
       }
       cards_.Add(other.cards_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -4963,10 +4603,10 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            if (roomIcon_ == null) {
-              RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+            if (roomInfo_ == null) {
+              RoomInfo = new global::Spelldawn.Protos.RoomInfo();
             }
-            input.ReadMessage(RoomIcon);
+            input.ReadMessage(RoomInfo);
             break;
           }
           case 26: {
@@ -4995,10 +4635,10 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            if (roomIcon_ == null) {
-              RoomIcon = new global::Spelldawn.Protos.RoomIcon();
+            if (roomInfo_ == null) {
+              RoomInfo = new global::Spelldawn.Protos.RoomInfo();
             }
-            input.ReadMessage(RoomIcon);
+            input.ReadMessage(RoomInfo);
             break;
           }
           case 26: {
@@ -5024,7 +4664,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[20]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[19]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -5251,7 +4891,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[21]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[20]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -5423,7 +5063,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[22]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[21]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -5559,7 +5199,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[23]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[22]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6010,7 +5650,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[24]; }
+      get { return global::Spelldawn.Protos.GameViewReflection.Descriptor.MessageTypes[23]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

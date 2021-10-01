@@ -13,14 +13,23 @@
 // limitations under the License.
 
 using Spelldawn.Protos;
-using static Spelldawn.Masonry.MasonUtil;
+using Spelldawn.Services;
+using UnityEngine;
 
 #nullable enable
 
-namespace Spelldawn.Battle
+namespace Spelldawn.Game
 {
-  public static class ArenaCardNode
+  public sealed class Deck : MonoBehaviour
   {
-    public static Node? Render(CardView? card) => card is null ? null : Row("ArenaCard");
+    [SerializeField] Registry _registry = null!;
+
+    void OnMouseUpAsButton()
+    {
+      _registry.ActionService.HandleAction(new GameAction
+      {
+        DrawCard = new DrawCardAction()
+      });
+    }
   }
 }

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
@@ -38,7 +37,7 @@ namespace Spelldawn.Masonry
     /// <param name="previousNode">The Node value corresponding to <paramref name="previousElement"/></param>
     /// <returns>Either a new VisualElement matching the provided node, or null if <paramref name="previousElement"/>
     /// was mutated to match the provided node instead.</returns>
-    public static async Task<VisualElement?> Update(
+    public static VisualElement? Update(
       Registry registry,
       Node node,
       VisualElement? previousElement = null,
@@ -59,7 +58,7 @@ namespace Spelldawn.Masonry
           {
             var child = node.Children[i];
             // Element exists in new tree, update it
-            var updated = await Update(
+            var updated = Update(
               registry,
               child,
               previousElement[i],
@@ -91,7 +90,7 @@ namespace Spelldawn.Masonry
       for (var j = addedChildrenCount; j < node.Children.Count; ++j)
       {
         var child = node.Children[j];
-        var updated = await Update(registry, child);
+        var updated = Update(registry, child);
         if (updated == null)
         {
           Debug.LogError($"Expected update for {child} to return a value");
@@ -102,7 +101,7 @@ namespace Spelldawn.Masonry
         }
       }
 
-      result = result is { } r ? await Mason.ApplyToElement(registry, node, r) : null;
+      result = result is { } r ? Mason.ApplyToElement(registry, node, r) : null;
       return createdNewElement ? result : null;
     }
   }

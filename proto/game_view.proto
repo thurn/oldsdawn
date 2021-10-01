@@ -59,7 +59,7 @@ message AwaitResponse {
 message CardTargeting {
   oneof targeting {
     /** Pick one of these targets and then animate to the display area when played. */
-    ValidTargets pick_first_target = 1;
+    ValidTargets pick_target = 1;
 
     /** Add this card to a room when played. */
     ValidRooms play_in_room = 2;
@@ -93,24 +93,15 @@ message CardCost {
 }
 
 message RevealedCardView {
-  sd.SpriteAddress card_back = 1;
-  sd.SpriteAddress card_frame = 2;
-  sd.SpriteAddress title_background = 3;
-  sd.SpriteAddress jewel = 4;
-  sd.SpriteAddress image_background = 5;
-  sd.SpriteAddress image = 6;
-  CardTitle title = 7;
-  RulesText rules_text = 8;
-  sd.SpriteAddress arena_frame = 9;
-  CardIcons card_icons = 10;
-  CardTargeting targeting = 11;
-  CardCost cost = 12;
-}
-
-message HiddenCardView {
-  sd.SpriteAddress card_back = 1;
-  CardIcons card_icons = 2;
-  sd.SpriteAddress arena_frame = 3;
+  sd.SpriteAddress card_frame = 1;
+  sd.SpriteAddress title_background = 2;
+  sd.SpriteAddress jewel = 3;
+  sd.SpriteAddress image_background = 4;
+  sd.SpriteAddress image = 5;
+  CardTitle title = 6;
+  RulesText rules_text = 7;
+  CardTargeting targeting = 8;
+  CardCost cost = 9;
 }
 
 /** Where in the arena should this card be displayed? */
@@ -126,11 +117,10 @@ enum ArenaPosition {
 message CardView {
   CardId card_id = 1;
   ArenaPosition arena_position = 2;
-
-  oneof card {
-    RevealedCardView revealed_card = 3;
-    HiddenCardView hidden_card = 4;
-  }
+  sd.SpriteAddress card_back = 3;
+  CardIcons card_icons = 4;
+  sd.SpriteAddress arena_frame = 5;
+  RevealedCardView revealed_card = 6;
 }
 
 message HandView {
@@ -144,6 +134,12 @@ message DiscardPileView {
 message PlayerInfo {
   string name = 1;
   sd.SpriteAddress portrait = 2;
+
+  /**
+   * Identifies the player's unique powers. The back for this card is used
+   * as the card back for all of this player's cards. The CardIds of the
+   * user's and the opponent's identity cards are conventionally 1 and 2.
+   */
   CardView identity_card = 3;
 }
 
@@ -156,13 +152,13 @@ message ScoreView {
   repeated CardView scored_cards = 2;
 }
 
-message RoomIcon {
+message RoomInfo {
   sd.SpriteAddress room_icon = 1;
 }
 
 message RoomView {
   RoomId room_id = 1;
-  RoomIcon room_icon = 2;
+  RoomInfo room_info = 2;
   repeated CardView cards = 3;
 }
 

@@ -12,15 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using Spelldawn.Protos;
+using UnityEngine;
 using static Spelldawn.Masonry.MasonUtil;
 
 #nullable enable
 
 namespace Spelldawn.Services
 {
-  public static class SampleData
+  public sealed class SampleData : MonoBehaviour
   {
+    [SerializeField] Registry _registry = null!;
+
     static readonly string Text1 = @"★, 2❋: Destroy this token. Add another line of text to this card.
 <b>↯Play</b>: Give the Overlord the <u>Shatter</u> ability";
 
@@ -63,62 +67,79 @@ When you use this item, remove a ◈ or sacrifice it
 <b>Area</b> <i>(this item’s damage persists for the duration of the raid)</i>
 ";
 
-    public static GameView SampleView() =>
+    // RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21"),
+    // RevealedCard(2, "The Maker's Eye", Text2, "Poneti/4000_Fantasy_Icons/Weapons/500_weapons/Axe_11",
+    // "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_blue"),
+    // RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13"),
+    // RevealedCard(4, "Personal Touch", Text4, "Poneti/4000_Fantasy_Icons/Weapons/500_weapons/Hammer_06",
+    // "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_green"),
+    // RevealedCard(5, "Secret Key", Text5, "Poneti/4000_Fantasy_Icons/Weapons/WeaponIcons_2/Sword_v2_10",
+    // "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_grey"),
+    // RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37"),
+    // RevealedCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40")
+
+    void Start()
+    {
+      StartCoroutine(_registry.CommandService.HandleCommand(new GameCommand
+      {
+        RenderGame = new RenderGameCommand
+        {
+          Game = SampleGame()
+        }
+      }));
+    }
+
+    static GameView SampleGame() =>
       new()
       {
-        User = new PlayerView
-        {
-          PlayerInfo = new PlayerInfo
-          {
-            Name = "User"
-          },
-          Score = new ScoreView
-          {
-            Score = 0
-          },
-          Hand = new HandView
-          {
-            Cards =
-            {
-              RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21"),
-              RevealedCard(2, "The Maker's Eye", Text2, "Poneti/4000_Fantasy_Icons/Weapons/500_weapons/Axe_11", "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_blue"),
-              RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13"),
-              RevealedCard(4, "Personal Touch", Text4, "Poneti/4000_Fantasy_Icons/Weapons/500_weapons/Hammer_06", "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_green"),
-              RevealedCard(5, "Secret Key", Text5, "Poneti/4000_Fantasy_Icons/Weapons/WeaponIcons_2/Sword_v2_10", "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_grey"),
-              RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37"),
-            }
-          },
-          Mana = new ManaView
-          {
-            Amount = 5
-          },
-          DiscardPile = new DiscardPileView
-          {
-            Cards =
-            {
-              RevealedCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40")
-            }
-          },
-          ActionTracker = new ActionTrackerView
-          {
-            AvailableActionCount = 3
-          },
-          Deck = new DeckView()
-        },
-        Opponent = new PlayerView(),
+        User = Player("User", PlayerName.User,
+          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
+        Opponent = Player("Opponent", PlayerName.Opponent,
+          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
         Arena = new ArenaView()
       };
 
-    static CardId CardId(int id) => new CardId { Value = id };
+    static CardId CardId(int id) => new() { Value = id };
+
+    static PlayerView Player(string playerName, PlayerName id, string cardBack) => new()
+    {
+      PlayerInfo = new PlayerInfo
+      {
+        Name = playerName,
+        IdentityCard = new CardView
+        {
+          CardId = CardId((int)id),
+          CardBack = new SpriteAddress
+          {
+            Address = cardBack
+          }
+        }
+      },
+      Score = new ScoreView
+      {
+        Score = 0
+      },
+      Hand = new HandView(),
+      Mana = new ManaView
+      {
+        Amount = 5
+      },
+      DiscardPile = new DiscardPileView(),
+      ActionTracker = new ActionTrackerView
+      {
+        AvailableActionCount = 3
+      },
+      Deck = new DeckView()
+    };
 
     static CardView RevealedCard(int cardId, string title, string text, string image, string? imageBackground = null) =>
       new()
       {
         CardId = CardId(cardId),
+        CardBack = Sprite(
+          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
         RevealedCard = new RevealedCardView
         {
-          CardBack = Sprite(
-            "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
           CardFrame = Sprite(
             "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"),
           TitleBackground = Sprite(
