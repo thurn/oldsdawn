@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Spelldawn.Game;
@@ -36,7 +37,6 @@ namespace Spelldawn.Services
     [SerializeField] Transform _cardStagingArea = null!;
 
     readonly Dictionary<CardId, Card> _cards = new();
-    readonly HashSet<Card> _stagingCards = new();
     Card? _optimisticCard;
     SpriteAddress? _userCardBack;
 
@@ -58,33 +58,16 @@ namespace Spelldawn.Services
         Destroy(_optimisticCard);
       }
 
-      foreach (var x in FindObjectsOfType<Card>())
-      {
-        Destroy(x.gameObject);
-      }
-
       _optimisticCard = ComponentUtils.Instantiate(_cardPrefab);
       _optimisticCard.Render(_registry, new CardView
       {
         CardBack = _userCardBack
       });
-      _stagingCards.Add(_optimisticCard);
-
-      _optimisticCard.transform.position = _userDeck.transform.position;
       _optimisticCard.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-      var initialMoveTarget = new Vector3(
-        _userDeck.transform.position.x - 4,
-        _userDeck.transform.position.y + 2,
-        _userDeck.transform.position.z - 8);
-
-      DOTween.Sequence()
-        .Insert(0,
-          _optimisticCard.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
-        .Insert(0.5f, _optimisticCard.transform.DOMove(_cardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
-        .Insert(0, _optimisticCard.transform.DORotateQuaternion(_cardStagingArea.rotation, 1.0f).SetEase(Ease.Linear));
+      AnimateFromDeckToStaging(_optimisticCard);
     }
 
-    public IEnumerator<YieldInstruction> CreateCard(CreateCardCommand command)
+    public IEnumerator CreateCard(CreateCardCommand command)
     {
       Errors.CheckNotNull(command.Card);
       Errors.CheckNotNull(command.Card.CardId);
@@ -102,7 +85,7 @@ namespace Spelldawn.Services
         switch (command.Position)
         {
           case CreateCardPosition.UserDeck:
-            card.transform.position = _userDeck.transform.position;
+            AnimateFromDeckToStaging(card);
             break;
           case CreateCardPosition.Spawn:
             card.transform.position = _cardStagingArea.position;
@@ -111,12 +94,13 @@ namespace Spelldawn.Services
       }
 
       card.Render(_registry, command.Card);
-      _stagingCards.Add(card);
       _cards[command.Card.CardId] = card;
-      return CollectionUtils.Yield();
+
+      yield return new WaitUntil(() => card.IsRevealed && card.StagingAnimationComplete);
+      yield return new WaitForSeconds(0.5f);
     }
 
-    public IEnumerator<YieldInstruction> MoveCard(MoveCardCommand command)
+    public IEnumerator MoveCard(MoveCardCommand command)
     {
       Errors.CheckState(_cards.ContainsKey(command.CardId), $"Card not found: {command.CardId}");
       var card = _cards[command.CardId];
@@ -124,7 +108,7 @@ namespace Spelldawn.Services
       switch (command.Zone)
       {
         case GameZone.Hand:
-          return AddToHand(_registry.PlayerHand(command.TargetPlayer), card);
+          return _registry.PlayerHand(command.TargetPlayer).AddCard(card);
         case GameZone.Arena:
           return _registry.ArenaService.AddCard(card);
         case GameZone.Deck:
@@ -151,6 +135,22 @@ namespace Spelldawn.Services
         .Insert(0, card.transform.DOMove(target.position, 0.5f))
         .Insert(0, card.transform.DORotateQuaternion(target.rotation, 0.5f))
         .WaitForCompletion();
+    }
+
+    void AnimateFromDeckToStaging(Card card)
+    {
+      card.transform.position = _userDeck.transform.position;
+      var initialMoveTarget = new Vector3(
+        _userDeck.transform.position.x - 4,
+        _userDeck.transform.position.y + 2,
+        _userDeck.transform.position.z - 8);
+
+      DOTween.Sequence()
+        .Insert(0,
+          card.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
+        .Insert(0.5f, card.transform.DOMove(_cardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
+        .Insert(0, card.transform.DORotateQuaternion(_cardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
+        .AppendCallback(() => card.StagingAnimationComplete = true);
     }
   }
 }

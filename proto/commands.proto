@@ -34,18 +34,26 @@ message InitiateRaidCommand {
 }
 
 enum CreateCardPosition {
+  /**
+   * If no position is specified, the card should be invisible until it is
+   * moved, at which point it materializes immediately at the destination.
+   */
   CREATE_CARD_POSITION_UNSPECIFIED = 0;
 
   /**
-   * Creates card on top of the user's deck. If an optimistic card has already
-   * been moved to the staging area, that card is used instead.
+   * Creates card on top of the user's deck and animates it moving to the staging
+   * area.
+   *
+   * If an optimistic card has already been created, that card is used instead.
    */
   CREATE_CARD_POSITION_USER_DECK = 1;
+
+  CREATE_CARD_POSITION_OPPONENT_DECK = 2;
 
   /**
    * Creates a card in the staging area.
    */
-  CREATE_CARD_POSITION_SPAWN = 2;
+  CREATE_CARD_POSITION_STAGING = 3;
 }
 
 /**

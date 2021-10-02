@@ -13,11 +13,10 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using Spelldawn.Protos;
 using Spelldawn.Services;
-using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -27,30 +26,31 @@ namespace Spelldawn.Game
   public sealed class Hand : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] Transform _deckPosition = null!;
-    [SerializeField] float _initialCardScale;
-    [SerializeField] float _finalCardScale;
     [SerializeField] int _zRotationMultiplier;
     [SerializeField] Transform _controlPoint1 = null!;
     [SerializeField] Transform _controlPoint2 = null!;
     [SerializeField] Transform _controlPoint3 = null!;
     [SerializeField] Transform _controlPoint4 = null!;
-    [SerializeField] Card _cardPrefab = null!;
+    [SerializeField] bool _debugUpdatePositions;
 
     readonly List<Card> _cards = new();
 
-    public void DrawCard(CardView cardView)
+    public IEnumerator<YieldInstruction> AddCard(Card card)
     {
-      var card = ComponentUtils.Instantiate(_cardPrefab);
-      card.Render(_registry, cardView);
-      card.transform.position = _deckPosition.position;
-      card.transform.localScale = Vector2.one * _initialCardScale;
-      card.transform.SetParent(transform);
+      // card.transform.SetParent(transform);
       _cards.Add(card);
-      AnimateCardsToPosition();
+      return AnimateCardsToPosition();
     }
 
-    void AnimateCardsToPosition(Action? onComplete = null)
+    void Update()
+    {
+      if (_debugUpdatePositions)
+      {
+        StartCoroutine(AnimateCardsToPosition());
+      }
+    }
+
+    IEnumerator<YieldInstruction> AnimateCardsToPosition()
     {
       var sequence = DOTween.Sequence();
       for (var i = 0; i < _cards.Count; ++i)
@@ -58,16 +58,16 @@ namespace Spelldawn.Game
         var card = _cards[i];
         var curvePosition = CalculateCurvePosition(i);
         var t = card.transform;
-        t.SetSiblingIndex(i);
-        sequence.Insert(atPosition: 0, t.DOScale(_finalCardScale, duration: 0.3f));
+        // t.SetSiblingIndex(i);
         sequence.Insert(atPosition: 0,
           t.DOMove(CalculateBezierPosition(curvePosition), duration: 0.3f));
         sequence.Insert(atPosition: 0,
-          t.DOLocalRotate(new Vector3(x: 0, y: 0,
+          t.DOLocalRotate(new Vector3(x: 280, y: 0,
             _zRotationMultiplier * CalculateZRotation(curvePosition)), duration: 0.3f));
+        card.SetSortingOrder(i);
       }
 
-      sequence.AppendCallback(() => onComplete?.Invoke());
+      yield return sequence.WaitForCompletion();
     }
 
     float CalculateCurvePosition(int cardIndex)
@@ -88,9 +88,9 @@ namespace Spelldawn.Game
         case 4:
           return PositionWithinRange(start: 0.2f, end: 0.8f, cardIndex, _cards.Count);
         case 5:
-          return PositionWithinRange(start: 0.15f, end: 0.85f, cardIndex, _cards.Count);
-        case 6:
           return PositionWithinRange(start: 0.1f, end: 0.9f, cardIndex, _cards.Count);
+        // case 6:
+        //   return PositionWithinRange(start: 0.1f, end: 0.9f, cardIndex, _cards.Count);
         default:
           return PositionWithinRange(start: 0.0f, end: 1.0f, cardIndex, _cards.Count);
       }

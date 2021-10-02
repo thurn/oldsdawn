@@ -34,7 +34,7 @@ namespace Spelldawn.Services
       ApplyOptimisticResponse(action);
 
       // Send to server
-      yield return new WaitForSeconds(Random.Range(0.1f, 1.5f));
+      yield return new WaitForSeconds(Random.Range(0.1f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
 
       _registry.SampleData.FakeActionResponse(action);
     }
