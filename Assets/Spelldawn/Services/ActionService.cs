@@ -36,7 +36,7 @@ namespace Spelldawn.Services
       // Send to server
       yield return new WaitForSeconds(Random.Range(0.1f, 1.5f));
 
-      FakeActionResponse(action);
+      _registry.SampleData.FakeActionResponse(action);
     }
 
     void ApplyOptimisticResponse(GameAction action)
@@ -48,15 +48,6 @@ namespace Spelldawn.Services
           break;
         case GameAction.ActionOneofCase.DrawCard:
           _registry.CardService.DrawOptimisticCard();
-          break;
-      }
-    }
-
-    void FakeActionResponse(GameAction action)
-    {
-      switch (action.ActionCase)
-      {
-        case GameAction.ActionOneofCase.DrawCard:
           break;
       }
     }

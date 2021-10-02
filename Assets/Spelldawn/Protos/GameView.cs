@@ -35,56 +35,55 @@ namespace Spelldawn.Protos {
             "ZFRpdGxlEgwKBHRleHQYASABKAkiGQoJUnVsZXNUZXh0EgwKBHRleHQYASAB",
             "KAkiLwoMVmFsaWRUYXJnZXRzEh8KB3RhcmdldHMYASADKAsyDi5zZC5DYXJk",
             "VGFyZ2V0IicKClZhbGlkUm9vbXMSGQoFcm9vbXMYAiADKAsyCi5zZC5Sb29t",
-            "SWQiDAoKUGxheUFzSXRlbSIPCg1Bd2FpdFJlc3BvbnNlIsgBCg1DYXJkVGFy",
-            "Z2V0aW5nEi0KEXBpY2tfZmlyc3RfdGFyZ2V0GAEgASgLMhAuc2QuVmFsaWRU",
-            "YXJnZXRzSAASJgoMcGxheV9pbl9yb29tGAIgASgLMg4uc2QuVmFsaWRSb29t",
-            "c0gAEiYKDHBsYXlfYXNfaXRlbRgDIAEoCzIOLnNkLlBsYXlBc0l0ZW1IABIr",
-            "Cg5hd2FpdF9yZXNwb25zZRgEIAEoCzIRLnNkLkF3YWl0UmVzcG9uc2VIAEIL",
-            "Cgl0YXJnZXRpbmciUQoIQ2FyZENvc3QSHQoIY2FuX3BsYXkYASABKA4yCy5z",
-            "ZC5DYW5QbGF5EhEKCW1hbmFfY29zdBgCIAEoBRITCgthY3Rpb25fY29zdBgD",
-            "IAEoBSLaAgoQUmV2ZWFsZWRDYXJkVmlldxIlCgpjYXJkX2ZyYW1lGAEgASgL",
-            "MhEuc2QuU3ByaXRlQWRkcmVzcxIrChB0aXRsZV9iYWNrZ3JvdW5kGAIgASgL",
-            "MhEuc2QuU3ByaXRlQWRkcmVzcxIgCgVqZXdlbBgDIAEoCzIRLnNkLlNwcml0",
-            "ZUFkZHJlc3MSKwoQaW1hZ2VfYmFja2dyb3VuZBgEIAEoCzIRLnNkLlNwcml0",
-            "ZUFkZHJlc3MSIAoFaW1hZ2UYBSABKAsyES5zZC5TcHJpdGVBZGRyZXNzEhwK",
-            "BXRpdGxlGAYgASgLMg0uc2QuQ2FyZFRpdGxlEiEKCnJ1bGVzX3RleHQYByAB",
-            "KAsyDS5zZC5SdWxlc1RleHQSJAoJdGFyZ2V0aW5nGAggASgLMhEuc2QuQ2Fy",
-            "ZFRhcmdldGluZxIaCgRjb3N0GAkgASgLMgwuc2QuQ2FyZENvc3Qi8AEKCENh",
-            "cmRWaWV3EhsKB2NhcmRfaWQYASABKAsyCi5zZC5DYXJkSWQSKQoOYXJlbmFf",
-            "cG9zaXRpb24YAiABKA4yES5zZC5BcmVuYVBvc2l0aW9uEiQKCWNhcmRfYmFj",
-            "axgDIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSIQoKY2FyZF9pY29ucxgEIAEo",
-            "CzINLnNkLkNhcmRJY29ucxImCgthcmVuYV9mcmFtZRgFIAEoCzIRLnNkLlNw",
-            "cml0ZUFkZHJlc3MSKwoNcmV2ZWFsZWRfY2FyZBgGIAEoCzIULnNkLlJldmVh",
-            "bGVkQ2FyZFZpZXciJwoISGFuZFZpZXcSGwoFY2FyZHMYASADKAsyDC5zZC5D",
-            "YXJkVmlldyIuCg9EaXNjYXJkUGlsZVZpZXcSGwoFY2FyZHMYASADKAsyDC5z",
-            "ZC5DYXJkVmlldyJkCgpQbGF5ZXJJbmZvEgwKBG5hbWUYASABKAkSIwoIcG9y",
-            "dHJhaXQYAiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiMKDWlkZW50aXR5X2Nh",
-            "cmQYAyABKAsyDC5zZC5DYXJkVmlldyIaCghNYW5hVmlldxIOCgZhbW91bnQY",
-            "ASABKAUiPgoJU2NvcmVWaWV3Eg0KBXNjb3JlGAEgASgFEiIKDHNjb3JlZF9j",
-            "YXJkcxgCIAMoCzIMLnNkLkNhcmRWaWV3IjAKCFJvb21JbmZvEiQKCXJvb21f",
-            "aWNvbhgBIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MiZQoIUm9vbVZpZXcSGwoH",
-            "cm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZBIfCglyb29tX2luZm8YAiABKAsy",
-            "DC5zZC5Sb29tSW5mbxIbCgVjYXJkcxgDIAMoCzIMLnNkLkNhcmRWaWV3ImMK",
-            "CUFyZW5hVmlldxIcChRvdmVybG9yZF9wZXJzcGVjdGl2ZRgBIAEoCBIbCgVy",
-            "b29tcxgCIAMoCzIMLnNkLlJvb21WaWV3EhsKBWl0ZW1zGAMgAygLMgwuc2Qu",
-            "Q2FyZFZpZXciMwoRQWN0aW9uVHJhY2tlclZpZXcSHgoWYXZhaWxhYmxlX2Fj",
-            "dGlvbl9jb3VudBgBIAEoBSIKCghEZWNrVmlldyL9AQoKUGxheWVyVmlldxIj",
-            "CgtwbGF5ZXJfaW5mbxgBIAEoCzIOLnNkLlBsYXllckluZm8SHAoFc2NvcmUY",
-            "AiABKAsyDS5zZC5TY29yZVZpZXcSGgoEaGFuZBgDIAEoCzIMLnNkLkhhbmRW",
-            "aWV3EhoKBG1hbmEYBCABKAsyDC5zZC5NYW5hVmlldxIpCgxkaXNjYXJkX3Bp",
-            "bGUYBSABKAsyEy5zZC5EaXNjYXJkUGlsZVZpZXcSLQoOYWN0aW9uX3RyYWNr",
-            "ZXIYBiABKAsyFS5zZC5BY3Rpb25UcmFja2VyVmlldxIaCgRkZWNrGAcgASgL",
-            "Mgwuc2QuRGVja1ZpZXciaAoIR2FtZVZpZXcSHAoEdXNlchgBIAEoCzIOLnNk",
-            "LlBsYXllclZpZXcSIAoIb3Bwb25lbnQYAiABKAsyDi5zZC5QbGF5ZXJWaWV3",
-            "EhwKBWFyZW5hGAMgASgLMg0uc2QuQXJlbmFWaWV3KlwKB0NhblBsYXkSGAoU",
-            "Q0FOX1BMQVlfVU5TUEVDSUZJRUQQABIUChBDQU5fUExBWV9ERUZBVUxUEAES",
-            "DwoLQ0FOX1BMQVlfTk8QAhIQCgxDQU5fUExBWV9ZRVMQAyrNAQoNQXJlbmFQ",
-            "b3NpdGlvbhIeChpBUkVOQV9QT1NJVElPTl9VTlNQRUNJRklFRBAAEhoKFkFS",
-            "RU5BX1BPU0lUSU9OX0lOX1JPT00QARIgChxBUkVOQV9QT1NJVElPTl9ST09N",
-            "X0RFRkVOREVSEAISHQoZQVJFTkFfUE9TSVRJT05fSVRFTVNfTEVGVBADEh8K",
-            "G0FSRU5BX1BPU0lUSU9OX0lURU1TX0NFTlRFUhAEEh4KGkFSRU5BX1BPU0lU",
-            "SU9OX0lURU1TX1JJR0hUEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3Rv",
-            "Mw=="));
+            "SWQiDAoKUGxheUFzSXRlbSIPCg1Bd2FpdFJlc3BvbnNlIsIBCg1DYXJkVGFy",
+            "Z2V0aW5nEicKC3BpY2tfdGFyZ2V0GAEgASgLMhAuc2QuVmFsaWRUYXJnZXRz",
+            "SAASJgoMcGxheV9pbl9yb29tGAIgASgLMg4uc2QuVmFsaWRSb29tc0gAEiYK",
+            "DHBsYXlfYXNfaXRlbRgDIAEoCzIOLnNkLlBsYXlBc0l0ZW1IABIrCg5hd2Fp",
+            "dF9yZXNwb25zZRgEIAEoCzIRLnNkLkF3YWl0UmVzcG9uc2VIAEILCgl0YXJn",
+            "ZXRpbmciUQoIQ2FyZENvc3QSHQoIY2FuX3BsYXkYASABKA4yCy5zZC5DYW5Q",
+            "bGF5EhEKCW1hbmFfY29zdBgCIAEoBRITCgthY3Rpb25fY29zdBgDIAEoBSLa",
+            "AgoQUmV2ZWFsZWRDYXJkVmlldxIlCgpjYXJkX2ZyYW1lGAEgASgLMhEuc2Qu",
+            "U3ByaXRlQWRkcmVzcxIrChB0aXRsZV9iYWNrZ3JvdW5kGAIgASgLMhEuc2Qu",
+            "U3ByaXRlQWRkcmVzcxIgCgVqZXdlbBgDIAEoCzIRLnNkLlNwcml0ZUFkZHJl",
+            "c3MSKwoQaW1hZ2VfYmFja2dyb3VuZBgEIAEoCzIRLnNkLlNwcml0ZUFkZHJl",
+            "c3MSIAoFaW1hZ2UYBSABKAsyES5zZC5TcHJpdGVBZGRyZXNzEhwKBXRpdGxl",
+            "GAYgASgLMg0uc2QuQ2FyZFRpdGxlEiEKCnJ1bGVzX3RleHQYByABKAsyDS5z",
+            "ZC5SdWxlc1RleHQSJAoJdGFyZ2V0aW5nGAggASgLMhEuc2QuQ2FyZFRhcmdl",
+            "dGluZxIaCgRjb3N0GAkgASgLMgwuc2QuQ2FyZENvc3Qi8AEKCENhcmRWaWV3",
+            "EhsKB2NhcmRfaWQYASABKAsyCi5zZC5DYXJkSWQSKQoOYXJlbmFfcG9zaXRp",
+            "b24YAiABKA4yES5zZC5BcmVuYVBvc2l0aW9uEiQKCWNhcmRfYmFjaxgDIAEo",
+            "CzIRLnNkLlNwcml0ZUFkZHJlc3MSIQoKY2FyZF9pY29ucxgEIAEoCzINLnNk",
+            "LkNhcmRJY29ucxImCgthcmVuYV9mcmFtZRgFIAEoCzIRLnNkLlNwcml0ZUFk",
+            "ZHJlc3MSKwoNcmV2ZWFsZWRfY2FyZBgGIAEoCzIULnNkLlJldmVhbGVkQ2Fy",
+            "ZFZpZXciJwoISGFuZFZpZXcSGwoFY2FyZHMYASADKAsyDC5zZC5DYXJkVmll",
+            "dyIuCg9EaXNjYXJkUGlsZVZpZXcSGwoFY2FyZHMYASADKAsyDC5zZC5DYXJk",
+            "VmlldyJkCgpQbGF5ZXJJbmZvEgwKBG5hbWUYASABKAkSIwoIcG9ydHJhaXQY",
+            "AiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiMKDWlkZW50aXR5X2NhcmQYAyAB",
+            "KAsyDC5zZC5DYXJkVmlldyIaCghNYW5hVmlldxIOCgZhbW91bnQYASABKAUi",
+            "PgoJU2NvcmVWaWV3Eg0KBXNjb3JlGAEgASgFEiIKDHNjb3JlZF9jYXJkcxgC",
+            "IAMoCzIMLnNkLkNhcmRWaWV3IjAKCFJvb21JbmZvEiQKCXJvb21faWNvbhgB",
+            "IAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MiZQoIUm9vbVZpZXcSGwoHcm9vbV9p",
+            "ZBgBIAEoCzIKLnNkLlJvb21JZBIfCglyb29tX2luZm8YAiABKAsyDC5zZC5S",
+            "b29tSW5mbxIbCgVjYXJkcxgDIAMoCzIMLnNkLkNhcmRWaWV3ImMKCUFyZW5h",
+            "VmlldxIcChRvdmVybG9yZF9wZXJzcGVjdGl2ZRgBIAEoCBIbCgVyb29tcxgC",
+            "IAMoCzIMLnNkLlJvb21WaWV3EhsKBWl0ZW1zGAMgAygLMgwuc2QuQ2FyZFZp",
+            "ZXciMwoRQWN0aW9uVHJhY2tlclZpZXcSHgoWYXZhaWxhYmxlX2FjdGlvbl9j",
+            "b3VudBgBIAEoBSIKCghEZWNrVmlldyL9AQoKUGxheWVyVmlldxIjCgtwbGF5",
+            "ZXJfaW5mbxgBIAEoCzIOLnNkLlBsYXllckluZm8SHAoFc2NvcmUYAiABKAsy",
+            "DS5zZC5TY29yZVZpZXcSGgoEaGFuZBgDIAEoCzIMLnNkLkhhbmRWaWV3EhoK",
+            "BG1hbmEYBCABKAsyDC5zZC5NYW5hVmlldxIpCgxkaXNjYXJkX3BpbGUYBSAB",
+            "KAsyEy5zZC5EaXNjYXJkUGlsZVZpZXcSLQoOYWN0aW9uX3RyYWNrZXIYBiAB",
+            "KAsyFS5zZC5BY3Rpb25UcmFja2VyVmlldxIaCgRkZWNrGAcgASgLMgwuc2Qu",
+            "RGVja1ZpZXciaAoIR2FtZVZpZXcSHAoEdXNlchgBIAEoCzIOLnNkLlBsYXll",
+            "clZpZXcSIAoIb3Bwb25lbnQYAiABKAsyDi5zZC5QbGF5ZXJWaWV3EhwKBWFy",
+            "ZW5hGAMgASgLMg0uc2QuQXJlbmFWaWV3KlwKB0NhblBsYXkSGAoUQ0FOX1BM",
+            "QVlfVU5TUEVDSUZJRUQQABIUChBDQU5fUExBWV9ERUZBVUxUEAESDwoLQ0FO",
+            "X1BMQVlfTk8QAhIQCgxDQU5fUExBWV9ZRVMQAyrNAQoNQXJlbmFQb3NpdGlv",
+            "bhIeChpBUkVOQV9QT1NJVElPTl9VTlNQRUNJRklFRBAAEhoKFkFSRU5BX1BP",
+            "U0lUSU9OX0lOX1JPT00QARIgChxBUkVOQV9QT1NJVElPTl9ST09NX0RFRkVO",
+            "REVSEAISHQoZQVJFTkFfUE9TSVRJT05fSVRFTVNfTEVGVBADEh8KG0FSRU5B",
+            "X1BPU0lUSU9OX0lURU1TX0NFTlRFUhAEEh4KGkFSRU5BX1BPU0lUSU9OX0lU",
+            "RU1TX1JJR0hUEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.MasonryReflection.Descriptor, global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CanPlay), typeof(global::Spelldawn.Protos.ArenaPosition), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -96,7 +95,7 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ValidRooms), global::Spelldawn.Protos.ValidRooms.Parser, new[]{ "Rooms" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayAsItem), global::Spelldawn.Protos.PlayAsItem.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.AwaitResponse), global::Spelldawn.Protos.AwaitResponse.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardTargeting), global::Spelldawn.Protos.CardTargeting.Parser, new[]{ "PickFirstTarget", "PlayInRoom", "PlayAsItem", "AwaitResponse" }, new[]{ "Targeting" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardTargeting), global::Spelldawn.Protos.CardTargeting.Parser, new[]{ "PickTarget", "PlayInRoom", "PlayAsItem", "AwaitResponse" }, new[]{ "Targeting" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardCost), global::Spelldawn.Protos.CardCost.Parser, new[]{ "CanPlay", "ManaCost", "ActionCost" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RevealedCardView), global::Spelldawn.Protos.RevealedCardView.Parser, new[]{ "CardFrame", "TitleBackground", "Jewel", "ImageBackground", "Image", "Title", "RulesText", "Targeting", "Cost" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardView), global::Spelldawn.Protos.CardView.Parser, new[]{ "CardId", "ArenaPosition", "CardBack", "CardIcons", "ArenaFrame", "RevealedCard" }, null, null, null, null),
@@ -1734,8 +1733,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public CardTargeting(CardTargeting other) : this() {
       switch (other.TargetingCase) {
-        case TargetingOneofCase.PickFirstTarget:
-          PickFirstTarget = other.PickFirstTarget.Clone();
+        case TargetingOneofCase.PickTarget:
+          PickTarget = other.PickTarget.Clone();
           break;
         case TargetingOneofCase.PlayInRoom:
           PlayInRoom = other.PlayInRoom.Clone();
@@ -1756,17 +1755,17 @@ namespace Spelldawn.Protos {
       return new CardTargeting(this);
     }
 
-    /// <summary>Field number for the "pick_first_target" field.</summary>
-    public const int PickFirstTargetFieldNumber = 1;
+    /// <summary>Field number for the "pick_target" field.</summary>
+    public const int PickTargetFieldNumber = 1;
     /// <summary>
     ///* Pick one of these targets and then animate to the display area when played. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.ValidTargets PickFirstTarget {
-      get { return targetingCase_ == TargetingOneofCase.PickFirstTarget ? (global::Spelldawn.Protos.ValidTargets) targeting_ : null; }
+    public global::Spelldawn.Protos.ValidTargets PickTarget {
+      get { return targetingCase_ == TargetingOneofCase.PickTarget ? (global::Spelldawn.Protos.ValidTargets) targeting_ : null; }
       set {
         targeting_ = value;
-        targetingCase_ = value == null ? TargetingOneofCase.None : TargetingOneofCase.PickFirstTarget;
+        targetingCase_ = value == null ? TargetingOneofCase.None : TargetingOneofCase.PickTarget;
       }
     }
 
@@ -1816,7 +1815,7 @@ namespace Spelldawn.Protos {
     /// <summary>Enum of possible cases for the "targeting" oneof.</summary>
     public enum TargetingOneofCase {
       None = 0,
-      PickFirstTarget = 1,
+      PickTarget = 1,
       PlayInRoom = 2,
       PlayAsItem = 3,
       AwaitResponse = 4,
@@ -1846,7 +1845,7 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(PickFirstTarget, other.PickFirstTarget)) return false;
+      if (!object.Equals(PickTarget, other.PickTarget)) return false;
       if (!object.Equals(PlayInRoom, other.PlayInRoom)) return false;
       if (!object.Equals(PlayAsItem, other.PlayAsItem)) return false;
       if (!object.Equals(AwaitResponse, other.AwaitResponse)) return false;
@@ -1857,7 +1856,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (targetingCase_ == TargetingOneofCase.PickFirstTarget) hash ^= PickFirstTarget.GetHashCode();
+      if (targetingCase_ == TargetingOneofCase.PickTarget) hash ^= PickTarget.GetHashCode();
       if (targetingCase_ == TargetingOneofCase.PlayInRoom) hash ^= PlayInRoom.GetHashCode();
       if (targetingCase_ == TargetingOneofCase.PlayAsItem) hash ^= PlayAsItem.GetHashCode();
       if (targetingCase_ == TargetingOneofCase.AwaitResponse) hash ^= AwaitResponse.GetHashCode();
@@ -1878,9 +1877,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (targetingCase_ == TargetingOneofCase.PickFirstTarget) {
+      if (targetingCase_ == TargetingOneofCase.PickTarget) {
         output.WriteRawTag(10);
-        output.WriteMessage(PickFirstTarget);
+        output.WriteMessage(PickTarget);
       }
       if (targetingCase_ == TargetingOneofCase.PlayInRoom) {
         output.WriteRawTag(18);
@@ -1903,9 +1902,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (targetingCase_ == TargetingOneofCase.PickFirstTarget) {
+      if (targetingCase_ == TargetingOneofCase.PickTarget) {
         output.WriteRawTag(10);
-        output.WriteMessage(PickFirstTarget);
+        output.WriteMessage(PickTarget);
       }
       if (targetingCase_ == TargetingOneofCase.PlayInRoom) {
         output.WriteRawTag(18);
@@ -1928,8 +1927,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (targetingCase_ == TargetingOneofCase.PickFirstTarget) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PickFirstTarget);
+      if (targetingCase_ == TargetingOneofCase.PickTarget) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PickTarget);
       }
       if (targetingCase_ == TargetingOneofCase.PlayInRoom) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayInRoom);
@@ -1952,11 +1951,11 @@ namespace Spelldawn.Protos {
         return;
       }
       switch (other.TargetingCase) {
-        case TargetingOneofCase.PickFirstTarget:
-          if (PickFirstTarget == null) {
-            PickFirstTarget = new global::Spelldawn.Protos.ValidTargets();
+        case TargetingOneofCase.PickTarget:
+          if (PickTarget == null) {
+            PickTarget = new global::Spelldawn.Protos.ValidTargets();
           }
-          PickFirstTarget.MergeFrom(other.PickFirstTarget);
+          PickTarget.MergeFrom(other.PickTarget);
           break;
         case TargetingOneofCase.PlayInRoom:
           if (PlayInRoom == null) {
@@ -1994,11 +1993,11 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             global::Spelldawn.Protos.ValidTargets subBuilder = new global::Spelldawn.Protos.ValidTargets();
-            if (targetingCase_ == TargetingOneofCase.PickFirstTarget) {
-              subBuilder.MergeFrom(PickFirstTarget);
+            if (targetingCase_ == TargetingOneofCase.PickTarget) {
+              subBuilder.MergeFrom(PickTarget);
             }
             input.ReadMessage(subBuilder);
-            PickFirstTarget = subBuilder;
+            PickTarget = subBuilder;
             break;
           }
           case 18: {
@@ -2044,11 +2043,11 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             global::Spelldawn.Protos.ValidTargets subBuilder = new global::Spelldawn.Protos.ValidTargets();
-            if (targetingCase_ == TargetingOneofCase.PickFirstTarget) {
-              subBuilder.MergeFrom(PickFirstTarget);
+            if (targetingCase_ == TargetingOneofCase.PickTarget) {
+              subBuilder.MergeFrom(PickTarget);
             }
             input.ReadMessage(subBuilder);
-            PickFirstTarget = subBuilder;
+            PickTarget = subBuilder;
             break;
           }
           case 18: {
@@ -3654,6 +3653,12 @@ namespace Spelldawn.Protos {
     /// <summary>Field number for the "identity_card" field.</summary>
     public const int IdentityCardFieldNumber = 3;
     private global::Spelldawn.Protos.CardView identityCard_;
+    /// <summary>
+    ///*
+    /// Identifies the player's unique powers. The back for this card is used
+    /// as the card back for all of this player's cards. The CardIds of the
+    /// user's and the opponent's identity cards are conventionally 1 and 2.
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardView IdentityCard {
       get { return identityCard_; }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using DG.Tweening;
 using Spelldawn.Game;
 using Spelldawn.Protos;
@@ -27,18 +28,27 @@ namespace Spelldawn.Services
     const float CardScale = 1.5f;
 
     [SerializeField] Registry _registry = null!;
-    [SerializeField] Deck _deck = null!;
+    [SerializeField] Deck _userDeck = null!;
+    [SerializeField] Deck _opponentDeck = null!;
+    [SerializeField] Transform _userDiscardPile = null!;
+    [SerializeField] Transform _opponentDiscardPile = null!;
     [SerializeField] Card _cardPrefab = null!;
     [SerializeField] Transform _cardStagingArea = null!;
 
-    SpriteAddress? _userCardBack;
-    SpriteAddress? _opponentCardBack;
+    readonly Dictionary<CardId, Card> _cards = new();
+    readonly HashSet<Card> _stagingCards = new();
     Card? _optimisticCard;
+    SpriteAddress? _userCardBack;
 
-    public void Initialize(CardView? userCard, CardView? opponentCard)
+    Deck PlayerDeck(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userDeck : _opponentDeck;
+
+    Transform PlayerDiscardPile(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userDiscardPile : _opponentDiscardPile;
+
+    public void Initialize(CardView? userCard)
     {
       _userCardBack = userCard?.CardBack;
-      _opponentCardBack = opponentCard?.CardBack;
     }
 
     public void DrawOptimisticCard()
@@ -48,23 +58,99 @@ namespace Spelldawn.Services
         Destroy(_optimisticCard);
       }
 
+      foreach (var x in FindObjectsOfType<Card>())
+      {
+        Destroy(x.gameObject);
+      }
+
       _optimisticCard = ComponentUtils.Instantiate(_cardPrefab);
       _optimisticCard.Render(_registry, new CardView
       {
         CardBack = _userCardBack
       });
-      _optimisticCard.transform.position = _deck.transform.position;
+      _stagingCards.Add(_optimisticCard);
+
+      _optimisticCard.transform.position = _userDeck.transform.position;
       _optimisticCard.transform.localScale = new Vector3(CardScale, CardScale, 1f);
       var initialMoveTarget = new Vector3(
-        _deck.transform.position.x - 4,
-        _deck.transform.position.y + 2,
-        _deck.transform.position.z - 8);
+        _userDeck.transform.position.x - 4,
+        _userDeck.transform.position.y + 2,
+        _userDeck.transform.position.z - 8);
 
       DOTween.Sequence()
         .Insert(0,
           _optimisticCard.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
         .Insert(0.5f, _optimisticCard.transform.DOMove(_cardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
         .Insert(0, _optimisticCard.transform.DORotateQuaternion(_cardStagingArea.rotation, 1.0f).SetEase(Ease.Linear));
+    }
+
+    public IEnumerator<YieldInstruction> CreateCard(CreateCardCommand command)
+    {
+      Errors.CheckNotNull(command.Card);
+      Errors.CheckNotNull(command.Card.CardId);
+
+      Card card;
+      if (_optimisticCard)
+      {
+        card = _optimisticCard!;
+        _optimisticCard = null;
+      }
+      else
+      {
+        card = ComponentUtils.Instantiate(_cardPrefab);
+        card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+        switch (command.Position)
+        {
+          case CreateCardPosition.UserDeck:
+            card.transform.position = _userDeck.transform.position;
+            break;
+          case CreateCardPosition.Spawn:
+            card.transform.position = _cardStagingArea.position;
+            break;
+        }
+      }
+
+      card.Render(_registry, command.Card);
+      _stagingCards.Add(card);
+      _cards[command.Card.CardId] = card;
+      return CollectionUtils.Yield();
+    }
+
+    public IEnumerator<YieldInstruction> MoveCard(MoveCardCommand command)
+    {
+      Errors.CheckState(_cards.ContainsKey(command.CardId), $"Card not found: {command.CardId}");
+      var card = _cards[command.CardId];
+
+      switch (command.Zone)
+      {
+        case GameZone.Hand:
+          return AddToHand(_registry.PlayerHand(command.TargetPlayer), card);
+        case GameZone.Arena:
+          return _registry.ArenaService.AddCard(card);
+        case GameZone.Deck:
+          return MoveTo(card, PlayerDeck(command.TargetPlayer).transform);
+        case GameZone.Discard:
+          return MoveTo(card, PlayerDiscardPile(command.TargetPlayer));
+        case GameZone.Banished:
+          Destroy(card);
+          break;
+      }
+
+      return CollectionUtils.Yield();
+    }
+
+    IEnumerator<YieldInstruction> AddToHand(Hand hand, Card card)
+    {
+      Debug.Log($"AddToHand:");
+      yield break;
+    }
+
+    IEnumerator<YieldInstruction> MoveTo(Card card, Transform target)
+    {
+      yield return DOTween.Sequence()
+        .Insert(0, card.transform.DOMove(target.position, 0.5f))
+        .Insert(0, card.transform.DORotateQuaternion(target.rotation, 0.5f))
+        .WaitForCompletion();
     }
   }
 }

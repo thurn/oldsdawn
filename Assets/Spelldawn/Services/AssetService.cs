@@ -40,39 +40,42 @@ namespace Spelldawn.Services
       return (Font)_assets[address.Address];
     }
 
-    public IEnumerator<WaitUntil> LoadAssets(GameCommand command)
+    public IEnumerator<WaitUntil> LoadAssets(CommandList commandList)
     {
       var requests = new Dictionary<string, ResourceRequest>();
 
-      switch (command.CommandCase)
+      foreach (var command in commandList.Commands)
       {
-        case GameCommand.CommandOneofCase.RenderGame:
-          LoadGameAssets(requests, command.RenderGame.Game);
-          break;
-        case GameCommand.CommandOneofCase.InitiateRaid:
-          break;
-        case GameCommand.CommandOneofCase.CreateCard:
-          LoadCardAssets(requests, command.CreateCard.Card);
-          break;
-        case GameCommand.CommandOneofCase.UpdateCard:
-          LoadCardAssets(requests, command.UpdateCard.Card);
-          break;
-        case GameCommand.CommandOneofCase.MoveCard:
-          break;
-        case GameCommand.CommandOneofCase.DestroyCard:
-          break;
-        case GameCommand.CommandOneofCase.UpdatePlayerState:
-          LoadPlayerInfoAssets(requests, command.UpdatePlayerState.Info);
-          LoadScoreViewAssets(requests, command.UpdatePlayerState.Score);
-          break;
-        case GameCommand.CommandOneofCase.CreateOrUpdateRoom:
-          LoadRoomInfoAssets(requests, command.CreateOrUpdateRoom.RoomInfo);
-          break;
-        case GameCommand.CommandOneofCase.DestroyRoom:
-          break;
-        case GameCommand.CommandOneofCase.None:
-        default:
-          break;
+        switch (command.CommandCase)
+        {
+          case GameCommand.CommandOneofCase.RenderGame:
+            LoadGameAssets(requests, command.RenderGame.Game);
+            break;
+          case GameCommand.CommandOneofCase.InitiateRaid:
+            break;
+          case GameCommand.CommandOneofCase.CreateCard:
+            LoadCardAssets(requests, command.CreateCard.Card);
+            break;
+          case GameCommand.CommandOneofCase.UpdateCard:
+            LoadCardAssets(requests, command.UpdateCard.Card);
+            break;
+          case GameCommand.CommandOneofCase.MoveCard:
+            break;
+          case GameCommand.CommandOneofCase.DestroyCard:
+            break;
+          case GameCommand.CommandOneofCase.UpdatePlayerState:
+            LoadPlayerInfoAssets(requests, command.UpdatePlayerState.Info);
+            LoadScoreViewAssets(requests, command.UpdatePlayerState.Score);
+            break;
+          case GameCommand.CommandOneofCase.CreateOrUpdateRoom:
+            LoadRoomInfoAssets(requests, command.CreateOrUpdateRoom.RoomInfo);
+            break;
+          case GameCommand.CommandOneofCase.DestroyRoom:
+            break;
+          case GameCommand.CommandOneofCase.None:
+          default:
+            break;
+        }
       }
 
       if (requests.Count > 0)

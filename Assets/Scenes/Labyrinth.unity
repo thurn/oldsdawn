@@ -30569,6 +30569,7 @@ GameObject:
   - component: {fileID: 1445473044}
   - component: {fileID: 1445473043}
   - component: {fileID: 1445473050}
+  - component: {fileID: 1445473051}
   m_Layer: 0
   m_Name: Registry
   m_TagString: Untagged
@@ -30602,7 +30603,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _deck: {fileID: 1346296148}
+  _userDeck: {fileID: 1346296148}
+  _opponentDeck: {fileID: 0}
+  _userDiscardPile: {fileID: 1755763556}
+  _opponentDiscardPile: {fileID: 0}
   _cardPrefab: {fileID: 3573626451624847171, guid: 94ee6780efb164566b7977f07977d072, type: 3}
   _cardStagingArea: {fileID: 2105498054}
 --- !u!114 &1445473045
@@ -30663,6 +30667,10 @@ MonoBehaviour:
   _cardService: {fileID: 1445473044}
   _commandService: {fileID: 1445473043}
   _documentService: {fileID: 1445473046}
+  _sampleData: {fileID: 1445473050}
+  _arenaService: {fileID: 1445473051}
+  _userHand: {fileID: 317749080}
+  _opponentHand: {fileID: 0}
 --- !u!4 &1445473049
 Transform:
   m_ObjectHideFlags: 0
@@ -30688,6 +30696,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33dec724e9214927bf587de4a76fb1eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 1445473048}
+--- !u!114 &1445473051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445473042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ec7658bb8c14c9d985ded1722ab151e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
@@ -37451,6 +37472,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1751860553}
   m_Mesh: {fileID: -2026350702032400335, guid: 42765a03403ef174991f465298bfa87c, type: 3}
+--- !u!4 &1755763556 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3484575499145436869, guid: 94ee6780efb164566b7977f07977d072, type: 3}
+  m_PrefabInstance: {fileID: 826300652}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1760583503
 GameObject:
   m_ObjectHideFlags: 0

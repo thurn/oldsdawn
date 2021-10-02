@@ -52,13 +52,14 @@ namespace Spelldawn.Protos {
             "YXRlQ29tbWFuZEgAEj4KFWNyZWF0ZV9vcl91cGRhdGVfcm9vbRgIIAEoCzId",
             "LnNkLkNyZWF0ZU9yVXBkYXRlUm9vbUNvbW1hbmRIABIuCgxkZXN0cm95X3Jv",
             "b20YCSABKAsyFi5zZC5EZXN0cm95Um9vbUNvbW1hbmRIAEIJCgdjb21tYW5k",
-            "Kn4KEkNyZWF0ZUNhcmRQb3NpdGlvbhIkCiBDUkVBVEVfQ0FSRF9QT1NJVElP",
-            "Tl9VTlNQRUNJRklFRBAAEiIKHkNSRUFURV9DQVJEX1BPU0lUSU9OX1VTRVJf",
-            "REVDSxABEh4KGkNSRUFURV9DQVJEX1BPU0lUSU9OX1NQQVdOEAIqkQEKCEdh",
-            "bWVab25lEhkKFUdBTUVfWk9ORV9VTlNQRUNJRklFRBAAEhIKDkdBTUVfWk9O",
-            "RV9IQU5EEAESEwoPR0FNRV9aT05FX0FSRU5BEAISEgoOR0FNRV9aT05FX0RF",
-            "Q0sQAxIVChFHQU1FX1pPTkVfRElTQ0FSRBAEEhYKEkdBTUVfWk9ORV9CQU5J",
-            "U0hFRBAFQhOqAhBTcGVsbGRhd24uUHJvdG9zYgZwcm90bzM="));
+            "IjAKC0NvbW1hbmRMaXN0EiEKCGNvbW1hbmRzGAEgAygLMg8uc2QuR2FtZUNv",
+            "bW1hbmQqfgoSQ3JlYXRlQ2FyZFBvc2l0aW9uEiQKIENSRUFURV9DQVJEX1BP",
+            "U0lUSU9OX1VOU1BFQ0lGSUVEEAASIgoeQ1JFQVRFX0NBUkRfUE9TSVRJT05f",
+            "VVNFUl9ERUNLEAESHgoaQ1JFQVRFX0NBUkRfUE9TSVRJT05fU1BBV04QAiqR",
+            "AQoIR2FtZVpvbmUSGQoVR0FNRV9aT05FX1VOU1BFQ0lGSUVEEAASEgoOR0FN",
+            "RV9aT05FX0hBTkQQARITCg9HQU1FX1pPTkVfQVJFTkEQAhISCg5HQU1FX1pP",
+            "TkVfREVDSxADEhUKEUdBTUVfWk9ORV9ESVNDQVJEEAQSFgoSR0FNRV9aT05F",
+            "X0JBTklTSEVEEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, global::Spelldawn.Protos.GameViewReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CreateCardPosition), typeof(global::Spelldawn.Protos.GameZone), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -71,7 +72,8 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.UpdatePlayerStateCommand), global::Spelldawn.Protos.UpdatePlayerStateCommand.Parser, new[]{ "PlayerName", "Info", "Score", "ActionTracker" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CreateOrUpdateRoomCommand), global::Spelldawn.Protos.CreateOrUpdateRoomCommand.Parser, new[]{ "RoomId", "RoomInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DestroyRoomCommand), global::Spelldawn.Protos.DestroyRoomCommand.Parser, new[]{ "RoomId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameCommand), global::Spelldawn.Protos.GameCommand.Parser, new[]{ "RenderGame", "InitiateRaid", "CreateCard", "UpdateCard", "MoveCard", "DestroyCard", "UpdatePlayerState", "CreateOrUpdateRoom", "DestroyRoom" }, new[]{ "Command" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameCommand), global::Spelldawn.Protos.GameCommand.Parser, new[]{ "RenderGame", "InitiateRaid", "CreateCard", "UpdateCard", "MoveCard", "DestroyCard", "UpdatePlayerState", "CreateOrUpdateRoom", "DestroyRoom" }, new[]{ "Command" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CommandList), global::Spelldawn.Protos.CommandList.Parser, new[]{ "Commands" }, null, null, null, null)
           }));
     }
     #endregion
@@ -2639,6 +2641,167 @@ namespace Spelldawn.Protos {
             }
             input.ReadMessage(subBuilder);
             DestroyRoom = subBuilder;
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class CommandList : pb::IMessage<CommandList>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<CommandList> _parser = new pb::MessageParser<CommandList>(() => new CommandList());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<CommandList> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.CommandsReflection.Descriptor.MessageTypes[10]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CommandList() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CommandList(CommandList other) : this() {
+      commands_ = other.commands_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CommandList Clone() {
+      return new CommandList(this);
+    }
+
+    /// <summary>Field number for the "commands" field.</summary>
+    public const int CommandsFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.GameCommand> _repeated_commands_codec
+        = pb::FieldCodec.ForMessage(10, global::Spelldawn.Protos.GameCommand.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.GameCommand> commands_ = new pbc::RepeatedField<global::Spelldawn.Protos.GameCommand>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.GameCommand> Commands {
+      get { return commands_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as CommandList);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(CommandList other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if(!commands_.Equals(other.commands_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= commands_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      commands_.WriteTo(output, _repeated_commands_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      commands_.WriteTo(ref output, _repeated_commands_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      size += commands_.CalculateSize(_repeated_commands_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(CommandList other) {
+      if (other == null) {
+        return;
+      }
+      commands_.Add(other.commands_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            commands_.AddEntriesFrom(input, _repeated_commands_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            commands_.AddEntriesFrom(ref input, _repeated_commands_codec);
             break;
           }
         }

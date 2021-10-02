@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Spelldawn.Game;
+using Spelldawn.Protos;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -46,5 +49,15 @@ namespace Spelldawn.Services
 
     public DocumentService DocumentService => _documentService;
     [SerializeField] DocumentService _documentService = null!;
+
+    public SampleData SampleData => _sampleData;
+    [SerializeField] SampleData _sampleData = null!;
+
+    public ArenaService ArenaService => _arenaService;
+    [SerializeField] ArenaService _arenaService = null!;
+
+    [SerializeField] Hand _userHand = null!;
+    [SerializeField] Hand _opponentHand = null!;
+    public Hand PlayerHand(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
   }
 }

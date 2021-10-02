@@ -206,7 +206,7 @@ MonoBehaviour:
     bottomLeft: {r: 1, g: 1, b: 1, a: 1}
     bottomRight: {r: 1, g: 1, b: 1, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
+  m_spriteAsset: {fileID: 11400000, guid: b514744f6566c461982c007e214cc401, type: 2}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
   m_TextStyleHashCode: -1183493901
@@ -656,6 +656,7 @@ MonoBehaviour:
   _title: {fileID: 2821169604148772063}
   _rulesText: {fileID: 5774626145048932515}
   _jewel: {fileID: 7159367575576020492}
+  _isRevealed: 0
 --- !u!1 &3484575499453799607
 GameObject:
   m_ObjectHideFlags: 0

@@ -48,6 +48,10 @@ enum CreateCardPosition {
   CREATE_CARD_POSITION_SPAWN = 2;
 }
 
+/**
+ * Makes a new card. If an optimistic card has already been created, it is
+ * updated to match the provided 'card' and 'position' is ignored.
+ */
 message CreateCardCommand {
   CreateCardPosition position = 1;
   CardView card = 2;
@@ -104,4 +108,8 @@ message GameCommand {
     CreateOrUpdateRoomCommand create_or_update_room = 8;
     DestroyRoomCommand destroy_room = 9;
   }
+}
+
+message CommandList {
+  repeated GameCommand commands = 1;
 }

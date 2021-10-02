@@ -24,42 +24,47 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
 
-    public IEnumerator<YieldInstruction> HandleCommand(GameCommand command)
+    public IEnumerator<YieldInstruction> HandleCommands(CommandList commandList)
     {
-      yield return StartCoroutine(_registry.AssetService.LoadAssets(command));
+      yield return StartCoroutine(_registry.AssetService.LoadAssets(commandList));
 
-      switch (command.CommandCase)
+      foreach (var command in commandList.Commands)
       {
-        case GameCommand.CommandOneofCase.RenderGame:
-          HandleRenderGame(command.RenderGame);
-          break;
-        case GameCommand.CommandOneofCase.InitiateRaid:
-          break;
-        case GameCommand.CommandOneofCase.CreateCard:
-          break;
-        case GameCommand.CommandOneofCase.UpdateCard:
-          break;
-        case GameCommand.CommandOneofCase.MoveCard:
-          break;
-        case GameCommand.CommandOneofCase.DestroyCard:
-          break;
-        case GameCommand.CommandOneofCase.UpdatePlayerState:
-          break;
-        case GameCommand.CommandOneofCase.CreateOrUpdateRoom:
-          break;
-        case GameCommand.CommandOneofCase.DestroyRoom:
-          break;
-        case GameCommand.CommandOneofCase.None:
-        default:
-          break;
+        switch (command.CommandCase)
+        {
+          case GameCommand.CommandOneofCase.RenderGame:
+            yield return StartCoroutine(HandleRenderGame(command.RenderGame));
+            break;
+          case GameCommand.CommandOneofCase.InitiateRaid:
+            break;
+          case GameCommand.CommandOneofCase.CreateCard:
+            yield return StartCoroutine(_registry.CardService.CreateCard(command.CreateCard));
+            break;
+          case GameCommand.CommandOneofCase.UpdateCard:
+            break;
+          case GameCommand.CommandOneofCase.MoveCard:
+            yield return StartCoroutine(_registry.CardService.MoveCard(command.MoveCard));
+            break;
+          case GameCommand.CommandOneofCase.DestroyCard:
+            break;
+          case GameCommand.CommandOneofCase.UpdatePlayerState:
+            break;
+          case GameCommand.CommandOneofCase.CreateOrUpdateRoom:
+            break;
+          case GameCommand.CommandOneofCase.DestroyRoom:
+            break;
+          case GameCommand.CommandOneofCase.None:
+          default:
+            break;
+        }
       }
     }
 
-    void HandleRenderGame(RenderGameCommand renderGameCommand)
+    IEnumerator<YieldInstruction> HandleRenderGame(RenderGameCommand renderGameCommand)
     {
       _registry.CardService.Initialize(
-        renderGameCommand.Game?.User?.PlayerInfo?.IdentityCard,
-        renderGameCommand.Game?.Opponent?.PlayerInfo?.IdentityCard);
+        renderGameCommand.Game?.User?.PlayerInfo?.IdentityCard);
+      yield break;
     }
   }
 }
