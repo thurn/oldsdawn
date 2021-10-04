@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections;
-using DG.Tweening;
+using Spelldawn.Protos;
+using Spelldawn.Services;
+using Spelldawn.Utils;
 using TMPro;
 using UnityEngine;
 
@@ -23,34 +24,50 @@ namespace Spelldawn.Game
 {
   public sealed class ManaDisplay : MonoBehaviour
   {
+    [SerializeField] Registry _registry = null!;
+    [SerializeField] bool _clickable;
+    [SerializeField] GameObject _pressEffect = null!;
     [SerializeField] TextMeshPro _manaText = null!;
-    [SerializeField] TextMeshPro _manaSymbol = null!;
+    [SerializeField] float _currentMana = 5;
 
-    void Start()
+    public void Increment()
     {
-      StartCoroutine(Flicker());
+      SetMana(_currentMana + 1);
     }
 
-    IEnumerator Flicker()
+    public void SetMana(float currentMana)
     {
-      var glowValues = new[]
-        { 0.19f, 0.2f, 0.25f, 0.35f, 0.2f, 0.4f, 0.1f, 0.25f, 0.2f, 0.4f, 0.35f, 0.4f, 0.2f, 0.4f };
-      yield return new WaitForSeconds(Random.Range(1.0f, 5.0f));
+      Errors.CheckNonNegative(currentMana);
+      _currentMana = currentMana;
+      _manaText.text = "" + _currentMana;
+    }
 
-      while (true)
+    void OnMouseDown()
+    {
+      if (_clickable)
       {
-        foreach (var glow in glowValues)
+        transform.localScale = 0.95f * Vector3.one;
+      }
+    }
+
+    void OnMouseUp()
+    {
+      if (_clickable)
+      {
+        transform.localScale = Vector3.one;
+      }
+    }
+
+    void OnMouseUpAsButton()
+    {
+      if (_clickable)
+      {
+        _pressEffect.SetActive(false);
+        _pressEffect.SetActive(true);
+        _registry.ActionService.HandleAction(new GameAction
         {
-          yield return DOTween.To(
-            () => _manaSymbol.fontMaterial.GetFloat(ShaderUtilities.ID_GlowOuter),
-            val =>
-            {
-              _manaSymbol.fontMaterial.SetFloat(ShaderUtilities.ID_GlowOuter, val);
-              _manaSymbol.UpdateMeshPadding();
-            },
-            endValue: 0.5f + glow,
-            duration: 0.5f).WaitForCompletion();
-        }
+          GainMana = new GainManaAction()
+        });
       }
     }
   }

@@ -56,13 +56,13 @@ namespace Spelldawn.Utils
       return value;
     }
 
-    public static int CheckPositive(float value) => CheckPositive((int) value);
+    public static int CheckNonNegative(float value) => CheckNonNegative((int) value);
 
-    public static int CheckPositive(int value)
+    public static int CheckNonNegative(int value)
     {
-      if (value <= 0)
+      if (value < 0)
       {
-        throw new ArgumentException($"Expected value {value} to be > 0.");
+        throw new ArgumentException($"Expected value {value} to be >= 0.");
       }
 
       return value;

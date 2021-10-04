@@ -49,6 +49,9 @@ namespace Spelldawn.Services
         case GameAction.ActionOneofCase.DrawCard:
           _registry.CardService.DrawOptimisticCard();
           break;
+        case GameAction.ActionOneofCase.GainMana:
+          _registry.ManaDisplayForPlayer(PlayerName.User).Increment();
+          break;
       }
     }
   }

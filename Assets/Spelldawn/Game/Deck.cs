@@ -23,13 +23,17 @@ namespace Spelldawn.Game
   public sealed class Deck : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
+    [SerializeField] bool _clickable;
 
     void OnMouseUpAsButton()
     {
-      _registry.ActionService.HandleAction(new GameAction
+      if (_clickable)
       {
-        DrawCard = new DrawCardAction()
-      });
+        _registry.ActionService.HandleAction(new GameAction
+        {
+          DrawCard = new DrawCardAction()
+        });
+      }
     }
   }
 }

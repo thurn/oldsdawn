@@ -29,10 +29,12 @@ namespace Spelldawn.Services
 
     /// <summary>'Scaled with Screen Size' document for rendering gameplay</summary>
     public UIDocument GameDocument => _gameDocument;
+
     [SerializeField] UIDocument _gameDocument = null!;
 
     /// <summary>'Constant Physical Size' document for rendering gameplay</summary>
     public UIDocument InterfaceDocument => _interfaceDocument;
+
     [SerializeField] UIDocument _interfaceDocument = null!;
 
     public AssetService AssetService => _assetService;
@@ -58,6 +60,12 @@ namespace Spelldawn.Services
 
     [SerializeField] Hand _userHand = null!;
     [SerializeField] Hand _opponentHand = null!;
-    public Hand PlayerHand(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
+    public Hand HandForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
+
+    [SerializeField] ManaDisplay _userManaDisplay = null!;
+    [SerializeField] ManaDisplay _opponentManaDisplay = null!;
+
+    public ManaDisplay ManaDisplayForPlayer(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userManaDisplay : _opponentManaDisplay;
   }
 }

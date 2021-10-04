@@ -108,7 +108,7 @@ namespace Spelldawn.Services
       switch (command.Zone)
       {
         case GameZone.Hand:
-          return _registry.PlayerHand(command.TargetPlayer).AddCard(card);
+          return _registry.HandForPlayer(command.TargetPlayer).AddCard(card);
         case GameZone.Arena:
           return _registry.ArenaService.AddCard(card);
         case GameZone.Deck:
