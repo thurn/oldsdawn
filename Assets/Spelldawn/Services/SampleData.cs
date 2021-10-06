@@ -25,6 +25,7 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     int _lastReturnedCard;
+    int _lastOpponentCardId = 65536;
 
     static readonly string Text1 =
       @"<sprite name=""hourglass"">, 2<sprite name=""fire"">: Destroy this token. Add another line of text to this card.
@@ -92,13 +93,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Game = SampleGame()
         }
-      }, new GameCommand
-      {
-        RenderInterface = new RenderInterfaceCommand
-        {
-          Node = DebugButtons()
-        }
       });
+    }
+
+    void Update()
+    {
+      if (Input.GetKeyDown(KeyCode.D))
+      {
+        DrawOpponentCard();
+      }
     }
 
     public void FakeActionResponse(GameAction action)
@@ -110,35 +113,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           break;
       }
     }
-
-    Node DebugButtons() => Column("Debug", new FlexStyle
-    {
-      FlexGrow = 1,
-      JustifyContent = FlexJustify.Center
-    }, Column("Buttons", new FlexStyle
-    {
-      Margin = LeftDip(ScreenPxToDip(Screen.safeArea.x) + 8),
-      AlignItems = FlexAlign.FlexStart
-    }, Button("Opponent Draw")));
-
-    static Node Button(string label) => Row("Button", new FlexStyle
-    {
-      BackgroundImage = Sprite("Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
-      Margin = TopBottomDip(4),
-      JustifyContent = FlexJustify.Center,
-      AlignItems = FlexAlign.Center,
-      Height = Dip(88),
-      FlexGrow = 0,
-      FlexShrink = 0,
-      ImageSlice = ImageSlice(0, 25)
-    } , Text(label, new FlexStyle
-    {
-      Margin = LeftRightDip(16),
-      Padding = AllDip(0),
-      Color = MakeColor(Color.white),
-      Font = Font("Fonts/Roboto"),
-      FontSize = Dip(36)
-    }));
 
     void DrawCardResponse()
     {
@@ -156,6 +130,31 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           CardId = card.CardId,
           TargetPlayer = PlayerName.User,
+          Zone = GameZone.Hand
+        }
+      });
+    }
+
+    void DrawOpponentCard()
+    {
+      var cardId = CardId(_lastOpponentCardId++);
+      HandleCommands(new GameCommand
+      {
+        CreateCard = new CreateCardCommand
+        {
+          Card = new CardView
+          {
+            CardId = cardId,
+            CardBack = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1")
+          },
+          Position = CreateCardPosition.OpponentDeck
+        }
+      }, new GameCommand
+      {
+        MoveCard = new MoveCardCommand
+        {
+          CardId = cardId,
+          TargetPlayer = PlayerName.Opponent,
           Zone = GameZone.Hand
         }
       });

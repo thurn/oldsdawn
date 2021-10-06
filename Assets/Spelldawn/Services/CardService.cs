@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -29,26 +30,29 @@ namespace Spelldawn.Services
     const float CardScale = 1.5f;
 
     [SerializeField] Registry _registry = null!;
-    [SerializeField] Deck _userDeck = null!;
-    [SerializeField] Deck _opponentDeck = null!;
-    [SerializeField] Transform _userDiscardPile = null!;
-    [SerializeField] Transform _opponentDiscardPile = null!;
     [SerializeField] Card _cardPrefab = null!;
-    [SerializeField] Transform _cardStagingArea = null!;
 
     readonly Dictionary<CardId, Card> _cards = new();
     Card? _optimisticCard;
     SpriteAddress? _userCardBack;
 
-    Deck PlayerDeck(PlayerName playerName) =>
-      playerName == PlayerName.User ? _userDeck : _opponentDeck;
-
-    Transform PlayerDiscardPile(PlayerName playerName) =>
-      playerName == PlayerName.User ? _userDiscardPile : _opponentDiscardPile;
-
-    public void Initialize(CardView? userCard)
+    public void Initialize(CardView? userCard, CardView? opponentCard)
     {
-      _userCardBack = userCard?.CardBack;
+      if (userCard != null)
+      {
+        _userCardBack = userCard.CardBack;
+        SetCardBacks(userCard, PlayerName.User);
+        SetCardBacks(userCard, PlayerName.Opponent);
+      }
+
+      if (opponentCard != null)
+      {
+        foreach (var spriteRenderer in _registry.DeckForPlayer(PlayerName.Opponent)
+          .GetComponentsInChildren<SpriteRenderer>())
+        {
+          spriteRenderer.sprite = _registry.AssetService.GetSprite(opponentCard.CardBack);
+        }
+      }
     }
 
     public void DrawOptimisticCard()
@@ -72,9 +76,11 @@ namespace Spelldawn.Services
       Errors.CheckNotNull(command.Card);
       Errors.CheckNotNull(command.Card.CardId);
 
+      var waitForStaging = false;
       Card card;
       if (_optimisticCard)
       {
+        waitForStaging = true;
         card = _optimisticCard!;
         _optimisticCard = null;
       }
@@ -86,9 +92,14 @@ namespace Spelldawn.Services
         {
           case CreateCardPosition.UserDeck:
             AnimateFromDeckToStaging(card);
+            waitForStaging = true;
+            break;
+          case CreateCardPosition.OpponentDeck:
+            card.transform.position = DeckSpawnPosition(PlayerName.Opponent);
             break;
           case CreateCardPosition.Staging:
-            card.transform.position = _cardStagingArea.position;
+            card.transform.position = _registry.CardStagingArea.position;
+            waitForStaging = true;
             break;
         }
       }
@@ -96,8 +107,11 @@ namespace Spelldawn.Services
       card.Render(_registry, command.Card);
       _cards[command.Card.CardId] = card;
 
-      yield return new WaitUntil(() => card.IsRevealed && card.StagingAnimationComplete);
-      yield return new WaitForSeconds(0.5f);
+      if (waitForStaging)
+      {
+        yield return new WaitUntil(() => card.IsRevealed && card.StagingAnimationComplete);
+        yield return new WaitForSeconds(0.5f);
+      }
     }
 
     public IEnumerator MoveCard(MoveCardCommand command)
@@ -112,21 +126,15 @@ namespace Spelldawn.Services
         case GameZone.Arena:
           return _registry.ArenaService.AddCard(card);
         case GameZone.Deck:
-          return MoveTo(card, PlayerDeck(command.TargetPlayer).transform);
+          return MoveTo(card, _registry.DeckForPlayer(command.TargetPlayer).transform);
         case GameZone.Discard:
-          return MoveTo(card, PlayerDiscardPile(command.TargetPlayer));
+          throw new NotImplementedException();
         case GameZone.Banished:
           Destroy(card);
           break;
       }
 
       return CollectionUtils.Yield();
-    }
-
-    IEnumerator<YieldInstruction> AddToHand(Hand hand, Card card)
-    {
-      Debug.Log($"AddToHand:");
-      yield break;
     }
 
     IEnumerator<YieldInstruction> MoveTo(Card card, Transform target)
@@ -137,20 +145,36 @@ namespace Spelldawn.Services
         .WaitForCompletion();
     }
 
+    void SetCardBacks(CardView? cardView, PlayerName playerName)
+    {
+      if (cardView != null)
+      {
+        foreach (var spriteRenderer in _registry.DeckForPlayer(playerName)
+          .GetComponentsInChildren<SpriteRenderer>())
+        {
+          spriteRenderer.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
+        }
+      }
+    }
+
     void AnimateFromDeckToStaging(Card card)
     {
-      card.transform.position = _userDeck.transform.position;
+      var target = DeckSpawnPosition(PlayerName.User);
+      card.transform.position = target;
       var initialMoveTarget = new Vector3(
-        _userDeck.transform.position.x - 4,
-        _userDeck.transform.position.y + 2,
-        _userDeck.transform.position.z - 8);
+        target.x - 4,
+        target.y + 2,
+        target.z - 8);
 
       DOTween.Sequence()
         .Insert(0,
           card.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
-        .Insert(0.5f, card.transform.DOMove(_cardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
-        .Insert(0, card.transform.DORotateQuaternion(_cardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
+        .Insert(0.5f, card.transform.DOMove(_registry.CardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
+        .Insert(0, card.transform.DORotateQuaternion(_registry.CardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
         .AppendCallback(() => card.StagingAnimationComplete = true);
     }
+
+    Vector3 DeckSpawnPosition(PlayerName playerName) =>
+      _registry.DeckForPlayer(playerName).transform.position + new Vector3(0f, 1f, 0f);
   }
 }

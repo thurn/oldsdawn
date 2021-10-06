@@ -24,46 +24,48 @@ namespace Spelldawn.Protos {
     static ActionsReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg1hY3Rpb25zLnByb3RvEgJzZBoVZ2FtZV9wcmltaXRpdmVzLnByb3RvIh0K",
-            "DkRlYnVnTG9nQWN0aW9uEgsKA2xvZxgBIAEoCSIQCg5HYWluTWFuYUFjdGlv",
-            "biIQCg5EcmF3Q2FyZEFjdGlvbiIsCg1MZXZlbFVwQWN0aW9uEhsKB3Jvb21f",
-            "aWQYASABKAsyCi5zZC5Sb29tSWQiKQoKUmFpZEFjdGlvbhIbCgdyb29tX2lk",
-            "GAEgASgLMgouc2QuUm9vbUlkIlMKDlBsYXlDYXJkQWN0aW9uEhsKB2NhcmRf",
-            "aWQYASABKAsyCi5zZC5DYXJkSWQSJAoMZmlyc3RfdGFyZ2V0GAIgASgLMg4u",
-            "c2QuQ2FyZFRhcmdldCIPCg1Db25jZWRlQWN0aW9uIqcCCgpHYW1lQWN0aW9u",
-            "EicKCWRlYnVnX2xvZxgBIAEoCzISLnNkLkRlYnVnTG9nQWN0aW9uSAASJwoJ",
-            "Z2Fpbl9tYW5hGAIgASgLMhIuc2QuR2Fpbk1hbmFBY3Rpb25IABInCglkcmF3",
-            "X2NhcmQYAyABKAsyEi5zZC5EcmF3Q2FyZEFjdGlvbkgAEiUKCGxldmVsX3Vw",
-            "GAQgASgLMhEuc2QuTGV2ZWxVcEFjdGlvbkgAEh4KBHJhaWQYBSABKAsyDi5z",
-            "ZC5SYWlkQWN0aW9uSAASJwoJcGxheV9jYXJkGAYgASgLMhIuc2QuUGxheUNh",
-            "cmRBY3Rpb25IABIkCgdjb25jZWRlGAcgASgLMhEuc2QuQ29uY2VkZUFjdGlv",
-            "bkgAQggKBmFjdGlvbkITqgIQU3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
+            "Cg1hY3Rpb25zLnByb3RvEgJzZBoVZ2FtZV9wcmltaXRpdmVzLnByb3RvGhln",
+            "b29nbGUvcHJvdG9idWYvYW55LnByb3RvIkgKGkRlYnVnUGVyZm9ybUNvbW1h",
+            "bmRzQWN0aW9uEioKDGNvbW1hbmRfbGlzdBgBIAEoCzIULmdvb2dsZS5wcm90",
+            "b2J1Zi5BbnkiEAoOR2Fpbk1hbmFBY3Rpb24iEAoORHJhd0NhcmRBY3Rpb24i",
+            "LAoNTGV2ZWxVcEFjdGlvbhIbCgdyb29tX2lkGAEgASgLMgouc2QuUm9vbUlk",
+            "IikKClJhaWRBY3Rpb24SGwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZCJT",
+            "Cg5QbGF5Q2FyZEFjdGlvbhIbCgdjYXJkX2lkGAEgASgLMgouc2QuQ2FyZElk",
+            "EiQKDGZpcnN0X3RhcmdldBgCIAEoCzIOLnNkLkNhcmRUYXJnZXQiDwoNQ29u",
+            "Y2VkZUFjdGlvbiK2AgoKR2FtZUFjdGlvbhI2CgxkZWJ1Z19hY3Rpb24YASAB",
+            "KAsyHi5zZC5EZWJ1Z1BlcmZvcm1Db21tYW5kc0FjdGlvbkgAEicKCWdhaW5f",
+            "bWFuYRgCIAEoCzISLnNkLkdhaW5NYW5hQWN0aW9uSAASJwoJZHJhd19jYXJk",
+            "GAMgASgLMhIuc2QuRHJhd0NhcmRBY3Rpb25IABIlCghsZXZlbF91cBgEIAEo",
+            "CzIRLnNkLkxldmVsVXBBY3Rpb25IABIeCgRyYWlkGAUgASgLMg4uc2QuUmFp",
+            "ZEFjdGlvbkgAEicKCXBsYXlfY2FyZBgGIAEoCzISLnNkLlBsYXlDYXJkQWN0",
+            "aW9uSAASJAoHY29uY2VkZRgHIAEoCzIRLnNkLkNvbmNlZGVBY3Rpb25IAEII",
+            "CgZhY3Rpb25CE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.AnyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DebugLogAction), global::Spelldawn.Protos.DebugLogAction.Parser, new[]{ "Log" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DebugPerformCommandsAction), global::Spelldawn.Protos.DebugPerformCommandsAction.Parser, new[]{ "CommandList" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GainManaAction), global::Spelldawn.Protos.GainManaAction.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DrawCardAction), global::Spelldawn.Protos.DrawCardAction.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.LevelUpAction), global::Spelldawn.Protos.LevelUpAction.Parser, new[]{ "RoomId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RaidAction), global::Spelldawn.Protos.RaidAction.Parser, new[]{ "RoomId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayCardAction), global::Spelldawn.Protos.PlayCardAction.Parser, new[]{ "CardId", "FirstTarget" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ConcedeAction), global::Spelldawn.Protos.ConcedeAction.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameAction), global::Spelldawn.Protos.GameAction.Parser, new[]{ "DebugLog", "GainMana", "DrawCard", "LevelUp", "Raid", "PlayCard", "Concede" }, new[]{ "Action" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameAction), global::Spelldawn.Protos.GameAction.Parser, new[]{ "DebugAction", "GainMana", "DrawCard", "LevelUp", "Raid", "PlayCard", "Concede" }, new[]{ "Action" }, null, null, null)
           }));
     }
     #endregion
 
   }
   #region Messages
-  public sealed partial class DebugLogAction : pb::IMessage<DebugLogAction>
+  public sealed partial class DebugPerformCommandsAction : pb::IMessage<DebugPerformCommandsAction>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<DebugLogAction> _parser = new pb::MessageParser<DebugLogAction>(() => new DebugLogAction());
+    private static readonly pb::MessageParser<DebugPerformCommandsAction> _parser = new pb::MessageParser<DebugPerformCommandsAction>(() => new DebugPerformCommandsAction());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<DebugLogAction> Parser { get { return _parser; } }
+    public static pb::MessageParser<DebugPerformCommandsAction> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -76,55 +78,58 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public DebugLogAction() {
+    public DebugPerformCommandsAction() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public DebugLogAction(DebugLogAction other) : this() {
-      log_ = other.log_;
+    public DebugPerformCommandsAction(DebugPerformCommandsAction other) : this() {
+      commandList_ = other.commandList_ != null ? other.commandList_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public DebugLogAction Clone() {
-      return new DebugLogAction(this);
+    public DebugPerformCommandsAction Clone() {
+      return new DebugPerformCommandsAction(this);
     }
 
-    /// <summary>Field number for the "log" field.</summary>
-    public const int LogFieldNumber = 1;
-    private string log_ = "";
+    /// <summary>Field number for the "command_list" field.</summary>
+    public const int CommandListFieldNumber = 1;
+    private global::Google.Protobuf.WellKnownTypes.Any commandList_;
+    /// <summary>
+    ///* Secretly CommandList, but recursive imports... 
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Log {
-      get { return log_; }
+    public global::Google.Protobuf.WellKnownTypes.Any CommandList {
+      get { return commandList_; }
       set {
-        log_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        commandList_ = value;
       }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as DebugLogAction);
+      return Equals(other as DebugPerformCommandsAction);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(DebugLogAction other) {
+    public bool Equals(DebugPerformCommandsAction other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (Log != other.Log) return false;
+      if (!object.Equals(CommandList, other.CommandList)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (Log.Length != 0) hash ^= Log.GetHashCode();
+      if (commandList_ != null) hash ^= CommandList.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -141,9 +146,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Log.Length != 0) {
+      if (commandList_ != null) {
         output.WriteRawTag(10);
-        output.WriteString(Log);
+        output.WriteMessage(CommandList);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -154,9 +159,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Log.Length != 0) {
+      if (commandList_ != null) {
         output.WriteRawTag(10);
-        output.WriteString(Log);
+        output.WriteMessage(CommandList);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -167,8 +172,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (Log.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Log);
+      if (commandList_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CommandList);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -177,12 +182,15 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(DebugLogAction other) {
+    public void MergeFrom(DebugPerformCommandsAction other) {
       if (other == null) {
         return;
       }
-      if (other.Log.Length != 0) {
-        Log = other.Log;
+      if (other.commandList_ != null) {
+        if (commandList_ == null) {
+          CommandList = new global::Google.Protobuf.WellKnownTypes.Any();
+        }
+        CommandList.MergeFrom(other.CommandList);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -199,7 +207,10 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            Log = input.ReadString();
+            if (commandList_ == null) {
+              CommandList = new global::Google.Protobuf.WellKnownTypes.Any();
+            }
+            input.ReadMessage(CommandList);
             break;
           }
         }
@@ -217,7 +228,10 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            Log = input.ReadString();
+            if (commandList_ == null) {
+              CommandList = new global::Google.Protobuf.WellKnownTypes.Any();
+            }
+            input.ReadMessage(CommandList);
             break;
           }
         }
@@ -1311,8 +1325,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public GameAction(GameAction other) : this() {
       switch (other.ActionCase) {
-        case ActionOneofCase.DebugLog:
-          DebugLog = other.DebugLog.Clone();
+        case ActionOneofCase.DebugAction:
+          DebugAction = other.DebugAction.Clone();
           break;
         case ActionOneofCase.GainMana:
           GainMana = other.GainMana.Clone();
@@ -1342,14 +1356,14 @@ namespace Spelldawn.Protos {
       return new GameAction(this);
     }
 
-    /// <summary>Field number for the "debug_log" field.</summary>
-    public const int DebugLogFieldNumber = 1;
+    /// <summary>Field number for the "debug_action" field.</summary>
+    public const int DebugActionFieldNumber = 1;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.DebugLogAction DebugLog {
-      get { return actionCase_ == ActionOneofCase.DebugLog ? (global::Spelldawn.Protos.DebugLogAction) action_ : null; }
+    public global::Spelldawn.Protos.DebugPerformCommandsAction DebugAction {
+      get { return actionCase_ == ActionOneofCase.DebugAction ? (global::Spelldawn.Protos.DebugPerformCommandsAction) action_ : null; }
       set {
         action_ = value;
-        actionCase_ = value == null ? ActionOneofCase.None : ActionOneofCase.DebugLog;
+        actionCase_ = value == null ? ActionOneofCase.None : ActionOneofCase.DebugAction;
       }
     }
 
@@ -1423,7 +1437,7 @@ namespace Spelldawn.Protos {
     /// <summary>Enum of possible cases for the "action" oneof.</summary>
     public enum ActionOneofCase {
       None = 0,
-      DebugLog = 1,
+      DebugAction = 1,
       GainMana = 2,
       DrawCard = 3,
       LevelUp = 4,
@@ -1456,7 +1470,7 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(DebugLog, other.DebugLog)) return false;
+      if (!object.Equals(DebugAction, other.DebugAction)) return false;
       if (!object.Equals(GainMana, other.GainMana)) return false;
       if (!object.Equals(DrawCard, other.DrawCard)) return false;
       if (!object.Equals(LevelUp, other.LevelUp)) return false;
@@ -1470,7 +1484,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (actionCase_ == ActionOneofCase.DebugLog) hash ^= DebugLog.GetHashCode();
+      if (actionCase_ == ActionOneofCase.DebugAction) hash ^= DebugAction.GetHashCode();
       if (actionCase_ == ActionOneofCase.GainMana) hash ^= GainMana.GetHashCode();
       if (actionCase_ == ActionOneofCase.DrawCard) hash ^= DrawCard.GetHashCode();
       if (actionCase_ == ActionOneofCase.LevelUp) hash ^= LevelUp.GetHashCode();
@@ -1494,9 +1508,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (actionCase_ == ActionOneofCase.DebugLog) {
+      if (actionCase_ == ActionOneofCase.DebugAction) {
         output.WriteRawTag(10);
-        output.WriteMessage(DebugLog);
+        output.WriteMessage(DebugAction);
       }
       if (actionCase_ == ActionOneofCase.GainMana) {
         output.WriteRawTag(18);
@@ -1531,9 +1545,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (actionCase_ == ActionOneofCase.DebugLog) {
+      if (actionCase_ == ActionOneofCase.DebugAction) {
         output.WriteRawTag(10);
-        output.WriteMessage(DebugLog);
+        output.WriteMessage(DebugAction);
       }
       if (actionCase_ == ActionOneofCase.GainMana) {
         output.WriteRawTag(18);
@@ -1568,8 +1582,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (actionCase_ == ActionOneofCase.DebugLog) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(DebugLog);
+      if (actionCase_ == ActionOneofCase.DebugAction) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(DebugAction);
       }
       if (actionCase_ == ActionOneofCase.GainMana) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(GainMana);
@@ -1601,11 +1615,11 @@ namespace Spelldawn.Protos {
         return;
       }
       switch (other.ActionCase) {
-        case ActionOneofCase.DebugLog:
-          if (DebugLog == null) {
-            DebugLog = new global::Spelldawn.Protos.DebugLogAction();
+        case ActionOneofCase.DebugAction:
+          if (DebugAction == null) {
+            DebugAction = new global::Spelldawn.Protos.DebugPerformCommandsAction();
           }
-          DebugLog.MergeFrom(other.DebugLog);
+          DebugAction.MergeFrom(other.DebugAction);
           break;
         case ActionOneofCase.GainMana:
           if (GainMana == null) {
@@ -1660,12 +1674,12 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            global::Spelldawn.Protos.DebugLogAction subBuilder = new global::Spelldawn.Protos.DebugLogAction();
-            if (actionCase_ == ActionOneofCase.DebugLog) {
-              subBuilder.MergeFrom(DebugLog);
+            global::Spelldawn.Protos.DebugPerformCommandsAction subBuilder = new global::Spelldawn.Protos.DebugPerformCommandsAction();
+            if (actionCase_ == ActionOneofCase.DebugAction) {
+              subBuilder.MergeFrom(DebugAction);
             }
             input.ReadMessage(subBuilder);
-            DebugLog = subBuilder;
+            DebugAction = subBuilder;
             break;
           }
           case 18: {
@@ -1737,12 +1751,12 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            global::Spelldawn.Protos.DebugLogAction subBuilder = new global::Spelldawn.Protos.DebugLogAction();
-            if (actionCase_ == ActionOneofCase.DebugLog) {
-              subBuilder.MergeFrom(DebugLog);
+            global::Spelldawn.Protos.DebugPerformCommandsAction subBuilder = new global::Spelldawn.Protos.DebugPerformCommandsAction();
+            if (actionCase_ == ActionOneofCase.DebugAction) {
+              subBuilder.MergeFrom(DebugAction);
             }
             input.ReadMessage(subBuilder);
-            DebugLog = subBuilder;
+            DebugAction = subBuilder;
             break;
           }
           case 18: {

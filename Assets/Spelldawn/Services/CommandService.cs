@@ -77,7 +77,8 @@ namespace Spelldawn.Services
     IEnumerator<YieldInstruction> HandleRenderGame(RenderGameCommand command)
     {
       _registry.CardService.Initialize(
-        command.Game?.User?.PlayerInfo?.IdentityCard);
+        command.Game?.User?.PlayerInfo?.IdentityCard,
+        command.Game?.Opponent?.PlayerInfo?.IdentityCard);
       yield break;
     }
   }

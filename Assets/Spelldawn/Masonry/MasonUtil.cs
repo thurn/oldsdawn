@@ -146,6 +146,14 @@ namespace Spelldawn.Masonry
       return MakeFlexbox(name, style, children);
     }
 
+    public static Node Row(string name,
+      FlexStyle? style = null,
+      EventHandlers? handlers = null,
+      params Node?[] children)
+    {
+      return null!;
+    }
+
     public static Node Column(string name, FlexStyle? style, IEnumerable<Node?> children) =>
       Column(name, style, children.ToArray());
 

@@ -18,9 +18,11 @@ package sd;
 option csharp_namespace = "Spelldawn.Protos";
 
 import "game_primitives.proto";
+import "google/protobuf/any.proto";
 
-message DebugLogAction {
-  string log = 1;
+message DebugPerformCommandsAction {
+  /** Secretly CommandList, but recursive imports... */
+  google.protobuf.Any command_list = 1;
 }
 
 /**
@@ -98,7 +100,7 @@ message ConcedeAction {
  */
 message GameAction {
   oneof action {
-    DebugLogAction debug_log = 1;
+    DebugPerformCommandsAction debug_action = 1;
     GainManaAction gain_mana = 2;
     DrawCardAction draw_card = 3;
     LevelUpAction level_up = 4;

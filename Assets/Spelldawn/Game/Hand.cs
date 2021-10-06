@@ -37,7 +37,6 @@ namespace Spelldawn.Game
 
     public IEnumerator<YieldInstruction> AddCard(Card card)
     {
-      // card.transform.SetParent(transform);
       _cards.Add(card);
       return AnimateCardsToPosition();
     }

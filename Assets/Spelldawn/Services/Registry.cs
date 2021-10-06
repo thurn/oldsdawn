@@ -55,6 +55,13 @@ namespace Spelldawn.Services
     [SerializeField] Hand _opponentHand = null!;
     public Hand HandForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
 
+    [SerializeField] Deck _userDeck = null!;
+    [SerializeField] Deck _opponentDeck = null!;
+    public Deck DeckForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userDeck : _opponentDeck;
+
+    [SerializeField] Transform _cardStagingArea = null!;
+    public Transform CardStagingArea => _cardStagingArea;
+
     [SerializeField] ManaDisplay _userManaDisplay = null!;
     [SerializeField] ManaDisplay _opponentManaDisplay = null!;
 
