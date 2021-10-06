@@ -19,6 +19,15 @@ option csharp_namespace = "Spelldawn.Protos";
 
 import "game_primitives.proto";
 import "game_view.proto";
+import "masonry.proto";
+
+/**
+ * Updates the content of the user interface to display the provided node,
+ * replacing all existing UI elements.
+ */
+message RenderInterfaceCommand {
+  Node node = 1;
+}
 
 /**
  * Many of the below commands are specific cases of RenderGame. They are
@@ -106,15 +115,16 @@ message DestroyRoomCommand {
 
 message GameCommand {
   oneof command {
-    RenderGameCommand render_game = 1;
-    InitiateRaidCommand initiate_raid = 2;
-    CreateCardCommand create_card = 3;
-    UpdateCardCommand update_card = 4;
-    MoveCardCommand move_card = 5;
-    DestroyCardCommand destroy_card = 6;
-    UpdatePlayerStateCommand update_player_state = 7;
-    CreateOrUpdateRoomCommand create_or_update_room = 8;
-    DestroyRoomCommand destroy_room = 9;
+    RenderInterfaceCommand render_interface = 1;
+    RenderGameCommand render_game = 2;
+    InitiateRaidCommand initiate_raid = 3;
+    CreateCardCommand create_card = 4;
+    UpdateCardCommand update_card = 5;
+    MoveCardCommand move_card = 6;
+    DestroyCardCommand destroy_card = 7;
+    UpdatePlayerStateCommand update_player_state = 8;
+    CreateOrUpdateRoomCommand create_or_update_room = 9;
+    DestroyRoomCommand destroy_room = 10;
   }
 }
 

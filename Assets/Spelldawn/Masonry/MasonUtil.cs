@@ -25,7 +25,7 @@ namespace Spelldawn.Masonry
 {
   public static class MasonUtil
   {
-    const float ReferenceDpi = 155f;
+    const float ReferenceDpi = 326f;
 
     public static Dimension Dip(float value) => new()
     {
@@ -233,6 +233,19 @@ namespace Spelldawn.Masonry
     public static TimeValue DurationMs(float ms) => new()
     {
       Milliseconds = ms
+    };
+
+    public static ImageSlice ImageSlice(int slice) => ImageSlice(slice, slice);
+
+    public static ImageSlice ImageSlice(int topBottom, int rightLeft) =>
+      ImageSlice(topBottom, rightLeft, topBottom, rightLeft);
+
+    public static ImageSlice ImageSlice(int top, int right, int bottom, int left) => new()
+    {
+      Top = top,
+      Right = right,
+      Bottom = bottom,
+      Left = left
     };
 
     static Node MakeFlexbox(string name, FlexStyle style, params Node?[] children)

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf.Collections;
@@ -40,7 +41,7 @@ namespace Spelldawn.Services
       return (Font)_assets[address.Address];
     }
 
-    public IEnumerator<WaitUntil> LoadAssets(CommandList commandList)
+    public IEnumerator LoadAssets(CommandList commandList)
     {
       var requests = new Dictionary<string, ResourceRequest>();
 
@@ -48,6 +49,9 @@ namespace Spelldawn.Services
       {
         switch (command.CommandCase)
         {
+          case GameCommand.CommandOneofCase.RenderInterface:
+            LoadNodeAssets(requests, command.RenderInterface.Node);
+            break;
           case GameCommand.CommandOneofCase.RenderGame:
             LoadGameAssets(requests, command.RenderGame.Game);
             break;
@@ -93,6 +97,30 @@ namespace Spelldawn.Services
             Debug.LogError($"Null asset for {address}");
           }
         }
+      }
+    }
+
+    void LoadNodeAssets(IDictionary<string, ResourceRequest> requests, Node? node)
+    {
+      if (node != null)
+      {
+        LoadStyleAssets(requests, node.Style);
+        LoadStyleAssets(requests, node.HoverStyle);
+        LoadStyleAssets(requests, node.PressedStyle);
+
+        foreach (var child in node.Children)
+        {
+          LoadNodeAssets(requests, child);
+        }
+      }
+    }
+
+    void LoadStyleAssets(IDictionary<string, ResourceRequest> requests, FlexStyle? style)
+    {
+      if (style != null)
+      {
+        LoadSprite(requests, style.BackgroundImage);
+        LoadFont(requests, style.Font);
       }
     }
 
@@ -214,6 +242,14 @@ namespace Spelldawn.Services
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
         requests[address.Address] = Resources.LoadAsync<Sprite>(address.Address);
+      }
+    }
+
+    void LoadFont(IDictionary<string, ResourceRequest> requests, FontAddress? address)
+    {
+      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+      {
+        requests[address.Address] = Resources.LoadAsync<Font>(address.Address);
       }
     }
   }

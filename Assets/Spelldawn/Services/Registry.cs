@@ -27,15 +27,8 @@ namespace Spelldawn.Services
     public Camera MainCamera => _mainCamera;
     [SerializeField] Camera _mainCamera = null!;
 
-    /// <summary>'Scaled with Screen Size' document for rendering gameplay</summary>
-    public UIDocument GameDocument => _gameDocument;
-
-    [SerializeField] UIDocument _gameDocument = null!;
-
-    /// <summary>'Constant Physical Size' document for rendering gameplay</summary>
-    public UIDocument InterfaceDocument => _interfaceDocument;
-
-    [SerializeField] UIDocument _interfaceDocument = null!;
+    public UIDocument Document => _document;
+    [SerializeField] UIDocument _document = null!;
 
     public AssetService AssetService => _assetService;
     [SerializeField] AssetService _assetService = null!;

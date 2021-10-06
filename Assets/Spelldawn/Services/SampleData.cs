@@ -26,7 +26,8 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     int _lastReturnedCard;
 
-    static readonly string Text1 = @"<sprite name=""hourglass"">, 2<sprite name=""fire"">: Destroy this token. Add another line of text to this card.
+    static readonly string Text1 =
+      @"<sprite name=""hourglass"">, 2<sprite name=""fire"">: Destroy this token. Add another line of text to this card.
 <b><sprite name=""bolt"">Play</b>: Give the Overlord the <u>Shatter</u> ability";
 
     static readonly string Text2 = @"If another item would be destroyed, this item is destroyed instead
@@ -49,7 +50,8 @@ namespace Spelldawn.Services
 • Reveal one card
 ";
 
-    static readonly string Text7 = @"1<sprite name=""fire""> <b>Recurring</b> <i>(Refill up to 1<sprite name=""fire""> each turn)</i>
+    static readonly string Text7 =
+      @"1<sprite name=""fire""> <b>Recurring</b> <i>(Refill up to 1<sprite name=""fire""> each turn)</i>
 Use this <sprite name=""fire""> to pay for using Weapons or equipping Silver items 
 ";
 
@@ -71,13 +73,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     static readonly List<CardView> Cards = new()
     {
       RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21"),
-      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25",
-        "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_blue"),
+      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
       RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13"),
-      RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16",
-        "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_green"),
-      RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_41",
-        "Poneti/4000_Fantasy_Icons/Z_Other/fr_bg/bg_grey"),
+      RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16"),
+      RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42"),
       RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37"),
       RevealedCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40"),
       RevealedCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66"),
@@ -93,6 +92,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Game = SampleGame()
         }
+      }, new GameCommand
+      {
+        RenderInterface = new RenderInterfaceCommand
+        {
+          Node = DebugButtons()
+        }
       });
     }
 
@@ -105,6 +110,35 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           break;
       }
     }
+
+    Node DebugButtons() => Column("Debug", new FlexStyle
+    {
+      FlexGrow = 1,
+      JustifyContent = FlexJustify.Center
+    }, Column("Buttons", new FlexStyle
+    {
+      Margin = LeftDip(ScreenPxToDip(Screen.safeArea.x) + 8),
+      AlignItems = FlexAlign.FlexStart
+    }, Button("Opponent Draw")));
+
+    static Node Button(string label) => Row("Button", new FlexStyle
+    {
+      BackgroundImage = Sprite("Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
+      Margin = TopBottomDip(4),
+      JustifyContent = FlexJustify.Center,
+      AlignItems = FlexAlign.Center,
+      Height = Dip(88),
+      FlexGrow = 0,
+      FlexShrink = 0,
+      ImageSlice = ImageSlice(0, 25)
+    } , Text(label, new FlexStyle
+    {
+      Margin = LeftRightDip(16),
+      Padding = AllDip(0),
+      Color = MakeColor(Color.white),
+      Font = Font("Fonts/Roboto"),
+      FontSize = Dip(36)
+    }));
 
     void DrawCardResponse()
     {
@@ -179,7 +213,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       Deck = new DeckView()
     };
 
-    static CardView RevealedCard(int cardId, string title, string text, string image, string? imageBackground = null) =>
+    static CardView RevealedCard(int cardId, string title, string text, string image) =>
       new()
       {
         CardId = CardId(cardId),
@@ -193,7 +227,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"),
           Jewel = Sprite(
             "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"),
-          ImageBackground = imageBackground is null ? null : Sprite(imageBackground),
           Image = Sprite(image),
           Title = new CardTitle
           {

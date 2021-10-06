@@ -87,7 +87,7 @@ namespace Spelldawn.Services
           case CreateCardPosition.UserDeck:
             AnimateFromDeckToStaging(card);
             break;
-          case CreateCardPosition.Spawn:
+          case CreateCardPosition.Staging:
             card.transform.position = _cardStagingArea.position;
             break;
         }

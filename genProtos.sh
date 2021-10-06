@@ -8,3 +8,4 @@ rm -r -f ./obj
 dotnet clean
 dotnet build
 mv *.cs ../Assets/Spelldawn/Protos
+rm -f *.cs

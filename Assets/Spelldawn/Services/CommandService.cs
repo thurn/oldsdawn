@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using Spelldawn.Masonry;
 using Spelldawn.Protos;
 using UnityEngine;
 
@@ -32,6 +33,9 @@ namespace Spelldawn.Services
       {
         switch (command.CommandCase)
         {
+          case GameCommand.CommandOneofCase.RenderInterface:
+            HandleRenderInterface(command.RenderInterface);
+            break;
           case GameCommand.CommandOneofCase.RenderGame:
             yield return StartCoroutine(HandleRenderGame(command.RenderGame));
             break;
@@ -60,10 +64,20 @@ namespace Spelldawn.Services
       }
     }
 
-    IEnumerator<YieldInstruction> HandleRenderGame(RenderGameCommand renderGameCommand)
+    void HandleRenderInterface(RenderInterfaceCommand command)
+    {
+      var rootElement = _registry.Document.rootVisualElement;
+      rootElement.Clear();
+      if (command.Node != null)
+      {
+        rootElement.Add(Mason.Render(_registry, command.Node));
+      }
+    }
+
+    IEnumerator<YieldInstruction> HandleRenderGame(RenderGameCommand command)
     {
       _registry.CardService.Initialize(
-        renderGameCommand.Game?.User?.PlayerInfo?.IdentityCard);
+        command.Game?.User?.PlayerInfo?.IdentityCard);
       yield break;
     }
   }
