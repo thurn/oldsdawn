@@ -24,9 +24,26 @@ namespace Spelldawn.Services
   public sealed class CommandService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
+    bool _currentlyHandling;
+    readonly Queue<CommandList> _queue = new();
 
-    public IEnumerator<YieldInstruction> HandleCommands(CommandList commandList)
+    public void HandleCommands(CommandList commandList)
     {
+      _queue.Enqueue(commandList);
+    }
+
+    void Update()
+    {
+      if (_queue.Count > 0 && !_currentlyHandling)
+      {
+        StartCoroutine(HandleCommandsAsync(_queue.Dequeue()));
+      }
+    }
+
+    IEnumerator<YieldInstruction> HandleCommandsAsync(CommandList commandList)
+    {
+      _currentlyHandling = true;
+
       yield return StartCoroutine(_registry.AssetService.LoadAssets(commandList));
 
       foreach (var command in commandList.Commands)
@@ -62,6 +79,8 @@ namespace Spelldawn.Services
             break;
         }
       }
+
+      _currentlyHandling = false;
     }
 
     void HandleRenderInterface(RenderInterfaceCommand command)

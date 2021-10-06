@@ -90,9 +90,12 @@ namespace Spelldawn.Services
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
         switch (command.Position)
         {
-          case CreateCardPosition.UserDeck:
+          case CreateCardPosition.UserDeckToStaging:
             AnimateFromDeckToStaging(card);
             waitForStaging = true;
+            break;
+          case CreateCardPosition.UserDeck:
+            card.transform.position = DeckSpawnPosition(PlayerName.User);
             break;
           case CreateCardPosition.OpponentDeck:
             card.transform.position = DeckSpawnPosition(PlayerName.Opponent);

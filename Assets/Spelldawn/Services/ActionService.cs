@@ -44,7 +44,7 @@ namespace Spelldawn.Services
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.DebugAction:
-          StartCoroutine(_registry.CommandService.HandleCommands(action.DebugAction.CommandList.Unpack<CommandList>()));
+          _registry.CommandService.HandleCommands(action.DebugAction.CommandList.Unpack<CommandList>());
           break;
         case GameAction.ActionOneofCase.DrawCard:
           _registry.CardService.DrawOptimisticCard();

@@ -94,6 +94,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Game = SampleGame()
         }
       });
+
+      for (var i = 0; i < 6; ++i)
+      {
+        DrawUserCard(directToHand: true);
+        DrawOpponentCard();
+      }
     }
 
     void Update()
@@ -109,12 +115,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.DrawCard:
-          DrawCardResponse();
+          DrawUserCard();
           break;
       }
     }
 
-    void DrawCardResponse()
+    void DrawUserCard(bool directToHand = false)
     {
       var card = Card();
       HandleCommands(new GameCommand
@@ -122,7 +128,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         CreateCard = new CreateCardCommand
         {
           Card = card,
-          Position = CreateCardPosition.UserDeck
+          Position = directToHand ? CreateCardPosition.UserDeck : CreateCardPosition.UserDeckToStaging
         }
       }, new GameCommand
       {
@@ -164,7 +170,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       var list = new CommandList();
       list.Commands.AddRange(commands);
-      StartCoroutine(_registry.CommandService.HandleCommands(list));
+      _registry.CommandService.HandleCommands(list);
     }
 
     CardView Card() => Cards[_lastReturnedCard++ % 10];

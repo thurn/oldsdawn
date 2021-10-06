@@ -55,15 +55,16 @@ namespace Spelldawn.Protos {
             "ChVjcmVhdGVfb3JfdXBkYXRlX3Jvb20YCSABKAsyHS5zZC5DcmVhdGVPclVw",
             "ZGF0ZVJvb21Db21tYW5kSAASLgoMZGVzdHJveV9yb29tGAogASgLMhYuc2Qu",
             "RGVzdHJveVJvb21Db21tYW5kSABCCQoHY29tbWFuZCIwCgtDb21tYW5kTGlz",
-            "dBIhCghjb21tYW5kcxgBIAMoCzIPLnNkLkdhbWVDb21tYW5kKqgBChJDcmVh",
+            "dBIhCghjb21tYW5kcxgBIAMoCzIPLnNkLkdhbWVDb21tYW5kKtcBChJDcmVh",
             "dGVDYXJkUG9zaXRpb24SJAogQ1JFQVRFX0NBUkRfUE9TSVRJT05fVU5TUEVD",
-            "SUZJRUQQABIiCh5DUkVBVEVfQ0FSRF9QT1NJVElPTl9VU0VSX0RFQ0sQARIm",
-            "CiJDUkVBVEVfQ0FSRF9QT1NJVElPTl9PUFBPTkVOVF9ERUNLEAISIAocQ1JF",
-            "QVRFX0NBUkRfUE9TSVRJT05fU1RBR0lORxADKpEBCghHYW1lWm9uZRIZChVH",
-            "QU1FX1pPTkVfVU5TUEVDSUZJRUQQABISCg5HQU1FX1pPTkVfSEFORBABEhMK",
-            "D0dBTUVfWk9ORV9BUkVOQRACEhIKDkdBTUVfWk9ORV9ERUNLEAMSFQoRR0FN",
-            "RV9aT05FX0RJU0NBUkQQBBIWChJHQU1FX1pPTkVfQkFOSVNIRUQQBUITqgIQ",
-            "U3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
+            "SUZJRUQQABItCilDUkVBVEVfQ0FSRF9QT1NJVElPTl9VU0VSX0RFQ0tfVE9f",
+            "U1RBR0lORxABEiIKHkNSRUFURV9DQVJEX1BPU0lUSU9OX1VTRVJfREVDSxAC",
+            "EiYKIkNSRUFURV9DQVJEX1BPU0lUSU9OX09QUE9ORU5UX0RFQ0sQAxIgChxD",
+            "UkVBVEVfQ0FSRF9QT1NJVElPTl9TVEFHSU5HEAQqkQEKCEdhbWVab25lEhkK",
+            "FUdBTUVfWk9ORV9VTlNQRUNJRklFRBAAEhIKDkdBTUVfWk9ORV9IQU5EEAES",
+            "EwoPR0FNRV9aT05FX0FSRU5BEAISEgoOR0FNRV9aT05FX0RFQ0sQAxIVChFH",
+            "QU1FX1pPTkVfRElTQ0FSRBAEEhYKEkdBTUVfWk9ORV9CQU5JU0hFRBAFQhOq",
+            "AhBTcGVsbGRhd24uUHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, global::Spelldawn.Protos.GameViewReflection.Descriptor, global::Spelldawn.Protos.MasonryReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CreateCardPosition), typeof(global::Spelldawn.Protos.GameZone), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -99,13 +100,14 @@ namespace Spelldawn.Protos {
     ///
     /// If an optimistic card has already been created, that card is used instead.
     /// </summary>
-    [pbr::OriginalName("CREATE_CARD_POSITION_USER_DECK")] UserDeck = 1,
-    [pbr::OriginalName("CREATE_CARD_POSITION_OPPONENT_DECK")] OpponentDeck = 2,
+    [pbr::OriginalName("CREATE_CARD_POSITION_USER_DECK_TO_STAGING")] UserDeckToStaging = 1,
+    [pbr::OriginalName("CREATE_CARD_POSITION_USER_DECK")] UserDeck = 2,
+    [pbr::OriginalName("CREATE_CARD_POSITION_OPPONENT_DECK")] OpponentDeck = 3,
     /// <summary>
     ///*
     /// Creates a card in the staging area.
     /// </summary>
-    [pbr::OriginalName("CREATE_CARD_POSITION_STAGING")] Staging = 3,
+    [pbr::OriginalName("CREATE_CARD_POSITION_STAGING")] Staging = 4,
   }
 
   public enum GameZone {

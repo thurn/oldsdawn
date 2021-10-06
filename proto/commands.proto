@@ -55,14 +55,16 @@ enum CreateCardPosition {
    *
    * If an optimistic card has already been created, that card is used instead.
    */
-  CREATE_CARD_POSITION_USER_DECK = 1;
+  CREATE_CARD_POSITION_USER_DECK_TO_STAGING = 1;
 
-  CREATE_CARD_POSITION_OPPONENT_DECK = 2;
+  CREATE_CARD_POSITION_USER_DECK = 2;
+
+  CREATE_CARD_POSITION_OPPONENT_DECK = 3;
 
   /**
    * Creates a card in the staging area.
    */
-  CREATE_CARD_POSITION_STAGING = 3;
+  CREATE_CARD_POSITION_STAGING = 4;
 }
 
 /**
