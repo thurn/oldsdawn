@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using UnityEngine;
@@ -53,10 +52,12 @@ namespace Spelldawn.Services
 
     [SerializeField] Hand _userHand = null!;
     [SerializeField] Hand _opponentHand = null!;
+
     public Hand HandForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
 
     [SerializeField] Deck _userDeck = null!;
     [SerializeField] Deck _opponentDeck = null!;
+
     public Deck DeckForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userDeck : _opponentDeck;
 
     [SerializeField] Transform _cardStagingArea = null!;
@@ -67,5 +68,11 @@ namespace Spelldawn.Services
 
     public ManaDisplay ManaDisplayForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userManaDisplay : _opponentManaDisplay;
+
+    [SerializeField] ActionDisplay _userActionDisplay = null!;
+    [SerializeField] ActionDisplay _opponentActionDisplay = null!;
+
+    public ActionDisplay ActionDisplayForPlayer(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userActionDisplay : _opponentActionDisplay;
   }
 }

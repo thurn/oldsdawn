@@ -25,78 +25,86 @@ namespace Spelldawn.Protos {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Cg9nYW1lX3ZpZXcucHJvdG8SAnNkGg1tYXNvbnJ5LnByb3RvGhVnYW1lX3By",
-            "aW1pdGl2ZXMucHJvdG8iVwoIQ2FyZEljb24SJQoKYmFja2dyb3VuZBgBIAEo",
-            "CzIRLnNkLlNwcml0ZUFkZHJlc3MSDAoEdGV4dBgCIAEoCRIWCg5zaG93bl9p",
-            "bl9hcmVuYRgDIAEoCCLKAQoJQ2FyZEljb25zEiMKDXRvcF9sZWZ0X2ljb24Y",
-            "DCABKAsyDC5zZC5DYXJkSWNvbhIkCg50b3BfcmlnaHRfaWNvbhgNIAEoCzIM",
-            "LnNkLkNhcmRJY29uEicKEWJvdHRvbV9yaWdodF9pY29uGA4gASgLMgwuc2Qu",
-            "Q2FyZEljb24SJgoQYm90dG9tX2xlZnRfaWNvbhgPIAEoCzIMLnNkLkNhcmRJ",
-            "Y29uEiEKC2NlbnRlcl9pY29uGBAgASgLMgwuc2QuQ2FyZEljb24iGQoJQ2Fy",
-            "ZFRpdGxlEgwKBHRleHQYASABKAkiGQoJUnVsZXNUZXh0EgwKBHRleHQYASAB",
-            "KAkiLwoMVmFsaWRUYXJnZXRzEh8KB3RhcmdldHMYASADKAsyDi5zZC5DYXJk",
-            "VGFyZ2V0IicKClZhbGlkUm9vbXMSGQoFcm9vbXMYAiADKAsyCi5zZC5Sb29t",
-            "SWQiDAoKUGxheUFzSXRlbSIPCg1Bd2FpdFJlc3BvbnNlIsIBCg1DYXJkVGFy",
-            "Z2V0aW5nEicKC3BpY2tfdGFyZ2V0GAEgASgLMhAuc2QuVmFsaWRUYXJnZXRz",
-            "SAASJgoMcGxheV9pbl9yb29tGAIgASgLMg4uc2QuVmFsaWRSb29tc0gAEiYK",
-            "DHBsYXlfYXNfaXRlbRgDIAEoCzIOLnNkLlBsYXlBc0l0ZW1IABIrCg5hd2Fp",
-            "dF9yZXNwb25zZRgEIAEoCzIRLnNkLkF3YWl0UmVzcG9uc2VIAEILCgl0YXJn",
-            "ZXRpbmciUQoIQ2FyZENvc3QSHQoIY2FuX3BsYXkYASABKA4yCy5zZC5DYW5Q",
-            "bGF5EhEKCW1hbmFfY29zdBgCIAEoBRITCgthY3Rpb25fY29zdBgDIAEoBSLa",
-            "AgoQUmV2ZWFsZWRDYXJkVmlldxIlCgpjYXJkX2ZyYW1lGAEgASgLMhEuc2Qu",
-            "U3ByaXRlQWRkcmVzcxIrChB0aXRsZV9iYWNrZ3JvdW5kGAIgASgLMhEuc2Qu",
-            "U3ByaXRlQWRkcmVzcxIgCgVqZXdlbBgDIAEoCzIRLnNkLlNwcml0ZUFkZHJl",
-            "c3MSKwoQaW1hZ2VfYmFja2dyb3VuZBgEIAEoCzIRLnNkLlNwcml0ZUFkZHJl",
-            "c3MSIAoFaW1hZ2UYBSABKAsyES5zZC5TcHJpdGVBZGRyZXNzEhwKBXRpdGxl",
-            "GAYgASgLMg0uc2QuQ2FyZFRpdGxlEiEKCnJ1bGVzX3RleHQYByABKAsyDS5z",
-            "ZC5SdWxlc1RleHQSJAoJdGFyZ2V0aW5nGAggASgLMhEuc2QuQ2FyZFRhcmdl",
-            "dGluZxIaCgRjb3N0GAkgASgLMgwuc2QuQ2FyZENvc3Qi8AEKCENhcmRWaWV3",
-            "EhsKB2NhcmRfaWQYASABKAsyCi5zZC5DYXJkSWQSKQoOYXJlbmFfcG9zaXRp",
-            "b24YAiABKA4yES5zZC5BcmVuYVBvc2l0aW9uEiQKCWNhcmRfYmFjaxgDIAEo",
-            "CzIRLnNkLlNwcml0ZUFkZHJlc3MSIQoKY2FyZF9pY29ucxgEIAEoCzINLnNk",
-            "LkNhcmRJY29ucxImCgthcmVuYV9mcmFtZRgFIAEoCzIRLnNkLlNwcml0ZUFk",
-            "ZHJlc3MSKwoNcmV2ZWFsZWRfY2FyZBgGIAEoCzIULnNkLlJldmVhbGVkQ2Fy",
-            "ZFZpZXciJwoISGFuZFZpZXcSGwoFY2FyZHMYASADKAsyDC5zZC5DYXJkVmll",
-            "dyIuCg9EaXNjYXJkUGlsZVZpZXcSGwoFY2FyZHMYASADKAsyDC5zZC5DYXJk",
-            "VmlldyJkCgpQbGF5ZXJJbmZvEgwKBG5hbWUYASABKAkSIwoIcG9ydHJhaXQY",
-            "AiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiMKDWlkZW50aXR5X2NhcmQYAyAB",
-            "KAsyDC5zZC5DYXJkVmlldyIaCghNYW5hVmlldxIOCgZhbW91bnQYASABKAUi",
-            "PgoJU2NvcmVWaWV3Eg0KBXNjb3JlGAEgASgFEiIKDHNjb3JlZF9jYXJkcxgC",
-            "IAMoCzIMLnNkLkNhcmRWaWV3IjAKCFJvb21JbmZvEiQKCXJvb21faWNvbhgB",
-            "IAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MiZQoIUm9vbVZpZXcSGwoHcm9vbV9p",
-            "ZBgBIAEoCzIKLnNkLlJvb21JZBIfCglyb29tX2luZm8YAiABKAsyDC5zZC5S",
-            "b29tSW5mbxIbCgVjYXJkcxgDIAMoCzIMLnNkLkNhcmRWaWV3ImMKCUFyZW5h",
-            "VmlldxIcChRvdmVybG9yZF9wZXJzcGVjdGl2ZRgBIAEoCBIbCgVyb29tcxgC",
-            "IAMoCzIMLnNkLlJvb21WaWV3EhsKBWl0ZW1zGAMgAygLMgwuc2QuQ2FyZFZp",
-            "ZXciMwoRQWN0aW9uVHJhY2tlclZpZXcSHgoWYXZhaWxhYmxlX2FjdGlvbl9j",
-            "b3VudBgBIAEoBSIKCghEZWNrVmlldyL9AQoKUGxheWVyVmlldxIjCgtwbGF5",
-            "ZXJfaW5mbxgBIAEoCzIOLnNkLlBsYXllckluZm8SHAoFc2NvcmUYAiABKAsy",
-            "DS5zZC5TY29yZVZpZXcSGgoEaGFuZBgDIAEoCzIMLnNkLkhhbmRWaWV3EhoK",
-            "BG1hbmEYBCABKAsyDC5zZC5NYW5hVmlldxIpCgxkaXNjYXJkX3BpbGUYBSAB",
-            "KAsyEy5zZC5EaXNjYXJkUGlsZVZpZXcSLQoOYWN0aW9uX3RyYWNrZXIYBiAB",
-            "KAsyFS5zZC5BY3Rpb25UcmFja2VyVmlldxIaCgRkZWNrGAcgASgLMgwuc2Qu",
-            "RGVja1ZpZXciaAoIR2FtZVZpZXcSHAoEdXNlchgBIAEoCzIOLnNkLlBsYXll",
-            "clZpZXcSIAoIb3Bwb25lbnQYAiABKAsyDi5zZC5QbGF5ZXJWaWV3EhwKBWFy",
-            "ZW5hGAMgASgLMg0uc2QuQXJlbmFWaWV3KlwKB0NhblBsYXkSGAoUQ0FOX1BM",
-            "QVlfVU5TUEVDSUZJRUQQABIUChBDQU5fUExBWV9ERUZBVUxUEAESDwoLQ0FO",
-            "X1BMQVlfTk8QAhIQCgxDQU5fUExBWV9ZRVMQAyrNAQoNQXJlbmFQb3NpdGlv",
-            "bhIeChpBUkVOQV9QT1NJVElPTl9VTlNQRUNJRklFRBAAEhoKFkFSRU5BX1BP",
-            "U0lUSU9OX0lOX1JPT00QARIgChxBUkVOQV9QT1NJVElPTl9ST09NX0RFRkVO",
-            "REVSEAISHQoZQVJFTkFfUE9TSVRJT05fSVRFTVNfTEVGVBADEh8KG0FSRU5B",
-            "X1BPU0lUSU9OX0lURU1TX0NFTlRFUhAEEh4KGkFSRU5BX1BPU0lUSU9OX0lU",
-            "RU1TX1JJR0hUEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
+            "aW1pdGl2ZXMucHJvdG8iVgoIQ2FyZEljb24SJQoKYmFja2dyb3VuZBgBIAEo",
+            "CzIRLnNkLlNwcml0ZUFkZHJlc3MSDAoEdGV4dBgCIAEoCRIVCg1zaG93X2lu",
+            "X2FyZW5hGAMgASgIIsoBCglDYXJkSWNvbnMSIwoNdG9wX2xlZnRfaWNvbhgB",
+            "IAEoCzIMLnNkLkNhcmRJY29uEiQKDnRvcF9yaWdodF9pY29uGAIgASgLMgwu",
+            "c2QuQ2FyZEljb24SJwoRYm90dG9tX3JpZ2h0X2ljb24YAyABKAsyDC5zZC5D",
+            "YXJkSWNvbhImChBib3R0b21fbGVmdF9pY29uGAQgASgLMgwuc2QuQ2FyZElj",
+            "b24SIQoLY2VudGVyX2ljb24YBSABKAsyDC5zZC5DYXJkSWNvbiIZCglDYXJk",
+            "VGl0bGUSDAoEdGV4dBgBIAEoCSIZCglSdWxlc1RleHQSDAoEdGV4dBgBIAEo",
+            "CSIzCgpQaWNrVGFyZ2V0EiUKDXZhbGlkX3RhcmdldHMYASADKAsyDi5zZC5D",
+            "YXJkVGFyZ2V0Ii0KClBsYXlJblJvb20SHwoLdmFsaWRfcm9vbXMYAiADKAsy",
+            "Ci5zZC5Sb29tSWQiDAoKUGxheUFzSXRlbSIPCg1Bd2FpdFJlc3BvbnNlIsAB",
+            "Cg1DYXJkVGFyZ2V0aW5nEiUKC3BpY2tfdGFyZ2V0GAEgASgLMg4uc2QuUGlj",
+            "a1RhcmdldEgAEiYKDHBsYXlfaW5fcm9vbRgCIAEoCzIOLnNkLlBsYXlJblJv",
+            "b21IABImCgxwbGF5X2FzX2l0ZW0YAyABKAsyDi5zZC5QbGF5QXNJdGVtSAAS",
+            "KwoOYXdhaXRfcmVzcG9uc2UYBCABKAsyES5zZC5Bd2FpdFJlc3BvbnNlSABC",
+            "CwoJdGFyZ2V0aW5nIqwBCghDYXJkQ29zdBIRCgltYW5hX2Nvc3QYASABKAUS",
+            "EwoLYWN0aW9uX2Nvc3QYAiABKAUSEAoIY2FuX3BsYXkYAyABKAgSMAoSY2Fu",
+            "X3BsYXlfYWxnb3JpdGhtGAQgASgOMhQuc2QuQ2FuUGxheUFsZ29yaXRobRI0",
+            "ChRzcGVuZF9jb3N0X2FsZ29yaXRobRgFIAEoDjIWLnNkLlNwZW5kQ29zdEFs",
+            "Z29yaXRobSLaAgoQUmV2ZWFsZWRDYXJkVmlldxIlCgpjYXJkX2ZyYW1lGAEg",
+            "ASgLMhEuc2QuU3ByaXRlQWRkcmVzcxIrChB0aXRsZV9iYWNrZ3JvdW5kGAIg",
+            "ASgLMhEuc2QuU3ByaXRlQWRkcmVzcxIgCgVqZXdlbBgDIAEoCzIRLnNkLlNw",
+            "cml0ZUFkZHJlc3MSKwoQaW1hZ2VfYmFja2dyb3VuZBgEIAEoCzIRLnNkLlNw",
+            "cml0ZUFkZHJlc3MSIAoFaW1hZ2UYBSABKAsyES5zZC5TcHJpdGVBZGRyZXNz",
+            "EhwKBXRpdGxlGAYgASgLMg0uc2QuQ2FyZFRpdGxlEiEKCnJ1bGVzX3RleHQY",
+            "ByABKAsyDS5zZC5SdWxlc1RleHQSJAoJdGFyZ2V0aW5nGAggASgLMhEuc2Qu",
+            "Q2FyZFRhcmdldGluZxIaCgRjb3N0GAkgASgLMgwuc2QuQ2FyZENvc3Qi8AEK",
+            "CENhcmRWaWV3EhsKB2NhcmRfaWQYASABKAsyCi5zZC5DYXJkSWQSKQoOYXJl",
+            "bmFfcG9zaXRpb24YAiABKA4yES5zZC5BcmVuYVBvc2l0aW9uEiQKCWNhcmRf",
+            "YmFjaxgDIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MSIQoKY2FyZF9pY29ucxgE",
+            "IAEoCzINLnNkLkNhcmRJY29ucxImCgthcmVuYV9mcmFtZRgFIAEoCzIRLnNk",
+            "LlNwcml0ZUFkZHJlc3MSKwoNcmV2ZWFsZWRfY2FyZBgGIAEoCzIULnNkLlJl",
+            "dmVhbGVkQ2FyZFZpZXciJwoISGFuZFZpZXcSGwoFY2FyZHMYASADKAsyDC5z",
+            "ZC5DYXJkVmlldyIuCg9EaXNjYXJkUGlsZVZpZXcSGwoFY2FyZHMYASADKAsy",
+            "DC5zZC5DYXJkVmlldyJkCgpQbGF5ZXJJbmZvEgwKBG5hbWUYASABKAkSIwoI",
+            "cG9ydHJhaXQYAiABKAsyES5zZC5TcHJpdGVBZGRyZXNzEiMKDWlkZW50aXR5",
+            "X2NhcmQYAyABKAsyDC5zZC5DYXJkVmlldyIaCghNYW5hVmlldxIOCgZhbW91",
+            "bnQYASABKAUiPgoJU2NvcmVWaWV3Eg0KBXNjb3JlGAEgASgFEiIKDHNjb3Jl",
+            "ZF9jYXJkcxgCIAMoCzIMLnNkLkNhcmRWaWV3IjAKCFJvb21JbmZvEiQKCXJv",
+            "b21faWNvbhgBIAEoCzIRLnNkLlNwcml0ZUFkZHJlc3MiZQoIUm9vbVZpZXcS",
+            "GwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZBIfCglyb29tX2luZm8YAiAB",
+            "KAsyDC5zZC5Sb29tSW5mbxIbCgVjYXJkcxgDIAMoCzIMLnNkLkNhcmRWaWV3",
+            "ImMKCUFyZW5hVmlldxIcChRvdmVybG9yZF9wZXJzcGVjdGl2ZRgBIAEoCBIb",
+            "CgVyb29tcxgCIAMoCzIMLnNkLlJvb21WaWV3EhsKBWl0ZW1zGAMgAygLMgwu",
+            "c2QuQ2FyZFZpZXciMwoRQWN0aW9uVHJhY2tlclZpZXcSHgoWYXZhaWxhYmxl",
+            "X2FjdGlvbl9jb3VudBgBIAEoBSIKCghEZWNrVmlldyL9AQoKUGxheWVyVmll",
+            "dxIjCgtwbGF5ZXJfaW5mbxgBIAEoCzIOLnNkLlBsYXllckluZm8SHAoFc2Nv",
+            "cmUYAiABKAsyDS5zZC5TY29yZVZpZXcSGgoEaGFuZBgDIAEoCzIMLnNkLkhh",
+            "bmRWaWV3EhoKBG1hbmEYBCABKAsyDC5zZC5NYW5hVmlldxIpCgxkaXNjYXJk",
+            "X3BpbGUYBSABKAsyEy5zZC5EaXNjYXJkUGlsZVZpZXcSLQoOYWN0aW9uX3Ry",
+            "YWNrZXIYBiABKAsyFS5zZC5BY3Rpb25UcmFja2VyVmlldxIaCgRkZWNrGAcg",
+            "ASgLMgwuc2QuRGVja1ZpZXciaAoIR2FtZVZpZXcSHAoEdXNlchgBIAEoCzIO",
+            "LnNkLlBsYXllclZpZXcSIAoIb3Bwb25lbnQYAiABKAsyDi5zZC5QbGF5ZXJW",
+            "aWV3EhwKBWFyZW5hGAMgASgLMg0uc2QuQXJlbmFWaWV3KssBChBDYW5QbGF5",
+            "QWxnb3JpdGhtEiIKHkNBTl9QTEFZX0FMR09SSVRITV9VTlNQRUNJRklFRBAA",
+            "EiEKHUNBTl9QTEFZX0FMR09SSVRITV9PUFRJTUlTVElDEAESJgoiQ0FOX1BM",
+            "QVlfQUxHT1JJVEhNX0FERElUSU9OQUxfQ09TVBACEiYKIkNBTl9QTEFZX0FM",
+            "R09SSVRITV9BRERJVElPTkFMX1BMQVkQAxIgChxDQU5fUExBWV9BTEdPUklU",
+            "SE1fTk9fVVBEQVRFEAQqgwEKElNwZW5kQ29zdEFsZ29yaXRobRIkCiBTUEVO",
+            "RF9DT1NUX0FMR09SSVRITV9VTlNQRUNJRklFRBAAEiMKH1NQRU5EX0NPU1Rf",
+            "QUxHT1JJVEhNX09QVElNSVNUSUMQARIiCh5TUEVORF9DT1NUX0FMR09SSVRI",
+            "TV9OT19VUERBVEUQAirNAQoNQXJlbmFQb3NpdGlvbhIeChpBUkVOQV9QT1NJ",
+            "VElPTl9VTlNQRUNJRklFRBAAEhoKFkFSRU5BX1BPU0lUSU9OX0lOX1JPT00Q",
+            "ARIgChxBUkVOQV9QT1NJVElPTl9ST09NX0RFRkVOREVSEAISHQoZQVJFTkFf",
+            "UE9TSVRJT05fSVRFTVNfTEVGVBADEh8KG0FSRU5BX1BPU0lUSU9OX0lURU1T",
+            "X0NFTlRFUhAEEh4KGkFSRU5BX1BPU0lUSU9OX0lURU1TX1JJR0hUEAVCE6oC",
+            "EFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.MasonryReflection.Descriptor, global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CanPlay), typeof(global::Spelldawn.Protos.ArenaPosition), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardIcon), global::Spelldawn.Protos.CardIcon.Parser, new[]{ "Background", "Text", "ShownInArena" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CanPlayAlgorithm), typeof(global::Spelldawn.Protos.SpendCostAlgorithm), typeof(global::Spelldawn.Protos.ArenaPosition), }, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardIcon), global::Spelldawn.Protos.CardIcon.Parser, new[]{ "Background", "Text", "ShowInArena" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardIcons), global::Spelldawn.Protos.CardIcons.Parser, new[]{ "TopLeftIcon", "TopRightIcon", "BottomRightIcon", "BottomLeftIcon", "CenterIcon" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardTitle), global::Spelldawn.Protos.CardTitle.Parser, new[]{ "Text" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RulesText), global::Spelldawn.Protos.RulesText.Parser, new[]{ "Text" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ValidTargets), global::Spelldawn.Protos.ValidTargets.Parser, new[]{ "Targets" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ValidRooms), global::Spelldawn.Protos.ValidRooms.Parser, new[]{ "Rooms" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PickTarget), global::Spelldawn.Protos.PickTarget.Parser, new[]{ "ValidTargets" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayInRoom), global::Spelldawn.Protos.PlayInRoom.Parser, new[]{ "ValidRooms" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayAsItem), global::Spelldawn.Protos.PlayAsItem.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.AwaitResponse), global::Spelldawn.Protos.AwaitResponse.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardTargeting), global::Spelldawn.Protos.CardTargeting.Parser, new[]{ "PickTarget", "PlayInRoom", "PlayAsItem", "AwaitResponse" }, new[]{ "Targeting" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardCost), global::Spelldawn.Protos.CardCost.Parser, new[]{ "CanPlay", "ManaCost", "ActionCost" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardCost), global::Spelldawn.Protos.CardCost.Parser, new[]{ "ManaCost", "ActionCost", "CanPlay", "CanPlayAlgorithm", "SpendCostAlgorithm" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RevealedCardView), global::Spelldawn.Protos.RevealedCardView.Parser, new[]{ "CardFrame", "TitleBackground", "Jewel", "ImageBackground", "Image", "Title", "RulesText", "Targeting", "Cost" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardView), global::Spelldawn.Protos.CardView.Parser, new[]{ "CardId", "ArenaPosition", "CardBack", "CardIcons", "ArenaFrame", "RevealedCard" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.HandView), global::Spelldawn.Protos.HandView.Parser, new[]{ "Cards" }, null, null, null, null),
@@ -117,23 +125,46 @@ namespace Spelldawn.Protos {
 
   }
   #region Enums
-  /// <summary>
-  ///* How to determine whether the card can be played. 
-  /// </summary>
-  public enum CanPlay {
-    [pbr::OriginalName("CAN_PLAY_UNSPECIFIED")] Unspecified = 0,
+  public enum CanPlayAlgorithm {
+    [pbr::OriginalName("CAN_PLAY_ALGORITHM_UNSPECIFIED")] Unspecified = 0,
     /// <summary>
-    ///* The card can be played if mana &amp; actions are available. 
+    ///*
+    /// Always update the 'can_play' state automatically based on available mana
+    /// and actions.
     /// </summary>
-    [pbr::OriginalName("CAN_PLAY_DEFAULT")] Default = 1,
+    [pbr::OriginalName("CAN_PLAY_ALGORITHM_OPTIMISTIC")] Optimistic = 1,
     /// <summary>
-    ///* Never display this card optimistically as a valid play 
+    ///*
+    /// 'Optimistic False' algorithm for cards with an additional cost. Will
+    /// transition the 'can_play' state to false based on available mana and
+    /// actions, but not to true.
     /// </summary>
-    [pbr::OriginalName("CAN_PLAY_NO")] No = 2,
+    [pbr::OriginalName("CAN_PLAY_ALGORITHM_ADDITIONAL_COST")] AdditionalCost = 2,
     /// <summary>
-    ///* Always display this card optimistically as a valid play 
+    ///*
+    /// 'Optimistic True' algorithm, for cards which can always be played for
+    /// their normal cost, but have other valid play windows as well. Will
+    /// transition the 'can_play' state to true based on available mana and
+    /// actions, but not to false.
     /// </summary>
-    [pbr::OriginalName("CAN_PLAY_YES")] Yes = 3,
+    [pbr::OriginalName("CAN_PLAY_ALGORITHM_ADDITIONAL_PLAY")] AdditionalPlay = 3,
+    /// <summary>
+    ///*
+    /// Do not transition the 'can_play' state automatically
+    /// </summary>
+    [pbr::OriginalName("CAN_PLAY_ALGORITHM_NO_UPDATE")] NoUpdate = 4,
+  }
+
+  public enum SpendCostAlgorithm {
+    [pbr::OriginalName("SPEND_COST_ALGORITHM_UNSPECIFIED")] Unspecified = 0,
+    /// <summary>
+    ///* Deduct the mana &amp; action cost immediately when this card is played. 
+    /// </summary>
+    [pbr::OriginalName("SPEND_COST_ALGORITHM_OPTIMISTIC")] Optimistic = 1,
+    /// <summary>
+    ///* Do not modify mana &amp; action values when this card is played. 
+    /// </summary>
+    [pbr::OriginalName("SPEND_COST_ALGORITHM_NO_UPDATE")] NoUpdate = 2,
   }
 
   /// <summary>
@@ -182,7 +213,7 @@ namespace Spelldawn.Protos {
     public CardIcon(CardIcon other) : this() {
       background_ = other.background_ != null ? other.background_.Clone() : null;
       text_ = other.text_;
-      shownInArena_ = other.shownInArena_;
+      showInArena_ = other.showInArena_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -213,14 +244,14 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "shown_in_arena" field.</summary>
-    public const int ShownInArenaFieldNumber = 3;
-    private bool shownInArena_;
+    /// <summary>Field number for the "show_in_arena" field.</summary>
+    public const int ShowInArenaFieldNumber = 3;
+    private bool showInArena_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool ShownInArena {
-      get { return shownInArena_; }
+    public bool ShowInArena {
+      get { return showInArena_; }
       set {
-        shownInArena_ = value;
+        showInArena_ = value;
       }
     }
 
@@ -239,7 +270,7 @@ namespace Spelldawn.Protos {
       }
       if (!object.Equals(Background, other.Background)) return false;
       if (Text != other.Text) return false;
-      if (ShownInArena != other.ShownInArena) return false;
+      if (ShowInArena != other.ShowInArena) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -248,7 +279,7 @@ namespace Spelldawn.Protos {
       int hash = 1;
       if (background_ != null) hash ^= Background.GetHashCode();
       if (Text.Length != 0) hash ^= Text.GetHashCode();
-      if (ShownInArena != false) hash ^= ShownInArena.GetHashCode();
+      if (ShowInArena != false) hash ^= ShowInArena.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -273,9 +304,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(18);
         output.WriteString(Text);
       }
-      if (ShownInArena != false) {
+      if (ShowInArena != false) {
         output.WriteRawTag(24);
-        output.WriteBool(ShownInArena);
+        output.WriteBool(ShowInArena);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -294,9 +325,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(18);
         output.WriteString(Text);
       }
-      if (ShownInArena != false) {
+      if (ShowInArena != false) {
         output.WriteRawTag(24);
-        output.WriteBool(ShownInArena);
+        output.WriteBool(ShowInArena);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -313,7 +344,7 @@ namespace Spelldawn.Protos {
       if (Text.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Text);
       }
-      if (ShownInArena != false) {
+      if (ShowInArena != false) {
         size += 1 + 1;
       }
       if (_unknownFields != null) {
@@ -336,8 +367,8 @@ namespace Spelldawn.Protos {
       if (other.Text.Length != 0) {
         Text = other.Text;
       }
-      if (other.ShownInArena != false) {
-        ShownInArena = other.ShownInArena;
+      if (other.ShowInArena != false) {
+        ShowInArena = other.ShowInArena;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -365,7 +396,7 @@ namespace Spelldawn.Protos {
             break;
           }
           case 24: {
-            ShownInArena = input.ReadBool();
+            ShowInArena = input.ReadBool();
             break;
           }
         }
@@ -394,7 +425,7 @@ namespace Spelldawn.Protos {
             break;
           }
           case 24: {
-            ShownInArena = input.ReadBool();
+            ShowInArena = input.ReadBool();
             break;
           }
         }
@@ -447,7 +478,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "top_left_icon" field.</summary>
-    public const int TopLeftIconFieldNumber = 12;
+    public const int TopLeftIconFieldNumber = 1;
     private global::Spelldawn.Protos.CardIcon topLeftIcon_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardIcon TopLeftIcon {
@@ -458,7 +489,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "top_right_icon" field.</summary>
-    public const int TopRightIconFieldNumber = 13;
+    public const int TopRightIconFieldNumber = 2;
     private global::Spelldawn.Protos.CardIcon topRightIcon_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardIcon TopRightIcon {
@@ -469,7 +500,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "bottom_right_icon" field.</summary>
-    public const int BottomRightIconFieldNumber = 14;
+    public const int BottomRightIconFieldNumber = 3;
     private global::Spelldawn.Protos.CardIcon bottomRightIcon_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardIcon BottomRightIcon {
@@ -480,7 +511,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "bottom_left_icon" field.</summary>
-    public const int BottomLeftIconFieldNumber = 15;
+    public const int BottomLeftIconFieldNumber = 4;
     private global::Spelldawn.Protos.CardIcon bottomLeftIcon_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardIcon BottomLeftIcon {
@@ -491,7 +522,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "center_icon" field.</summary>
-    public const int CenterIconFieldNumber = 16;
+    public const int CenterIconFieldNumber = 5;
     private global::Spelldawn.Protos.CardIcon centerIcon_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardIcon CenterIcon {
@@ -547,23 +578,23 @@ namespace Spelldawn.Protos {
       output.WriteRawMessage(this);
     #else
       if (topLeftIcon_ != null) {
-        output.WriteRawTag(98);
+        output.WriteRawTag(10);
         output.WriteMessage(TopLeftIcon);
       }
       if (topRightIcon_ != null) {
-        output.WriteRawTag(106);
+        output.WriteRawTag(18);
         output.WriteMessage(TopRightIcon);
       }
       if (bottomRightIcon_ != null) {
-        output.WriteRawTag(114);
+        output.WriteRawTag(26);
         output.WriteMessage(BottomRightIcon);
       }
       if (bottomLeftIcon_ != null) {
-        output.WriteRawTag(122);
+        output.WriteRawTag(34);
         output.WriteMessage(BottomLeftIcon);
       }
       if (centerIcon_ != null) {
-        output.WriteRawTag(130, 1);
+        output.WriteRawTag(42);
         output.WriteMessage(CenterIcon);
       }
       if (_unknownFields != null) {
@@ -576,23 +607,23 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (topLeftIcon_ != null) {
-        output.WriteRawTag(98);
+        output.WriteRawTag(10);
         output.WriteMessage(TopLeftIcon);
       }
       if (topRightIcon_ != null) {
-        output.WriteRawTag(106);
+        output.WriteRawTag(18);
         output.WriteMessage(TopRightIcon);
       }
       if (bottomRightIcon_ != null) {
-        output.WriteRawTag(114);
+        output.WriteRawTag(26);
         output.WriteMessage(BottomRightIcon);
       }
       if (bottomLeftIcon_ != null) {
-        output.WriteRawTag(122);
+        output.WriteRawTag(34);
         output.WriteMessage(BottomLeftIcon);
       }
       if (centerIcon_ != null) {
-        output.WriteRawTag(130, 1);
+        output.WriteRawTag(42);
         output.WriteMessage(CenterIcon);
       }
       if (_unknownFields != null) {
@@ -617,7 +648,7 @@ namespace Spelldawn.Protos {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(BottomLeftIcon);
       }
       if (centerIcon_ != null) {
-        size += 2 + pb::CodedOutputStream.ComputeMessageSize(CenterIcon);
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CenterIcon);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -674,35 +705,35 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 98: {
+          case 10: {
             if (topLeftIcon_ == null) {
               TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(TopLeftIcon);
             break;
           }
-          case 106: {
+          case 18: {
             if (topRightIcon_ == null) {
               TopRightIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(TopRightIcon);
             break;
           }
-          case 114: {
+          case 26: {
             if (bottomRightIcon_ == null) {
               BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(BottomRightIcon);
             break;
           }
-          case 122: {
+          case 34: {
             if (bottomLeftIcon_ == null) {
               BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(BottomLeftIcon);
             break;
           }
-          case 130: {
+          case 42: {
             if (centerIcon_ == null) {
               CenterIcon = new global::Spelldawn.Protos.CardIcon();
             }
@@ -723,35 +754,35 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 98: {
+          case 10: {
             if (topLeftIcon_ == null) {
               TopLeftIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(TopLeftIcon);
             break;
           }
-          case 106: {
+          case 18: {
             if (topRightIcon_ == null) {
               TopRightIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(TopRightIcon);
             break;
           }
-          case 114: {
+          case 26: {
             if (bottomRightIcon_ == null) {
               BottomRightIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(BottomRightIcon);
             break;
           }
-          case 122: {
+          case 34: {
             if (bottomLeftIcon_ == null) {
               BottomLeftIcon = new global::Spelldawn.Protos.CardIcon();
             }
             input.ReadMessage(BottomLeftIcon);
             break;
           }
-          case 130: {
+          case 42: {
             if (centerIcon_ == null) {
               CenterIcon = new global::Spelldawn.Protos.CardIcon();
             }
@@ -1109,15 +1140,15 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class ValidTargets : pb::IMessage<ValidTargets>
+  public sealed partial class PickTarget : pb::IMessage<PickTarget>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<ValidTargets> _parser = new pb::MessageParser<ValidTargets>(() => new ValidTargets());
+    private static readonly pb::MessageParser<PickTarget> _parser = new pb::MessageParser<PickTarget>(() => new PickTarget());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<ValidTargets> Parser { get { return _parser; } }
+    public static pb::MessageParser<PickTarget> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -1130,54 +1161,54 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ValidTargets() {
+    public PickTarget() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ValidTargets(ValidTargets other) : this() {
-      targets_ = other.targets_.Clone();
+    public PickTarget(PickTarget other) : this() {
+      validTargets_ = other.validTargets_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ValidTargets Clone() {
-      return new ValidTargets(this);
+    public PickTarget Clone() {
+      return new PickTarget(this);
     }
 
-    /// <summary>Field number for the "targets" field.</summary>
-    public const int TargetsFieldNumber = 1;
-    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardTarget> _repeated_targets_codec
+    /// <summary>Field number for the "valid_targets" field.</summary>
+    public const int ValidTargetsFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CardTarget> _repeated_validTargets_codec
         = pb::FieldCodec.ForMessage(10, global::Spelldawn.Protos.CardTarget.Parser);
-    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardTarget> targets_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardTarget>();
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CardTarget> validTargets_ = new pbc::RepeatedField<global::Spelldawn.Protos.CardTarget>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Spelldawn.Protos.CardTarget> Targets {
-      get { return targets_; }
+    public pbc::RepeatedField<global::Spelldawn.Protos.CardTarget> ValidTargets {
+      get { return validTargets_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as ValidTargets);
+      return Equals(other as PickTarget);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(ValidTargets other) {
+    public bool Equals(PickTarget other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if(!targets_.Equals(other.targets_)) return false;
+      if(!validTargets_.Equals(other.validTargets_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      hash ^= targets_.GetHashCode();
+      hash ^= validTargets_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1194,7 +1225,7 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      targets_.WriteTo(output, _repeated_targets_codec);
+      validTargets_.WriteTo(output, _repeated_validTargets_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1204,7 +1235,7 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      targets_.WriteTo(ref output, _repeated_targets_codec);
+      validTargets_.WriteTo(ref output, _repeated_validTargets_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1214,7 +1245,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      size += targets_.CalculateSize(_repeated_targets_codec);
+      size += validTargets_.CalculateSize(_repeated_validTargets_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1222,11 +1253,11 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(ValidTargets other) {
+    public void MergeFrom(PickTarget other) {
       if (other == null) {
         return;
       }
-      targets_.Add(other.targets_);
+      validTargets_.Add(other.validTargets_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1242,7 +1273,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            targets_.AddEntriesFrom(input, _repeated_targets_codec);
+            validTargets_.AddEntriesFrom(input, _repeated_validTargets_codec);
             break;
           }
         }
@@ -1260,7 +1291,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            targets_.AddEntriesFrom(ref input, _repeated_targets_codec);
+            validTargets_.AddEntriesFrom(ref input, _repeated_validTargets_codec);
             break;
           }
         }
@@ -1270,15 +1301,15 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class ValidRooms : pb::IMessage<ValidRooms>
+  public sealed partial class PlayInRoom : pb::IMessage<PlayInRoom>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<ValidRooms> _parser = new pb::MessageParser<ValidRooms>(() => new ValidRooms());
+    private static readonly pb::MessageParser<PlayInRoom> _parser = new pb::MessageParser<PlayInRoom>(() => new PlayInRoom());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<ValidRooms> Parser { get { return _parser; } }
+    public static pb::MessageParser<PlayInRoom> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -1291,54 +1322,54 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ValidRooms() {
+    public PlayInRoom() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ValidRooms(ValidRooms other) : this() {
-      rooms_ = other.rooms_.Clone();
+    public PlayInRoom(PlayInRoom other) : this() {
+      validRooms_ = other.validRooms_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ValidRooms Clone() {
-      return new ValidRooms(this);
+    public PlayInRoom Clone() {
+      return new PlayInRoom(this);
     }
 
-    /// <summary>Field number for the "rooms" field.</summary>
-    public const int RoomsFieldNumber = 2;
-    private static readonly pb::FieldCodec<global::Spelldawn.Protos.RoomId> _repeated_rooms_codec
+    /// <summary>Field number for the "valid_rooms" field.</summary>
+    public const int ValidRoomsFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.RoomId> _repeated_validRooms_codec
         = pb::FieldCodec.ForMessage(18, global::Spelldawn.Protos.RoomId.Parser);
-    private readonly pbc::RepeatedField<global::Spelldawn.Protos.RoomId> rooms_ = new pbc::RepeatedField<global::Spelldawn.Protos.RoomId>();
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.RoomId> validRooms_ = new pbc::RepeatedField<global::Spelldawn.Protos.RoomId>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Spelldawn.Protos.RoomId> Rooms {
-      get { return rooms_; }
+    public pbc::RepeatedField<global::Spelldawn.Protos.RoomId> ValidRooms {
+      get { return validRooms_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as ValidRooms);
+      return Equals(other as PlayInRoom);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(ValidRooms other) {
+    public bool Equals(PlayInRoom other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if(!rooms_.Equals(other.rooms_)) return false;
+      if(!validRooms_.Equals(other.validRooms_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      hash ^= rooms_.GetHashCode();
+      hash ^= validRooms_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1355,7 +1386,7 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      rooms_.WriteTo(output, _repeated_rooms_codec);
+      validRooms_.WriteTo(output, _repeated_validRooms_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1365,7 +1396,7 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      rooms_.WriteTo(ref output, _repeated_rooms_codec);
+      validRooms_.WriteTo(ref output, _repeated_validRooms_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1375,7 +1406,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      size += rooms_.CalculateSize(_repeated_rooms_codec);
+      size += validRooms_.CalculateSize(_repeated_validRooms_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1383,11 +1414,11 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(ValidRooms other) {
+    public void MergeFrom(PlayInRoom other) {
       if (other == null) {
         return;
       }
-      rooms_.Add(other.rooms_);
+      validRooms_.Add(other.validRooms_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1403,7 +1434,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 18: {
-            rooms_.AddEntriesFrom(input, _repeated_rooms_codec);
+            validRooms_.AddEntriesFrom(input, _repeated_validRooms_codec);
             break;
           }
         }
@@ -1421,7 +1452,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 18: {
-            rooms_.AddEntriesFrom(ref input, _repeated_rooms_codec);
+            validRooms_.AddEntriesFrom(ref input, _repeated_validRooms_codec);
             break;
           }
         }
@@ -1758,11 +1789,11 @@ namespace Spelldawn.Protos {
     /// <summary>Field number for the "pick_target" field.</summary>
     public const int PickTargetFieldNumber = 1;
     /// <summary>
-    ///* Pick one of these targets and then animate to the display area when played. 
+    ///* Pick one of these targets and then animate to the staging area when played. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.ValidTargets PickTarget {
-      get { return targetingCase_ == TargetingOneofCase.PickTarget ? (global::Spelldawn.Protos.ValidTargets) targeting_ : null; }
+    public global::Spelldawn.Protos.PickTarget PickTarget {
+      get { return targetingCase_ == TargetingOneofCase.PickTarget ? (global::Spelldawn.Protos.PickTarget) targeting_ : null; }
       set {
         targeting_ = value;
         targetingCase_ = value == null ? TargetingOneofCase.None : TargetingOneofCase.PickTarget;
@@ -1775,8 +1806,8 @@ namespace Spelldawn.Protos {
     ///* Add this card to a room when played. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.ValidRooms PlayInRoom {
-      get { return targetingCase_ == TargetingOneofCase.PlayInRoom ? (global::Spelldawn.Protos.ValidRooms) targeting_ : null; }
+    public global::Spelldawn.Protos.PlayInRoom PlayInRoom {
+      get { return targetingCase_ == TargetingOneofCase.PlayInRoom ? (global::Spelldawn.Protos.PlayInRoom) targeting_ : null; }
       set {
         targeting_ = value;
         targetingCase_ = value == null ? TargetingOneofCase.None : TargetingOneofCase.PlayInRoom;
@@ -1800,7 +1831,7 @@ namespace Spelldawn.Protos {
     /// <summary>Field number for the "await_response" field.</summary>
     public const int AwaitResponseFieldNumber = 4;
     /// <summary>
-    ///* Animate this card to the 'display' area when played 
+    ///* Animate this card to the staging area when played 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.AwaitResponse AwaitResponse {
@@ -1953,13 +1984,13 @@ namespace Spelldawn.Protos {
       switch (other.TargetingCase) {
         case TargetingOneofCase.PickTarget:
           if (PickTarget == null) {
-            PickTarget = new global::Spelldawn.Protos.ValidTargets();
+            PickTarget = new global::Spelldawn.Protos.PickTarget();
           }
           PickTarget.MergeFrom(other.PickTarget);
           break;
         case TargetingOneofCase.PlayInRoom:
           if (PlayInRoom == null) {
-            PlayInRoom = new global::Spelldawn.Protos.ValidRooms();
+            PlayInRoom = new global::Spelldawn.Protos.PlayInRoom();
           }
           PlayInRoom.MergeFrom(other.PlayInRoom);
           break;
@@ -1992,7 +2023,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            global::Spelldawn.Protos.ValidTargets subBuilder = new global::Spelldawn.Protos.ValidTargets();
+            global::Spelldawn.Protos.PickTarget subBuilder = new global::Spelldawn.Protos.PickTarget();
             if (targetingCase_ == TargetingOneofCase.PickTarget) {
               subBuilder.MergeFrom(PickTarget);
             }
@@ -2001,7 +2032,7 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            global::Spelldawn.Protos.ValidRooms subBuilder = new global::Spelldawn.Protos.ValidRooms();
+            global::Spelldawn.Protos.PlayInRoom subBuilder = new global::Spelldawn.Protos.PlayInRoom();
             if (targetingCase_ == TargetingOneofCase.PlayInRoom) {
               subBuilder.MergeFrom(PlayInRoom);
             }
@@ -2042,7 +2073,7 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            global::Spelldawn.Protos.ValidTargets subBuilder = new global::Spelldawn.Protos.ValidTargets();
+            global::Spelldawn.Protos.PickTarget subBuilder = new global::Spelldawn.Protos.PickTarget();
             if (targetingCase_ == TargetingOneofCase.PickTarget) {
               subBuilder.MergeFrom(PickTarget);
             }
@@ -2051,7 +2082,7 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            global::Spelldawn.Protos.ValidRooms subBuilder = new global::Spelldawn.Protos.ValidRooms();
+            global::Spelldawn.Protos.PlayInRoom subBuilder = new global::Spelldawn.Protos.PlayInRoom();
             if (targetingCase_ == TargetingOneofCase.PlayInRoom) {
               subBuilder.MergeFrom(PlayInRoom);
             }
@@ -2113,9 +2144,11 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public CardCost(CardCost other) : this() {
-      canPlay_ = other.canPlay_;
       manaCost_ = other.manaCost_;
       actionCost_ = other.actionCost_;
+      canPlay_ = other.canPlay_;
+      canPlayAlgorithm_ = other.canPlayAlgorithm_;
+      spendCostAlgorithm_ = other.spendCostAlgorithm_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2124,19 +2157,8 @@ namespace Spelldawn.Protos {
       return new CardCost(this);
     }
 
-    /// <summary>Field number for the "can_play" field.</summary>
-    public const int CanPlayFieldNumber = 1;
-    private global::Spelldawn.Protos.CanPlay canPlay_ = global::Spelldawn.Protos.CanPlay.Unspecified;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CanPlay CanPlay {
-      get { return canPlay_; }
-      set {
-        canPlay_ = value;
-      }
-    }
-
     /// <summary>Field number for the "mana_cost" field.</summary>
-    public const int ManaCostFieldNumber = 2;
+    public const int ManaCostFieldNumber = 1;
     private int manaCost_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ManaCost {
@@ -2147,13 +2169,46 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "action_cost" field.</summary>
-    public const int ActionCostFieldNumber = 3;
+    public const int ActionCostFieldNumber = 2;
     private int actionCost_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ActionCost {
       get { return actionCost_; }
       set {
         actionCost_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "can_play" field.</summary>
+    public const int CanPlayFieldNumber = 3;
+    private bool canPlay_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool CanPlay {
+      get { return canPlay_; }
+      set {
+        canPlay_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "can_play_algorithm" field.</summary>
+    public const int CanPlayAlgorithmFieldNumber = 4;
+    private global::Spelldawn.Protos.CanPlayAlgorithm canPlayAlgorithm_ = global::Spelldawn.Protos.CanPlayAlgorithm.Unspecified;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CanPlayAlgorithm CanPlayAlgorithm {
+      get { return canPlayAlgorithm_; }
+      set {
+        canPlayAlgorithm_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "spend_cost_algorithm" field.</summary>
+    public const int SpendCostAlgorithmFieldNumber = 5;
+    private global::Spelldawn.Protos.SpendCostAlgorithm spendCostAlgorithm_ = global::Spelldawn.Protos.SpendCostAlgorithm.Unspecified;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.SpendCostAlgorithm SpendCostAlgorithm {
+      get { return spendCostAlgorithm_; }
+      set {
+        spendCostAlgorithm_ = value;
       }
     }
 
@@ -2170,18 +2225,22 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (CanPlay != other.CanPlay) return false;
       if (ManaCost != other.ManaCost) return false;
       if (ActionCost != other.ActionCost) return false;
+      if (CanPlay != other.CanPlay) return false;
+      if (CanPlayAlgorithm != other.CanPlayAlgorithm) return false;
+      if (SpendCostAlgorithm != other.SpendCostAlgorithm) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (CanPlay != global::Spelldawn.Protos.CanPlay.Unspecified) hash ^= CanPlay.GetHashCode();
       if (ManaCost != 0) hash ^= ManaCost.GetHashCode();
       if (ActionCost != 0) hash ^= ActionCost.GetHashCode();
+      if (CanPlay != false) hash ^= CanPlay.GetHashCode();
+      if (CanPlayAlgorithm != global::Spelldawn.Protos.CanPlayAlgorithm.Unspecified) hash ^= CanPlayAlgorithm.GetHashCode();
+      if (SpendCostAlgorithm != global::Spelldawn.Protos.SpendCostAlgorithm.Unspecified) hash ^= SpendCostAlgorithm.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2198,17 +2257,25 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (CanPlay != global::Spelldawn.Protos.CanPlay.Unspecified) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) CanPlay);
-      }
       if (ManaCost != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteInt32(ManaCost);
       }
       if (ActionCost != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteInt32(ActionCost);
+      }
+      if (CanPlay != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(CanPlay);
+      }
+      if (CanPlayAlgorithm != global::Spelldawn.Protos.CanPlayAlgorithm.Unspecified) {
+        output.WriteRawTag(32);
+        output.WriteEnum((int) CanPlayAlgorithm);
+      }
+      if (SpendCostAlgorithm != global::Spelldawn.Protos.SpendCostAlgorithm.Unspecified) {
+        output.WriteRawTag(40);
+        output.WriteEnum((int) SpendCostAlgorithm);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -2219,17 +2286,25 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (CanPlay != global::Spelldawn.Protos.CanPlay.Unspecified) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) CanPlay);
-      }
       if (ManaCost != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteInt32(ManaCost);
       }
       if (ActionCost != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteInt32(ActionCost);
+      }
+      if (CanPlay != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(CanPlay);
+      }
+      if (CanPlayAlgorithm != global::Spelldawn.Protos.CanPlayAlgorithm.Unspecified) {
+        output.WriteRawTag(32);
+        output.WriteEnum((int) CanPlayAlgorithm);
+      }
+      if (SpendCostAlgorithm != global::Spelldawn.Protos.SpendCostAlgorithm.Unspecified) {
+        output.WriteRawTag(40);
+        output.WriteEnum((int) SpendCostAlgorithm);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -2240,14 +2315,20 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (CanPlay != global::Spelldawn.Protos.CanPlay.Unspecified) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CanPlay);
-      }
       if (ManaCost != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ManaCost);
       }
       if (ActionCost != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ActionCost);
+      }
+      if (CanPlay != false) {
+        size += 1 + 1;
+      }
+      if (CanPlayAlgorithm != global::Spelldawn.Protos.CanPlayAlgorithm.Unspecified) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CanPlayAlgorithm);
+      }
+      if (SpendCostAlgorithm != global::Spelldawn.Protos.SpendCostAlgorithm.Unspecified) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) SpendCostAlgorithm);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2260,14 +2341,20 @@ namespace Spelldawn.Protos {
       if (other == null) {
         return;
       }
-      if (other.CanPlay != global::Spelldawn.Protos.CanPlay.Unspecified) {
-        CanPlay = other.CanPlay;
-      }
       if (other.ManaCost != 0) {
         ManaCost = other.ManaCost;
       }
       if (other.ActionCost != 0) {
         ActionCost = other.ActionCost;
+      }
+      if (other.CanPlay != false) {
+        CanPlay = other.CanPlay;
+      }
+      if (other.CanPlayAlgorithm != global::Spelldawn.Protos.CanPlayAlgorithm.Unspecified) {
+        CanPlayAlgorithm = other.CanPlayAlgorithm;
+      }
+      if (other.SpendCostAlgorithm != global::Spelldawn.Protos.SpendCostAlgorithm.Unspecified) {
+        SpendCostAlgorithm = other.SpendCostAlgorithm;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2284,15 +2371,23 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            CanPlay = (global::Spelldawn.Protos.CanPlay) input.ReadEnum();
-            break;
-          }
-          case 16: {
             ManaCost = input.ReadInt32();
             break;
           }
-          case 24: {
+          case 16: {
             ActionCost = input.ReadInt32();
+            break;
+          }
+          case 24: {
+            CanPlay = input.ReadBool();
+            break;
+          }
+          case 32: {
+            CanPlayAlgorithm = (global::Spelldawn.Protos.CanPlayAlgorithm) input.ReadEnum();
+            break;
+          }
+          case 40: {
+            SpendCostAlgorithm = (global::Spelldawn.Protos.SpendCostAlgorithm) input.ReadEnum();
             break;
           }
         }
@@ -2310,15 +2405,23 @@ namespace Spelldawn.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            CanPlay = (global::Spelldawn.Protos.CanPlay) input.ReadEnum();
-            break;
-          }
-          case 16: {
             ManaCost = input.ReadInt32();
             break;
           }
-          case 24: {
+          case 16: {
             ActionCost = input.ReadInt32();
+            break;
+          }
+          case 24: {
+            CanPlay = input.ReadBool();
+            break;
+          }
+          case 32: {
+            CanPlayAlgorithm = (global::Spelldawn.Protos.CanPlayAlgorithm) input.ReadEnum();
+            break;
+          }
+          case 40: {
+            SpendCostAlgorithm = (global::Spelldawn.Protos.SpendCostAlgorithm) input.ReadEnum();
             break;
           }
         }

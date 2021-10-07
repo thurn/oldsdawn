@@ -40,8 +40,60 @@ namespace Spelldawn.Game
     [SerializeField] bool _isRevealed;
     [SerializeField] SortingGroup _sortingGroup = null!;
     [SerializeField] WarpTextExample _warpText = null!;
+    [SerializeField] Icon _topLeftIcon = null!;
+    [SerializeField] Icon _topRightIcon = null!;
+    [SerializeField] Icon _bottomRightIcon = null!;
+    [SerializeField] Icon _bottomLeftIcon = null!;
+    [SerializeField] Icon _centerIcon = null!;
 
     Registry _registry = null!;
+    RevealedCardView? _revealedCardView;
+
+    [Serializable]
+    public sealed class Icon
+    {
+      [SerializeField] SpriteRenderer _background = null!;
+      public SpriteRenderer Background => _background;
+      [SerializeField] TextMeshPro _text = null!;
+      public TextMeshPro Text => _text;
+    }
+
+    void Start()
+    {
+      _cardBack.gameObject.SetActive(true);
+      _cardFront.gameObject.SetActive(false);
+    }
+
+    void Update()
+    {
+      if (_revealedCardView is { Cost: { } cost })
+      {
+        var haveAvailableResources =
+          cost.ManaCost < _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
+          cost.ActionCost < _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions;
+        switch (cost.CanPlayAlgorithm)
+        {
+          case CanPlayAlgorithm.Optimistic:
+            _outline.gameObject.SetActive(haveAvailableResources);
+
+            break;
+          case CanPlayAlgorithm.AdditionalCost:
+            if (!haveAvailableResources)
+            {
+              _outline.gameObject.SetActive(false);
+            }
+
+            break;
+          case CanPlayAlgorithm.AdditionalPlay:
+            if (haveAvailableResources)
+            {
+              _outline.gameObject.SetActive(true);
+            }
+
+            break;
+        }
+      }
+    }
 
     public void Render(Registry registry, CardView cardView)
     {
@@ -53,11 +105,11 @@ namespace Spelldawn.Game
       {
         if (_isRevealed)
         {
-          RenderRevealedCard(cardView.RevealedCard);
+          RenderRevealedCard(cardView);
         }
         else
         {
-          Flip(_cardFront, _cardBack, () => RenderRevealedCard(cardView.RevealedCard));
+          Flip(_cardFront, _cardBack, () => RenderRevealedCard(cardView));
         }
       }
       else
@@ -96,18 +148,42 @@ namespace Spelldawn.Game
         .Insert(atPosition: 0.2f, faceUp.transform.DOLocalRotate(Vector3.zero, duration: 0.3f));
     }
 
-    void RenderRevealedCard(RevealedCardView cardView)
+    void RenderRevealedCard(CardView card)
     {
+      var revealed = card.RevealedCard;
+      _revealedCardView = revealed;
       _isRevealed = true;
-      gameObject.name = cardView.Title.Text;
+
+      gameObject.name = revealed.Title.Text;
       _cardBack.gameObject.SetActive(value: false);
       _cardFront.gameObject.SetActive(value: true);
-      _image.sprite = _registry.AssetService.GetSprite(cardView.Image);
-      _frame.sprite = _registry.AssetService.GetSprite(cardView.CardFrame);
-      _titleBackground.sprite = _registry.AssetService.GetSprite(cardView.TitleBackground);
-      SetTitle(cardView.Title.Text);
-      _rulesText.text = cardView.RulesText.Text;
-      _jewel.sprite = _registry.AssetService.GetSprite(cardView.Jewel);
+      _image.sprite = _registry.AssetService.GetSprite(revealed.Image);
+      _frame.sprite = _registry.AssetService.GetSprite(revealed.CardFrame);
+      _titleBackground.sprite = _registry.AssetService.GetSprite(revealed.TitleBackground);
+      SetTitle(revealed.Title.Text);
+      _rulesText.text = revealed.RulesText.Text;
+      _jewel.sprite = _registry.AssetService.GetSprite(revealed.Jewel);
+      _outline.gameObject.SetActive(revealed.Cost?.CanPlay == true);
+
+      SetCardIcon(card.CardIcons?.TopLeftIcon, _topLeftIcon);
+      SetCardIcon(card.CardIcons?.TopRightIcon, _topRightIcon);
+      SetCardIcon(card.CardIcons?.BottomRightIcon, _bottomRightIcon);
+      SetCardIcon(card.CardIcons?.BottomLeftIcon, _bottomLeftIcon);
+      SetCardIcon(card.CardIcons?.CenterIcon, _centerIcon);
+    }
+
+    void SetCardIcon(CardIcon? cardIcon, Icon icon)
+    {
+      if (cardIcon != null)
+      {
+        icon.Background.gameObject.SetActive(true);
+        icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);
+        icon.Text.text = cardIcon.Text;
+      }
+      else
+      {
+        icon.Background.gameObject.SetActive(false);
+      }
     }
 
     void SetTitle(string title)

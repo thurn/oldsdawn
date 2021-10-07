@@ -74,16 +74,16 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static readonly List<CardView> Cards = new()
     {
-      RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21"),
-      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
-      RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13"),
-      RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16"),
-      RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42"),
-      RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37"),
-      RevealedCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40"),
-      RevealedCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66"),
-      RevealedCard(8, "Divine Bolt", Text8, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_52"),
-      RevealedCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68")
+      RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0),
+      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4),
+      RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 8),
+      RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16", 15),
+      RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42", 4),
+      RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37", 2),
+      RevealedCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40", 3),
+      RevealedCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66", 0),
+      RevealedCard(8, "Divine Bolt", Text8, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_52", 3),
+      RevealedCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68", 6)
     };
 
     void Start()
@@ -222,12 +222,20 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       Deck = new DeckView()
     };
 
-    static CardView RevealedCard(int cardId, string title, string text, string image) =>
+    static CardView RevealedCard(int cardId, string title, string text, string image, int manaCost) =>
       new()
       {
         CardId = CardId(cardId),
         CardBack = Sprite(
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
+        CardIcons = new CardIcons
+        {
+          TopLeftIcon = new CardIcon
+          {
+            Background = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"),
+            Text = manaCost + ""
+          }
+        },
         RevealedCard = new RevealedCardView
         {
           CardFrame = Sprite(
@@ -245,6 +253,13 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             Text = text
           },
+          Cost = new CardCost
+          {
+            CanPlay = false,
+            CanPlayAlgorithm = CanPlayAlgorithm.Optimistic,
+            ActionCost = 1,
+            ManaCost = manaCost
+          }
         }
       };
   }

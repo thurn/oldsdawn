@@ -28,14 +28,16 @@ namespace Spelldawn.Game
     [SerializeField] bool _clickable;
     [SerializeField] GameObject _pressEffect = null!;
     [SerializeField] TextMeshPro _manaText = null!;
-    [SerializeField] float _currentMana = 5;
+    [SerializeField] int _currentMana = 5;
+
+    public int CurrentMana => _currentMana;
 
     public void Increment()
     {
       SetMana(_currentMana + 1);
     }
 
-    public void SetMana(float currentMana)
+    public void SetMana(int currentMana)
     {
       Errors.CheckNonNegative(currentMana);
       _currentMana = currentMana;

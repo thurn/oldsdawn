@@ -23,15 +23,15 @@ import "game_primitives.proto";
 message CardIcon {
   sd.SpriteAddress background = 1;
   string text = 2;
-  bool shown_in_arena = 3;
+  bool show_in_arena = 3;
 }
 
 message CardIcons {
-  CardIcon top_left_icon = 12;
-  CardIcon top_right_icon = 13;
-  CardIcon bottom_right_icon = 14;
-  CardIcon bottom_left_icon = 15;
-  CardIcon center_icon = 16;
+  CardIcon top_left_icon = 1;
+  CardIcon top_right_icon = 2;
+  CardIcon bottom_right_icon = 3;
+  CardIcon bottom_left_icon = 4;
+  CardIcon center_icon = 5;
 }
 
 message CardTitle {
@@ -42,12 +42,12 @@ message RulesText {
   string text = 1;
 }
 
-message ValidTargets {
-  repeated CardTarget targets = 1;
+message PickTarget {
+  repeated CardTarget valid_targets = 1;
 }
 
-message ValidRooms {
-  repeated RoomId rooms = 2;
+message PlayInRoom {
+  repeated RoomId valid_rooms = 2;
 }
 
 message PlayAsItem {
@@ -58,38 +58,70 @@ message AwaitResponse {
 
 message CardTargeting {
   oneof targeting {
-    /** Pick one of these targets and then animate to the display area when played. */
-    ValidTargets pick_target = 1;
+    /** Pick one of these targets and then animate to the staging area when played. */
+    PickTarget pick_target = 1;
 
     /** Add this card to a room when played. */
-    ValidRooms play_in_room = 2;
+    PlayInRoom play_in_room = 2;
 
     /** Add this card to the items in the arena when played */
     PlayAsItem play_as_item = 3;
 
-    /** Animate this card to the 'display' area when played */
+    /** Animate this card to the staging area when played */
     AwaitResponse await_response = 4;
   }
 }
 
-/** How to determine whether the card can be played. */
-enum CanPlay {
-  CAN_PLAY_UNSPECIFIED = 0;
+enum CanPlayAlgorithm {
+  CAN_PLAY_ALGORITHM_UNSPECIFIED = 0;
 
-  /** The card can be played if mana & actions are available. */
-  CAN_PLAY_DEFAULT = 1;
+  /**
+   * Always update the 'can_play' state automatically based on available mana
+   * and actions.
+   */
+  CAN_PLAY_ALGORITHM_OPTIMISTIC = 1;
 
-  /** Never display this card optimistically as a valid play */
-  CAN_PLAY_NO = 2;
+  /**
+   * 'Optimistic False' algorithm for cards with an additional cost. Will
+   * transition the 'can_play' state to false based on available mana and
+   * actions, but not to true.
+   */
+  CAN_PLAY_ALGORITHM_ADDITIONAL_COST = 2;
 
-  /** Always display this card optimistically as a valid play */
-  CAN_PLAY_YES = 3;
+  /**
+   * 'Optimistic True' algorithm, for cards which can always be played for
+   * their normal cost, but have other valid play windows as well. Will
+   * transition the 'can_play' state to true based on available mana and
+   * actions, but not to false.
+   */
+   CAN_PLAY_ALGORITHM_ADDITIONAL_PLAY = 3;
+
+  /**
+   * Do not transition the 'can_play' state automatically
+   */
+  CAN_PLAY_ALGORITHM_NO_UPDATE = 4;
+}
+
+enum SpendCostAlgorithm {
+  SPEND_COST_ALGORITHM_UNSPECIFIED = 0;
+
+  /** Deduct the mana & action cost immediately when this card is played. */
+  SPEND_COST_ALGORITHM_OPTIMISTIC = 1;
+
+  /** Do not modify mana & action values when this card is played. */
+  SPEND_COST_ALGORITHM_NO_UPDATE = 2;
 }
 
 message CardCost {
-  CanPlay can_play = 1;
-  int32 mana_cost = 2;
-  int32 action_cost = 3;
+  int32 mana_cost = 1;
+
+  int32 action_cost = 2;
+
+  bool can_play = 3;
+
+  CanPlayAlgorithm can_play_algorithm = 4;
+
+  SpendCostAlgorithm spend_cost_algorithm = 5;
 }
 
 message RevealedCardView {
