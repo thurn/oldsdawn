@@ -33,6 +33,7 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _image = null!;
     [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] SpriteRenderer _titleBackground = null!;
+    [SerializeField] MeshRenderer _outline = null!;
     [SerializeField] TextMeshPro _title = null!;
     [SerializeField] TextMeshPro _rulesText = null!;
     [SerializeField] SpriteRenderer _jewel = null!;
@@ -46,6 +47,7 @@ namespace Spelldawn.Game
     {
       _registry = registry;
       _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
+      _outline.sortingOrder = -1;
 
       if (cardView.RevealedCard != null)
       {

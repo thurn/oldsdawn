@@ -24,6 +24,7 @@ namespace Spelldawn.Services
   public sealed class SampleData : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
+    [SerializeField] bool _drawHands;
     int _lastReturnedCard;
     int _lastOpponentCardId = 65536;
 
@@ -95,10 +96,13 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       });
 
-      for (var i = 0; i < 6; ++i)
+      if (_drawHands)
       {
-        DrawUserCard(directToHand: true);
-        DrawOpponentCard();
+        for (var i = 0; i < 6; ++i)
+        {
+          DrawUserCard(directToHand: true);
+          DrawOpponentCard();
+        }
       }
     }
 
