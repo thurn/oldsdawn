@@ -80,7 +80,7 @@ message RaidAction {
  */
 message PlayCardAction {
   CardId card_id = 1;
-  CardTarget first_target = 2;
+  TargetId target = 2;
 }
 
 /**

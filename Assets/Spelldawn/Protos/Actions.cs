@@ -29,17 +29,17 @@ namespace Spelldawn.Protos {
             "bmRzQWN0aW9uEioKDGNvbW1hbmRfbGlzdBgBIAEoCzIULmdvb2dsZS5wcm90",
             "b2J1Zi5BbnkiEAoOR2Fpbk1hbmFBY3Rpb24iEAoORHJhd0NhcmRBY3Rpb24i",
             "LAoNTGV2ZWxVcEFjdGlvbhIbCgdyb29tX2lkGAEgASgLMgouc2QuUm9vbUlk",
-            "IikKClJhaWRBY3Rpb24SGwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZCJT",
+            "IikKClJhaWRBY3Rpb24SGwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZCJL",
             "Cg5QbGF5Q2FyZEFjdGlvbhIbCgdjYXJkX2lkGAEgASgLMgouc2QuQ2FyZElk",
-            "EiQKDGZpcnN0X3RhcmdldBgCIAEoCzIOLnNkLkNhcmRUYXJnZXQiDwoNQ29u",
-            "Y2VkZUFjdGlvbiK2AgoKR2FtZUFjdGlvbhI2CgxkZWJ1Z19hY3Rpb24YASAB",
-            "KAsyHi5zZC5EZWJ1Z1BlcmZvcm1Db21tYW5kc0FjdGlvbkgAEicKCWdhaW5f",
-            "bWFuYRgCIAEoCzISLnNkLkdhaW5NYW5hQWN0aW9uSAASJwoJZHJhd19jYXJk",
-            "GAMgASgLMhIuc2QuRHJhd0NhcmRBY3Rpb25IABIlCghsZXZlbF91cBgEIAEo",
-            "CzIRLnNkLkxldmVsVXBBY3Rpb25IABIeCgRyYWlkGAUgASgLMg4uc2QuUmFp",
-            "ZEFjdGlvbkgAEicKCXBsYXlfY2FyZBgGIAEoCzISLnNkLlBsYXlDYXJkQWN0",
-            "aW9uSAASJAoHY29uY2VkZRgHIAEoCzIRLnNkLkNvbmNlZGVBY3Rpb25IAEII",
-            "CgZhY3Rpb25CE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
+            "EhwKBnRhcmdldBgCIAEoCzIMLnNkLlRhcmdldElkIg8KDUNvbmNlZGVBY3Rp",
+            "b24itgIKCkdhbWVBY3Rpb24SNgoMZGVidWdfYWN0aW9uGAEgASgLMh4uc2Qu",
+            "RGVidWdQZXJmb3JtQ29tbWFuZHNBY3Rpb25IABInCglnYWluX21hbmEYAiAB",
+            "KAsyEi5zZC5HYWluTWFuYUFjdGlvbkgAEicKCWRyYXdfY2FyZBgDIAEoCzIS",
+            "LnNkLkRyYXdDYXJkQWN0aW9uSAASJQoIbGV2ZWxfdXAYBCABKAsyES5zZC5M",
+            "ZXZlbFVwQWN0aW9uSAASHgoEcmFpZBgFIAEoCzIOLnNkLlJhaWRBY3Rpb25I",
+            "ABInCglwbGF5X2NhcmQYBiABKAsyEi5zZC5QbGF5Q2FyZEFjdGlvbkgAEiQK",
+            "B2NvbmNlZGUYByABKAsyES5zZC5Db25jZWRlQWN0aW9uSABCCAoGYWN0aW9u",
+            "QhOqAhBTcGVsbGRhd24uUHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.AnyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -48,7 +48,7 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DrawCardAction), global::Spelldawn.Protos.DrawCardAction.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.LevelUpAction), global::Spelldawn.Protos.LevelUpAction.Parser, new[]{ "RoomId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RaidAction), global::Spelldawn.Protos.RaidAction.Parser, new[]{ "RoomId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayCardAction), global::Spelldawn.Protos.PlayCardAction.Parser, new[]{ "CardId", "FirstTarget" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayCardAction), global::Spelldawn.Protos.PlayCardAction.Parser, new[]{ "CardId", "Target" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ConcedeAction), global::Spelldawn.Protos.ConcedeAction.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameAction), global::Spelldawn.Protos.GameAction.Parser, new[]{ "DebugAction", "GainMana", "DrawCard", "LevelUp", "Raid", "PlayCard", "Concede" }, new[]{ "Action" }, null, null, null)
           }));
@@ -949,7 +949,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public PlayCardAction(PlayCardAction other) : this() {
       cardId_ = other.cardId_ != null ? other.cardId_.Clone() : null;
-      firstTarget_ = other.firstTarget_ != null ? other.firstTarget_.Clone() : null;
+      target_ = other.target_ != null ? other.target_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -969,14 +969,14 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "first_target" field.</summary>
-    public const int FirstTargetFieldNumber = 2;
-    private global::Spelldawn.Protos.CardTarget firstTarget_;
+    /// <summary>Field number for the "target" field.</summary>
+    public const int TargetFieldNumber = 2;
+    private global::Spelldawn.Protos.TargetId target_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CardTarget FirstTarget {
-      get { return firstTarget_; }
+    public global::Spelldawn.Protos.TargetId Target {
+      get { return target_; }
       set {
-        firstTarget_ = value;
+        target_ = value;
       }
     }
 
@@ -994,7 +994,7 @@ namespace Spelldawn.Protos {
         return true;
       }
       if (!object.Equals(CardId, other.CardId)) return false;
-      if (!object.Equals(FirstTarget, other.FirstTarget)) return false;
+      if (!object.Equals(Target, other.Target)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1002,7 +1002,7 @@ namespace Spelldawn.Protos {
     public override int GetHashCode() {
       int hash = 1;
       if (cardId_ != null) hash ^= CardId.GetHashCode();
-      if (firstTarget_ != null) hash ^= FirstTarget.GetHashCode();
+      if (target_ != null) hash ^= Target.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1023,9 +1023,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(CardId);
       }
-      if (firstTarget_ != null) {
+      if (target_ != null) {
         output.WriteRawTag(18);
-        output.WriteMessage(FirstTarget);
+        output.WriteMessage(Target);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1040,9 +1040,9 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(CardId);
       }
-      if (firstTarget_ != null) {
+      if (target_ != null) {
         output.WriteRawTag(18);
-        output.WriteMessage(FirstTarget);
+        output.WriteMessage(Target);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1056,8 +1056,8 @@ namespace Spelldawn.Protos {
       if (cardId_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardId);
       }
-      if (firstTarget_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(FirstTarget);
+      if (target_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Target);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1076,11 +1076,11 @@ namespace Spelldawn.Protos {
         }
         CardId.MergeFrom(other.CardId);
       }
-      if (other.firstTarget_ != null) {
-        if (firstTarget_ == null) {
-          FirstTarget = new global::Spelldawn.Protos.CardTarget();
+      if (other.target_ != null) {
+        if (target_ == null) {
+          Target = new global::Spelldawn.Protos.TargetId();
         }
-        FirstTarget.MergeFrom(other.FirstTarget);
+        Target.MergeFrom(other.Target);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1104,10 +1104,10 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            if (firstTarget_ == null) {
-              FirstTarget = new global::Spelldawn.Protos.CardTarget();
+            if (target_ == null) {
+              Target = new global::Spelldawn.Protos.TargetId();
             }
-            input.ReadMessage(FirstTarget);
+            input.ReadMessage(Target);
             break;
           }
         }
@@ -1132,10 +1132,10 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            if (firstTarget_ == null) {
-              FirstTarget = new global::Spelldawn.Protos.CardTarget();
+            if (target_ == null) {
+              Target = new global::Spelldawn.Protos.TargetId();
             }
-            input.ReadMessage(FirstTarget);
+            input.ReadMessage(Target);
             break;
           }
         }

@@ -37,7 +37,6 @@ namespace Spelldawn.Game
     [SerializeField] TextMeshPro _title = null!;
     [SerializeField] TextMeshPro _rulesText = null!;
     [SerializeField] SpriteRenderer _jewel = null!;
-    [SerializeField] bool _isRevealed;
     [SerializeField] SortingGroup _sortingGroup = null!;
     [SerializeField] WarpTextExample _warpText = null!;
     [SerializeField] Icon _topLeftIcon = null!;
@@ -45,6 +44,15 @@ namespace Spelldawn.Game
     [SerializeField] Icon _bottomRightIcon = null!;
     [SerializeField] Icon _bottomLeftIcon = null!;
     [SerializeField] Icon _centerIcon = null!;
+    [SerializeField] bool _isRevealed;
+    [SerializeField] bool _canPlay;
+    [SerializeField] bool _isDragging;
+    [SerializeField] Hand? _hand;
+    [SerializeField] float _dragStartZ;
+    [SerializeField] Vector3 _dragStartPosition;
+    [SerializeField] Vector3 _dragOffset;
+    [SerializeField] Quaternion _initialDragRotation;
+    [SerializeField] int _handIndex;
 
     Registry _registry = null!;
     RevealedCardView? _revealedCardView;
@@ -58,41 +66,20 @@ namespace Spelldawn.Game
       public TextMeshPro Text => _text;
     }
 
+    public bool IsRevealed => _isRevealed;
+
+    public bool StagingAnimationComplete { get; set; }
+
+    public void SetHand(Hand hand, SortingOrder order)
+    {
+      _hand = hand;
+      order.ApplyTo(_sortingGroup);
+    }
+
     void Start()
     {
       _cardBack.gameObject.SetActive(true);
       _cardFront.gameObject.SetActive(false);
-    }
-
-    void Update()
-    {
-      if (_revealedCardView is { Cost: { } cost })
-      {
-        var haveAvailableResources =
-          cost.ManaCost < _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
-          cost.ActionCost < _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions;
-        switch (cost.CanPlayAlgorithm)
-        {
-          case CanPlayAlgorithm.Optimistic:
-            _outline.gameObject.SetActive(haveAvailableResources);
-
-            break;
-          case CanPlayAlgorithm.AdditionalCost:
-            if (!haveAvailableResources)
-            {
-              _outline.gameObject.SetActive(false);
-            }
-
-            break;
-          case CanPlayAlgorithm.AdditionalPlay:
-            if (haveAvailableResources)
-            {
-              _outline.gameObject.SetActive(true);
-            }
-
-            break;
-        }
-      }
     }
 
     public void Render(Registry registry, CardView cardView)
@@ -125,13 +112,69 @@ namespace Spelldawn.Game
       }
     }
 
-    public bool IsRevealed => _isRevealed;
-
-    public bool StagingAnimationComplete { get; set; }
-
-    public void SetSortingOrder(int orderInLayer)
+    void Update()
     {
-      _sortingGroup.sortingOrder = orderInLayer;
+      if (!_isDragging && _revealedCardView is { Cost: { } cost })
+      {
+        var haveAvailableResources =
+          cost.ManaCost <= _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
+          cost.ActionCost <= _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions;
+        _canPlay = cost.CanPlayAlgorithm switch
+        {
+          CanPlayAlgorithm.Optimistic => haveAvailableResources,
+          CanPlayAlgorithm.AdditionalCost when !haveAvailableResources => false,
+          CanPlayAlgorithm.AdditionalPlay when haveAvailableResources => true,
+          _ => _canPlay
+        };
+
+        UpdateOutline();
+      }
+    }
+
+    void OnMouseDown()
+    {
+      if (_isDragging)
+      {
+        // Unity seems to send this event multiple times a lot...
+        return;
+      }
+
+      if (_canPlay)
+      {
+        _isDragging = true;
+        SortingOrder.Create(SortingOrder.Type.Dragging).ApplyTo(_sortingGroup);
+        _handIndex = _hand!.RemoveCard(this);
+        _outline.gameObject.SetActive(false);
+        _initialDragRotation = transform.rotation;
+        _dragStartZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
+        _dragStartPosition = _registry.MainCamera.ScreenToWorldPoint(
+          new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartZ));
+        _dragOffset = gameObject.transform.position - _dragStartPosition;
+      }
+    }
+
+    void OnMouseDrag()
+    {
+      if (_isDragging)
+      {
+        var mousePosition = _registry.MainCamera.ScreenToWorldPoint(
+          new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartZ));
+        var distanceDragged = Vector2.Distance(mousePosition, _dragStartPosition);
+        var t = Mathf.Clamp01(distanceDragged / 5);
+        transform.position = _dragOffset + mousePosition;
+        var rotation = Quaternion.Slerp(_initialDragRotation, Quaternion.Euler(280, 0, 0), t);
+        transform.rotation = rotation;
+      }
+    }
+
+    void OnMouseUp()
+    {
+      if (_isDragging)
+      {
+        UpdateOutline();
+        _isDragging = false;
+        StartCoroutine(_hand!.AddCard(this, _handIndex));
+      }
     }
 
     static void Flip(Component faceUp, Component faceDown, Action onFlipped)
@@ -153,6 +196,7 @@ namespace Spelldawn.Game
       var revealed = card.RevealedCard;
       _revealedCardView = revealed;
       _isRevealed = true;
+      _canPlay = card.RevealedCard?.Cost?.CanPlay == true;
 
       gameObject.name = revealed.Title.Text;
       _cardBack.gameObject.SetActive(value: false);
@@ -163,13 +207,18 @@ namespace Spelldawn.Game
       SetTitle(revealed.Title.Text);
       _rulesText.text = revealed.RulesText.Text;
       _jewel.sprite = _registry.AssetService.GetSprite(revealed.Jewel);
-      _outline.gameObject.SetActive(revealed.Cost?.CanPlay == true);
+      UpdateOutline();
 
       SetCardIcon(card.CardIcons?.TopLeftIcon, _topLeftIcon);
       SetCardIcon(card.CardIcons?.TopRightIcon, _topRightIcon);
       SetCardIcon(card.CardIcons?.BottomRightIcon, _bottomRightIcon);
       SetCardIcon(card.CardIcons?.BottomLeftIcon, _bottomLeftIcon);
       SetCardIcon(card.CardIcons?.CenterIcon, _centerIcon);
+    }
+
+    void UpdateOutline()
+    {
+      _outline.gameObject.SetActive(_canPlay);
     }
 
     void SetCardIcon(CardIcon? cardIcon, Icon icon)

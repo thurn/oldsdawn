@@ -13,10 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using Spelldawn.Services;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -25,7 +24,6 @@ namespace Spelldawn.Game
 {
   public sealed class Hand : MonoBehaviour
   {
-    [SerializeField] Registry _registry = null!;
     [SerializeField] int _zRotationMultiplier;
     [SerializeField] Transform _controlPoint1 = null!;
     [SerializeField] Transform _controlPoint2 = null!;
@@ -35,10 +33,26 @@ namespace Spelldawn.Game
 
     readonly List<Card> _cards = new();
 
-    public IEnumerator<YieldInstruction> AddCard(Card card)
+    public IEnumerator<YieldInstruction> AddCard(Card card, int? index = null)
     {
-      _cards.Add(card);
+      if (index is { } i)
+      {
+        _cards.Insert(i, card);
+      }
+      else
+      {
+        _cards.Add(card);
+      }
+
       return AnimateCardsToPosition();
+    }
+
+    public int RemoveCard(Card card)
+    {
+      var index = _cards.FindIndex(c => c == card);
+      Errors.CheckNonNegative(index);
+      _cards.RemoveAt(index);
+      return index;
     }
 
     void Update()
@@ -57,13 +71,12 @@ namespace Spelldawn.Game
         var card = _cards[i];
         var curvePosition = CalculateCurvePosition(i);
         var t = card.transform;
-        // t.SetSiblingIndex(i);
         sequence.Insert(atPosition: 0,
           t.DOMove(CalculateBezierPosition(curvePosition), duration: 0.3f));
         sequence.Insert(atPosition: 0,
           t.DOLocalRotate(new Vector3(x: 280, y: 0,
             _zRotationMultiplier * CalculateZRotation(curvePosition)), duration: 0.3f));
-        card.SetSortingOrder(i);
+        card.SetHand(this, SortingOrder.Create(SortingOrder.Type.Hand, i));
       }
 
       yield return sequence.WaitForCompletion();

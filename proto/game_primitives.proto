@@ -24,17 +24,29 @@ enum PlayerName {
 }
 
 message CardId {
-  int32 value = 1;
+  oneof card_id {
+    PlayerName identity_card = 1;
+    int32 value = 2;
+  }
+}
+
+enum InnerRoom {
+  INNER_ROOM_UNSPECIFIED = 0;
+  INNER_ROOM_TREASURY = 1;
+  INNER_ROOM_SANCTUM = 2;
+  INNER_ROOM_CRYPTS = 3;
 }
 
 message RoomId {
-  int32 value = 1;
+  oneof room_id {
+    InnerRoom inner_room = 1;
+    int32 outer_room = 2;
+  }
 }
 
-message CardTarget {
+message TargetId {
   oneof target {
     CardId card_id = 1;
     RoomId room_id = 2;
-    PlayerName player_name = 3;
   }
 }

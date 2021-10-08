@@ -74,9 +74,32 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static readonly List<CardView> Cards = new()
     {
-      RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0),
-      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4),
-      RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 8),
+      RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0,
+        new CardTargeting
+        {
+          PickCard = new PickCard
+          {
+            ValidTargets =
+            {
+              CardId(65538)
+            }
+          }
+        }),
+      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4,
+        new CardTargeting
+        {
+          PickRoom = new PickRoom
+          {
+            ValidRooms =
+            {
+              new RoomId { InnerRoom = InnerRoom.Crypts },
+              new RoomId { InnerRoom = InnerRoom.Sanctum },
+              new RoomId { InnerRoom = InnerRoom.Treasury }
+            }
+          }
+        }, onCardRelease: OnCardRelease.PlayInRoom),
+      RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1,
+        onCardRelease: OnCardRelease.PlayAsItem),
       RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16", 15),
       RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42", 4),
       RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37", 2),
@@ -95,7 +118,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Game = SampleGame()
         }
       });
-
       if (_drawHands)
       {
         for (var i = 0; i < 6; ++i)
@@ -222,7 +244,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       Deck = new DeckView()
     };
 
-    static CardView RevealedCard(int cardId, string title, string text, string image, int manaCost) =>
+    static CardView RevealedCard(
+      int cardId,
+      string title,
+      string text,
+      string image,
+      int manaCost,
+      CardTargeting? targeting = null,
+      OnCardRelease onCardRelease = OnCardRelease.MoveToStaging) =>
       new()
       {
         CardId = CardId(cardId),
@@ -253,6 +282,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             Text = text
           },
+          Targeting = targeting,
+          OnRelease = onCardRelease,
           Cost = new CardCost
           {
             CanPlay = false,

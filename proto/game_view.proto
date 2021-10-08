@@ -42,34 +42,47 @@ message RulesText {
   string text = 1;
 }
 
-message PickTarget {
-  repeated CardTarget valid_targets = 1;
+enum TargetingArrow {
+  TARGETING_ARROW_UNSPECIFIED = 0;
+  TARGETING_ARROW_RED = 1;
+  TARGETING_ARROW_BLUE = 2;
+  TARGETING_ARROW_GREEN = 3;
 }
 
-message PlayInRoom {
+message PickCard {
+  repeated CardId valid_targets = 1;
+
+  TargetingArrow targeting_arrow = 2;
+}
+
+message PickRoom {
   repeated RoomId valid_rooms = 2;
-}
-
-message PlayAsItem {
-}
-
-message AwaitResponse {
 }
 
 message CardTargeting {
   oneof targeting {
-    /** Pick one of these targets and then animate to the staging area when played. */
-    PickTarget pick_target = 1;
+    /** Pick one of these cards via an arrow on drag. */
+    PickCard pick_card = 1;
 
-    /** Add this card to a room when played. */
-    PlayInRoom play_in_room = 2;
-
-    /** Add this card to the items in the arena when played */
-    PlayAsItem play_as_item = 3;
-
-    /** Animate this card to the staging area when played */
-    AwaitResponse await_response = 4;
+    /** Pick one of these valid rooms. */
+    PickRoom pick_room = 2;
   }
+}
+
+enum OnCardRelease {
+  ON_CARD_RELEASE_UNSPECIFIED = 0;
+
+  /** Animate the card to the Staging area on release. */
+  ON_CARD_RELEASE_MOVE_TO_STAGING = 1;
+
+  /** Animate the card into the arena as an item on release. */
+  ON_CARD_RELEASE_PLAY_AS_ITEM = 2;
+
+  /**
+   * Animate the card into a room on release, which must have been selected
+   * via the PickRoom targeting mode above.
+   */
+  ON_CARD_RELEASE_PLAY_IN_ROOM = 3;
 }
 
 enum CanPlayAlgorithm {
@@ -132,8 +145,17 @@ message RevealedCardView {
   sd.SpriteAddress image = 5;
   CardTitle title = 6;
   RulesText rules_text = 7;
+
+  /**
+   * Custom targeting behavior for a card. If unspecified, no targeting UI
+   * is shown.
+   */
   CardTargeting targeting = 8;
-  CardCost cost = 9;
+
+  /** What to do after a played card is released. */
+  OnCardRelease on_release = 9;
+
+  CardCost cost = 10;
 }
 
 /** Where in the arena should this card be displayed? */
