@@ -71,7 +71,7 @@ namespace Spelldawn.Services
       AnimateFromDeckToStaging(_optimisticCard);
     }
 
-    public IEnumerator HandleCreateCard(CreateCardCommand command)
+    public IEnumerator HandleCreateCardCommand(CreateCardCommand command)
     {
       Errors.CheckNotNull(command.Card);
       Errors.CheckNotNull(command.Card.CardId);
@@ -101,7 +101,7 @@ namespace Spelldawn.Services
       card.Render(_registry, command.Card, animate: waitForStaging);
       _cards[command.Card.CardId] = card;
 
-      StartCoroutine(MoveCard(card, command.Card.OnCreatePosition, animate: false));
+      StartCoroutine(MoveCardInternal(card, command.Card.OnCreatePosition, animate: false));
 
       if (waitForStaging)
       {
@@ -110,27 +110,44 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator HandleMoveCard(MoveCardCommand command)
+    public IEnumerator HandleMoveCardCommand(MoveCardCommand command)
     {
       Errors.CheckState(_cards.ContainsKey(command.CardId), $"Card not found: {command.CardId}");
       var card = _cards[command.CardId];
-      card.RemoveFromParent();
-      return MoveCard(card, command.Position, !command.DisableAnimation);
+      if (card.Parent)
+      {
+        card.Parent!.RemoveCardIfPresent(card, !command.DisableAnimation);
+      }
+      return MoveCardInternal(card, command.Position, !command.DisableAnimation);
     }
 
-    IEnumerator MoveCard(Card card, CardPosition position, bool animate)
+    public IEnumerator MoveCard(Card card, CardPosition targetPosition, bool animate = true)
+    {
+      if (card.Parent)
+      {
+        card.Parent!.RemoveCardIfPresent(card, animate);
+      }
+      return MoveCardInternal(card, targetPosition, animate);
+    }
+
+    IEnumerator MoveCardInternal(Card card, CardPosition position, bool animate)
     {
       switch (position.PositionCase)
       {
         case CardPosition.PositionOneofCase.Room:
+          card.SetRenderingMode(Card.RenderingMode.Arena);
           return _registry.ArenaService.AddToRoom(card, position.Room, animate);
         case CardPosition.PositionOneofCase.Item:
+          card.SetRenderingMode(Card.RenderingMode.Arena);
           return _registry.ArenaService.AddAsItem(card, position.Item, animate);
         case CardPosition.PositionOneofCase.Staging:
+          card.SetRenderingMode(Card.RenderingMode.Default);
           return _registry.CardStaging.AddCard(card, animate);
         case CardPosition.PositionOneofCase.Hand:
+          card.SetRenderingMode(Card.RenderingMode.Default);
           return _registry.HandForPlayer(position.Hand.Owner).AddCard(card, animate);
         case CardPosition.PositionOneofCase.Deck:
+          card.SetRenderingMode(Card.RenderingMode.Default);
           return _registry.DeckForPlayer(position.Deck.Owner).AddCard(card, animate);
         case CardPosition.PositionOneofCase.Discard:
           throw new NotImplementedException();

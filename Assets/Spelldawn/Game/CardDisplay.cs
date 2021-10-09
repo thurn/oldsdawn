@@ -55,6 +55,12 @@ namespace Spelldawn.Game
       return index;
     }
 
+    public void RemoveCardIfPresent(Card card, bool animate = true)
+    {
+      Cards.Remove(card);
+      StartCoroutine(MoveCardsToPosition(animate));
+    }
+
     protected abstract SortingOrder.Type SortingType { get; }
 
     protected virtual float AnimationDuration => 0.3f;

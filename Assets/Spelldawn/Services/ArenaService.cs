@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Spelldawn.Game;
 using Spelldawn.Protos;
@@ -24,16 +26,27 @@ namespace Spelldawn.Services
   public sealed class ArenaService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] RectangleCardDisplay _leftItems = null!;
-    [SerializeField] RectangleCardDisplay _centerItems = null!;
-    [SerializeField] RectangleCardDisplay _rightItems = null!;
+    [SerializeField] TwoRowCardDisplay _leftItems = null!;
+    [SerializeField] TwoRowCardDisplay _centerItems = null!;
+    [SerializeField] TwoRowCardDisplay _rightItems = null!;
 
-    public IEnumerator<YieldInstruction> AddAsItem(Card card, CardPositionItem position, bool animate)
+    public IEnumerator AddAsItem(Card card, CardPositionItem position, bool animate)
     {
-      yield break;
+      switch (position.ItemLocation)
+      {
+        case ItemLocation.Left:
+          return _leftItems.AddCard(card, animate);
+        case ItemLocation.Center:
+          return _centerItems.AddCard(card, animate);
+        case ItemLocation.Right:
+          return _rightItems.AddCard(card, animate);
+        default:
+          Debug.LogError($"Unknown item location: {position.ItemLocation}");
+          return _rightItems.AddCard(card, animate);
+      }
     }
 
-    public IEnumerator<YieldInstruction> AddToRoom(Card card, CardPositionRoom position, bool animate)
+    public IEnumerator AddToRoom(Card card, CardPositionRoom position, bool animate)
     {
       yield break;
     }

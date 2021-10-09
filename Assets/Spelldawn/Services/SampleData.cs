@@ -97,7 +97,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               new RoomId { InnerRoom = InnerRoom.Treasury }
             }
           }
-        }, releasePosition: new CardPosition
+        }, new CardPosition
         {
           Room = new CardPositionRoom
           {
@@ -324,9 +324,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             Text = text
           },
           Targeting = targeting,
-          OnReleasePosition = releasePosition ?? new CardPosition
+          OnReleasePosition = new CardPosition
           {
-            Staging = new CardPositionStaging()
+            Item = new CardPositionItem
+            {
+              ItemLocation = ItemLocation.Right
+            }
           },
           Cost = new CardCost
           {

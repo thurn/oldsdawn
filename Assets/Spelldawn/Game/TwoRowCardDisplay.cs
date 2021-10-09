@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using UnityEngine;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class RectangleCardDisplay : CardDisplay
+  public sealed class TwoRowCardDisplay : CardDisplay
   {
     [SerializeField] float _width;
     [SerializeField] float _height;
+    [SerializeField] float _fourCardOffset;
 
     protected override SortingOrder.Type SortingType => SortingOrder.Type.Arena;
 
@@ -32,20 +32,32 @@ namespace Spelldawn.Game
       {
         1 => transform.position,
         2 => transform.position + new Vector3(XPosition(index, count), 0, 0),
-        _ => transform.position + new Vector3(XPosition(index, count), YPosition(index, count), 0)
+        _ => transform.position + new Vector3(XPosition(index, count), 0, ZPosition(index, count))
       };
     }
 
-    float XPosition(int index, int count) =>
-      Mathf.Lerp(_width / -2f, _width / 2f, XPercentage(index, count));
+    protected override Vector3? CalculateCardRotation(Card card, int index, int count) =>
+      new Vector3(x: 270, y: 0, 0);
 
-    float YPosition(int index, int count) =>
+    float XPosition(int index, int count) =>
+      count < 5
+        ? Mathf.Lerp(_width * -_fourCardOffset, _width * _fourCardOffset, XPercentage(index, count))
+        : Mathf.Lerp(_width * -0.5f, _width * 0.5f, XPercentage(index, count));
+
+    float ZPosition(int index, int count) =>
       index < count / 2 ? _height / -2f : _height / 2f;
 
     float XPercentage(int index, int count)
     {
-      var rowSize = count / 2;
-      return index < rowSize ? index / (count - rowSize - 1f) : (index - rowSize) / (count - rowSize - 1f);
+      if (count < 3)
+      {
+        return index == 0 ? 0 : 1;
+      }
+      else
+      {
+        var rowSize = count / 2;
+        return index < rowSize ? index / (count - rowSize - 1f) : (index - rowSize) / (count - rowSize - 1f);
+      }
     }
 
     void OnDrawGizmosSelected()

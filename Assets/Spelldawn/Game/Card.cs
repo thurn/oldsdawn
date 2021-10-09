@@ -30,6 +30,7 @@ namespace Spelldawn.Game
   {
     [SerializeField] SpriteRenderer _cardBack = null!;
     [SerializeField] Transform _cardFront = null!;
+    [SerializeField] GameObject _cardShadow = null!;
     [SerializeField] SpriteRenderer _image = null!;
     [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] SpriteRenderer _titleBackground = null!;
@@ -37,6 +38,8 @@ namespace Spelldawn.Game
     [SerializeField] TextMeshPro _title = null!;
     [SerializeField] TextMeshPro _rulesText = null!;
     [SerializeField] SpriteRenderer _jewel = null!;
+    [SerializeField] SpriteRenderer _arenaFrame = null!;
+    [SerializeField] GameObject _arenaShadow = null!;
     [SerializeField] SortingGroup _sortingGroup = null!;
     [SerializeField] WarpTextExample _warpText = null!;
     [SerializeField] Icon _topLeftIcon = null!;
@@ -53,8 +56,10 @@ namespace Spelldawn.Game
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] int _handIndex;
+    [SerializeField] RenderingMode _renderingMode;
 
     Registry _registry = null!;
+    CardView? _cardView;
     RevealedCardView? _revealedCardView;
 
     [Serializable]
@@ -66,11 +71,17 @@ namespace Spelldawn.Game
       public TextMeshPro Text => _text;
     }
 
+    public enum RenderingMode
+    {
+      Default,
+      Arena
+    }
+
     public bool IsRevealed => _isRevealed;
 
     public bool StagingAnimationComplete { get; set; }
 
-    public CardDisplay? Parent { set; private get; }
+    public CardDisplay? Parent { set; get; }
 
     public SortingOrder? SortingOrder
     {
@@ -83,6 +94,7 @@ namespace Spelldawn.Game
       _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
       _outline.sortingOrder = -1;
       _interactive = true;
+      _cardView = cardView;
 
       if (cardView.RevealedCard != null)
       {
@@ -108,14 +120,6 @@ namespace Spelldawn.Game
       }
     }
 
-    public void RemoveFromParent()
-    {
-      if (Parent)
-      {
-        Parent!.RemoveCard(this, animate: true);
-      }
-    }
-
     void Update()
     {
       if (_interactive && _revealedCardView is { Cost: { } cost })
@@ -133,6 +137,43 @@ namespace Spelldawn.Game
 
         UpdateOutline();
       }
+    }
+
+    public void SetRenderingMode(RenderingMode renderingMode)
+    {
+      if (renderingMode != _renderingMode)
+      {
+        switch (renderingMode)
+        {
+          case RenderingMode.Default:
+            _frame.gameObject.SetActive(true);
+            _titleBackground.gameObject.SetActive(true);
+            _title.gameObject.SetActive(true);
+            _rulesText.gameObject.SetActive(true);
+            _jewel.gameObject.SetActive(true);
+            _arenaFrame.gameObject.SetActive(false);
+            _cardShadow.SetActive(true);
+            _arenaShadow.SetActive(false);
+            break;
+          case RenderingMode.Arena:
+            _frame.gameObject.SetActive(false);
+            _titleBackground.gameObject.SetActive(false);
+            _title.gameObject.SetActive(false);
+            _rulesText.gameObject.SetActive(false);
+            _jewel.gameObject.SetActive(false);
+            _arenaFrame.gameObject.SetActive(true);
+            _cardShadow.SetActive(false);
+            _arenaShadow.SetActive(true);
+            _topLeftIcon.Background.gameObject.SetActive(false);
+            break;
+          default:
+            Debug.LogError($"Unrecognized rendering mode: {_renderingMode}");
+            goto case RenderingMode.Default;
+        }
+      }
+
+      _renderingMode = renderingMode;
+      UpdateIcons();
     }
 
     void OnMouseDown()
@@ -176,7 +217,7 @@ namespace Spelldawn.Game
       {
         _isDragging = false;
         var distance = _dragStartPosition.z - DragWorldMousePosition().z;
-        if (distance < 4.5f)
+        if (distance < 4.5f || _revealedCardView?.OnReleasePosition == null)
         {
           // Return to hand
           _interactive = true;
@@ -184,7 +225,7 @@ namespace Spelldawn.Game
         }
         else
         {
-          StartCoroutine(_registry.CardStaging.AddCard(this));
+          StartCoroutine(_registry.CardService.MoveCard(this, _revealedCardView.OnReleasePosition));
         }
       }
     }
@@ -233,12 +274,7 @@ namespace Spelldawn.Game
       _rulesText.text = revealed.RulesText.Text;
       _jewel.sprite = _registry.AssetService.GetSprite(revealed.Jewel);
       UpdateOutline();
-
-      SetCardIcon(card.CardIcons?.TopLeftIcon, _topLeftIcon);
-      SetCardIcon(card.CardIcons?.TopRightIcon, _topRightIcon);
-      SetCardIcon(card.CardIcons?.BottomRightIcon, _bottomRightIcon);
-      SetCardIcon(card.CardIcons?.BottomLeftIcon, _bottomLeftIcon);
-      SetCardIcon(card.CardIcons?.CenterIcon, _centerIcon);
+      UpdateIcons();
     }
 
     void UpdateOutline()
@@ -246,9 +282,18 @@ namespace Spelldawn.Game
       _outline.gameObject.SetActive(_canPlay);
     }
 
-    void SetCardIcon(CardIcon? cardIcon, Icon icon)
+    void UpdateIcons()
     {
-      if (cardIcon != null)
+      SetCardIcon(_topLeftIcon, _cardView?.CardIcons?.TopLeftIcon);
+      SetCardIcon(_topRightIcon, _cardView?.CardIcons?.TopRightIcon);
+      SetCardIcon(_bottomRightIcon, _cardView?.CardIcons?.BottomRightIcon);
+      SetCardIcon(_bottomLeftIcon, _cardView?.CardIcons?.BottomLeftIcon);
+      SetCardIcon(_centerIcon, _cardView?.CardIcons?.CenterIcon);
+    }
+
+    void SetCardIcon(Icon icon, CardIcon? cardIcon)
+    {
+      if (cardIcon != null && _renderingMode == RenderingMode.Default)
       {
         icon.Background.gameObject.SetActive(true);
         icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);
