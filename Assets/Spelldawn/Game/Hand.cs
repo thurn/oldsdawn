@@ -19,7 +19,7 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class Hand : CardList
+  public sealed class Hand : CardDisplay
   {
     [SerializeField] int _zRotationMultiplier;
     [SerializeField] SortingOrder.Type _sortingType;

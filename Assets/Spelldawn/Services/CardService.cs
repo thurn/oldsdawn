@@ -71,14 +71,14 @@ namespace Spelldawn.Services
       AnimateFromDeckToStaging(_optimisticCard);
     }
 
-    public IEnumerator CreateCard(CreateCardCommand command)
+    public IEnumerator HandleCreateCard(CreateCardCommand command)
     {
       Errors.CheckNotNull(command.Card);
       Errors.CheckNotNull(command.Card.CardId);
 
       var waitForStaging = false;
       Card card;
-      if (_optimisticCard)
+      if (!command.DisallowOptimistic && _optimisticCard)
       {
         waitForStaging = true;
         card = _optimisticCard!;
@@ -88,27 +88,20 @@ namespace Spelldawn.Services
       {
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-        switch (command.Position)
+
+        switch (command.Animation)
         {
-          case CreateCardPosition.UserDeckToStaging:
+          case CardCreationAnimation.UserDeckToStaging:
             AnimateFromDeckToStaging(card);
-            waitForStaging = true;
-            break;
-          case CreateCardPosition.UserDeck:
-            card.transform.position = DeckSpawnPosition(PlayerName.User);
-            break;
-          case CreateCardPosition.OpponentDeck:
-            card.transform.position = DeckSpawnPosition(PlayerName.Opponent);
-            break;
-          case CreateCardPosition.Staging:
-            card.transform.position = _registry.CardStagingArea.position;
             waitForStaging = true;
             break;
         }
       }
 
-      card.Render(_registry, command.Card);
+      card.Render(_registry, command.Card, animate: waitForStaging);
       _cards[command.Card.CardId] = card;
+
+      StartCoroutine(MoveCard(card, command.Card.OnCreatePosition, animate: false));
 
       if (waitForStaging)
       {
@@ -117,35 +110,37 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator MoveCard(MoveCardCommand command)
+    public IEnumerator HandleMoveCard(MoveCardCommand command)
     {
       Errors.CheckState(_cards.ContainsKey(command.CardId), $"Card not found: {command.CardId}");
       var card = _cards[command.CardId];
-
-      switch (command.Zone)
-      {
-        case GameZone.Hand:
-          return _registry.HandForPlayer(command.TargetPlayer).AddCard(card);
-        case GameZone.Arena:
-          return _registry.ArenaService.AddCard(card);
-        case GameZone.Deck:
-          return MoveTo(card, _registry.DeckForPlayer(command.TargetPlayer).transform);
-        case GameZone.Discard:
-          throw new NotImplementedException();
-        case GameZone.Banished:
-          Destroy(card);
-          break;
-      }
-
-      return CollectionUtils.Yield();
+      card.RemoveFromParent();
+      return MoveCard(card, command.Position, !command.DisableAnimation);
     }
 
-    IEnumerator<YieldInstruction> MoveTo(Card card, Transform target)
+    IEnumerator MoveCard(Card card, CardPosition position, bool animate)
     {
-      yield return DOTween.Sequence()
-        .Insert(0, card.transform.DOMove(target.position, 0.5f))
-        .Insert(0, card.transform.DORotateQuaternion(target.rotation, 0.5f))
-        .WaitForCompletion();
+      switch (position.PositionCase)
+      {
+        case CardPosition.PositionOneofCase.Room:
+          return _registry.ArenaService.AddToRoom(card, position.Room, animate);
+        case CardPosition.PositionOneofCase.Item:
+          return _registry.ArenaService.AddAsItem(card, position.Item, animate);
+        case CardPosition.PositionOneofCase.Staging:
+          return _registry.CardStaging.AddCard(card, animate);
+        case CardPosition.PositionOneofCase.Hand:
+          return _registry.HandForPlayer(position.Hand.Owner).AddCard(card, animate);
+        case CardPosition.PositionOneofCase.Deck:
+          return _registry.DeckForPlayer(position.Deck.Owner).AddCard(card, animate);
+        case CardPosition.PositionOneofCase.Discard:
+          throw new NotImplementedException();
+        case CardPosition.PositionOneofCase.Scored:
+          throw new NotImplementedException();
+        case CardPosition.PositionOneofCase.Browser:
+          throw new NotImplementedException();
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
     }
 
     void SetCardBacks(CardView? cardView, PlayerName playerName)

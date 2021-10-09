@@ -42,40 +42,32 @@ message InitiateRaidCommand {
   RoomId room_id = 1;
 }
 
-enum CreateCardPosition {
-  /**
-   * If no position is specified, the card should be invisible until it is
-   * moved, at which point it materializes immediately at the destination.
-   */
-  CREATE_CARD_POSITION_UNSPECIFIED = 0;
+enum CardCreationAnimation {
+  CARD_CREATION_ANIMATION_UNSPECIFIED = 0;
 
-  /**
-   * Creates card on top of the user's deck and animates it moving to the staging
-   * area.
-   *
-   * If an optimistic card has already been created, that card is used instead.
-   */
-  CREATE_CARD_POSITION_USER_DECK_TO_STAGING = 1;
-
-  CREATE_CARD_POSITION_USER_DECK = 2;
-
-  CREATE_CARD_POSITION_OPPONENT_DECK = 3;
-
-  /**
-   * Creates a card in the staging area.
-   */
-  CREATE_CARD_POSITION_STAGING = 4;
+  CARD_CREATION_ANIMATION_USER_DECK_TO_STAGING = 1;
 }
 
 /**
- * Makes a new card. If an optimistic card has already been created, it is
- * updated to match the provided 'card' and 'position' is ignored.
+ * Makes a new card.
  */
 message CreateCardCommand {
-  CreateCardPosition position = 1;
-  CardView card = 2;
+  CardView card = 1;
+
+  /** Optionally, an animation to play after creating the card. */
+  CardCreationAnimation animation = 2;
+
+  /**
+   * If an optimistic card has already been created, it is updated to match the provided
+   * 'card' instead unless this value is 'true'.
+   */
+  bool disallow_optimistic = 3;
 }
 
+/**
+ * Updates a card. Note that changes to 'on_create_position' are ignored here,
+ * use MoveCardCommand instead to reposition cards.
+ */
 message UpdateCardCommand {
   CardView card = 1;
 }
@@ -91,8 +83,8 @@ enum GameZone {
 
 message MoveCardCommand {
   CardId card_id = 1;
-  PlayerName target_player = 2;
-  GameZone zone = 3;
+  CardPosition position = 2;
+  bool disable_animation = 3;
 }
 
 message DestroyCardCommand {

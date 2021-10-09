@@ -14,6 +14,7 @@
 
 using System.Collections.Generic;
 using Spelldawn.Game;
+using Spelldawn.Protos;
 using UnityEngine;
 
 #nullable enable
@@ -23,8 +24,16 @@ namespace Spelldawn.Services
   public sealed class ArenaService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
+    [SerializeField] RectangleCardDisplay _leftItems = null!;
+    [SerializeField] RectangleCardDisplay _centerItems = null!;
+    [SerializeField] RectangleCardDisplay _rightItems = null!;
 
-    public IEnumerator<YieldInstruction> AddCard(Card card)
+    public IEnumerator<YieldInstruction> AddAsItem(Card card, CardPositionItem position, bool animate)
+    {
+      yield break;
+    }
+
+    public IEnumerator<YieldInstruction> AddToRoom(Card card, CardPositionRoom position, bool animate)
     {
       yield break;
     }

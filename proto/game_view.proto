@@ -69,22 +69,6 @@ message CardTargeting {
   }
 }
 
-enum OnCardRelease {
-  ON_CARD_RELEASE_UNSPECIFIED = 0;
-
-  /** Animate the card to the Staging area on release. */
-  ON_CARD_RELEASE_MOVE_TO_STAGING = 1;
-
-  /** Animate the card into the arena as an item on release. */
-  ON_CARD_RELEASE_PLAY_AS_ITEM = 2;
-
-  /**
-   * Animate the card into a room on release, which must have been selected
-   * via the PickRoom targeting mode above.
-   */
-  ON_CARD_RELEASE_PLAY_IN_ROOM = 3;
-}
-
 enum CanPlayAlgorithm {
   CAN_PLAY_ALGORITHM_UNSPECIFIED = 0;
 
@@ -137,6 +121,63 @@ message CardCost {
   SpendCostAlgorithm spend_cost_algorithm = 5;
 }
 
+enum RoomLocation {
+  ROOM_LOCATION_UNSPECIFIED = 0;
+  ROOM_LOCATION_IN_ROOM = 1;
+  ROOM_LOCATION_DEFENDER = 2;
+}
+
+message CardPositionRoom {
+  RoomId room_id = 1;
+  RoomLocation room_location = 2;
+}
+
+enum ItemLocation {
+  ITEM_LOCATION_UNSPECIFIED = 0;
+  ITEM_LOCATION_LEFT = 1;
+  ITEM_LOCATION_CENTER = 2;
+  ITEM_LOCATION_RIGHT = 3;
+}
+
+message CardPositionItem {
+  ItemLocation item_location = 1;
+}
+
+message CardPositionStaging {
+}
+
+message CardPositionHand {
+  PlayerName owner = 1;
+}
+
+message CardPositionDeck {
+  PlayerName owner = 1;
+}
+
+message CardPositionDiscard {
+  PlayerName owner = 1;
+}
+
+message CardPositionScored {
+  PlayerName owner = 1;
+}
+
+message CardPositionBrowser {
+}
+
+message CardPosition {
+  oneof position {
+    CardPositionRoom room = 1;
+    CardPositionItem item = 2;
+    CardPositionStaging staging = 3;
+    CardPositionHand hand = 4;
+    CardPositionDeck deck = 5;
+    CardPositionDiscard discard = 6;
+    CardPositionScored scored = 7;
+    CardPositionBrowser browser = 8;
+  }
+}
+
 message RevealedCardView {
   sd.SpriteAddress card_frame = 1;
   sd.SpriteAddress title_background = 2;
@@ -152,25 +193,21 @@ message RevealedCardView {
    */
   CardTargeting targeting = 8;
 
-  /** What to do after a played card is released. */
-  OnCardRelease on_release = 9;
+  /**
+   * Where to move a played card. Information from 'targeting' will be
+   * incorporated to fill this in, e.g. if a room is targeted and
+   * CardPositionRoom is selected here with no RoomId, the targeted room
+   * is used.
+   */
+  CardPosition on_release_position = 9;
 
+  /** Information needed to determine whether a card can be played. */
   CardCost cost = 10;
-}
-
-/** Where in the arena should this card be displayed? */
-enum ArenaPosition {
-  ARENA_POSITION_UNSPECIFIED = 0;
-  ARENA_POSITION_IN_ROOM = 1;
-  ARENA_POSITION_ROOM_DEFENDER = 2;
-  ARENA_POSITION_ITEMS_LEFT = 3;
-  ARENA_POSITION_ITEMS_CENTER = 4;
-  ARENA_POSITION_ITEMS_RIGHT = 5;
 }
 
 message CardView {
   CardId card_id = 1;
-  ArenaPosition arena_position = 2;
+  CardPosition on_create_position = 2;
   sd.SpriteAddress card_back = 3;
   CardIcons card_icons = 4;
   sd.SpriteAddress arena_frame = 5;

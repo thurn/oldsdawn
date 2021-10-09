@@ -70,20 +70,14 @@ namespace Spelldawn.Game
 
     public bool StagingAnimationComplete { get; set; }
 
-    public CardList? Parent { set; private get; }
+    public CardDisplay? Parent { set; private get; }
 
     public SortingOrder? SortingOrder
     {
       set => value?.ApplyTo(_sortingGroup);
     }
 
-    void Start()
-    {
-      _cardBack.gameObject.SetActive(true);
-      _cardFront.gameObject.SetActive(false);
-    }
-
-    public void Render(Registry registry, CardView cardView)
+    public void Render(Registry registry, CardView cardView, bool animate = true)
     {
       _registry = registry;
       _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
@@ -98,19 +92,27 @@ namespace Spelldawn.Game
         }
         else
         {
-          Flip(_cardFront, _cardBack, () => RenderRevealedCard(cardView));
+          Flip(_cardFront, _cardBack, () => RenderRevealedCard(cardView), animate);
         }
       }
       else
       {
         if (_isRevealed)
         {
-          Flip(_cardBack, _cardFront, RenderHiddenCard);
+          Flip(_cardBack, _cardFront, RenderHiddenCard, animate);
         }
         else
         {
           RenderHiddenCard();
         }
+      }
+    }
+
+    public void RemoveFromParent()
+    {
+      if (Parent)
+      {
+        Parent!.RemoveCard(this, animate: true);
       }
     }
 
@@ -178,7 +180,7 @@ namespace Spelldawn.Game
         {
           // Return to hand
           _interactive = true;
-          StartCoroutine(Parent!.AddCard(this, _handIndex));
+          StartCoroutine(Parent!.AddCard(this, animate: true, index: _handIndex));
         }
         else
         {
@@ -190,18 +192,28 @@ namespace Spelldawn.Game
     Vector3 DragWorldMousePosition() => _registry.MainCamera.ScreenToWorldPoint(
       new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartScreenZ));
 
-    static void Flip(Component faceUp, Component faceDown, Action onFlipped)
+    static void Flip(Component faceUp, Component faceDown, Action onFlipped, bool animate)
     {
-      DOTween.Sequence()
-        .Insert(atPosition: 0, faceDown.transform.DOLocalRotate(new Vector3(x: 0, y: 90, z: 0), duration: 0.2f))
-        .InsertCallback(atPosition: 0.2f, () =>
-        {
-          faceUp.gameObject.SetActive(value: true);
-          faceUp.transform.localRotation = Quaternion.Euler(x: 0, y: 90, z: 0);
-          faceDown.gameObject.SetActive(value: false);
-          onFlipped();
-        })
-        .Insert(atPosition: 0.2f, faceUp.transform.DOLocalRotate(Vector3.zero, duration: 0.3f));
+      if (animate)
+      {
+        const float duration = 0.2f;
+        DOTween.Sequence()
+          .Insert(atPosition: 0, faceDown.transform.DOLocalRotate(new Vector3(x: 0, y: 90, z: 0), duration))
+          .InsertCallback(atPosition: duration, () =>
+          {
+            faceUp.gameObject.SetActive(value: true);
+            faceUp.transform.localRotation = Quaternion.Euler(x: 0, y: 90, z: 0);
+            faceDown.gameObject.SetActive(value: false);
+            onFlipped();
+          })
+          .Insert(atPosition: duration, faceUp.transform.DOLocalRotate(Vector3.zero, duration));
+      }
+      else
+      {
+        faceUp.gameObject.SetActive(value: true);
+        faceDown.gameObject.SetActive(value: false);
+        onFlipped();
+      }
     }
 
     void RenderRevealedCard(CardView card)

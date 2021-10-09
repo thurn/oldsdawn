@@ -29,51 +29,49 @@ namespace Spelldawn.Protos {
             "ZmFjZUNvbW1hbmQSFgoEbm9kZRgBIAEoCzIILnNkLk5vZGUiLwoRUmVuZGVy",
             "R2FtZUNvbW1hbmQSGgoEZ2FtZRgBIAEoCzIMLnNkLkdhbWVWaWV3IjIKE0lu",
             "aXRpYXRlUmFpZENvbW1hbmQSGwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21J",
-            "ZCJZChFDcmVhdGVDYXJkQ29tbWFuZBIoCghwb3NpdGlvbhgBIAEoDjIWLnNk",
-            "LkNyZWF0ZUNhcmRQb3NpdGlvbhIaCgRjYXJkGAIgASgLMgwuc2QuQ2FyZFZp",
-            "ZXciLwoRVXBkYXRlQ2FyZENvbW1hbmQSGgoEY2FyZBgBIAEoCzIMLnNkLkNh",
-            "cmRWaWV3InEKD01vdmVDYXJkQ29tbWFuZBIbCgdjYXJkX2lkGAEgASgLMgou",
-            "c2QuQ2FyZElkEiUKDXRhcmdldF9wbGF5ZXIYAiABKA4yDi5zZC5QbGF5ZXJO",
-            "YW1lEhoKBHpvbmUYAyABKA4yDC5zZC5HYW1lWm9uZSIxChJEZXN0cm95Q2Fy",
-            "ZENvbW1hbmQSGwoHY2FyZF9pZBgBIAEoCzIKLnNkLkNhcmRJZCKqAQoYVXBk",
-            "YXRlUGxheWVyU3RhdGVDb21tYW5kEiMKC3BsYXllcl9uYW1lGAEgASgOMg4u",
-            "c2QuUGxheWVyTmFtZRIcCgRpbmZvGAIgASgLMg4uc2QuUGxheWVySW5mbxIc",
-            "CgVzY29yZRgDIAEoCzINLnNkLlNjb3JlVmlldxItCg5hY3Rpb25fdHJhY2tl",
-            "chgEIAEoCzIVLnNkLkFjdGlvblRyYWNrZXJWaWV3IlkKGUNyZWF0ZU9yVXBk",
-            "YXRlUm9vbUNvbW1hbmQSGwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZBIf",
-            "Cglyb29tX2luZm8YAiABKAsyDC5zZC5Sb29tSW5mbyIxChJEZXN0cm95Um9v",
-            "bUNvbW1hbmQSGwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZCKTBAoLR2Ft",
-            "ZUNvbW1hbmQSNgoQcmVuZGVyX2ludGVyZmFjZRgBIAEoCzIaLnNkLlJlbmRl",
-            "ckludGVyZmFjZUNvbW1hbmRIABIsCgtyZW5kZXJfZ2FtZRgCIAEoCzIVLnNk",
-            "LlJlbmRlckdhbWVDb21tYW5kSAASMAoNaW5pdGlhdGVfcmFpZBgDIAEoCzIX",
-            "LnNkLkluaXRpYXRlUmFpZENvbW1hbmRIABIsCgtjcmVhdGVfY2FyZBgEIAEo",
-            "CzIVLnNkLkNyZWF0ZUNhcmRDb21tYW5kSAASLAoLdXBkYXRlX2NhcmQYBSAB",
-            "KAsyFS5zZC5VcGRhdGVDYXJkQ29tbWFuZEgAEigKCW1vdmVfY2FyZBgGIAEo",
-            "CzITLnNkLk1vdmVDYXJkQ29tbWFuZEgAEi4KDGRlc3Ryb3lfY2FyZBgHIAEo",
-            "CzIWLnNkLkRlc3Ryb3lDYXJkQ29tbWFuZEgAEjsKE3VwZGF0ZV9wbGF5ZXJf",
-            "c3RhdGUYCCABKAsyHC5zZC5VcGRhdGVQbGF5ZXJTdGF0ZUNvbW1hbmRIABI+",
-            "ChVjcmVhdGVfb3JfdXBkYXRlX3Jvb20YCSABKAsyHS5zZC5DcmVhdGVPclVw",
-            "ZGF0ZVJvb21Db21tYW5kSAASLgoMZGVzdHJveV9yb29tGAogASgLMhYuc2Qu",
-            "RGVzdHJveVJvb21Db21tYW5kSABCCQoHY29tbWFuZCIwCgtDb21tYW5kTGlz",
-            "dBIhCghjb21tYW5kcxgBIAMoCzIPLnNkLkdhbWVDb21tYW5kKtcBChJDcmVh",
-            "dGVDYXJkUG9zaXRpb24SJAogQ1JFQVRFX0NBUkRfUE9TSVRJT05fVU5TUEVD",
-            "SUZJRUQQABItCilDUkVBVEVfQ0FSRF9QT1NJVElPTl9VU0VSX0RFQ0tfVE9f",
-            "U1RBR0lORxABEiIKHkNSRUFURV9DQVJEX1BPU0lUSU9OX1VTRVJfREVDSxAC",
-            "EiYKIkNSRUFURV9DQVJEX1BPU0lUSU9OX09QUE9ORU5UX0RFQ0sQAxIgChxD",
-            "UkVBVEVfQ0FSRF9QT1NJVElPTl9TVEFHSU5HEAQqkQEKCEdhbWVab25lEhkK",
-            "FUdBTUVfWk9ORV9VTlNQRUNJRklFRBAAEhIKDkdBTUVfWk9ORV9IQU5EEAES",
-            "EwoPR0FNRV9aT05FX0FSRU5BEAISEgoOR0FNRV9aT05FX0RFQ0sQAxIVChFH",
-            "QU1FX1pPTkVfRElTQ0FSRBAEEhYKEkdBTUVfWk9ORV9CQU5JU0hFRBAFQhOq",
-            "AhBTcGVsbGRhd24uUHJvdG9zYgZwcm90bzM="));
+            "ZCJ6ChFDcmVhdGVDYXJkQ29tbWFuZBIaCgRjYXJkGAEgASgLMgwuc2QuQ2Fy",
+            "ZFZpZXcSLAoJYW5pbWF0aW9uGAIgASgOMhkuc2QuQ2FyZENyZWF0aW9uQW5p",
+            "bWF0aW9uEhsKE2Rpc2FsbG93X29wdGltaXN0aWMYAyABKAgiLwoRVXBkYXRl",
+            "Q2FyZENvbW1hbmQSGgoEY2FyZBgBIAEoCzIMLnNkLkNhcmRWaWV3Im0KD01v",
+            "dmVDYXJkQ29tbWFuZBIbCgdjYXJkX2lkGAEgASgLMgouc2QuQ2FyZElkEiIK",
+            "CHBvc2l0aW9uGAIgASgLMhAuc2QuQ2FyZFBvc2l0aW9uEhkKEWRpc2FibGVf",
+            "YW5pbWF0aW9uGAMgASgIIjEKEkRlc3Ryb3lDYXJkQ29tbWFuZBIbCgdjYXJk",
+            "X2lkGAEgASgLMgouc2QuQ2FyZElkIqoBChhVcGRhdGVQbGF5ZXJTdGF0ZUNv",
+            "bW1hbmQSIwoLcGxheWVyX25hbWUYASABKA4yDi5zZC5QbGF5ZXJOYW1lEhwK",
+            "BGluZm8YAiABKAsyDi5zZC5QbGF5ZXJJbmZvEhwKBXNjb3JlGAMgASgLMg0u",
+            "c2QuU2NvcmVWaWV3Ei0KDmFjdGlvbl90cmFja2VyGAQgASgLMhUuc2QuQWN0",
+            "aW9uVHJhY2tlclZpZXciWQoZQ3JlYXRlT3JVcGRhdGVSb29tQ29tbWFuZBIb",
+            "Cgdyb29tX2lkGAEgASgLMgouc2QuUm9vbUlkEh8KCXJvb21faW5mbxgCIAEo",
+            "CzIMLnNkLlJvb21JbmZvIjEKEkRlc3Ryb3lSb29tQ29tbWFuZBIbCgdyb29t",
+            "X2lkGAEgASgLMgouc2QuUm9vbUlkIpMECgtHYW1lQ29tbWFuZBI2ChByZW5k",
+            "ZXJfaW50ZXJmYWNlGAEgASgLMhouc2QuUmVuZGVySW50ZXJmYWNlQ29tbWFu",
+            "ZEgAEiwKC3JlbmRlcl9nYW1lGAIgASgLMhUuc2QuUmVuZGVyR2FtZUNvbW1h",
+            "bmRIABIwCg1pbml0aWF0ZV9yYWlkGAMgASgLMhcuc2QuSW5pdGlhdGVSYWlk",
+            "Q29tbWFuZEgAEiwKC2NyZWF0ZV9jYXJkGAQgASgLMhUuc2QuQ3JlYXRlQ2Fy",
+            "ZENvbW1hbmRIABIsCgt1cGRhdGVfY2FyZBgFIAEoCzIVLnNkLlVwZGF0ZUNh",
+            "cmRDb21tYW5kSAASKAoJbW92ZV9jYXJkGAYgASgLMhMuc2QuTW92ZUNhcmRD",
+            "b21tYW5kSAASLgoMZGVzdHJveV9jYXJkGAcgASgLMhYuc2QuRGVzdHJveUNh",
+            "cmRDb21tYW5kSAASOwoTdXBkYXRlX3BsYXllcl9zdGF0ZRgIIAEoCzIcLnNk",
+            "LlVwZGF0ZVBsYXllclN0YXRlQ29tbWFuZEgAEj4KFWNyZWF0ZV9vcl91cGRh",
+            "dGVfcm9vbRgJIAEoCzIdLnNkLkNyZWF0ZU9yVXBkYXRlUm9vbUNvbW1hbmRI",
+            "ABIuCgxkZXN0cm95X3Jvb20YCiABKAsyFi5zZC5EZXN0cm95Um9vbUNvbW1h",
+            "bmRIAEIJCgdjb21tYW5kIjAKC0NvbW1hbmRMaXN0EiEKCGNvbW1hbmRzGAEg",
+            "AygLMg8uc2QuR2FtZUNvbW1hbmQqcgoVQ2FyZENyZWF0aW9uQW5pbWF0aW9u",
+            "EicKI0NBUkRfQ1JFQVRJT05fQU5JTUFUSU9OX1VOU1BFQ0lGSUVEEAASMAos",
+            "Q0FSRF9DUkVBVElPTl9BTklNQVRJT05fVVNFUl9ERUNLX1RPX1NUQUdJTkcQ",
+            "ASqRAQoIR2FtZVpvbmUSGQoVR0FNRV9aT05FX1VOU1BFQ0lGSUVEEAASEgoO",
+            "R0FNRV9aT05FX0hBTkQQARITCg9HQU1FX1pPTkVfQVJFTkEQAhISCg5HQU1F",
+            "X1pPTkVfREVDSxADEhUKEUdBTUVfWk9ORV9ESVNDQVJEEAQSFgoSR0FNRV9a",
+            "T05FX0JBTklTSEVEEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, global::Spelldawn.Protos.GameViewReflection.Descriptor, global::Spelldawn.Protos.MasonryReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CreateCardPosition), typeof(global::Spelldawn.Protos.GameZone), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CardCreationAnimation), typeof(global::Spelldawn.Protos.GameZone), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RenderInterfaceCommand), global::Spelldawn.Protos.RenderInterfaceCommand.Parser, new[]{ "Node" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RenderGameCommand), global::Spelldawn.Protos.RenderGameCommand.Parser, new[]{ "Game" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.InitiateRaidCommand), global::Spelldawn.Protos.InitiateRaidCommand.Parser, new[]{ "RoomId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CreateCardCommand), global::Spelldawn.Protos.CreateCardCommand.Parser, new[]{ "Position", "Card" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CreateCardCommand), global::Spelldawn.Protos.CreateCardCommand.Parser, new[]{ "Card", "Animation", "DisallowOptimistic" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.UpdateCardCommand), global::Spelldawn.Protos.UpdateCardCommand.Parser, new[]{ "Card" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.MoveCardCommand), global::Spelldawn.Protos.MoveCardCommand.Parser, new[]{ "CardId", "TargetPlayer", "Zone" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.MoveCardCommand), global::Spelldawn.Protos.MoveCardCommand.Parser, new[]{ "CardId", "Position", "DisableAnimation" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DestroyCardCommand), global::Spelldawn.Protos.DestroyCardCommand.Parser, new[]{ "CardId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.UpdatePlayerStateCommand), global::Spelldawn.Protos.UpdatePlayerStateCommand.Parser, new[]{ "PlayerName", "Info", "Score", "ActionTracker" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CreateOrUpdateRoomCommand), global::Spelldawn.Protos.CreateOrUpdateRoomCommand.Parser, new[]{ "RoomId", "RoomInfo" }, null, null, null, null),
@@ -86,28 +84,9 @@ namespace Spelldawn.Protos {
 
   }
   #region Enums
-  public enum CreateCardPosition {
-    /// <summary>
-    ///*
-    /// If no position is specified, the card should be invisible until it is
-    /// moved, at which point it materializes immediately at the destination.
-    /// </summary>
-    [pbr::OriginalName("CREATE_CARD_POSITION_UNSPECIFIED")] Unspecified = 0,
-    /// <summary>
-    ///*
-    /// Creates card on top of the user's deck and animates it moving to the staging
-    /// area.
-    ///
-    /// If an optimistic card has already been created, that card is used instead.
-    /// </summary>
-    [pbr::OriginalName("CREATE_CARD_POSITION_USER_DECK_TO_STAGING")] UserDeckToStaging = 1,
-    [pbr::OriginalName("CREATE_CARD_POSITION_USER_DECK")] UserDeck = 2,
-    [pbr::OriginalName("CREATE_CARD_POSITION_OPPONENT_DECK")] OpponentDeck = 3,
-    /// <summary>
-    ///*
-    /// Creates a card in the staging area.
-    /// </summary>
-    [pbr::OriginalName("CREATE_CARD_POSITION_STAGING")] Staging = 4,
+  public enum CardCreationAnimation {
+    [pbr::OriginalName("CARD_CREATION_ANIMATION_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("CARD_CREATION_ANIMATION_USER_DECK_TO_STAGING")] UserDeckToStaging = 1,
   }
 
   public enum GameZone {
@@ -678,8 +657,7 @@ namespace Spelldawn.Protos {
 
   /// <summary>
   ///*
-  /// Makes a new card. If an optimistic card has already been created, it is
-  /// updated to match the provided 'card' and 'position' is ignored.
+  /// Makes a new card.
   /// </summary>
   public sealed partial class CreateCardCommand : pb::IMessage<CreateCardCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -710,8 +688,9 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public CreateCardCommand(CreateCardCommand other) : this() {
-      position_ = other.position_;
       card_ = other.card_ != null ? other.card_.Clone() : null;
+      animation_ = other.animation_;
+      disallowOptimistic_ = other.disallowOptimistic_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -720,25 +699,44 @@ namespace Spelldawn.Protos {
       return new CreateCardCommand(this);
     }
 
-    /// <summary>Field number for the "position" field.</summary>
-    public const int PositionFieldNumber = 1;
-    private global::Spelldawn.Protos.CreateCardPosition position_ = global::Spelldawn.Protos.CreateCardPosition.Unspecified;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.CreateCardPosition Position {
-      get { return position_; }
-      set {
-        position_ = value;
-      }
-    }
-
     /// <summary>Field number for the "card" field.</summary>
-    public const int CardFieldNumber = 2;
+    public const int CardFieldNumber = 1;
     private global::Spelldawn.Protos.CardView card_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CardView Card {
       get { return card_; }
       set {
         card_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "animation" field.</summary>
+    public const int AnimationFieldNumber = 2;
+    private global::Spelldawn.Protos.CardCreationAnimation animation_ = global::Spelldawn.Protos.CardCreationAnimation.Unspecified;
+    /// <summary>
+    ///* Optionally, an animation to play after creating the card. 
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.CardCreationAnimation Animation {
+      get { return animation_; }
+      set {
+        animation_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "disallow_optimistic" field.</summary>
+    public const int DisallowOptimisticFieldNumber = 3;
+    private bool disallowOptimistic_;
+    /// <summary>
+    ///*
+    /// If an optimistic card has already been created, it is updated to match the provided
+    /// 'card' instead unless this value is 'true'.
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool DisallowOptimistic {
+      get { return disallowOptimistic_; }
+      set {
+        disallowOptimistic_ = value;
       }
     }
 
@@ -755,16 +753,18 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (Position != other.Position) return false;
       if (!object.Equals(Card, other.Card)) return false;
+      if (Animation != other.Animation) return false;
+      if (DisallowOptimistic != other.DisallowOptimistic) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (Position != global::Spelldawn.Protos.CreateCardPosition.Unspecified) hash ^= Position.GetHashCode();
       if (card_ != null) hash ^= Card.GetHashCode();
+      if (Animation != global::Spelldawn.Protos.CardCreationAnimation.Unspecified) hash ^= Animation.GetHashCode();
+      if (DisallowOptimistic != false) hash ^= DisallowOptimistic.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -781,13 +781,17 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Position != global::Spelldawn.Protos.CreateCardPosition.Unspecified) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) Position);
-      }
       if (card_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(Card);
+      }
+      if (Animation != global::Spelldawn.Protos.CardCreationAnimation.Unspecified) {
+        output.WriteRawTag(16);
+        output.WriteEnum((int) Animation);
+      }
+      if (DisallowOptimistic != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(DisallowOptimistic);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -798,13 +802,17 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Position != global::Spelldawn.Protos.CreateCardPosition.Unspecified) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) Position);
-      }
       if (card_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(Card);
+      }
+      if (Animation != global::Spelldawn.Protos.CardCreationAnimation.Unspecified) {
+        output.WriteRawTag(16);
+        output.WriteEnum((int) Animation);
+      }
+      if (DisallowOptimistic != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(DisallowOptimistic);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -815,11 +823,14 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (Position != global::Spelldawn.Protos.CreateCardPosition.Unspecified) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Position);
-      }
       if (card_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Card);
+      }
+      if (Animation != global::Spelldawn.Protos.CardCreationAnimation.Unspecified) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Animation);
+      }
+      if (DisallowOptimistic != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -832,14 +843,17 @@ namespace Spelldawn.Protos {
       if (other == null) {
         return;
       }
-      if (other.Position != global::Spelldawn.Protos.CreateCardPosition.Unspecified) {
-        Position = other.Position;
-      }
       if (other.card_ != null) {
         if (card_ == null) {
           Card = new global::Spelldawn.Protos.CardView();
         }
         Card.MergeFrom(other.Card);
+      }
+      if (other.Animation != global::Spelldawn.Protos.CardCreationAnimation.Unspecified) {
+        Animation = other.Animation;
+      }
+      if (other.DisallowOptimistic != false) {
+        DisallowOptimistic = other.DisallowOptimistic;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -855,15 +869,19 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            Position = (global::Spelldawn.Protos.CreateCardPosition) input.ReadEnum();
-            break;
-          }
-          case 18: {
+          case 10: {
             if (card_ == null) {
               Card = new global::Spelldawn.Protos.CardView();
             }
             input.ReadMessage(Card);
+            break;
+          }
+          case 16: {
+            Animation = (global::Spelldawn.Protos.CardCreationAnimation) input.ReadEnum();
+            break;
+          }
+          case 24: {
+            DisallowOptimistic = input.ReadBool();
             break;
           }
         }
@@ -880,15 +898,19 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 8: {
-            Position = (global::Spelldawn.Protos.CreateCardPosition) input.ReadEnum();
-            break;
-          }
-          case 18: {
+          case 10: {
             if (card_ == null) {
               Card = new global::Spelldawn.Protos.CardView();
             }
             input.ReadMessage(Card);
+            break;
+          }
+          case 16: {
+            Animation = (global::Spelldawn.Protos.CardCreationAnimation) input.ReadEnum();
+            break;
+          }
+          case 24: {
+            DisallowOptimistic = input.ReadBool();
             break;
           }
         }
@@ -898,6 +920,11 @@ namespace Spelldawn.Protos {
 
   }
 
+  /// <summary>
+  ///*
+  /// Updates a card. Note that changes to 'on_create_position' are ignored here,
+  /// use MoveCardCommand instead to reposition cards.
+  /// </summary>
   public sealed partial class UpdateCardCommand : pb::IMessage<UpdateCardCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -1109,8 +1136,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MoveCardCommand(MoveCardCommand other) : this() {
       cardId_ = other.cardId_ != null ? other.cardId_.Clone() : null;
-      targetPlayer_ = other.targetPlayer_;
-      zone_ = other.zone_;
+      position_ = other.position_ != null ? other.position_.Clone() : null;
+      disableAnimation_ = other.disableAnimation_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1130,25 +1157,25 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "target_player" field.</summary>
-    public const int TargetPlayerFieldNumber = 2;
-    private global::Spelldawn.Protos.PlayerName targetPlayer_ = global::Spelldawn.Protos.PlayerName.Unspecified;
+    /// <summary>Field number for the "position" field.</summary>
+    public const int PositionFieldNumber = 2;
+    private global::Spelldawn.Protos.CardPosition position_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.PlayerName TargetPlayer {
-      get { return targetPlayer_; }
+    public global::Spelldawn.Protos.CardPosition Position {
+      get { return position_; }
       set {
-        targetPlayer_ = value;
+        position_ = value;
       }
     }
 
-    /// <summary>Field number for the "zone" field.</summary>
-    public const int ZoneFieldNumber = 3;
-    private global::Spelldawn.Protos.GameZone zone_ = global::Spelldawn.Protos.GameZone.Unspecified;
+    /// <summary>Field number for the "disable_animation" field.</summary>
+    public const int DisableAnimationFieldNumber = 3;
+    private bool disableAnimation_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.GameZone Zone {
-      get { return zone_; }
+    public bool DisableAnimation {
+      get { return disableAnimation_; }
       set {
-        zone_ = value;
+        disableAnimation_ = value;
       }
     }
 
@@ -1166,8 +1193,8 @@ namespace Spelldawn.Protos {
         return true;
       }
       if (!object.Equals(CardId, other.CardId)) return false;
-      if (TargetPlayer != other.TargetPlayer) return false;
-      if (Zone != other.Zone) return false;
+      if (!object.Equals(Position, other.Position)) return false;
+      if (DisableAnimation != other.DisableAnimation) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1175,8 +1202,8 @@ namespace Spelldawn.Protos {
     public override int GetHashCode() {
       int hash = 1;
       if (cardId_ != null) hash ^= CardId.GetHashCode();
-      if (TargetPlayer != global::Spelldawn.Protos.PlayerName.Unspecified) hash ^= TargetPlayer.GetHashCode();
-      if (Zone != global::Spelldawn.Protos.GameZone.Unspecified) hash ^= Zone.GetHashCode();
+      if (position_ != null) hash ^= Position.GetHashCode();
+      if (DisableAnimation != false) hash ^= DisableAnimation.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1197,13 +1224,13 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(CardId);
       }
-      if (TargetPlayer != global::Spelldawn.Protos.PlayerName.Unspecified) {
-        output.WriteRawTag(16);
-        output.WriteEnum((int) TargetPlayer);
+      if (position_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Position);
       }
-      if (Zone != global::Spelldawn.Protos.GameZone.Unspecified) {
+      if (DisableAnimation != false) {
         output.WriteRawTag(24);
-        output.WriteEnum((int) Zone);
+        output.WriteBool(DisableAnimation);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1218,13 +1245,13 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(CardId);
       }
-      if (TargetPlayer != global::Spelldawn.Protos.PlayerName.Unspecified) {
-        output.WriteRawTag(16);
-        output.WriteEnum((int) TargetPlayer);
+      if (position_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Position);
       }
-      if (Zone != global::Spelldawn.Protos.GameZone.Unspecified) {
+      if (DisableAnimation != false) {
         output.WriteRawTag(24);
-        output.WriteEnum((int) Zone);
+        output.WriteBool(DisableAnimation);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1238,11 +1265,11 @@ namespace Spelldawn.Protos {
       if (cardId_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardId);
       }
-      if (TargetPlayer != global::Spelldawn.Protos.PlayerName.Unspecified) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) TargetPlayer);
+      if (position_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
       }
-      if (Zone != global::Spelldawn.Protos.GameZone.Unspecified) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Zone);
+      if (DisableAnimation != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1261,11 +1288,14 @@ namespace Spelldawn.Protos {
         }
         CardId.MergeFrom(other.CardId);
       }
-      if (other.TargetPlayer != global::Spelldawn.Protos.PlayerName.Unspecified) {
-        TargetPlayer = other.TargetPlayer;
+      if (other.position_ != null) {
+        if (position_ == null) {
+          Position = new global::Spelldawn.Protos.CardPosition();
+        }
+        Position.MergeFrom(other.Position);
       }
-      if (other.Zone != global::Spelldawn.Protos.GameZone.Unspecified) {
-        Zone = other.Zone;
+      if (other.DisableAnimation != false) {
+        DisableAnimation = other.DisableAnimation;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1288,12 +1318,15 @@ namespace Spelldawn.Protos {
             input.ReadMessage(CardId);
             break;
           }
-          case 16: {
-            TargetPlayer = (global::Spelldawn.Protos.PlayerName) input.ReadEnum();
+          case 18: {
+            if (position_ == null) {
+              Position = new global::Spelldawn.Protos.CardPosition();
+            }
+            input.ReadMessage(Position);
             break;
           }
           case 24: {
-            Zone = (global::Spelldawn.Protos.GameZone) input.ReadEnum();
+            DisableAnimation = input.ReadBool();
             break;
           }
         }
@@ -1317,12 +1350,15 @@ namespace Spelldawn.Protos {
             input.ReadMessage(CardId);
             break;
           }
-          case 16: {
-            TargetPlayer = (global::Spelldawn.Protos.PlayerName) input.ReadEnum();
+          case 18: {
+            if (position_ == null) {
+              Position = new global::Spelldawn.Protos.CardPosition();
+            }
+            input.ReadMessage(Position);
             break;
           }
           case 24: {
-            Zone = (global::Spelldawn.Protos.GameZone) input.ReadEnum();
+            DisableAnimation = input.ReadBool();
             break;
           }
         }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using Spelldawn.Utils;
@@ -21,12 +22,17 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public abstract class CardList : MonoBehaviour
+  public abstract class CardDisplay : MonoBehaviour
   {
     protected List<Card> Cards { get; } = new();
 
-    public IEnumerator<YieldInstruction> AddCard(Card card, int? index = null)
+    public IEnumerator<YieldInstruction> AddCard(Card card, bool animate = true, int? index = null)
     {
+      if (Cards.Contains(card))
+      {
+        throw new ArgumentException($"Card {card} already added!");
+      }
+
       card.Parent = this;
       if (index is { } i)
       {
@@ -37,15 +43,15 @@ namespace Spelldawn.Game
         Cards.Add(card);
       }
 
-      return AnimateCardsToPosition();
+      return MoveCardsToPosition(animate);
     }
 
-    public int RemoveCard(Card card)
+    public int RemoveCard(Card card, bool animate = true)
     {
       var index = Cards.FindIndex(c => c == card);
       Errors.CheckNonNegative(index);
       Cards.RemoveAt(index);
-      StartCoroutine(AnimateCardsToPosition());
+      StartCoroutine(MoveCardsToPosition(animate));
       return index;
     }
 
@@ -57,23 +63,43 @@ namespace Spelldawn.Game
 
     protected virtual Vector3? CalculateCardRotation(Card card, int index, int count) => null;
 
-    IEnumerator<YieldInstruction> AnimateCardsToPosition()
+    IEnumerator<YieldInstruction> MoveCardsToPosition(bool animate)
     {
       var sequence = DOTween.Sequence();
       for (var i = 0; i < Cards.Count; ++i)
       {
         var card = Cards[i];
-        sequence.Insert(atPosition: 0,
-          card.transform.DOMove(CalculateCardPosition(card, i, Cards.Count), duration: AnimationDuration));
-        if (CalculateCardRotation(card, i, Cards.Count) is { } vector)
+        var position = CalculateCardPosition(card, i, Cards.Count);
+        var rotation = CalculateCardRotation(card, i, Cards.Count);
+
+        if (animate)
         {
-          sequence.Insert(atPosition: 0, card.transform.DOLocalRotate(vector, duration: AnimationDuration));
+          sequence.Insert(atPosition: 0, card.transform.DOMove(position, duration: AnimationDuration));
+        }
+        else
+        {
+          card.transform.position = position;
+        }
+
+        if (rotation is { } vector)
+        {
+          if (animate)
+          {
+            sequence.Insert(atPosition: 0, card.transform.DOLocalRotate(vector, duration: AnimationDuration));
+          }
+          else
+          {
+            card.transform.localEulerAngles = vector;
+          }
         }
 
         card.SortingOrder = SortingOrder.Create(SortingType, i);
       }
 
-      yield return sequence.WaitForCompletion();
+      if (animate)
+      {
+        yield return sequence.WaitForCompletion();
+      }
     }
   }
 }

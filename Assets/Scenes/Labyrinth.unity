@@ -503,6 +503,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 29771606}
   m_Mesh: {fileID: 256832603270019726, guid: 65cd54c3f352c8d48ac20820e087060d, type: 3}
+--- !u!1 &32347431
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 32347432}
+  - component: {fileID: 32347433}
+  m_Layer: 0
+  m_Name: LeftItems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &32347432
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32347431}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 22.99, y: 1, z: 14.69}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 348475425}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &32347433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32347431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d837dfc177740fdb5b9742fb79dbf46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _width: 10
+  _height: 5
 --- !u!1 &36337170
 GameObject:
   m_ObjectHideFlags: 0
@@ -6625,7 +6671,6 @@ MonoBehaviour:
   _controlPoint2: {fileID: 711539115}
   _controlPoint3: {fileID: 708292382}
   _controlPoint4: {fileID: 2133127460}
-  _debugUpdatePositions: 0
 --- !u!1 &319105149
 GameObject:
   m_ObjectHideFlags: 0
@@ -7020,6 +7065,7 @@ Transform:
   m_Children:
   - {fileID: 95532992}
   - {fileID: 2001478713}
+  - {fileID: 32347432}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -23480,7 +23526,6 @@ MonoBehaviour:
   _controlPoint2: {fileID: 319105150}
   _controlPoint3: {fileID: 727605490}
   _controlPoint4: {fileID: 2022558780}
-  _debugUpdatePositions: 0
 --- !u!4 &1072430062
 Transform:
   m_ObjectHideFlags: 0
@@ -23867,7 +23912,6 @@ MonoBehaviour:
   _controlPoint2: {fileID: 271427119}
   _controlPoint3: {fileID: 1348719291}
   _controlPoint4: {fileID: 1530514246}
-  _debugUpdatePositions: 0
 --- !u!4 &1086194765
 Transform:
   m_ObjectHideFlags: 0
@@ -31324,12 +31368,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1445473049}
   - component: {fileID: 1445473048}
+  - component: {fileID: 1445473050}
   - component: {fileID: 1445473047}
   - component: {fileID: 1445473046}
   - component: {fileID: 1445473045}
   - component: {fileID: 1445473044}
   - component: {fileID: 1445473043}
-  - component: {fileID: 1445473050}
   - component: {fileID: 1445473051}
   m_Layer: 0
   m_Name: Registry
@@ -31476,6 +31520,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
+  _leftItems: {fileID: 0}
+  _centerItems: {fileID: 0}
+  _rightItems: {fileID: 0}
 --- !u!1 &1450480192
 GameObject:
   m_ObjectHideFlags: 0

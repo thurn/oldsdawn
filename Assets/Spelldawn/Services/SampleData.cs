@@ -97,9 +97,21 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               new RoomId { InnerRoom = InnerRoom.Treasury }
             }
           }
-        }, onCardRelease: OnCardRelease.PlayInRoom),
+        }, releasePosition: new CardPosition
+        {
+          Room = new CardPositionRoom
+          {
+            RoomLocation = RoomLocation.Defender
+          }
+        }),
       RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1,
-        onCardRelease: OnCardRelease.PlayAsItem),
+        releasePosition: new CardPosition
+        {
+          Item = new CardPositionItem
+          {
+            ItemLocation = ItemLocation.Left
+          }
+        }),
       RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16", 15),
       RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42", 4),
       RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37", 2),
@@ -123,7 +135,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         for (var i = 0; i < 6; ++i)
         {
           DrawUserCard(directToHand: true);
-          DrawOpponentCard();
+          DrawOpponentCard(disableAnimation: true);
         }
       }
     }
@@ -149,25 +161,54 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     void DrawUserCard(bool directToHand = false)
     {
       var card = Card();
+      card.OnCreatePosition = directToHand ? HandPosition(PlayerName.User) : DeckPosition(PlayerName.User);
+
       HandleCommands(new GameCommand
       {
         CreateCard = new CreateCardCommand
         {
           Card = card,
-          Position = directToHand ? CreateCardPosition.UserDeck : CreateCardPosition.UserDeckToStaging
-        }
-      }, new GameCommand
-      {
-        MoveCard = new MoveCardCommand
-        {
-          CardId = card.CardId,
-          TargetPlayer = PlayerName.User,
-          Zone = GameZone.Hand
+          Animation = directToHand ? CardCreationAnimation.Unspecified : CardCreationAnimation.UserDeckToStaging
         }
       });
+
+      if (!directToHand)
+      {
+        HandleCommands(new GameCommand
+        {
+          MoveCard = new MoveCardCommand
+          {
+            CardId = card.CardId,
+            Position = HandPosition(PlayerName.User),
+            DisableAnimation = directToHand
+          }
+        });
+      }
     }
 
-    void DrawOpponentCard()
+    static CardPosition DeckPosition(PlayerName playerName)
+    {
+      return new CardPosition
+      {
+        Deck = new CardPositionDeck
+        {
+          Owner = playerName
+        }
+      };
+    }
+
+    static CardPosition HandPosition(PlayerName playerName)
+    {
+      return new CardPosition
+      {
+        Hand = new CardPositionHand
+        {
+          Owner = playerName
+        }
+      };
+    }
+
+    void DrawOpponentCard(bool disableAnimation = false)
     {
       var cardId = CardId(_lastOpponentCardId++);
       HandleCommands(new GameCommand
@@ -177,17 +218,17 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Card = new CardView
           {
             CardId = cardId,
+            OnCreatePosition = DeckPosition(PlayerName.Opponent),
             CardBack = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1")
-          },
-          Position = CreateCardPosition.OpponentDeck
+          }
         }
       }, new GameCommand
       {
         MoveCard = new MoveCardCommand
         {
           CardId = cardId,
-          TargetPlayer = PlayerName.Opponent,
-          Zone = GameZone.Hand
+          Position = HandPosition(PlayerName.Opponent),
+          DisableAnimation = disableAnimation
         }
       });
     }
@@ -251,7 +292,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       string image,
       int manaCost,
       CardTargeting? targeting = null,
-      OnCardRelease onCardRelease = OnCardRelease.MoveToStaging) =>
+      CardPosition? releasePosition = null) =>
       new()
       {
         CardId = CardId(cardId),
@@ -283,7 +324,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             Text = text
           },
           Targeting = targeting,
-          OnRelease = onCardRelease,
+          OnReleasePosition = releasePosition ?? new CardPosition
+          {
+            Staging = new CardPositionStaging()
+          },
           Cost = new CardCost
           {
             CanPlay = false,
