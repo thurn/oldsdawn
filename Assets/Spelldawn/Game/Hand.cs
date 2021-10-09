@@ -13,98 +13,56 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using DG.Tweening;
-using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class Hand : MonoBehaviour
+  public sealed class Hand : CardList
   {
     [SerializeField] int _zRotationMultiplier;
+    [SerializeField] SortingOrder.Type _sortingType;
     [SerializeField] Transform _controlPoint1 = null!;
     [SerializeField] Transform _controlPoint2 = null!;
     [SerializeField] Transform _controlPoint3 = null!;
     [SerializeField] Transform _controlPoint4 = null!;
-    [SerializeField] bool _debugUpdatePositions;
 
-    readonly List<Card> _cards = new();
+    protected override SortingOrder.Type SortingType => _sortingType;
 
-    public IEnumerator<YieldInstruction> AddCard(Card card, int? index = null)
+    protected override Vector3 CalculateCardPosition(Card card, int index, int count)
     {
-      if (index is { } i)
-      {
-        _cards.Insert(i, card);
-      }
-      else
-      {
-        _cards.Add(card);
-      }
-
-      return AnimateCardsToPosition();
+      var curvePosition = CalculateCurvePosition(index, count);
+      return CalculateBezierPosition(curvePosition);
     }
 
-    public int RemoveCard(Card card)
+    protected override Vector3? CalculateCardRotation(Card card, int index, int count)
     {
-      var index = _cards.FindIndex(c => c == card);
-      Errors.CheckNonNegative(index);
-      _cards.RemoveAt(index);
-      return index;
+      var curvePosition = CalculateCurvePosition(index, count);
+      return new Vector3(x: 280, y: 0, _zRotationMultiplier * CalculateZRotation(curvePosition));
     }
 
-    void Update()
+    float CalculateCurvePosition(int cardIndex, int cardCount)
     {
-      if (_debugUpdatePositions)
-      {
-        StartCoroutine(AnimateCardsToPosition());
-      }
-    }
-
-    IEnumerator<YieldInstruction> AnimateCardsToPosition()
-    {
-      var sequence = DOTween.Sequence();
-      for (var i = 0; i < _cards.Count; ++i)
-      {
-        var card = _cards[i];
-        var curvePosition = CalculateCurvePosition(i);
-        var t = card.transform;
-        sequence.Insert(atPosition: 0,
-          t.DOMove(CalculateBezierPosition(curvePosition), duration: 0.3f));
-        sequence.Insert(atPosition: 0,
-          t.DOLocalRotate(new Vector3(x: 280, y: 0,
-            _zRotationMultiplier * CalculateZRotation(curvePosition)), duration: 0.3f));
-        card.SetHand(this, SortingOrder.Create(SortingOrder.Type.Hand, i));
-      }
-
-      yield return sequence.WaitForCompletion();
-    }
-
-    float CalculateCurvePosition(int cardIndex)
-    {
-      if (cardIndex < 0 || cardIndex >= _cards.Count)
+      if (cardIndex < 0 || cardIndex >= cardCount)
       {
         throw new ArgumentException("Index out of bounds");
       }
 
-      switch (_cards.Count)
+      switch (cardCount)
       {
         case 1:
           return 0.5f;
         case 2:
-          return PositionWithinRange(start: 0.4f, end: 0.6f, cardIndex, _cards.Count);
+          return PositionWithinRange(start: 0.4f, end: 0.6f, cardIndex, cardCount);
         case 3:
-          return PositionWithinRange(start: 0.3f, end: 0.7f, cardIndex, _cards.Count);
+          return PositionWithinRange(start: 0.3f, end: 0.7f, cardIndex, cardCount);
         case 4:
-          return PositionWithinRange(start: 0.2f, end: 0.8f, cardIndex, _cards.Count);
+          return PositionWithinRange(start: 0.2f, end: 0.8f, cardIndex, cardCount);
         case 5:
-          return PositionWithinRange(start: 0.1f, end: 0.9f, cardIndex, _cards.Count);
-        // case 6:
-        //   return PositionWithinRange(start: 0.1f, end: 0.9f, cardIndex, _cards.Count);
+          return PositionWithinRange(start: 0.1f, end: 0.9f, cardIndex, cardCount);
         default:
-          return PositionWithinRange(start: 0.0f, end: 1.0f, cardIndex, _cards.Count);
+          return PositionWithinRange(start: 0.0f, end: 1.0f, cardIndex, cardCount);
       }
     }
 

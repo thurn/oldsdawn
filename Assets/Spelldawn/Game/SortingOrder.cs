@@ -26,6 +26,7 @@ namespace Spelldawn.Game
     public enum Type
     {
       Hand,
+      Staging,
       Dragging
     }
 
@@ -43,6 +44,7 @@ namespace Spelldawn.Game
       group.sortingOrder = _index + _type switch
       {
         Type.Hand => 100,
+        Type.Staging => 200,
         Type.Dragging => 200,
         _ => throw new ArgumentOutOfRangeException()
       };

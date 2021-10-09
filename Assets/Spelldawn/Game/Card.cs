@@ -47,8 +47,8 @@ namespace Spelldawn.Game
     [SerializeField] bool _isRevealed;
     [SerializeField] bool _canPlay;
     [SerializeField] bool _isDragging;
-    [SerializeField] Hand? _hand;
-    [SerializeField] float _dragStartZ;
+    [SerializeField] bool _interactive;
+    [SerializeField] float _dragStartScreenZ;
     [SerializeField] Vector3 _dragStartPosition;
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
@@ -70,10 +70,11 @@ namespace Spelldawn.Game
 
     public bool StagingAnimationComplete { get; set; }
 
-    public void SetHand(Hand hand, SortingOrder order)
+    public CardList? Parent { set; private get; }
+
+    public SortingOrder? SortingOrder
     {
-      _hand = hand;
-      order.ApplyTo(_sortingGroup);
+      set => value?.ApplyTo(_sortingGroup);
     }
 
     void Start()
@@ -87,6 +88,7 @@ namespace Spelldawn.Game
       _registry = registry;
       _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
       _outline.sortingOrder = -1;
+      _interactive = true;
 
       if (cardView.RevealedCard != null)
       {
@@ -114,7 +116,7 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      if (!_isDragging && _revealedCardView is { Cost: { } cost })
+      if (_interactive && _revealedCardView is { Cost: { } cost })
       {
         var haveAvailableResources =
           cost.ManaCost <= _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
@@ -139,16 +141,16 @@ namespace Spelldawn.Game
         return;
       }
 
-      if (_canPlay)
+      if (_interactive && _canPlay)
       {
         _isDragging = true;
+        _interactive = false;
         SortingOrder.Create(SortingOrder.Type.Dragging).ApplyTo(_sortingGroup);
-        _handIndex = _hand!.RemoveCard(this);
+        _handIndex = Parent!.RemoveCard(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
-        _dragStartZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
-        _dragStartPosition = _registry.MainCamera.ScreenToWorldPoint(
-          new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartZ));
+        _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
+        _dragStartPosition = DragWorldMousePosition();
         _dragOffset = gameObject.transform.position - _dragStartPosition;
       }
     }
@@ -157,8 +159,7 @@ namespace Spelldawn.Game
     {
       if (_isDragging)
       {
-        var mousePosition = _registry.MainCamera.ScreenToWorldPoint(
-          new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartZ));
+        var mousePosition = DragWorldMousePosition();
         var distanceDragged = Vector2.Distance(mousePosition, _dragStartPosition);
         var t = Mathf.Clamp01(distanceDragged / 5);
         transform.position = _dragOffset + mousePosition;
@@ -171,11 +172,23 @@ namespace Spelldawn.Game
     {
       if (_isDragging)
       {
-        UpdateOutline();
         _isDragging = false;
-        StartCoroutine(_hand!.AddCard(this, _handIndex));
+        var distance = _dragStartPosition.z - DragWorldMousePosition().z;
+        if (distance < 4.5f)
+        {
+          // Return to hand
+          _interactive = true;
+          StartCoroutine(Parent!.AddCard(this, _handIndex));
+        }
+        else
+        {
+          StartCoroutine(_registry.CardStaging.AddCard(this));
+        }
       }
     }
+
+    Vector3 DragWorldMousePosition() => _registry.MainCamera.ScreenToWorldPoint(
+      new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartScreenZ));
 
     static void Flip(Component faceUp, Component faceDown, Action onFlipped)
     {

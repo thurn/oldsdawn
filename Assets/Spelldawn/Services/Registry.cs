@@ -50,6 +50,9 @@ namespace Spelldawn.Services
     public ArenaService ArenaService => _arenaService;
     [SerializeField] ArenaService _arenaService = null!;
 
+    [SerializeField] Hand _cardStaging = null!;
+    public Hand CardStaging => _cardStaging;
+
     [SerializeField] Hand _userHand = null!;
     [SerializeField] Hand _opponentHand = null!;
 
@@ -74,5 +77,10 @@ namespace Spelldawn.Services
 
     public ActionDisplay ActionDisplayForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userActionDisplay : _opponentActionDisplay;
+
+    void Awake()
+    {
+      Application.targetFrameRate = 60;
+    }
   }
 }
