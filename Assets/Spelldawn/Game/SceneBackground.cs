@@ -12,33 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Spelldawn.Protos;
-using Spelldawn.Services;
 using UnityEngine;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class Deck : CardDisplay
+  public sealed class SceneBackground : MonoBehaviour
   {
-    [SerializeField] Registry _registry = null!;
-    [SerializeField] bool _clickable;
+    [SerializeField] bool _flipped;
 
-    protected override SortingOrder.Type SortingType => SortingOrder.Type.Deck;
-
-    protected override Vector3 CalculateCardPosition(Card card, int index, int count) => transform.position;
-
-    protected override Vector3? CalculateCardRotation(Card card, int index, int count) => transform.eulerAngles;
-
-    void OnMouseUpAsButton()
+    public void Flip()
     {
-      if (_clickable)
+      if (_flipped)
       {
-        _registry.ActionService.HandleAction(new GameAction
-        {
-          DrawCard = new DrawCardAction()
-        });
+        transform.position = new Vector3(0, 0, 36);
+        transform.localEulerAngles = new Vector3(0, 0, 0);
+        _flipped = false;
+      }
+      else
+      {
+        transform.position = new Vector3(0, 0, 55);
+        transform.localEulerAngles = new Vector3(0, 180, 0);
+        _flipped = true;
       }
     }
   }

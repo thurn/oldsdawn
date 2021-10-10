@@ -1,0 +1,18 @@
+{
+    "name": "SpelldawnEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4eed4253a72624a8b9e0cc8e05edcece"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

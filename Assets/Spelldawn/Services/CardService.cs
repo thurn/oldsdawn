@@ -177,6 +177,7 @@ namespace Spelldawn.Services
       var target = DeckSpawnPosition(PlayerName.User);
       card.transform.position = target;
       card.transform.rotation = _registry.DeckForPlayer(PlayerName.User).transform.rotation;
+      card.SortingOrder = SortingOrder.Create(SortingOrder.Type.Staging);
       var initialMoveTarget = new Vector3(
         target.x - 4,
         target.y + 2,
