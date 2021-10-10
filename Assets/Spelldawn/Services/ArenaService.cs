@@ -26,9 +26,8 @@ namespace Spelldawn.Services
   public sealed class ArenaService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] TwoRowCardDisplay _leftItems = null!;
-    [SerializeField] TwoRowCardDisplay _centerItems = null!;
-    [SerializeField] TwoRowCardDisplay _rightItems = null!;
+    [SerializeField] LinearCardDisplay _leftItems = null!;
+    [SerializeField] LinearCardDisplay _rightItems = null!;
 
     public IEnumerator AddAsItem(Card card, CardPositionItem position, bool animate)
     {
@@ -36,8 +35,6 @@ namespace Spelldawn.Services
       {
         case ItemLocation.Left:
           return _leftItems.AddCard(card, animate);
-        case ItemLocation.Center:
-          return _centerItems.AddCard(card, animate);
         case ItemLocation.Right:
           return _rightItems.AddCard(card, animate);
         default:

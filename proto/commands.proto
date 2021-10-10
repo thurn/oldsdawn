@@ -72,15 +72,6 @@ message UpdateCardCommand {
   CardView card = 1;
 }
 
-enum GameZone {
-  GAME_ZONE_UNSPECIFIED = 0;
-  GAME_ZONE_HAND = 1;
-  GAME_ZONE_ARENA = 2;
-  GAME_ZONE_DECK = 3;
-  GAME_ZONE_DISCARD = 4;
-  GAME_ZONE_BANISHED = 5;
-}
-
 message MoveCardCommand {
   CardId card_id = 1;
   CardPosition position = 2;

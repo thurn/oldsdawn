@@ -107,10 +107,10 @@ namespace Spelldawn.Protos {
             "UklUSE1fT1BUSU1JU1RJQxABEiIKHlNQRU5EX0NPU1RfQUxHT1JJVEhNX05P",
             "X1VQREFURRACKmQKDFJvb21Mb2NhdGlvbhIdChlST09NX0xPQ0FUSU9OX1VO",
             "U1BFQ0lGSUVEEAASGQoVUk9PTV9MT0NBVElPTl9JTl9ST09NEAESGgoWUk9P",
-            "TV9MT0NBVElPTl9ERUZFTkRFUhACKngKDEl0ZW1Mb2NhdGlvbhIdChlJVEVN",
+            "TV9MT0NBVElPTl9ERUZFTkRFUhACKl4KDEl0ZW1Mb2NhdGlvbhIdChlJVEVN",
             "X0xPQ0FUSU9OX1VOU1BFQ0lGSUVEEAASFgoSSVRFTV9MT0NBVElPTl9MRUZU",
-            "EAESGAoUSVRFTV9MT0NBVElPTl9DRU5URVIQAhIXChNJVEVNX0xPQ0FUSU9O",
-            "X1JJR0hUEANCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
+            "EAESFwoTSVRFTV9MT0NBVElPTl9SSUdIVBACQhOqAhBTcGVsbGRhd24uUHJv",
+            "dG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.MasonryReflection.Descriptor, global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.TargetingArrow), typeof(global::Spelldawn.Protos.CanPlayAlgorithm), typeof(global::Spelldawn.Protos.SpendCostAlgorithm), typeof(global::Spelldawn.Protos.RoomLocation), typeof(global::Spelldawn.Protos.ItemLocation), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -209,8 +209,7 @@ namespace Spelldawn.Protos {
   public enum ItemLocation {
     [pbr::OriginalName("ITEM_LOCATION_UNSPECIFIED")] Unspecified = 0,
     [pbr::OriginalName("ITEM_LOCATION_LEFT")] Left = 1,
-    [pbr::OriginalName("ITEM_LOCATION_CENTER")] Center = 2,
-    [pbr::OriginalName("ITEM_LOCATION_RIGHT")] Right = 3,
+    [pbr::OriginalName("ITEM_LOCATION_RIGHT")] Right = 2,
   }
 
   #endregion

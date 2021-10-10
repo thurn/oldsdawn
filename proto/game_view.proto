@@ -135,8 +135,7 @@ message CardPositionRoom {
 enum ItemLocation {
   ITEM_LOCATION_UNSPECIFIED = 0;
   ITEM_LOCATION_LEFT = 1;
-  ITEM_LOCATION_CENTER = 2;
-  ITEM_LOCATION_RIGHT = 3;
+  ITEM_LOCATION_RIGHT = 2;
 }
 
 message CardPositionItem {

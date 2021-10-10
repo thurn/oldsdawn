@@ -59,13 +59,10 @@ namespace Spelldawn.Protos {
             "AygLMg8uc2QuR2FtZUNvbW1hbmQqcgoVQ2FyZENyZWF0aW9uQW5pbWF0aW9u",
             "EicKI0NBUkRfQ1JFQVRJT05fQU5JTUFUSU9OX1VOU1BFQ0lGSUVEEAASMAos",
             "Q0FSRF9DUkVBVElPTl9BTklNQVRJT05fVVNFUl9ERUNLX1RPX1NUQUdJTkcQ",
-            "ASqRAQoIR2FtZVpvbmUSGQoVR0FNRV9aT05FX1VOU1BFQ0lGSUVEEAASEgoO",
-            "R0FNRV9aT05FX0hBTkQQARITCg9HQU1FX1pPTkVfQVJFTkEQAhISCg5HQU1F",
-            "X1pPTkVfREVDSxADEhUKEUdBTUVfWk9ORV9ESVNDQVJEEAQSFgoSR0FNRV9a",
-            "T05FX0JBTklTSEVEEAVCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
+            "AUITqgIQU3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor, global::Spelldawn.Protos.GameViewReflection.Descriptor, global::Spelldawn.Protos.MasonryReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CardCreationAnimation), typeof(global::Spelldawn.Protos.GameZone), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.CardCreationAnimation), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RenderInterfaceCommand), global::Spelldawn.Protos.RenderInterfaceCommand.Parser, new[]{ "Node" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RenderGameCommand), global::Spelldawn.Protos.RenderGameCommand.Parser, new[]{ "Game" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.InitiateRaidCommand), global::Spelldawn.Protos.InitiateRaidCommand.Parser, new[]{ "RoomId" }, null, null, null, null),
@@ -87,15 +84,6 @@ namespace Spelldawn.Protos {
   public enum CardCreationAnimation {
     [pbr::OriginalName("CARD_CREATION_ANIMATION_UNSPECIFIED")] Unspecified = 0,
     [pbr::OriginalName("CARD_CREATION_ANIMATION_USER_DECK_TO_STAGING")] UserDeckToStaging = 1,
-  }
-
-  public enum GameZone {
-    [pbr::OriginalName("GAME_ZONE_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("GAME_ZONE_HAND")] Hand = 1,
-    [pbr::OriginalName("GAME_ZONE_ARENA")] Arena = 2,
-    [pbr::OriginalName("GAME_ZONE_DECK")] Deck = 3,
-    [pbr::OriginalName("GAME_ZONE_DISCARD")] Discard = 4,
-    [pbr::OriginalName("GAME_ZONE_BANISHED")] Banished = 5,
   }
 
   #endregion

@@ -88,6 +88,8 @@ namespace Spelldawn.Game
       set => value?.ApplyTo(_sortingGroup);
     }
 
+    public float ImageWidth => _image.bounds.size.x;
+
     public void Render(Registry registry, CardView cardView, bool animate = true)
     {
       _registry = registry;

@@ -80,6 +80,7 @@ namespace Spelldawn.Services
       Card card;
       if (!command.DisallowOptimistic && _optimisticCard)
       {
+        Debug.Log($"HandleCreateCardCommand: found optimistic");
         waitForStaging = true;
         card = _optimisticCard!;
         _optimisticCard = null;
@@ -88,6 +89,7 @@ namespace Spelldawn.Services
       {
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+        StartCoroutine(MoveCardInternal(card, command.Card.OnCreatePosition, animate: false));
 
         switch (command.Animation)
         {
@@ -100,8 +102,6 @@ namespace Spelldawn.Services
 
       card.Render(_registry, command.Card, animate: waitForStaging);
       _cards[command.Card.CardId] = card;
-
-      StartCoroutine(MoveCardInternal(card, command.Card.OnCreatePosition, animate: false));
 
       if (waitForStaging)
       {
@@ -176,6 +176,7 @@ namespace Spelldawn.Services
     {
       var target = DeckSpawnPosition(PlayerName.User);
       card.transform.position = target;
+      card.transform.rotation = _registry.DeckForPlayer(PlayerName.User).transform.rotation;
       var initialMoveTarget = new Vector3(
         target.x - 4,
         target.y + 2,
@@ -184,8 +185,9 @@ namespace Spelldawn.Services
       DOTween.Sequence()
         .Insert(0,
           card.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
+        .Insert(0, card.transform.DOLocalRotate(new Vector3(270, 0, 0), 0.5f))
         .Insert(0.5f, card.transform.DOMove(_registry.CardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
-        .Insert(0, card.transform.DORotateQuaternion(_registry.CardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
+        .Insert(0.5f, card.transform.DORotateQuaternion(_registry.CardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
         .AppendCallback(() => card.StagingAnimationComplete = true);
     }
 
