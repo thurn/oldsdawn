@@ -715,6 +715,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _width: 22
   _initialSpacing: 1
+  _cardSize: 3.5
 --- !u!1 &36337170
 GameObject:
   m_ObjectHideFlags: 0
@@ -2179,7 +2180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorC
+      value: RoomC
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId
@@ -6267,7 +6268,7 @@ GameObject:
   - component: {fileID: 220520325}
   - component: {fileID: 220520326}
   m_Layer: 0
-  m_Name: RoomSelectors
+  m_Name: Rooms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9176,7 +9177,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorD
+      value: RoomD
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId
@@ -9448,8 +9449,9 @@ GameObject:
   m_Component:
   - component: {fileID: 348475425}
   - component: {fileID: 348475426}
+  - component: {fileID: 348475427}
   m_Layer: 0
-  m_Name: Background
+  m_Name: Arena
   m_TagString: Untagged
   m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -9486,6 +9488,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _flipped: 1
+--- !u!114 &348475427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348475424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ec7658bb8c14c9d985ded1722ab151e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 1445473048}
+  _leftItems: {fileID: 32347433}
+  _rightItems: {fileID: 622587992}
+  _display: {fileID: 1433955379}
+  _curentRoomSelector: {fileID: 0}
 --- !u!1 &352251813
 GameObject:
   m_ObjectHideFlags: 0
@@ -15091,7 +15110,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorTreasury
+      value: RoomTreasury
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId
@@ -17308,6 +17327,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _width: 30
   _initialSpacing: 1
+  _cardSize: 3.5
 --- !u!1 &623454221
 GameObject:
   m_ObjectHideFlags: 0
@@ -23064,13 +23084,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 801763469011278702, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 821081267838170759, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 834393315621706678, guid: 94ee6780efb164566b7977f07977d072, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2027318099404271120, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
@@ -23156,12 +23180,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5486159759213016987, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6951699690469240736, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: -3126067664937594705, guid: d94ddeafd339c4b3cad4a7200a77c0d4, type: 2}
+    - target: {fileID: 7312213557431541649, guid: 94ee6780efb164566b7977f07977d072, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8654087573040091116, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -40831,6 +40859,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 220520325}
     m_Modifications:
+    - target: {fileID: 1492424033034700327, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
+      propertyPath: _cardSize
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1492424033034700327, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
+      propertyPath: _initialSpacing
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253908, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -40877,7 +40913,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorA
+      value: RoomA
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId
@@ -40899,6 +40935,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9488aa6c4ed74a41b948a1c2a2c0128d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1433955379 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1492424033034700327, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
+  m_PrefabInstance: {fileID: 1433955376}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d9d920a7054f4f91a388f3000ae767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &1437158730 stripped
@@ -41016,7 +41063,6 @@ GameObject:
   - component: {fileID: 1445473045}
   - component: {fileID: 1445473044}
   - component: {fileID: 1445473043}
-  - component: {fileID: 1445473051}
   m_Layer: 0
   m_Name: Registry
   m_TagString: Untagged
@@ -41109,8 +41155,7 @@ MonoBehaviour:
   _commandService: {fileID: 1445473043}
   _documentService: {fileID: 1445473046}
   _sampleData: {fileID: 1445473050}
-  _arenaService: {fileID: 1445473051}
-  _roomSelectors: {fileID: 220520326}
+  _arenaService: {fileID: 348475427}
   _cardStaging: {fileID: 1086194764}
   _userHand: {fileID: 317749080}
   _opponentHand: {fileID: 1072430061}
@@ -41150,21 +41195,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _drawHands: 1
---- !u!114 &1445473051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1445473042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ec7658bb8c14c9d985ded1722ab151e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _registry: {fileID: 1445473048}
-  _leftItems: {fileID: 32347433}
-  _rightItems: {fileID: 622587992}
 --- !u!1 &1451530778
 GameObject:
   m_ObjectHideFlags: 0
@@ -42048,7 +42078,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorE
+      value: RoomE
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId
@@ -56949,13 +56979,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 801763469011278702, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 821081267838170759, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 834393315621706678, guid: 94ee6780efb164566b7977f07977d072, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2027318099404271120, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
@@ -57041,12 +57075,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5486159759213016987, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6951699690469240736, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: -3126067664937594705, guid: d94ddeafd339c4b3cad4a7200a77c0d4, type: 2}
+    - target: {fileID: 7312213557431541649, guid: 94ee6780efb164566b7977f07977d072, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8654087573040091116, guid: 94ee6780efb164566b7977f07977d072, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -57941,7 +57979,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorB
+      value: RoomB
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId
@@ -60073,7 +60111,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorSanctum
+      value: RoomSanctum
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId
@@ -63848,7 +63886,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomSelectorCrypts
+      value: RoomCrypts
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId

@@ -27,21 +27,24 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] LinearCardDisplay _leftItems = null!;
     [SerializeField] LinearCardDisplay _rightItems = null!;
+    [SerializeField] RectangularCardDisplay _display = null!;
     [SerializeField] RoomSelector? _curentRoomSelector;
+
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
     public IEnumerator AddAsItem(Card card, CardPositionItem position, bool animate)
     {
-      switch (position.ItemLocation)
-      {
-        case ItemLocation.Left:
-          return _leftItems.AddCard(card, animate);
-        case ItemLocation.Right:
-          return _rightItems.AddCard(card, animate);
-        default:
-          Debug.LogError($"Unknown item location: {position.ItemLocation}");
-          return _rightItems.AddCard(card, animate);
-      }
+      return _display.AddCard(card, animate);
+      // switch (position.ItemLocation)
+      // {
+      //   case ItemLocation.Left:
+      //     return _leftItems.AddCard(card, animate);
+      //   case ItemLocation.Right:
+      //     return _rightItems.AddCard(card, animate);
+      //   default:
+      //     Debug.LogError($"Unknown item location: {position.ItemLocation}");
+      //     return _rightItems.AddCard(card, animate);
+      // }
     }
 
     public IEnumerator AddToRoom(Card card, CardPositionRoom position, bool animate)

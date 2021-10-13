@@ -28,19 +28,18 @@ namespace Spelldawn.Game
 
     public IEnumerator<YieldInstruction> AddCard(Card card, bool animate = true, int? index = null)
     {
-      if (Cards.Contains(card))
-      {
-        throw new ArgumentException($"Card {card} already added!");
-      }
-
       card.Parent = this;
-      if (index is { } i)
+
+      if (!Cards.Contains(card))
       {
-        Cards.Insert(i, card);
-      }
-      else
-      {
-        Cards.Add(card);
+        if (index is { } i)
+        {
+          Cards.Insert(i, card);
+        }
+        else
+        {
+          Cards.Add(card);
+        }
       }
 
       return MoveCardsToPosition(animate);

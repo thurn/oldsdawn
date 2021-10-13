@@ -31,6 +31,7 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _cardBack = null!;
     [SerializeField] Transform _cardFront = null!;
     [SerializeField] GameObject _cardShadow = null!;
+    [SerializeField] Transform _arenaCard = null!;
     [SerializeField] SpriteRenderer _image = null!;
     [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] SpriteRenderer _titleBackground = null!;
@@ -57,6 +58,7 @@ namespace Spelldawn.Game
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] int _handIndex;
     [SerializeField] RenderingMode _renderingMode;
+    [SerializeField] Vector3 _arenaCardOffset;
 
     Registry _registry = null!;
     CardView? _cardView;
@@ -88,7 +90,10 @@ namespace Spelldawn.Game
       set => value?.ApplyTo(_sortingGroup);
     }
 
-    public float ImageWidth => _image.bounds.size.x;
+    void Start()
+    {
+      _arenaCardOffset = _arenaCard.localPosition;
+    }
 
     public void Render(Registry registry, CardView cardView, bool animate = true)
     {
@@ -156,6 +161,8 @@ namespace Spelldawn.Game
             _arenaFrame.gameObject.SetActive(false);
             _cardShadow.SetActive(true);
             _arenaShadow.SetActive(false);
+
+            _arenaCard.localPosition = _arenaCardOffset;
             break;
           case RenderingMode.Arena:
             _frame.gameObject.SetActive(false);
@@ -167,6 +174,10 @@ namespace Spelldawn.Game
             _cardShadow.SetActive(false);
             _arenaShadow.SetActive(true);
             _topLeftIcon.Background.gameObject.SetActive(false);
+
+            // In Arena mode, we want the image content to be centered within the card, so we shift
+            // it around.
+            _arenaCard.position = transform.position;
             break;
           default:
             Debug.LogError($"Unrecognized rendering mode: {_renderingMode}");
@@ -218,7 +229,7 @@ namespace Spelldawn.Game
     {
       _registry.ArenaService.HideRoomSelector();
       var distance = _dragStartPosition.z - DragWorldMousePosition().z;
-      if (!_isDragging || distance < 4.5f || _revealedCardView?.OnReleasePosition == null)
+      if (!_isDragging || distance < 3.5f || _revealedCardView?.OnReleasePosition == null)
       {
         // Return to hand
         _interactive = true;
@@ -270,6 +281,7 @@ namespace Spelldawn.Game
       _cardBack.gameObject.SetActive(value: false);
       _cardFront.gameObject.SetActive(value: true);
       _image.sprite = _registry.AssetService.GetSprite(revealed.Image);
+      _image.gameObject.SetActive(true);
       _frame.sprite = _registry.AssetService.GetSprite(revealed.CardFrame);
       _titleBackground.sprite = _registry.AssetService.GetSprite(revealed.TitleBackground);
       SetTitle(revealed.Title.Text);

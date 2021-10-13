@@ -80,7 +80,6 @@ namespace Spelldawn.Services
       Card card;
       if (!command.DisallowOptimistic && _optimisticCard)
       {
-        Debug.Log($"HandleCreateCardCommand: found optimistic");
         waitForStaging = true;
         card = _optimisticCard!;
         _optimisticCard = null;
