@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using UnityEngine;
@@ -28,6 +27,8 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] LinearCardDisplay _leftItems = null!;
     [SerializeField] LinearCardDisplay _rightItems = null!;
+    [SerializeField] RoomSelector? _curentRoomSelector;
+    readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
     public IEnumerator AddAsItem(Card card, CardPositionItem position, bool animate)
     {
@@ -46,6 +47,36 @@ namespace Spelldawn.Services
     public IEnumerator AddToRoom(Card card, CardPositionRoom position, bool animate)
     {
       yield break;
+    }
+
+    public void ShowRoomSelectorForMousePosition()
+    {
+      var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
+      var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
+      for (var i = 0; i < hits; ++i)
+      {
+        var hit = _raycastHitsTempBuffer[i];
+        var selector = hit.collider.GetComponent<RoomSelector>();
+        if (selector)
+        {
+          if (_curentRoomSelector)
+          {
+            _curentRoomSelector!.SpriteRenderer.enabled = false;
+          }
+
+          selector.SpriteRenderer.enabled = true;
+          _curentRoomSelector = selector;
+        }
+      }
+      Array.Clear(_raycastHitsTempBuffer, 0, _raycastHitsTempBuffer.Length);
+    }
+
+    public void HideRoomSelector()
+    {
+      if (_curentRoomSelector)
+      {
+        _curentRoomSelector!.SpriteRenderer.enabled = false;
+      }
     }
   }
 }

@@ -44,7 +44,7 @@ namespace Spelldawn.Game
     protected override Vector3? CalculateCardRotation(Card card, int index, int count) =>
       new Vector3(x: 270, y: 0, 0);
 
-    void OnDrawGizmos()
+    void OnDrawGizmosSelected()
     {
       Gizmos.color = Color.blue;
       Gizmos.DrawSphere(transform.position + new Vector3(_width / 2f, 0, 0), radius: 1);

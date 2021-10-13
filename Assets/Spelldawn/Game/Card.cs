@@ -210,26 +210,26 @@ namespace Spelldawn.Game
         transform.position = _dragOffset + mousePosition;
         var rotation = Quaternion.Slerp(_initialDragRotation, Quaternion.Euler(280, 0, 0), t);
         transform.rotation = rotation;
+        _registry.ArenaService.ShowRoomSelectorForMousePosition();
       }
     }
 
     void OnMouseUp()
     {
-      if (_isDragging)
+      _registry.ArenaService.HideRoomSelector();
+      var distance = _dragStartPosition.z - DragWorldMousePosition().z;
+      if (!_isDragging || distance < 4.5f || _revealedCardView?.OnReleasePosition == null)
       {
-        _isDragging = false;
-        var distance = _dragStartPosition.z - DragWorldMousePosition().z;
-        if (distance < 4.5f || _revealedCardView?.OnReleasePosition == null)
-        {
-          // Return to hand
-          _interactive = true;
-          StartCoroutine(Parent!.AddCard(this, animate: true, index: _handIndex));
-        }
-        else
-        {
-          StartCoroutine(_registry.CardService.MoveCard(this, _revealedCardView.OnReleasePosition));
-        }
+        // Return to hand
+        _interactive = true;
+        StartCoroutine(Parent!.AddCard(this, animate: true, index: _handIndex));
       }
+      else
+      {
+        StartCoroutine(_registry.CardService.MoveCard(this, _revealedCardView.OnReleasePosition));
+      }
+
+      _isDragging = false;
     }
 
     Vector3 DragWorldMousePosition() => _registry.MainCamera.ScreenToWorldPoint(

@@ -92,9 +92,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             ValidRooms =
             {
-              new RoomId { InnerRoom = InnerRoom.Crypts },
-              new RoomId { InnerRoom = InnerRoom.Sanctum },
-              new RoomId { InnerRoom = InnerRoom.Treasury }
+              RoomId.Crypts,
+              RoomId.Sanctum,
+              RoomId.Treasury
             }
           }
         }, new CardPosition

@@ -26,21 +26,20 @@ namespace Spelldawn.Protos {
           string.Concat(
             "ChVnYW1lX3ByaW1pdGl2ZXMucHJvdG8SAnNkIk0KBkNhcmRJZBInCg1pZGVu",
             "dGl0eV9jYXJkGAEgASgOMg4uc2QuUGxheWVyTmFtZUgAEg8KBXZhbHVlGAIg",
-            "ASgFSABCCQoHY2FyZF9pZCJOCgZSb29tSWQSIwoKaW5uZXJfcm9vbRgBIAEo",
-            "DjINLnNkLklubmVyUm9vbUgAEhQKCm91dGVyX3Jvb20YAiABKAVIAEIJCgdy",
-            "b29tX2lkIlIKCFRhcmdldElkEh0KB2NhcmRfaWQYASABKAsyCi5zZC5DYXJk",
-            "SWRIABIdCgdyb29tX2lkGAIgASgLMgouc2QuUm9vbUlkSABCCAoGdGFyZ2V0",
-            "KlkKClBsYXllck5hbWUSGwoXUExBWUVSX05BTUVfVU5TUEVDSUZJRUQQABIU",
-            "ChBQTEFZRVJfTkFNRV9VU0VSEAESGAoUUExBWUVSX05BTUVfT1BQT05FTlQQ",
-            "AipvCglJbm5lclJvb20SGgoWSU5ORVJfUk9PTV9VTlNQRUNJRklFRBAAEhcK",
-            "E0lOTkVSX1JPT01fVFJFQVNVUlkQARIWChJJTk5FUl9ST09NX1NBTkNUVU0Q",
-            "AhIVChFJTk5FUl9ST09NX0NSWVBUUxADQhOqAhBTcGVsbGRhd24uUHJvdG9z",
-            "YgZwcm90bzM="));
+            "ASgFSABCCQoHY2FyZF9pZCJSCghUYXJnZXRJZBIdCgdjYXJkX2lkGAEgASgL",
+            "Mgouc2QuQ2FyZElkSAASHQoHcm9vbV9pZBgCIAEoDjIKLnNkLlJvb21JZEgA",
+            "QggKBnRhcmdldCpZCgpQbGF5ZXJOYW1lEhsKF1BMQVlFUl9OQU1FX1VOU1BF",
+            "Q0lGSUVEEAASFAoQUExBWUVSX05BTUVfVVNFUhABEhgKFFBMQVlFUl9OQU1F",
+            "X09QUE9ORU5UEAIqxAEKBlJvb21JZBIXChNST09NX0lEX1VOU1BFQ0lGSUVE",
+            "EAASFAoQUk9PTV9JRF9UUkVBU1VSWRABEhMKD1JPT01fSURfU0FOQ1RVTRAC",
+            "EhIKDlJPT01fSURfQ1JZUFRTEAMSEgoOUk9PTV9JRF9ST09NX0EQBBISCg5S",
+            "T09NX0lEX1JPT01fQhAFEhIKDlJPT01fSURfUk9PTV9DEAYSEgoOUk9PTV9J",
+            "RF9ST09NX0QQBxISCg5ST09NX0lEX1JPT01fRRAIQhOqAhBTcGVsbGRhd24u",
+            "UHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.PlayerName), typeof(global::Spelldawn.Protos.InnerRoom), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.PlayerName), typeof(global::Spelldawn.Protos.RoomId), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CardId), global::Spelldawn.Protos.CardId.Parser, new[]{ "IdentityCard", "Value" }, new[]{ "CardId" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RoomId), global::Spelldawn.Protos.RoomId.Parser, new[]{ "InnerRoom", "OuterRoom" }, new[]{ "RoomId" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.TargetId), global::Spelldawn.Protos.TargetId.Parser, new[]{ "CardId", "RoomId" }, new[]{ "Target" }, null, null, null)
           }));
     }
@@ -54,11 +53,16 @@ namespace Spelldawn.Protos {
     [pbr::OriginalName("PLAYER_NAME_OPPONENT")] Opponent = 2,
   }
 
-  public enum InnerRoom {
-    [pbr::OriginalName("INNER_ROOM_UNSPECIFIED")] Unspecified = 0,
-    [pbr::OriginalName("INNER_ROOM_TREASURY")] Treasury = 1,
-    [pbr::OriginalName("INNER_ROOM_SANCTUM")] Sanctum = 2,
-    [pbr::OriginalName("INNER_ROOM_CRYPTS")] Crypts = 3,
+  public enum RoomId {
+    [pbr::OriginalName("ROOM_ID_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("ROOM_ID_TREASURY")] Treasury = 1,
+    [pbr::OriginalName("ROOM_ID_SANCTUM")] Sanctum = 2,
+    [pbr::OriginalName("ROOM_ID_CRYPTS")] Crypts = 3,
+    [pbr::OriginalName("ROOM_ID_ROOM_A")] RoomA = 4,
+    [pbr::OriginalName("ROOM_ID_ROOM_B")] RoomB = 5,
+    [pbr::OriginalName("ROOM_ID_ROOM_C")] RoomC = 6,
+    [pbr::OriginalName("ROOM_ID_ROOM_D")] RoomD = 7,
+    [pbr::OriginalName("ROOM_ID_ROOM_E")] RoomE = 8,
   }
 
   #endregion
@@ -305,247 +309,6 @@ namespace Spelldawn.Protos {
 
   }
 
-  public sealed partial class RoomId : pb::IMessage<RoomId>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<RoomId> _parser = new pb::MessageParser<RoomId>(() => new RoomId());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<RoomId> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor.MessageTypes[1]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RoomId() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RoomId(RoomId other) : this() {
-      switch (other.RoomIdCase) {
-        case RoomIdOneofCase.InnerRoom:
-          InnerRoom = other.InnerRoom;
-          break;
-        case RoomIdOneofCase.OuterRoom:
-          OuterRoom = other.OuterRoom;
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RoomId Clone() {
-      return new RoomId(this);
-    }
-
-    /// <summary>Field number for the "inner_room" field.</summary>
-    public const int InnerRoomFieldNumber = 1;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.InnerRoom InnerRoom {
-      get { return roomIdCase_ == RoomIdOneofCase.InnerRoom ? (global::Spelldawn.Protos.InnerRoom) roomId_ : global::Spelldawn.Protos.InnerRoom.Unspecified; }
-      set {
-        roomId_ = value;
-        roomIdCase_ = RoomIdOneofCase.InnerRoom;
-      }
-    }
-
-    /// <summary>Field number for the "outer_room" field.</summary>
-    public const int OuterRoomFieldNumber = 2;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int OuterRoom {
-      get { return roomIdCase_ == RoomIdOneofCase.OuterRoom ? (int) roomId_ : 0; }
-      set {
-        roomId_ = value;
-        roomIdCase_ = RoomIdOneofCase.OuterRoom;
-      }
-    }
-
-    private object roomId_;
-    /// <summary>Enum of possible cases for the "room_id" oneof.</summary>
-    public enum RoomIdOneofCase {
-      None = 0,
-      InnerRoom = 1,
-      OuterRoom = 2,
-    }
-    private RoomIdOneofCase roomIdCase_ = RoomIdOneofCase.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public RoomIdOneofCase RoomIdCase {
-      get { return roomIdCase_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearRoomId() {
-      roomIdCase_ = RoomIdOneofCase.None;
-      roomId_ = null;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as RoomId);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(RoomId other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (InnerRoom != other.InnerRoom) return false;
-      if (OuterRoom != other.OuterRoom) return false;
-      if (RoomIdCase != other.RoomIdCase) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (roomIdCase_ == RoomIdOneofCase.InnerRoom) hash ^= InnerRoom.GetHashCode();
-      if (roomIdCase_ == RoomIdOneofCase.OuterRoom) hash ^= OuterRoom.GetHashCode();
-      hash ^= (int) roomIdCase_;
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (roomIdCase_ == RoomIdOneofCase.InnerRoom) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) InnerRoom);
-      }
-      if (roomIdCase_ == RoomIdOneofCase.OuterRoom) {
-        output.WriteRawTag(16);
-        output.WriteInt32(OuterRoom);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (roomIdCase_ == RoomIdOneofCase.InnerRoom) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) InnerRoom);
-      }
-      if (roomIdCase_ == RoomIdOneofCase.OuterRoom) {
-        output.WriteRawTag(16);
-        output.WriteInt32(OuterRoom);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (roomIdCase_ == RoomIdOneofCase.InnerRoom) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) InnerRoom);
-      }
-      if (roomIdCase_ == RoomIdOneofCase.OuterRoom) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(OuterRoom);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(RoomId other) {
-      if (other == null) {
-        return;
-      }
-      switch (other.RoomIdCase) {
-        case RoomIdOneofCase.InnerRoom:
-          InnerRoom = other.InnerRoom;
-          break;
-        case RoomIdOneofCase.OuterRoom:
-          OuterRoom = other.OuterRoom;
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 8: {
-            roomId_ = input.ReadEnum();
-            roomIdCase_ = RoomIdOneofCase.InnerRoom;
-            break;
-          }
-          case 16: {
-            OuterRoom = input.ReadInt32();
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 8: {
-            roomId_ = input.ReadEnum();
-            roomIdCase_ = RoomIdOneofCase.InnerRoom;
-            break;
-          }
-          case 16: {
-            OuterRoom = input.ReadInt32();
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
   public sealed partial class TargetId : pb::IMessage<TargetId>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -558,7 +321,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Spelldawn.Protos.GamePrimitivesReflection.Descriptor.MessageTypes[1]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -580,7 +343,7 @@ namespace Spelldawn.Protos {
           CardId = other.CardId.Clone();
           break;
         case TargetOneofCase.RoomId:
-          RoomId = other.RoomId.Clone();
+          RoomId = other.RoomId;
           break;
       }
 
@@ -607,10 +370,10 @@ namespace Spelldawn.Protos {
     public const int RoomIdFieldNumber = 2;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RoomId RoomId {
-      get { return targetCase_ == TargetOneofCase.RoomId ? (global::Spelldawn.Protos.RoomId) target_ : null; }
+      get { return targetCase_ == TargetOneofCase.RoomId ? (global::Spelldawn.Protos.RoomId) target_ : global::Spelldawn.Protos.RoomId.Unspecified; }
       set {
         target_ = value;
-        targetCase_ = value == null ? TargetOneofCase.None : TargetOneofCase.RoomId;
+        targetCase_ = TargetOneofCase.RoomId;
       }
     }
 
@@ -647,7 +410,7 @@ namespace Spelldawn.Protos {
         return true;
       }
       if (!object.Equals(CardId, other.CardId)) return false;
-      if (!object.Equals(RoomId, other.RoomId)) return false;
+      if (RoomId != other.RoomId) return false;
       if (TargetCase != other.TargetCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -679,8 +442,8 @@ namespace Spelldawn.Protos {
         output.WriteMessage(CardId);
       }
       if (targetCase_ == TargetOneofCase.RoomId) {
-        output.WriteRawTag(18);
-        output.WriteMessage(RoomId);
+        output.WriteRawTag(16);
+        output.WriteEnum((int) RoomId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -696,8 +459,8 @@ namespace Spelldawn.Protos {
         output.WriteMessage(CardId);
       }
       if (targetCase_ == TargetOneofCase.RoomId) {
-        output.WriteRawTag(18);
-        output.WriteMessage(RoomId);
+        output.WriteRawTag(16);
+        output.WriteEnum((int) RoomId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -712,7 +475,7 @@ namespace Spelldawn.Protos {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(CardId);
       }
       if (targetCase_ == TargetOneofCase.RoomId) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomId);
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) RoomId);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -733,10 +496,7 @@ namespace Spelldawn.Protos {
           CardId.MergeFrom(other.CardId);
           break;
         case TargetOneofCase.RoomId:
-          if (RoomId == null) {
-            RoomId = new global::Spelldawn.Protos.RoomId();
-          }
-          RoomId.MergeFrom(other.RoomId);
+          RoomId = other.RoomId;
           break;
       }
 
@@ -763,13 +523,9 @@ namespace Spelldawn.Protos {
             CardId = subBuilder;
             break;
           }
-          case 18: {
-            global::Spelldawn.Protos.RoomId subBuilder = new global::Spelldawn.Protos.RoomId();
-            if (targetCase_ == TargetOneofCase.RoomId) {
-              subBuilder.MergeFrom(RoomId);
-            }
-            input.ReadMessage(subBuilder);
-            RoomId = subBuilder;
+          case 16: {
+            target_ = input.ReadEnum();
+            targetCase_ = TargetOneofCase.RoomId;
             break;
           }
         }
@@ -795,13 +551,9 @@ namespace Spelldawn.Protos {
             CardId = subBuilder;
             break;
           }
-          case 18: {
-            global::Spelldawn.Protos.RoomId subBuilder = new global::Spelldawn.Protos.RoomId();
-            if (targetCase_ == TargetOneofCase.RoomId) {
-              subBuilder.MergeFrom(RoomId);
-            }
-            input.ReadMessage(subBuilder);
-            RoomId = subBuilder;
+          case 16: {
+            target_ = input.ReadEnum();
+            targetCase_ = TargetOneofCase.RoomId;
             break;
           }
         }

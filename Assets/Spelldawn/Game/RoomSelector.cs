@@ -12,39 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+using Spelldawn.Protos;
+using UnityEngine;
 
-package sd;
-option csharp_namespace = "Spelldawn.Protos";
+#nullable enable
 
-enum PlayerName {
-  PLAYER_NAME_UNSPECIFIED = 0;
-  PLAYER_NAME_USER = 1;
-  PLAYER_NAME_OPPONENT = 2;
-}
+namespace Spelldawn.Game
+{
+  public sealed class RoomSelector : MonoBehaviour
+  {
+    [SerializeField] RoomId _roomId;
+    public RoomId RoomId => _roomId;
 
-message CardId {
-  oneof card_id {
-    PlayerName identity_card = 1;
-    int32 value = 2;
-  }
-}
-
-enum RoomId {
-  ROOM_ID_UNSPECIFIED = 0;
-  ROOM_ID_TREASURY = 1;
-  ROOM_ID_SANCTUM = 2;
-  ROOM_ID_CRYPTS = 3;
-  ROOM_ID_ROOM_A = 4;
-  ROOM_ID_ROOM_B = 5;
-  ROOM_ID_ROOM_C = 6;
-  ROOM_ID_ROOM_D = 7;
-  ROOM_ID_ROOM_E = 8;
-}
-
-message TargetId {
-  oneof target {
-    CardId card_id = 1;
-    RoomId room_id = 2;
+    [SerializeField] SpriteRenderer _spriteRenderer = null!;
+    public SpriteRenderer SpriteRenderer => _spriteRenderer;
   }
 }

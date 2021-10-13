@@ -28,8 +28,8 @@ namespace Spelldawn.Protos {
             "b29nbGUvcHJvdG9idWYvYW55LnByb3RvIkgKGkRlYnVnUGVyZm9ybUNvbW1h",
             "bmRzQWN0aW9uEioKDGNvbW1hbmRfbGlzdBgBIAEoCzIULmdvb2dsZS5wcm90",
             "b2J1Zi5BbnkiEAoOR2Fpbk1hbmFBY3Rpb24iEAoORHJhd0NhcmRBY3Rpb24i",
-            "LAoNTGV2ZWxVcEFjdGlvbhIbCgdyb29tX2lkGAEgASgLMgouc2QuUm9vbUlk",
-            "IikKClJhaWRBY3Rpb24SGwoHcm9vbV9pZBgBIAEoCzIKLnNkLlJvb21JZCJL",
+            "LAoNTGV2ZWxVcEFjdGlvbhIbCgdyb29tX2lkGAEgASgOMgouc2QuUm9vbUlk",
+            "IikKClJhaWRBY3Rpb24SGwoHcm9vbV9pZBgBIAEoDjIKLnNkLlJvb21JZCJL",
             "Cg5QbGF5Q2FyZEFjdGlvbhIbCgdjYXJkX2lkGAEgASgLMgouc2QuQ2FyZElk",
             "EhwKBnRhcmdldBgCIAEoCzIMLnNkLlRhcmdldElkIg8KDUNvbmNlZGVBY3Rp",
             "b24itgIKCkdhbWVBY3Rpb24SNgoMZGVidWdfYWN0aW9uGAEgASgLMh4uc2Qu",
@@ -560,7 +560,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LevelUpAction(LevelUpAction other) : this() {
-      roomId_ = other.roomId_ != null ? other.roomId_.Clone() : null;
+      roomId_ = other.roomId_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -571,7 +571,7 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "room_id" field.</summary>
     public const int RoomIdFieldNumber = 1;
-    private global::Spelldawn.Protos.RoomId roomId_;
+    private global::Spelldawn.Protos.RoomId roomId_ = global::Spelldawn.Protos.RoomId.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RoomId RoomId {
       get { return roomId_; }
@@ -593,14 +593,14 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(RoomId, other.RoomId)) return false;
+      if (RoomId != other.RoomId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (roomId_ != null) hash ^= RoomId.GetHashCode();
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) hash ^= RoomId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -617,9 +617,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (roomId_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(RoomId);
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        output.WriteRawTag(8);
+        output.WriteEnum((int) RoomId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -630,9 +630,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (roomId_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(RoomId);
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        output.WriteRawTag(8);
+        output.WriteEnum((int) RoomId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -643,8 +643,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (roomId_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomId);
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) RoomId);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -657,11 +657,8 @@ namespace Spelldawn.Protos {
       if (other == null) {
         return;
       }
-      if (other.roomId_ != null) {
-        if (roomId_ == null) {
-          RoomId = new global::Spelldawn.Protos.RoomId();
-        }
-        RoomId.MergeFrom(other.RoomId);
+      if (other.RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        RoomId = other.RoomId;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -677,11 +674,8 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            if (roomId_ == null) {
-              RoomId = new global::Spelldawn.Protos.RoomId();
-            }
-            input.ReadMessage(RoomId);
+          case 8: {
+            RoomId = (global::Spelldawn.Protos.RoomId) input.ReadEnum();
             break;
           }
         }
@@ -698,11 +692,8 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
-            if (roomId_ == null) {
-              RoomId = new global::Spelldawn.Protos.RoomId();
-            }
-            input.ReadMessage(RoomId);
+          case 8: {
+            RoomId = (global::Spelldawn.Protos.RoomId) input.ReadEnum();
             break;
           }
         }
@@ -747,7 +738,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public RaidAction(RaidAction other) : this() {
-      roomId_ = other.roomId_ != null ? other.roomId_.Clone() : null;
+      roomId_ = other.roomId_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -758,7 +749,7 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "room_id" field.</summary>
     public const int RoomIdFieldNumber = 1;
-    private global::Spelldawn.Protos.RoomId roomId_;
+    private global::Spelldawn.Protos.RoomId roomId_ = global::Spelldawn.Protos.RoomId.Unspecified;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RoomId RoomId {
       get { return roomId_; }
@@ -780,14 +771,14 @@ namespace Spelldawn.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(RoomId, other.RoomId)) return false;
+      if (RoomId != other.RoomId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (roomId_ != null) hash ^= RoomId.GetHashCode();
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) hash ^= RoomId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -804,9 +795,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (roomId_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(RoomId);
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        output.WriteRawTag(8);
+        output.WriteEnum((int) RoomId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -817,9 +808,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (roomId_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(RoomId);
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        output.WriteRawTag(8);
+        output.WriteEnum((int) RoomId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -830,8 +821,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (roomId_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RoomId);
+      if (RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) RoomId);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -844,11 +835,8 @@ namespace Spelldawn.Protos {
       if (other == null) {
         return;
       }
-      if (other.roomId_ != null) {
-        if (roomId_ == null) {
-          RoomId = new global::Spelldawn.Protos.RoomId();
-        }
-        RoomId.MergeFrom(other.RoomId);
+      if (other.RoomId != global::Spelldawn.Protos.RoomId.Unspecified) {
+        RoomId = other.RoomId;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -864,11 +852,8 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            if (roomId_ == null) {
-              RoomId = new global::Spelldawn.Protos.RoomId();
-            }
-            input.ReadMessage(RoomId);
+          case 8: {
+            RoomId = (global::Spelldawn.Protos.RoomId) input.ReadEnum();
             break;
           }
         }
@@ -885,11 +870,8 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
-            if (roomId_ == null) {
-              RoomId = new global::Spelldawn.Protos.RoomId();
-            }
-            input.ReadMessage(RoomId);
+          case 8: {
+            RoomId = (global::Spelldawn.Protos.RoomId) input.ReadEnum();
             break;
           }
         }
