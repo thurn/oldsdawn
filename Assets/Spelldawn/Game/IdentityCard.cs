@@ -29,6 +29,7 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] TextMeshPro _scoreText = null!;
     [SerializeField] SortingGroup _sortingGroup = null!;
+    [SerializeField] GameObject _raidSymbol = null!;
     RoomId? _selectedRoom;
 
     public override SortingOrder? SortingOrder
@@ -38,6 +39,11 @@ namespace Spelldawn.Game
 
     public override void SetRenderingMode(RenderingMode renderingMode)
     {
+    }
+
+    public bool RaidSymbolShown
+    {
+      set => _raidSymbol.SetActive(value);
     }
 
     void OnMouseDown()

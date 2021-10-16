@@ -23,6 +23,7 @@ namespace Spelldawn.Game
     [SerializeField] float _width;
     [SerializeField] float _initialSpacing;
     [SerializeField] float _cardSize;
+    [SerializeField] float _rotation = 270;
 
     protected override SortingOrder.Type SortingType => SortingOrder.Type.Arena;
 
@@ -30,9 +31,16 @@ namespace Spelldawn.Game
       transform.position + new Vector3(CalculateXOffset(_width, _initialSpacing, _cardSize, index, count), 0, 0);
 
     protected override Vector3? CalculateCardRotation(int index, int count) =>
-      new Vector3(x: 270, y: 0, 0);
+      new Vector3(x: _rotation, y: 0, 0);
 
-    public static float CalculateXOffset(float width, float initialSpacing, float cardWidth, int index, int count)
+    public static float CalculateXOffset(
+      float width,
+      float initialSpacing,
+      float cardWidth,
+      int index,
+      int count,
+      float minOffsetMultiplier = 1f,
+      float maxOffsetMultiplier = 1f)
     {
       var availableWidth = Mathf.Min(width, (cardWidth + initialSpacing) * count);
       var offset = (availableWidth / 2f - cardWidth / 2f);
@@ -40,7 +48,7 @@ namespace Spelldawn.Game
       return count switch
       {
         0 or 1 => 0,
-        _ => Mathf.Lerp(-offset, offset, index / (count - 1f))
+        _ => Mathf.Lerp(-offset * minOffsetMultiplier, offset * maxOffsetMultiplier, index / (count - 1f))
       };
     }
 

@@ -31,6 +31,7 @@ namespace Spelldawn.Game
       Discard,
       Raid,
       Hand,
+      Interface,
       Staging,
       Dragging
     }
@@ -53,8 +54,9 @@ namespace Spelldawn.Game
         Type.Discard => 300,
         Type.Raid => 400,
         Type.Hand => 500,
-        Type.Staging => 600,
-        Type.Dragging => 700,
+        Type.Interface => 600,
+        Type.Staging => 700,
+        Type.Dragging => 800,
         _ => throw new ArgumentOutOfRangeException()
       };
     }

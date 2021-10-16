@@ -18,24 +18,28 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class RaidDefendersCardDisplay : CardDisplay
+  public sealed class RaidParticipantsCardDisplay : CardDisplay
   {
-    [SerializeField] float _spacing;
+    [SerializeField] float _width;
+    [SerializeField] float _initialSpacing;
     [SerializeField] float _cardSize;
+    [SerializeField] float _rotation = 270;
 
     protected override SortingOrder.Type SortingType => SortingOrder.Type.Raid;
 
-    protected override Vector3 CalculateCardPosition(int index, int count)
-    {
-      return transform.position + new Vector3((_cardSize / 2f) + index * (_cardSize + _spacing), 0, 0);
-    }
+    protected override Vector3 CalculateCardPosition(int index, int count) =>
+      transform.position + new Vector3(LinearCardDisplay.CalculateXOffset(
+        _width, _initialSpacing, _cardSize, index, count,
+        minOffsetMultiplier: 0f,
+        maxOffsetMultiplier: 1f), 0, 0);
 
     protected override Vector3? CalculateCardRotation(int index, int count) =>
-      new Vector3(x: 280, y: 0, 0);
+      new Vector3(x: _rotation, y: 0, 0);
 
     void OnDrawGizmosSelected()
     {
-      Gizmos.color = Color.green;
+      Gizmos.color = Color.red;
+      Gizmos.DrawSphere(transform.position + new Vector3(_width / 2f, 0, 0), radius: 1);
       Gizmos.DrawSphere(transform.position, radius: 1);
     }
   }

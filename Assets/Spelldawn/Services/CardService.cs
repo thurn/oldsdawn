@@ -175,6 +175,14 @@ namespace Spelldawn.Services
       }
     }
 
+    void SetRenderingMode(List<AbstractCard> cards, AbstractCard.RenderingMode mode)
+    {
+      foreach (var card in cards)
+      {
+        card.SetRenderingMode(mode);
+      }
+    }
+
     void SetCardBacks(CardView? cardView, PlayerName playerName)
     {
       if (cardView != null)

@@ -26,15 +26,15 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] SpriteRenderer _background = null!;
-    [SerializeField] RaidDefendersCardDisplay _defenders = null!;
-    [SerializeField] LinearCardDisplay _raidTargets = null!;
+    [SerializeField] CardDisplay _participants = null!;
+    [SerializeField] CardDisplay _raidTargets = null!;
     RoomId? _currentRoom;
 
     public IEnumerator AddToRaid(AbstractCard card, CardPositionRaid position, bool animate) =>
       position.RoomLocation switch
       {
         RoomLocation.InRoom => _raidTargets.AddCard(card, animate, position.Index),
-        _ => _defenders.AddCard(card, animate, position.Index),
+        _ => _participants.AddCard(card, animate, position.Index),
       };
 
     public IEnumerator HandleInitiateRaid(InitiateRaidCommand command)
@@ -49,22 +49,33 @@ namespace Spelldawn.Services
         _currentRoom = command.RoomId;
         _background.enabled = true;
 
-        yield return MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).Defenders, RoomLocation.Defender);
-        yield return MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).CardsInRoom, RoomLocation.InRoom);
+        MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).Defenders, RoomLocation.Defender);
+        MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).CardsInRoom, RoomLocation.InRoom);
+
+        var identity = _registry.IdentityCardForPlayer(command.Initiator);
+        identity.RaidSymbolShown = true;
+
+        yield return _registry.CardService.MoveCard(identity, new CardPosition
+        {
+          Raid = new CardPositionRaid
+          {
+            RoomLocation = RoomLocation.Defender
+          }
+        });
       }
     }
 
-    IEnumerator MoveToRaid(IEnumerable<AbstractCard> cards, RoomLocation roomLocation)
+    void MoveToRaid(IEnumerable<AbstractCard> cards, RoomLocation roomLocation)
     {
       foreach (var card in cards)
       {
-        yield return _registry.CardService.MoveCard(card, new CardPosition
+        StartCoroutine(_registry.CardService.MoveCard(card, new CardPosition
         {
           Raid = new CardPositionRaid
           {
             RoomLocation = roomLocation
           }
-        });
+        }));
       }
     }
 

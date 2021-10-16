@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
+using Spelldawn.Game;
 using Spelldawn.Utils;
 using UnityEngine;
 
@@ -29,18 +32,15 @@ namespace Spelldawn.Game
 
     public IEnumerator<YieldInstruction> AddCard(AbstractCard card, bool animate = true, int? index = null)
     {
-      card.Parent = this;
+      Insert(card, index);
+      return MoveCardsToPosition(animate);
+    }
 
-      if (!Cards.Contains(card))
+    public IEnumerator AddCards(IEnumerable<AbstractCard> cards, bool animate = true)
+    {
+      foreach (var card in cards)
       {
-        if (index is { } i)
-        {
-          Cards.Insert(i, card);
-        }
-        else
-        {
-          Cards.Add(card);
-        }
+        Insert(card, null);
       }
 
       return MoveCardsToPosition(animate);
@@ -61,6 +61,11 @@ namespace Spelldawn.Game
       StartCoroutine(MoveCardsToPosition(animate));
     }
 
+    public void DebugUpdate()
+    {
+      StartCoroutine(MoveCardsToPosition(true));
+    }
+
     protected abstract SortingOrder.Type SortingType { get; }
 
     protected virtual float AnimationDuration => 0.3f;
@@ -68,6 +73,22 @@ namespace Spelldawn.Game
     protected abstract Vector3 CalculateCardPosition(int index, int count);
 
     protected virtual Vector3? CalculateCardRotation(int index, int count) => null;
+
+    void Insert(AbstractCard card, int? index)
+    {
+      card.Parent = this;
+      if (!Cards.Contains(card))
+      {
+        if (index is { } i)
+        {
+          Cards.Insert(i, card);
+        }
+        else
+        {
+          Cards.Add(card);
+        }
+      }
+    }
 
     IEnumerator<YieldInstruction> MoveCardsToPosition(bool animate)
     {
