@@ -47,6 +47,9 @@ namespace Spelldawn.Services
     public SampleData SampleData => _sampleData;
     [SerializeField] SampleData _sampleData = null!;
 
+    [SerializeField] ArrowService _arrowService = null!;
+    public ArrowService ArrowService => _arrowService;
+
     public ArenaService ArenaService => _arenaService;
     [SerializeField] ArenaService _arenaService = null!;
 
@@ -77,6 +80,12 @@ namespace Spelldawn.Services
 
     public ActionDisplay ActionDisplayForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userActionDisplay : _opponentActionDisplay;
+
+    [SerializeField] IdentityCard _userIdentityCard = null!;
+    [SerializeField] IdentityCard _opponentIdentityCard = null!;
+
+    public IdentityCard IdentityCardForPlayer(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userIdentityCard : _opponentIdentityCard;
 
     void Awake()
     {

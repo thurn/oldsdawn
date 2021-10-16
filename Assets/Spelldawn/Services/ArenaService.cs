@@ -27,24 +27,22 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] LinearCardDisplay _leftItems = null!;
     [SerializeField] LinearCardDisplay _rightItems = null!;
-    [SerializeField] RectangularCardDisplay _display = null!;
     [SerializeField] RoomSelector? _curentRoomSelector;
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
     public IEnumerator AddAsItem(Card card, CardPositionItem position, bool animate)
     {
-      return _display.AddCard(card, animate);
-      // switch (position.ItemLocation)
-      // {
-      //   case ItemLocation.Left:
-      //     return _leftItems.AddCard(card, animate);
-      //   case ItemLocation.Right:
-      //     return _rightItems.AddCard(card, animate);
-      //   default:
-      //     Debug.LogError($"Unknown item location: {position.ItemLocation}");
-      //     return _rightItems.AddCard(card, animate);
-      // }
+      switch (position.ItemLocation)
+      {
+        case ItemLocation.Left:
+          return _leftItems.AddCard(card, animate);
+        case ItemLocation.Right:
+          return _rightItems.AddCard(card, animate);
+        default:
+          Debug.LogError($"Unknown item location: {position.ItemLocation}");
+          return _rightItems.AddCard(card, animate);
+      }
     }
 
     public IEnumerator AddToRoom(Card card, CardPositionRoom position, bool animate)
@@ -52,26 +50,31 @@ namespace Spelldawn.Services
       yield break;
     }
 
-    public void ShowRoomSelectorForMousePosition()
+    public RoomId? ShowRoomSelectorForMousePosition()
     {
+      if (_curentRoomSelector)
+      {
+        _curentRoomSelector!.SpriteRenderer.enabled = false;
+      }
+
       var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
       var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
+      RoomId? result = null;
+
       for (var i = 0; i < hits; ++i)
       {
         var hit = _raycastHitsTempBuffer[i];
         var selector = hit.collider.GetComponent<RoomSelector>();
         if (selector)
         {
-          if (_curentRoomSelector)
-          {
-            _curentRoomSelector!.SpriteRenderer.enabled = false;
-          }
-
+          result = selector.RoomId;
           selector.SpriteRenderer.enabled = true;
           _curentRoomSelector = selector;
+          break;
         }
       }
       Array.Clear(_raycastHitsTempBuffer, 0, _raycastHitsTempBuffer.Length);
+      return result;
     }
 
     public void HideRoomSelector()

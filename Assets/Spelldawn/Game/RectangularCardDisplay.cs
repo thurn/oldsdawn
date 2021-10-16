@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using UnityEngine;
 
 #nullable enable
@@ -56,15 +57,22 @@ namespace Spelldawn.Game
     {
       var availableHeight = Mathf.Min(_height, (_cardSize + _initialSpacing) * count);
       var offset = availableHeight / 2f - _cardSize / 2f;
+
+      if (transform.eulerAngles.y > 90f)
+      {
+        // Flip the 'front' of the display if we're rotated in world space
+        offset = -offset;
+      }
+
       return count switch
       {
         1 => 0,
-        _ when index >= (int) Mathf.Ceil(count / 2f) => -offset,
-        _ => offset
+        _ when index >= (int) Mathf.Ceil(count / 2f) => offset,
+        _ => -offset
       };
     }
 
-    void OnDrawGizmos()
+    void OnDrawGizmosSelected()
     {
       Gizmos.color = Color.blue;
       Gizmos.DrawSphere(transform.position + new Vector3(_width / 2f, 0, _height / 2f), radius: 0.5f);
