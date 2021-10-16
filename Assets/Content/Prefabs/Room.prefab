@@ -48,6 +48,54 @@ MonoBehaviour:
   _height: 9
   _initialSpacing: 1
   _cardSize: 3.5
+--- !u!1 &3086487373951498873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7780003152950097171}
+  - component: {fileID: 4245108521904032291}
+  m_Layer: 0
+  m_Name: InRoom
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7780003152950097171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086487373951498873}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -5.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5875982806262253908}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4245108521904032291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086487373951498873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d9d920a7054f4f91a388f3000ae767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _width: 7
+  _height: 9
+  _initialSpacing: 1
+  _cardSize: 3.5
 --- !u!1 &5875982806262253910
 GameObject:
   m_ObjectHideFlags: 0
@@ -80,6 +128,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8935662750753957304}
+  - {fileID: 7780003152950097171}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
@@ -160,5 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9488aa6c4ed74a41b948a1c2a2c0128d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inRoom: {fileID: 4245108521904032291}
+  _defenders: {fileID: 1492424033034700327}
   _roomId: 0
   _spriteRenderer: {fileID: 5875982806262253909}

@@ -39,7 +39,11 @@ message RenderGameCommand {
 }
 
 message InitiateRaidCommand {
-  RoomId room_id = 1;
+  PlayerName initiator = 1;
+  RoomId room_id = 2;
+}
+
+message EndRaidCommand {
 }
 
 enum CardCreationAnimation {
@@ -103,13 +107,14 @@ message GameCommand {
     RenderInterfaceCommand render_interface = 1;
     RenderGameCommand render_game = 2;
     InitiateRaidCommand initiate_raid = 3;
-    CreateCardCommand create_card = 4;
-    UpdateCardCommand update_card = 5;
-    MoveCardCommand move_card = 6;
-    DestroyCardCommand destroy_card = 7;
-    UpdatePlayerStateCommand update_player_state = 8;
-    CreateOrUpdateRoomCommand create_or_update_room = 9;
-    DestroyRoomCommand destroy_room = 10;
+    EndRaidCommand end_raid = 4;
+    CreateCardCommand create_card = 5;
+    UpdateCardCommand update_card = 6;
+    MoveCardCommand move_card = 7;
+    DestroyCardCommand destroy_card = 8;
+    UpdatePlayerStateCommand update_player_state = 9;
+    CreateOrUpdateRoomCommand create_or_update_room = 10;
+    DestroyRoomCommand destroy_room = 11;
   }
 }
 

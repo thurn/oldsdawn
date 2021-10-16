@@ -26,10 +26,10 @@ namespace Spelldawn.Game
 
     protected override SortingOrder.Type SortingType => SortingOrder.Type.Arena;
 
-    protected override Vector3 CalculateCardPosition(Card card, int index, int count) =>
+    protected override Vector3 CalculateCardPosition(int index, int count) =>
       transform.position + new Vector3(CalculateXOffset(_width, _initialSpacing, _cardSize, index, count), 0, 0);
 
-    protected override Vector3? CalculateCardRotation(Card card, int index, int count) =>
+    protected override Vector3? CalculateCardRotation(int index, int count) =>
       new Vector3(x: 270, y: 0, 0);
 
     public static float CalculateXOffset(float width, float initialSpacing, float cardWidth, int index, int count)

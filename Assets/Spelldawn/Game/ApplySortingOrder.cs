@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 #nullable enable
@@ -28,6 +29,7 @@ namespace Spelldawn.Game
       Arena,
       Deck,
       Discard,
+      Raid,
       Hand,
       Staging,
       Dragging
@@ -49,11 +51,23 @@ namespace Spelldawn.Game
         Type.Arena => 100,
         Type.Deck => 200,
         Type.Discard => 300,
-        Type.Hand => 400,
-        Type.Staging => 500,
-        Type.Dragging => 600,
+        Type.Raid => 400,
+        Type.Hand => 500,
+        Type.Staging => 600,
+        Type.Dragging => 700,
         _ => throw new ArgumentOutOfRangeException()
       };
+    }
+  }
+
+  public sealed class ApplySortingOrder : MonoBehaviour
+  {
+    [SerializeField] SortingOrder.Type _type;
+
+    void Start()
+    {
+      var group = gameObject.AddComponent<SortingGroup>();
+      SortingOrder.Create(_type).ApplyTo(group);
     }
   }
 }

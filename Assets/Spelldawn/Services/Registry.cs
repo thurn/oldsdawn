@@ -53,6 +53,9 @@ namespace Spelldawn.Services
     public ArenaService ArenaService => _arenaService;
     [SerializeField] ArenaService _arenaService = null!;
 
+    [SerializeField] RaidService _raidService = null!;
+    public RaidService RaidService => _raidService;
+
     [SerializeField] Hand _cardStaging = null!;
     public Hand CardStaging => _cardStaging;
 

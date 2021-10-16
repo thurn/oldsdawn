@@ -130,6 +130,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Game = SampleGame()
         }
       });
+
       if (_drawHands)
       {
         for (var i = 0; i < 6; ++i)
@@ -292,8 +293,30 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       string image,
       int manaCost,
       CardTargeting? targeting = null,
-      CardPosition? releasePosition = null) =>
-      new()
+      CardPosition? releasePosition = null)
+    {
+      var roomTarget = new CardTargeting
+      {
+        PickRoom = new PickRoom
+        {
+          ValidRooms =
+          {
+            RoomId.Crypts,
+            RoomId.Sanctum,
+            RoomId.Treasury
+          }
+        }
+      };
+
+      var roomPos = new CardPosition
+      {
+        Room = new CardPositionRoom
+        {
+          RoomLocation = RoomLocation.Defender
+        }
+      };
+
+      return new CardView
       {
         CardId = CardId(cardId),
         CardBack = Sprite(
@@ -323,14 +346,16 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             Text = text
           },
-          Targeting = targeting,
-          OnReleasePosition = new CardPosition
-          {
-            Item = new CardPositionItem
-            {
-              ItemLocation = ItemLocation.Right
-            }
-          },
+          Targeting = roomTarget,
+          OnReleasePosition = roomPos,
+          // Targeting = targeting,
+          // OnReleasePosition = releasePosition ?? new CardPosition
+          // {
+          //   Item = new CardPositionItem
+          //   {
+          //     ItemLocation = ItemLocation.Right
+          //   }
+          // },
           Cost = new CardCost
           {
             CanPlay = false,
@@ -340,5 +365,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           }
         }
       };
+    }
   }
 }

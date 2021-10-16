@@ -14,8 +14,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Spelldawn.Game;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -27,11 +29,18 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] LinearCardDisplay _leftItems = null!;
     [SerializeField] LinearCardDisplay _rightItems = null!;
-    [SerializeField] RoomSelector? _curentRoomSelector;
+    [SerializeField] List<Room> _rooms = null!;
+    [SerializeField] Room? _curentRoomSelector;
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
-    public IEnumerator AddAsItem(Card card, CardPositionItem position, bool animate)
+    public Room FindRoom(RoomId roomId)
+    {
+      var result = _rooms.Find(r => r.RoomId == roomId);
+      return Errors.CheckNotNull(result);
+    }
+
+    public IEnumerator AddAsItem(AbstractCard card, CardPositionItem position, bool animate)
     {
       switch (position.ItemLocation)
       {
@@ -45,9 +54,9 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator AddToRoom(Card card, CardPositionRoom position, bool animate)
+    public IEnumerator AddToRoom(AbstractCard card, CardPositionRoom position, bool animate)
     {
-      yield break;
+      return FindRoom(position.RoomId).AddCard(card, position.RoomLocation, position.Index, animate);
     }
 
     public RoomId? ShowRoomSelectorForMousePosition()
@@ -64,7 +73,7 @@ namespace Spelldawn.Services
       for (var i = 0; i < hits; ++i)
       {
         var hit = _raycastHitsTempBuffer[i];
-        var selector = hit.collider.GetComponent<RoomSelector>();
+        var selector = hit.collider.GetComponent<Room>();
         if (selector)
         {
           result = selector.RoomId;
@@ -73,6 +82,7 @@ namespace Spelldawn.Services
           break;
         }
       }
+
       Array.Clear(_raycastHitsTempBuffer, 0, _raycastHitsTempBuffer.Length);
       return result;
     }

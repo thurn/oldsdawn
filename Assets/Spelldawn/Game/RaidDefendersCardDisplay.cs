@@ -12,17 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using UnityEngine;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class Arena : MonoBehaviour
+  public sealed class RaidDefendersCardDisplay : CardDisplay
   {
-    readonly List<Card> _leftItems = new();
-    readonly List<Card> _centerItems = new();
-    readonly List<Card> _rightItems = new();
+    [SerializeField] float _spacing;
+    [SerializeField] float _cardSize;
+
+    protected override SortingOrder.Type SortingType => SortingOrder.Type.Raid;
+
+    protected override Vector3 CalculateCardPosition(int index, int count)
+    {
+      return transform.position + new Vector3((_cardSize / 2f) + index * (_cardSize + _spacing), 0, 0);
+    }
+
+    protected override Vector3? CalculateCardRotation(int index, int count) =>
+      new Vector3(x: 280, y: 0, 0);
+
+    void OnDrawGizmosSelected()
+    {
+      Gizmos.color = Color.green;
+      Gizmos.DrawSphere(transform.position, radius: 1);
+    }
   }
 }

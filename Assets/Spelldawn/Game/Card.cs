@@ -26,7 +26,7 @@ using UnityEngine.Rendering;
 
 namespace Spelldawn.Game
 {
-  public sealed class Card : MonoBehaviour
+  public sealed class Card : AbstractCard
   {
     [SerializeField] SpriteRenderer _cardBack = null!;
     [SerializeField] Transform _cardFront = null!;
@@ -63,6 +63,7 @@ namespace Spelldawn.Game
     Registry _registry = null!;
     CardView? _cardView;
     RevealedCardView? _revealedCardView;
+    RoomId? _targetRoom;
 
     [Serializable]
     public sealed class Icon
@@ -73,19 +74,11 @@ namespace Spelldawn.Game
       public TextMeshPro Text => _text;
     }
 
-    public enum RenderingMode
-    {
-      Default,
-      Arena
-    }
-
     public bool IsRevealed => _isRevealed;
 
     public bool StagingAnimationComplete { get; set; }
 
-    public CardDisplay? Parent { set; get; }
-
-    public SortingOrder? SortingOrder
+    public override SortingOrder? SortingOrder
     {
       set => value?.ApplyTo(_sortingGroup);
     }
@@ -100,7 +93,7 @@ namespace Spelldawn.Game
       _registry = registry;
       _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
       _outline.sortingOrder = -1;
-      _interactive = true;
+      _interactive = _renderingMode == RenderingMode.Default;
       _cardView = cardView;
 
       if (cardView.RevealedCard != null)
@@ -146,7 +139,7 @@ namespace Spelldawn.Game
       }
     }
 
-    public void SetRenderingMode(RenderingMode renderingMode)
+    public override void SetRenderingMode(RenderingMode renderingMode)
     {
       if (renderingMode != _renderingMode)
       {
@@ -174,7 +167,6 @@ namespace Spelldawn.Game
             _cardShadow.SetActive(false);
             _arenaShadow.SetActive(true);
             _topLeftIcon.Background.gameObject.SetActive(false);
-
             // In Arena mode, we want the image content to be centered within the card, so we shift
             // it around.
             _arenaCard.position = transform.position;
@@ -187,6 +179,12 @@ namespace Spelldawn.Game
 
       _renderingMode = renderingMode;
       UpdateIcons();
+
+      if (_revealedCardView != null)
+      {
+        // TODO: For some reason this is needed to fix the text curve, figure out why
+        SetTitle(_revealedCardView.Title.Text);
+      }
     }
 
     void OnMouseDown()
@@ -221,7 +219,11 @@ namespace Spelldawn.Game
         transform.position = _dragOffset + mousePosition;
         var rotation = Quaternion.Slerp(_initialDragRotation, Quaternion.Euler(280, 0, 0), t);
         transform.rotation = rotation;
-        _registry.ArenaService.ShowRoomSelectorForMousePosition();
+
+        if (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom)
+        {
+          _targetRoom = _registry.ArenaService.ShowRoomSelectorForMousePosition();
+        }
       }
     }
 
@@ -237,7 +239,33 @@ namespace Spelldawn.Game
       }
       else
       {
-        StartCoroutine(_registry.CardService.MoveCard(this, _revealedCardView.OnReleasePosition));
+        var position = _revealedCardView?.OnReleasePosition;
+        if (position?.PositionCase == CardPosition.PositionOneofCase.Room)
+        {
+          if (_targetRoom is { } targetRoom)
+          {
+            // Move to targeted room if one is available
+            var newPosition = new CardPosition();
+            newPosition.MergeFrom(position);
+            newPosition.Room.RoomId = targetRoom;
+            position = newPosition;
+            _targetRoom = null;
+          }
+          else
+          {
+            position = null;
+          }
+        }
+
+        if (position != null)
+        {
+          StartCoroutine(_registry.CardService.MoveCard(this, position));
+        }
+        else
+        {
+          _interactive = true;
+          StartCoroutine(Parent!.AddCard(this, animate: true, index: _handIndex));
+        }
       }
 
       _isDragging = false;

@@ -30,13 +30,13 @@ namespace Spelldawn.Game
 
     protected override SortingOrder.Type SortingType => _sortingType;
 
-    protected override Vector3 CalculateCardPosition(Card card, int index, int count)
+    protected override Vector3 CalculateCardPosition(int index, int count)
     {
       var curvePosition = CalculateCurvePosition(index, count);
       return CalculateBezierPosition(curvePosition);
     }
 
-    protected override Vector3? CalculateCardRotation(Card card, int index, int count)
+    protected override Vector3? CalculateCardRotation(int index, int count)
     {
       var curvePosition = CalculateCurvePosition(index, count);
       return new Vector3(x: 280, y: 0, _zRotationMultiplier * CalculateZRotation(curvePosition));

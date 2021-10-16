@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using Spelldawn.Utils;
@@ -24,9 +23,11 @@ namespace Spelldawn.Game
 {
   public abstract class CardDisplay : MonoBehaviour
   {
-    protected List<Card> Cards { get; } = new();
+    protected List<AbstractCard> Cards { get; } = new();
 
-    public IEnumerator<YieldInstruction> AddCard(Card card, bool animate = true, int? index = null)
+    public List<AbstractCard> AllCards => new(Cards);
+
+    public IEnumerator<YieldInstruction> AddCard(AbstractCard card, bool animate = true, int? index = null)
     {
       card.Parent = this;
 
@@ -45,7 +46,7 @@ namespace Spelldawn.Game
       return MoveCardsToPosition(animate);
     }
 
-    public int RemoveCard(Card card, bool animate = true)
+    public int RemoveCard(AbstractCard card, bool animate = true)
     {
       var index = Cards.FindIndex(c => c == card);
       Errors.CheckNonNegative(index);
@@ -54,7 +55,7 @@ namespace Spelldawn.Game
       return index;
     }
 
-    public void RemoveCardIfPresent(Card card, bool animate = true)
+    public void RemoveCardIfPresent(AbstractCard card, bool animate = true)
     {
       Cards.Remove(card);
       StartCoroutine(MoveCardsToPosition(animate));
@@ -64,9 +65,9 @@ namespace Spelldawn.Game
 
     protected virtual float AnimationDuration => 0.3f;
 
-    protected abstract Vector3 CalculateCardPosition(Card card, int index, int count);
+    protected abstract Vector3 CalculateCardPosition(int index, int count);
 
-    protected virtual Vector3? CalculateCardRotation(Card card, int index, int count) => null;
+    protected virtual Vector3? CalculateCardRotation(int index, int count) => null;
 
     IEnumerator<YieldInstruction> MoveCardsToPosition(bool animate)
     {
@@ -74,8 +75,8 @@ namespace Spelldawn.Game
       for (var i = 0; i < Cards.Count; ++i)
       {
         var card = Cards[i];
-        var position = CalculateCardPosition(card, i, Cards.Count);
-        var rotation = CalculateCardRotation(card, i, Cards.Count);
+        var position = CalculateCardPosition(i, Cards.Count);
+        var rotation = CalculateCardRotation(i, Cards.Count);
 
         if (animate)
         {
@@ -98,7 +99,7 @@ namespace Spelldawn.Game
           }
         }
 
-        card.SortingOrder = SortingOrder.Create(SortingType, i);
+        card.SortingOrder = SortingOrder.Create(SortingType, 10 + i);
       }
 
       if (animate)

@@ -16,18 +16,29 @@ using Spelldawn.Protos;
 using Spelldawn.Services;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class IdentityCard : MonoBehaviour, ArrowService.IArrowDelegate
+  public sealed class IdentityCard : AbstractCard, ArrowService.IArrowDelegate
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _canDrag;
     [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] TextMeshPro _scoreText = null!;
+    [SerializeField] SortingGroup _sortingGroup = null!;
     RoomId? _selectedRoom;
+
+    public override SortingOrder? SortingOrder
+    {
+      set => value?.ApplyTo(_sortingGroup);
+    }
+
+    public override void SetRenderingMode(RenderingMode renderingMode)
+    {
+    }
 
     void OnMouseDown()
     {
@@ -45,7 +56,14 @@ namespace Spelldawn.Game
     public void OnArrowReleased(Vector3 position)
     {
       _registry.ArenaService.HideRoomSelector();
-      Debug.Log($"OnArrowReleased: Selected room: {_selectedRoom}");
+      if (_selectedRoom is { } selectedRoom)
+      {
+        StartCoroutine(_registry.RaidService.HandleInitiateRaid(new InitiateRaidCommand
+        {
+          Initiator = PlayerName.User,
+          RoomId = selectedRoom
+        }));
+      }
     }
   }
 }

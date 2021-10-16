@@ -32,7 +32,17 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] Card _cardPrefab = null!;
 
-    readonly Dictionary<CardId, Card> _cards = new();
+    readonly Dictionary<CardId, AbstractCard> _cards = new();
+
+    static readonly CardId UserCardId = new CardId
+    {
+      IdentityCard = PlayerName.User
+    };
+    static readonly CardId OpponentCardId = new CardId
+    {
+      IdentityCard = PlayerName.Opponent
+    };
+
     Card? _optimisticCard;
     SpriteAddress? _userCardBack;
 
@@ -53,6 +63,9 @@ namespace Spelldawn.Services
           spriteRenderer.sprite = _registry.AssetService.GetSprite(opponentCard.CardBack);
         }
       }
+
+      _cards[UserCardId] = _registry.IdentityCardForPlayer(PlayerName.User);
+      _cards[OpponentCardId] = _registry.IdentityCardForPlayer(PlayerName.Opponent);
     }
 
     public void DrawOptimisticCard()
@@ -120,7 +133,7 @@ namespace Spelldawn.Services
       return MoveCardInternal(card, command.Position, !command.DisableAnimation);
     }
 
-    public IEnumerator MoveCard(Card card, CardPosition targetPosition, bool animate = true)
+    public IEnumerator MoveCard(AbstractCard card, CardPosition targetPosition, bool animate = true)
     {
       if (card.Parent)
       {
@@ -129,29 +142,32 @@ namespace Spelldawn.Services
       return MoveCardInternal(card, targetPosition, animate);
     }
 
-    IEnumerator MoveCardInternal(Card card, CardPosition position, bool animate)
+    IEnumerator MoveCardInternal(AbstractCard card, CardPosition position, bool animate)
     {
       switch (position.PositionCase)
       {
         case CardPosition.PositionOneofCase.Room:
-          card.SetRenderingMode(Card.RenderingMode.Arena);
+          card.SetRenderingMode(AbstractCard.RenderingMode.Arena);
           return _registry.ArenaService.AddToRoom(card, position.Room, animate);
         case CardPosition.PositionOneofCase.Item:
-          card.SetRenderingMode(Card.RenderingMode.Arena);
+          card.SetRenderingMode(AbstractCard.RenderingMode.Arena);
           return _registry.ArenaService.AddAsItem(card, position.Item, animate);
         case CardPosition.PositionOneofCase.Staging:
-          card.SetRenderingMode(Card.RenderingMode.Default);
+          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
           return _registry.CardStaging.AddCard(card, animate);
         case CardPosition.PositionOneofCase.Hand:
-          card.SetRenderingMode(Card.RenderingMode.Default);
+          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
           return _registry.HandForPlayer(position.Hand.Owner).AddCard(card, animate);
         case CardPosition.PositionOneofCase.Deck:
-          card.SetRenderingMode(Card.RenderingMode.Default);
+          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
           return _registry.DeckForPlayer(position.Deck.Owner).AddCard(card, animate);
         case CardPosition.PositionOneofCase.Discard:
           throw new NotImplementedException();
         case CardPosition.PositionOneofCase.Scored:
           throw new NotImplementedException();
+        case CardPosition.PositionOneofCase.Raid:
+          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
+          return _registry.RaidService.AddToRaid(card, position.Raid, animate);
         case CardPosition.PositionOneofCase.Browser:
           throw new NotImplementedException();
         default:

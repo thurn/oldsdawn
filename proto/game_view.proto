@@ -17,6 +17,8 @@ syntax = "proto3";
 package sd;
 option csharp_namespace = "Spelldawn.Protos";
 
+import "google/protobuf/wrappers.proto";
+
 import "masonry.proto";
 import "game_primitives.proto";
 
@@ -130,6 +132,7 @@ enum RoomLocation {
 message CardPositionRoom {
   RoomId room_id = 1;
   RoomLocation room_location = 2;
+  google.protobuf.Int32Value index = 3;
 }
 
 enum ItemLocation {
@@ -161,6 +164,11 @@ message CardPositionScored {
   PlayerName owner = 1;
 }
 
+message CardPositionRaid {
+  RoomLocation room_location = 1;
+  google.protobuf.Int32Value index = 2;
+}
+
 message CardPositionBrowser {
 }
 
@@ -173,7 +181,8 @@ message CardPosition {
     CardPositionDeck deck = 5;
     CardPositionDiscard discard = 6;
     CardPositionScored scored = 7;
-    CardPositionBrowser browser = 8;
+    CardPositionRaid raid = 8;
+    CardPositionBrowser browser = 9;
   }
 }
 
