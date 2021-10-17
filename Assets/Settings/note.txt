@@ -1,0 +1,5 @@
+FontAwesome glyphs:
+Mana is 190 (page 7)
+  - Defaults: BX: 0 BY: 14.25 AD: 12
+  - Updated to BX: 2, BY: 15, AD: 16
+Bolt is 266 (page 12)

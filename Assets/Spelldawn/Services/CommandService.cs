@@ -36,14 +36,13 @@ namespace Spelldawn.Services
     {
       if (_queue.Count > 0 && !_currentlyHandling)
       {
+        _currentlyHandling = true;
         StartCoroutine(HandleCommandsAsync(_queue.Dequeue()));
       }
     }
 
     IEnumerator<YieldInstruction> HandleCommandsAsync(CommandList commandList)
     {
-      _currentlyHandling = true;
-
       yield return StartCoroutine(_registry.AssetService.LoadAssets(commandList));
 
       foreach (var command in commandList.Commands)
@@ -85,12 +84,7 @@ namespace Spelldawn.Services
 
     void HandleRenderInterface(RenderInterfaceCommand command)
     {
-      var rootElement = _registry.Document.rootVisualElement;
-      rootElement.Clear();
-      if (command.Node != null)
-      {
-        rootElement.Add(Mason.Render(_registry, command.Node));
-      }
+      _registry.DocumentService.HandleRenderInterface(command);
     }
 
     IEnumerator<YieldInstruction> HandleRenderGame(RenderGameCommand command)

@@ -125,6 +125,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       HandleCommands(new GameCommand
       {
+        RenderInterface = new RenderInterfaceCommand
+        {
+          Node = RaidControls(),
+          Position = InterfacePosition.RaidControls
+        }
+      });
+
+      HandleCommands(new GameCommand
+      {
         RenderGame = new RenderGameCommand
         {
           Game = SampleGame()
@@ -286,6 +295,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       Deck = new DeckView()
     };
 
+    static int _cardCount;
+
     static CardView RevealedCard(
       int cardId,
       string title,
@@ -295,6 +306,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       CardTargeting? targeting = null,
       CardPosition? releasePosition = null)
     {
+      _cardCount++;
       var roomTarget = new CardTargeting
       {
         PickRoom = new PickRoom
@@ -313,6 +325,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Room = new CardPositionRoom
         {
           RoomLocation = RoomLocation.Defender
+        }
+      };
+
+      var itemPos = new CardPosition
+      {
+        Item = new CardPositionItem
+        {
+          ItemLocation = ItemLocation.Left
         }
       };
 
@@ -346,8 +366,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             Text = text
           },
-          Targeting = roomTarget,
-          OnReleasePosition = roomPos,
+          Targeting = _cardCount % 2 != 0 ? roomTarget : null,
+          OnReleasePosition = _cardCount % 2 != 0 ? roomPos : itemPos,
           // Targeting = targeting,
           // OnReleasePosition = releasePosition ?? new CardPosition
           // {
@@ -366,5 +386,39 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       };
     }
+
+    static Node RaidControls() => Row("ControlButtons",
+      new FlexStyle
+      {
+        JustifyContent = FlexJustify.FlexEnd,
+        FlexGrow = 1,
+        Wrap = FlexWrap.WrapReverse,
+      },
+      Button("The Maker's Eye\n5\uf06d", true),
+      Button("Gordian Blade\n3\uf06d", true),
+      Button("Flee"),
+      Button("Continue"));
+
+    static Node Button(string label, bool orange = false) => Row("Button",
+      new FlexStyle
+      {
+        Padding = LeftRightDip(16),
+        Margin = AllDip(8),
+        Height = Dip(88),
+        MinWidth = Dip(132),
+        JustifyContent = FlexJustify.Center,
+        AlignItems = FlexAlign.Center,
+        FlexShrink = 0,
+        BackgroundImage = Sprite(orange ?
+          "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange" :
+          "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
+        ImageSlice = ImageSlice(0, 64)
+      }, Text(label, new FlexStyle
+      {
+        Color = MakeColor(Color.white),
+        FontSize = Dip(orange ? 26 : 32),
+        Font = Font("Fonts/Roboto"),
+        TextAlign = TextAlign.MiddleCenter
+      }));
   }
 }

@@ -21,12 +21,20 @@ import "game_primitives.proto";
 import "game_view.proto";
 import "masonry.proto";
 
+enum InterfacePosition {
+  INTERFACE_POSITION_UNSPECIFIED = 0;
+  INTERFACE_POSITION_FULL_SCREEN = 1;
+  INTERFACE_POSITION_RAID_CONTROLS = 2;
+}
+
 /**
  * Updates the content of the user interface to display the provided node,
  * replacing all existing UI elements.
  */
 message RenderInterfaceCommand {
   Node node = 1;
+
+  InterfacePosition position = 2;
 }
 
 /**

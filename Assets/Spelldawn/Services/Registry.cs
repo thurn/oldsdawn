@@ -26,9 +26,6 @@ namespace Spelldawn.Services
     public Camera MainCamera => _mainCamera;
     [SerializeField] Camera _mainCamera = null!;
 
-    public UIDocument Document => _document;
-    [SerializeField] UIDocument _document = null!;
-
     public AssetService AssetService => _assetService;
     [SerializeField] AssetService _assetService = null!;
 

@@ -94,12 +94,12 @@ namespace Spelldawn.Masonry
       }
     }
 
-    public static FlexColor MakeColor(Color color) => new()
+    public static FlexColor MakeColor(Color color, float? setAlpha = null) => new()
     {
       Red = color.r,
       Green = color.g,
       Blue = color.b,
-      Alpha = color.a
+      Alpha = setAlpha ?? color.a
     };
 
     public static BorderColor AllBordersColor(Color color) => new()

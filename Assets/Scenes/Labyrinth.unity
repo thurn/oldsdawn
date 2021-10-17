@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.43748972, g: 0.4853109, b: 0.56558526, a: 1}
+  m_IndirectSpecularColor: {r: 0.43748972, g: 0.48531085, b: 0.56558526, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -40774,6 +40774,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
+  _document: {fileID: 29513489}
 --- !u!114 &1445473047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40799,7 +40800,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 963194227}
-  _document: {fileID: 29513489}
   _assetService: {fileID: 1445473047}
   _actionService: {fileID: 1445473045}
   _cardService: {fileID: 1445473044}

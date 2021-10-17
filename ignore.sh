@@ -17,6 +17,9 @@ xattr -w com.dropbox.ignored 1 UserSettings/
 xattr -w com.dropbox.ignored 1 Temp/
 xattr -w com.dropbox.ignored 1 out/
 xattr -w com.dropbox.ignored 1 out_BurstDebugInformation_DoNotShip/
+xattr -w com.dropbox.ignored 1 proto/bin
+xattr -w com.dropbox.ignored 1 proto/obj
+
 
 rm -r 'Temp (Ignored Item Conflict 1)'
 rm -r 'Temp (Ignored Item Conflict)'
