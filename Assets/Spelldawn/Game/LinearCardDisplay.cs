@@ -25,7 +25,7 @@ namespace Spelldawn.Game
     [SerializeField] float _cardSize;
     [SerializeField] float _rotation = 270;
 
-    protected override SortingOrder.Type SortingType => SortingOrder.Type.Arena;
+    protected override SortingOrder.Type DefaultSortingType() => SortingOrder.Type.Arena;
 
     protected override Vector3 CalculateCardPosition(int index, int count) =>
       transform.position + new Vector3(CalculateXOffset(_width, _initialSpacing, _cardSize, index, count), 0, 0);

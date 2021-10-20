@@ -14,9 +14,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using DG.Tweening;
-using Spelldawn.Game;
 using Spelldawn.Utils;
 using UnityEngine;
 
@@ -66,7 +64,20 @@ namespace Spelldawn.Game
       StartCoroutine(MoveCardsToPosition(true));
     }
 
-    protected abstract SortingOrder.Type SortingType { get; }
+    SortingOrder.Type? _sortingType;
+
+    public SortingOrder.Type? SortingType
+    {
+      get => _sortingType;
+
+      set
+      {
+        _sortingType = value;
+        StartCoroutine(MoveCardsToPosition(true));
+      }
+    }
+
+    protected abstract SortingOrder.Type DefaultSortingType();
 
     protected virtual float AnimationDuration => 0.3f;
 
@@ -120,7 +131,7 @@ namespace Spelldawn.Game
           }
         }
 
-        card.SortingOrder = SortingOrder.Create(SortingType, 10 + i);
+        card.SortingOrder = SortingOrder.Create(SortingType ?? DefaultSortingType(), 10 + i);
       }
 
       if (animate)

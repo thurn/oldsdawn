@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using Spelldawn.Masonry;
 using Spelldawn.Protos;
 using UnityEngine;
 
@@ -26,6 +25,13 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     bool _currentlyHandling;
     readonly Queue<CommandList> _queue = new();
+
+    public void HandleCommands(params GameCommand[] commands)
+    {
+      var list = new CommandList();
+      list.Commands.AddRange(commands);
+      HandleCommands(list);
+    }
 
     public void HandleCommands(CommandList commandList)
     {
@@ -56,6 +62,9 @@ namespace Spelldawn.Services
             yield return StartCoroutine(HandleRenderGame(command.RenderGame));
             break;
           case GameCommand.CommandOneofCase.InitiateRaid:
+            yield return StartCoroutine(_registry.RaidService.HandleInitiateRaid(command.InitiateRaid));
+            break;
+          case GameCommand.CommandOneofCase.EndRaid:
             break;
           case GameCommand.CommandOneofCase.CreateCard:
             yield return StartCoroutine(_registry.CardService.HandleCreateCardCommand(command.CreateCard));
@@ -69,9 +78,8 @@ namespace Spelldawn.Services
             break;
           case GameCommand.CommandOneofCase.UpdatePlayerState:
             break;
-          case GameCommand.CommandOneofCase.CreateOrUpdateRoom:
-            break;
-          case GameCommand.CommandOneofCase.DestroyRoom:
+          case GameCommand.CommandOneofCase.FireProjectile:
+            yield return StartCoroutine(_registry.CardService.HandleFireProjectileCommand(command.FireProjectile));
             break;
           case GameCommand.CommandOneofCase.None:
           default:

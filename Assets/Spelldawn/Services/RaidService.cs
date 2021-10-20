@@ -48,9 +48,10 @@ namespace Spelldawn.Services
 
         _currentRoom = command.RoomId;
         _background.enabled = true;
+        _registry.ArenaService.LeftItems.SortingType = SortingOrder.Type.Raid;
 
-        MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).Defenders, RoomLocation.Defender);
-        MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).CardsInRoom, RoomLocation.InRoom);
+        yield return MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).Defenders, RoomLocation.Defender);
+        yield return MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).CardsInRoom, RoomLocation.InRoom);
 
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;
@@ -65,17 +66,23 @@ namespace Spelldawn.Services
       }
     }
 
-    void MoveToRaid(IEnumerable<AbstractCard> cards, RoomLocation roomLocation)
+    IEnumerator MoveToRaid(IEnumerable<AbstractCard> cards, RoomLocation roomLocation)
     {
+      var coroutines = new List<Coroutine>();
       foreach (var card in cards)
       {
-        StartCoroutine(_registry.CardService.MoveCard(card, new CardPosition
+        coroutines.Add(StartCoroutine(_registry.CardService.MoveCard(card, new CardPosition
         {
           Raid = new CardPositionRaid
           {
             RoomLocation = roomLocation
           }
-        }));
+        })));
+      }
+
+      foreach (var coroutine in coroutines)
+      {
+        yield return coroutine;
       }
     }
 

@@ -122,11 +122,11 @@ namespace Spelldawn.Masonry
         callbacks.SetCallback<MouseUpEvent>(null);
       }
 
-      if (node.EventHandlers?.ClickAction is {} clickAction)
+      if (node.EventHandlers?.OnClick is {} onClick)
       {
         callbacks.SetCallback(new EventCallback<ClickEvent>(_ =>
         {
-          registry.ActionService.HandleAction(clickAction);
+          registry.ActionService.HandleAction(onClick);
         }));
       }
       else

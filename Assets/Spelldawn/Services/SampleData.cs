@@ -123,16 +123,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     void Start()
     {
-      HandleCommands(new GameCommand
-      {
-        RenderInterface = new RenderInterfaceCommand
-        {
-          Node = RaidControls(),
-          Position = InterfacePosition.RaidControls
-        }
-      });
-
-      HandleCommands(new GameCommand
+      _registry.CommandService.HandleCommands(new GameCommand
       {
         RenderGame = new RenderGameCommand
         {
@@ -165,6 +156,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         case GameAction.ActionOneofCase.DrawCard:
           DrawUserCard();
           break;
+        case GameAction.ActionOneofCase.InitiateRaid:
+          InitiateRaid(action.InitiateRaid);
+          break;
       }
     }
 
@@ -173,7 +167,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       var card = Card();
       card.OnCreatePosition = directToHand ? HandPosition(PlayerName.User) : DeckPosition(PlayerName.User);
 
-      HandleCommands(new GameCommand
+      _registry.CommandService.HandleCommands(new GameCommand
       {
         CreateCard = new CreateCardCommand
         {
@@ -184,7 +178,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
       if (!directToHand)
       {
-        HandleCommands(new GameCommand
+        _registry.CommandService.HandleCommands(new GameCommand
         {
           MoveCard = new MoveCardCommand
           {
@@ -221,7 +215,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     void DrawOpponentCard(bool disableAnimation = false)
     {
       var cardId = CardId(_lastOpponentCardId++);
-      HandleCommands(new GameCommand
+      _registry.CommandService.HandleCommands(new GameCommand
       {
         CreateCard = new CreateCardCommand
         {
@@ -241,13 +235,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           DisableAnimation = disableAnimation
         }
       });
-    }
-
-    void HandleCommands(params GameCommand[] commands)
-    {
-      var list = new CommandList();
-      list.Commands.AddRange(commands);
-      _registry.CommandService.HandleCommands(list);
     }
 
     CardView Card() => Cards[_lastReturnedCard++ % 10];
@@ -295,7 +282,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       Deck = new DeckView()
     };
 
-    static int _cardCount;
+    static bool IsItem(int cardId) => cardId % 2 == 0;
 
     static CardView RevealedCard(
       int cardId,
@@ -306,7 +293,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       CardTargeting? targeting = null,
       CardPosition? releasePosition = null)
     {
-      _cardCount++;
       var roomTarget = new CardTargeting
       {
         PickRoom = new PickRoom
@@ -366,8 +352,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             Text = text
           },
-          Targeting = _cardCount % 2 != 0 ? roomTarget : null,
-          OnReleasePosition = _cardCount % 2 != 0 ? roomPos : itemPos,
+          Targeting = IsItem(cardId) ? null : roomTarget,
+          OnReleasePosition = IsItem(cardId) ? itemPos : roomPos,
           // Targeting = targeting,
           // OnReleasePosition = releasePosition ?? new CardPosition
           // {
@@ -387,19 +373,38 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
     }
 
-    static Node RaidControls() => Row("ControlButtons",
+    void InitiateRaid(InitiateRaidAction action)
+    {
+      _registry.CommandService.HandleCommands(new GameCommand
+      {
+        InitiateRaid = new InitiateRaidCommand
+        {
+          Initiator = PlayerName.User,
+          RoomId = action.RoomId
+        }
+      }, new GameCommand
+      {
+        RenderInterface = new RenderInterfaceCommand
+        {
+          Position = InterfacePosition.RaidControls,
+          Node = RaidControls()
+        }
+      });
+    }
+
+    Node RaidControls() => Row("ControlButtons",
       new FlexStyle
       {
         JustifyContent = FlexJustify.FlexEnd,
         FlexGrow = 1,
+        AlignItems = FlexAlign.Center,
         Wrap = FlexWrap.WrapReverse,
       },
-      Button("The Maker's Eye\n5\uf06d", true),
-      Button("Gordian Blade\n3\uf06d", true),
-      Button("Flee"),
+      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(), orange: true),
+      Button("Gordian Blade\n3\uf06d", action: null, orange: true),
       Button("Continue"));
 
-    static Node Button(string label, bool orange = false) => Row("Button",
+    Node Button(string label, ServerAction? action = null, bool orange = false) => Row("Button",
       new FlexStyle
       {
         Padding = LeftRightDip(16),
@@ -409,16 +414,85 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         JustifyContent = FlexJustify.Center,
         AlignItems = FlexAlign.Center,
         FlexShrink = 0,
-        BackgroundImage = Sprite(orange ?
-          "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange" :
-          "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
+        BackgroundImage = Sprite(orange
+          ? "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange"
+          : "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
         ImageSlice = ImageSlice(0, 64)
-      }, Text(label, new FlexStyle
+      },
+      new EventHandlers
+      {
+        OnClick = new GameAction
+        {
+          ServerAction = action
+        }
+      },
+      Text(label, new FlexStyle
       {
         Color = MakeColor(Color.white),
         FontSize = Dip(orange ? 26 : 32),
         Font = Font("Fonts/Roboto"),
         TextAlign = TextAlign.MiddleCenter
       }));
+
+    ServerAction CardStrikeAction() =>
+      new()
+      {
+        OptimisticUpdate = new CommandList
+        {
+          Commands =
+          {
+            new GameCommand
+            {
+              RenderInterface = new RenderInterfaceCommand
+              {
+                Node = null,
+                Position = InterfacePosition.RaidControls
+              }
+            },
+            new GameCommand
+            {
+              FireProjectile = new FireProjectileCommand
+              {
+                SourceId = new CardId
+                {
+                  Value = 2
+                },
+                TargetId = new CardId
+                {
+                  Value = 1
+                },
+                Projectile = new ProjectileAddress
+                {
+                  Address = "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 8"
+                },
+                TravelDuration = new TimeValue
+                {
+                  Milliseconds = 300
+                },
+                AdditionalHit = new EffectAddress
+                {
+                  Address = "Hovl Studio/Sword slash VFX/Prefabs/Sword Slash 1"
+                },
+                AdditionalHitDelay = new TimeValue
+                {
+                  Milliseconds = 300
+                },
+                HideDuration = new TimeValue
+                {
+                  Milliseconds = 300
+                },
+                JumpToPosition = new CardPosition
+                {
+                  Room = new CardPositionRoom
+                  {
+                    RoomId = RoomId.RoomB,
+                    RoomLocation = RoomLocation.Defender
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
   }
 }

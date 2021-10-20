@@ -25,7 +25,7 @@ namespace Spelldawn.Game
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _clickable;
 
-    protected override SortingOrder.Type SortingType => SortingOrder.Type.Deck;
+    protected override SortingOrder.Type DefaultSortingType() => SortingOrder.Type.Deck;
 
     protected override Vector3 CalculateCardPosition(int index, int count) => transform.position;
 

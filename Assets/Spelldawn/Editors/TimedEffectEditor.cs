@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Spelldawn.Services;
+using Spelldawn.Game;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,16 +20,20 @@ using UnityEngine;
 
 namespace Spelldawn.Editors
 {
-  [CustomEditor(typeof(DocumentService))]
-  public sealed class DocumentServiceEditor : Editor
+  [CustomEditor(typeof(TimedEffect))]
+  public sealed class TimedEffectEditor : Editor
   {
     public override void OnInspectorGUI()
     {
       DrawDefaultInspector();
 
-      if (GUILayout.Button("Show Regions"))
+      if (GUILayout.Button("Disabling Looping"))
       {
-        ((DocumentService)target).DebugShowRegions();
+        foreach (var particleSystem in ((TimedEffect)target).GetComponentsInChildren<ParticleSystem>())
+        {
+          var main = particleSystem.main;
+          main.loop = false;
+        }
       }
     }
   }

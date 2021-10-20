@@ -33,6 +33,7 @@ namespace Spelldawn.Game
       Hand,
       Interface,
       Staging,
+      Effects,
       Dragging
     }
 
@@ -47,19 +48,27 @@ namespace Spelldawn.Game
 
     public void ApplyTo(SortingGroup group)
     {
-      group.sortingOrder = _index + _type switch
-      {
-        Type.Arena => 100,
-        Type.Deck => 200,
-        Type.Discard => 300,
-        Type.Raid => 400,
-        Type.Hand => 500,
-        Type.Interface => 600,
-        Type.Staging => 700,
-        Type.Dragging => 800,
-        _ => throw new ArgumentOutOfRangeException()
-      };
+      group.sortingOrder = Position();
     }
+
+    public void ApplyTo(Renderer renderer)
+    {
+      renderer.sortingOrder = Position();
+    }
+
+    int Position() => _index + _type switch
+    {
+      Type.Arena => 100,
+      Type.Deck => 200,
+      Type.Discard => 300,
+      Type.Raid => 400,
+      Type.Hand => 500,
+      Type.Interface => 600,
+      Type.Staging => 700,
+      Type.Effects => 800,
+      Type.Dragging => 900,
+      _ => throw new ArgumentOutOfRangeException()
+    };
   }
 
   public sealed class ApplySortingOrder : MonoBehaviour

@@ -1,0 +1,926 @@
+// Copyright © Spelldawn 2021-present
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//    https://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package com.spelldawn;
+option csharp_namespace = "Spelldawn.Protos";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/any.proto";
+
+
+// ============================================================================
+// Masonry
+// ============================================================================
+
+
+enum FlexAlign {
+    FLEX_ALIGN_UNSPECIFIED = 0;
+    FLEX_ALIGN_AUTO = 1;
+    FLEX_ALIGN_FLEX_START = 2;
+    FLEX_ALIGN_CENTER = 3;
+    FLEX_ALIGN_FLEX_END = 4;
+    FLEX_ALIGN_STRETCH = 5;
+}
+
+enum FlexDisplayStyle {
+    FLEX_DISPLAY_STYLE_UNSPECIFIED = 0;
+    FLEX_DISPLAY_STYLE_FLEX = 1;
+    FLEX_DISPLAY_STYLE_NONE = 2;
+}
+
+enum FlexDirection {
+    FLEX_DIRECTION_UNSPECIFIED = 0;
+    FLEX_DIRECTION_COLUMN = 1;
+    FLEX_DIRECTION_COLUMN_REVERSE = 2;
+    FLEX_DIRECTION_ROW = 3;
+    FLEX_DIRECTION_ROW_REVERSE = 4;
+}
+
+enum FlexWrap {
+    FLEX_WRAP_UNSPECIFIED = 0;
+    FLEX_WRAP_NO_WRAP = 1;
+    FLEX_WRAP_WRAP = 2;
+    FLEX_WRAP_WRAP_REVERSE = 3;
+}
+
+enum FlexJustify {
+    FLEX_JUSTIFY_UNSPECIFIED = 0;
+    FLEX_JUSTIFY_FLEX_START = 1;
+    FLEX_JUSTIFY_CENTER = 2;
+    FLEX_JUSTIFY_FLEX_END = 3;
+    FLEX_JUSTIFY_SPACE_BETWEEN = 4;
+    FLEX_JUSTIFY_SPACE_AROUND = 5;
+}
+
+enum FlexOverflow {
+    FLEX_OVERFLOW_UNSPECIFIED = 0;
+    FLEX_OVERFLOW_VISIBLE = 1;
+    FLEX_OVERFLOW_HIDDEN = 2;
+}
+
+enum FlexPosition {
+    FLEX_POSITION_UNSPECIFIED = 0;
+    FLEX_POSITION_RELATIVE = 1;
+    FLEX_POSITION_ABSOLUTE = 2;
+}
+
+enum TextOverflow {
+    TEXT_OVERFLOW_UNSPECIFIED = 0;
+    TEXT_OVERFLOW_CLIP = 1;
+    TEXT_OVERFLOW_ELLIPSIS = 2;
+}
+
+enum EasingMode {
+    EASING_MODE_UNSPECIFIED = 0;
+    EASING_MODE_EASE = 1;
+    EASING_MODE_EASE_IN = 2;
+    EASING_MODE_EASE_OUT = 3;
+    EASING_MODE_EASE_IN_OUT = 4;
+    EASING_MODE_LINEAR = 5;
+    EASING_MODE_EASE_IN_SINE = 6;
+    EASING_MODE_EASE_OUT_SINE = 7;
+    EASING_MODE_EASE_IN_OUT_SINE = 8;
+    EASING_MODE_EASE_IN_CUBIC = 9;
+    EASING_MODE_EASE_OUT_CUBIC = 10;
+    EASING_MODE_EASE_IN_OUT_CUBIC = 11;
+    EASING_MODE_EASE_IN_CIRC = 12;
+    EASING_MODE_EASE_OUT_CIRC = 13;
+    EASING_MODE_EASE_IN_OUT_CIRC = 14;
+    EASING_MODE_EASE_IN_ELASTIC = 15;
+    EASING_MODE_EASE_OUT_ELASTIC = 16;
+    EASING_MODE_EASE_IN_OUT_ELASTIC = 17;
+    EASING_MODE_EASE_IN_BACK = 18;
+    EASING_MODE_EASE_OUT_BACK = 19;
+    EASING_MODE_EASE_IN_OUT_BACK = 20;
+    EASING_MODE_EASE_IN_BOUNCE = 21;
+    EASING_MODE_EASE_OUT_BOUNCE = 22;
+    EASING_MODE_EASE_IN_OUT_BOUNCE = 23;
+}
+
+enum ImageScaleMode {
+    IMAGE_SCALE_MODE_UNSPECIFIED = 0;
+    IMAGE_SCALE_MODE_STRETCH_TO_FILL = 1;
+    IMAGE_SCALE_MODE_SCALE_AND_CROP = 2;
+    IMAGE_SCALE_MODE_SCALE_TO_FIT = 3;
+}
+
+enum FontStyle {
+    FONT_STYLE_UNSPECIFIED = 0;
+    FONT_STYLE_NORMAL = 1;
+    FONT_STYLE_BOLD = 2;
+    FONT_STYLE_ITALIC = 3;
+    FONT_STYLE_BOLD_AND_ITALIC = 4;
+}
+
+enum OverflowClipBox {
+    OVERFLOW_CLIP_BOX_UNSPECIFIED = 0;
+    OVERFLOW_CLIP_BOX_PADDING_BOX = 1;
+    OVERFLOW_CLIP_BOX_CONTENT_BOX = 2;
+}
+
+enum TextAlign {
+    TEXT_ALIGN_UNSPECIFIED = 0;
+    TEXT_ALIGN_UPPER_LEFT = 1;
+    TEXT_ALIGN_UPPER_CENTER = 2;
+    TEXT_ALIGN_UPPER_RIGHT = 3;
+    TEXT_ALIGN_MIDDLE_LEFT = 4;
+    TEXT_ALIGN_MIDDLE_CENTER = 5;
+    TEXT_ALIGN_MIDDLE_RIGHT = 6;
+    TEXT_ALIGN_LOWER_LEFT = 7;
+    TEXT_ALIGN_LOWER_CENTER = 8;
+    TEXT_ALIGN_LOWER_RIGHT = 9;
+}
+
+enum TextOverflowPosition {
+    TEXT_OVERFLOW_POSITION_UNSPECIFIED = 0;
+    TEXT_OVERFLOW_POSITION_END = 1;
+    TEXT_OVERFLOW_POSITION_START = 2;
+    TEXT_OVERFLOW_POSITION_MIDDLE = 3;
+}
+
+enum FlexVisibility {
+    FLEX_VISIBILITY_UNSPECIFIED = 0;
+    FLEX_VISIBILITY_VISIBLE = 1;
+    FLEX_VISIBILITY_HIDDEN = 2;
+}
+
+enum WhiteSpace {
+    WHITE_SPACE_UNSPECIFIED = 0;
+    WHITE_SPACE_NORMAL = 1;
+    WHITE_SPACE_NO_WRAP = 2;
+}
+
+message FlexColor {
+    float red = 1;
+    float green = 2;
+    float blue = 3;
+    float alpha = 4;
+}
+
+message SpriteAddress {
+    string address = 1;
+}
+
+message FontAddress {
+    string address = 1;
+}
+
+message ProjectileAddress {
+    string address = 1;
+}
+
+message EffectAddress {
+    string address = 1;
+}
+
+message FlexVector2 {
+    float x = 1;
+    float y = 2;
+}
+
+message FlexVector3 {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+enum DimensionUnit {
+    DIMENSION_UNIT_UNSPECIFIED = 0;
+    /** Density-independent pixels, which unity also calls "pixels". */
+    DIMENSION_UNIT_DIP = 1;
+    DIMENSION_UNIT_PERCENTAGE = 2;
+    DIMENSION_UNIT_VMIN = 3;
+}
+
+message Dimension {
+    DimensionUnit unit = 1;
+    float value = 2;
+}
+
+message DimensionGroup {
+    Dimension top = 1;
+    Dimension right = 2;
+    Dimension bottom = 3;
+    Dimension left = 4;
+}
+
+message BorderWidth {
+    float top = 1;
+    float right = 2;
+    float bottom = 3;
+    float left = 4;
+}
+
+message BorderColor {
+    FlexColor top = 1;
+    FlexColor right = 2;
+    FlexColor bottom = 3;
+    FlexColor left = 4;
+}
+
+message BorderRadius {
+    Dimension top_left = 1;
+    Dimension top_right = 2;
+    Dimension bottom_right = 3;
+    Dimension bottom_left = 4;
+}
+
+message FlexRotate {
+    float degrees = 1;
+}
+
+message FlexTranslate {
+    Dimension x = 1;
+    Dimension y = 2;
+    float z = 3;
+}
+
+message FlexScale {
+    FlexVector3 amount = 1;
+}
+
+message TextShadow {
+    FlexVector2 offset = 1;
+    float blur_radius = 2;
+    FlexColor color = 3;
+}
+
+message TimeValue {
+    int32 milliseconds = 1;
+}
+
+message ImageSlice {
+    int32 top = 1;
+    int32 right = 2;
+    int32 bottom = 3;
+    int32 left = 4;
+}
+
+message FlexStyle {
+    FlexAlign align_content = 1;
+    FlexAlign align_items = 2;
+    FlexAlign align_self = 3;
+    FlexColor background_color = 4;
+    SpriteAddress background_image = 5;
+    BorderColor border_color = 6;
+    BorderRadius border_radius = 7;
+    BorderWidth border_width = 8;
+    DimensionGroup inset = 9;
+    FlexColor color = 10;
+    FlexDisplayStyle display = 11;
+    Dimension flex_basis = 12;
+    FlexDirection flex_direction = 13;
+    google.protobuf.FloatValue flex_grow = 14;
+    google.protobuf.FloatValue flex_shrink = 15;
+    FlexWrap wrap = 16;
+    Dimension font_size = 17;
+    Dimension height = 18;
+    FlexJustify justify_content = 19;
+    Dimension letter_spacing = 20;
+    DimensionGroup margin = 21;
+    Dimension max_height = 22;
+    Dimension max_width = 23;
+    Dimension min_height = 24;
+    Dimension min_width = 25;
+    google.protobuf.FloatValue opacity = 26;
+    FlexOverflow overflow = 27;
+    DimensionGroup padding = 28;
+    FlexPosition position = 29;
+    FlexRotate rotate = 30;
+    FlexScale scale = 31;
+    TextOverflow text_overflow = 32;
+    TextShadow text_shadow = 33;
+    FlexTranslate transform_origin = 34;
+    repeated TimeValue transition_delays = 35;
+    repeated TimeValue transition_durations = 36;
+    repeated string transition_properties = 37;
+    repeated EasingMode transition_easing_modes = 38;
+    FlexTranslate translate = 39;
+    FlexColor background_image_tint_color = 40;
+    ImageScaleMode background_image_scale_mode = 41;
+    FontAddress font = 42;
+    FontStyle font_style = 43;
+    OverflowClipBox overflow_clip_box = 44;
+    Dimension paragraph_spacing = 45;
+    ImageSlice image_slice = 46;
+    TextAlign text_align = 47;
+    FlexColor text_outline_color = 48;
+    google.protobuf.FloatValue text_outline_width = 49;
+    TextOverflowPosition text_overflow_position = 50;
+    FlexVisibility visibility = 51;
+    WhiteSpace white_space = 52;
+    Dimension width = 53;
+    Dimension word_spacing = 54;
+
+    /**
+    * Overwrites both 'width' and 'height' by multiplying the dimensions of
+    * the provided 'background_image' (in units of raw pixels) by this
+    * constant.
+    */
+    google.protobuf.FloatValue background_image_scale_multiplier = 55;
+
+    /**
+    * Calculates the aspect ratio of the provided 'background_image' and uses
+    * it to set dimensions. If 'width' is set, the 'height' will be set based
+    * on the aspect ratio and vice versa. Does not support percentage values.
+    */
+    bool fixed_background_image_aspect_ratio = 56;
+}
+
+message Flexbox {
+}
+
+message Text {
+    string label = 1;
+}
+
+message EventHandlers {
+    GameAction on_click = 1;
+}
+
+message NodeType {
+    oneof type {
+        Text text = 1;
+    }
+}
+
+message Node {
+    /**
+    * Used to identify this node in the hierarchy, should be unique among
+    * sibilings. If not provided, index will be used instead.
+    */
+    string id = 1;
+
+    /**
+    * Used to identify this node in debugging tools
+    */
+    string name = 2;
+
+    NodeType node_type = 3;
+
+    repeated Node children = 4;
+
+    EventHandlers event_handlers = 5;
+
+    FlexStyle style = 6;
+    FlexStyle hover_style = 7;
+    FlexStyle pressed_style = 8;
+}
+
+
+// ============================================================================
+// Game Primitives
+// ============================================================================
+
+
+enum PlayerName {
+    PLAYER_NAME_UNSPECIFIED = 0;
+    PLAYER_NAME_USER = 1;
+    PLAYER_NAME_OPPONENT = 2;
+}
+
+message CardId {
+    oneof card_id {
+        PlayerName identity_card = 1;
+        int32 value = 2;
+    }
+}
+
+enum RoomId {
+    ROOM_ID_UNSPECIFIED = 0;
+    ROOM_ID_TREASURY = 1;
+    ROOM_ID_SANCTUM = 2;
+    ROOM_ID_CRYPTS = 3;
+    ROOM_ID_ROOM_A = 4;
+    ROOM_ID_ROOM_B = 5;
+    ROOM_ID_ROOM_C = 6;
+    ROOM_ID_ROOM_D = 7;
+    ROOM_ID_ROOM_E = 8;
+}
+
+message TargetId {
+    oneof target {
+        CardId card_id = 1;
+        RoomId room_id = 2;
+    }
+}
+
+
+// ============================================================================
+// Game View
+// ============================================================================
+
+
+message CardIcon {
+    SpriteAddress background = 1;
+    string text = 2;
+    bool show_in_arena = 3;
+}
+
+message CardIcons {
+    CardIcon top_left_icon = 1;
+    CardIcon top_right_icon = 2;
+    CardIcon bottom_right_icon = 3;
+    CardIcon bottom_left_icon = 4;
+    CardIcon center_icon = 5;
+}
+
+message CardTitle {
+    string text = 1;
+}
+
+message RulesText {
+    string text = 1;
+}
+
+enum TargetingArrow {
+    TARGETING_ARROW_UNSPECIFIED = 0;
+    TARGETING_ARROW_RED = 1;
+    TARGETING_ARROW_BLUE = 2;
+    TARGETING_ARROW_GREEN = 3;
+}
+
+message PickCard {
+    repeated CardId valid_targets = 1;
+
+    TargetingArrow targeting_arrow = 2;
+}
+
+message PickRoom {
+    repeated RoomId valid_rooms = 2;
+}
+
+message CardTargeting {
+    oneof targeting {
+        /** Pick one of these cards via an arrow on drag. */
+        PickCard pick_card = 1;
+
+        /** Pick one of these valid rooms. */
+        PickRoom pick_room = 2;
+    }
+}
+
+enum CanPlayAlgorithm {
+    CAN_PLAY_ALGORITHM_UNSPECIFIED = 0;
+
+    /**
+    * Always update the 'can_play' state automatically based on available mana
+    * and actions.
+    */
+    CAN_PLAY_ALGORITHM_OPTIMISTIC = 1;
+
+    /**
+    * 'Optimistic False' algorithm for cards with an additional cost. Will
+    * transition the 'can_play' state to false based on available mana and
+    * actions, but not to true.
+    */
+    CAN_PLAY_ALGORITHM_ADDITIONAL_COST = 2;
+
+    /**
+    * 'Optimistic True' algorithm, for cards which can always be played for
+    * their normal cost, but have other valid play windows as well. Will
+    * transition the 'can_play' state to true based on available mana and
+    * actions, but not to false.
+    */
+    CAN_PLAY_ALGORITHM_ADDITIONAL_PLAY = 3;
+
+    /**
+    * Do not transition the 'can_play' state automatically
+    */
+    CAN_PLAY_ALGORITHM_NO_UPDATE = 4;
+}
+
+enum SpendCostAlgorithm {
+    SPEND_COST_ALGORITHM_UNSPECIFIED = 0;
+
+    /** Deduct the mana & action cost immediately when this card is played. */
+    SPEND_COST_ALGORITHM_OPTIMISTIC = 1;
+
+    /** Do not modify mana & action values when this card is played. */
+    SPEND_COST_ALGORITHM_NO_UPDATE = 2;
+}
+
+message CardCost {
+    int32 mana_cost = 1;
+
+    int32 action_cost = 2;
+
+    bool can_play = 3;
+
+    CanPlayAlgorithm can_play_algorithm = 4;
+
+    SpendCostAlgorithm spend_cost_algorithm = 5;
+}
+
+message CardPositionOffscreen {
+}
+
+enum RoomLocation {
+    ROOM_LOCATION_UNSPECIFIED = 0;
+    ROOM_LOCATION_IN_ROOM = 1;
+    ROOM_LOCATION_DEFENDER = 2;
+}
+
+message CardPositionRoom {
+    RoomId room_id = 1;
+    RoomLocation room_location = 2;
+    google.protobuf.Int32Value index = 3;
+}
+
+enum ItemLocation {
+    ITEM_LOCATION_UNSPECIFIED = 0;
+    ITEM_LOCATION_LEFT = 1;
+    ITEM_LOCATION_RIGHT = 2;
+}
+
+message CardPositionItem {
+    ItemLocation item_location = 1;
+}
+
+message CardPositionStaging {
+}
+
+message CardPositionHand {
+    PlayerName owner = 1;
+}
+
+message CardPositionDeck {
+    PlayerName owner = 1;
+}
+
+message CardPositionDiscard {
+    PlayerName owner = 1;
+}
+
+message CardPositionScored {
+    PlayerName owner = 1;
+}
+
+message CardPositionRaid {
+    RoomLocation room_location = 1;
+    google.protobuf.Int32Value index = 2;
+}
+
+message CardPositionBrowser {
+}
+
+message CardPosition {
+    oneof position {
+        CardPositionOffscreen offscreen = 1;
+        CardPositionRoom room = 2;
+        CardPositionItem item = 3;
+        CardPositionStaging staging = 4;
+        CardPositionHand hand = 5;
+        CardPositionDeck deck = 6;
+        CardPositionDiscard discard = 7;
+        CardPositionScored scored = 8;
+        CardPositionRaid raid = 9;
+        CardPositionBrowser browser = 10;
+    }
+}
+
+message RevealedCardView {
+    SpriteAddress card_frame = 1;
+    SpriteAddress title_background = 2;
+    SpriteAddress jewel = 3;
+    SpriteAddress image_background = 4;
+    SpriteAddress image = 5;
+    CardTitle title = 6;
+    RulesText rules_text = 7;
+
+    /**
+    * Custom targeting behavior for a card. If unspecified, no targeting UI
+    * is shown.
+    */
+    CardTargeting targeting = 8;
+
+    /**
+    * Where to move a played card. Information from 'targeting' will be
+    * incorporated to fill this in, e.g. if a room is targeted and
+    * CardPositionRoom is selected here with no RoomId, the targeted room
+    * is used.
+    */
+    CardPosition on_release_position = 9;
+
+    /** Information needed to determine whether a card can be played. */
+    CardCost cost = 10;
+}
+
+message CardView {
+    CardId card_id = 1;
+    CardPosition on_create_position = 2;
+    SpriteAddress card_back = 3;
+    CardIcons card_icons = 4;
+    SpriteAddress arena_frame = 5;
+    RevealedCardView revealed_card = 6;
+}
+
+message HandView {
+    repeated CardView cards = 1;
+}
+
+message DiscardPileView {
+    repeated CardView cards = 1;
+}
+
+message PlayerInfo {
+    string name = 1;
+    SpriteAddress portrait = 2;
+
+    /**
+    * Identifies the player's unique powers. The back for this card is used
+    * as the card back for all of this player's cards. The CardIds of the
+    * user's and the opponent's identity cards are conventionally 1 and 2.
+    */
+    CardView identity_card = 3;
+}
+
+message ManaView {
+    int32 amount = 1;
+}
+
+message ScoreView {
+    int32 score = 1;
+    repeated CardView scored_cards = 2;
+}
+
+message RoomView {
+    RoomId room_id = 1;
+    repeated CardView cards = 2;
+}
+
+message ArenaView {
+    /**
+    * If true, render rooms at the bottom of the screen, if false, render items
+    * at the bottom.
+    */
+    bool overlord_perspective = 1;
+
+    repeated RoomView rooms = 2;
+    repeated CardView items = 3;
+}
+
+message ActionTrackerView {
+    int32 available_action_count = 1;
+}
+
+message DeckView {
+}
+
+message PlayerView {
+    PlayerInfo player_info = 1;
+    ScoreView score = 2;
+    HandView hand = 3;
+    ManaView mana = 4;
+    DiscardPileView discard_pile = 5;
+    ActionTrackerView action_tracker = 6;
+    DeckView deck = 7;
+}
+
+message GameView {
+    PlayerView user = 1;
+    PlayerView opponent = 2;
+    ArenaView arena = 3;
+}
+
+
+// ============================================================================
+// Actions
+// ============================================================================
+
+
+message ServerAction {
+    /** Opaque payload to send to the server. */
+    google.protobuf.Any payload = 1;
+
+    /** Optimistic mutations to game state for this action. */
+    CommandList optimistic_update = 2;
+}
+
+/**
+* Spend an action to gain 1 mana.
+*
+* Optimistic: Mana is added immediately.
+*/
+message GainManaAction {
+}
+
+/**
+* Spend an action to draw a card.
+*
+* Optimistic: Face-down card animates to reveal area.
+*/
+message DrawCardAction {
+}
+
+/**
+* Spend an action to place a level counter on a room.
+*
+* Optimistic: Counter is added immediately
+*/
+message LevelUpAction {
+    RoomId room_id = 1;
+}
+
+/**
+* Spend an action to play a card from hand.
+*
+* Optimistic:
+*   - Mana and action cost is spent immediately, and 'can play' values for
+*     other cards in hand are optimistically updated
+*   - Other costs like 'sacrifice an artifact' are not optimistic and are
+*     handled like choices
+*   - Targeted cards select their *first* valid target (cards, rooms, players)
+*     optimistically. If additional targets are required, they're not handled
+*     optimistically, and this play pattern should possibly be avoided.
+*   - Cards that require a choice to be made before resolving do not display
+*     the options optimistically, instead they animate to the reveal card area
+*   - Item cards which don't require a choice to be made or target simply
+*     animate into the play area optimistically
+*   - Spell cards animate to the reveal card area and wait for their effects to be
+*     applied
+*   - Minion and Project cards animate to their selected room optimistically
+*/
+message PlayCardAction {
+    CardId card_id = 1;
+    TargetId target = 2;
+}
+
+/**
+* Spend an action to initiate a raid on one of the overlord's rooms
+*
+* Optimistic: Raid start animation plays
+*/
+message InitiateRaidAction {
+    RoomId room_id = 1;
+}
+
+/**
+* Possible game actions taken by the user.
+*
+* Actions have an associated 'optimistic' behavior to display while waiting
+* for a server response. The client should not send multiple actions at the
+* same time -- interaction should be disabled while an action is pending.
+*/
+message GameAction {
+    oneof action {
+        ServerAction server_action = 1;
+        GainManaAction gain_mana = 2;
+        DrawCardAction draw_card = 3;
+        LevelUpAction level_up = 4;
+        PlayCardAction play_card = 5;
+        InitiateRaidAction initiate_raid = 6;
+    }
+}
+
+
+// ============================================================================
+// Commands
+// ============================================================================
+
+
+enum InterfacePosition {
+    INTERFACE_POSITION_UNSPECIFIED = 0;
+    INTERFACE_POSITION_FULL_SCREEN = 1;
+    INTERFACE_POSITION_RAID_CONTROLS = 2;
+}
+
+/**
+* Updates the content of the user interface to display the provided node,
+* replacing all existing UI elements.
+*/
+message RenderInterfaceCommand {
+    Node node = 1;
+
+    InterfacePosition position = 2;
+}
+
+/**
+* Many of the below commands are specific cases of RenderGame. They are
+* differentiated in order to simplify the diffing logic the client needs
+* to perform to detect and animate changes.
+*/
+message RenderGameCommand {
+    GameView game = 1;
+}
+
+message InitiateRaidCommand {
+    PlayerName initiator = 1;
+    RoomId room_id = 2;
+}
+
+message EndRaidCommand {
+}
+
+enum CardCreationAnimation {
+    CARD_CREATION_ANIMATION_UNSPECIFIED = 0;
+
+    CARD_CREATION_ANIMATION_USER_DECK_TO_STAGING = 1;
+}
+
+/**
+* Makes a new card.
+*/
+message CreateCardCommand {
+    CardView card = 1;
+
+    /** Optionally, an animation to play after creating the card. */
+    CardCreationAnimation animation = 2;
+
+    /**
+    * If an optimistic card has already been created, it is updated to match the provided
+    * 'card' instead unless this value is 'true'.
+    */
+    bool disallow_optimistic = 3;
+}
+
+/**
+* Updates a card. Note that changes to 'on_create_position' are ignored here,
+* use MoveCardCommand instead to reposition cards.
+*/
+message UpdateCardCommand {
+    CardView card = 1;
+}
+
+message MoveCardCommand {
+    CardId card_id = 1;
+    CardPosition position = 2;
+    bool disable_animation = 3;
+}
+
+message DestroyCardCommand {
+    CardId card_id = 1;
+}
+
+message UpdatePlayerStateCommand {
+    PlayerName player_name = 1;
+    PlayerInfo info = 2;
+    ScoreView score = 3;
+    ActionTrackerView action_tracker = 4;
+}
+
+/**
+ * Fire a projectile from one card at another.
+ */
+message FireProjectileCommand {
+    CardId source_id = 1;
+    CardId target_id = 2;
+
+    /** Projectile to fire from the 'source_id' card to 'target_id' */
+    ProjectileAddress projectile = 3;
+
+    /** How long the projectile should take to hit its target. */
+    TimeValue travel_duration = 4;
+
+    /** Additional effect to display on the target on hit. */
+    EffectAddress additional_hit = 5;
+
+    /**
+     * Delay before showing the additional hit. If provided, the original
+     * projectile Hit effect will be hidden before showing the new hit effect.
+     */
+    TimeValue additional_hit_delay = 6;
+
+    /**
+     * If provided, the target will be hidden for this duration after being hit
+     * and before jumping to 'jump_to_position'.
+     */
+    TimeValue hide_duration = 7;
+
+    /**
+     * Position for the target to jump to after being hit.
+     */
+    CardPosition jump_to_position = 8;
+}
+
+message GameCommand {
+    oneof command {
+        RenderInterfaceCommand render_interface = 1;
+        RenderGameCommand render_game = 2;
+        InitiateRaidCommand initiate_raid = 3;
+        EndRaidCommand end_raid = 4;
+        CreateCardCommand create_card = 5;
+        UpdateCardCommand update_card = 6;
+        MoveCardCommand move_card = 7;
+        DestroyCardCommand destroy_card = 8;
+        UpdatePlayerStateCommand update_player_state = 9;
+        FireProjectileCommand fire_projectile = 10;
+    }
+}
+
+message CommandList {
+    repeated GameCommand commands = 1;
+}

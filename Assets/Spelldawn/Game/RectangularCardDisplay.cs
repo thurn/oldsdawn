@@ -26,7 +26,7 @@ namespace Spelldawn.Game
     [SerializeField] float _initialSpacing;
     [SerializeField] float _cardSize;
 
-    protected override SortingOrder.Type SortingType => SortingOrder.Type.Arena;
+    protected override SortingOrder.Type DefaultSortingType() => SortingOrder.Type.Arena;
 
     protected override Vector3 CalculateCardPosition(int index, int count) =>
       transform.position + new Vector3(

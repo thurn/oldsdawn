@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf.Collections;
+using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
@@ -39,6 +40,18 @@ namespace Spelldawn.Services
     {
       Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
       return (Font)_assets[address.Address];
+    }
+
+    public Projectile GetProjectile(ProjectileAddress address)
+    {
+      Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
+      return ComponentUtils.GetComponent<Projectile>((GameObject)_assets[address.Address]);
+    }
+
+    public TimedEffect GetEffect(EffectAddress address)
+    {
+      Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
+      return ComponentUtils.GetComponent<TimedEffect>((GameObject)_assets[address.Address]);
     }
 
     public IEnumerator LoadAssets(CommandList commandList)
@@ -71,10 +84,9 @@ namespace Spelldawn.Services
             LoadPlayerInfoAssets(requests, command.UpdatePlayerState.Info);
             LoadScoreViewAssets(requests, command.UpdatePlayerState.Score);
             break;
-          case GameCommand.CommandOneofCase.CreateOrUpdateRoom:
-            LoadRoomInfoAssets(requests, command.CreateOrUpdateRoom.RoomInfo);
-            break;
-          case GameCommand.CommandOneofCase.DestroyRoom:
+          case GameCommand.CommandOneofCase.FireProjectile:
+            LoadProjectile(requests, command.FireProjectile.Projectile);
+            LoadEffect(requests, command.FireProjectile.AdditionalHit);
             break;
           case GameCommand.CommandOneofCase.None:
           default:
@@ -151,7 +163,6 @@ namespace Spelldawn.Services
       {
         foreach (var room in arenaView.Rooms)
         {
-          LoadRoomInfoAssets(requests, room.RoomInfo);
           LoadCardListAssets(requests, room.Cards);
         }
 
@@ -229,14 +240,6 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadRoomInfoAssets(IDictionary<string, ResourceRequest> requests, RoomInfo? roomInfo)
-    {
-      if (roomInfo != null)
-      {
-        LoadSprite(requests, roomInfo.RoomIcon);
-      }
-    }
-
     void LoadSprite(IDictionary<string, ResourceRequest> requests, SpriteAddress? address)
     {
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
@@ -250,6 +253,22 @@ namespace Spelldawn.Services
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
         requests[address.Address] = Resources.LoadAsync<Font>(address.Address);
+      }
+    }
+
+    void LoadProjectile(IDictionary<string, ResourceRequest> requests, ProjectileAddress? address)
+    {
+      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+      {
+        requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
+      }
+    }
+
+    void LoadEffect(IDictionary<string, ResourceRequest> requests, EffectAddress? address)
+    {
+      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+      {
+        requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
       }
     }
   }

@@ -32,6 +32,9 @@ namespace Spelldawn.Services
     [SerializeField] List<Room> _rooms = null!;
     [SerializeField] Room? _curentRoomSelector;
 
+    public CardDisplay LeftItems => _leftItems;
+    public CardDisplay RightIems => _rightItems;
+
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
     public Room FindRoom(RoomId roomId)

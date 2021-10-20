@@ -139,29 +139,35 @@ namespace Spelldawn.Masonry
     public static Node Row(string name, FlexStyle? style, IEnumerable<Node?> children) =>
       Row(name, style, children.ToArray());
 
-    public static Node Row(string name, FlexStyle? style = null, params Node?[] children)
-    {
-      style ??= new FlexStyle();
-      style.FlexDirection = FlexDirection.Row;
-      return MakeFlexbox(name, style, children);
-    }
+    public static Node Row(string name, FlexStyle? style = null, params Node?[] children) =>
+      Row(name, style, handlers: null, children);
 
-    public static Node Row(string name,
+    public static Node Row(
+      string name,
       FlexStyle? style = null,
       EventHandlers? handlers = null,
       params Node?[] children)
     {
-      return null!;
+      style ??= new FlexStyle();
+      style.FlexDirection = FlexDirection.Row;
+      return MakeFlexbox(name, style, handlers, children);
     }
 
     public static Node Column(string name, FlexStyle? style, IEnumerable<Node?> children) =>
       Column(name, style, children.ToArray());
 
-    public static Node Column(string name, FlexStyle? style = null, params Node?[] children)
+    public static Node Column(string name, FlexStyle? style = null, params Node?[] children) =>
+      Column(name, style, handlers: null, children);
+
+    public static Node Column(
+      string name,
+      FlexStyle? style = null,
+      EventHandlers? handlers = null,
+      params Node?[] children)
     {
       style ??= new FlexStyle();
       style.FlexDirection = FlexDirection.Column;
-      return MakeFlexbox(name, style, children);
+      return MakeFlexbox(name, style, handlers, children);
     }
 
     public static Node? WithStyle(Node? input, Action<FlexStyle> styleFn)
@@ -238,7 +244,7 @@ namespace Spelldawn.Masonry
     };
 
 
-    public static TimeValue DurationMs(float ms) => new()
+    public static TimeValue DurationMs(int ms) => new()
     {
       Milliseconds = ms
     };
@@ -256,11 +262,12 @@ namespace Spelldawn.Masonry
       Left = left
     };
 
-    static Node MakeFlexbox(string name, FlexStyle style, params Node?[] children)
+    static Node MakeFlexbox(string name, FlexStyle style, EventHandlers? handlers, params Node?[] children)
     {
       var result = new Node
       {
         Style = style,
+        EventHandlers = handlers,
         Name = name
       };
       result.Children.AddRange(children.Where(child => child != null));

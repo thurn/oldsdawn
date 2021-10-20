@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace Spelldawn.Services
 {
-  public sealed class ObjectPoolService
+  public sealed class ObjectPoolService : MonoBehaviour
   {
     readonly Dictionary<int, List<GameObject>> _pools = new();
 
@@ -49,7 +49,7 @@ namespace Spelldawn.Services
         _pools[instanceId] = new List<GameObject>();
       }
 
-      var result = Object.Instantiate(prefab, parent, worldPositionStays: false);
+      var result = Instantiate(prefab, parent, worldPositionStays: false);
       result.transform.position = position;
       _pools[instanceId].Add(result.gameObject);
       return result;

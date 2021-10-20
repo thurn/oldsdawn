@@ -38,6 +38,7 @@ namespace Spelldawn.Services
     {
       IdentityCard = PlayerName.User
     };
+
     static readonly CardId OpponentCardId = new CardId
     {
       IdentityCard = PlayerName.Opponent
@@ -122,30 +123,97 @@ namespace Spelldawn.Services
       }
     }
 
+    public IEnumerator HandleFireProjectileCommand(FireProjectileCommand command)
+    {
+      var source = CheckExists(command.SourceId);
+      var target = CheckExists(command.TargetId);
+      var originalPosition = source.transform.position;
+      var originalRotation = source.transform.rotation.eulerAngles;
+
+      yield return DOTween
+        .Sequence()
+        .Insert(0, source.transform.DORotate(new Vector3(280, 0, 0), 0.2f))
+        .Insert(0,
+          source.transform.DOMove(
+            Vector3.MoveTowards(source.transform.position, _registry.MainCamera.transform.position, 20f) -
+            new Vector3(0, 0, 1), 0.2f))
+        .WaitForCompletion();
+
+      var projectile = _registry.ObjectPoolService.Create(
+        _registry.AssetService.GetProjectile(command.Projectile), source.transform.position);
+      var start = source.transform.position;
+
+      DOTween
+        .Sequence()
+        .Insert(0, source.transform.DOMove(Vector3.Lerp(start, target.transform.position, 0.1f), 0.1f))
+        .Insert(0.1f, source.transform.DOMove(start, 0.1f))
+        .Insert(1f, source.transform.DOMove(originalPosition, 0.2f))
+        .Insert(1f, source.transform.DORotate(originalRotation, 0.2f));
+
+      yield return projectile.Fire(
+        _registry,
+        target.transform,
+        command.TravelDuration,
+        command.AdditionalHit,
+        command.AdditionalHitDelay);
+
+      if (command.HideDuration != null)
+      {
+        target.gameObject.SetActive(false);
+        yield return new WaitForSeconds(DataUtils.ToSeconds(command.HideDuration, 0));
+        target.gameObject.SetActive(true);
+      }
+
+      if (command.JumpToPosition != null)
+      {
+        yield return MoveCard(target, new CardPosition
+        {
+          Room = new CardPositionRoom
+          {
+            RoomLocation = RoomLocation.Defender,
+            RoomId = RoomId.RoomB
+          }
+        }, animate: false, animateRemove: true);
+      }
+    }
+
     public IEnumerator HandleMoveCardCommand(MoveCardCommand command)
     {
-      Errors.CheckState(_cards.ContainsKey(command.CardId), $"Card not found: {command.CardId}");
+      CheckExists(command.CardId);
       var card = _cards[command.CardId];
       if (card.Parent)
       {
         card.Parent!.RemoveCardIfPresent(card, !command.DisableAnimation);
       }
+
       return MoveCardInternal(card, command.Position, !command.DisableAnimation);
     }
 
-    public IEnumerator MoveCard(AbstractCard card, CardPosition targetPosition, bool animate = true)
+    public IEnumerator MoveCard(AbstractCard card, CardPosition targetPosition, bool animate = true,
+      bool animateRemove = true)
     {
       if (card.Parent)
       {
-        card.Parent!.RemoveCardIfPresent(card, animate);
+        card.Parent!.RemoveCardIfPresent(card, animateRemove);
       }
+
       return MoveCardInternal(card, targetPosition, animate);
+    }
+
+    AbstractCard CheckExists(CardId cardId)
+    {
+      Errors.CheckState(_cards.ContainsKey(cardId), $"Card not found: {cardId}");
+      return _cards[cardId];
     }
 
     IEnumerator MoveCardInternal(AbstractCard card, CardPosition position, bool animate)
     {
       switch (position.PositionCase)
       {
+        case CardPosition.PositionOneofCase.Offscreen:
+          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
+          card.transform.position = Vector3.zero;
+          return CollectionUtils.Yield();
         case CardPosition.PositionOneofCase.Room:
           card.SetRenderingMode(AbstractCard.RenderingMode.Arena);
           return _registry.ArenaService.AddToRoom(card, position.Room, animate);
@@ -172,14 +240,6 @@ namespace Spelldawn.Services
           throw new NotImplementedException();
         default:
           throw new ArgumentOutOfRangeException();
-      }
-    }
-
-    void SetRenderingMode(List<AbstractCard> cards, AbstractCard.RenderingMode mode)
-    {
-      foreach (var card in cards)
-      {
-        card.SetRenderingMode(mode);
       }
     }
 

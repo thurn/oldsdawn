@@ -2,7 +2,8 @@
     "name": "SpelldawnEditor",
     "rootNamespace": "",
     "references": [
-        "GUID:4eed4253a72624a8b9e0cc8e05edcece"
+        "GUID:4eed4253a72624a8b9e0cc8e05edcece",
+        "GUID:ef7ffe6d73794495e9482dbc3236050a"
     ],
     "includePlatforms": [
         "Editor"

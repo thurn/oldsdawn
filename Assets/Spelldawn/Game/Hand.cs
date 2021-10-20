@@ -28,7 +28,7 @@ namespace Spelldawn.Game
     [SerializeField] Transform _controlPoint3 = null!;
     [SerializeField] Transform _controlPoint4 = null!;
 
-    protected override SortingOrder.Type SortingType => _sortingType;
+    protected override SortingOrder.Type DefaultSortingType() => _sortingType;
 
     protected override Vector3 CalculateCardPosition(int index, int count)
     {

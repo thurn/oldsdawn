@@ -43,14 +43,28 @@ namespace Spelldawn.Services
     {
       switch (action.ActionCase)
       {
-        case GameAction.ActionOneofCase.DebugAction:
-          _registry.CommandService.HandleCommands(action.DebugAction.CommandList.Unpack<CommandList>());
+        case GameAction.ActionOneofCase.ServerAction:
+          if (action.ServerAction.OptimisticUpdate is { } response)
+          {
+            _registry.CommandService.HandleCommands(response);
+          }
+
           break;
         case GameAction.ActionOneofCase.DrawCard:
           _registry.CardService.DrawOptimisticCard();
           break;
         case GameAction.ActionOneofCase.GainMana:
           _registry.ManaDisplayForPlayer(PlayerName.User).Increment();
+          break;
+        case GameAction.ActionOneofCase.InitiateRaid:
+          _registry.CommandService.HandleCommands(new GameCommand
+          {
+            InitiateRaid = new InitiateRaidCommand
+            {
+              RoomId = action.InitiateRaid.RoomId,
+              Initiator = PlayerName.User
+            }
+          });
           break;
       }
     }

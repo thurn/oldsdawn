@@ -15,7 +15,6 @@
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 #nullable enable
 
@@ -23,23 +22,26 @@ namespace Spelldawn.Services
 {
   public sealed class Registry : MonoBehaviour
   {
-    public Camera MainCamera => _mainCamera;
     [SerializeField] Camera _mainCamera = null!;
+    public Camera MainCamera => _mainCamera;
 
-    public AssetService AssetService => _assetService;
     [SerializeField] AssetService _assetService = null!;
+    public AssetService AssetService => _assetService;
 
-    public ActionService ActionService => _actionService;
+    [SerializeField] ObjectPoolService _objectPoolService = null!;
+    public ObjectPoolService ObjectPoolService => _objectPoolService;
+
     [SerializeField] ActionService _actionService = null!;
+    public ActionService ActionService => _actionService;
 
-    public CardService CardService => _cardService;
     [SerializeField] CardService _cardService = null!;
+    public CardService CardService => _cardService;
 
-    public CommandService CommandService => _commandService;
     [SerializeField] CommandService _commandService = null!;
+    public CommandService CommandService => _commandService;
 
-    public DocumentService DocumentService => _documentService;
     [SerializeField] DocumentService _documentService = null!;
+    public DocumentService DocumentService => _documentService;
 
     public SampleData SampleData => _sampleData;
     [SerializeField] SampleData _sampleData = null!;

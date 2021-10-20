@@ -25,26 +25,53 @@ namespace Spelldawn.Services
   public sealed class DocumentService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-
     [SerializeField] UIDocument _document = null!;
+    VisualElement _fullScreen = null!;
+    VisualElement _raidControls = null!;
 
-    public void DebugShowRegions()
+    void Start()
     {
       _document.rootVisualElement.Clear();
+      AddRoot("Full Screen", out _fullScreen);
+      AddRoot("Raid Controls", out _raidControls);
     }
 
     public void HandleRenderInterface(RenderInterfaceCommand command)
     {
-      _document.rootVisualElement.Clear();
-      _document.rootVisualElement.Add(Mason.Render(_registry, Elements(command.Node)));
+      switch (command.Position)
+      {
+        case InterfacePosition.FullScreen:
+          _fullScreen.Clear();
+          _fullScreen.Add(Mason.Render(_registry, FullScreen(command.Node)));
+          break;
+        case InterfacePosition.RaidControls:
+          _raidControls.Clear();
+          _raidControls.Add(Mason.Render(_registry, RaidControls(command.Node)));
+          break;
+      }
     }
 
-    static Node Elements(Node raidControls) => Column("Root",
-      new FlexStyle
+    void AddRoot(string elementName, out VisualElement element)
+    {
+      element = new VisualElement
       {
-        Position = FlexPosition.Absolute,
-        Inset = GroupDip(0, 0, 0, 0)
-      },
+        name = elementName,
+        style =
+        {
+          position = Position.Absolute,
+          top = 0,
+          right = 0,
+          bottom = 0,
+          left = 0
+        }
+      };
+      _document.rootVisualElement.Add(element);
+    }
+
+    static Node FullScreen(Node? content) =>
+      Row("FullScreen", new FlexStyle());
+
+    static Node RaidControls(Node? content) =>
       Row("RaidControls", new FlexStyle
       {
         Position = FlexPosition.Absolute,
@@ -55,7 +82,6 @@ namespace Spelldawn.Services
           Right = Dip(0),
           Bottom = Dip(160)
         }
-      }, raidControls)
-    );
+      }, content);
   }
 }

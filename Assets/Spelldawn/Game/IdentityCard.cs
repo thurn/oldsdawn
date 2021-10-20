@@ -64,11 +64,13 @@ namespace Spelldawn.Game
       _registry.ArenaService.HideRoomSelector();
       if (_selectedRoom is { } selectedRoom)
       {
-        StartCoroutine(_registry.RaidService.HandleInitiateRaid(new InitiateRaidCommand
+        _registry.ActionService.HandleAction(new GameAction
         {
-          Initiator = PlayerName.User,
-          RoomId = selectedRoom
-        }));
+          InitiateRaid = new InitiateRaidAction
+          {
+            RoomId = selectedRoom
+          }
+        });
       }
     }
   }
