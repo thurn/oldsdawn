@@ -1459,14 +1459,11 @@ MonoBehaviour:
   _isRevealed: 0
   _canPlay: 0
   _isDragging: 0
-  _interactive: 0
   _dragStartScreenZ: 0
   _dragStartPosition: {x: 0, y: 0, z: 0}
   _dragOffset: {x: 0, y: 0, z: 0}
   _initialDragRotation: {x: 0, y: 0, z: 0, w: 0}
   _handIndex: 0
-  _renderingMode: 0
-  _arenaCardOffset: {x: 0, y: 0, z: 0}
 --- !u!210 &6859622998180740047
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -2615,7 +2612,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8530864689233107374}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.60000014, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

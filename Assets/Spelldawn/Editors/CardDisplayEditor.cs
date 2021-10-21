@@ -21,14 +21,14 @@ using UnityEngine;
 
 namespace Spelldawn.Editors
 {
-  [CustomEditor(typeof(CardDisplay), editorForChildClasses: true)]
+  [CustomEditor(typeof(ObjectDisplay), editorForChildClasses: true)]
   public sealed class CardDisplayEditor : Editor
   {
     public override void OnInspectorGUI()
     {
       DrawDefaultInspector();
       GUILayout.Space(10);
-      var display = ((CardDisplay)target);
+      var display = ((ObjectDisplay)target);
 
       if (GUILayout.Button("Update"))
       {
@@ -37,8 +37,8 @@ namespace Spelldawn.Editors
 
       if (GUILayout.Button("Delete"))
       {
-        var card = display.AllCards.First();
-        display.RemoveCard(card);
+        var card = display.AllObjects.First();
+        display.RemoveObject(card);
         Destroy(card.gameObject);
       }
     }

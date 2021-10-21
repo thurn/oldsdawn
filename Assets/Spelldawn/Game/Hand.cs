@@ -19,24 +19,24 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class Hand : CardDisplay
+  public sealed class Hand : ObjectDisplay
   {
     [SerializeField] int _zRotationMultiplier;
-    [SerializeField] SortingOrder.Type _sortingType;
+    [SerializeField] GameContext _sortingGameContext;
     [SerializeField] Transform _controlPoint1 = null!;
     [SerializeField] Transform _controlPoint2 = null!;
     [SerializeField] Transform _controlPoint3 = null!;
     [SerializeField] Transform _controlPoint4 = null!;
 
-    protected override SortingOrder.Type DefaultSortingType() => _sortingType;
+    protected override GameContext DefaultGameContext() => _sortingGameContext;
 
-    protected override Vector3 CalculateCardPosition(int index, int count)
+    protected override Vector3 CalculateObjectPosition(int index, int count)
     {
       var curvePosition = CalculateCurvePosition(index, count);
       return CalculateBezierPosition(curvePosition);
     }
 
-    protected override Vector3? CalculateCardRotation(int index, int count)
+    protected override Vector3? CalculateObjectRotation(int index, int count)
     {
       var curvePosition = CalculateCurvePosition(index, count);
       return new Vector3(x: 280, y: 0, _zRotationMultiplier * CalculateZRotation(curvePosition));

@@ -21,5 +21,8 @@ namespace Spelldawn.Utils
   public static class DataUtils
   {
     public static float ToSeconds(TimeValue? value, int ifNull) => (value?.Milliseconds ?? ifNull) / 1000f;
+
+    public static PlayerName OpposingPlayer(PlayerName player) =>
+      player == PlayerName.User ? PlayerName.Opponent : PlayerName.User;
   }
 }

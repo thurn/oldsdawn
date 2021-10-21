@@ -27,13 +27,13 @@ namespace Spelldawn.Services
   public sealed class ArenaService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] LinearCardDisplay _leftItems = null!;
-    [SerializeField] LinearCardDisplay _rightItems = null!;
+    [SerializeField] LinearObjectDisplay _leftItems = null!;
+    [SerializeField] LinearObjectDisplay _rightItems = null!;
     [SerializeField] List<Room> _rooms = null!;
     [SerializeField] Room? _curentRoomSelector;
 
-    public CardDisplay LeftItems => _leftItems;
-    public CardDisplay RightIems => _rightItems;
+    public ObjectDisplay LeftItems => _leftItems;
+    public ObjectDisplay RightIems => _rightItems;
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
@@ -43,21 +43,21 @@ namespace Spelldawn.Services
       return Errors.CheckNotNull(result);
     }
 
-    public IEnumerator AddAsItem(AbstractCard card, CardPositionItem position, bool animate)
+    public IEnumerator AddAsItem(Displayable card, CardPositionItem position, bool animate)
     {
       switch (position.ItemLocation)
       {
         case ItemLocation.Left:
-          return _leftItems.AddCard(card, animate);
+          return _leftItems.AddObject(card, animate);
         case ItemLocation.Right:
-          return _rightItems.AddCard(card, animate);
+          return _rightItems.AddObject(card, animate);
         default:
           Debug.LogError($"Unknown item location: {position.ItemLocation}");
-          return _rightItems.AddCard(card, animate);
+          return _rightItems.AddObject(card, animate);
       }
     }
 
-    public IEnumerator AddToRoom(AbstractCard card, CardPositionRoom position, bool animate)
+    public IEnumerator AddToRoom(Displayable card, CardPositionRoom position, bool animate)
     {
       return FindRoom(position.RoomId).AddCard(card, position.RoomLocation, position.Index, animate);
     }

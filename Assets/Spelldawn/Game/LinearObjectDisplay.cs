@@ -18,19 +18,19 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class LinearCardDisplay : CardDisplay
+  public sealed class LinearObjectDisplay : ObjectDisplay
   {
     [SerializeField] float _width;
     [SerializeField] float _initialSpacing;
     [SerializeField] float _cardSize;
     [SerializeField] float _rotation = 270;
 
-    protected override SortingOrder.Type DefaultSortingType() => SortingOrder.Type.Arena;
+    protected override GameContext DefaultGameContext() => Game.GameContext.Arena;
 
-    protected override Vector3 CalculateCardPosition(int index, int count) =>
+    protected override Vector3 CalculateObjectPosition(int index, int count) =>
       transform.position + new Vector3(CalculateXOffset(_width, _initialSpacing, _cardSize, index, count), 0, 0);
 
-    protected override Vector3? CalculateCardRotation(int index, int count) =>
+    protected override Vector3? CalculateObjectRotation(int index, int count) =>
       new Vector3(x: _rotation, y: 0, 0);
 
     public static float CalculateXOffset(

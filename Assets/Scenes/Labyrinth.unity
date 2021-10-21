@@ -713,6 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 875f6ae4ea9e4bb4aa155c17a6ca6ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentGameContext: 0
   _width: 22
   _initialSpacing: 1
   _cardSize: 3.5
@@ -3366,7 +3367,6 @@ MonoBehaviour:
   _registry: {fileID: 1445473048}
   _background: {fileID: 894161627}
   _participants: {fileID: 1192066000}
-  _raidTargets: {fileID: 1174488033}
 --- !u!1 &142239664
 GameObject:
   m_ObjectHideFlags: 0
@@ -8501,8 +8501,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b628477e1cf417c97898c323bbd9406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentGameContext: 0
   _zRotationMultiplier: -1
-  _sortingType: 4
+  _sortingGameContext: 5
   _controlPoint1: {fileID: 1807845830}
   _controlPoint2: {fileID: 711539115}
   _controlPoint3: {fileID: 708292382}
@@ -17081,6 +17082,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 875f6ae4ea9e4bb4aa155c17a6ca6ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentGameContext: 0
   _width: 30
   _initialSpacing: 1
   _cardSize: 3.5
@@ -20403,7 +20405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563e7d4c9348441595c77dec4222b93b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 5
+  _gameContext: 6
 --- !u!1 &741578178
 GameObject:
   m_ObjectHideFlags: 0
@@ -25674,7 +25676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563e7d4c9348441595c77dec4222b93b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 3
+  _gameContext: 10
 --- !u!1 &894361387
 GameObject:
   m_ObjectHideFlags: 0
@@ -31137,8 +31139,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b628477e1cf417c97898c323bbd9406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentGameContext: 0
   _zRotationMultiplier: 1
-  _sortingType: 4
+  _sortingGameContext: 5
   _controlPoint1: {fileID: 1943111019}
   _controlPoint2: {fileID: 319105150}
   _controlPoint3: {fileID: 727605490}
@@ -31357,8 +31360,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b628477e1cf417c97898c323bbd9406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentGameContext: 0
   _zRotationMultiplier: 0
-  _sortingType: 1
+  _sortingGameContext: 7
   _controlPoint1: {fileID: 545354813}
   _controlPoint2: {fileID: 271427119}
   _controlPoint3: {fileID: 1348719291}
@@ -33512,6 +33516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 875f6ae4ea9e4bb4aa155c17a6ca6ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentGameContext: 0
   _width: 10
   _initialSpacing: 1
   _cardSize: 3.5
@@ -34141,6 +34146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97aaacb75d5445cebbd2bf6e47d541b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentGameContext: 0
   _width: 46
   _initialSpacing: 5
   _cardSize: 3.5
@@ -43536,7 +43542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563e7d4c9348441595c77dec4222b93b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 5
+  _gameContext: 6
 --- !u!1 &1546830408
 GameObject:
   m_ObjectHideFlags: 0
@@ -57702,7 +57708,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563e7d4c9348441595c77dec4222b93b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 5
+  _gameContext: 6
 --- !u!1 &2094489521
 GameObject:
   m_ObjectHideFlags: 0
@@ -60051,7 +60057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563e7d4c9348441595c77dec4222b93b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 5
+  _gameContext: 6
 --- !u!4 &2233573693941330877
 Transform:
   m_ObjectHideFlags: 0
@@ -60653,7 +60659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563e7d4c9348441595c77dec4222b93b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 5
+  _gameContext: 6
 --- !u!1001 &2862352592027705519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61005,7 +61011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563e7d4c9348441595c77dec4222b93b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 5
+  _gameContext: 6
 --- !u!33 &4044710140918978158
 MeshFilter:
   m_ObjectHideFlags: 0

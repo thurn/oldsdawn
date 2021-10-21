@@ -23,14 +23,14 @@ namespace Spelldawn.Game
 {
   public sealed class Room : MonoBehaviour
   {
-    [SerializeField] RectangularCardDisplay _inRoom = null!;
+    [SerializeField] RectangularObjectDisplay _inRoom = null!;
 
-    public IEnumerable<AbstractCard> CardsInRoom => _inRoom.AllCards;
+    public IEnumerable<Displayable> CardsInRoom => _inRoom.AllObjects;
 
     // Defenders are sorted in order, index 0 represents the rearmost defender
-    [SerializeField] RectangularCardDisplay _defenders = null!;
+    [SerializeField] RectangularObjectDisplay _defenders = null!;
 
-    public IEnumerable<AbstractCard> Defenders => _defenders.AllCards;
+    public IEnumerable<Displayable> Defenders => _defenders.AllObjects;
 
     [SerializeField] RoomId _roomId;
     public RoomId RoomId => _roomId;
@@ -38,10 +38,10 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _spriteRenderer = null!;
     public SpriteRenderer SpriteRenderer => _spriteRenderer;
 
-    public IEnumerator AddCard(AbstractCard card, RoomLocation location, int? index, bool animate) => location switch
+    public IEnumerator AddCard(Displayable card, RoomLocation location, int? index, bool animate) => location switch
     {
-      RoomLocation.InRoom => _inRoom.AddCard(card, animate, index),
-      _ => _defenders.AddCard(card, animate, index)
+      RoomLocation.InRoom => _inRoom.AddObject(card, animate, index),
+      _ => _defenders.AddObject(card, animate, index)
     };
   }
 }

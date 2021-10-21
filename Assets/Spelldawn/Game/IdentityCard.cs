@@ -22,7 +22,7 @@ using UnityEngine.Rendering;
 
 namespace Spelldawn.Game
 {
-  public sealed class IdentityCard : AbstractCard, ArrowService.IArrowDelegate
+  public sealed class IdentityCard : Displayable, ArrowService.IArrowDelegate
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _canDrag;
@@ -31,15 +31,6 @@ namespace Spelldawn.Game
     [SerializeField] SortingGroup _sortingGroup = null!;
     [SerializeField] GameObject _raidSymbol = null!;
     RoomId? _selectedRoom;
-
-    public override SortingOrder? SortingOrder
-    {
-      set => value?.ApplyTo(_sortingGroup);
-    }
-
-    public override void SetRenderingMode(RenderingMode renderingMode)
-    {
-    }
 
     public bool RaidSymbolShown
     {
@@ -72,6 +63,11 @@ namespace Spelldawn.Game
           }
         });
       }
+    }
+
+    protected override void OnSetGameContext(GameContext _, GameContext gameContext, int? index = null)
+    {
+      SortingOrder.Create(gameContext, index ?? 0).ApplyTo(_sortingGroup);
     }
   }
 }

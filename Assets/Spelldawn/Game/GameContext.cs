@@ -12,24 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using UnityEngine;
-
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public abstract class AbstractCard : MonoBehaviour
+  public enum GameContext
   {
-    public enum RenderingMode
-    {
-      Default,
-      Arena
-    }
-
-    public CardDisplay? Parent { set; get; }
-
-    public abstract SortingOrder? SortingOrder { set; }
-
-    public abstract void SetRenderingMode(RenderingMode renderingMode);
+    // Note: Enum numbers are serialized by Unity and cannot be changed
+    Unspecified = 0,
+    Arena = 1,
+    Deck = 2,
+    Discard = 3,
+    ArenaRaidParticipant = 10,
+    RaidParticipant = 4,
+    Hand = 5,
+    Interface = 6,
+    Staging = 7,
+    Effects = 8,
+    Dragging = 9
   }
 }

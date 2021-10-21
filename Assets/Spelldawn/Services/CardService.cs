@@ -32,7 +32,7 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] Card _cardPrefab = null!;
 
-    readonly Dictionary<CardId, AbstractCard> _cards = new();
+    readonly Dictionary<CardId, Displayable> _cards = new();
 
     static readonly CardId UserCardId = new CardId
     {
@@ -80,7 +80,7 @@ namespace Spelldawn.Services
       _optimisticCard.Render(_registry, new CardView
       {
         CardBack = _userCardBack
-      });
+      }, GameContext.Staging);
       _optimisticCard.transform.localScale = new Vector3(CardScale, CardScale, 1f);
       AnimateFromDeckToStaging(_optimisticCard);
     }
@@ -102,6 +102,7 @@ namespace Spelldawn.Services
       {
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+        card.Render(_registry, command.Card, GameContext.Staging, animate: waitForStaging);
         StartCoroutine(MoveCardInternal(card, command.Card.OnCreatePosition, animate: false));
 
         switch (command.Animation)
@@ -113,7 +114,6 @@ namespace Spelldawn.Services
         }
       }
 
-      card.Render(_registry, command.Card, animate: waitForStaging);
       _cards[command.Card.CardId] = card;
 
       if (waitForStaging)
@@ -183,58 +183,51 @@ namespace Spelldawn.Services
       var card = _cards[command.CardId];
       if (card.Parent)
       {
-        card.Parent!.RemoveCardIfPresent(card, !command.DisableAnimation);
+        card.Parent!.RemoveObjectIfPresent(card, !command.DisableAnimation);
       }
 
       return MoveCardInternal(card, command.Position, !command.DisableAnimation);
     }
 
-    public IEnumerator MoveCard(AbstractCard card, CardPosition targetPosition, bool animate = true,
+    public IEnumerator MoveCard(Displayable card, CardPosition targetPosition, bool animate = true,
       bool animateRemove = true)
     {
       if (card.Parent)
       {
-        card.Parent!.RemoveCardIfPresent(card, animateRemove);
+        card.Parent!.RemoveObjectIfPresent(card, animateRemove);
       }
 
       return MoveCardInternal(card, targetPosition, animate);
     }
 
-    AbstractCard CheckExists(CardId cardId)
+    Displayable CheckExists(CardId cardId)
     {
       Errors.CheckState(_cards.ContainsKey(cardId), $"Card not found: {cardId}");
       return _cards[cardId];
     }
 
-    IEnumerator MoveCardInternal(AbstractCard card, CardPosition position, bool animate)
+    IEnumerator MoveCardInternal(Displayable card, CardPosition position, bool animate)
     {
       switch (position.PositionCase)
       {
         case CardPosition.PositionOneofCase.Offscreen:
-          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
           card.transform.position = Vector3.zero;
           return CollectionUtils.Yield();
         case CardPosition.PositionOneofCase.Room:
-          card.SetRenderingMode(AbstractCard.RenderingMode.Arena);
           return _registry.ArenaService.AddToRoom(card, position.Room, animate);
         case CardPosition.PositionOneofCase.Item:
-          card.SetRenderingMode(AbstractCard.RenderingMode.Arena);
           return _registry.ArenaService.AddAsItem(card, position.Item, animate);
         case CardPosition.PositionOneofCase.Staging:
-          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
-          return _registry.CardStaging.AddCard(card, animate);
+          return _registry.CardStaging.AddObject(card, animate);
         case CardPosition.PositionOneofCase.Hand:
-          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
-          return _registry.HandForPlayer(position.Hand.Owner).AddCard(card, animate);
+          return _registry.HandForPlayer(position.Hand.Owner).AddObject(card, animate);
         case CardPosition.PositionOneofCase.Deck:
-          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
-          return _registry.DeckForPlayer(position.Deck.Owner).AddCard(card, animate);
+          return _registry.DeckForPlayer(position.Deck.Owner).AddObject(card, animate);
         case CardPosition.PositionOneofCase.Discard:
           throw new NotImplementedException();
         case CardPosition.PositionOneofCase.Scored:
           throw new NotImplementedException();
         case CardPosition.PositionOneofCase.Raid:
-          card.SetRenderingMode(AbstractCard.RenderingMode.Default);
           return _registry.RaidService.AddToRaid(card, position.Raid, animate);
         case CardPosition.PositionOneofCase.Browser:
           throw new NotImplementedException();
@@ -260,7 +253,7 @@ namespace Spelldawn.Services
       var target = DeckSpawnPosition(PlayerName.User);
       card.transform.position = target;
       card.transform.rotation = _registry.DeckForPlayer(PlayerName.User).transform.rotation;
-      card.SortingOrder = SortingOrder.Create(SortingOrder.Type.Staging);
+      card.SetGameContext(GameContext.Staging);
       var initialMoveTarget = new Vector3(
         target.x - 4,
         target.y + 2,

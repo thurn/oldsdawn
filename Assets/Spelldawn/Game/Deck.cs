@@ -20,16 +20,16 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class Deck : CardDisplay
+  public sealed class Deck : ObjectDisplay
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _clickable;
 
-    protected override SortingOrder.Type DefaultSortingType() => SortingOrder.Type.Deck;
+    protected override GameContext DefaultGameContext() => Game.GameContext.Deck;
 
-    protected override Vector3 CalculateCardPosition(int index, int count) => transform.position;
+    protected override Vector3 CalculateObjectPosition(int index, int count) => transform.position;
 
-    protected override Vector3? CalculateCardRotation(int index, int count) => transform.eulerAngles;
+    protected override Vector3? CalculateObjectRotation(int index, int count) => transform.eulerAngles;
 
     void OnMouseUpAsButton()
     {

@@ -26,8 +26,10 @@ using UnityEngine.Rendering;
 
 namespace Spelldawn.Game
 {
-  public sealed class Card : AbstractCard
+  public sealed class Card : Displayable
   {
+    static readonly Vector3 ArenaCardOffset = new(0, 0.6f, 0);
+
     [SerializeField] SpriteRenderer _cardBack = null!;
     [SerializeField] Transform _cardFront = null!;
     [SerializeField] GameObject _cardShadow = null!;
@@ -51,14 +53,11 @@ namespace Spelldawn.Game
     [SerializeField] bool _isRevealed;
     [SerializeField] bool _canPlay;
     [SerializeField] bool _isDragging;
-    [SerializeField] bool _interactive;
     [SerializeField] float _dragStartScreenZ;
     [SerializeField] Vector3 _dragStartPosition;
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] int _handIndex;
-    [SerializeField] RenderingMode _renderingMode;
-    [SerializeField] Vector3 _arenaCardOffset;
 
     Registry _registry = null!;
     CardView? _cardView;
@@ -78,22 +77,14 @@ namespace Spelldawn.Game
 
     public bool StagingAnimationComplete { get; set; }
 
-    public override SortingOrder? SortingOrder
-    {
-      set => value?.ApplyTo(_sortingGroup);
-    }
+    bool InHand() => HasGameContext && GameContext == GameContext.Hand;
 
-    void Start()
+    public void Render(Registry registry, CardView cardView, GameContext gameContext, bool animate = true)
     {
-      _arenaCardOffset = _arenaCard.localPosition;
-    }
-
-    public void Render(Registry registry, CardView cardView, bool animate = true)
-    {
+      SetGameContext(gameContext);
       _registry = registry;
       _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
       _outline.sortingOrder = -1;
-      _interactive = _renderingMode == RenderingMode.Default;
       _cardView = cardView;
 
       if (cardView.RevealedCard != null)
@@ -122,7 +113,7 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      if (_interactive && _revealedCardView is { Cost: { } cost })
+      if (!_isDragging && InHand() && _revealedCardView is { Cost: { } cost })
       {
         var haveAvailableResources =
           cost.ManaCost <= _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
@@ -135,51 +126,54 @@ namespace Spelldawn.Game
           _ => _canPlay
         };
 
-        UpdateOutline();
+        _outline.gameObject.SetActive(_canPlay);
+      }
+      else
+      {
+        _outline.gameObject.SetActive(false);
       }
     }
 
-    public override void SetRenderingMode(RenderingMode renderingMode)
+    bool IsArenaContext(GameContext context) => context switch
     {
-      if (renderingMode != _renderingMode)
-      {
-        switch (renderingMode)
-        {
-          case RenderingMode.Default:
-            _frame.gameObject.SetActive(true);
-            _titleBackground.gameObject.SetActive(true);
-            _title.gameObject.SetActive(true);
-            _rulesText.gameObject.SetActive(true);
-            _jewel.gameObject.SetActive(true);
-            _arenaFrame.gameObject.SetActive(false);
-            _cardShadow.SetActive(true);
-            _arenaShadow.SetActive(false);
+      GameContext.Arena => true,
+      GameContext.ArenaRaidParticipant => true,
+      _ => false
+    };
 
-            _arenaCard.localPosition = _arenaCardOffset;
-            break;
-          case RenderingMode.Arena:
-            _frame.gameObject.SetActive(false);
-            _titleBackground.gameObject.SetActive(false);
-            _title.gameObject.SetActive(false);
-            _rulesText.gameObject.SetActive(false);
-            _jewel.gameObject.SetActive(false);
-            _arenaFrame.gameObject.SetActive(true);
-            _cardShadow.SetActive(false);
-            _arenaShadow.SetActive(true);
-            _topLeftIcon.Background.gameObject.SetActive(false);
-            // In Arena mode, we want the image content to be centered within the card, so we shift
-            // it around.
-            _arenaCard.position = transform.position;
-            break;
-          default:
-            Debug.LogError($"Unrecognized rendering mode: {_renderingMode}");
-            goto case RenderingMode.Default;
-        }
+    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
+    {
+      SortingOrder.Create(newContext, index ?? 0).ApplyTo(_sortingGroup);
+
+      if (IsArenaContext(newContext))
+      {
+        _frame.gameObject.SetActive(false);
+        _titleBackground.gameObject.SetActive(false);
+        _title.gameObject.SetActive(false);
+        _rulesText.gameObject.SetActive(false);
+        _jewel.gameObject.SetActive(false);
+        _arenaFrame.gameObject.SetActive(true);
+        _cardShadow.SetActive(false);
+        _arenaShadow.SetActive(true);
+        _topLeftIcon.Background.gameObject.SetActive(false);
+        // In Arena mode, we want the image content to be centered within the card, so we shift
+        // it around.
+        _arenaCard.position = transform.position;
+      }
+      else
+      {
+        _frame.gameObject.SetActive(true);
+        _titleBackground.gameObject.SetActive(true);
+        _title.gameObject.SetActive(true);
+        _rulesText.gameObject.SetActive(true);
+        _jewel.gameObject.SetActive(true);
+        _arenaFrame.gameObject.SetActive(false);
+        _cardShadow.SetActive(true);
+        _arenaShadow.SetActive(false);
+        _arenaCard.localPosition = ArenaCardOffset;
       }
 
-      _renderingMode = renderingMode;
       UpdateIcons();
-
       if (_revealedCardView != null)
       {
         // TODO: For some reason this is needed to fix the text curve, figure out why
@@ -195,12 +189,11 @@ namespace Spelldawn.Game
         return;
       }
 
-      if (_interactive && _canPlay)
+      if (InHand() && _canPlay)
       {
         _isDragging = true;
-        _interactive = false;
-        SortingOrder.Create(SortingOrder.Type.Dragging).ApplyTo(_sortingGroup);
-        _handIndex = Parent!.RemoveCard(this);
+        SortingOrder.Create(GameContext.Dragging).ApplyTo(_sortingGroup);
+        _handIndex = Parent!.RemoveObject(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
         _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
@@ -234,8 +227,7 @@ namespace Spelldawn.Game
       if (!_isDragging || distance < 3.5f || _revealedCardView?.OnReleasePosition == null)
       {
         // Return to hand
-        _interactive = true;
-        StartCoroutine(Parent!.AddCard(this, animate: true, index: _handIndex));
+        StartCoroutine(Parent!.AddObject(this, animate: true, index: _handIndex));
       }
       else
       {
@@ -257,15 +249,9 @@ namespace Spelldawn.Game
           }
         }
 
-        if (position != null)
-        {
-          StartCoroutine(_registry.CardService.MoveCard(this, position));
-        }
-        else
-        {
-          _interactive = true;
-          StartCoroutine(Parent!.AddCard(this, animate: true, index: _handIndex));
-        }
+        StartCoroutine(position != null
+          ? _registry.CardService.MoveCard(this, position)
+          : Parent!.AddObject(this, animate: true, index: _handIndex));
       }
 
       _isDragging = false;
@@ -315,13 +301,7 @@ namespace Spelldawn.Game
       SetTitle(revealed.Title.Text);
       _rulesText.text = revealed.RulesText.Text;
       _jewel.sprite = _registry.AssetService.GetSprite(revealed.Jewel);
-      UpdateOutline();
       UpdateIcons();
-    }
-
-    void UpdateOutline()
-    {
-      _outline.gameObject.SetActive(_canPlay);
     }
 
     void UpdateIcons()
@@ -335,7 +315,7 @@ namespace Spelldawn.Game
 
     void SetCardIcon(Icon icon, CardIcon? cardIcon)
     {
-      if (cardIcon != null && _renderingMode == RenderingMode.Default)
+      if (cardIcon != null && !IsArenaContext(GameContext))
       {
         icon.Background.gameObject.SetActive(true);
         icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);

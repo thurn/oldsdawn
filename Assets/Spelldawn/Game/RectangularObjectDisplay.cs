@@ -19,22 +19,22 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class RectangularCardDisplay : CardDisplay
+  public sealed class RectangularObjectDisplay : ObjectDisplay
   {
     [SerializeField] float _width;
     [SerializeField] float _height;
     [SerializeField] float _initialSpacing;
     [SerializeField] float _cardSize;
 
-    protected override SortingOrder.Type DefaultSortingType() => SortingOrder.Type.Arena;
+    protected override GameContext DefaultGameContext() => Game.GameContext.Arena;
 
-    protected override Vector3 CalculateCardPosition(int index, int count) =>
+    protected override Vector3 CalculateObjectPosition(int index, int count) =>
       transform.position + new Vector3(
         CalculateXOffset(index, count),
         0,
         CalculateZOffset(index, count));
 
-    protected override Vector3? CalculateCardRotation(int index, int count) =>
+    protected override Vector3? CalculateObjectRotation(int index, int count) =>
       new Vector3(x: 270, y: 0, 0);
 
     float CalculateXOffset(int index, int count)
@@ -50,7 +50,7 @@ namespace Spelldawn.Game
         index -= count;
       }
 
-      return LinearCardDisplay.CalculateXOffset(_width, _initialSpacing, _cardSize, index, count);
+      return LinearObjectDisplay.CalculateXOffset(_width, _initialSpacing, _cardSize, index, count);
     }
 
     float CalculateZOffset(int index, int count)

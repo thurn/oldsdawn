@@ -86,7 +86,7 @@ namespace Spelldawn.Game
     {
       foreach (var ps in GetComponentsInChildren<ParticleSystem>())
       {
-        SortingOrder.Create(SortingOrder.Type.Effects).ApplyTo(ps.GetComponent<Renderer>());
+        SortingOrder.Create(GameContext.Effects).ApplyTo(ps.GetComponent<Renderer>());
       }
     }
   }

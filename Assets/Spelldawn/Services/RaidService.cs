@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Spelldawn.Game;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -26,16 +27,11 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] SpriteRenderer _background = null!;
-    [SerializeField] CardDisplay _participants = null!;
-    [SerializeField] CardDisplay _raidTargets = null!;
+    [SerializeField] ObjectDisplay _participants = null!;
     RoomId? _currentRoom;
 
-    public IEnumerator AddToRaid(AbstractCard card, CardPositionRaid position, bool animate) =>
-      position.RoomLocation switch
-      {
-        RoomLocation.InRoom => _raidTargets.AddCard(card, animate, position.Index),
-        _ => _participants.AddCard(card, animate, position.Index),
-      };
+    public IEnumerator AddToRaid(Displayable card, CardPositionRaid position, bool animate) =>
+      _participants.AddObject(card, animate, position.Index);
 
     public IEnumerator HandleInitiateRaid(InitiateRaidCommand command)
     {
@@ -48,10 +44,21 @@ namespace Spelldawn.Services
 
         _currentRoom = command.RoomId;
         _background.enabled = true;
-        _registry.ArenaService.LeftItems.SortingType = SortingOrder.Type.Raid;
+        _registry.ArenaService.LeftItems.GameContext = GameContext.ArenaRaidParticipant;
 
-        yield return MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).Defenders, RoomLocation.Defender);
-        yield return MoveToRaid(_registry.ArenaService.FindRoom(command.RoomId).CardsInRoom, RoomLocation.InRoom);
+        var room = _registry.ArenaService.FindRoom(command.RoomId);
+        switch (command.RoomId)
+        {
+          case RoomId.Sanctum:
+            yield return _participants.AddObject(
+              _registry.IdentityCardForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
+            break;
+          default:
+            break;
+        }
+
+        yield return MoveToRaid(room.CardsInRoom, RoomLocation.InRoom);
+        yield return MoveToRaid(room.Defenders, RoomLocation.Defender);
 
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;
@@ -66,7 +73,7 @@ namespace Spelldawn.Services
       }
     }
 
-    IEnumerator MoveToRaid(IEnumerable<AbstractCard> cards, RoomLocation roomLocation)
+    IEnumerator MoveToRaid(IEnumerable<Displayable> cards, RoomLocation roomLocation)
     {
       var coroutines = new List<Coroutine>();
       foreach (var card in cards)
