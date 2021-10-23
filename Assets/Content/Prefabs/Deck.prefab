@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 897510664189753341}
   - component: {fileID: 1478306717337425584}
   - component: {fileID: 5710788212974388070}
+  - component: {fileID: 4342431512562652132}
   m_Layer: 0
   m_Name: Deck
   m_TagString: Untagged
@@ -62,8 +63,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e632facbf4d4bafb9fceef9e61bc859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 0
+  _sortingGroup: {fileID: 4342431512562652132}
   _registry: {fileID: 0}
   _clickable: 0
+--- !u!210 &4342431512562652132
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897510664189753330}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &1072442688763440058
 GameObject:
   m_ObjectHideFlags: 0

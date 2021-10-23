@@ -43,7 +43,7 @@ namespace Spelldawn.Services
       return Errors.CheckNotNull(result);
     }
 
-    public IEnumerator AddAsItem(Displayable card, CardPositionItem position, bool animate)
+    public IEnumerator AddAsItem(Displayable card, ObjectPositionItem position, bool animate)
     {
       switch (position.ItemLocation)
       {
@@ -57,7 +57,7 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator AddToRoom(Displayable card, CardPositionRoom position, bool animate)
+    public IEnumerator AddToRoom(Displayable card, ObjectPositionRoom position, bool animate)
     {
       return FindRoom(position.RoomId).AddCard(card, position.RoomLocation, position.Index, animate);
     }

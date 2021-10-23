@@ -30,7 +30,7 @@ namespace Spelldawn.Services
     [SerializeField] ObjectDisplay _participants = null!;
     RoomId? _currentRoom;
 
-    public IEnumerator AddToRaid(Displayable card, CardPositionRaid position, bool animate) =>
+    public IEnumerator AddToRaid(Displayable card, ObjectPositionRaid position, bool animate) =>
       _participants.AddObject(card, animate, position.Index);
 
     public IEnumerator HandleInitiateRaid(InitiateRaidCommand command)
@@ -44,7 +44,7 @@ namespace Spelldawn.Services
 
         _currentRoom = command.RoomId;
         _background.enabled = true;
-        _registry.ArenaService.LeftItems.GameContext = GameContext.ArenaRaidParticipant;
+        _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
 
         var room = _registry.ArenaService.FindRoom(command.RoomId);
         switch (command.RoomId)
@@ -53,21 +53,22 @@ namespace Spelldawn.Services
             yield return _participants.AddObject(
               _registry.IdentityCardForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;
-          default:
+          case RoomId.Treasury:
+            yield return _participants.AddObject(_registry.DeckForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;
         }
 
-        yield return MoveToRaid(room.CardsInRoom, RoomLocation.InRoom);
-        yield return MoveToRaid(room.Defenders, RoomLocation.Defender);
+        yield return MoveToRaid(room.CardsInRoom, RoomLocation.Back);
+        yield return MoveToRaid(room.Defenders, RoomLocation.Front);
 
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;
 
-        yield return _registry.CardService.MoveCard(identity, new CardPosition
+        yield return _registry.CardService.MoveCard(identity, new ObjectPosition
         {
-          Raid = new CardPositionRaid
+          Raid = new ObjectPositionRaid
           {
-            RoomLocation = RoomLocation.Defender
+            RoomLocation = RoomLocation.Front
           }
         });
       }
@@ -78,9 +79,9 @@ namespace Spelldawn.Services
       var coroutines = new List<Coroutine>();
       foreach (var card in cards)
       {
-        coroutines.Add(StartCoroutine(_registry.CardService.MoveCard(card, new CardPosition
+        coroutines.Add(StartCoroutine(_registry.CardService.MoveCard(card, new ObjectPosition
         {
-          Raid = new CardPositionRaid
+          Raid = new ObjectPositionRaid
           {
             RoomLocation = roomLocation
           }

@@ -22,25 +22,10 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public abstract class ObjectDisplay : MonoBehaviour
+  public abstract class ObjectDisplay : Displayable
   {
-    [SerializeField] GameContext _currentGameContext = GameContext.Unspecified;
     protected List<Displayable> Objects { get; } = new();
     public List<Displayable> AllObjects => new(Objects);
-
-    public GameContext GameContext
-    {
-      get => _currentGameContext == GameContext.Unspecified
-        ? Errors.CheckEnum(DefaultGameContext())
-        : _currentGameContext;
-
-      set
-      {
-        Errors.CheckArgument(value != GameContext.Unspecified, "GameContext unspecified");
-        _currentGameContext = value;
-        StartCoroutine(MoveObjectsToPosition(true));
-      }
-    }
 
     public IEnumerator<YieldInstruction> AddObject(Displayable displayable, bool animate = true, int? index = null)
     {
@@ -78,7 +63,12 @@ namespace Spelldawn.Game
       StartCoroutine(MoveObjectsToPosition(true));
     }
 
-    protected abstract GameContext DefaultGameContext();
+    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
+    {
+      StartCoroutine(MoveObjectsToPosition(true));
+    }
+
+    protected abstract override GameContext DefaultGameContext();
 
     protected virtual float AnimationDuration => 0.3f;
 

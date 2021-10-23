@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using Google.Protobuf.WellKnownTypes;
 using Spelldawn.Protos;
 using UnityEngine;
 using static Spelldawn.Masonry.MasonUtil;
@@ -74,17 +75,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static readonly List<CardView> Cards = new()
     {
-      RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0,
-        new CardTargeting
-        {
-          PickCard = new PickCard
-          {
-            ValidTargets =
-            {
-              CardId(65538)
-            }
-          }
-        }),
+      RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0),
       RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4,
         new CardTargeting
         {
@@ -97,17 +88,17 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               RoomId.Treasury
             }
           }
-        }, new CardPosition
+        }, new ObjectPosition
         {
-          Room = new CardPositionRoom
+          Room = new ObjectPositionRoom
           {
-            RoomLocation = RoomLocation.Defender
+            RoomLocation = RoomLocation.Front
           }
         }),
       RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1,
-        releasePosition: new CardPosition
+        releasePosition: new ObjectPosition
         {
-          Item = new CardPositionItem
+          Item = new ObjectPositionItem
           {
             ItemLocation = ItemLocation.Left
           }
@@ -153,6 +144,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       switch (action.ActionCase)
       {
+        case GameAction.ActionOneofCase.ServerAction:
+          var commands = action.ServerAction.Payload.Unpack<CommandList>();
+          _registry.CommandService.HandleCommands(commands);
+          break;
         case GameAction.ActionOneofCase.DrawCard:
           DrawUserCard();
           break;
@@ -180,9 +175,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         _registry.CommandService.HandleCommands(new GameCommand
         {
-          MoveCard = new MoveCardCommand
+          MoveGameObject = new MoveGameObjectCommand
           {
-            CardId = card.CardId,
+            Id = new GameObjectId
+            {
+              CardId = card.CardId
+            },
             Position = HandPosition(PlayerName.User),
             DisableAnimation = directToHand
           }
@@ -190,22 +188,22 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     }
 
-    static CardPosition DeckPosition(PlayerName playerName)
+    static ObjectPosition DeckPosition(PlayerName playerName)
     {
-      return new CardPosition
+      return new ObjectPosition
       {
-        Deck = new CardPositionDeck
+        Deck = new ObjectPositionDeck
         {
           Owner = playerName
         }
       };
     }
 
-    static CardPosition HandPosition(PlayerName playerName)
+    static ObjectPosition HandPosition(PlayerName playerName)
     {
-      return new CardPosition
+      return new ObjectPosition
       {
-        Hand = new CardPositionHand
+        Hand = new ObjectPositionHand
         {
           Owner = playerName
         }
@@ -228,9 +226,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       }, new GameCommand
       {
-        MoveCard = new MoveCardCommand
+        MoveGameObject = new MoveGameObjectCommand
         {
-          CardId = cardId,
+          Id = new GameObjectId
+          {
+            CardId = cardId
+          },
           Position = HandPosition(PlayerName.Opponent),
           DisableAnimation = disableAnimation
         }
@@ -291,7 +292,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       string image,
       int manaCost,
       CardTargeting? targeting = null,
-      CardPosition? releasePosition = null)
+      ObjectPosition? releasePosition = null)
     {
       var roomTarget = new CardTargeting
       {
@@ -306,17 +307,17 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       };
 
-      var roomPos = new CardPosition
+      var roomPos = new ObjectPosition
       {
-        Room = new CardPositionRoom
+        Room = new ObjectPositionRoom
         {
-          RoomLocation = RoomLocation.Defender
+          RoomLocation = RoomLocation.Front
         }
       };
 
-      var itemPos = new CardPosition
+      var itemPos = new ObjectPosition
       {
-        Item = new CardPositionItem
+        Item = new ObjectPositionItem
         {
           ItemLocation = ItemLocation.Left
         }
@@ -437,6 +438,16 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     ServerAction CardStrikeAction() =>
       new()
       {
+        Payload = Any.Pack(new CommandList
+        {
+          Commands =
+          {
+            new GameCommand
+            {
+              EndRaid = new EndRaidCommand()
+            }
+          }
+        }),
         OptimisticUpdate = new CommandList
         {
           Commands =
@@ -453,13 +464,19 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             {
               FireProjectile = new FireProjectileCommand
               {
-                SourceId = new CardId
+                SourceId = new GameObjectId
                 {
-                  Value = 2
+                  CardId = new CardId
+                  {
+                    Value = 2
+                  }
                 },
-                TargetId = new CardId
+                TargetId = new GameObjectId
                 {
-                  Value = 1
+                  CardId = new CardId
+                  {
+                    Value = 1
+                  }
                 },
                 Projectile = new ProjectileAddress
                 {
@@ -475,18 +492,18 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
                 },
                 AdditionalHitDelay = new TimeValue
                 {
-                  Milliseconds = 300
+                  Milliseconds = 100
                 },
                 HideDuration = new TimeValue
                 {
                   Milliseconds = 300
                 },
-                JumpToPosition = new CardPosition
+                JumpToPosition = new ObjectPosition
                 {
-                  Room = new CardPositionRoom
+                  Room = new ObjectPositionRoom
                   {
                     RoomId = RoomId.RoomB,
-                    RoomLocation = RoomLocation.Defender
+                    RoomLocation = RoomLocation.Front
                   }
                 }
               }

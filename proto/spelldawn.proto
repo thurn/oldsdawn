@@ -399,6 +399,15 @@ message CardId {
     }
 }
 
+message GameObjectId {
+    oneof id {
+        CardId card_id = 1;
+        PlayerName deck = 2;
+        PlayerName hand = 3;
+        PlayerName discard_pile = 4;
+    }
+}
+
 enum RoomId {
     ROOM_ID_UNSPECIFIED = 0;
     ROOM_ID_TREASURY = 1;
@@ -409,13 +418,6 @@ enum RoomId {
     ROOM_ID_ROOM_C = 6;
     ROOM_ID_ROOM_D = 7;
     ROOM_ID_ROOM_E = 8;
-}
-
-message TargetId {
-    oneof target {
-        CardId card_id = 1;
-        RoomId room_id = 2;
-    }
 }
 
 
@@ -453,23 +455,14 @@ enum TargetingArrow {
     TARGETING_ARROW_GREEN = 3;
 }
 
-message PickCard {
-    repeated CardId valid_targets = 1;
-
-    TargetingArrow targeting_arrow = 2;
-}
-
 message PickRoom {
     repeated RoomId valid_rooms = 2;
 }
 
 message CardTargeting {
     oneof targeting {
-        /** Pick one of these cards via an arrow on drag. */
-        PickCard pick_card = 1;
-
         /** Pick one of these valid rooms. */
-        PickRoom pick_room = 2;
+        PickRoom pick_room = 1;
     }
 }
 
@@ -525,16 +518,16 @@ message CardCost {
     SpendCostAlgorithm spend_cost_algorithm = 5;
 }
 
-message CardPositionOffscreen {
+message ObjectPositionOffscreen {
 }
 
 enum RoomLocation {
     ROOM_LOCATION_UNSPECIFIED = 0;
-    ROOM_LOCATION_IN_ROOM = 1;
-    ROOM_LOCATION_DEFENDER = 2;
+    ROOM_LOCATION_BACK = 1;
+    ROOM_LOCATION_FRONT = 2;
 }
 
-message CardPositionRoom {
+message ObjectPositionRoom {
     RoomId room_id = 1;
     RoomLocation room_location = 2;
     google.protobuf.Int32Value index = 3;
@@ -546,49 +539,68 @@ enum ItemLocation {
     ITEM_LOCATION_RIGHT = 2;
 }
 
-message CardPositionItem {
+message ObjectPositionItem {
     ItemLocation item_location = 1;
 }
 
-message CardPositionStaging {
+message ObjectPositionStaging {
 }
 
-message CardPositionHand {
+message ObjectPositionHand {
     PlayerName owner = 1;
 }
 
-message CardPositionDeck {
+message ObjectPositionHandContainer {
     PlayerName owner = 1;
 }
 
-message CardPositionDiscard {
+message ObjectPositionDeck {
     PlayerName owner = 1;
 }
 
-message CardPositionScored {
+message ObjectPositionDeckContainer {
     PlayerName owner = 1;
 }
 
-message CardPositionRaid {
+message ObjectPositionDiscard {
+    PlayerName owner = 1;
+}
+
+message ObjectPositionDiscardContainer {
+    PlayerName owner = 1;
+}
+
+message ObjectPositionScored {
+    PlayerName owner = 1;
+}
+
+message ObjectPositionRaid {
     RoomLocation room_location = 1;
     google.protobuf.Int32Value index = 2;
 }
 
-message CardPositionBrowser {
+message ObjectPositionBrowser {
 }
 
-message CardPosition {
+message ObjectPositionIdentityContainer {
+    PlayerName owner = 1;
+}
+
+message ObjectPosition {
     oneof position {
-        CardPositionOffscreen offscreen = 1;
-        CardPositionRoom room = 2;
-        CardPositionItem item = 3;
-        CardPositionStaging staging = 4;
-        CardPositionHand hand = 5;
-        CardPositionDeck deck = 6;
-        CardPositionDiscard discard = 7;
-        CardPositionScored scored = 8;
-        CardPositionRaid raid = 9;
-        CardPositionBrowser browser = 10;
+        ObjectPositionOffscreen offscreen = 1;
+        ObjectPositionRoom room = 2;
+        ObjectPositionItem item = 3;
+        ObjectPositionStaging staging = 4;
+        ObjectPositionHand hand = 5;
+        ObjectPositionHandContainer hand_container = 6;
+        ObjectPositionDeck deck = 7;
+        ObjectPositionDeckContainer deck_container = 8;
+        ObjectPositionDiscard discard = 9;
+        ObjectPositionDiscardContainer discard_container = 10;
+        ObjectPositionScored scored = 11;
+        ObjectPositionRaid raid = 12;
+        ObjectPositionBrowser browser = 13;
     }
 }
 
@@ -610,10 +622,10 @@ message RevealedCardView {
     /**
     * Where to move a played card. Information from 'targeting' will be
     * incorporated to fill this in, e.g. if a room is targeted and
-    * CardPositionRoom is selected here with no RoomId, the targeted room
+    * ObjectPositionRoom is selected here with no RoomId, the targeted room
     * is used.
     */
-    CardPosition on_release_position = 9;
+    ObjectPosition on_release_position = 9;
 
     /** Information needed to determine whether a card can be played. */
     CardCost cost = 10;
@@ -621,7 +633,7 @@ message RevealedCardView {
 
 message CardView {
     CardId card_id = 1;
-    CardPosition on_create_position = 2;
+    ObjectPosition on_create_position = 2;
     SpriteAddress card_back = 3;
     CardIcons card_icons = 4;
     SpriteAddress arena_frame = 5;
@@ -735,6 +747,12 @@ message LevelUpAction {
     RoomId room_id = 1;
 }
 
+message CardTarget {
+    oneof card_target {
+        RoomId room_id = 1;
+    }
+}
+
 /**
 * Spend an action to play a card from hand.
 *
@@ -756,7 +774,7 @@ message LevelUpAction {
 */
 message PlayCardAction {
     CardId card_id = 1;
-    TargetId target = 2;
+    CardTarget target = 2;
 }
 
 /**
@@ -855,9 +873,9 @@ message UpdateCardCommand {
     CardView card = 1;
 }
 
-message MoveCardCommand {
-    CardId card_id = 1;
-    CardPosition position = 2;
+message MoveGameObjectCommand {
+    GameObjectId id = 1;
+    ObjectPosition position = 2;
     bool disable_animation = 3;
 }
 
@@ -873,11 +891,11 @@ message UpdatePlayerStateCommand {
 }
 
 /**
- * Fire a projectile from one card at another.
+ * Fire a projectile from one game object at another.
  */
 message FireProjectileCommand {
-    CardId source_id = 1;
-    CardId target_id = 2;
+    GameObjectId source_id = 1;
+    GameObjectId target_id = 2;
 
     /** Projectile to fire from the 'source_id' card to 'target_id' */
     ProjectileAddress projectile = 3;
@@ -903,7 +921,7 @@ message FireProjectileCommand {
     /**
      * Position for the target to jump to after being hit.
      */
-    CardPosition jump_to_position = 8;
+    ObjectPosition jump_to_position = 8;
 }
 
 message GameCommand {
@@ -914,7 +932,7 @@ message GameCommand {
         EndRaidCommand end_raid = 4;
         CreateCardCommand create_card = 5;
         UpdateCardCommand update_card = 6;
-        MoveCardCommand move_card = 7;
+        MoveGameObjectCommand move_game_object = 7;
         DestroyCardCommand destroy_card = 8;
         UpdatePlayerStateCommand update_player_state = 9;
         FireProjectileCommand fire_projectile = 10;

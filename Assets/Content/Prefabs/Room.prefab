@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d9d920a7054f4f91a388f3000ae767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 1
   _width: 7
   _height: 9
   _initialSpacing: 1
@@ -92,6 +94,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d9d920a7054f4f91a388f3000ae767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 1
   _width: 7
   _height: 9
   _initialSpacing: 1

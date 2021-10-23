@@ -16,7 +16,6 @@ using Spelldawn.Protos;
 using Spelldawn.Services;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 #nullable enable
 
@@ -28,7 +27,6 @@ namespace Spelldawn.Game
     [SerializeField] bool _canDrag;
     [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] TextMeshPro _scoreText = null!;
-    [SerializeField] SortingGroup _sortingGroup = null!;
     [SerializeField] GameObject _raidSymbol = null!;
     RoomId? _selectedRoom;
 
@@ -67,7 +65,6 @@ namespace Spelldawn.Game
 
     protected override void OnSetGameContext(GameContext _, GameContext gameContext, int? index = null)
     {
-      SortingOrder.Create(gameContext, index ?? 0).ApplyTo(_sortingGroup);
     }
   }
 }

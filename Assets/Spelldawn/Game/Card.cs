@@ -20,7 +20,6 @@ using Spelldawn.Utils;
 using TMPro;
 using TMPro.Examples;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 #nullable enable
 
@@ -43,7 +42,6 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _jewel = null!;
     [SerializeField] SpriteRenderer _arenaFrame = null!;
     [SerializeField] GameObject _arenaShadow = null!;
-    [SerializeField] SortingGroup _sortingGroup = null!;
     [SerializeField] WarpTextExample _warpText = null!;
     [SerializeField] Icon _topLeftIcon = null!;
     [SerializeField] Icon _topRightIcon = null!;
@@ -143,8 +141,6 @@ namespace Spelldawn.Game
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
-      SortingOrder.Create(newContext, index ?? 0).ApplyTo(_sortingGroup);
-
       if (IsArenaContext(newContext))
       {
         _frame.gameObject.SetActive(false);
@@ -192,7 +188,7 @@ namespace Spelldawn.Game
       if (InHand() && _canPlay)
       {
         _isDragging = true;
-        SortingOrder.Create(GameContext.Dragging).ApplyTo(_sortingGroup);
+        SetGameContext(GameContext.Dragging);
         _handIndex = Parent!.RemoveObject(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
@@ -232,12 +228,12 @@ namespace Spelldawn.Game
       else
       {
         var position = _revealedCardView?.OnReleasePosition;
-        if (position?.PositionCase == CardPosition.PositionOneofCase.Room)
+        if (position?.PositionCase == ObjectPosition.PositionOneofCase.Room)
         {
           if (_targetRoom is { } targetRoom)
           {
             // Move to targeted room if one is available
-            var newPosition = new CardPosition();
+            var newPosition = new ObjectPosition();
             newPosition.MergeFrom(position);
             newPosition.Room.RoomId = targetRoom;
             position = newPosition;

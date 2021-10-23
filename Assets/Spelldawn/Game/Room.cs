@@ -40,7 +40,7 @@ namespace Spelldawn.Game
 
     public IEnumerator AddCard(Displayable card, RoomLocation location, int? index, bool animate) => location switch
     {
-      RoomLocation.InRoom => _inRoom.AddObject(card, animate, index),
+      RoomLocation.Back => _inRoom.AddObject(card, animate, index),
       _ => _defenders.AddObject(card, animate, index)
     };
   }

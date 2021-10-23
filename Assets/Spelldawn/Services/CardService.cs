@@ -32,16 +32,22 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] Card _cardPrefab = null!;
 
-    readonly Dictionary<CardId, Displayable> _cards = new();
+    readonly Dictionary<GameObjectId, Displayable> _cards = new();
 
-    static readonly CardId UserCardId = new CardId
+    static readonly GameObjectId UserCardId = new()
     {
-      IdentityCard = PlayerName.User
+      CardId = new CardId
+      {
+        IdentityCard = PlayerName.User
+      }
     };
 
-    static readonly CardId OpponentCardId = new CardId
+    static readonly GameObjectId OpponentCardId = new()
     {
-      IdentityCard = PlayerName.Opponent
+      CardId = new CardId
+      {
+        IdentityCard = PlayerName.Opponent
+      }
     };
 
     Card? _optimisticCard;
@@ -114,7 +120,7 @@ namespace Spelldawn.Services
         }
       }
 
-      _cards[command.Card.CardId] = card;
+      _cards[ToGameObjectId(command.Card.CardId)] = card;
 
       if (waitForStaging)
       {
@@ -135,8 +141,7 @@ namespace Spelldawn.Services
         .Insert(0, source.transform.DORotate(new Vector3(280, 0, 0), 0.2f))
         .Insert(0,
           source.transform.DOMove(
-            Vector3.MoveTowards(source.transform.position, _registry.MainCamera.transform.position, 20f) -
-            new Vector3(0, 0, 1), 0.2f))
+            Vector3.MoveTowards(source.transform.position, _registry.MainCamera.transform.position, 20f), 0.2f))
         .WaitForCompletion();
 
       var projectile = _registry.ObjectPoolService.Create(
@@ -166,21 +171,14 @@ namespace Spelldawn.Services
 
       if (command.JumpToPosition != null)
       {
-        yield return MoveCard(target, new CardPosition
-        {
-          Room = new CardPositionRoom
-          {
-            RoomLocation = RoomLocation.Defender,
-            RoomId = RoomId.RoomB
-          }
-        }, animate: false, animateRemove: true);
+        yield return MoveCard(target, command.JumpToPosition, animate: false, animateRemove: true);
       }
     }
 
-    public IEnumerator HandleMoveCardCommand(MoveCardCommand command)
+    public IEnumerator HandleMoveCardCommand(MoveGameObjectCommand command)
     {
-      CheckExists(command.CardId);
-      var card = _cards[command.CardId];
+      CheckExists(command.Id);
+      var card = _cards[command.Id];
       if (card.Parent)
       {
         card.Parent!.RemoveObjectIfPresent(card, !command.DisableAnimation);
@@ -189,7 +187,7 @@ namespace Spelldawn.Services
       return MoveCardInternal(card, command.Position, !command.DisableAnimation);
     }
 
-    public IEnumerator MoveCard(Displayable card, CardPosition targetPosition, bool animate = true,
+    public IEnumerator MoveCard(Displayable card, ObjectPosition targetPosition, bool animate = true,
       bool animateRemove = true)
     {
       if (card.Parent)
@@ -200,36 +198,41 @@ namespace Spelldawn.Services
       return MoveCardInternal(card, targetPosition, animate);
     }
 
-    Displayable CheckExists(CardId cardId)
+    static GameObjectId ToGameObjectId(CardId cardId) => new()
+    {
+      CardId = cardId
+    };
+
+    Displayable CheckExists(GameObjectId cardId)
     {
       Errors.CheckState(_cards.ContainsKey(cardId), $"Card not found: {cardId}");
       return _cards[cardId];
     }
 
-    IEnumerator MoveCardInternal(Displayable card, CardPosition position, bool animate)
+    IEnumerator MoveCardInternal(Displayable card, ObjectPosition position, bool animate)
     {
       switch (position.PositionCase)
       {
-        case CardPosition.PositionOneofCase.Offscreen:
+        case ObjectPosition.PositionOneofCase.Offscreen:
           card.transform.position = Vector3.zero;
           return CollectionUtils.Yield();
-        case CardPosition.PositionOneofCase.Room:
+        case ObjectPosition.PositionOneofCase.Room:
           return _registry.ArenaService.AddToRoom(card, position.Room, animate);
-        case CardPosition.PositionOneofCase.Item:
+        case ObjectPosition.PositionOneofCase.Item:
           return _registry.ArenaService.AddAsItem(card, position.Item, animate);
-        case CardPosition.PositionOneofCase.Staging:
+        case ObjectPosition.PositionOneofCase.Staging:
           return _registry.CardStaging.AddObject(card, animate);
-        case CardPosition.PositionOneofCase.Hand:
+        case ObjectPosition.PositionOneofCase.Hand:
           return _registry.HandForPlayer(position.Hand.Owner).AddObject(card, animate);
-        case CardPosition.PositionOneofCase.Deck:
+        case ObjectPosition.PositionOneofCase.Deck:
           return _registry.DeckForPlayer(position.Deck.Owner).AddObject(card, animate);
-        case CardPosition.PositionOneofCase.Discard:
+        case ObjectPosition.PositionOneofCase.Discard:
           throw new NotImplementedException();
-        case CardPosition.PositionOneofCase.Scored:
+        case ObjectPosition.PositionOneofCase.Scored:
           throw new NotImplementedException();
-        case CardPosition.PositionOneofCase.Raid:
+        case ObjectPosition.PositionOneofCase.Raid:
           return _registry.RaidService.AddToRaid(card, position.Raid, animate);
-        case CardPosition.PositionOneofCase.Browser:
+        case ObjectPosition.PositionOneofCase.Browser:
           throw new NotImplementedException();
         default:
           throw new ArgumentOutOfRangeException();

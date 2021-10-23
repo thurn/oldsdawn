@@ -65,14 +65,15 @@ namespace Spelldawn.Services
             yield return StartCoroutine(_registry.RaidService.HandleInitiateRaid(command.InitiateRaid));
             break;
           case GameCommand.CommandOneofCase.EndRaid:
+            yield return StartCoroutine(_registry.RaidService.HandleEndRaid(command.EndRaid));
             break;
           case GameCommand.CommandOneofCase.CreateCard:
             yield return StartCoroutine(_registry.CardService.HandleCreateCardCommand(command.CreateCard));
             break;
           case GameCommand.CommandOneofCase.UpdateCard:
             break;
-          case GameCommand.CommandOneofCase.MoveCard:
-            yield return StartCoroutine(_registry.CardService.HandleMoveCardCommand(command.MoveCard));
+          case GameCommand.CommandOneofCase.MoveGameObject:
+            yield return StartCoroutine(_registry.CardService.HandleMoveCardCommand(command.MoveGameObject));
             break;
           case GameCommand.CommandOneofCase.DestroyCard:
             break;
