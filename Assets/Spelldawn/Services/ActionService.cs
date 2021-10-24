@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
+using System.Collections;
 using Spelldawn.Protos;
 using UnityEngine;
 
@@ -23,41 +23,50 @@ namespace Spelldawn.Services
   public sealed class ActionService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
+    bool _currentlyHandlingAction;
 
     public void HandleAction(GameAction action)
     {
+      if (_currentlyHandlingAction)
+      {
+        Debug.LogError($"Error: Already handling action, cannot process {action}");
+        return;
+      }
+
+      _currentlyHandlingAction = true;
       StartCoroutine(HandleActionAsync(action));
     }
 
-    IEnumerator<YieldInstruction> HandleActionAsync(GameAction action)
+    IEnumerator HandleActionAsync(GameAction action)
     {
-      ApplyOptimisticResponse(action);
+      yield return ApplyOptimisticResponse(action);
 
       // Send to server
       yield return new WaitForSeconds(Random.Range(0.1f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
 
-      _registry.SampleData.FakeActionResponse(action);
+      yield return _registry.SampleData.FakeActionResponse(action);
+      _currentlyHandlingAction = false;
     }
 
-    void ApplyOptimisticResponse(GameAction action)
+    IEnumerator ApplyOptimisticResponse(GameAction action)
     {
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.ServerAction:
           if (action.ServerAction.OptimisticUpdate is { } response)
           {
-            _registry.CommandService.HandleCommands(response);
+            yield return _registry.CommandService.HandleCommands(response);
           }
 
           break;
         case GameAction.ActionOneofCase.DrawCard:
-          _registry.CardService.DrawOptimisticCard();
+          _registry.ObjectPositionService.DrawOptimisticCard();
           break;
         case GameAction.ActionOneofCase.GainMana:
           _registry.ManaDisplayForPlayer(PlayerName.User).Increment();
           break;
         case GameAction.ActionOneofCase.InitiateRaid:
-          _registry.CommandService.HandleCommands(new GameCommand
+          yield return _registry.CommandService.HandleCommands(new GameCommand
           {
             InitiateRaid = new InitiateRaidCommand
             {
@@ -66,6 +75,8 @@ namespace Spelldawn.Services
             }
           });
           break;
+        default:
+          yield break;
       }
     }
   }

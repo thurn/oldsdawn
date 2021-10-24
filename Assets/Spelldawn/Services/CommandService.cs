@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using System.Collections.Generic;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -23,19 +25,20 @@ namespace Spelldawn.Services
   public sealed class CommandService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    bool _currentlyHandling;
+    [SerializeField] bool _currentlyHandling;
     readonly Queue<CommandList> _queue = new();
 
-    public void HandleCommands(params GameCommand[] commands)
+    public IEnumerator HandleCommands(params GameCommand[] commands)
     {
       var list = new CommandList();
       list.Commands.AddRange(commands);
-      HandleCommands(list);
+      return HandleCommands(list);
     }
 
-    public void HandleCommands(CommandList commandList)
+    public IEnumerator HandleCommands(CommandList commandList)
     {
       _queue.Enqueue(commandList);
+      return new WaitUntil(() => _currentlyHandling == false && _queue.Count == 0);
     }
 
     void Update()
@@ -47,7 +50,7 @@ namespace Spelldawn.Services
       }
     }
 
-    IEnumerator<YieldInstruction> HandleCommandsAsync(CommandList commandList)
+    IEnumerator HandleCommandsAsync(CommandList commandList)
     {
       yield return StartCoroutine(_registry.AssetService.LoadAssets(commandList));
 
@@ -55,6 +58,9 @@ namespace Spelldawn.Services
       {
         switch (command.CommandCase)
         {
+          case GameCommand.CommandOneofCase.DebugLog:
+            Debug.Log(command.DebugLog.Message);
+            break;
           case GameCommand.CommandOneofCase.RenderInterface:
             HandleRenderInterface(command.RenderInterface);
             break;
@@ -68,19 +74,22 @@ namespace Spelldawn.Services
             yield return StartCoroutine(_registry.RaidService.HandleEndRaid(command.EndRaid));
             break;
           case GameCommand.CommandOneofCase.CreateCard:
-            yield return StartCoroutine(_registry.CardService.HandleCreateCardCommand(command.CreateCard));
+            yield return StartCoroutine(_registry.ObjectPositionService.HandleCreateCardCommand(command.CreateCard));
             break;
           case GameCommand.CommandOneofCase.UpdateCard:
             break;
           case GameCommand.CommandOneofCase.MoveGameObject:
-            yield return StartCoroutine(_registry.CardService.HandleMoveCardCommand(command.MoveGameObject));
+            yield return StartCoroutine(_registry.ObjectPositionService.HandleMoveCardCommand(command.MoveGameObject));
             break;
           case GameCommand.CommandOneofCase.DestroyCard:
             break;
           case GameCommand.CommandOneofCase.UpdatePlayerState:
             break;
           case GameCommand.CommandOneofCase.FireProjectile:
-            yield return StartCoroutine(_registry.CardService.HandleFireProjectileCommand(command.FireProjectile));
+            yield return StartCoroutine(_registry.ObjectPositionService.HandleFireProjectileCommand(command.FireProjectile));
+            break;
+          case GameCommand.CommandOneofCase.Delay:
+            yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
             break;
           case GameCommand.CommandOneofCase.None:
           default:
@@ -96,9 +105,9 @@ namespace Spelldawn.Services
       _registry.DocumentService.HandleRenderInterface(command);
     }
 
-    IEnumerator<YieldInstruction> HandleRenderGame(RenderGameCommand command)
+    IEnumerator HandleRenderGame(RenderGameCommand command)
     {
-      _registry.CardService.Initialize(
+      _registry.ObjectPositionService.Initialize(
         command.Game?.User?.PlayerInfo?.IdentityCard,
         command.Game?.Opponent?.PlayerInfo?.IdentityCard);
       yield break;

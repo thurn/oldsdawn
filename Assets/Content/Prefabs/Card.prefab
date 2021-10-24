@@ -839,7 +839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2085476032902578303
 Transform:
   m_ObjectHideFlags: 0
@@ -1426,6 +1426,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a1514c6e064b52b8539d102d7982e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 0
+  _sortingGroup: {fileID: 6859622998180740047}
   _cardBack: {fileID: 5519798289580742811}
   _cardFront: {fileID: 2085476032902578303}
   _cardShadow: {fileID: 6204971130660892922}
@@ -1439,7 +1442,6 @@ MonoBehaviour:
   _jewel: {fileID: 7159367575576020492}
   _arenaFrame: {fileID: 506407848545496258}
   _arenaShadow: {fileID: 8026857265719818714}
-  _sortingGroup: {fileID: 6859622998180740047}
   _warpText: {fileID: 4147502737440292297}
   _topLeftIcon:
     _background: {fileID: 696291940682449709}
@@ -1588,7 +1590,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4079848414435750209
 Transform:
   m_ObjectHideFlags: 0

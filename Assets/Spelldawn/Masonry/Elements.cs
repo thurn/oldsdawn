@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 #nullable enable
@@ -22,63 +23,109 @@ namespace Spelldawn.Masonry
 {
   public interface INodeCallbacks
   {
-    public void SetCallback<TEventType>(
-      EventCallback<TEventType>? callback,
-      TrickleDown useTrickleDown = TrickleDown.NoTrickleDown) where TEventType : EventBase<TEventType>, new();
+    VisualElement Self { get; }
+    Lazy<Callbacks> Callbacks { get; }
+
+    void SetCallback(Callbacks.Event eventType, Action? callback)
+    {
+      if (callback != null || Callbacks.IsValueCreated)
+      {
+        Callbacks.Value.SetCallback(Self, eventType, callback);
+      }
+    }
   }
 
   public sealed class Callbacks
   {
-    readonly Dictionary<Type, object> _callbacks = new();
-
-    public void SetCallback<TEventType>(
-      VisualElement e,
-      EventCallback<TEventType>? callback,
-      TrickleDown useTrickleDown = TrickleDown.NoTrickleDown)
-      where TEventType : EventBase<TEventType>, new()
+    public enum Event
     {
-      var t = typeof(TEventType);
-      if (_callbacks.ContainsKey(t))
+      Click,
+      MouseDown,
+      MouseUp,
+      MouseEnter,
+      MouseLeave
+    }
+
+    readonly HashSet<Event> _registered = new();
+    readonly Dictionary<Event, Action?> _actions = new();
+    float _lastClickTime;
+
+    public void SetCallback(VisualElement e, Event eventType, Action? callback)
+    {
+      if (!_registered.Contains(eventType))
       {
-        e.UnregisterCallback((EventCallback<TEventType>)_callbacks[t]);
-        _callbacks.Remove(t);
+        _registered.Add(eventType);
+        Register(e, eventType);
       }
 
-      if (callback != null)
+      _actions[eventType] = callback;
+    }
+
+    void Register(VisualElement e, Event eventType)
+    {
+      switch (eventType)
       {
-        e.RegisterCallback(callback, useTrickleDown);
-        _callbacks[t] = callback;
+        case Event.Click:
+          e.RegisterCallback<ClickEvent>(OnClick);
+          break;
+        case Event.MouseDown:
+          e.RegisterCallback<MouseDownEvent>(OnMouseDown);
+          break;
+        case Event.MouseUp:
+          e.RegisterCallback<MouseUpEvent>(OnMouseUp);
+          break;
+        case Event.MouseEnter:
+          e.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
+          break;
+        case Event.MouseLeave:
+          e.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(eventType), eventType, "Unknown event type");
       }
+    }
+
+    void OnClick(ClickEvent evt)
+    {
+      if (Mathf.Abs(Time.time - _lastClickTime) > 0.1f)
+      {
+        _actions[Event.Click]?.Invoke();
+        _lastClickTime = Time.time;
+      }
+    }
+
+    void OnMouseDown(MouseDownEvent evt)
+    {
+      _actions[Event.MouseDown]?.Invoke();
+    }
+
+    void OnMouseUp(MouseUpEvent evt)
+    {
+      _actions[Event.MouseUp]?.Invoke();
+    }
+
+    void OnMouseEnter(MouseEnterEvent evt)
+    {
+      _actions[Event.MouseEnter]?.Invoke();
+    }
+
+    void OnMouseLeave(MouseLeaveEvent evt)
+    {
+      _actions[Event.MouseLeave]?.Invoke();
     }
   }
 
   public sealed class NodeVisualElement : VisualElement, INodeCallbacks
   {
+    public VisualElement Self => this;
     readonly Lazy<Callbacks> _callbacks = new();
-
-    public void SetCallback<TEventType>(
-      EventCallback<TEventType>? callback,
-      TrickleDown useTrickleDown = TrickleDown.NoTrickleDown) where TEventType : EventBase<TEventType>, new()
-    {
-      if (callback != null || _callbacks.IsValueCreated)
-      {
-        _callbacks.Value.SetCallback(this, callback, useTrickleDown);
-      }
-    }
+    public Lazy<Callbacks> Callbacks => _callbacks;
   }
 
   public sealed class NodeLabel : Label, INodeCallbacks
   {
+    public VisualElement Self => this;
     readonly Lazy<Callbacks> _callbacks = new();
-
-    public void SetCallback<TEventType>(
-      EventCallback<TEventType>? callback,
-      TrickleDown useTrickleDown = TrickleDown.NoTrickleDown) where TEventType : EventBase<TEventType>, new()
-    {
-      if (callback != null || _callbacks.IsValueCreated)
-      {
-        _callbacks.Value.SetCallback(this, callback, useTrickleDown);
-      }
-    }
+    public Lazy<Callbacks> Callbacks => _callbacks;
   }
 }

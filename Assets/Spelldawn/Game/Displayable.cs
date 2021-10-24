@@ -22,8 +22,11 @@ namespace Spelldawn.Game
 {
   public abstract class Displayable : MonoBehaviour
   {
-    [SerializeField] ObjectDisplay? _parent;
+    [Header("Displayable")] [SerializeField]
+    ObjectDisplay? _parent;
+
     [SerializeField] GameContext _gameContext;
+
     [SerializeField] SortingGroup? _sortingGroup;
 
     public ObjectDisplay? Parent

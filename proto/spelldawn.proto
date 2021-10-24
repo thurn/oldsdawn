@@ -575,8 +575,7 @@ message ObjectPositionScored {
 }
 
 message ObjectPositionRaid {
-    RoomLocation room_location = 1;
-    google.protobuf.Int32Value index = 2;
+    google.protobuf.Int32Value index = 1;
 }
 
 message ObjectPositionBrowser {
@@ -809,6 +808,9 @@ message GameAction {
 // Commands
 // ============================================================================
 
+message DebugLogCommand {
+    string message = 1;
+}
 
 enum InterfacePosition {
     INTERFACE_POSITION_UNSPECIFIED = 0;
@@ -859,10 +861,9 @@ message CreateCardCommand {
     CardCreationAnimation animation = 2;
 
     /**
-    * If an optimistic card has already been created, it is updated to match the provided
-    * 'card' instead unless this value is 'true'.
+    * Disable animations when creating this card.
     */
-    bool disallow_optimistic = 3;
+    bool disable_animation = 3;
 }
 
 /**
@@ -913,29 +914,41 @@ message FireProjectileCommand {
     TimeValue additional_hit_delay = 6;
 
     /**
-     * If provided, the target will be hidden for this duration after being hit
-     * and before jumping to 'jump_to_position'.
+     * During to wait for the project's impact effect before continuing
      */
-    TimeValue hide_duration = 7;
+    TimeValue wait_duration = 7;
+
+    /**
+     * If true, the target will be hidden after being hit during the
+     * 'wait_duration' and before jumping to 'jump_to_position'.
+     */
+    bool hide_on_hit = 8;
 
     /**
      * Position for the target to jump to after being hit.
      */
-    ObjectPosition jump_to_position = 8;
+    ObjectPosition jump_to_position = 9;
+}
+
+/** Wait before executing the next command in sequence. */
+message DelayCommand {
+    TimeValue duration = 1;
 }
 
 message GameCommand {
     oneof command {
-        RenderInterfaceCommand render_interface = 1;
-        RenderGameCommand render_game = 2;
-        InitiateRaidCommand initiate_raid = 3;
-        EndRaidCommand end_raid = 4;
-        CreateCardCommand create_card = 5;
-        UpdateCardCommand update_card = 6;
-        MoveGameObjectCommand move_game_object = 7;
-        DestroyCardCommand destroy_card = 8;
-        UpdatePlayerStateCommand update_player_state = 9;
-        FireProjectileCommand fire_projectile = 10;
+        DebugLogCommand debug_log = 1;
+        RenderInterfaceCommand render_interface = 2;
+        RenderGameCommand render_game = 3;
+        InitiateRaidCommand initiate_raid = 4;
+        EndRaidCommand end_raid = 5;
+        CreateCardCommand create_card = 6;
+        UpdateCardCommand update_card = 7;
+        MoveGameObjectCommand move_game_object = 8;
+        DestroyCardCommand destroy_card = 9;
+        UpdatePlayerStateCommand update_player_state = 10;
+        FireProjectileCommand fire_projectile = 11;
+        DelayCommand delay = 12;
     }
 }
 

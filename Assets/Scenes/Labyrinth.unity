@@ -40874,7 +40874,7 @@ MonoBehaviour:
   _assetService: {fileID: 1445473047}
   _objectPoolService: {fileID: 1445473051}
   _actionService: {fileID: 1445473045}
-  _cardService: {fileID: 1445473044}
+  _objectPositionService: {fileID: 1445473044}
   _commandService: {fileID: 1445473043}
   _documentService: {fileID: 1445473046}
   _sampleData: {fileID: 1445473050}
@@ -40884,6 +40884,8 @@ MonoBehaviour:
   _cardStaging: {fileID: 1086194764}
   _userHand: {fileID: 317749080}
   _opponentHand: {fileID: 1072430061}
+  _userDeckPosition: {fileID: 314233147}
+  _opponentDeckPosition: {fileID: 2022949400}
   _userDeck: {fileID: 3484575499835500941}
   _opponentDeck: {fileID: 1996628703}
   _cardStagingArea: {fileID: 2105498054}
@@ -40891,6 +40893,8 @@ MonoBehaviour:
   _opponentManaDisplay: {fileID: 2862352591999099260}
   _userActionDisplay: {fileID: 1273052419919274049}
   _opponentActionDisplay: {fileID: 3896692206056782996}
+  _userIdentityCardPosition: {fileID: 670489382}
+  _opponentIdentityCardPosition: {fileID: 297690459}
   _userIdentityCard: {fileID: 1493733123}
   _opponentIdentityCard: {fileID: 1560564983}
 --- !u!4 &1445473049

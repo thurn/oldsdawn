@@ -31,4 +31,14 @@ namespace Spelldawn.Game
     Effects = 8,
     Dragging = 9
   }
+
+  public static class GameContextUtil
+  {
+    public static bool IsArenaContext(this GameContext gameContext) => gameContext switch
+    {
+      GameContext.Arena => true,
+      GameContext.ArenaRaidParticipant => true,
+      _ => false
+    };
+  }
 }

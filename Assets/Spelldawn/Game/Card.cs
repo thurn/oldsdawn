@@ -132,16 +132,9 @@ namespace Spelldawn.Game
       }
     }
 
-    bool IsArenaContext(GameContext context) => context switch
-    {
-      GameContext.Arena => true,
-      GameContext.ArenaRaidParticipant => true,
-      _ => false
-    };
-
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
-      if (IsArenaContext(newContext))
+      if (newContext.IsArenaContext())
       {
         _frame.gameObject.SetActive(false);
         _titleBackground.gameObject.SetActive(false);
@@ -246,7 +239,7 @@ namespace Spelldawn.Game
         }
 
         StartCoroutine(position != null
-          ? _registry.CardService.MoveCard(this, position)
+          ? _registry.ObjectPositionService.MoveCard(this, position)
           : Parent!.AddObject(this, animate: true, index: _handIndex));
       }
 
@@ -261,12 +254,12 @@ namespace Spelldawn.Game
       if (animate)
       {
         const float duration = 0.2f;
-        DOTween.Sequence()
+        TweenUtils.Sequence($"{faceUp.transform.parent.gameObject.name} Flip")
           .Insert(atPosition: 0, faceDown.transform.DOLocalRotate(new Vector3(x: 0, y: 90, z: 0), duration))
           .InsertCallback(atPosition: duration, () =>
           {
             faceUp.gameObject.SetActive(value: true);
-            faceUp.transform.localRotation = Quaternion.Euler(x: 0, y: 90, z: 0);
+            faceUp.transform.localRotation = Quaternion.Euler(x: 0, y: -90, z: 0);
             faceDown.gameObject.SetActive(value: false);
             onFlipped();
           })
@@ -311,7 +304,7 @@ namespace Spelldawn.Game
 
     void SetCardIcon(Icon icon, CardIcon? cardIcon)
     {
-      if (cardIcon != null && !IsArenaContext(GameContext))
+      if (cardIcon != null && !GameContext.IsArenaContext())
       {
         icon.Background.gameObject.SetActive(true);
         icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);

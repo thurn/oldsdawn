@@ -49,19 +49,19 @@ namespace Spelldawn.Game
 
       if (_flash && _flash != null)
       {
-        var flash = registry.ObjectPoolService.Create(_flash, transform.position);
+        var flash = registry.AssetPoolService.Create(_flash, transform.position);
         flash.transform.rotation = rotation;
         flash.transform.localScale = _scale * Vector3.one;
       }
 
-      yield return DOTween.Sequence()
+      yield return TweenUtils.Sequence($"{name} Projectile")
         .Append(transform.DOMove(target.position, DataUtils.ToSeconds(duration, 300)).SetEase(Ease.Linear))
         .WaitForCompletion();
 
       TimedEffect? hit = null;
       if (_hit && _hit != null)
       {
-        hit = registry.ObjectPoolService.Create(_hit, transform.position);
+        hit = registry.AssetPoolService.Create(_hit, transform.position);
         hit.transform.rotation = rotation;
         hit.transform.localScale = _scale * Vector3.one;
       }
@@ -72,7 +72,7 @@ namespace Spelldawn.Game
       {
         yield return new WaitForSeconds(DataUtils.ToSeconds(additionalHitDelay, 0));
         var additionalHitEffect =
-          registry.ObjectPoolService.Create(registry.AssetService.GetEffect(additionalHit), transform.position);
+          registry.AssetPoolService.Create(registry.AssetService.GetEffect(additionalHit), transform.position);
         additionalHitEffect.transform.rotation = rotation;
 
         if (hit)

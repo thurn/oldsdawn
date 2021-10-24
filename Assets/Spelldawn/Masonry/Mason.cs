@@ -79,19 +79,13 @@ namespace Spelldawn.Masonry
         var hoverStyle = new FlexStyle();
         hoverStyle.MergeFrom(node.Style);
         hoverStyle.MergeFrom(node.HoverStyle);
-        callbacks.SetCallback(new EventCallback<MouseEnterEvent>(_ =>
-        {
-          ApplyStyle(registry, element, hoverStyle);
-        }));
-        callbacks.SetCallback(new EventCallback<MouseLeaveEvent>(_ =>
-        {
-          ApplyStyle(registry, element, node.Style);
-        }));
+        callbacks.SetCallback(Callbacks.Event.MouseEnter, () => { ApplyStyle(registry, element, hoverStyle); });
+        callbacks.SetCallback(Callbacks.Event.MouseLeave, () => { ApplyStyle(registry, element, node.Style); });
       }
       else
       {
-        callbacks.SetCallback<MouseEnterEvent>(null);
-        callbacks.SetCallback<MouseLeaveEvent>(null);
+        callbacks.SetCallback(Callbacks.Event.MouseEnter, null);
+        callbacks.SetCallback(Callbacks.Event.MouseLeave, null);
       }
 
       if (node.PressedStyle != null)
@@ -99,11 +93,8 @@ namespace Spelldawn.Masonry
         var pressedStyle = new FlexStyle();
         pressedStyle.MergeFrom(node.Style);
         pressedStyle.MergeFrom(node.PressedStyle);
-        callbacks.SetCallback(new EventCallback<MouseDownEvent>(_ =>
-        {
-          ApplyStyle(registry, element, pressedStyle);
-        }));
-        callbacks.SetCallback(new EventCallback<MouseUpEvent>(_ =>
+        callbacks.SetCallback(Callbacks.Event.MouseDown, () => { ApplyStyle(registry, element, pressedStyle); });
+        callbacks.SetCallback(Callbacks.Event.MouseUp, () =>
         {
           var style = node.Style;
           if (node.HoverStyle != null)
@@ -114,24 +105,21 @@ namespace Spelldawn.Masonry
           }
 
           ApplyStyle(registry, element, style);
-        }));
+        });
       }
       else
       {
-        callbacks.SetCallback<MouseDownEvent>(null);
-        callbacks.SetCallback<MouseUpEvent>(null);
+        callbacks.SetCallback(Callbacks.Event.MouseDown, null);
+        callbacks.SetCallback(Callbacks.Event.MouseUp, null);
       }
 
-      if (node.EventHandlers?.OnClick is {} onClick)
+      if (node.EventHandlers?.OnClick is { } onClick)
       {
-        callbacks.SetCallback(new EventCallback<ClickEvent>(_ =>
-        {
-          registry.ActionService.HandleAction(onClick);
-        }));
+        callbacks.SetCallback(Callbacks.Event.Click, () => { registry.ActionService.HandleAction(onClick); });
       }
       else
       {
-        callbacks.SetCallback<ClickEvent>(null);
+        callbacks.SetCallback(Callbacks.Event.Click, null);
       }
 
       return result;

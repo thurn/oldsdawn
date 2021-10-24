@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using System.Collections.Generic;
 using Google.Protobuf.WellKnownTypes;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 using static Spelldawn.Masonry.MasonUtil;
 
@@ -112,9 +114,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       RevealedCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68", 6)
     };
 
-    void Start()
+    IEnumerator Start()
     {
-      _registry.CommandService.HandleCommands(new GameCommand
+      yield return _registry.CommandService.HandleCommands(new GameCommand
       {
         RenderGame = new RenderGameCommand
         {
@@ -126,8 +128,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         for (var i = 0; i < 6; ++i)
         {
-          DrawUserCard(directToHand: true);
-          DrawOpponentCard(disableAnimation: true);
+          yield return DrawUserCard(directToHand: true);
+          yield return DrawOpponentCard(disableAnimation: true);
         }
       }
     }
@@ -136,44 +138,49 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       if (Input.GetKeyDown(KeyCode.D))
       {
-        DrawOpponentCard();
+        StartCoroutine(DrawOpponentCard());
+      }
+
+      if (Input.GetKeyDown(KeyCode.R))
+      {
+        StartCoroutine(_registry.CommandService.HandleCommands(MoveToRaidIndex(55555, 1)));
       }
     }
 
-    public void FakeActionResponse(GameAction action)
+    public IEnumerator FakeActionResponse(GameAction action)
     {
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.ServerAction:
           var commands = action.ServerAction.Payload.Unpack<CommandList>();
-          _registry.CommandService.HandleCommands(commands);
-          break;
+          return _registry.CommandService.HandleCommands(commands);
         case GameAction.ActionOneofCase.DrawCard:
-          DrawUserCard();
-          break;
+          return DrawUserCard();
         case GameAction.ActionOneofCase.InitiateRaid:
-          InitiateRaid(action.InitiateRaid);
-          break;
+          return InitiateRaid(action.InitiateRaid);
+        default:
+          return CollectionUtils.Yield();
       }
     }
 
-    void DrawUserCard(bool directToHand = false)
+    IEnumerator DrawUserCard(bool directToHand = false)
     {
       var card = Card();
       card.OnCreatePosition = directToHand ? HandPosition(PlayerName.User) : DeckPosition(PlayerName.User);
 
-      _registry.CommandService.HandleCommands(new GameCommand
+      yield return _registry.CommandService.HandleCommands(new GameCommand
       {
         CreateCard = new CreateCardCommand
         {
           Card = card,
-          Animation = directToHand ? CardCreationAnimation.Unspecified : CardCreationAnimation.UserDeckToStaging
+          Animation = directToHand ? CardCreationAnimation.Unspecified : CardCreationAnimation.UserDeckToStaging,
+          DisableAnimation = directToHand
         }
       });
 
       if (!directToHand)
       {
-        _registry.CommandService.HandleCommands(new GameCommand
+        yield return _registry.CommandService.HandleCommands(new GameCommand
         {
           MoveGameObject = new MoveGameObjectCommand
           {
@@ -210,10 +217,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
     }
 
-    void DrawOpponentCard(bool disableAnimation = false)
+    IEnumerator DrawOpponentCard(bool disableAnimation = false)
     {
       var cardId = CardId(_lastOpponentCardId++);
-      _registry.CommandService.HandleCommands(new GameCommand
+      return _registry.CommandService.HandleCommands(new GameCommand
       {
         CreateCard = new CreateCardCommand
         {
@@ -251,6 +258,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
 
     static CardId CardId(int id) => new() { Value = id };
+
+    static GameObjectId CardObjectId(CardId cardId) => new() { CardId = cardId };
+
+    static TimeValue TimeMs(int ms) => new() { Milliseconds = ms };
 
     static PlayerView Player(string playerName, PlayerName id, string cardBack) => new()
     {
@@ -374,9 +385,49 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
     }
 
-    void InitiateRaid(InitiateRaidAction action)
+    CardView OpponentCard(int cardId) => new()
     {
-      _registry.CommandService.HandleCommands(new GameCommand
+      CardId = CardId(cardId),
+      CardBack = Sprite(
+        "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
+      CardIcons = new CardIcons
+      {
+        TopLeftIcon = new CardIcon
+        {
+          Background = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"),
+          Text = "4"
+        }
+      },
+      OnCreatePosition = new ObjectPosition
+      {
+        Deck = new ObjectPositionDeck
+        {
+          Owner = PlayerName.Opponent
+        }
+      },
+      RevealedCard = new RevealedCardView
+      {
+        CardFrame = Sprite(
+          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Elf_Style_Color_1"),
+        TitleBackground = Sprite(
+          "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"),
+        Jewel = Sprite(
+          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01"),
+        Image = Sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_92"),
+        Title = new CardTitle
+        {
+          Text = "Opponent Scheme Card"
+        },
+        RulesText = new RulesText
+        {
+          Text = "This is an opponent card you can score"
+        }
+      }
+    };
+
+    IEnumerator InitiateRaid(InitiateRaidAction action)
+    {
+      return _registry.CommandService.HandleCommands(new GameCommand
       {
         InitiateRaid = new InitiateRaidCommand
         {
@@ -438,16 +489,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     ServerAction CardStrikeAction() =>
       new()
       {
-        Payload = Any.Pack(new CommandList
-        {
-          Commands =
-          {
-            new GameCommand
-            {
-              EndRaid = new EndRaidCommand()
-            }
-          }
-        }),
+        Payload = Any.Pack(AccessDeck()),
         OptimisticUpdate = new CommandList
         {
           Commands =
@@ -464,40 +506,20 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             {
               FireProjectile = new FireProjectileCommand
               {
-                SourceId = new GameObjectId
-                {
-                  CardId = new CardId
-                  {
-                    Value = 2
-                  }
-                },
-                TargetId = new GameObjectId
-                {
-                  CardId = new CardId
-                  {
-                    Value = 1
-                  }
-                },
+                SourceId = CardObjectId(CardId(2)),
+                TargetId = CardObjectId(CardId(1)),
                 Projectile = new ProjectileAddress
                 {
                   Address = "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 8"
                 },
-                TravelDuration = new TimeValue
-                {
-                  Milliseconds = 300
-                },
+                TravelDuration = TimeMs(300),
                 AdditionalHit = new EffectAddress
                 {
                   Address = "Hovl Studio/Sword slash VFX/Prefabs/Sword Slash 1"
                 },
-                AdditionalHitDelay = new TimeValue
-                {
-                  Milliseconds = 100
-                },
-                HideDuration = new TimeValue
-                {
-                  Milliseconds = 300
-                },
+                AdditionalHitDelay = TimeMs(100),
+                WaitDuration = TimeMs(300),
+                HideOnHit = true,
                 JumpToPosition = new ObjectPosition
                 {
                   Room = new ObjectPositionRoom
@@ -507,9 +529,91 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
                   }
                 }
               }
-            }
+            },
           }
         }
       };
+
+    CommandList AccessDeck() => new()
+    {
+      Commands =
+      {
+        new GameCommand
+        {
+          FireProjectile = new FireProjectileCommand
+          {
+            SourceId = CardObjectId(new CardId
+            {
+              IdentityCard = PlayerName.User
+            }),
+            TargetId = new GameObjectId
+            {
+              Deck = PlayerName.Opponent
+            },
+            Projectile = new ProjectileAddress
+            {
+              Address = "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 1"
+            },
+            TravelDuration = TimeMs(300),
+            WaitDuration = TimeMs(300)
+          }
+        },
+        new GameCommand
+        {
+          CreateCard = new CreateCardCommand
+          {
+            Card = OpponentCard(55555)
+          }
+        },
+        // new GameCommand
+        // {
+        //   Delay = new DelayCommand
+        //   {
+        //     Duration = TimeMs(1000)
+        //   }
+        // },
+        MoveToRaidIndex(55555, 1),
+        DebugLog("End Move"),
+        // new GameCommand
+        // {
+        //   CreateCard = new CreateCardCommand
+        //   {
+        //     Card = OpponentCard(55556)
+        //   }
+        // },
+        // MoveToRaidIndex(55556, 1),
+        // new GameCommand
+        // {
+        //   CreateCard = new CreateCardCommand
+        //   {
+        //     Card = OpponentCard(55557)
+        //   }
+        // },
+        // MoveToRaidIndex(55557, 1)
+      }
+    };
+
+    GameCommand DebugLog(string message) => new()
+    {
+      DebugLog = new DebugLogCommand
+      {
+        Message = message
+      }
+    };
+
+    GameCommand MoveToRaidIndex(int cardId, int index) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Raid = new ObjectPositionRaid
+          {
+            Index = index
+          }
+        }
+      }
+    };
   }
 }

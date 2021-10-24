@@ -24,48 +24,67 @@ namespace Spelldawn.Game
 {
   public abstract class ObjectDisplay : Displayable
   {
-    protected List<Displayable> Objects { get; } = new();
-    public List<Displayable> AllObjects => new(Objects);
+    [Header("Object Display")] [SerializeField]
+    List<Displayable> _objects = new();
 
-    public IEnumerator<YieldInstruction> AddObject(Displayable displayable, bool animate = true, int? index = null)
+    [SerializeField] bool _updateRequired;
+
+    [SerializeField] bool _animateNextUpdate;
+
+    [SerializeField] bool _animationRunning;
+
+    public List<Displayable> AllObjects => new(_objects);
+
+    void Update()
     {
+      if (_updateRequired && !_animationRunning)
+      {
+        MoveObjectsToPosition(_animateNextUpdate);
+        _updateRequired = false;
+      }
+    }
+
+    public IEnumerator AddObject(Displayable displayable, bool animate = true, int? index = null)
+    {
+      MarkUpdateRequired(animate);
       Insert(displayable, index);
-      return MoveObjectsToPosition(animate);
+      yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
     }
 
     public IEnumerator AddObjects(IEnumerable<Displayable> objects, bool animate = true)
     {
+      MarkUpdateRequired(animate);
       foreach (var displayable in objects)
       {
         Insert(displayable, null);
       }
 
-      return MoveObjectsToPosition(animate);
+      yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
     }
 
     public int RemoveObject(Displayable displayable, bool animate = true)
     {
-      var index = Objects.FindIndex(c => c == displayable);
+      MarkUpdateRequired(animate);
+      var index = _objects.FindIndex(c => c == displayable);
       Errors.CheckNonNegative(index);
-      Objects.RemoveAt(index);
-      StartCoroutine(MoveObjectsToPosition(animate));
+      _objects.RemoveAt(index);
       return index;
     }
 
     public void RemoveObjectIfPresent(Displayable displayable, bool animate = true)
     {
-      Objects.Remove(displayable);
-      StartCoroutine(MoveObjectsToPosition(animate));
+      MarkUpdateRequired(animate);
+      _objects.Remove(displayable);
     }
 
     public void DebugUpdate()
     {
-      StartCoroutine(MoveObjectsToPosition(true));
+      MarkUpdateRequired(true);
     }
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
-      StartCoroutine(MoveObjectsToPosition(true));
+      MarkUpdateRequired(true);
     }
 
     protected abstract override GameContext DefaultGameContext();
@@ -76,30 +95,46 @@ namespace Spelldawn.Game
 
     protected virtual Vector3? CalculateObjectRotation(int index, int count) => null;
 
+    void MarkUpdateRequired(bool animate)
+    {
+      _updateRequired = true;
+      _animateNextUpdate |= animate;
+    }
+
     void Insert(Displayable displayable, int? index)
     {
       displayable.Parent = this;
-      if (!Objects.Contains(displayable))
+      if (!_objects.Contains(displayable))
       {
         if (index is { } i)
         {
-          Objects.Insert(i, displayable);
+          _objects.Insert(i, displayable);
         }
         else
         {
-          Objects.Add(displayable);
+          _objects.Add(displayable);
         }
       }
     }
 
-    IEnumerator<YieldInstruction> MoveObjectsToPosition(bool animate)
+    void MoveObjectsToPosition(bool animate)
     {
-      var sequence = DOTween.Sequence();
-      for (var i = 0; i < Objects.Count; ++i)
+      if (animate)
       {
-        var displayable = Objects[i];
-        var position = CalculateObjectPosition(i, Objects.Count);
-        var rotation = CalculateObjectRotation(i, Objects.Count);
+        _animationRunning = true;
+      }
+
+      Sequence? sequence = null;
+      if (animate)
+      {
+        sequence = TweenUtils.Sequence($"{gameObject.name} MoveObjectsToPosition");
+      }
+
+      for (var i = 0; i < _objects.Count; ++i)
+      {
+        var displayable = _objects[i];
+        var position = CalculateObjectPosition(i, _objects.Count);
+        var rotation = CalculateObjectRotation(i, _objects.Count);
 
         if (animate)
         {
@@ -114,7 +149,8 @@ namespace Spelldawn.Game
         {
           if (animate)
           {
-            sequence.Insert(atPosition: 0, displayable.transform.DOLocalRotate(vector, duration: AnimationDuration));
+            sequence.Insert(atPosition: 0,
+              displayable.transform.DOLocalRotate(vector, duration: AnimationDuration));
           }
           else
           {
@@ -127,7 +163,11 @@ namespace Spelldawn.Game
 
       if (animate)
       {
-        yield return sequence.WaitForCompletion();
+        sequence.OnComplete(() =>
+        {
+          _animationRunning = false;
+          _animateNextUpdate = false;
+        });
       }
     }
   }

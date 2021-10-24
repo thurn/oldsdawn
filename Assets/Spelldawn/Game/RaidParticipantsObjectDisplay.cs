@@ -25,7 +25,7 @@ namespace Spelldawn.Game
     [SerializeField] float _cardSize;
     [SerializeField] float _rotation = 270;
 
-    protected override GameContext DefaultGameContext() => Game.GameContext.RaidParticipant;
+    protected override GameContext DefaultGameContext() => GameContext.RaidParticipant;
 
     protected override Vector3 CalculateObjectPosition(int index, int count) =>
       transform.position + new Vector3(LinearObjectDisplay.CalculateXOffset(

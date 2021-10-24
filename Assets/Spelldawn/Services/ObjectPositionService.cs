@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Spelldawn.Services
 {
-  public sealed class CardService : MonoBehaviour
+  public sealed class ObjectPositionService : MonoBehaviour
   {
     const float CardScale = 1.5f;
 
@@ -98,7 +98,7 @@ namespace Spelldawn.Services
 
       var waitForStaging = false;
       Card card;
-      if (!command.DisallowOptimistic && _optimisticCard)
+      if (_optimisticCard)
       {
         waitForStaging = true;
         card = _optimisticCard!;
@@ -108,7 +108,7 @@ namespace Spelldawn.Services
       {
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-        card.Render(_registry, command.Card, GameContext.Staging, animate: waitForStaging);
+        card.Render(_registry, command.Card, GameContext.Staging, animate: !command.DisableAnimation);
         StartCoroutine(MoveCardInternal(card, command.Card.OnCreatePosition, animate: false));
 
         switch (command.Animation)
@@ -136,24 +136,31 @@ namespace Spelldawn.Services
       var originalPosition = source.transform.position;
       var originalRotation = source.transform.rotation.eulerAngles;
 
-      yield return DOTween
-        .Sequence()
-        .Insert(0, source.transform.DORotate(new Vector3(280, 0, 0), 0.2f))
-        .Insert(0,
-          source.transform.DOMove(
-            Vector3.MoveTowards(source.transform.position, _registry.MainCamera.transform.position, 20f), 0.2f))
-        .WaitForCompletion();
+      if (source.GameContext.IsArenaContext())
+      {
+        // Enlarge before firing
+        yield return TweenUtils.Sequence("EnlargeBeforeFiring")
+          .Insert(0, source.transform.DORotate(new Vector3(280, 0, 0), 0.2f))
+          .Insert(0,
+            source.transform.DOMove(
+              Vector3.MoveTowards(source.transform.position, _registry.MainCamera.transform.position, 20f), 0.2f))
+          .WaitForCompletion();
+      }
 
-      var projectile = _registry.ObjectPoolService.Create(
+      var projectile = _registry.AssetPoolService.Create(
         _registry.AssetService.GetProjectile(command.Projectile), source.transform.position);
-      var start = source.transform.position;
 
-      DOTween
-        .Sequence()
-        .Insert(0, source.transform.DOMove(Vector3.Lerp(start, target.transform.position, 0.1f), 0.1f))
-        .Insert(0.1f, source.transform.DOMove(start, 0.1f))
-        .Insert(1f, source.transform.DOMove(originalPosition, 0.2f))
-        .Insert(1f, source.transform.DORotate(originalRotation, 0.2f));
+      var startPosition = source.transform.position;
+      var throwSequence = TweenUtils.Sequence("ProjectileThrow")
+        .Insert(0, source.transform.DOMove(Vector3.Lerp(startPosition, target.transform.position, 0.1f), 0.1f))
+        .Insert(0.1f, source.transform.DOMove(startPosition, 0.1f));
+
+      if (source.GameContext.IsArenaContext())
+      {
+        throwSequence
+          .Insert(0.8f, source.transform.DOMove(originalPosition, 0.1f))
+          .Insert(0.8f, source.transform.DORotate(originalRotation, 0.1f));
+      }
 
       yield return projectile.Fire(
         _registry,
@@ -162,16 +169,24 @@ namespace Spelldawn.Services
         command.AdditionalHit,
         command.AdditionalHitDelay);
 
-      if (command.HideDuration != null)
+      if (command.HideOnHit)
       {
-        target.gameObject.SetActive(false);
-        yield return new WaitForSeconds(DataUtils.ToSeconds(command.HideDuration, 0));
-        target.gameObject.SetActive(true);
+        target.gameObject.transform.position = Vector3.zero;
+      }
+
+      if (command.WaitDuration != null)
+      {
+        yield return new WaitForSeconds(DataUtils.ToSeconds(command.WaitDuration, 0));
       }
 
       if (command.JumpToPosition != null)
       {
         yield return MoveCard(target, command.JumpToPosition, animate: false, animateRemove: true);
+      }
+
+      if (throwSequence.IsActive())
+      {
+        yield return throwSequence.WaitForCompletion();
       }
     }
 
@@ -203,10 +218,20 @@ namespace Spelldawn.Services
       CardId = cardId
     };
 
-    Displayable CheckExists(GameObjectId cardId)
+    Displayable CheckExists(GameObjectId gameObjectId)
     {
-      Errors.CheckState(_cards.ContainsKey(cardId), $"Card not found: {cardId}");
-      return _cards[cardId];
+      switch (gameObjectId.IdCase)
+      {
+        case GameObjectId.IdOneofCase.CardId:
+          Errors.CheckState(_cards.ContainsKey(gameObjectId), $"Card not found: {gameObjectId}");
+          return _cards[gameObjectId];
+        case GameObjectId.IdOneofCase.Deck:
+          return _registry.DeckForPlayer(gameObjectId.Deck);
+        case GameObjectId.IdOneofCase.Hand:
+          return _registry.HandForPlayer(gameObjectId.Hand);
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
     }
 
     IEnumerator MoveCardInternal(Displayable card, ObjectPosition position, bool animate)
@@ -262,7 +287,7 @@ namespace Spelldawn.Services
         target.y + 2,
         target.z - 8);
 
-      DOTween.Sequence()
+      TweenUtils.Sequence("DeckToStaging")
         .Insert(0,
           card.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
         .Insert(0, card.transform.DOLocalRotate(new Vector3(270, 0, 0), 0.5f))

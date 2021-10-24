@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace Spelldawn.Services
 {
-  public sealed class ObjectPoolService : MonoBehaviour
+  public sealed class AssetPoolService : MonoBehaviour
   {
     readonly Dictionary<int, List<GameObject>> _pools = new();
 

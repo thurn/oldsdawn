@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using DG.Tweening;
-using UnityEngine.UIElements;
 
 #nullable enable
 
@@ -21,32 +20,11 @@ namespace Spelldawn.Utils
 {
   public static class TweenUtils
   {
-    public static Tween ToLeft(VisualElement e, float left, float durationMs) =>
-      DOTween.To(
-        () => e.style.left.value.value,
-        val => e.style.left = val,
-        endValue: left,
-        duration: durationMs / 1000f);
-
-    public static Tween ToTop(VisualElement e, float top, float durationMs) =>
-      DOTween.To(
-        () => e.style.top.value.value,
-        val => e.style.top = val,
-        endValue: top,
-        duration: durationMs / 1000f);
-
-    public static Tween ToWidth(VisualElement e, float width, float durationMs) =>
-      DOTween.To(
-        () => e.style.width.value.value,
-        val => e.style.width = val,
-        endValue: width,
-        duration: durationMs / 1000f);
-
-    public static Tween ToHeight(VisualElement e, float height, float durationMs) =>
-      DOTween.To(
-        () => e.style.height.value.value,
-        val => e.style.height = val,
-        endValue: height,
-        duration: durationMs / 1000f);
+    public static Sequence Sequence(string name)
+    {
+      var result = DOTween.Sequence();
+      result.stringId = name;
+      return result;
+    }
   }
 }
