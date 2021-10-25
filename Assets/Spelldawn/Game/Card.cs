@@ -29,7 +29,7 @@ namespace Spelldawn.Game
   {
     static readonly Vector3 ArenaCardOffset = new(0, 0.6f, 0);
 
-    [SerializeField] SpriteRenderer _cardBack = null!;
+    [Header("Card")] [SerializeField] SpriteRenderer _cardBack = null!;
     [SerializeField] Transform _cardFront = null!;
     [SerializeField] GameObject _cardShadow = null!;
     [SerializeField] Transform _arenaCard = null!;
@@ -43,6 +43,7 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _arenaFrame = null!;
     [SerializeField] GameObject _arenaShadow = null!;
     [SerializeField] WarpTextExample _warpText = null!;
+    [SerializeField] Transform _uiAnchor = null!;
     [SerializeField] Icon _topLeftIcon = null!;
     [SerializeField] Icon _topRightIcon = null!;
     [SerializeField] Icon _bottomRightIcon = null!;
@@ -131,6 +132,8 @@ namespace Spelldawn.Game
         _outline.gameObject.SetActive(false);
       }
     }
+
+    public override Transform InterfaceAnchor() => _uiAnchor;
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {

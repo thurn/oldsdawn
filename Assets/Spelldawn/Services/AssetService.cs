@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace Spelldawn.Services
         switch (command.CommandCase)
         {
           case GameCommand.CommandOneofCase.RenderInterface:
-            LoadNodeAssets(requests, command.RenderInterface.Node);
+            LoadRenderInterfaceAssets(requests, command.RenderInterface);
             break;
           case GameCommand.CommandOneofCase.RenderGame:
             LoadGameAssets(requests, command.RenderGame.Game);
@@ -109,6 +110,25 @@ namespace Spelldawn.Services
             Debug.LogError($"Null asset for {address}");
           }
         }
+      }
+    }
+
+    void LoadRenderInterfaceAssets(IDictionary<string, ResourceRequest> requests, RenderInterfaceCommand command)
+    {
+      switch (command.PositionCase)
+      {
+        case RenderInterfaceCommand.PositionOneofCase.FullScreen:
+          LoadNodeAssets(requests, command.FullScreen.Node);
+          break;
+        case RenderInterfaceCommand.PositionOneofCase.RaidControls:
+          LoadNodeAssets(requests, command.RaidControls.Node);
+          break;
+        case RenderInterfaceCommand.PositionOneofCase.ObjectControls:
+          foreach (var controlNode in command.ObjectControls.ControlNodes)
+          {
+            LoadNodeAssets(requests, controlNode.Node);
+          }
+          break;
       }
     }
 

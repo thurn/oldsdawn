@@ -75,6 +75,8 @@ namespace Spelldawn.Services
       _cards[OpponentCardId] = _registry.IdentityCardForPlayer(PlayerName.Opponent);
     }
 
+    public Transform InterfaceAnchorForObject(GameObjectId id) => CheckExists(id).InterfaceAnchor();
+
     public void DrawOptimisticCard()
     {
       if (_optimisticCard)

@@ -812,10 +812,21 @@ message DebugLogCommand {
     string message = 1;
 }
 
-enum InterfacePosition {
-    INTERFACE_POSITION_UNSPECIFIED = 0;
-    INTERFACE_POSITION_FULL_SCREEN = 1;
-    INTERFACE_POSITION_RAID_CONTROLS = 2;
+message InterfacePositionFullScreen {
+    Node node = 1;
+}
+
+message InterfacePositionRaidControls {
+    Node node = 1;
+}
+
+message ObjectControlNode {
+    GameObjectId game_object_id = 1;
+    Node node = 2;
+}
+
+message InterfacePositionObjectControls {
+    repeated ObjectControlNode control_nodes = 1;
 }
 
 /**
@@ -823,9 +834,11 @@ enum InterfacePosition {
 * replacing all existing UI elements.
 */
 message RenderInterfaceCommand {
-    Node node = 1;
-
-    InterfacePosition position = 2;
+    oneof position {
+        InterfacePositionFullScreen full_screen = 1;
+        InterfacePositionRaidControls raid_controls = 2;
+        InterfacePositionObjectControls object_controls = 3;
+    }
 }
 
 /**

@@ -122,6 +122,16 @@ namespace Spelldawn.Masonry
         callbacks.SetCallback(Callbacks.Event.Click, null);
       }
 
+      if (node.PressedStyle != null || node.HoverStyle != null || node.EventHandlers != null)
+      {
+        element.pickingMode = PickingMode.Position;
+      }
+      else
+      {
+        // Ignore mouse events on non-interactive elements
+        element.pickingMode = PickingMode.Ignore;
+      }
+
       return result;
     }
 
@@ -148,7 +158,6 @@ namespace Spelldawn.Masonry
     {
       DimensionUnit.Dip => new Length(dimension.Value * multiplier),
       DimensionUnit.Percentage => Length.Percent(dimension.Value * multiplier),
-      DimensionUnit.Vmin => new Length(MasonUtil.VMinToDip(dimension.Value * multiplier)),
       _ => new Length()
     };
 

@@ -385,7 +385,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
     }
 
-    CardView OpponentCard(int cardId) => new()
+    CardView OpponentCard(string title, int cardId, int image) => new()
     {
       CardId = CardId(cardId),
       CardBack = Sprite(
@@ -413,14 +413,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"),
         Jewel = Sprite(
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01"),
-        Image = Sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_92"),
+        Image = Sprite($"Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_{image}"),
         Title = new CardTitle
         {
-          Text = "Opponent Scheme Card"
+          Text = title
         },
         RulesText = new RulesText
         {
-          Text = "This is an opponent card you can score"
+          Text = "Some card text"
         }
       }
     };
@@ -438,8 +438,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          Position = InterfacePosition.RaidControls,
-          Node = RaidControls()
+          RaidControls = new InterfacePositionRaidControls
+          {
+            Node = RaidControls()
+          }
         }
       });
     }
@@ -452,14 +454,13 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         AlignItems = FlexAlign.Center,
         Wrap = FlexWrap.WrapReverse,
       },
-      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(), orange: true),
-      Button("Gordian Blade\n3\uf06d", action: null, orange: true),
+      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(), smallText: true, orange: true),
+      Button("Gordian Blade\n3\uf06d", action: null, smallText: true, orange: true),
       Button("Continue"));
 
-    Node Button(string label, ServerAction? action = null, bool orange = false) => Row("Button",
+    Node Button(string label, ServerAction? action = null, bool smallText = false, bool orange = false) => Row("Button",
       new FlexStyle
       {
-        Padding = LeftRightDip(16),
         Margin = AllDip(8),
         Height = Dip(88),
         MinWidth = Dip(132),
@@ -469,7 +470,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         BackgroundImage = Sprite(orange
           ? "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange"
           : "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
-        ImageSlice = ImageSlice(0, 64)
+        ImageSlice = ImageSlice(0, 16)
       },
       new EventHandlers
       {
@@ -480,8 +481,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       },
       Text(label, new FlexStyle
       {
+        Margin = LeftRightDip(16),
+        Padding = AllDip(0),
         Color = MakeColor(Color.white),
-        FontSize = Dip(orange ? 26 : 32),
+        FontSize = Dip(smallText ? 26 : 32),
         Font = Font("Fonts/Roboto"),
         TextAlign = TextAlign.MiddleCenter
       }));
@@ -498,8 +501,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             {
               RenderInterface = new RenderInterfaceCommand
               {
-                Node = null,
-                Position = InterfacePosition.RaidControls
+                RaidControls = new InterfacePositionRaidControls()
               }
             },
             new GameCommand
@@ -562,42 +564,35 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           CreateCard = new CreateCardCommand
           {
-            Card = OpponentCard(55555)
+            Card = OpponentCard("Scheme", 55555, 92)
           }
         },
-        // new GameCommand
-        // {
-        //   Delay = new DelayCommand
-        //   {
-        //     Duration = TimeMs(1000)
-        //   }
-        // },
         MoveToRaidIndex(55555, 1),
-        DebugLog("End Move"),
-        // new GameCommand
-        // {
-        //   CreateCard = new CreateCardCommand
-        //   {
-        //     Card = OpponentCard(55556)
-        //   }
-        // },
-        // MoveToRaidIndex(55556, 1),
-        // new GameCommand
-        // {
-        //   CreateCard = new CreateCardCommand
-        //   {
-        //     Card = OpponentCard(55557)
-        //   }
-        // },
-        // MoveToRaidIndex(55557, 1)
-      }
-    };
-
-    GameCommand DebugLog(string message) => new()
-    {
-      DebugLog = new DebugLogCommand
-      {
-        Message = message
+        new GameCommand
+        {
+          CreateCard = new CreateCardCommand
+          {
+            Card = OpponentCard("Not A Scheme", 55556, 93)
+          }
+        },
+        MoveToRaidIndex(55556, 1),
+        new GameCommand
+        {
+          RenderInterface = new RenderInterfaceCommand
+          {
+            ObjectControls = new InterfacePositionObjectControls
+            {
+              ControlNodes =
+              {
+                new ObjectControlNode
+                {
+                  GameObjectId = CardObjectId(CardId(55555)),
+                  Node = Button("Score", action: null, smallText: false, orange: true)
+                }
+              }
+            }
+          }
+        }
       }
     };
 

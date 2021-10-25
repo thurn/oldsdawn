@@ -23,4 +23,7 @@ xattr -w com.dropbox.ignored 1 proto/obj
 
 rm -r 'Temp (Ignored Item Conflict 1)'
 rm -r 'Temp (Ignored Item Conflict)'
+rm -r 'rm -r out\ \(Ignored\ Item\ Conflict\)'
+rm -r proto/obj
+rm -r proto/bin
 rm proto/*.cs

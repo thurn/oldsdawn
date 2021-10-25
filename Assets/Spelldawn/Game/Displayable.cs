@@ -41,6 +41,9 @@ namespace Spelldawn.Game
 
     protected virtual GameContext DefaultGameContext() => GameContext.Unspecified;
 
+    /// <summary>Anchor point for UI controls</summary>
+    public virtual Transform InterfaceAnchor() => transform;
+
     public void SetGameContext(GameContext gameContext, int? index = null)
     {
       Errors.CheckEnum(gameContext);

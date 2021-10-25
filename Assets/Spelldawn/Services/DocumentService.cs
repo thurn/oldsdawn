@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
 using Spelldawn.Masonry;
 using static Spelldawn.Masonry.MasonUtil;
 using Spelldawn.Protos;
@@ -26,28 +27,47 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] UIDocument _document = null!;
+
     VisualElement _fullScreen = null!;
     VisualElement _raidControls = null!;
+    VisualElement _cardControls = null!;
 
     void Start()
     {
       _document.rootVisualElement.Clear();
       AddRoot("Full Screen", out _fullScreen);
       AddRoot("Raid Controls", out _raidControls);
+      AddRoot("Card Controls", out _cardControls);
     }
+
+    float ScreenPxToElementDip(float value) => value * _document.panelSettings.referenceDpi / Screen.dpi;
+
+    public Vector2 ScreenPositionToElementPosition(Vector3 screenPosition) =>
+      new(ScreenPxToElementDip(screenPosition.x), ScreenPxToElementDip(Screen.height - screenPosition.y));
+
+    public Vector2 TransformPositionToElementPosition(Transform t) =>
+      ScreenPositionToElementPosition(_registry.MainCamera.WorldToScreenPoint(t.position));
 
     public void HandleRenderInterface(RenderInterfaceCommand command)
     {
-      switch (command.Position)
+      switch (command.PositionCase)
       {
-        case InterfacePosition.FullScreen:
+        case RenderInterfaceCommand.PositionOneofCase.FullScreen:
           _fullScreen.Clear();
-          _fullScreen.Add(Mason.Render(_registry, FullScreen(command.Node)));
+          _fullScreen.Add(Mason.Render(_registry, FullScreen(command.FullScreen.Node)));
           break;
-        case InterfacePosition.RaidControls:
+        case RenderInterfaceCommand.PositionOneofCase.RaidControls:
           _raidControls.Clear();
-          _raidControls.Add(Mason.Render(_registry, RaidControls(command.Node)));
+          _raidControls.Add(Mason.Render(_registry, RaidControls(command.RaidControls.Node)));
           break;
+        case RenderInterfaceCommand.PositionOneofCase.ObjectControls:
+          _cardControls.Clear();
+          _cardControls.Add(Mason.Render(_registry,
+            Row("CardControls", new FlexStyle(), command.ObjectControls.ControlNodes.Select(ObjectControl))));
+          break;
+        default:
+          Debug.LogError($"Unknown interface position: {command.PositionCase}");
+          goto case RenderInterfaceCommand.PositionOneofCase.FullScreen;
       }
     }
 
@@ -63,7 +83,8 @@ namespace Spelldawn.Services
           right = 0,
           bottom = 0,
           left = 0
-        }
+        },
+        pickingMode = PickingMode.Ignore
       };
       _document.rootVisualElement.Add(element);
     }
@@ -83,5 +104,20 @@ namespace Spelldawn.Services
           Bottom = Dip(160)
         }
       }, content);
+
+    Node ObjectControl(ObjectControlNode controlNode)
+    {
+      var position = TransformPositionToElementPosition(
+        _registry.ObjectPositionService.InterfaceAnchorForObject(controlNode.GameObjectId));
+
+      return Column("ObjectControl", new FlexStyle
+      {
+        Position = FlexPosition.Absolute,
+        Inset = PositionDip(position.x - 250, position.y),
+        Width = Dip(500),
+        JustifyContent = FlexJustify.FlexStart,
+        AlignItems = FlexAlign.Center
+      }, controlNode.Node);
+    }
   }
 }
