@@ -75,7 +75,7 @@ namespace Spelldawn.Services
       _cards[OpponentCardId] = _registry.IdentityCardForPlayer(PlayerName.Opponent);
     }
 
-    public Transform InterfaceAnchorForObject(GameObjectId id) => CheckExists(id).InterfaceAnchor();
+    public Displayable Find(GameObjectId id) => CheckExists(id);
 
     public void DrawOptimisticCard()
     {
@@ -236,31 +236,33 @@ namespace Spelldawn.Services
       }
     }
 
-    IEnumerator MoveCardInternal(Displayable card, ObjectPosition position, bool animate)
+    IEnumerator MoveCardInternal(Displayable displayable, ObjectPosition position, bool animate)
     {
       switch (position.PositionCase)
       {
         case ObjectPosition.PositionOneofCase.Offscreen:
-          card.transform.position = Vector3.zero;
+          displayable.transform.position = Vector3.zero;
           return CollectionUtils.Yield();
         case ObjectPosition.PositionOneofCase.Room:
-          return _registry.ArenaService.AddToRoom(card, position.Room, animate);
+          return _registry.ArenaService.AddToRoom(displayable, position.Room, animate);
         case ObjectPosition.PositionOneofCase.Item:
-          return _registry.ArenaService.AddAsItem(card, position.Item, animate);
+          return _registry.ArenaService.AddAsItem(displayable, position.Item, animate);
         case ObjectPosition.PositionOneofCase.Staging:
-          return _registry.CardStaging.AddObject(card, animate);
+          return _registry.CardStaging.AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Hand:
-          return _registry.HandForPlayer(position.Hand.Owner).AddObject(card, animate);
+          return _registry.HandForPlayer(position.Hand.Owner).AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Deck:
-          return _registry.DeckForPlayer(position.Deck.Owner).AddObject(card, animate);
+          return _registry.DeckForPlayer(position.Deck.Owner).AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Discard:
           throw new NotImplementedException();
         case ObjectPosition.PositionOneofCase.Scored:
-          throw new NotImplementedException();
+          return _registry.CardScoring.AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Raid:
-          return _registry.RaidService.AddToRaid(card, position.Raid, animate);
+          return _registry.RaidService.AddToRaid(displayable, position.Raid, animate);
         case ObjectPosition.PositionOneofCase.Browser:
           throw new NotImplementedException();
+        case ObjectPosition.PositionOneofCase.Identity:
+          return _registry.IdentityCardForPlayer(position.Identity.Owner).AddObject(displayable, animate);
         default:
           throw new ArgumentOutOfRangeException();
       }

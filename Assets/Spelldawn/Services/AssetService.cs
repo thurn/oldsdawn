@@ -89,6 +89,9 @@ namespace Spelldawn.Services
             LoadProjectile(requests, command.FireProjectile.Projectile);
             LoadEffect(requests, command.FireProjectile.AdditionalHit);
             break;
+          case GameCommand.CommandOneofCase.PlayEffect:
+            LoadEffect(requests, command.PlayEffect.Effect);
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;

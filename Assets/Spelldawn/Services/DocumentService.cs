@@ -108,7 +108,7 @@ namespace Spelldawn.Services
     Node ObjectControl(ObjectControlNode controlNode)
     {
       var position = TransformPositionToElementPosition(
-        _registry.ObjectPositionService.InterfaceAnchorForObject(controlNode.GameObjectId));
+        _registry.ObjectPositionService.Find(controlNode.GameObjectId).InterfaceAnchor());
 
       return Column("ObjectControl", new FlexStyle
       {

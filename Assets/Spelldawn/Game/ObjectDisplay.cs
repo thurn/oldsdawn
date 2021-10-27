@@ -95,6 +95,8 @@ namespace Spelldawn.Game
 
     protected virtual Vector3? CalculateObjectRotation(int index, int count) => null;
 
+    protected virtual float? CalculateObjectScale(int index, int count) => null;
+
     void MarkUpdateRequired(bool animate)
     {
       _updateRequired = true;
@@ -135,6 +137,7 @@ namespace Spelldawn.Game
         var displayable = _objects[i];
         var position = CalculateObjectPosition(i, _objects.Count);
         var rotation = CalculateObjectRotation(i, _objects.Count);
+        var scale = CalculateObjectScale(i, _objects.Count);
 
         if (animate)
         {
@@ -155,6 +158,18 @@ namespace Spelldawn.Game
           else
           {
             displayable.transform.localEulerAngles = vector;
+          }
+        }
+
+        if (scale is { } s)
+        {
+          if (animate)
+          {
+            sequence.Insert(atPosition: 0, displayable.transform.DOScale(Vector3.one * s, duration: AnimationDuration));
+          }
+          else
+          {
+            displayable.transform.localScale = Vector3.one * s;
           }
         }
 

@@ -12,34 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using UnityEngine;
+
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public enum GameContext
+  public abstract class StackObjectDisplay : ObjectDisplay
   {
-    // Note: Enum numbers are serialized by Unity and cannot be changed
-    Unspecified = 0,
-    Arena = 1,
-    Deck = 2,
-    Discard = 3,
-    ArenaRaidParticipant = 10,
-    RaidParticipant = 4,
-    Hand = 5,
-    Interface = 6,
-    Staging = 7,
-    Scored = 11,
-    Effects = 8,
-    Dragging = 9
-  }
+    protected override Vector3 CalculateObjectPosition(int index, int count) =>
+      new(
+        transform.position.x,
+        transform.position.y + Mathf.Lerp(-5f, 5f, count == 1 ? 0.5f : index / (float)count),
+        transform.position.z);
 
-  public static class GameContextUtil
-  {
-    public static bool IsArenaContext(this GameContext gameContext) => gameContext switch
-    {
-      GameContext.Arena => true,
-      GameContext.ArenaRaidParticipant => true,
-      _ => false
-    };
+    protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;
   }
 }

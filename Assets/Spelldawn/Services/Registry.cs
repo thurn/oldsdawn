@@ -59,6 +59,9 @@ namespace Spelldawn.Services
     [SerializeField] Hand _cardStaging = null!;
     public Hand CardStaging => _cardStaging;
 
+    [SerializeField] StackObjectDisplay _cardScoring = null!;
+    public StackObjectDisplay CardScoring => _cardScoring;
+
     [SerializeField] Hand _userHand = null!;
     [SerializeField] Hand _opponentHand = null!;
 

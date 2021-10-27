@@ -587,7 +587,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
                 new ObjectControlNode
                 {
                   GameObjectId = CardObjectId(CardId(55555)),
-                  Node = Button("Score", action: null, smallText: false, orange: true)
+                  Node = Button("Score", action: ScoreAction(55555), smallText: false, orange: true)
                 }
               }
             }
@@ -606,6 +606,118 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Raid = new ObjectPositionRaid
           {
             Index = index
+          }
+        }
+      }
+    };
+
+    ServerAction ScoreAction(int cardId) => new()
+    {
+      Payload = Any.Pack(new CommandList
+      {
+        Commands =
+        {
+          MoveToIdentity(cardId),
+          MoveToOffscreen(cardId),
+          SetUserScore(1)
+        }
+      }),
+      OptimisticUpdate = new CommandList
+      {
+        Commands =
+        {
+          new GameCommand
+          {
+            RenderInterface = new RenderInterfaceCommand
+            {
+              ObjectControls = new InterfacePositionObjectControls()
+            }
+          },
+          MoveToScored(cardId),
+          PlayHitEffect(cardId, 4),
+          Delay(100),
+          PlayHitEffect(cardId, 4),
+          Delay(200)
+        }
+      }
+    };
+
+    GameCommand PlayHitEffect(int cardId, int i) =>
+      new()
+      {
+        PlayEffect = new PlayEffectCommand
+        {
+          Effect = new EffectAddress
+          {
+            Address = $"Hovl Studio/Magic hits/Prefabs/Hit {i}"
+          },
+          Position = new PlayEffectPosition
+          {
+            GameObject = CardObjectId(CardId(cardId))
+          },
+          Scale = 2.0f
+        }
+      };
+
+    GameCommand Delay(int ms) => new()
+    {
+      Delay = new DelayCommand
+      {
+        Duration = TimeMs(ms)
+      }
+    };
+
+    GameCommand MoveToScored(int cardId) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Scored = new ObjectPositionScored()
+        }
+      }
+    };
+
+    GameCommand MoveToIdentity(int cardId) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Identity = new ObjectPositionIdentity
+          {
+            Owner = PlayerName.User
+          }
+        }
+      }
+    };
+
+    GameCommand MoveToOffscreen(int cardId) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Offscreen = new ObjectPositionOffscreen()
+        }
+      }
+    };
+
+    GameCommand SetUserScore(int score) => new()
+    {
+      RenderGame = new RenderGameCommand
+      {
+        Game = new GameView
+        {
+          User = new PlayerView
+          {
+            Score = new ScoreView
+            {
+              Score = score
+            }
           }
         }
       }

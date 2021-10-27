@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Spelldawn.Protos;
@@ -86,10 +87,14 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.UpdatePlayerState:
             break;
           case GameCommand.CommandOneofCase.FireProjectile:
-            yield return StartCoroutine(_registry.ObjectPositionService.HandleFireProjectileCommand(command.FireProjectile));
+            yield return StartCoroutine(
+              _registry.ObjectPositionService.HandleFireProjectileCommand(command.FireProjectile));
             break;
           case GameCommand.CommandOneofCase.Delay:
             yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
+            break;
+          case GameCommand.CommandOneofCase.PlayEffect:
+            yield return HandlePlayEffect(command.PlayEffect);
             break;
           case GameCommand.CommandOneofCase.None:
           default:
@@ -110,7 +115,29 @@ namespace Spelldawn.Services
       _registry.ObjectPositionService.Initialize(
         command.Game?.User?.PlayerInfo?.IdentityCard,
         command.Game?.Opponent?.PlayerInfo?.IdentityCard);
+
+      _registry.IdentityCardForPlayer(PlayerName.User).SetScore(command.Game?.User?.Score?.Score);
       yield break;
+    }
+
+    IEnumerator HandlePlayEffect(PlayEffectCommand command)
+    {
+      var position = command.Position.EffectPositionCase switch
+      {
+        PlayEffectPosition.EffectPositionOneofCase.GameObject =>
+          _registry.ObjectPositionService.Find(command.Position.GameObject).transform.position,
+        _ => throw new ArgumentOutOfRangeException()
+      };
+
+      var rotation = Quaternion.LookRotation(position - _registry.MainCamera.transform.position);
+      var effect = _registry.AssetPoolService.Create(_registry.AssetService.GetEffect(command.Effect), position);
+      effect.transform.rotation = rotation;
+      if (command.Scale is { } scale)
+      {
+        effect.transform.localScale = scale * Vector3.one;
+      }
+
+      yield return new WaitForSeconds(1f);
     }
   }
 }

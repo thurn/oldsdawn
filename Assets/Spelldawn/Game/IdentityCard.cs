@@ -21,18 +21,29 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class IdentityCard : Displayable, ArrowService.IArrowDelegate
+  public sealed class IdentityCard : StackObjectDisplay, ArrowService.IArrowDelegate
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _canDrag;
-    [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] TextMeshPro _scoreText = null!;
     [SerializeField] GameObject _raidSymbol = null!;
     RoomId? _selectedRoom;
 
+    protected override GameContext DefaultGameContext() => GameContext.Arena;
+
+    protected override float? CalculateObjectScale(int index, int count) => 0.1f;
+
     public bool RaidSymbolShown
     {
       set => _raidSymbol.SetActive(value);
+    }
+
+    public void SetScore(int? value)
+    {
+      if (value is { } v)
+      {
+        _scoreText.text = v.ToString();
+      }
     }
 
     void OnMouseDown()

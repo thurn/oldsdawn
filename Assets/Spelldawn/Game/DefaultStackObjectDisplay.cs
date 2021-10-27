@@ -16,30 +16,8 @@
 
 namespace Spelldawn.Game
 {
-  public enum GameContext
+  public sealed class DefaultStackObjectDisplay : StackObjectDisplay
   {
-    // Note: Enum numbers are serialized by Unity and cannot be changed
-    Unspecified = 0,
-    Arena = 1,
-    Deck = 2,
-    Discard = 3,
-    ArenaRaidParticipant = 10,
-    RaidParticipant = 4,
-    Hand = 5,
-    Interface = 6,
-    Staging = 7,
-    Scored = 11,
-    Effects = 8,
-    Dragging = 9
-  }
-
-  public static class GameContextUtil
-  {
-    public static bool IsArenaContext(this GameContext gameContext) => gameContext switch
-    {
-      GameContext.Arena => true,
-      GameContext.ArenaRaidParticipant => true,
-      _ => false
-    };
+    protected override GameContext DefaultGameContext() => GameContext;
   }
 }

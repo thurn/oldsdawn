@@ -571,7 +571,6 @@ message ObjectPositionDiscardContainer {
 }
 
 message ObjectPositionScored {
-    PlayerName owner = 1;
 }
 
 message ObjectPositionRaid {
@@ -579,6 +578,10 @@ message ObjectPositionRaid {
 }
 
 message ObjectPositionBrowser {
+}
+
+message ObjectPositionIdentity {
+    PlayerName owner = 1;
 }
 
 message ObjectPositionIdentityContainer {
@@ -600,6 +603,8 @@ message ObjectPosition {
         ObjectPositionScored scored = 11;
         ObjectPositionRaid raid = 12;
         ObjectPositionBrowser browser = 13;
+        ObjectPositionIdentity identity = 14;
+        ObjectPositionIdentityContainer identity_container = 15;
     }
 }
 
@@ -948,6 +953,23 @@ message DelayCommand {
     TimeValue duration = 1;
 }
 
+message PlayEffectPosition {
+    oneof effect_position {
+        GameObjectId game_object = 1;
+    }
+}
+
+message PlayEffectCommand {
+    EffectAddress effect = 1;
+
+    PlayEffectPosition position = 2;
+
+    google.protobuf.FloatValue scale = 3;
+
+    /** How long to wait before continuing. */
+    TimeValue duration = 1;
+}
+
 message GameCommand {
     oneof command {
         DebugLogCommand debug_log = 1;
@@ -962,6 +984,7 @@ message GameCommand {
         UpdatePlayerStateCommand update_player_state = 10;
         FireProjectileCommand fire_projectile = 11;
         DelayCommand delay = 12;
+        PlayEffectCommand play_effect = 13;
     }
 }
 

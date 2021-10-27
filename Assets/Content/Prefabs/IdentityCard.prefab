@@ -24,15 +24,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3471970735234092863}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: -1, z: 0.1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0.8, y: -1, z: 0.1}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3471970735534257307}
   m_Father: {fileID: 3471970735989548203}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!212 &3471970735234092861
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -269,7 +269,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: 2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e96149557a5a64bb59842fa9c02240c6, type: 2}
   m_sharedMaterial: {fileID: -5884420940402431444, guid: e96149557a5a64bb59842fa9c02240c6, type: 2}
@@ -392,11 +392,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d683b6b0bfa7473a89e1d9b48b6e65e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 0
+  _sortingGroup: {fileID: 9091279491861523925}
+  _objects: []
+  _updateRequired: 0
+  _animateNextUpdate: 0
+  _animationRunning: 0
   _registry: {fileID: 0}
   _canDrag: 0
-  _frame: {fileID: 3471970735344309018}
   _scoreText: {fileID: 3471970735534257304}
-  _sortingGroup: {fileID: 9091279491861523925}
   _raidSymbol: {fileID: 8860615117535787749}
 --- !u!65 &6381433577306138343
 BoxCollider:
