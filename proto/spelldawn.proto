@@ -879,6 +879,7 @@ message InitiateRaidCommand {
  * instead.
  */
 message EndRaidCommand {
+    PlayerName initiator = 1;
 }
 
 enum CardCreationAnimation {

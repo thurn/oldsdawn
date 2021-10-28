@@ -47,11 +47,14 @@ namespace Spelldawn.Services
       if (_queue.Count > 0 && !_currentlyHandling)
       {
         _currentlyHandling = true;
-        StartCoroutine(HandleCommandsAsync(_queue.Dequeue()));
+        StartCoroutine(HandleCommandsAsync(_queue.Dequeue(), () =>
+        {
+          _currentlyHandling = false;
+        }));
       }
     }
 
-    IEnumerator HandleCommandsAsync(CommandList commandList)
+    IEnumerator HandleCommandsAsync(CommandList commandList, Action? onComplete = null)
     {
       yield return _registry.AssetService.LoadAssets(commandList);
 
@@ -68,6 +71,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.RenderInterface:
             HandleRenderInterface(command.RenderInterface);
             break;
+          case GameCommand.CommandOneofCase.Delay:
+            yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
+            break;
           case GameCommand.CommandOneofCase.RenderGame:
             yield return HandleRenderGame(command.RenderGame);
             break;
@@ -81,6 +87,7 @@ namespace Spelldawn.Services
             yield return _registry.ObjectPositionService.HandleCreateCardCommand(command.CreateCard);
             break;
           case GameCommand.CommandOneofCase.UpdateCard:
+            yield return _registry.ObjectPositionService.HandleUpdateCardCommand(command.UpdateCard);
             break;
           case GameCommand.CommandOneofCase.MoveGameObject:
             yield return _registry.ObjectPositionService.HandleMoveGameObjectCommand(command.MoveGameObject);
@@ -93,9 +100,6 @@ namespace Spelldawn.Services
             yield return
               _registry.ObjectPositionService.HandleFireProjectileCommand(command.FireProjectile);
             break;
-          case GameCommand.CommandOneofCase.Delay:
-            yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
-            break;
           case GameCommand.CommandOneofCase.PlayEffect:
             yield return HandlePlayEffect(command.PlayEffect);
             break;
@@ -105,7 +109,7 @@ namespace Spelldawn.Services
         }
       }
 
-      _currentlyHandling = false;
+      onComplete?.Invoke();
     }
 
     IEnumerator HandleRunInParallel(RunInParallelCommand command)

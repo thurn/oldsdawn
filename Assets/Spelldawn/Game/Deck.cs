@@ -30,7 +30,6 @@ namespace Spelldawn.Game
 
     public void SetCardBacks(SpriteAddress spriteAddress)
     {
-      Debug.Log($"SetCardBacks: {AllObjects.Count} to {spriteAddress.Address}");
       foreach (var obj in AllObjects)
       {
         ComponentUtils.GetComponent<SpriteRenderer>(obj).sprite = _registry.AssetService.GetSprite(spriteAddress);

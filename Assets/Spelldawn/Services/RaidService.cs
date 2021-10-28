@@ -85,6 +85,7 @@ namespace Spelldawn.Services
 
     public IEnumerator HandleEndRaid(EndRaidCommand endRaidCommand)
     {
+      _registry.IdentityCardForPlayer(endRaidCommand.Initiator).RaidSymbolShown = false;
       _background.enabled = false;
       yield break;
     }

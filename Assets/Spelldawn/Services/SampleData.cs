@@ -14,6 +14,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Google.Protobuf.WellKnownTypes;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
@@ -30,6 +31,7 @@ namespace Spelldawn.Services
     [SerializeField] bool _drawHands;
     int _lastReturnedCard;
     int _lastOpponentCardId = 65536;
+    readonly List<CardId> _opponentHandCards = new();
 
     static readonly string Text1 =
       @"<sprite name=""hourglass"">, 2<sprite name=""fire"">: Destroy this token. Add another line of text to this card.
@@ -220,6 +222,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     IEnumerator DrawOpponentCard(bool disableAnimation = false)
     {
       var cardId = CardId(_lastOpponentCardId++);
+      _opponentHandCards.Add(cardId);
       return _registry.CommandService.HandleCommands(new GameCommand
       {
         CreateCard = new CreateCardCommand
@@ -440,13 +443,86 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           RaidControls = new InterfacePositionRaidControls
           {
-            Node = RaidControls()
+            Node = action.RoomId switch
+            {
+              RoomId.Sanctum => SanctumRaidControls(),
+              RoomId.Treasury => TreasuryRaidControls(),
+              _ => null
+            }
           }
         }
       });
     }
 
-    Node RaidControls() => Row("ControlButtons",
+    Node SanctumRaidControls() => Row("ControlButtons",
+      new FlexStyle
+      {
+        JustifyContent = FlexJustify.FlexEnd,
+        FlexGrow = 1,
+        AlignItems = FlexAlign.Center,
+        Wrap = FlexWrap.WrapReverse,
+      }, Button("Continue", action: AccessHandAction(RoomId.Sanctum)));
+
+    ServerAction AccessHandAction(RoomId fromRoom) => new()
+    {
+      OptimisticUpdate = new CommandList
+      {
+        Commands =
+        {
+          FireProjectile(CardObjectId(CardId(1)), IdentityCardId(PlayerName.User), 3)
+        }
+      },
+      Payload = Any.Pack(new CommandList
+      {
+        Commands =
+        {
+          MoveToRoom(1, RoomId.Sanctum),
+          FireProjectile(IdentityCardId(PlayerName.User), IdentityCardId(PlayerName.Opponent), 4),
+          ClearRaidControls(),
+          RunInParallel(
+            MoveIdentityToContainer(PlayerName.User),
+            MoveIdentityToContainer(PlayerName.Opponent)
+          ),
+          UpdateCard(OpponentCard("Revealed Card", 65539, 18)),
+          UpdateCard(OpponentCard("Scheme Card", 65541, 19)),
+          RunInParallel(_opponentHandCards.Select(id => MoveToBrowser(CardObjectId(id)))),
+          RenderObjectButton(CardObjectId(CardId(65541)), "Score!", ScoreAction(65541,
+            RunInParallel(_opponentHandCards
+              .Except(CollectionUtils.Once(CardId(65541)))
+              .Select(id => MoveToHand(id.Value, PlayerName.Opponent)))))
+        }
+      })
+    };
+
+    GameObjectId IdentityCardId(PlayerName playerName) => new()
+    {
+      CardId = new CardId
+      {
+        IdentityCard = playerName
+      }
+    };
+
+    // ReSharper disable once UnusedMember.Local
+    GameObjectId DeckObjectId(PlayerName playerName) => new()
+    {
+      Deck = playerName
+    };
+
+    // ReSharper disable once UnusedMember.Local
+    GameObjectId HandObjectId(PlayerName playerName) => new()
+    {
+      Hand = playerName
+    };
+
+    GameCommand UpdateCard(CardView cardView) => new()
+    {
+      UpdateCard = new UpdateCardCommand
+      {
+        Card = cardView
+      }
+    };
+
+    Node TreasuryRaidControls() => Row("ControlButtons",
       new FlexStyle
       {
         JustifyContent = FlexJustify.FlexEnd,
@@ -454,7 +530,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         AlignItems = FlexAlign.Center,
         Wrap = FlexWrap.WrapReverse,
       },
-      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(), smallText: true, orange: true),
+      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(RoomId.Treasury), smallText: true, orange: true),
       Button("Gordian Blade\n3\uf06d", action: null, smallText: true, orange: true),
       Button("Continue"));
 
@@ -489,7 +565,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         TextAlign = TextAlign.MiddleCenter
       }));
 
-    ServerAction CardStrikeAction() =>
+    ServerAction CardStrikeAction(RoomId fromRoom) =>
       new()
       {
         Payload = Any.Pack(AccessDeck()),
@@ -497,42 +573,24 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Commands =
           {
-            new GameCommand
-            {
-              RenderInterface = new RenderInterfaceCommand
-              {
-                RaidControls = new InterfacePositionRaidControls()
-              }
-            },
-            new GameCommand
-            {
-              FireProjectile = new FireProjectileCommand
-              {
-                SourceId = CardObjectId(CardId(2)),
-                TargetId = CardObjectId(CardId(1)),
-                Projectile = new ProjectileAddress
-                {
-                  Address = "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 8"
-                },
-                TravelDuration = TimeMs(300),
-                AdditionalHit = new EffectAddress
-                {
-                  Address = "Hovl Studio/Sword slash VFX/Prefabs/Sword Slash 1"
-                },
-                AdditionalHitDelay = TimeMs(100),
-                WaitDuration = TimeMs(300),
-                HideOnHit = true,
-                JumpToPosition = new ObjectPosition
-                {
-                  Room = new ObjectPositionRoom
-                  {
-                    RoomId = RoomId.RoomB,
-                    RoomLocation = RoomLocation.Front
-                  }
-                }
-              }
-            },
+            ClearRaidControls(),
+            FireProjectile(
+              CardObjectId(CardId(2)),
+              CardObjectId(CardId(1)),
+              projectileNumber: 8,
+              additionalHit: true,
+              hideOnHit: true,
+              jumpToRoomOnHit: fromRoom)
           }
+        }
+      };
+
+    GameCommand ClearRaidControls() =>
+      new()
+      {
+        RenderInterface = new RenderInterfaceCommand
+        {
+          RaidControls = new InterfacePositionRaidControls()
         }
       };
 
@@ -576,51 +634,59 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           }
         },
         MoveToRaidIndex(55556, 1),
-        MoveIdentityToContainer(),
-        new GameCommand
+        MoveIdentityToContainer(PlayerName.User),
+        RenderObjectButton(CardObjectId(CardId(55555)), "Score!",
+          ScoreAction(55555, MoveToDeck(55556, PlayerName.Opponent)))
+      }
+    };
+
+    GameCommand RenderObjectButton(GameObjectId id, string label, ServerAction onClick)
+    {
+      return new GameCommand
+      {
+        RenderInterface = new RenderInterfaceCommand
         {
-          RenderInterface = new RenderInterfaceCommand
+          ObjectControls = new InterfacePositionObjectControls
           {
-            ObjectControls = new InterfacePositionObjectControls
+            ControlNodes =
             {
-              ControlNodes =
+              new ObjectControlNode
               {
-                new ObjectControlNode
-                {
-                  GameObjectId = CardObjectId(CardId(55555)),
-                  Node = Button("Score", action: ScoreAction(55555), smallText: false, orange: true)
-                }
+                GameObjectId = id,
+                Node = Button(label, action: onClick, smallText: false, orange: true)
               }
             }
           }
         }
-      }
-    };
+      };
+    }
 
-    GameCommand MoveIdentityToContainer() =>
+    GameCommand MoveIdentityToContainer(PlayerName playerName) =>
       new()
       {
         MoveGameObject = new MoveGameObjectCommand
         {
           Id = CardObjectId(new CardId
           {
-            IdentityCard = PlayerName.User
+            IdentityCard = playerName
           }),
           Position = new ObjectPosition
           {
             IdentityContainer = new ObjectPositionIdentityContainer
             {
-              Owner = PlayerName.User
+              Owner = playerName
             }
           }
         }
       };
 
-    GameCommand MoveToRaidIndex(int cardId, int index) => new()
+    GameCommand MoveToRaidIndex(int cardId, int index) => MoveToRaidIndex(CardObjectId(CardId(cardId)), index);
+
+    GameCommand MoveToRaidIndex(GameObjectId id, int index) => new()
     {
       MoveGameObject = new MoveGameObjectCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Id = id,
         Position = new ObjectPosition
         {
           Raid = new ObjectPositionRaid
@@ -631,7 +697,19 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    ServerAction ScoreAction(int cardId) => new()
+    GameCommand MoveToBrowser(GameObjectId id) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = id,
+        Position = new ObjectPosition
+        {
+          Browser = new ObjectPositionBrowser()
+        }
+      }
+    };
+
+    ServerAction ScoreAction(int cardId, GameCommand cleanUp) => new()
     {
       Payload = Any.Pack(new CommandList
       {
@@ -655,17 +733,17 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               ObjectControls = new InterfacePositionObjectControls()
             }
           },
-          MoveToDeck(55556, PlayerName.Opponent),
           MoveToScored(cardId),
-          PlayHitEffect(cardId, 4),
-          Delay(100),
-          PlayHitEffect(cardId, 4),
-          Delay(200)
+          cleanUp,
+          PlayHitEffect(cardId, 4, 700),
+          PlayHitEffect(cardId, 4)
         }
       }
     };
 
-    GameCommand RunInParallel(params GameCommand[] commands)
+    GameCommand RunInParallel(params GameCommand[] commands) => RunInParallel(commands.ToList());
+
+    GameCommand RunInParallel(IEnumerable<GameCommand> commands)
     {
       var result = new RunInParallelCommand();
       foreach (var command in commands)
@@ -682,7 +760,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
     }
 
-    GameCommand PlayHitEffect(int cardId, int i) =>
+    GameCommand PlayHitEffect(int cardId, int i, int duration = 300) =>
       new()
       {
         PlayEffect = new PlayEffectCommand
@@ -695,11 +773,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             GameObject = CardObjectId(CardId(cardId))
           },
-          Duration = TimeMs(300),
+          Duration = TimeMs(duration),
           Scale = 2.0f
         }
       };
 
+    // ReSharper disable once UnusedMember.Local
     GameCommand Delay(int ms) => new()
     {
       Delay = new DelayCommand
@@ -766,7 +845,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand EndRaid() => new()
     {
-      EndRaid = new EndRaidCommand()
+      EndRaid = new EndRaidCommand
+      {
+        Initiator = PlayerName.User
+      }
     };
 
     GameCommand MoveToDeck(int cardId, PlayerName owner) => new()
@@ -779,6 +861,38 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Deck = new ObjectPositionDeck
           {
             Owner = owner
+          }
+        }
+      }
+    };
+
+    GameCommand MoveToHand(int cardId, PlayerName owner) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Hand = new ObjectPositionHand
+          {
+            Owner = owner
+          }
+        }
+      }
+    };
+
+
+    GameCommand MoveToRoom(int cardId, RoomId roomId) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Room = new ObjectPositionRoom
+          {
+            RoomId = roomId,
+            RoomLocation = RoomLocation.Front
           }
         }
       }
@@ -802,11 +916,51 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
+    // ReSharper disable once UnusedMember.Local
     GameCommand DebugLog(string message) => new()
     {
       DebugLog = new DebugLogCommand
       {
         Message = message
+      }
+    };
+
+    GameCommand FireProjectile(
+      GameObjectId sourceId,
+      GameObjectId targetId,
+      int projectileNumber,
+      bool additionalHit = false,
+      bool hideOnHit = false,
+      RoomId? jumpToRoomOnHit = null) => new()
+    {
+      FireProjectile = new FireProjectileCommand
+      {
+        SourceId = sourceId,
+        TargetId = targetId,
+        Projectile = new ProjectileAddress
+        {
+          Address = $"Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile {projectileNumber}"
+        },
+        TravelDuration = TimeMs(300),
+        AdditionalHit = additionalHit
+          ? new EffectAddress
+          {
+            Address = "Hovl Studio/Sword slash VFX/Prefabs/Sword Slash 1"
+          }
+          : null,
+        AdditionalHitDelay = additionalHit ? TimeMs(100) : null,
+        WaitDuration = TimeMs(300),
+        HideOnHit = hideOnHit,
+        JumpToPosition = jumpToRoomOnHit is { } r
+          ? new ObjectPosition
+          {
+            Room = new ObjectPositionRoom
+            {
+              RoomId = r,
+              RoomLocation = RoomLocation.Front
+            }
+          }
+          : null
       }
     };
   }

@@ -53,9 +53,10 @@ namespace Spelldawn.Game
       GameContext.Hand => 600,
       GameContext.Interface => 700,
       GameContext.Staging => 800,
-      GameContext.Scored => 900,
-      GameContext.Effects => 1000,
-      GameContext.Dragging => 1100,
+      GameContext.Browser => 900,
+      GameContext.Scored => 1000,
+      GameContext.Effects => 1100,
+      GameContext.Dragging => 1200,
       _ => throw new ArgumentOutOfRangeException()
     };
   }

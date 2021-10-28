@@ -19,7 +19,7 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class Hand : ObjectDisplay
+  public sealed class CurveObjectDisplay : ObjectDisplay
   {
     [SerializeField] int _zRotationMultiplier;
     [SerializeField] GameContext _sortingGameContext;

@@ -193,6 +193,13 @@ namespace Spelldawn.Services
       }
     }
 
+    public IEnumerator HandleUpdateCardCommand(UpdateCardCommand command)
+    {
+      var card = (Card)CheckExists(new GameObjectId { CardId = command.Card.CardId });
+      card.Render(_registry, command.Card);
+      yield break;
+    }
+
     public IEnumerator HandleMoveGameObjectCommand(MoveGameObjectCommand command)
     {
       var card = Find(command.Id);
@@ -265,11 +272,12 @@ namespace Spelldawn.Services
         case ObjectPosition.PositionOneofCase.Raid:
           return _registry.RaidService.AddToRaid(displayable, position.Raid, animate);
         case ObjectPosition.PositionOneofCase.Browser:
-          throw new NotImplementedException();
+          return _registry.CardBrowser.AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Identity:
           return _registry.IdentityCardForPlayer(position.Identity.Owner).AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.IdentityContainer:
-          return _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner)
+          return _registry
+            .IdentityCardPositionForPlayer(position.IdentityContainer.Owner)
             .AddObject(displayable, animate);
         default:
           throw new ArgumentOutOfRangeException();

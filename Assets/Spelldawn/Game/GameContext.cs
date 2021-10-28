@@ -28,6 +28,7 @@ namespace Spelldawn.Game
     Hand = 5,
     Interface = 6,
     Staging = 7,
+    Browser = 12,
     Scored = 11,
     Effects = 8,
     Dragging = 9

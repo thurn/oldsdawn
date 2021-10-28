@@ -25,5 +25,10 @@ namespace Spelldawn.Utils
     {
       yield break;
     }
+
+    public static IEnumerable<T> Once<T>(T value)
+    {
+      yield return value;
+    }
   }
 }

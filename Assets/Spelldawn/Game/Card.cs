@@ -78,9 +78,13 @@ namespace Spelldawn.Game
 
     bool InHand() => HasGameContext && GameContext == GameContext.Hand;
 
-    public void Render(Registry registry, CardView cardView, GameContext gameContext, bool animate = true)
+    public void Render(Registry registry, CardView cardView, GameContext? gameContext = null, bool animate = true)
     {
-      SetGameContext(gameContext);
+      if (gameContext is {} gc)
+      {
+        SetGameContext(gc);
+      }
+
       _registry = registry;
       _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
       _outline.sortingOrder = -1;

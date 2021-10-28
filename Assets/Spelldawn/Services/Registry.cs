@@ -56,16 +56,19 @@ namespace Spelldawn.Services
     [SerializeField] RaidService _raidService = null!;
     public RaidService RaidService => _raidService;
 
-    [SerializeField] Hand _cardStaging = null!;
-    public Hand CardStaging => _cardStaging;
+    [SerializeField] CurveObjectDisplay _cardStaging = null!;
+    public CurveObjectDisplay CardStaging => _cardStaging;
+
+    [SerializeField] CurveObjectDisplay _cardBrowser = null!;
+    public CurveObjectDisplay CardBrowser => _cardBrowser;
 
     [SerializeField] StackObjectDisplay _cardScoring = null!;
     public StackObjectDisplay CardScoring => _cardScoring;
 
-    [SerializeField] Hand _userHand = null!;
-    [SerializeField] Hand _opponentHand = null!;
+    [SerializeField] CurveObjectDisplay _userHand = null!;
+    [SerializeField] CurveObjectDisplay _opponentHand = null!;
 
-    public Hand HandForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
+    public CurveObjectDisplay HandForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
 
     [SerializeField] ObjectDisplay _userDeckPosition = null!;
     [SerializeField] ObjectDisplay _opponentDeckPosition = null!;
