@@ -79,13 +79,28 @@ namespace Spelldawn.Game
 
     public void DebugUpdate()
     {
-      MarkUpdateRequired(true);
+      if (Application.isPlaying)
+      {
+        MarkUpdateRequired(true);
+      }
+      else
+      {
+        MoveObjectsToPosition(false);
+      }
     }
+
+    public override bool IsContainer() => _objects.Count > 0;
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
       MarkUpdateRequired(true);
     }
+
+    public override void OnUpdateParentContainer()
+    {
+      MarkUpdateRequired(true);
+    }
+
 
     protected abstract override GameContext DefaultGameContext();
 
@@ -96,6 +111,9 @@ namespace Spelldawn.Game
     protected virtual Vector3? CalculateObjectRotation(int index, int count) => null;
 
     protected virtual float? CalculateObjectScale(int index, int count) => null;
+
+    /// <summary>If true, children will be forced into their assigned positions once per frame.</summary>
+    protected virtual bool LockChildPositions() => false;
 
     void MarkUpdateRequired(bool animate)
     {
@@ -121,14 +139,10 @@ namespace Spelldawn.Game
 
     void MoveObjectsToPosition(bool animate)
     {
-      if (animate)
-      {
-        _animationRunning = true;
-      }
-
       Sequence? sequence = null;
       if (animate)
       {
+        _animationRunning = true;
         sequence = TweenUtils.Sequence($"{gameObject.name} MoveObjectsToPosition");
       }
 
@@ -139,7 +153,16 @@ namespace Spelldawn.Game
         var rotation = CalculateObjectRotation(i, _objects.Count);
         var scale = CalculateObjectScale(i, _objects.Count);
 
-        if (animate)
+        var shouldAnimate = animate;
+        if (displayable.IsContainer())
+        {
+          // If the object is itself a container, we jump it to the destination position and then
+          // schedule its internal animations.
+          shouldAnimate = false;
+          displayable.OnUpdateParentContainer();
+        }
+
+        if (shouldAnimate)
         {
           sequence.Insert(atPosition: 0, displayable.transform.DOMove(position, duration: AnimationDuration));
         }
@@ -150,7 +173,7 @@ namespace Spelldawn.Game
 
         if (rotation is { } vector)
         {
-          if (animate)
+          if (shouldAnimate)
           {
             sequence.Insert(atPosition: 0,
               displayable.transform.DOLocalRotate(vector, duration: AnimationDuration));
@@ -163,7 +186,7 @@ namespace Spelldawn.Game
 
         if (scale is { } s)
         {
-          if (animate)
+          if (shouldAnimate)
           {
             sequence.Insert(atPosition: 0, displayable.transform.DOScale(Vector3.one * s, duration: AnimationDuration));
           }
@@ -178,7 +201,7 @@ namespace Spelldawn.Game
 
       if (animate)
       {
-        sequence.OnComplete(() =>
+        sequence.InsertCallback(AnimationDuration, () =>
         {
           _animationRunning = false;
           _animateNextUpdate = false;

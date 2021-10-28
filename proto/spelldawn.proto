@@ -817,6 +817,19 @@ message DebugLogCommand {
     string message = 1;
 }
 
+/**
+ * Run a series of command lists simultaneously. Warning: applying multiple commands
+ * to the same game object will have unpredictable results.
+ */
+message RunInParallelCommand {
+    repeated CommandList commands = 1;
+}
+
+/** Wait before executing the next command in sequence. */
+message DelayCommand {
+    TimeValue duration = 1;
+}
+
 message InterfacePositionFullScreen {
     Node node = 1;
 }
@@ -860,6 +873,11 @@ message InitiateRaidCommand {
     RoomId room_id = 2;
 }
 
+/**
+ * Removes the raid UI overlay. This command does not cause game objects within
+ * the raid to change position, 'MoveGameObjectCommand' should be used for that
+ * instead.
+ */
 message EndRaidCommand {
 }
 
@@ -948,11 +966,6 @@ message FireProjectileCommand {
     ObjectPosition jump_to_position = 9;
 }
 
-/** Wait before executing the next command in sequence. */
-message DelayCommand {
-    TimeValue duration = 1;
-}
-
 message PlayEffectPosition {
     oneof effect_position {
         GameObjectId game_object = 1;
@@ -967,24 +980,25 @@ message PlayEffectCommand {
     google.protobuf.FloatValue scale = 3;
 
     /** How long to wait before continuing. */
-    TimeValue duration = 1;
+    TimeValue duration = 4;
 }
 
 message GameCommand {
     oneof command {
         DebugLogCommand debug_log = 1;
-        RenderInterfaceCommand render_interface = 2;
-        RenderGameCommand render_game = 3;
-        InitiateRaidCommand initiate_raid = 4;
-        EndRaidCommand end_raid = 5;
-        CreateCardCommand create_card = 6;
-        UpdateCardCommand update_card = 7;
-        MoveGameObjectCommand move_game_object = 8;
-        DestroyCardCommand destroy_card = 9;
-        UpdatePlayerStateCommand update_player_state = 10;
-        FireProjectileCommand fire_projectile = 11;
-        DelayCommand delay = 12;
-        PlayEffectCommand play_effect = 13;
+        RunInParallelCommand run_in_parallel = 2;
+        DelayCommand delay = 3;
+        RenderInterfaceCommand render_interface = 4;
+        RenderGameCommand render_game = 5;
+        InitiateRaidCommand initiate_raid = 6;
+        EndRaidCommand end_raid = 7;
+        CreateCardCommand create_card = 8;
+        UpdateCardCommand update_card = 9;
+        MoveGameObjectCommand move_game_object = 10;
+        DestroyCardCommand destroy_card = 11;
+        UpdatePlayerStateCommand update_player_state = 12;
+        FireProjectileCommand fire_projectile = 13;
+        PlayEffectCommand play_effect = 14;
     }
 }
 

@@ -37,11 +37,6 @@ namespace Spelldawn.Services
     {
       if (_currentRoom != command.RoomId)
       {
-        if (_currentRoom is { } r && r != command.RoomId)
-        {
-          yield return HandleEndRaid(new EndRaidCommand());
-        }
-
         _currentRoom = command.RoomId;
         _background.enabled = true;
         _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
@@ -64,7 +59,7 @@ namespace Spelldawn.Services
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;
 
-        yield return _registry.ObjectPositionService.MoveCard(identity, new ObjectPosition
+        yield return _registry.ObjectPositionService.MoveGameObject(identity, new ObjectPosition
         {
           Raid = new ObjectPositionRaid()
         });
@@ -76,7 +71,7 @@ namespace Spelldawn.Services
       var coroutines = new List<Coroutine>();
       foreach (var card in cards)
       {
-        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveCard(card, new ObjectPosition
+        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveGameObject(card, new ObjectPosition
         {
           Raid = new ObjectPositionRaid()
         })));
@@ -91,11 +86,6 @@ namespace Spelldawn.Services
     public IEnumerator HandleEndRaid(EndRaidCommand endRaidCommand)
     {
       _background.enabled = false;
-
-      if (_currentRoom != null)
-      {
-      }
-
       yield break;
     }
   }

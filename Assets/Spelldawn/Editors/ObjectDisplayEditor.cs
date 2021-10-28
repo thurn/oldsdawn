@@ -12,20 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
+using Spelldawn.Game;
+using UnityEditor;
 using UnityEngine;
 
 #nullable enable
 
-namespace Spelldawn.Game
+namespace Spelldawn.Editors
 {
-  public abstract class StackObjectDisplay : ObjectDisplay
+  [CustomEditor(typeof(ObjectDisplay), editorForChildClasses: true)]
+  public sealed class ObjectDisplayEditor : Editor
   {
-    protected override Vector3 CalculateObjectPosition(int index, int count) =>
-      new(
-        transform.position.x,
-        transform.position.y + Mathf.Lerp(0f, 1f, count == 1 ? 0.5f : index / ((float)count - 1)),
-        transform.position.z);
+    public override void OnInspectorGUI()
+    {
+      DrawDefaultInspector();
+      GUILayout.Space(10);
+      var display = ((ObjectDisplay)target);
 
-    protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;
+      if (GUILayout.Button("Update"))
+      {
+        display.DebugUpdate();
+      }
+
+      if (GUILayout.Button("Delete"))
+      {
+        var card = display.AllObjects.First();
+        display.RemoveObject(card);
+        Destroy(card.gameObject);
+      }
+    }
   }
 }

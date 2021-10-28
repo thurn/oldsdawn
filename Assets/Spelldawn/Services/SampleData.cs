@@ -572,10 +572,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           CreateCard = new CreateCardCommand
           {
-            Card = OpponentCard("Not A Scheme", 55556, 93)
+            Card = OpponentCard("Not A Scheme", 55556, 98)
           }
         },
         MoveToRaidIndex(55556, 1),
+        MoveIdentityToContainer(),
         new GameCommand
         {
           RenderInterface = new RenderInterfaceCommand
@@ -595,6 +596,25 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       }
     };
+
+    GameCommand MoveIdentityToContainer() =>
+      new()
+      {
+        MoveGameObject = new MoveGameObjectCommand
+        {
+          Id = CardObjectId(new CardId
+          {
+            IdentityCard = PlayerName.User
+          }),
+          Position = new ObjectPosition
+          {
+            IdentityContainer = new ObjectPositionIdentityContainer
+            {
+              Owner = PlayerName.User
+            }
+          }
+        }
+      };
 
     GameCommand MoveToRaidIndex(int cardId, int index) => new()
     {
@@ -617,9 +637,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Commands =
         {
+          MoveToDeckContainer(PlayerName.Opponent),
           MoveToIdentity(cardId),
           MoveToOffscreen(cardId),
-          SetUserScore(1)
+          SetUserScore(2),
+          EndRaid()
         }
       }),
       OptimisticUpdate = new CommandList
@@ -633,6 +655,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               ObjectControls = new InterfacePositionObjectControls()
             }
           },
+          MoveToDeck(55556, PlayerName.Opponent),
           MoveToScored(cardId),
           PlayHitEffect(cardId, 4),
           Delay(100),
@@ -641,6 +664,23 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       }
     };
+
+    GameCommand RunInParallel(params GameCommand[] commands)
+    {
+      var result = new RunInParallelCommand();
+      foreach (var command in commands)
+      {
+        result.Commands.Add(new CommandList
+        {
+          Commands = { command }
+        });
+      }
+
+      return new GameCommand
+      {
+        RunInParallel = result
+      };
+    }
 
     GameCommand PlayHitEffect(int cardId, int i) =>
       new()
@@ -655,6 +695,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             GameObject = CardObjectId(CardId(cardId))
           },
+          Duration = TimeMs(300),
           Scale = 2.0f
         }
       };
@@ -720,6 +761,52 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             }
           }
         }
+      }
+    };
+
+    GameCommand EndRaid() => new()
+    {
+      EndRaid = new EndRaidCommand()
+    };
+
+    GameCommand MoveToDeck(int cardId, PlayerName owner) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Deck = new ObjectPositionDeck
+          {
+            Owner = owner
+          }
+        }
+      }
+    };
+
+    GameCommand MoveToDeckContainer(PlayerName owner) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = new GameObjectId
+        {
+          Deck = owner
+        },
+        Position = new ObjectPosition
+        {
+          DeckContainer = new ObjectPositionDeckContainer
+          {
+            Owner = owner
+          }
+        }
+      }
+    };
+
+    GameCommand DebugLog(string message) => new()
+    {
+      DebugLog = new DebugLogCommand
+      {
+        Message = message
       }
     };
   }

@@ -242,7 +242,7 @@ namespace Spelldawn.Game
         }
 
         StartCoroutine(position != null
-          ? _registry.ObjectPositionService.MoveCard(this, position)
+          ? _registry.ObjectPositionService.MoveGameObject(this, position)
           : Parent!.AddObject(this, animate: true, index: _handIndex));
       }
 

@@ -26,7 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 897510664189753330}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
@@ -37,7 +37,7 @@ Transform:
   - {fileID: 4336733095159336289}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1478306717337425584
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -66,6 +66,15 @@ MonoBehaviour:
   _parent: {fileID: 0}
   _gameContext: 0
   _sortingGroup: {fileID: 4342431512562652132}
+  _objects: []
+  _updateRequired: 0
+  _animateNextUpdate: 0
+  _animationRunning: 0
+  _initialChildren:
+  - {fileID: 2737819687240079703}
+  - {fileID: 5837746588541353383}
+  - {fileID: 5957154858582914422}
+  - {fileID: 6604934415589505766}
   _registry: {fileID: 0}
   _clickable: 0
 --- !u!210 &4342431512562652132
@@ -89,6 +98,7 @@ GameObject:
   m_Component:
   - component: {fileID: 338230949371336825}
   - component: {fileID: 8121512442413232547}
+  - component: {fileID: 2737819687240079703}
   m_Layer: 0
   m_Name: CardBack
   m_TagString: Untagged
@@ -163,6 +173,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2737819687240079703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072442688763440058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96bf9ef0c8d94bb89dd280ed7c23cd69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 0
+  _sortingGroup: {fileID: 0}
 --- !u!1 &4336733094308534599
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,6 +198,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4336733094308534598}
   - component: {fileID: 4336733094308534601}
+  - component: {fileID: 5957154858582914422}
   m_Layer: 0
   m_Name: CardBack
   m_TagString: Untagged
@@ -247,6 +273,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5957154858582914422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4336733094308534599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96bf9ef0c8d94bb89dd280ed7c23cd69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 0
+  _sortingGroup: {fileID: 0}
 --- !u!1 &4336733095159336318
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4336733095159336289}
   - component: {fileID: 4336733095159336288}
+  - component: {fileID: 6604934415589505766}
   m_Layer: 0
   m_Name: CardBack
   m_TagString: Untagged
@@ -331,6 +373,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6604934415589505766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4336733095159336318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96bf9ef0c8d94bb89dd280ed7c23cd69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 0
+  _sortingGroup: {fileID: 0}
 --- !u!1 &4336733095181663961
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,6 +398,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4336733095181663960}
   - component: {fileID: 4336733095181663963}
+  - component: {fileID: 5837746588541353383}
   m_Layer: 0
   m_Name: CardBack
   m_TagString: Untagged
@@ -415,3 +473,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5837746588541353383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4336733095181663961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96bf9ef0c8d94bb89dd280ed7c23cd69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _parent: {fileID: 0}
+  _gameContext: 0
+  _sortingGroup: {fileID: 0}

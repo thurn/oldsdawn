@@ -14,6 +14,7 @@
 
 using Spelldawn.Protos;
 using Spelldawn.Services;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -26,6 +27,15 @@ namespace Spelldawn.Game
     [SerializeField] bool _clickable;
 
     protected override GameContext DefaultGameContext() => GameContext.Deck;
+
+    public void SetCardBacks(SpriteAddress spriteAddress)
+    {
+      Debug.Log($"SetCardBacks: {AllObjects.Count} to {spriteAddress.Address}");
+      foreach (var obj in AllObjects)
+      {
+        ComponentUtils.GetComponent<SpriteRenderer>(obj).sprite = _registry.AssetService.GetSprite(spriteAddress);
+      }
+    }
 
     void OnMouseUpAsButton()
     {

@@ -57,13 +57,14 @@ namespace Spelldawn.Services
     {
       if (userCard != null)
       {
-        _userCardBack = userCard.CardBack;
         SetCardBacks(userCard, PlayerName.User);
-        SetCardBacks(userCard, PlayerName.Opponent);
+        _userCardBack = userCard.CardBack;
       }
 
       if (opponentCard != null)
       {
+        SetCardBacks(opponentCard, PlayerName.Opponent);
+
         foreach (var spriteRenderer in _registry.DeckForPlayer(PlayerName.Opponent)
           .GetComponentsInChildren<SpriteRenderer>())
         {
@@ -111,7 +112,7 @@ namespace Spelldawn.Services
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
         card.Render(_registry, command.Card, GameContext.Staging, animate: !command.DisableAnimation);
-        StartCoroutine(MoveCardInternal(card, command.Card.OnCreatePosition, animate: false));
+        StartCoroutine(MoveObjectInternal(card, command.Card.OnCreatePosition, animate: false));
 
         switch (command.Animation)
         {
@@ -183,7 +184,7 @@ namespace Spelldawn.Services
 
       if (command.JumpToPosition != null)
       {
-        yield return MoveCard(target, command.JumpToPosition, animate: false, animateRemove: true);
+        yield return MoveGameObject(target, command.JumpToPosition, animate: false, animateRemove: true);
       }
 
       if (throwSequence.IsActive())
@@ -192,27 +193,29 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator HandleMoveCardCommand(MoveGameObjectCommand command)
+    public IEnumerator HandleMoveGameObjectCommand(MoveGameObjectCommand command)
     {
-      CheckExists(command.Id);
-      var card = _cards[command.Id];
+      var card = Find(command.Id);
       if (card.Parent)
       {
         card.Parent!.RemoveObjectIfPresent(card, !command.DisableAnimation);
       }
 
-      return MoveCardInternal(card, command.Position, !command.DisableAnimation);
+      return MoveGameObject(Find(command.Id), command.Position, !command.DisableAnimation);
     }
 
-    public IEnumerator MoveCard(Displayable card, ObjectPosition targetPosition, bool animate = true,
+    public IEnumerator MoveGameObject(
+      Displayable displayable,
+      ObjectPosition targetPosition,
+      bool animate = true,
       bool animateRemove = true)
     {
-      if (card.Parent)
+      if (displayable.Parent)
       {
-        card.Parent!.RemoveObjectIfPresent(card, animateRemove);
+        displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
       }
 
-      return MoveCardInternal(card, targetPosition, animate);
+      return MoveObjectInternal(displayable, targetPosition, animate);
     }
 
     static GameObjectId ToGameObjectId(CardId cardId) => new()
@@ -236,7 +239,7 @@ namespace Spelldawn.Services
       }
     }
 
-    IEnumerator MoveCardInternal(Displayable displayable, ObjectPosition position, bool animate)
+    IEnumerator MoveObjectInternal(Displayable displayable, ObjectPosition position, bool animate)
     {
       switch (position.PositionCase)
       {
@@ -253,6 +256,8 @@ namespace Spelldawn.Services
           return _registry.HandForPlayer(position.Hand.Owner).AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Deck:
           return _registry.DeckForPlayer(position.Deck.Owner).AddObject(displayable, animate);
+        case ObjectPosition.PositionOneofCase.DeckContainer:
+          return _registry.DeckPositionForPlayer(position.DeckContainer.Owner).AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Discard:
           throw new NotImplementedException();
         case ObjectPosition.PositionOneofCase.Scored:
@@ -263,6 +268,9 @@ namespace Spelldawn.Services
           throw new NotImplementedException();
         case ObjectPosition.PositionOneofCase.Identity:
           return _registry.IdentityCardForPlayer(position.Identity.Owner).AddObject(displayable, animate);
+        case ObjectPosition.PositionOneofCase.IdentityContainer:
+          return _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner)
+            .AddObject(displayable, animate);
         default:
           throw new ArgumentOutOfRangeException();
       }
@@ -272,11 +280,7 @@ namespace Spelldawn.Services
     {
       if (cardView != null)
       {
-        foreach (var spriteRenderer in _registry.DeckForPlayer(playerName)
-          .GetComponentsInChildren<SpriteRenderer>())
-        {
-          spriteRenderer.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
-        }
+        _registry.DeckForPlayer(playerName).SetCardBacks(cardView.CardBack);
       }
     }
 

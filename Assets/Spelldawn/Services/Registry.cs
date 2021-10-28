@@ -67,10 +67,10 @@ namespace Spelldawn.Services
 
     public Hand HandForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
 
-    [SerializeField] Transform _userDeckPosition = null!;
-    [SerializeField] Transform _opponentDeckPosition = null!;
+    [SerializeField] ObjectDisplay _userDeckPosition = null!;
+    [SerializeField] ObjectDisplay _opponentDeckPosition = null!;
 
-    public Transform DeckPositionForPlayer(PlayerName playerName) =>
+    public ObjectDisplay DeckPositionForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userDeckPosition : _opponentDeckPosition;
 
     [SerializeField] Deck _userDeck = null!;
@@ -93,10 +93,10 @@ namespace Spelldawn.Services
     public ActionDisplay ActionDisplayForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userActionDisplay : _opponentActionDisplay;
 
-    [SerializeField] Transform _userIdentityCardPosition = null!;
-    [SerializeField] Transform _opponentIdentityCardPosition = null!;
+    [SerializeField] ObjectDisplay _userIdentityCardPosition = null!;
+    [SerializeField] ObjectDisplay _opponentIdentityCardPosition = null!;
 
-    public Transform IdentityCardPositionForPlayer(PlayerName playerName) =>
+    public ObjectDisplay IdentityCardPositionForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userIdentityCardPosition : _opponentIdentityCardPosition;
 
     [SerializeField] IdentityCard _userIdentityCard = null!;

@@ -12,35 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
-using Spelldawn.Game;
-using UnityEditor;
-using UnityEngine;
-
 #nullable enable
 
-namespace Spelldawn.Editors
+namespace Spelldawn.Game
 {
-  [CustomEditor(typeof(ObjectDisplay), editorForChildClasses: true)]
-  public sealed class CardDisplayEditor : Editor
+  public sealed class CustomDisplayable : Displayable
   {
-    public override void OnInspectorGUI()
+    void Start()
     {
-      DrawDefaultInspector();
-      GUILayout.Space(10);
-      var display = ((ObjectDisplay)target);
 
-      if (GUILayout.Button("Update"))
-      {
-        display.DebugUpdate();
-      }
+    }
 
-      if (GUILayout.Button("Delete"))
-      {
-        var card = display.AllObjects.First();
-        display.RemoveObject(card);
-        Destroy(card.gameObject);
-      }
+    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
+    {
     }
   }
 }

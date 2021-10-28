@@ -53,7 +53,7 @@ namespace Spelldawn.Services
 
     IEnumerator HandleCommandsAsync(CommandList commandList)
     {
-      yield return StartCoroutine(_registry.AssetService.LoadAssets(commandList));
+      yield return _registry.AssetService.LoadAssets(commandList);
 
       foreach (var command in commandList.Commands)
       {
@@ -62,33 +62,36 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.DebugLog:
             Debug.Log(command.DebugLog.Message);
             break;
+          case GameCommand.CommandOneofCase.RunInParallel:
+            yield return HandleRunInParallel(command.RunInParallel);
+            break;
           case GameCommand.CommandOneofCase.RenderInterface:
             HandleRenderInterface(command.RenderInterface);
             break;
           case GameCommand.CommandOneofCase.RenderGame:
-            yield return StartCoroutine(HandleRenderGame(command.RenderGame));
+            yield return HandleRenderGame(command.RenderGame);
             break;
           case GameCommand.CommandOneofCase.InitiateRaid:
-            yield return StartCoroutine(_registry.RaidService.HandleInitiateRaid(command.InitiateRaid));
+            yield return _registry.RaidService.HandleInitiateRaid(command.InitiateRaid);
             break;
           case GameCommand.CommandOneofCase.EndRaid:
-            yield return StartCoroutine(_registry.RaidService.HandleEndRaid(command.EndRaid));
+            yield return _registry.RaidService.HandleEndRaid(command.EndRaid);
             break;
           case GameCommand.CommandOneofCase.CreateCard:
-            yield return StartCoroutine(_registry.ObjectPositionService.HandleCreateCardCommand(command.CreateCard));
+            yield return _registry.ObjectPositionService.HandleCreateCardCommand(command.CreateCard);
             break;
           case GameCommand.CommandOneofCase.UpdateCard:
             break;
           case GameCommand.CommandOneofCase.MoveGameObject:
-            yield return StartCoroutine(_registry.ObjectPositionService.HandleMoveCardCommand(command.MoveGameObject));
+            yield return _registry.ObjectPositionService.HandleMoveGameObjectCommand(command.MoveGameObject);
             break;
           case GameCommand.CommandOneofCase.DestroyCard:
             break;
           case GameCommand.CommandOneofCase.UpdatePlayerState:
             break;
           case GameCommand.CommandOneofCase.FireProjectile:
-            yield return StartCoroutine(
-              _registry.ObjectPositionService.HandleFireProjectileCommand(command.FireProjectile));
+            yield return
+              _registry.ObjectPositionService.HandleFireProjectileCommand(command.FireProjectile);
             break;
           case GameCommand.CommandOneofCase.Delay:
             yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
@@ -103,6 +106,20 @@ namespace Spelldawn.Services
       }
 
       _currentlyHandling = false;
+    }
+
+    IEnumerator HandleRunInParallel(RunInParallelCommand command)
+    {
+      var coroutines = new List<Coroutine>();
+      foreach (var list in command.Commands)
+      {
+        coroutines.Add(StartCoroutine(HandleCommandsAsync(list)));
+      }
+
+      foreach (var coroutine in coroutines)
+      {
+        yield return coroutine;
+      }
     }
 
     void HandleRenderInterface(RenderInterfaceCommand command)
@@ -137,7 +154,7 @@ namespace Spelldawn.Services
         effect.transform.localScale = scale * Vector3.one;
       }
 
-      yield return new WaitForSeconds(1f);
+      yield return new WaitForSeconds(DataUtils.ToSeconds(command.Duration, 0));
     }
   }
 }

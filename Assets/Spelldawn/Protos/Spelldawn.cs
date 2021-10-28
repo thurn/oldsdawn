@@ -255,166 +255,170 @@ namespace Spelldawn.Protos {
             "MgoJcGxheV9jYXJkGAUgASgLMh0uY29tLnNwZWxsZGF3bi5QbGF5Q2FyZEFj",
             "dGlvbkgAEjoKDWluaXRpYXRlX3JhaWQYBiABKAsyIS5jb20uc3BlbGxkYXdu",
             "LkluaXRpYXRlUmFpZEFjdGlvbkgAQggKBmFjdGlvbiIiCg9EZWJ1Z0xvZ0Nv",
-            "bW1hbmQSDwoHbWVzc2FnZRgBIAEoCSJAChtJbnRlcmZhY2VQb3NpdGlvbkZ1",
-            "bGxTY3JlZW4SIQoEbm9kZRgBIAEoCzITLmNvbS5zcGVsbGRhd24uTm9kZSJC",
-            "Ch1JbnRlcmZhY2VQb3NpdGlvblJhaWRDb250cm9scxIhCgRub2RlGAEgASgL",
-            "MhMuY29tLnNwZWxsZGF3bi5Ob2RlImsKEU9iamVjdENvbnRyb2xOb2RlEjMK",
-            "DmdhbWVfb2JqZWN0X2lkGAEgASgLMhsuY29tLnNwZWxsZGF3bi5HYW1lT2Jq",
-            "ZWN0SWQSIQoEbm9kZRgCIAEoCzITLmNvbS5zcGVsbGRhd24uTm9kZSJaCh9J",
-            "bnRlcmZhY2VQb3NpdGlvbk9iamVjdENvbnRyb2xzEjcKDWNvbnRyb2xfbm9k",
-            "ZXMYASADKAsyIC5jb20uc3BlbGxkYXduLk9iamVjdENvbnRyb2xOb2RlIvkB",
-            "ChZSZW5kZXJJbnRlcmZhY2VDb21tYW5kEkEKC2Z1bGxfc2NyZWVuGAEgASgL",
-            "MiouY29tLnNwZWxsZGF3bi5JbnRlcmZhY2VQb3NpdGlvbkZ1bGxTY3JlZW5I",
-            "ABJFCg1yYWlkX2NvbnRyb2xzGAIgASgLMiwuY29tLnNwZWxsZGF3bi5JbnRl",
-            "cmZhY2VQb3NpdGlvblJhaWRDb250cm9sc0gAEkkKD29iamVjdF9jb250cm9s",
-            "cxgDIAEoCzIuLmNvbS5zcGVsbGRhd24uSW50ZXJmYWNlUG9zaXRpb25PYmpl",
-            "Y3RDb250cm9sc0gAQgoKCHBvc2l0aW9uIjoKEVJlbmRlckdhbWVDb21tYW5k",
-            "EiUKBGdhbWUYASABKAsyFy5jb20uc3BlbGxkYXduLkdhbWVWaWV3ImsKE0lu",
-            "aXRpYXRlUmFpZENvbW1hbmQSLAoJaW5pdGlhdG9yGAEgASgOMhkuY29tLnNw",
-            "ZWxsZGF3bi5QbGF5ZXJOYW1lEiYKB3Jvb21faWQYAiABKA4yFS5jb20uc3Bl",
-            "bGxkYXduLlJvb21JZCIQCg5FbmRSYWlkQ29tbWFuZCKOAQoRQ3JlYXRlQ2Fy",
-            "ZENvbW1hbmQSJQoEY2FyZBgBIAEoCzIXLmNvbS5zcGVsbGRhd24uQ2FyZFZp",
-            "ZXcSNwoJYW5pbWF0aW9uGAIgASgOMiQuY29tLnNwZWxsZGF3bi5DYXJkQ3Jl",
-            "YXRpb25BbmltYXRpb24SGQoRZGlzYWJsZV9hbmltYXRpb24YAyABKAgiOgoR",
-            "VXBkYXRlQ2FyZENvbW1hbmQSJQoEY2FyZBgBIAEoCzIXLmNvbS5zcGVsbGRh",
-            "d24uQ2FyZFZpZXcijAEKFU1vdmVHYW1lT2JqZWN0Q29tbWFuZBInCgJpZBgB",
-            "IAEoCzIbLmNvbS5zcGVsbGRhd24uR2FtZU9iamVjdElkEi8KCHBvc2l0aW9u",
-            "GAIgASgLMh0uY29tLnNwZWxsZGF3bi5PYmplY3RQb3NpdGlvbhIZChFkaXNh",
-            "YmxlX2FuaW1hdGlvbhgDIAEoCCI8ChJEZXN0cm95Q2FyZENvbW1hbmQSJgoH",
-            "Y2FyZF9pZBgBIAEoCzIVLmNvbS5zcGVsbGRhd24uQ2FyZElkItYBChhVcGRh",
-            "dGVQbGF5ZXJTdGF0ZUNvbW1hbmQSLgoLcGxheWVyX25hbWUYASABKA4yGS5j",
-            "b20uc3BlbGxkYXduLlBsYXllck5hbWUSJwoEaW5mbxgCIAEoCzIZLmNvbS5z",
-            "cGVsbGRhd24uUGxheWVySW5mbxInCgVzY29yZRgDIAEoCzIYLmNvbS5zcGVs",
-            "bGRhd24uU2NvcmVWaWV3EjgKDmFjdGlvbl90cmFja2VyGAQgASgLMiAuY29t",
-            "LnNwZWxsZGF3bi5BY3Rpb25UcmFja2VyVmlldyLNAwoVRmlyZVByb2plY3Rp",
-            "bGVDb21tYW5kEi4KCXNvdXJjZV9pZBgBIAEoCzIbLmNvbS5zcGVsbGRhd24u",
-            "R2FtZU9iamVjdElkEi4KCXRhcmdldF9pZBgCIAEoCzIbLmNvbS5zcGVsbGRh",
-            "d24uR2FtZU9iamVjdElkEjQKCnByb2plY3RpbGUYAyABKAsyIC5jb20uc3Bl",
-            "bGxkYXduLlByb2plY3RpbGVBZGRyZXNzEjEKD3RyYXZlbF9kdXJhdGlvbhgE",
-            "IAEoCzIYLmNvbS5zcGVsbGRhd24uVGltZVZhbHVlEjQKDmFkZGl0aW9uYWxf",
-            "aGl0GAUgASgLMhwuY29tLnNwZWxsZGF3bi5FZmZlY3RBZGRyZXNzEjYKFGFk",
-            "ZGl0aW9uYWxfaGl0X2RlbGF5GAYgASgLMhguY29tLnNwZWxsZGF3bi5UaW1l",
-            "VmFsdWUSLwoNd2FpdF9kdXJhdGlvbhgHIAEoCzIYLmNvbS5zcGVsbGRhd24u",
-            "VGltZVZhbHVlEhMKC2hpZGVfb25faGl0GAggASgIEjcKEGp1bXBfdG9fcG9z",
-            "aXRpb24YCSABKAsyHS5jb20uc3BlbGxkYXduLk9iamVjdFBvc2l0aW9uIjoK",
-            "DERlbGF5Q29tbWFuZBIqCghkdXJhdGlvbhgBIAEoCzIYLmNvbS5zcGVsbGRh",
-            "d24uVGltZVZhbHVlIlsKElBsYXlFZmZlY3RQb3NpdGlvbhIyCgtnYW1lX29i",
-            "amVjdBgBIAEoCzIbLmNvbS5zcGVsbGRhd24uR2FtZU9iamVjdElkSABCEQoP",
-            "ZWZmZWN0X3Bvc2l0aW9uIqIBChFQbGF5RWZmZWN0Q29tbWFuZBIsCgZlZmZl",
-            "Y3QYASABKAsyHC5jb20uc3BlbGxkYXduLkVmZmVjdEFkZHJlc3MSMwoIcG9z",
-            "aXRpb24YAiABKAsyIS5jb20uc3BlbGxkYXduLlBsYXlFZmZlY3RQb3NpdGlv",
-            "bhIqCgVzY2FsZRgDIAEoCzIbLmdvb2dsZS5wcm90b2J1Zi5GbG9hdFZhbHVl",
-            "IpgGCgtHYW1lQ29tbWFuZBIzCglkZWJ1Z19sb2cYASABKAsyHi5jb20uc3Bl",
-            "bGxkYXduLkRlYnVnTG9nQ29tbWFuZEgAEkEKEHJlbmRlcl9pbnRlcmZhY2UY",
-            "AiABKAsyJS5jb20uc3BlbGxkYXduLlJlbmRlckludGVyZmFjZUNvbW1hbmRI",
-            "ABI3CgtyZW5kZXJfZ2FtZRgDIAEoCzIgLmNvbS5zcGVsbGRhd24uUmVuZGVy",
-            "R2FtZUNvbW1hbmRIABI7Cg1pbml0aWF0ZV9yYWlkGAQgASgLMiIuY29tLnNw",
-            "ZWxsZGF3bi5Jbml0aWF0ZVJhaWRDb21tYW5kSAASMQoIZW5kX3JhaWQYBSAB",
-            "KAsyHS5jb20uc3BlbGxkYXduLkVuZFJhaWRDb21tYW5kSAASNwoLY3JlYXRl",
-            "X2NhcmQYBiABKAsyIC5jb20uc3BlbGxkYXduLkNyZWF0ZUNhcmRDb21tYW5k",
-            "SAASNwoLdXBkYXRlX2NhcmQYByABKAsyIC5jb20uc3BlbGxkYXduLlVwZGF0",
-            "ZUNhcmRDb21tYW5kSAASQAoQbW92ZV9nYW1lX29iamVjdBgIIAEoCzIkLmNv",
-            "bS5zcGVsbGRhd24uTW92ZUdhbWVPYmplY3RDb21tYW5kSAASOQoMZGVzdHJv",
-            "eV9jYXJkGAkgASgLMiEuY29tLnNwZWxsZGF3bi5EZXN0cm95Q2FyZENvbW1h",
-            "bmRIABJGChN1cGRhdGVfcGxheWVyX3N0YXRlGAogASgLMicuY29tLnNwZWxs",
-            "ZGF3bi5VcGRhdGVQbGF5ZXJTdGF0ZUNvbW1hbmRIABI/Cg9maXJlX3Byb2pl",
-            "Y3RpbGUYCyABKAsyJC5jb20uc3BlbGxkYXduLkZpcmVQcm9qZWN0aWxlQ29t",
-            "bWFuZEgAEiwKBWRlbGF5GAwgASgLMhsuY29tLnNwZWxsZGF3bi5EZWxheUNv",
-            "bW1hbmRIABI3CgtwbGF5X2VmZmVjdBgNIAEoCzIgLmNvbS5zcGVsbGRhd24u",
-            "UGxheUVmZmVjdENvbW1hbmRIAEIJCgdjb21tYW5kIjsKC0NvbW1hbmRMaXN0",
-            "EiwKCGNvbW1hbmRzGAEgAygLMhouY29tLnNwZWxsZGF3bi5HYW1lQ29tbWFu",
-            "ZCqfAQoJRmxleEFsaWduEhoKFkZMRVhfQUxJR05fVU5TUEVDSUZJRUQQABIT",
-            "Cg9GTEVYX0FMSUdOX0FVVE8QARIZChVGTEVYX0FMSUdOX0ZMRVhfU1RBUlQQ",
-            "AhIVChFGTEVYX0FMSUdOX0NFTlRFUhADEhcKE0ZMRVhfQUxJR05fRkxFWF9F",
-            "TkQQBBIWChJGTEVYX0FMSUdOX1NUUkVUQ0gQBSpwChBGbGV4RGlzcGxheVN0",
-            "eWxlEiIKHkZMRVhfRElTUExBWV9TVFlMRV9VTlNQRUNJRklFRBAAEhsKF0ZM",
-            "RVhfRElTUExBWV9TVFlMRV9GTEVYEAESGwoXRkxFWF9ESVNQTEFZX1NUWUxF",
-            "X05PTkUQAiqlAQoNRmxleERpcmVjdGlvbhIeChpGTEVYX0RJUkVDVElPTl9V",
-            "TlNQRUNJRklFRBAAEhkKFUZMRVhfRElSRUNUSU9OX0NPTFVNThABEiEKHUZM",
-            "RVhfRElSRUNUSU9OX0NPTFVNTl9SRVZFUlNFEAISFgoSRkxFWF9ESVJFQ1RJ",
-            "T05fUk9XEAMSHgoaRkxFWF9ESVJFQ1RJT05fUk9XX1JFVkVSU0UQBCpsCghG",
-            "bGV4V3JhcBIZChVGTEVYX1dSQVBfVU5TUEVDSUZJRUQQABIVChFGTEVYX1dS",
-            "QVBfTk9fV1JBUBABEhIKDkZMRVhfV1JBUF9XUkFQEAISGgoWRkxFWF9XUkFQ",
-            "X1dSQVBfUkVWRVJTRRADKrsBCgtGbGV4SnVzdGlmeRIcChhGTEVYX0pVU1RJ",
-            "RllfVU5TUEVDSUZJRUQQABIbChdGTEVYX0pVU1RJRllfRkxFWF9TVEFSVBAB",
-            "EhcKE0ZMRVhfSlVTVElGWV9DRU5URVIQAhIZChVGTEVYX0pVU1RJRllfRkxF",
-            "WF9FTkQQAxIeChpGTEVYX0pVU1RJRllfU1BBQ0VfQkVUV0VFThAEEh0KGUZM",
-            "RVhfSlVTVElGWV9TUEFDRV9BUk9VTkQQBSpiCgxGbGV4T3ZlcmZsb3cSHQoZ",
-            "RkxFWF9PVkVSRkxPV19VTlNQRUNJRklFRBAAEhkKFUZMRVhfT1ZFUkZMT1df",
-            "VklTSUJMRRABEhgKFEZMRVhfT1ZFUkZMT1dfSElEREVOEAIqZQoMRmxleFBv",
-            "c2l0aW9uEh0KGUZMRVhfUE9TSVRJT05fVU5TUEVDSUZJRUQQABIaChZGTEVY",
-            "X1BPU0lUSU9OX1JFTEFUSVZFEAESGgoWRkxFWF9QT1NJVElPTl9BQlNPTFVU",
-            "RRACKmEKDFRleHRPdmVyZmxvdxIdChlURVhUX09WRVJGTE9XX1VOU1BFQ0lG",
-            "SUVEEAASFgoSVEVYVF9PVkVSRkxPV19DTElQEAESGgoWVEVYVF9PVkVSRkxP",
-            "V19FTExJUFNJUxACKvMFCgpFYXNpbmdNb2RlEhsKF0VBU0lOR19NT0RFX1VO",
-            "U1BFQ0lGSUVEEAASFAoQRUFTSU5HX01PREVfRUFTRRABEhcKE0VBU0lOR19N",
-            "T0RFX0VBU0VfSU4QAhIYChRFQVNJTkdfTU9ERV9FQVNFX09VVBADEhsKF0VB",
-            "U0lOR19NT0RFX0VBU0VfSU5fT1VUEAQSFgoSRUFTSU5HX01PREVfTElORUFS",
-            "EAUSHAoYRUFTSU5HX01PREVfRUFTRV9JTl9TSU5FEAYSHQoZRUFTSU5HX01P",
-            "REVfRUFTRV9PVVRfU0lORRAHEiAKHEVBU0lOR19NT0RFX0VBU0VfSU5fT1VU",
-            "X1NJTkUQCBIdChlFQVNJTkdfTU9ERV9FQVNFX0lOX0NVQklDEAkSHgoaRUFT",
-            "SU5HX01PREVfRUFTRV9PVVRfQ1VCSUMQChIhCh1FQVNJTkdfTU9ERV9FQVNF",
-            "X0lOX09VVF9DVUJJQxALEhwKGEVBU0lOR19NT0RFX0VBU0VfSU5fQ0lSQxAM",
-            "Eh0KGUVBU0lOR19NT0RFX0VBU0VfT1VUX0NJUkMQDRIgChxFQVNJTkdfTU9E",
-            "RV9FQVNFX0lOX09VVF9DSVJDEA4SHwobRUFTSU5HX01PREVfRUFTRV9JTl9F",
-            "TEFTVElDEA8SIAocRUFTSU5HX01PREVfRUFTRV9PVVRfRUxBU1RJQxAQEiMK",
-            "H0VBU0lOR19NT0RFX0VBU0VfSU5fT1VUX0VMQVNUSUMQERIcChhFQVNJTkdf",
-            "TU9ERV9FQVNFX0lOX0JBQ0sQEhIdChlFQVNJTkdfTU9ERV9FQVNFX09VVF9C",
-            "QUNLEBMSIAocRUFTSU5HX01PREVfRUFTRV9JTl9PVVRfQkFDSxAUEh4KGkVB",
-            "U0lOR19NT0RFX0VBU0VfSU5fQk9VTkNFEBUSHwobRUFTSU5HX01PREVfRUFT",
-            "RV9PVVRfQk9VTkNFEBYSIgoeRUFTSU5HX01PREVfRUFTRV9JTl9PVVRfQk9V",
-            "TkNFEBcqoAEKDkltYWdlU2NhbGVNb2RlEiAKHElNQUdFX1NDQUxFX01PREVf",
-            "VU5TUEVDSUZJRUQQABIkCiBJTUFHRV9TQ0FMRV9NT0RFX1NUUkVUQ0hfVE9f",
-            "RklMTBABEiMKH0lNQUdFX1NDQUxFX01PREVfU0NBTEVfQU5EX0NST1AQAhIh",
-            "Ch1JTUFHRV9TQ0FMRV9NT0RFX1NDQUxFX1RPX0ZJVBADKooBCglGb250U3R5",
-            "bGUSGgoWRk9OVF9TVFlMRV9VTlNQRUNJRklFRBAAEhUKEUZPTlRfU1RZTEVf",
-            "Tk9STUFMEAESEwoPRk9OVF9TVFlMRV9CT0xEEAISFQoRRk9OVF9TVFlMRV9J",
-            "VEFMSUMQAxIeChpGT05UX1NUWUxFX0JPTERfQU5EX0lUQUxJQxAEKnoKD092",
-            "ZXJmbG93Q2xpcEJveBIhCh1PVkVSRkxPV19DTElQX0JPWF9VTlNQRUNJRklF",
-            "RBAAEiEKHU9WRVJGTE9XX0NMSVBfQk9YX1BBRERJTkdfQk9YEAESIQodT1ZF",
-            "UkZMT1dfQ0xJUF9CT1hfQ09OVEVOVF9CT1gQAiqmAgoJVGV4dEFsaWduEhoK",
-            "FlRFWFRfQUxJR05fVU5TUEVDSUZJRUQQABIZChVURVhUX0FMSUdOX1VQUEVS",
-            "X0xFRlQQARIbChdURVhUX0FMSUdOX1VQUEVSX0NFTlRFUhACEhoKFlRFWFRf",
-            "QUxJR05fVVBQRVJfUklHSFQQAxIaChZURVhUX0FMSUdOX01JRERMRV9MRUZU",
-            "EAQSHAoYVEVYVF9BTElHTl9NSURETEVfQ0VOVEVSEAUSGwoXVEVYVF9BTElH",
-            "Tl9NSURETEVfUklHSFQQBhIZChVURVhUX0FMSUdOX0xPV0VSX0xFRlQQBxIb",
-            "ChdURVhUX0FMSUdOX0xPV0VSX0NFTlRFUhAIEhoKFlRFWFRfQUxJR05fTE9X",
-            "RVJfUklHSFQQCSqjAQoUVGV4dE92ZXJmbG93UG9zaXRpb24SJgoiVEVYVF9P",
-            "VkVSRkxPV19QT1NJVElPTl9VTlNQRUNJRklFRBAAEh4KGlRFWFRfT1ZFUkZM",
-            "T1dfUE9TSVRJT05fRU5EEAESIAocVEVYVF9PVkVSRkxPV19QT1NJVElPTl9T",
-            "VEFSVBACEiEKHVRFWFRfT1ZFUkZMT1dfUE9TSVRJT05fTUlERExFEAMqagoO",
-            "RmxleFZpc2liaWxpdHkSHwobRkxFWF9WSVNJQklMSVRZX1VOU1BFQ0lGSUVE",
-            "EAASGwoXRkxFWF9WSVNJQklMSVRZX1ZJU0lCTEUQARIaChZGTEVYX1ZJU0lC",
-            "SUxJVFlfSElEREVOEAIqWgoKV2hpdGVTcGFjZRIbChdXSElURV9TUEFDRV9V",
-            "TlNQRUNJRklFRBAAEhYKEldISVRFX1NQQUNFX05PUk1BTBABEhcKE1dISVRF",
-            "X1NQQUNFX05PX1dSQVAQAip/Cg1EaW1lbnNpb25Vbml0Eh4KGkRJTUVOU0lP",
-            "Tl9VTklUX1VOU1BFQ0lGSUVEEAASFgoSRElNRU5TSU9OX1VOSVRfRElQEAES",
-            "HQoZRElNRU5TSU9OX1VOSVRfUEVSQ0VOVEFHRRACEhcKE0RJTUVOU0lPTl9V",
-            "TklUX1ZNSU4QAypZCgpQbGF5ZXJOYW1lEhsKF1BMQVlFUl9OQU1FX1VOU1BF",
-            "Q0lGSUVEEAASFAoQUExBWUVSX05BTUVfVVNFUhABEhgKFFBMQVlFUl9OQU1F",
-            "X09QUE9ORU5UEAIqxAEKBlJvb21JZBIXChNST09NX0lEX1VOU1BFQ0lGSUVE",
-            "EAASFAoQUk9PTV9JRF9UUkVBU1VSWRABEhMKD1JPT01fSURfU0FOQ1RVTRAC",
-            "EhIKDlJPT01fSURfQ1JZUFRTEAMSEgoOUk9PTV9JRF9ST09NX0EQBBISCg5S",
-            "T09NX0lEX1JPT01fQhAFEhIKDlJPT01fSURfUk9PTV9DEAYSEgoOUk9PTV9J",
-            "RF9ST09NX0QQBxISCg5ST09NX0lEX1JPT01fRRAIKn8KDlRhcmdldGluZ0Fy",
-            "cm93Eh8KG1RBUkdFVElOR19BUlJPV19VTlNQRUNJRklFRBAAEhcKE1RBUkdF",
-            "VElOR19BUlJPV19SRUQQARIYChRUQVJHRVRJTkdfQVJST1dfQkxVRRACEhkK",
-            "FVRBUkdFVElOR19BUlJPV19HUkVFThADKssBChBDYW5QbGF5QWxnb3JpdGht",
-            "EiIKHkNBTl9QTEFZX0FMR09SSVRITV9VTlNQRUNJRklFRBAAEiEKHUNBTl9Q",
-            "TEFZX0FMR09SSVRITV9PUFRJTUlTVElDEAESJgoiQ0FOX1BMQVlfQUxHT1JJ",
-            "VEhNX0FERElUSU9OQUxfQ09TVBACEiYKIkNBTl9QTEFZX0FMR09SSVRITV9B",
-            "RERJVElPTkFMX1BMQVkQAxIgChxDQU5fUExBWV9BTEdPUklUSE1fTk9fVVBE",
-            "QVRFEAQqgwEKElNwZW5kQ29zdEFsZ29yaXRobRIkCiBTUEVORF9DT1NUX0FM",
-            "R09SSVRITV9VTlNQRUNJRklFRBAAEiMKH1NQRU5EX0NPU1RfQUxHT1JJVEhN",
-            "X09QVElNSVNUSUMQARIiCh5TUEVORF9DT1NUX0FMR09SSVRITV9OT19VUERB",
-            "VEUQAipeCgxSb29tTG9jYXRpb24SHQoZUk9PTV9MT0NBVElPTl9VTlNQRUNJ",
-            "RklFRBAAEhYKElJPT01fTE9DQVRJT05fQkFDSxABEhcKE1JPT01fTE9DQVRJ",
-            "T05fRlJPTlQQAipeCgxJdGVtTG9jYXRpb24SHQoZSVRFTV9MT0NBVElPTl9V",
-            "TlNQRUNJRklFRBAAEhYKEklURU1fTE9DQVRJT05fTEVGVBABEhcKE0lURU1f",
-            "TE9DQVRJT05fUklHSFQQAipyChVDYXJkQ3JlYXRpb25BbmltYXRpb24SJwoj",
-            "Q0FSRF9DUkVBVElPTl9BTklNQVRJT05fVU5TUEVDSUZJRUQQABIwCixDQVJE",
-            "X0NSRUFUSU9OX0FOSU1BVElPTl9VU0VSX0RFQ0tfVE9fU1RBR0lORxABQhOq",
-            "AhBTcGVsbGRhd24uUHJvdG9zYgZwcm90bzM="));
+            "bW1hbmQSDwoHbWVzc2FnZRgBIAEoCSJEChRSdW5JblBhcmFsbGVsQ29tbWFu",
+            "ZBIsCghjb21tYW5kcxgBIAMoCzIaLmNvbS5zcGVsbGRhd24uQ29tbWFuZExp",
+            "c3QiOgoMRGVsYXlDb21tYW5kEioKCGR1cmF0aW9uGAEgASgLMhguY29tLnNw",
+            "ZWxsZGF3bi5UaW1lVmFsdWUiQAobSW50ZXJmYWNlUG9zaXRpb25GdWxsU2Ny",
+            "ZWVuEiEKBG5vZGUYASABKAsyEy5jb20uc3BlbGxkYXduLk5vZGUiQgodSW50",
+            "ZXJmYWNlUG9zaXRpb25SYWlkQ29udHJvbHMSIQoEbm9kZRgBIAEoCzITLmNv",
+            "bS5zcGVsbGRhd24uTm9kZSJrChFPYmplY3RDb250cm9sTm9kZRIzCg5nYW1l",
+            "X29iamVjdF9pZBgBIAEoCzIbLmNvbS5zcGVsbGRhd24uR2FtZU9iamVjdElk",
+            "EiEKBG5vZGUYAiABKAsyEy5jb20uc3BlbGxkYXduLk5vZGUiWgofSW50ZXJm",
+            "YWNlUG9zaXRpb25PYmplY3RDb250cm9scxI3Cg1jb250cm9sX25vZGVzGAEg",
+            "AygLMiAuY29tLnNwZWxsZGF3bi5PYmplY3RDb250cm9sTm9kZSL5AQoWUmVu",
+            "ZGVySW50ZXJmYWNlQ29tbWFuZBJBCgtmdWxsX3NjcmVlbhgBIAEoCzIqLmNv",
+            "bS5zcGVsbGRhd24uSW50ZXJmYWNlUG9zaXRpb25GdWxsU2NyZWVuSAASRQoN",
+            "cmFpZF9jb250cm9scxgCIAEoCzIsLmNvbS5zcGVsbGRhd24uSW50ZXJmYWNl",
+            "UG9zaXRpb25SYWlkQ29udHJvbHNIABJJCg9vYmplY3RfY29udHJvbHMYAyAB",
+            "KAsyLi5jb20uc3BlbGxkYXduLkludGVyZmFjZVBvc2l0aW9uT2JqZWN0Q29u",
+            "dHJvbHNIAEIKCghwb3NpdGlvbiI6ChFSZW5kZXJHYW1lQ29tbWFuZBIlCgRn",
+            "YW1lGAEgASgLMhcuY29tLnNwZWxsZGF3bi5HYW1lVmlldyJrChNJbml0aWF0",
+            "ZVJhaWRDb21tYW5kEiwKCWluaXRpYXRvchgBIAEoDjIZLmNvbS5zcGVsbGRh",
+            "d24uUGxheWVyTmFtZRImCgdyb29tX2lkGAIgASgOMhUuY29tLnNwZWxsZGF3",
+            "bi5Sb29tSWQiEAoORW5kUmFpZENvbW1hbmQijgEKEUNyZWF0ZUNhcmRDb21t",
+            "YW5kEiUKBGNhcmQYASABKAsyFy5jb20uc3BlbGxkYXduLkNhcmRWaWV3EjcK",
+            "CWFuaW1hdGlvbhgCIAEoDjIkLmNvbS5zcGVsbGRhd24uQ2FyZENyZWF0aW9u",
+            "QW5pbWF0aW9uEhkKEWRpc2FibGVfYW5pbWF0aW9uGAMgASgIIjoKEVVwZGF0",
+            "ZUNhcmRDb21tYW5kEiUKBGNhcmQYASABKAsyFy5jb20uc3BlbGxkYXduLkNh",
+            "cmRWaWV3IowBChVNb3ZlR2FtZU9iamVjdENvbW1hbmQSJwoCaWQYASABKAsy",
+            "Gy5jb20uc3BlbGxkYXduLkdhbWVPYmplY3RJZBIvCghwb3NpdGlvbhgCIAEo",
+            "CzIdLmNvbS5zcGVsbGRhd24uT2JqZWN0UG9zaXRpb24SGQoRZGlzYWJsZV9h",
+            "bmltYXRpb24YAyABKAgiPAoSRGVzdHJveUNhcmRDb21tYW5kEiYKB2NhcmRf",
+            "aWQYASABKAsyFS5jb20uc3BlbGxkYXduLkNhcmRJZCLWAQoYVXBkYXRlUGxh",
+            "eWVyU3RhdGVDb21tYW5kEi4KC3BsYXllcl9uYW1lGAEgASgOMhkuY29tLnNw",
+            "ZWxsZGF3bi5QbGF5ZXJOYW1lEicKBGluZm8YAiABKAsyGS5jb20uc3BlbGxk",
+            "YXduLlBsYXllckluZm8SJwoFc2NvcmUYAyABKAsyGC5jb20uc3BlbGxkYXdu",
+            "LlNjb3JlVmlldxI4Cg5hY3Rpb25fdHJhY2tlchgEIAEoCzIgLmNvbS5zcGVs",
+            "bGRhd24uQWN0aW9uVHJhY2tlclZpZXcizQMKFUZpcmVQcm9qZWN0aWxlQ29t",
+            "bWFuZBIuCglzb3VyY2VfaWQYASABKAsyGy5jb20uc3BlbGxkYXduLkdhbWVP",
+            "YmplY3RJZBIuCgl0YXJnZXRfaWQYAiABKAsyGy5jb20uc3BlbGxkYXduLkdh",
+            "bWVPYmplY3RJZBI0Cgpwcm9qZWN0aWxlGAMgASgLMiAuY29tLnNwZWxsZGF3",
+            "bi5Qcm9qZWN0aWxlQWRkcmVzcxIxCg90cmF2ZWxfZHVyYXRpb24YBCABKAsy",
+            "GC5jb20uc3BlbGxkYXduLlRpbWVWYWx1ZRI0Cg5hZGRpdGlvbmFsX2hpdBgF",
+            "IAEoCzIcLmNvbS5zcGVsbGRhd24uRWZmZWN0QWRkcmVzcxI2ChRhZGRpdGlv",
+            "bmFsX2hpdF9kZWxheRgGIAEoCzIYLmNvbS5zcGVsbGRhd24uVGltZVZhbHVl",
+            "Ei8KDXdhaXRfZHVyYXRpb24YByABKAsyGC5jb20uc3BlbGxkYXduLlRpbWVW",
+            "YWx1ZRITCgtoaWRlX29uX2hpdBgIIAEoCBI3ChBqdW1wX3RvX3Bvc2l0aW9u",
+            "GAkgASgLMh0uY29tLnNwZWxsZGF3bi5PYmplY3RQb3NpdGlvbiJbChJQbGF5",
+            "RWZmZWN0UG9zaXRpb24SMgoLZ2FtZV9vYmplY3QYASABKAsyGy5jb20uc3Bl",
+            "bGxkYXduLkdhbWVPYmplY3RJZEgAQhEKD2VmZmVjdF9wb3NpdGlvbiLOAQoR",
+            "UGxheUVmZmVjdENvbW1hbmQSLAoGZWZmZWN0GAEgASgLMhwuY29tLnNwZWxs",
+            "ZGF3bi5FZmZlY3RBZGRyZXNzEjMKCHBvc2l0aW9uGAIgASgLMiEuY29tLnNw",
+            "ZWxsZGF3bi5QbGF5RWZmZWN0UG9zaXRpb24SKgoFc2NhbGUYAyABKAsyGy5n",
+            "b29nbGUucHJvdG9idWYuRmxvYXRWYWx1ZRIqCghkdXJhdGlvbhgEIAEoCzIY",
+            "LmNvbS5zcGVsbGRhd24uVGltZVZhbHVlItgGCgtHYW1lQ29tbWFuZBIzCglk",
+            "ZWJ1Z19sb2cYASABKAsyHi5jb20uc3BlbGxkYXduLkRlYnVnTG9nQ29tbWFu",
+            "ZEgAEj4KD3J1bl9pbl9wYXJhbGxlbBgCIAEoCzIjLmNvbS5zcGVsbGRhd24u",
+            "UnVuSW5QYXJhbGxlbENvbW1hbmRIABIsCgVkZWxheRgDIAEoCzIbLmNvbS5z",
+            "cGVsbGRhd24uRGVsYXlDb21tYW5kSAASQQoQcmVuZGVyX2ludGVyZmFjZRgE",
+            "IAEoCzIlLmNvbS5zcGVsbGRhd24uUmVuZGVySW50ZXJmYWNlQ29tbWFuZEgA",
+            "EjcKC3JlbmRlcl9nYW1lGAUgASgLMiAuY29tLnNwZWxsZGF3bi5SZW5kZXJH",
+            "YW1lQ29tbWFuZEgAEjsKDWluaXRpYXRlX3JhaWQYBiABKAsyIi5jb20uc3Bl",
+            "bGxkYXduLkluaXRpYXRlUmFpZENvbW1hbmRIABIxCghlbmRfcmFpZBgHIAEo",
+            "CzIdLmNvbS5zcGVsbGRhd24uRW5kUmFpZENvbW1hbmRIABI3CgtjcmVhdGVf",
+            "Y2FyZBgIIAEoCzIgLmNvbS5zcGVsbGRhd24uQ3JlYXRlQ2FyZENvbW1hbmRI",
+            "ABI3Cgt1cGRhdGVfY2FyZBgJIAEoCzIgLmNvbS5zcGVsbGRhd24uVXBkYXRl",
+            "Q2FyZENvbW1hbmRIABJAChBtb3ZlX2dhbWVfb2JqZWN0GAogASgLMiQuY29t",
+            "LnNwZWxsZGF3bi5Nb3ZlR2FtZU9iamVjdENvbW1hbmRIABI5CgxkZXN0cm95",
+            "X2NhcmQYCyABKAsyIS5jb20uc3BlbGxkYXduLkRlc3Ryb3lDYXJkQ29tbWFu",
+            "ZEgAEkYKE3VwZGF0ZV9wbGF5ZXJfc3RhdGUYDCABKAsyJy5jb20uc3BlbGxk",
+            "YXduLlVwZGF0ZVBsYXllclN0YXRlQ29tbWFuZEgAEj8KD2ZpcmVfcHJvamVj",
+            "dGlsZRgNIAEoCzIkLmNvbS5zcGVsbGRhd24uRmlyZVByb2plY3RpbGVDb21t",
+            "YW5kSAASNwoLcGxheV9lZmZlY3QYDiABKAsyIC5jb20uc3BlbGxkYXduLlBs",
+            "YXlFZmZlY3RDb21tYW5kSABCCQoHY29tbWFuZCI7CgtDb21tYW5kTGlzdBIs",
+            "Cghjb21tYW5kcxgBIAMoCzIaLmNvbS5zcGVsbGRhd24uR2FtZUNvbW1hbmQq",
+            "nwEKCUZsZXhBbGlnbhIaChZGTEVYX0FMSUdOX1VOU1BFQ0lGSUVEEAASEwoP",
+            "RkxFWF9BTElHTl9BVVRPEAESGQoVRkxFWF9BTElHTl9GTEVYX1NUQVJUEAIS",
+            "FQoRRkxFWF9BTElHTl9DRU5URVIQAxIXChNGTEVYX0FMSUdOX0ZMRVhfRU5E",
+            "EAQSFgoSRkxFWF9BTElHTl9TVFJFVENIEAUqcAoQRmxleERpc3BsYXlTdHls",
+            "ZRIiCh5GTEVYX0RJU1BMQVlfU1RZTEVfVU5TUEVDSUZJRUQQABIbChdGTEVY",
+            "X0RJU1BMQVlfU1RZTEVfRkxFWBABEhsKF0ZMRVhfRElTUExBWV9TVFlMRV9O",
+            "T05FEAIqpQEKDUZsZXhEaXJlY3Rpb24SHgoaRkxFWF9ESVJFQ1RJT05fVU5T",
+            "UEVDSUZJRUQQABIZChVGTEVYX0RJUkVDVElPTl9DT0xVTU4QARIhCh1GTEVY",
+            "X0RJUkVDVElPTl9DT0xVTU5fUkVWRVJTRRACEhYKEkZMRVhfRElSRUNUSU9O",
+            "X1JPVxADEh4KGkZMRVhfRElSRUNUSU9OX1JPV19SRVZFUlNFEAQqbAoIRmxl",
+            "eFdyYXASGQoVRkxFWF9XUkFQX1VOU1BFQ0lGSUVEEAASFQoRRkxFWF9XUkFQ",
+            "X05PX1dSQVAQARISCg5GTEVYX1dSQVBfV1JBUBACEhoKFkZMRVhfV1JBUF9X",
+            "UkFQX1JFVkVSU0UQAyq7AQoLRmxleEp1c3RpZnkSHAoYRkxFWF9KVVNUSUZZ",
+            "X1VOU1BFQ0lGSUVEEAASGwoXRkxFWF9KVVNUSUZZX0ZMRVhfU1RBUlQQARIX",
+            "ChNGTEVYX0pVU1RJRllfQ0VOVEVSEAISGQoVRkxFWF9KVVNUSUZZX0ZMRVhf",
+            "RU5EEAMSHgoaRkxFWF9KVVNUSUZZX1NQQUNFX0JFVFdFRU4QBBIdChlGTEVY",
+            "X0pVU1RJRllfU1BBQ0VfQVJPVU5EEAUqYgoMRmxleE92ZXJmbG93Eh0KGUZM",
+            "RVhfT1ZFUkZMT1dfVU5TUEVDSUZJRUQQABIZChVGTEVYX09WRVJGTE9XX1ZJ",
+            "U0lCTEUQARIYChRGTEVYX09WRVJGTE9XX0hJRERFThACKmUKDEZsZXhQb3Np",
+            "dGlvbhIdChlGTEVYX1BPU0lUSU9OX1VOU1BFQ0lGSUVEEAASGgoWRkxFWF9Q",
+            "T1NJVElPTl9SRUxBVElWRRABEhoKFkZMRVhfUE9TSVRJT05fQUJTT0xVVEUQ",
+            "AiphCgxUZXh0T3ZlcmZsb3cSHQoZVEVYVF9PVkVSRkxPV19VTlNQRUNJRklF",
+            "RBAAEhYKElRFWFRfT1ZFUkZMT1dfQ0xJUBABEhoKFlRFWFRfT1ZFUkZMT1df",
+            "RUxMSVBTSVMQAirzBQoKRWFzaW5nTW9kZRIbChdFQVNJTkdfTU9ERV9VTlNQ",
+            "RUNJRklFRBAAEhQKEEVBU0lOR19NT0RFX0VBU0UQARIXChNFQVNJTkdfTU9E",
+            "RV9FQVNFX0lOEAISGAoURUFTSU5HX01PREVfRUFTRV9PVVQQAxIbChdFQVNJ",
+            "TkdfTU9ERV9FQVNFX0lOX09VVBAEEhYKEkVBU0lOR19NT0RFX0xJTkVBUhAF",
+            "EhwKGEVBU0lOR19NT0RFX0VBU0VfSU5fU0lORRAGEh0KGUVBU0lOR19NT0RF",
+            "X0VBU0VfT1VUX1NJTkUQBxIgChxFQVNJTkdfTU9ERV9FQVNFX0lOX09VVF9T",
+            "SU5FEAgSHQoZRUFTSU5HX01PREVfRUFTRV9JTl9DVUJJQxAJEh4KGkVBU0lO",
+            "R19NT0RFX0VBU0VfT1VUX0NVQklDEAoSIQodRUFTSU5HX01PREVfRUFTRV9J",
+            "Tl9PVVRfQ1VCSUMQCxIcChhFQVNJTkdfTU9ERV9FQVNFX0lOX0NJUkMQDBId",
+            "ChlFQVNJTkdfTU9ERV9FQVNFX09VVF9DSVJDEA0SIAocRUFTSU5HX01PREVf",
+            "RUFTRV9JTl9PVVRfQ0lSQxAOEh8KG0VBU0lOR19NT0RFX0VBU0VfSU5fRUxB",
+            "U1RJQxAPEiAKHEVBU0lOR19NT0RFX0VBU0VfT1VUX0VMQVNUSUMQEBIjCh9F",
+            "QVNJTkdfTU9ERV9FQVNFX0lOX09VVF9FTEFTVElDEBESHAoYRUFTSU5HX01P",
+            "REVfRUFTRV9JTl9CQUNLEBISHQoZRUFTSU5HX01PREVfRUFTRV9PVVRfQkFD",
+            "SxATEiAKHEVBU0lOR19NT0RFX0VBU0VfSU5fT1VUX0JBQ0sQFBIeChpFQVNJ",
+            "TkdfTU9ERV9FQVNFX0lOX0JPVU5DRRAVEh8KG0VBU0lOR19NT0RFX0VBU0Vf",
+            "T1VUX0JPVU5DRRAWEiIKHkVBU0lOR19NT0RFX0VBU0VfSU5fT1VUX0JPVU5D",
+            "RRAXKqABCg5JbWFnZVNjYWxlTW9kZRIgChxJTUFHRV9TQ0FMRV9NT0RFX1VO",
+            "U1BFQ0lGSUVEEAASJAogSU1BR0VfU0NBTEVfTU9ERV9TVFJFVENIX1RPX0ZJ",
+            "TEwQARIjCh9JTUFHRV9TQ0FMRV9NT0RFX1NDQUxFX0FORF9DUk9QEAISIQod",
+            "SU1BR0VfU0NBTEVfTU9ERV9TQ0FMRV9UT19GSVQQAyqKAQoJRm9udFN0eWxl",
+            "EhoKFkZPTlRfU1RZTEVfVU5TUEVDSUZJRUQQABIVChFGT05UX1NUWUxFX05P",
+            "Uk1BTBABEhMKD0ZPTlRfU1RZTEVfQk9MRBACEhUKEUZPTlRfU1RZTEVfSVRB",
+            "TElDEAMSHgoaRk9OVF9TVFlMRV9CT0xEX0FORF9JVEFMSUMQBCp6Cg9PdmVy",
+            "Zmxvd0NsaXBCb3gSIQodT1ZFUkZMT1dfQ0xJUF9CT1hfVU5TUEVDSUZJRUQQ",
+            "ABIhCh1PVkVSRkxPV19DTElQX0JPWF9QQURESU5HX0JPWBABEiEKHU9WRVJG",
+            "TE9XX0NMSVBfQk9YX0NPTlRFTlRfQk9YEAIqpgIKCVRleHRBbGlnbhIaChZU",
+            "RVhUX0FMSUdOX1VOU1BFQ0lGSUVEEAASGQoVVEVYVF9BTElHTl9VUFBFUl9M",
+            "RUZUEAESGwoXVEVYVF9BTElHTl9VUFBFUl9DRU5URVIQAhIaChZURVhUX0FM",
+            "SUdOX1VQUEVSX1JJR0hUEAMSGgoWVEVYVF9BTElHTl9NSURETEVfTEVGVBAE",
+            "EhwKGFRFWFRfQUxJR05fTUlERExFX0NFTlRFUhAFEhsKF1RFWFRfQUxJR05f",
+            "TUlERExFX1JJR0hUEAYSGQoVVEVYVF9BTElHTl9MT1dFUl9MRUZUEAcSGwoX",
+            "VEVYVF9BTElHTl9MT1dFUl9DRU5URVIQCBIaChZURVhUX0FMSUdOX0xPV0VS",
+            "X1JJR0hUEAkqowEKFFRleHRPdmVyZmxvd1Bvc2l0aW9uEiYKIlRFWFRfT1ZF",
+            "UkZMT1dfUE9TSVRJT05fVU5TUEVDSUZJRUQQABIeChpURVhUX09WRVJGTE9X",
+            "X1BPU0lUSU9OX0VORBABEiAKHFRFWFRfT1ZFUkZMT1dfUE9TSVRJT05fU1RB",
+            "UlQQAhIhCh1URVhUX09WRVJGTE9XX1BPU0lUSU9OX01JRERMRRADKmoKDkZs",
+            "ZXhWaXNpYmlsaXR5Eh8KG0ZMRVhfVklTSUJJTElUWV9VTlNQRUNJRklFRBAA",
+            "EhsKF0ZMRVhfVklTSUJJTElUWV9WSVNJQkxFEAESGgoWRkxFWF9WSVNJQklM",
+            "SVRZX0hJRERFThACKloKCldoaXRlU3BhY2USGwoXV0hJVEVfU1BBQ0VfVU5T",
+            "UEVDSUZJRUQQABIWChJXSElURV9TUEFDRV9OT1JNQUwQARIXChNXSElURV9T",
+            "UEFDRV9OT19XUkFQEAIqfwoNRGltZW5zaW9uVW5pdBIeChpESU1FTlNJT05f",
+            "VU5JVF9VTlNQRUNJRklFRBAAEhYKEkRJTUVOU0lPTl9VTklUX0RJUBABEh0K",
+            "GURJTUVOU0lPTl9VTklUX1BFUkNFTlRBR0UQAhIXChNESU1FTlNJT05fVU5J",
+            "VF9WTUlOEAMqWQoKUGxheWVyTmFtZRIbChdQTEFZRVJfTkFNRV9VTlNQRUNJ",
+            "RklFRBAAEhQKEFBMQVlFUl9OQU1FX1VTRVIQARIYChRQTEFZRVJfTkFNRV9P",
+            "UFBPTkVOVBACKsQBCgZSb29tSWQSFwoTUk9PTV9JRF9VTlNQRUNJRklFRBAA",
+            "EhQKEFJPT01fSURfVFJFQVNVUlkQARITCg9ST09NX0lEX1NBTkNUVU0QAhIS",
+            "Cg5ST09NX0lEX0NSWVBUUxADEhIKDlJPT01fSURfUk9PTV9BEAQSEgoOUk9P",
+            "TV9JRF9ST09NX0IQBRISCg5ST09NX0lEX1JPT01fQxAGEhIKDlJPT01fSURf",
+            "Uk9PTV9EEAcSEgoOUk9PTV9JRF9ST09NX0UQCCp/Cg5UYXJnZXRpbmdBcnJv",
+            "dxIfChtUQVJHRVRJTkdfQVJST1dfVU5TUEVDSUZJRUQQABIXChNUQVJHRVRJ",
+            "TkdfQVJST1dfUkVEEAESGAoUVEFSR0VUSU5HX0FSUk9XX0JMVUUQAhIZChVU",
+            "QVJHRVRJTkdfQVJST1dfR1JFRU4QAyrLAQoQQ2FuUGxheUFsZ29yaXRobRIi",
+            "Ch5DQU5fUExBWV9BTEdPUklUSE1fVU5TUEVDSUZJRUQQABIhCh1DQU5fUExB",
+            "WV9BTEdPUklUSE1fT1BUSU1JU1RJQxABEiYKIkNBTl9QTEFZX0FMR09SSVRI",
+            "TV9BRERJVElPTkFMX0NPU1QQAhImCiJDQU5fUExBWV9BTEdPUklUSE1fQURE",
+            "SVRJT05BTF9QTEFZEAMSIAocQ0FOX1BMQVlfQUxHT1JJVEhNX05PX1VQREFU",
+            "RRAEKoMBChJTcGVuZENvc3RBbGdvcml0aG0SJAogU1BFTkRfQ09TVF9BTEdP",
+            "UklUSE1fVU5TUEVDSUZJRUQQABIjCh9TUEVORF9DT1NUX0FMR09SSVRITV9P",
+            "UFRJTUlTVElDEAESIgoeU1BFTkRfQ09TVF9BTEdPUklUSE1fTk9fVVBEQVRF",
+            "EAIqXgoMUm9vbUxvY2F0aW9uEh0KGVJPT01fTE9DQVRJT05fVU5TUEVDSUZJ",
+            "RUQQABIWChJST09NX0xPQ0FUSU9OX0JBQ0sQARIXChNST09NX0xPQ0FUSU9O",
+            "X0ZST05UEAIqXgoMSXRlbUxvY2F0aW9uEh0KGUlURU1fTE9DQVRJT05fVU5T",
+            "UEVDSUZJRUQQABIWChJJVEVNX0xPQ0FUSU9OX0xFRlQQARIXChNJVEVNX0xP",
+            "Q0FUSU9OX1JJR0hUEAIqcgoVQ2FyZENyZWF0aW9uQW5pbWF0aW9uEicKI0NB",
+            "UkRfQ1JFQVRJT05fQU5JTUFUSU9OX1VOU1BFQ0lGSUVEEAASMAosQ0FSRF9D",
+            "UkVBVElPTl9BTklNQVRJT05fVVNFUl9ERUNLX1RPX1NUQUdJTkcQAUITqgIQ",
+            "U3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.AnyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.FlexAlign), typeof(global::Spelldawn.Protos.FlexDisplayStyle), typeof(global::Spelldawn.Protos.FlexDirection), typeof(global::Spelldawn.Protos.FlexWrap), typeof(global::Spelldawn.Protos.FlexJustify), typeof(global::Spelldawn.Protos.FlexOverflow), typeof(global::Spelldawn.Protos.FlexPosition), typeof(global::Spelldawn.Protos.TextOverflow), typeof(global::Spelldawn.Protos.EasingMode), typeof(global::Spelldawn.Protos.ImageScaleMode), typeof(global::Spelldawn.Protos.FontStyle), typeof(global::Spelldawn.Protos.OverflowClipBox), typeof(global::Spelldawn.Protos.TextAlign), typeof(global::Spelldawn.Protos.TextOverflowPosition), typeof(global::Spelldawn.Protos.FlexVisibility), typeof(global::Spelldawn.Protos.WhiteSpace), typeof(global::Spelldawn.Protos.DimensionUnit), typeof(global::Spelldawn.Protos.PlayerName), typeof(global::Spelldawn.Protos.RoomId), typeof(global::Spelldawn.Protos.TargetingArrow), typeof(global::Spelldawn.Protos.CanPlayAlgorithm), typeof(global::Spelldawn.Protos.SpendCostAlgorithm), typeof(global::Spelldawn.Protos.RoomLocation), typeof(global::Spelldawn.Protos.ItemLocation), typeof(global::Spelldawn.Protos.CardCreationAnimation), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -489,6 +493,8 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.InitiateRaidAction), global::Spelldawn.Protos.InitiateRaidAction.Parser, new[]{ "RoomId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameAction), global::Spelldawn.Protos.GameAction.Parser, new[]{ "ServerAction", "GainMana", "DrawCard", "LevelUp", "PlayCard", "InitiateRaid" }, new[]{ "Action" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DebugLogCommand), global::Spelldawn.Protos.DebugLogCommand.Parser, new[]{ "Message" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.RunInParallelCommand), global::Spelldawn.Protos.RunInParallelCommand.Parser, new[]{ "Commands" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DelayCommand), global::Spelldawn.Protos.DelayCommand.Parser, new[]{ "Duration" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.InterfacePositionFullScreen), global::Spelldawn.Protos.InterfacePositionFullScreen.Parser, new[]{ "Node" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.InterfacePositionRaidControls), global::Spelldawn.Protos.InterfacePositionRaidControls.Parser, new[]{ "Node" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.ObjectControlNode), global::Spelldawn.Protos.ObjectControlNode.Parser, new[]{ "GameObjectId", "Node" }, null, null, null, null),
@@ -503,10 +509,9 @@ namespace Spelldawn.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DestroyCardCommand), global::Spelldawn.Protos.DestroyCardCommand.Parser, new[]{ "CardId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.UpdatePlayerStateCommand), global::Spelldawn.Protos.UpdatePlayerStateCommand.Parser, new[]{ "PlayerName", "Info", "Score", "ActionTracker" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.FireProjectileCommand), global::Spelldawn.Protos.FireProjectileCommand.Parser, new[]{ "SourceId", "TargetId", "Projectile", "TravelDuration", "AdditionalHit", "AdditionalHitDelay", "WaitDuration", "HideOnHit", "JumpToPosition" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.DelayCommand), global::Spelldawn.Protos.DelayCommand.Parser, new[]{ "Duration" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayEffectPosition), global::Spelldawn.Protos.PlayEffectPosition.Parser, new[]{ "GameObject" }, new[]{ "EffectPosition" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayEffectCommand), global::Spelldawn.Protos.PlayEffectCommand.Parser, new[]{ "Effect", "Position", "Scale" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameCommand), global::Spelldawn.Protos.GameCommand.Parser, new[]{ "DebugLog", "RenderInterface", "RenderGame", "InitiateRaid", "EndRaid", "CreateCard", "UpdateCard", "MoveGameObject", "DestroyCard", "UpdatePlayerState", "FireProjectile", "Delay", "PlayEffect" }, new[]{ "Command" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.PlayEffectCommand), global::Spelldawn.Protos.PlayEffectCommand.Parser, new[]{ "Effect", "Position", "Scale", "Duration" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.GameCommand), global::Spelldawn.Protos.GameCommand.Parser, new[]{ "DebugLog", "RunInParallel", "Delay", "RenderInterface", "RenderGame", "InitiateRaid", "EndRaid", "CreateCard", "UpdateCard", "MoveGameObject", "DestroyCard", "UpdatePlayerState", "FireProjectile", "PlayEffect" }, new[]{ "Command" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CommandList), global::Spelldawn.Protos.CommandList.Parser, new[]{ "Commands" }, null, null, null, null)
           }));
     }
@@ -19613,6 +19618,356 @@ namespace Spelldawn.Protos {
 
   }
 
+  /// <summary>
+  ///*
+  /// Run a series of command lists simultaneously. Warning: applying multiple commands
+  /// to the same game object will have unpredictable results.
+  /// </summary>
+  public sealed partial class RunInParallelCommand : pb::IMessage<RunInParallelCommand>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<RunInParallelCommand> _parser = new pb::MessageParser<RunInParallelCommand>(() => new RunInParallelCommand());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<RunInParallelCommand> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[71]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RunInParallelCommand() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RunInParallelCommand(RunInParallelCommand other) : this() {
+      commands_ = other.commands_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RunInParallelCommand Clone() {
+      return new RunInParallelCommand(this);
+    }
+
+    /// <summary>Field number for the "commands" field.</summary>
+    public const int CommandsFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Spelldawn.Protos.CommandList> _repeated_commands_codec
+        = pb::FieldCodec.ForMessage(10, global::Spelldawn.Protos.CommandList.Parser);
+    private readonly pbc::RepeatedField<global::Spelldawn.Protos.CommandList> commands_ = new pbc::RepeatedField<global::Spelldawn.Protos.CommandList>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Spelldawn.Protos.CommandList> Commands {
+      get { return commands_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as RunInParallelCommand);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RunInParallelCommand other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if(!commands_.Equals(other.commands_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= commands_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      commands_.WriteTo(output, _repeated_commands_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      commands_.WriteTo(ref output, _repeated_commands_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      size += commands_.CalculateSize(_repeated_commands_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(RunInParallelCommand other) {
+      if (other == null) {
+        return;
+      }
+      commands_.Add(other.commands_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            commands_.AddEntriesFrom(input, _repeated_commands_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            commands_.AddEntriesFrom(ref input, _repeated_commands_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  /// <summary>
+  ///* Wait before executing the next command in sequence. 
+  /// </summary>
+  public sealed partial class DelayCommand : pb::IMessage<DelayCommand>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DelayCommand> _parser = new pb::MessageParser<DelayCommand>(() => new DelayCommand());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<DelayCommand> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[72]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DelayCommand() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DelayCommand(DelayCommand other) : this() {
+      duration_ = other.duration_ != null ? other.duration_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DelayCommand Clone() {
+      return new DelayCommand(this);
+    }
+
+    /// <summary>Field number for the "duration" field.</summary>
+    public const int DurationFieldNumber = 1;
+    private global::Spelldawn.Protos.TimeValue duration_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.TimeValue Duration {
+      get { return duration_; }
+      set {
+        duration_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as DelayCommand);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(DelayCommand other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(Duration, other.Duration)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (duration_ != null) hash ^= Duration.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (duration_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Duration);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (duration_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Duration);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (duration_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Duration);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(DelayCommand other) {
+      if (other == null) {
+        return;
+      }
+      if (other.duration_ != null) {
+        if (duration_ == null) {
+          Duration = new global::Spelldawn.Protos.TimeValue();
+        }
+        Duration.MergeFrom(other.Duration);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (duration_ == null) {
+              Duration = new global::Spelldawn.Protos.TimeValue();
+            }
+            input.ReadMessage(Duration);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (duration_ == null) {
+              Duration = new global::Spelldawn.Protos.TimeValue();
+            }
+            input.ReadMessage(Duration);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
   public sealed partial class InterfacePositionFullScreen : pb::IMessage<InterfacePositionFullScreen>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -19625,7 +19980,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[71]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[73]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -19806,7 +20161,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[72]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[74]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -19987,7 +20342,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[73]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[75]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -20213,7 +20568,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[74]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[76]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -20379,7 +20734,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[75]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[77]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -20702,7 +21057,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[76]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[78]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -20883,7 +21238,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[77]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[79]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -21079,6 +21434,12 @@ namespace Spelldawn.Protos {
 
   }
 
+  /// <summary>
+  ///*
+  /// Removes the raid UI overlay. This command does not cause game objects within
+  /// the raid to change position, 'MoveGameObjectCommand' should be used for that
+  /// instead.
+  /// </summary>
   public sealed partial class EndRaidCommand : pb::IMessage<EndRaidCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -21091,7 +21452,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[78]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[80]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -21231,7 +21592,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[79]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[81]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -21496,7 +21857,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[80]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[82]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -21677,7 +22038,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[81]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[83]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -21939,7 +22300,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[82]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[84]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -22120,7 +22481,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[83]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[85]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -22431,7 +22792,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[84]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[86]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -22978,190 +23339,6 @@ namespace Spelldawn.Protos {
 
   }
 
-  /// <summary>
-  ///* Wait before executing the next command in sequence. 
-  /// </summary>
-  public sealed partial class DelayCommand : pb::IMessage<DelayCommand>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<DelayCommand> _parser = new pb::MessageParser<DelayCommand>(() => new DelayCommand());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<DelayCommand> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[85]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public DelayCommand() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public DelayCommand(DelayCommand other) : this() {
-      duration_ = other.duration_ != null ? other.duration_.Clone() : null;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public DelayCommand Clone() {
-      return new DelayCommand(this);
-    }
-
-    /// <summary>Field number for the "duration" field.</summary>
-    public const int DurationFieldNumber = 1;
-    private global::Spelldawn.Protos.TimeValue duration_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.TimeValue Duration {
-      get { return duration_; }
-      set {
-        duration_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as DelayCommand);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(DelayCommand other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (!object.Equals(Duration, other.Duration)) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (duration_ != null) hash ^= Duration.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (duration_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Duration);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (duration_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Duration);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (duration_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Duration);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(DelayCommand other) {
-      if (other == null) {
-        return;
-      }
-      if (other.duration_ != null) {
-        if (duration_ == null) {
-          Duration = new global::Spelldawn.Protos.TimeValue();
-        }
-        Duration.MergeFrom(other.Duration);
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            if (duration_ == null) {
-              Duration = new global::Spelldawn.Protos.TimeValue();
-            }
-            input.ReadMessage(Duration);
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            if (duration_ == null) {
-              Duration = new global::Spelldawn.Protos.TimeValue();
-            }
-            input.ReadMessage(Duration);
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
   public sealed partial class PlayEffectPosition : pb::IMessage<PlayEffectPosition>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -23174,7 +23351,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[86]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[87]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -23387,7 +23564,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[87]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[88]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -23407,6 +23584,7 @@ namespace Spelldawn.Protos {
       effect_ = other.effect_ != null ? other.effect_.Clone() : null;
       position_ = other.position_ != null ? other.position_.Clone() : null;
       Scale = other.Scale;
+      duration_ = other.duration_ != null ? other.duration_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -23450,6 +23628,20 @@ namespace Spelldawn.Protos {
     }
 
 
+    /// <summary>Field number for the "duration" field.</summary>
+    public const int DurationFieldNumber = 4;
+    private global::Spelldawn.Protos.TimeValue duration_;
+    /// <summary>
+    ///* How long to wait before continuing. 
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.TimeValue Duration {
+      get { return duration_; }
+      set {
+        duration_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as PlayEffectCommand);
@@ -23466,6 +23658,7 @@ namespace Spelldawn.Protos {
       if (!object.Equals(Effect, other.Effect)) return false;
       if (!object.Equals(Position, other.Position)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.Equals(Scale, other.Scale)) return false;
+      if (!object.Equals(Duration, other.Duration)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -23475,6 +23668,7 @@ namespace Spelldawn.Protos {
       if (effect_ != null) hash ^= Effect.GetHashCode();
       if (position_ != null) hash ^= Position.GetHashCode();
       if (scale_ != null) hash ^= pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.GetHashCode(Scale);
+      if (duration_ != null) hash ^= Duration.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -23502,6 +23696,10 @@ namespace Spelldawn.Protos {
       if (scale_ != null) {
         _single_scale_codec.WriteTagAndValue(output, Scale);
       }
+      if (duration_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Duration);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -23522,6 +23720,10 @@ namespace Spelldawn.Protos {
       if (scale_ != null) {
         _single_scale_codec.WriteTagAndValue(ref output, Scale);
       }
+      if (duration_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Duration);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -23539,6 +23741,9 @@ namespace Spelldawn.Protos {
       }
       if (scale_ != null) {
         size += _single_scale_codec.CalculateSizeWithTag(Scale);
+      }
+      if (duration_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Duration);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -23567,6 +23772,12 @@ namespace Spelldawn.Protos {
         if (scale_ == null || other.Scale != 0F) {
           Scale = other.Scale;
         }
+      }
+      if (other.duration_ != null) {
+        if (duration_ == null) {
+          Duration = new global::Spelldawn.Protos.TimeValue();
+        }
+        Duration.MergeFrom(other.Duration);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -23601,6 +23812,13 @@ namespace Spelldawn.Protos {
             if (scale_ == null || value != 0F) {
               Scale = value;
             }
+            break;
+          }
+          case 34: {
+            if (duration_ == null) {
+              Duration = new global::Spelldawn.Protos.TimeValue();
+            }
+            input.ReadMessage(Duration);
             break;
           }
         }
@@ -23638,6 +23856,13 @@ namespace Spelldawn.Protos {
             }
             break;
           }
+          case 34: {
+            if (duration_ == null) {
+              Duration = new global::Spelldawn.Protos.TimeValue();
+            }
+            input.ReadMessage(Duration);
+            break;
+          }
         }
       }
     }
@@ -23657,7 +23882,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[88]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[89]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -23677,6 +23902,12 @@ namespace Spelldawn.Protos {
       switch (other.CommandCase) {
         case CommandOneofCase.DebugLog:
           DebugLog = other.DebugLog.Clone();
+          break;
+        case CommandOneofCase.RunInParallel:
+          RunInParallel = other.RunInParallel.Clone();
+          break;
+        case CommandOneofCase.Delay:
+          Delay = other.Delay.Clone();
           break;
         case CommandOneofCase.RenderInterface:
           RenderInterface = other.RenderInterface.Clone();
@@ -23708,9 +23939,6 @@ namespace Spelldawn.Protos {
         case CommandOneofCase.FireProjectile:
           FireProjectile = other.FireProjectile.Clone();
           break;
-        case CommandOneofCase.Delay:
-          Delay = other.Delay.Clone();
-          break;
         case CommandOneofCase.PlayEffect:
           PlayEffect = other.PlayEffect.Clone();
           break;
@@ -23735,8 +23963,30 @@ namespace Spelldawn.Protos {
       }
     }
 
+    /// <summary>Field number for the "run_in_parallel" field.</summary>
+    public const int RunInParallelFieldNumber = 2;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.RunInParallelCommand RunInParallel {
+      get { return commandCase_ == CommandOneofCase.RunInParallel ? (global::Spelldawn.Protos.RunInParallelCommand) command_ : null; }
+      set {
+        command_ = value;
+        commandCase_ = value == null ? CommandOneofCase.None : CommandOneofCase.RunInParallel;
+      }
+    }
+
+    /// <summary>Field number for the "delay" field.</summary>
+    public const int DelayFieldNumber = 3;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Spelldawn.Protos.DelayCommand Delay {
+      get { return commandCase_ == CommandOneofCase.Delay ? (global::Spelldawn.Protos.DelayCommand) command_ : null; }
+      set {
+        command_ = value;
+        commandCase_ = value == null ? CommandOneofCase.None : CommandOneofCase.Delay;
+      }
+    }
+
     /// <summary>Field number for the "render_interface" field.</summary>
-    public const int RenderInterfaceFieldNumber = 2;
+    public const int RenderInterfaceFieldNumber = 4;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RenderInterfaceCommand RenderInterface {
       get { return commandCase_ == CommandOneofCase.RenderInterface ? (global::Spelldawn.Protos.RenderInterfaceCommand) command_ : null; }
@@ -23747,7 +23997,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "render_game" field.</summary>
-    public const int RenderGameFieldNumber = 3;
+    public const int RenderGameFieldNumber = 5;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.RenderGameCommand RenderGame {
       get { return commandCase_ == CommandOneofCase.RenderGame ? (global::Spelldawn.Protos.RenderGameCommand) command_ : null; }
@@ -23758,7 +24008,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "initiate_raid" field.</summary>
-    public const int InitiateRaidFieldNumber = 4;
+    public const int InitiateRaidFieldNumber = 6;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.InitiateRaidCommand InitiateRaid {
       get { return commandCase_ == CommandOneofCase.InitiateRaid ? (global::Spelldawn.Protos.InitiateRaidCommand) command_ : null; }
@@ -23769,7 +24019,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "end_raid" field.</summary>
-    public const int EndRaidFieldNumber = 5;
+    public const int EndRaidFieldNumber = 7;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.EndRaidCommand EndRaid {
       get { return commandCase_ == CommandOneofCase.EndRaid ? (global::Spelldawn.Protos.EndRaidCommand) command_ : null; }
@@ -23780,7 +24030,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "create_card" field.</summary>
-    public const int CreateCardFieldNumber = 6;
+    public const int CreateCardFieldNumber = 8;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CreateCardCommand CreateCard {
       get { return commandCase_ == CommandOneofCase.CreateCard ? (global::Spelldawn.Protos.CreateCardCommand) command_ : null; }
@@ -23791,7 +24041,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "update_card" field.</summary>
-    public const int UpdateCardFieldNumber = 7;
+    public const int UpdateCardFieldNumber = 9;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.UpdateCardCommand UpdateCard {
       get { return commandCase_ == CommandOneofCase.UpdateCard ? (global::Spelldawn.Protos.UpdateCardCommand) command_ : null; }
@@ -23802,7 +24052,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "move_game_object" field.</summary>
-    public const int MoveGameObjectFieldNumber = 8;
+    public const int MoveGameObjectFieldNumber = 10;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.MoveGameObjectCommand MoveGameObject {
       get { return commandCase_ == CommandOneofCase.MoveGameObject ? (global::Spelldawn.Protos.MoveGameObjectCommand) command_ : null; }
@@ -23813,7 +24063,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "destroy_card" field.</summary>
-    public const int DestroyCardFieldNumber = 9;
+    public const int DestroyCardFieldNumber = 11;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.DestroyCardCommand DestroyCard {
       get { return commandCase_ == CommandOneofCase.DestroyCard ? (global::Spelldawn.Protos.DestroyCardCommand) command_ : null; }
@@ -23824,7 +24074,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "update_player_state" field.</summary>
-    public const int UpdatePlayerStateFieldNumber = 10;
+    public const int UpdatePlayerStateFieldNumber = 12;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.UpdatePlayerStateCommand UpdatePlayerState {
       get { return commandCase_ == CommandOneofCase.UpdatePlayerState ? (global::Spelldawn.Protos.UpdatePlayerStateCommand) command_ : null; }
@@ -23835,7 +24085,7 @@ namespace Spelldawn.Protos {
     }
 
     /// <summary>Field number for the "fire_projectile" field.</summary>
-    public const int FireProjectileFieldNumber = 11;
+    public const int FireProjectileFieldNumber = 13;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.FireProjectileCommand FireProjectile {
       get { return commandCase_ == CommandOneofCase.FireProjectile ? (global::Spelldawn.Protos.FireProjectileCommand) command_ : null; }
@@ -23845,19 +24095,8 @@ namespace Spelldawn.Protos {
       }
     }
 
-    /// <summary>Field number for the "delay" field.</summary>
-    public const int DelayFieldNumber = 12;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Spelldawn.Protos.DelayCommand Delay {
-      get { return commandCase_ == CommandOneofCase.Delay ? (global::Spelldawn.Protos.DelayCommand) command_ : null; }
-      set {
-        command_ = value;
-        commandCase_ = value == null ? CommandOneofCase.None : CommandOneofCase.Delay;
-      }
-    }
-
     /// <summary>Field number for the "play_effect" field.</summary>
-    public const int PlayEffectFieldNumber = 13;
+    public const int PlayEffectFieldNumber = 14;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.PlayEffectCommand PlayEffect {
       get { return commandCase_ == CommandOneofCase.PlayEffect ? (global::Spelldawn.Protos.PlayEffectCommand) command_ : null; }
@@ -23872,18 +24111,19 @@ namespace Spelldawn.Protos {
     public enum CommandOneofCase {
       None = 0,
       DebugLog = 1,
-      RenderInterface = 2,
-      RenderGame = 3,
-      InitiateRaid = 4,
-      EndRaid = 5,
-      CreateCard = 6,
-      UpdateCard = 7,
-      MoveGameObject = 8,
-      DestroyCard = 9,
-      UpdatePlayerState = 10,
-      FireProjectile = 11,
-      Delay = 12,
-      PlayEffect = 13,
+      RunInParallel = 2,
+      Delay = 3,
+      RenderInterface = 4,
+      RenderGame = 5,
+      InitiateRaid = 6,
+      EndRaid = 7,
+      CreateCard = 8,
+      UpdateCard = 9,
+      MoveGameObject = 10,
+      DestroyCard = 11,
+      UpdatePlayerState = 12,
+      FireProjectile = 13,
+      PlayEffect = 14,
     }
     private CommandOneofCase commandCase_ = CommandOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -23911,6 +24151,8 @@ namespace Spelldawn.Protos {
         return true;
       }
       if (!object.Equals(DebugLog, other.DebugLog)) return false;
+      if (!object.Equals(RunInParallel, other.RunInParallel)) return false;
+      if (!object.Equals(Delay, other.Delay)) return false;
       if (!object.Equals(RenderInterface, other.RenderInterface)) return false;
       if (!object.Equals(RenderGame, other.RenderGame)) return false;
       if (!object.Equals(InitiateRaid, other.InitiateRaid)) return false;
@@ -23921,7 +24163,6 @@ namespace Spelldawn.Protos {
       if (!object.Equals(DestroyCard, other.DestroyCard)) return false;
       if (!object.Equals(UpdatePlayerState, other.UpdatePlayerState)) return false;
       if (!object.Equals(FireProjectile, other.FireProjectile)) return false;
-      if (!object.Equals(Delay, other.Delay)) return false;
       if (!object.Equals(PlayEffect, other.PlayEffect)) return false;
       if (CommandCase != other.CommandCase) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -23931,6 +24172,8 @@ namespace Spelldawn.Protos {
     public override int GetHashCode() {
       int hash = 1;
       if (commandCase_ == CommandOneofCase.DebugLog) hash ^= DebugLog.GetHashCode();
+      if (commandCase_ == CommandOneofCase.RunInParallel) hash ^= RunInParallel.GetHashCode();
+      if (commandCase_ == CommandOneofCase.Delay) hash ^= Delay.GetHashCode();
       if (commandCase_ == CommandOneofCase.RenderInterface) hash ^= RenderInterface.GetHashCode();
       if (commandCase_ == CommandOneofCase.RenderGame) hash ^= RenderGame.GetHashCode();
       if (commandCase_ == CommandOneofCase.InitiateRaid) hash ^= InitiateRaid.GetHashCode();
@@ -23941,7 +24184,6 @@ namespace Spelldawn.Protos {
       if (commandCase_ == CommandOneofCase.DestroyCard) hash ^= DestroyCard.GetHashCode();
       if (commandCase_ == CommandOneofCase.UpdatePlayerState) hash ^= UpdatePlayerState.GetHashCode();
       if (commandCase_ == CommandOneofCase.FireProjectile) hash ^= FireProjectile.GetHashCode();
-      if (commandCase_ == CommandOneofCase.Delay) hash ^= Delay.GetHashCode();
       if (commandCase_ == CommandOneofCase.PlayEffect) hash ^= PlayEffect.GetHashCode();
       hash ^= (int) commandCase_;
       if (_unknownFields != null) {
@@ -23964,52 +24206,56 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(DebugLog);
       }
-      if (commandCase_ == CommandOneofCase.RenderInterface) {
+      if (commandCase_ == CommandOneofCase.RunInParallel) {
         output.WriteRawTag(18);
+        output.WriteMessage(RunInParallel);
+      }
+      if (commandCase_ == CommandOneofCase.Delay) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Delay);
+      }
+      if (commandCase_ == CommandOneofCase.RenderInterface) {
+        output.WriteRawTag(34);
         output.WriteMessage(RenderInterface);
       }
       if (commandCase_ == CommandOneofCase.RenderGame) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(42);
         output.WriteMessage(RenderGame);
       }
       if (commandCase_ == CommandOneofCase.InitiateRaid) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(50);
         output.WriteMessage(InitiateRaid);
       }
       if (commandCase_ == CommandOneofCase.EndRaid) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(58);
         output.WriteMessage(EndRaid);
       }
       if (commandCase_ == CommandOneofCase.CreateCard) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(66);
         output.WriteMessage(CreateCard);
       }
       if (commandCase_ == CommandOneofCase.UpdateCard) {
-        output.WriteRawTag(58);
+        output.WriteRawTag(74);
         output.WriteMessage(UpdateCard);
       }
       if (commandCase_ == CommandOneofCase.MoveGameObject) {
-        output.WriteRawTag(66);
+        output.WriteRawTag(82);
         output.WriteMessage(MoveGameObject);
       }
       if (commandCase_ == CommandOneofCase.DestroyCard) {
-        output.WriteRawTag(74);
+        output.WriteRawTag(90);
         output.WriteMessage(DestroyCard);
       }
       if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
-        output.WriteRawTag(82);
+        output.WriteRawTag(98);
         output.WriteMessage(UpdatePlayerState);
       }
       if (commandCase_ == CommandOneofCase.FireProjectile) {
-        output.WriteRawTag(90);
+        output.WriteRawTag(106);
         output.WriteMessage(FireProjectile);
       }
-      if (commandCase_ == CommandOneofCase.Delay) {
-        output.WriteRawTag(98);
-        output.WriteMessage(Delay);
-      }
       if (commandCase_ == CommandOneofCase.PlayEffect) {
-        output.WriteRawTag(106);
+        output.WriteRawTag(114);
         output.WriteMessage(PlayEffect);
       }
       if (_unknownFields != null) {
@@ -24025,52 +24271,56 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteMessage(DebugLog);
       }
-      if (commandCase_ == CommandOneofCase.RenderInterface) {
+      if (commandCase_ == CommandOneofCase.RunInParallel) {
         output.WriteRawTag(18);
+        output.WriteMessage(RunInParallel);
+      }
+      if (commandCase_ == CommandOneofCase.Delay) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Delay);
+      }
+      if (commandCase_ == CommandOneofCase.RenderInterface) {
+        output.WriteRawTag(34);
         output.WriteMessage(RenderInterface);
       }
       if (commandCase_ == CommandOneofCase.RenderGame) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(42);
         output.WriteMessage(RenderGame);
       }
       if (commandCase_ == CommandOneofCase.InitiateRaid) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(50);
         output.WriteMessage(InitiateRaid);
       }
       if (commandCase_ == CommandOneofCase.EndRaid) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(58);
         output.WriteMessage(EndRaid);
       }
       if (commandCase_ == CommandOneofCase.CreateCard) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(66);
         output.WriteMessage(CreateCard);
       }
       if (commandCase_ == CommandOneofCase.UpdateCard) {
-        output.WriteRawTag(58);
+        output.WriteRawTag(74);
         output.WriteMessage(UpdateCard);
       }
       if (commandCase_ == CommandOneofCase.MoveGameObject) {
-        output.WriteRawTag(66);
+        output.WriteRawTag(82);
         output.WriteMessage(MoveGameObject);
       }
       if (commandCase_ == CommandOneofCase.DestroyCard) {
-        output.WriteRawTag(74);
+        output.WriteRawTag(90);
         output.WriteMessage(DestroyCard);
       }
       if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
-        output.WriteRawTag(82);
+        output.WriteRawTag(98);
         output.WriteMessage(UpdatePlayerState);
       }
       if (commandCase_ == CommandOneofCase.FireProjectile) {
-        output.WriteRawTag(90);
+        output.WriteRawTag(106);
         output.WriteMessage(FireProjectile);
       }
-      if (commandCase_ == CommandOneofCase.Delay) {
-        output.WriteRawTag(98);
-        output.WriteMessage(Delay);
-      }
       if (commandCase_ == CommandOneofCase.PlayEffect) {
-        output.WriteRawTag(106);
+        output.WriteRawTag(114);
         output.WriteMessage(PlayEffect);
       }
       if (_unknownFields != null) {
@@ -24084,6 +24334,12 @@ namespace Spelldawn.Protos {
       int size = 0;
       if (commandCase_ == CommandOneofCase.DebugLog) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(DebugLog);
+      }
+      if (commandCase_ == CommandOneofCase.RunInParallel) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(RunInParallel);
+      }
+      if (commandCase_ == CommandOneofCase.Delay) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Delay);
       }
       if (commandCase_ == CommandOneofCase.RenderInterface) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(RenderInterface);
@@ -24115,9 +24371,6 @@ namespace Spelldawn.Protos {
       if (commandCase_ == CommandOneofCase.FireProjectile) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(FireProjectile);
       }
-      if (commandCase_ == CommandOneofCase.Delay) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Delay);
-      }
       if (commandCase_ == CommandOneofCase.PlayEffect) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayEffect);
       }
@@ -24138,6 +24391,18 @@ namespace Spelldawn.Protos {
             DebugLog = new global::Spelldawn.Protos.DebugLogCommand();
           }
           DebugLog.MergeFrom(other.DebugLog);
+          break;
+        case CommandOneofCase.RunInParallel:
+          if (RunInParallel == null) {
+            RunInParallel = new global::Spelldawn.Protos.RunInParallelCommand();
+          }
+          RunInParallel.MergeFrom(other.RunInParallel);
+          break;
+        case CommandOneofCase.Delay:
+          if (Delay == null) {
+            Delay = new global::Spelldawn.Protos.DelayCommand();
+          }
+          Delay.MergeFrom(other.Delay);
           break;
         case CommandOneofCase.RenderInterface:
           if (RenderInterface == null) {
@@ -24199,12 +24464,6 @@ namespace Spelldawn.Protos {
           }
           FireProjectile.MergeFrom(other.FireProjectile);
           break;
-        case CommandOneofCase.Delay:
-          if (Delay == null) {
-            Delay = new global::Spelldawn.Protos.DelayCommand();
-          }
-          Delay.MergeFrom(other.Delay);
-          break;
         case CommandOneofCase.PlayEffect:
           if (PlayEffect == null) {
             PlayEffect = new global::Spelldawn.Protos.PlayEffectCommand();
@@ -24237,96 +24496,15 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            global::Spelldawn.Protos.RenderInterfaceCommand subBuilder = new global::Spelldawn.Protos.RenderInterfaceCommand();
-            if (commandCase_ == CommandOneofCase.RenderInterface) {
-              subBuilder.MergeFrom(RenderInterface);
+            global::Spelldawn.Protos.RunInParallelCommand subBuilder = new global::Spelldawn.Protos.RunInParallelCommand();
+            if (commandCase_ == CommandOneofCase.RunInParallel) {
+              subBuilder.MergeFrom(RunInParallel);
             }
             input.ReadMessage(subBuilder);
-            RenderInterface = subBuilder;
+            RunInParallel = subBuilder;
             break;
           }
           case 26: {
-            global::Spelldawn.Protos.RenderGameCommand subBuilder = new global::Spelldawn.Protos.RenderGameCommand();
-            if (commandCase_ == CommandOneofCase.RenderGame) {
-              subBuilder.MergeFrom(RenderGame);
-            }
-            input.ReadMessage(subBuilder);
-            RenderGame = subBuilder;
-            break;
-          }
-          case 34: {
-            global::Spelldawn.Protos.InitiateRaidCommand subBuilder = new global::Spelldawn.Protos.InitiateRaidCommand();
-            if (commandCase_ == CommandOneofCase.InitiateRaid) {
-              subBuilder.MergeFrom(InitiateRaid);
-            }
-            input.ReadMessage(subBuilder);
-            InitiateRaid = subBuilder;
-            break;
-          }
-          case 42: {
-            global::Spelldawn.Protos.EndRaidCommand subBuilder = new global::Spelldawn.Protos.EndRaidCommand();
-            if (commandCase_ == CommandOneofCase.EndRaid) {
-              subBuilder.MergeFrom(EndRaid);
-            }
-            input.ReadMessage(subBuilder);
-            EndRaid = subBuilder;
-            break;
-          }
-          case 50: {
-            global::Spelldawn.Protos.CreateCardCommand subBuilder = new global::Spelldawn.Protos.CreateCardCommand();
-            if (commandCase_ == CommandOneofCase.CreateCard) {
-              subBuilder.MergeFrom(CreateCard);
-            }
-            input.ReadMessage(subBuilder);
-            CreateCard = subBuilder;
-            break;
-          }
-          case 58: {
-            global::Spelldawn.Protos.UpdateCardCommand subBuilder = new global::Spelldawn.Protos.UpdateCardCommand();
-            if (commandCase_ == CommandOneofCase.UpdateCard) {
-              subBuilder.MergeFrom(UpdateCard);
-            }
-            input.ReadMessage(subBuilder);
-            UpdateCard = subBuilder;
-            break;
-          }
-          case 66: {
-            global::Spelldawn.Protos.MoveGameObjectCommand subBuilder = new global::Spelldawn.Protos.MoveGameObjectCommand();
-            if (commandCase_ == CommandOneofCase.MoveGameObject) {
-              subBuilder.MergeFrom(MoveGameObject);
-            }
-            input.ReadMessage(subBuilder);
-            MoveGameObject = subBuilder;
-            break;
-          }
-          case 74: {
-            global::Spelldawn.Protos.DestroyCardCommand subBuilder = new global::Spelldawn.Protos.DestroyCardCommand();
-            if (commandCase_ == CommandOneofCase.DestroyCard) {
-              subBuilder.MergeFrom(DestroyCard);
-            }
-            input.ReadMessage(subBuilder);
-            DestroyCard = subBuilder;
-            break;
-          }
-          case 82: {
-            global::Spelldawn.Protos.UpdatePlayerStateCommand subBuilder = new global::Spelldawn.Protos.UpdatePlayerStateCommand();
-            if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
-              subBuilder.MergeFrom(UpdatePlayerState);
-            }
-            input.ReadMessage(subBuilder);
-            UpdatePlayerState = subBuilder;
-            break;
-          }
-          case 90: {
-            global::Spelldawn.Protos.FireProjectileCommand subBuilder = new global::Spelldawn.Protos.FireProjectileCommand();
-            if (commandCase_ == CommandOneofCase.FireProjectile) {
-              subBuilder.MergeFrom(FireProjectile);
-            }
-            input.ReadMessage(subBuilder);
-            FireProjectile = subBuilder;
-            break;
-          }
-          case 98: {
             global::Spelldawn.Protos.DelayCommand subBuilder = new global::Spelldawn.Protos.DelayCommand();
             if (commandCase_ == CommandOneofCase.Delay) {
               subBuilder.MergeFrom(Delay);
@@ -24335,7 +24513,97 @@ namespace Spelldawn.Protos {
             Delay = subBuilder;
             break;
           }
+          case 34: {
+            global::Spelldawn.Protos.RenderInterfaceCommand subBuilder = new global::Spelldawn.Protos.RenderInterfaceCommand();
+            if (commandCase_ == CommandOneofCase.RenderInterface) {
+              subBuilder.MergeFrom(RenderInterface);
+            }
+            input.ReadMessage(subBuilder);
+            RenderInterface = subBuilder;
+            break;
+          }
+          case 42: {
+            global::Spelldawn.Protos.RenderGameCommand subBuilder = new global::Spelldawn.Protos.RenderGameCommand();
+            if (commandCase_ == CommandOneofCase.RenderGame) {
+              subBuilder.MergeFrom(RenderGame);
+            }
+            input.ReadMessage(subBuilder);
+            RenderGame = subBuilder;
+            break;
+          }
+          case 50: {
+            global::Spelldawn.Protos.InitiateRaidCommand subBuilder = new global::Spelldawn.Protos.InitiateRaidCommand();
+            if (commandCase_ == CommandOneofCase.InitiateRaid) {
+              subBuilder.MergeFrom(InitiateRaid);
+            }
+            input.ReadMessage(subBuilder);
+            InitiateRaid = subBuilder;
+            break;
+          }
+          case 58: {
+            global::Spelldawn.Protos.EndRaidCommand subBuilder = new global::Spelldawn.Protos.EndRaidCommand();
+            if (commandCase_ == CommandOneofCase.EndRaid) {
+              subBuilder.MergeFrom(EndRaid);
+            }
+            input.ReadMessage(subBuilder);
+            EndRaid = subBuilder;
+            break;
+          }
+          case 66: {
+            global::Spelldawn.Protos.CreateCardCommand subBuilder = new global::Spelldawn.Protos.CreateCardCommand();
+            if (commandCase_ == CommandOneofCase.CreateCard) {
+              subBuilder.MergeFrom(CreateCard);
+            }
+            input.ReadMessage(subBuilder);
+            CreateCard = subBuilder;
+            break;
+          }
+          case 74: {
+            global::Spelldawn.Protos.UpdateCardCommand subBuilder = new global::Spelldawn.Protos.UpdateCardCommand();
+            if (commandCase_ == CommandOneofCase.UpdateCard) {
+              subBuilder.MergeFrom(UpdateCard);
+            }
+            input.ReadMessage(subBuilder);
+            UpdateCard = subBuilder;
+            break;
+          }
+          case 82: {
+            global::Spelldawn.Protos.MoveGameObjectCommand subBuilder = new global::Spelldawn.Protos.MoveGameObjectCommand();
+            if (commandCase_ == CommandOneofCase.MoveGameObject) {
+              subBuilder.MergeFrom(MoveGameObject);
+            }
+            input.ReadMessage(subBuilder);
+            MoveGameObject = subBuilder;
+            break;
+          }
+          case 90: {
+            global::Spelldawn.Protos.DestroyCardCommand subBuilder = new global::Spelldawn.Protos.DestroyCardCommand();
+            if (commandCase_ == CommandOneofCase.DestroyCard) {
+              subBuilder.MergeFrom(DestroyCard);
+            }
+            input.ReadMessage(subBuilder);
+            DestroyCard = subBuilder;
+            break;
+          }
+          case 98: {
+            global::Spelldawn.Protos.UpdatePlayerStateCommand subBuilder = new global::Spelldawn.Protos.UpdatePlayerStateCommand();
+            if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
+              subBuilder.MergeFrom(UpdatePlayerState);
+            }
+            input.ReadMessage(subBuilder);
+            UpdatePlayerState = subBuilder;
+            break;
+          }
           case 106: {
+            global::Spelldawn.Protos.FireProjectileCommand subBuilder = new global::Spelldawn.Protos.FireProjectileCommand();
+            if (commandCase_ == CommandOneofCase.FireProjectile) {
+              subBuilder.MergeFrom(FireProjectile);
+            }
+            input.ReadMessage(subBuilder);
+            FireProjectile = subBuilder;
+            break;
+          }
+          case 114: {
             global::Spelldawn.Protos.PlayEffectCommand subBuilder = new global::Spelldawn.Protos.PlayEffectCommand();
             if (commandCase_ == CommandOneofCase.PlayEffect) {
               subBuilder.MergeFrom(PlayEffect);
@@ -24368,96 +24636,15 @@ namespace Spelldawn.Protos {
             break;
           }
           case 18: {
-            global::Spelldawn.Protos.RenderInterfaceCommand subBuilder = new global::Spelldawn.Protos.RenderInterfaceCommand();
-            if (commandCase_ == CommandOneofCase.RenderInterface) {
-              subBuilder.MergeFrom(RenderInterface);
+            global::Spelldawn.Protos.RunInParallelCommand subBuilder = new global::Spelldawn.Protos.RunInParallelCommand();
+            if (commandCase_ == CommandOneofCase.RunInParallel) {
+              subBuilder.MergeFrom(RunInParallel);
             }
             input.ReadMessage(subBuilder);
-            RenderInterface = subBuilder;
+            RunInParallel = subBuilder;
             break;
           }
           case 26: {
-            global::Spelldawn.Protos.RenderGameCommand subBuilder = new global::Spelldawn.Protos.RenderGameCommand();
-            if (commandCase_ == CommandOneofCase.RenderGame) {
-              subBuilder.MergeFrom(RenderGame);
-            }
-            input.ReadMessage(subBuilder);
-            RenderGame = subBuilder;
-            break;
-          }
-          case 34: {
-            global::Spelldawn.Protos.InitiateRaidCommand subBuilder = new global::Spelldawn.Protos.InitiateRaidCommand();
-            if (commandCase_ == CommandOneofCase.InitiateRaid) {
-              subBuilder.MergeFrom(InitiateRaid);
-            }
-            input.ReadMessage(subBuilder);
-            InitiateRaid = subBuilder;
-            break;
-          }
-          case 42: {
-            global::Spelldawn.Protos.EndRaidCommand subBuilder = new global::Spelldawn.Protos.EndRaidCommand();
-            if (commandCase_ == CommandOneofCase.EndRaid) {
-              subBuilder.MergeFrom(EndRaid);
-            }
-            input.ReadMessage(subBuilder);
-            EndRaid = subBuilder;
-            break;
-          }
-          case 50: {
-            global::Spelldawn.Protos.CreateCardCommand subBuilder = new global::Spelldawn.Protos.CreateCardCommand();
-            if (commandCase_ == CommandOneofCase.CreateCard) {
-              subBuilder.MergeFrom(CreateCard);
-            }
-            input.ReadMessage(subBuilder);
-            CreateCard = subBuilder;
-            break;
-          }
-          case 58: {
-            global::Spelldawn.Protos.UpdateCardCommand subBuilder = new global::Spelldawn.Protos.UpdateCardCommand();
-            if (commandCase_ == CommandOneofCase.UpdateCard) {
-              subBuilder.MergeFrom(UpdateCard);
-            }
-            input.ReadMessage(subBuilder);
-            UpdateCard = subBuilder;
-            break;
-          }
-          case 66: {
-            global::Spelldawn.Protos.MoveGameObjectCommand subBuilder = new global::Spelldawn.Protos.MoveGameObjectCommand();
-            if (commandCase_ == CommandOneofCase.MoveGameObject) {
-              subBuilder.MergeFrom(MoveGameObject);
-            }
-            input.ReadMessage(subBuilder);
-            MoveGameObject = subBuilder;
-            break;
-          }
-          case 74: {
-            global::Spelldawn.Protos.DestroyCardCommand subBuilder = new global::Spelldawn.Protos.DestroyCardCommand();
-            if (commandCase_ == CommandOneofCase.DestroyCard) {
-              subBuilder.MergeFrom(DestroyCard);
-            }
-            input.ReadMessage(subBuilder);
-            DestroyCard = subBuilder;
-            break;
-          }
-          case 82: {
-            global::Spelldawn.Protos.UpdatePlayerStateCommand subBuilder = new global::Spelldawn.Protos.UpdatePlayerStateCommand();
-            if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
-              subBuilder.MergeFrom(UpdatePlayerState);
-            }
-            input.ReadMessage(subBuilder);
-            UpdatePlayerState = subBuilder;
-            break;
-          }
-          case 90: {
-            global::Spelldawn.Protos.FireProjectileCommand subBuilder = new global::Spelldawn.Protos.FireProjectileCommand();
-            if (commandCase_ == CommandOneofCase.FireProjectile) {
-              subBuilder.MergeFrom(FireProjectile);
-            }
-            input.ReadMessage(subBuilder);
-            FireProjectile = subBuilder;
-            break;
-          }
-          case 98: {
             global::Spelldawn.Protos.DelayCommand subBuilder = new global::Spelldawn.Protos.DelayCommand();
             if (commandCase_ == CommandOneofCase.Delay) {
               subBuilder.MergeFrom(Delay);
@@ -24466,7 +24653,97 @@ namespace Spelldawn.Protos {
             Delay = subBuilder;
             break;
           }
+          case 34: {
+            global::Spelldawn.Protos.RenderInterfaceCommand subBuilder = new global::Spelldawn.Protos.RenderInterfaceCommand();
+            if (commandCase_ == CommandOneofCase.RenderInterface) {
+              subBuilder.MergeFrom(RenderInterface);
+            }
+            input.ReadMessage(subBuilder);
+            RenderInterface = subBuilder;
+            break;
+          }
+          case 42: {
+            global::Spelldawn.Protos.RenderGameCommand subBuilder = new global::Spelldawn.Protos.RenderGameCommand();
+            if (commandCase_ == CommandOneofCase.RenderGame) {
+              subBuilder.MergeFrom(RenderGame);
+            }
+            input.ReadMessage(subBuilder);
+            RenderGame = subBuilder;
+            break;
+          }
+          case 50: {
+            global::Spelldawn.Protos.InitiateRaidCommand subBuilder = new global::Spelldawn.Protos.InitiateRaidCommand();
+            if (commandCase_ == CommandOneofCase.InitiateRaid) {
+              subBuilder.MergeFrom(InitiateRaid);
+            }
+            input.ReadMessage(subBuilder);
+            InitiateRaid = subBuilder;
+            break;
+          }
+          case 58: {
+            global::Spelldawn.Protos.EndRaidCommand subBuilder = new global::Spelldawn.Protos.EndRaidCommand();
+            if (commandCase_ == CommandOneofCase.EndRaid) {
+              subBuilder.MergeFrom(EndRaid);
+            }
+            input.ReadMessage(subBuilder);
+            EndRaid = subBuilder;
+            break;
+          }
+          case 66: {
+            global::Spelldawn.Protos.CreateCardCommand subBuilder = new global::Spelldawn.Protos.CreateCardCommand();
+            if (commandCase_ == CommandOneofCase.CreateCard) {
+              subBuilder.MergeFrom(CreateCard);
+            }
+            input.ReadMessage(subBuilder);
+            CreateCard = subBuilder;
+            break;
+          }
+          case 74: {
+            global::Spelldawn.Protos.UpdateCardCommand subBuilder = new global::Spelldawn.Protos.UpdateCardCommand();
+            if (commandCase_ == CommandOneofCase.UpdateCard) {
+              subBuilder.MergeFrom(UpdateCard);
+            }
+            input.ReadMessage(subBuilder);
+            UpdateCard = subBuilder;
+            break;
+          }
+          case 82: {
+            global::Spelldawn.Protos.MoveGameObjectCommand subBuilder = new global::Spelldawn.Protos.MoveGameObjectCommand();
+            if (commandCase_ == CommandOneofCase.MoveGameObject) {
+              subBuilder.MergeFrom(MoveGameObject);
+            }
+            input.ReadMessage(subBuilder);
+            MoveGameObject = subBuilder;
+            break;
+          }
+          case 90: {
+            global::Spelldawn.Protos.DestroyCardCommand subBuilder = new global::Spelldawn.Protos.DestroyCardCommand();
+            if (commandCase_ == CommandOneofCase.DestroyCard) {
+              subBuilder.MergeFrom(DestroyCard);
+            }
+            input.ReadMessage(subBuilder);
+            DestroyCard = subBuilder;
+            break;
+          }
+          case 98: {
+            global::Spelldawn.Protos.UpdatePlayerStateCommand subBuilder = new global::Spelldawn.Protos.UpdatePlayerStateCommand();
+            if (commandCase_ == CommandOneofCase.UpdatePlayerState) {
+              subBuilder.MergeFrom(UpdatePlayerState);
+            }
+            input.ReadMessage(subBuilder);
+            UpdatePlayerState = subBuilder;
+            break;
+          }
           case 106: {
+            global::Spelldawn.Protos.FireProjectileCommand subBuilder = new global::Spelldawn.Protos.FireProjectileCommand();
+            if (commandCase_ == CommandOneofCase.FireProjectile) {
+              subBuilder.MergeFrom(FireProjectile);
+            }
+            input.ReadMessage(subBuilder);
+            FireProjectile = subBuilder;
+            break;
+          }
+          case 114: {
             global::Spelldawn.Protos.PlayEffectCommand subBuilder = new global::Spelldawn.Protos.PlayEffectCommand();
             if (commandCase_ == CommandOneofCase.PlayEffect) {
               subBuilder.MergeFrom(PlayEffect);
@@ -24494,7 +24771,7 @@ namespace Spelldawn.Protos {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[89]; }
+      get { return global::Spelldawn.Protos.SpelldawnReflection.Descriptor.MessageTypes[90]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

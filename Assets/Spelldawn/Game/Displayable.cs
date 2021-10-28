@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using DG.Tweening;
 using Spelldawn.Utils;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -33,6 +34,13 @@ namespace Spelldawn.Game
     {
       get => _parent;
       set => _parent = value;
+    }
+
+    public virtual bool IsContainer() => false;
+
+    /// <summary>Called on a child container when the parent is repositioned.</summary>
+    public virtual void OnUpdateParentContainer()
+    {
     }
 
     public GameContext GameContext => Errors.CheckEnum(HasGameContext ? _gameContext : DefaultGameContext());
