@@ -77,9 +77,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 <b>Area</b> <i>(this item’s damage persists for the duration of the raid)</i>
 ";
 
+    static readonly CardView Card1 = RevealedCard(1, "Meteor Shower", Text1,
+      "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0);
+
     static readonly List<CardView> Cards = new()
     {
-      RevealedCard(1, "Meteor Shower", Text1, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0),
+      Card1,
       RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4,
         new CardTargeting
         {
@@ -160,6 +163,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           return DrawUserCard();
         case GameAction.ActionOneofCase.InitiateRaid:
           return InitiateRaid(action.InitiateRaid);
+        case GameAction.ActionOneofCase.LevelUpRoom:
+          return LevelUpRoom();
         default:
           return CollectionUtils.Yield();
       }
@@ -537,7 +542,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       Button("Gordian Blade\n3\uf06d", action: null, smallText: true, orange: true),
       Button("Continue"));
 
-    Node Button(string label, StandardAction? action = null, bool smallText = false, bool orange = false) => Row("Button",
+    Node Button(string label, StandardAction? action = null, bool smallText = false, bool orange = false) => Row(
+      "Button",
       new FlexStyle
       {
         Margin = AllDip(8),
@@ -966,5 +972,35 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           : null
       }
     };
+
+    IEnumerator LevelUpRoom()
+    {
+      var updated = Card1.Clone();
+      updated.CardIcons.ArenaIcon = new CardIcon
+      {
+        Text = "1",
+        Background = Sprite("LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Icons/Number_Icons_Color_3")
+      };
+      return _registry.CommandService.HandleCommands(new GameCommand
+      {
+        UpdateCard = new UpdateCardCommand
+        {
+          Card = updated
+        }
+      }, new GameCommand
+      {
+        MoveGameObject = new MoveGameObjectCommand
+        {
+          Id = IdentityCardId(PlayerName.User),
+          Position = new ObjectPosition
+          {
+            IdentityContainer = new ObjectPositionIdentityContainer
+            {
+              Owner = PlayerName.User
+            }
+          }
+        }
+      });
+    }
   }
 }

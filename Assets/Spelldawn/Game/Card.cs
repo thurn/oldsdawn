@@ -20,6 +20,7 @@ using Spelldawn.Utils;
 using TMPro;
 using TMPro.Examples;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #nullable enable
 
@@ -48,7 +49,7 @@ namespace Spelldawn.Game
     [SerializeField] Icon _topRightIcon = null!;
     [SerializeField] Icon _bottomRightIcon = null!;
     [SerializeField] Icon _bottomLeftIcon = null!;
-    [SerializeField] Icon _centerIcon = null!;
+    [FormerlySerializedAs("_centerIcon")] [SerializeField] Icon _arenaIcon = null!;
     [SerializeField] bool _isRevealed;
     [SerializeField] bool _canPlay;
     [SerializeField] bool _isDragging;
@@ -302,16 +303,16 @@ namespace Spelldawn.Game
 
     void UpdateIcons()
     {
-      SetCardIcon(_topLeftIcon, _cardView?.CardIcons?.TopLeftIcon);
-      SetCardIcon(_topRightIcon, _cardView?.CardIcons?.TopRightIcon);
-      SetCardIcon(_bottomRightIcon, _cardView?.CardIcons?.BottomRightIcon);
-      SetCardIcon(_bottomLeftIcon, _cardView?.CardIcons?.BottomLeftIcon);
-      SetCardIcon(_centerIcon, _cardView?.CardIcons?.CenterIcon);
+      SetCardIcon(_topLeftIcon, _cardView?.CardIcons?.TopLeftIcon, !GameContext.IsArenaContext());
+      SetCardIcon(_topRightIcon, _cardView?.CardIcons?.TopRightIcon, !GameContext.IsArenaContext());
+      SetCardIcon(_bottomRightIcon, _cardView?.CardIcons?.BottomRightIcon, !GameContext.IsArenaContext());
+      SetCardIcon(_bottomLeftIcon, _cardView?.CardIcons?.BottomLeftIcon, !GameContext.IsArenaContext());
+      SetCardIcon(_arenaIcon, _cardView?.CardIcons?.ArenaIcon, GameContext.IsArenaContext());
     }
 
-    void SetCardIcon(Icon icon, CardIcon? cardIcon)
+    void SetCardIcon(Icon icon, CardIcon? cardIcon, bool show)
     {
-      if (cardIcon != null && !GameContext.IsArenaContext())
+      if (cardIcon != null && show)
       {
         icon.Background.gameObject.SetActive(true);
         icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);

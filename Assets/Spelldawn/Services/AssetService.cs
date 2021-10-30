@@ -235,6 +235,7 @@ namespace Spelldawn.Services
         LoadCardIconAssets(requests, cardIcons.TopRightIcon);
         LoadCardIconAssets(requests, cardIcons.BottomRightIcon);
         LoadCardIconAssets(requests, cardIcons.BottomLeftIcon);
+        LoadCardIconAssets(requests, cardIcons.ArenaIcon);
       }
     }
 

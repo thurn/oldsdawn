@@ -429,7 +429,6 @@ enum RoomId {
 message CardIcon {
     SpriteAddress background = 1;
     string text = 2;
-    bool show_in_arena = 3;
 }
 
 message CardIcons {
@@ -437,7 +436,7 @@ message CardIcons {
     CardIcon top_right_icon = 2;
     CardIcon bottom_right_icon = 3;
     CardIcon bottom_left_icon = 4;
-    CardIcon center_icon = 5;
+    CardIcon arena_icon = 5;
 }
 
 message CardTitle {
