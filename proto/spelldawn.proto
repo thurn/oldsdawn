@@ -678,15 +678,26 @@ message RoomView {
     repeated CardView cards = 2;
 }
 
+enum IdentityAction {
+    IDENTITY_ACTION_UNSPECIFIED = 0;
+    IDENTITY_ACTION_INITIATE_RAID = 1;
+    IDENTITY_ACTION_LEVEL_UP_ROOM = 2;
+}
+
 message ArenaView {
     /**
     * If true, render rooms at the bottom of the screen, if false, render items
     * at the bottom.
     */
-    bool overlord_perspective = 1;
+    bool rooms_at_bottom = 1;
 
-    repeated RoomView rooms = 2;
-    repeated CardView items = 3;
+    /**
+     * Controls the drag action taken for the player's identity card.
+     */
+    IdentityAction identity_action = 2;
+
+    repeated RoomView rooms = 3;
+    repeated CardView items = 4;
 }
 
 message ActionTrackerView {
@@ -718,7 +729,7 @@ message GameView {
 // ============================================================================
 
 
-message ServerAction {
+message StandardAction {
     /** Opaque payload to send to the server. */
     google.protobuf.Any payload = 1;
 
@@ -743,11 +754,11 @@ message DrawCardAction {
 }
 
 /**
-* Spend an action to place a level counter on a room.
+* Spend an action to level up a room.
 *
 * Optimistic: Counter is added immediately
 */
-message LevelUpAction {
+message LevelUpRoomAction {
     RoomId room_id = 1;
 }
 
@@ -799,11 +810,11 @@ message InitiateRaidAction {
 */
 message GameAction {
     oneof action {
-        ServerAction server_action = 1;
+        StandardAction standard_action = 1;
         GainManaAction gain_mana = 2;
         DrawCardAction draw_card = 3;
-        LevelUpAction level_up = 4;
-        PlayCardAction play_card = 5;
+        PlayCardAction play_card = 4;
+        LevelUpRoomAction level_up_room = 5;
         InitiateRaidAction initiate_raid = 6;
     }
 }
@@ -880,6 +891,14 @@ message InitiateRaidCommand {
  */
 message EndRaidCommand {
     PlayerName initiator = 1;
+}
+
+/**
+ * Animates 'initiator' moving to a room and plays a standard effect.
+ */
+message LevelUpRoomCommand {
+    PlayerName initiator = 1;
+    RoomId room_id = 2;
 }
 
 enum CardCreationAnimation {
@@ -993,13 +1012,14 @@ message GameCommand {
         RenderGameCommand render_game = 5;
         InitiateRaidCommand initiate_raid = 6;
         EndRaidCommand end_raid = 7;
-        CreateCardCommand create_card = 8;
-        UpdateCardCommand update_card = 9;
-        MoveGameObjectCommand move_game_object = 10;
-        DestroyCardCommand destroy_card = 11;
-        UpdatePlayerStateCommand update_player_state = 12;
-        FireProjectileCommand fire_projectile = 13;
-        PlayEffectCommand play_effect = 14;
+        LevelUpRoomCommand level_up_room = 8;
+        CreateCardCommand create_card = 9;
+        UpdateCardCommand update_card = 10;
+        MoveGameObjectCommand move_game_object = 11;
+        DestroyCardCommand destroy_card = 12;
+        UpdatePlayerStateCommand update_player_state = 13;
+        FireProjectileCommand fire_projectile = 14;
+        PlayEffectCommand play_effect = 15;
     }
 }
 

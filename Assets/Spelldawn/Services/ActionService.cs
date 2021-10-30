@@ -52,8 +52,8 @@ namespace Spelldawn.Services
     {
       switch (action.ActionCase)
       {
-        case GameAction.ActionOneofCase.ServerAction:
-          if (action.ServerAction.OptimisticUpdate is { } response)
+        case GameAction.ActionOneofCase.StandardAction:
+          if (action.StandardAction.OptimisticUpdate is { } response)
           {
             yield return _registry.CommandService.HandleCommands(response);
           }
@@ -71,6 +71,16 @@ namespace Spelldawn.Services
             InitiateRaid = new InitiateRaidCommand
             {
               RoomId = action.InitiateRaid.RoomId,
+              Initiator = PlayerName.User
+            }
+          });
+          break;
+        case GameAction.ActionOneofCase.LevelUpRoom:
+          yield return _registry.CommandService.HandleCommands(new GameCommand
+          {
+            LevelUpRoom = new LevelUpRoomCommand
+            {
+              RoomId = action.LevelUpRoom.RoomId,
               Initiator = PlayerName.User
             }
           });

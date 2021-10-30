@@ -83,6 +83,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.EndRaid:
             yield return _registry.RaidService.HandleEndRaid(command.EndRaid);
             break;
+          case GameCommand.CommandOneofCase.LevelUpRoom:
+            yield return _registry.ArenaService.HandleLevelUpRoom(command.LevelUpRoom);
+            break;
           case GameCommand.CommandOneofCase.CreateCard:
             yield return _registry.ObjectPositionService.HandleCreateCardCommand(command.CreateCard);
             break;
@@ -137,7 +140,9 @@ namespace Spelldawn.Services
         command.Game?.User?.PlayerInfo?.IdentityCard,
         command.Game?.Opponent?.PlayerInfo?.IdentityCard);
 
+      _registry.ArenaService.SetRoomsOnBottom(command.Game?.Arena?.RoomsAtBottom);
       _registry.IdentityCardForPlayer(PlayerName.User).SetScore(command.Game?.User?.Score?.Score);
+      _registry.IdentityCardForPlayer(PlayerName.User).IdentityAction = command.Game?.Arena?.IdentityAction;
       yield break;
     }
 

@@ -27,16 +27,19 @@ namespace Spelldawn.Game
     [SerializeField] bool _canDrag;
     [SerializeField] TextMeshPro _scoreText = null!;
     [SerializeField] GameObject _raidSymbol = null!;
+
     RoomId? _selectedRoom;
 
-    protected override GameContext DefaultGameContext() => GameContext.Arena;
-
-    protected override float? CalculateObjectScale(int index, int count) => 0.1f;
+    public IdentityAction? IdentityAction { private get; set; }
 
     public bool RaidSymbolShown
     {
       set => _raidSymbol.SetActive(value);
     }
+
+    protected override GameContext DefaultGameContext() => GameContext.Arena;
+
+    protected override float? CalculateObjectScale(int index, int count) => 0.1f;
 
     public void SetScore(int? value)
     {
@@ -50,7 +53,15 @@ namespace Spelldawn.Game
     {
       if (_canDrag)
       {
-        _registry.ArrowService.ShowArrow(ArrowService.Type.Red, transform, this);
+        switch (IdentityAction)
+        {
+          case Protos.IdentityAction.InitiateRaid:
+            _registry.ArrowService.ShowArrow(ArrowService.Type.Red, transform, this);
+            break;
+          case Protos.IdentityAction.LevelUpRoom:
+            _registry.ArrowService.ShowArrow(ArrowService.Type.Green, transform, this);
+            break;
+        }
       }
     }
 
@@ -64,13 +75,27 @@ namespace Spelldawn.Game
       _registry.ArenaService.HideRoomSelector();
       if (_selectedRoom is { } selectedRoom)
       {
-        _registry.ActionService.HandleAction(new GameAction
+        switch (IdentityAction)
         {
-          InitiateRaid = new InitiateRaidAction
-          {
-            RoomId = selectedRoom
-          }
-        });
+          case Protos.IdentityAction.InitiateRaid:
+            _registry.ActionService.HandleAction(new GameAction
+            {
+              InitiateRaid = new InitiateRaidAction
+              {
+                RoomId = selectedRoom
+              }
+            });
+            break;
+          case Protos.IdentityAction.LevelUpRoom:
+            _registry.ActionService.HandleAction(new GameAction
+            {
+              LevelUpRoom = new LevelUpRoomAction
+              {
+                RoomId = selectedRoom
+              }
+            });
+            break;
+        }
       }
     }
 

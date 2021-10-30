@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
@@ -30,12 +31,22 @@ namespace Spelldawn.Services
     [SerializeField] LinearObjectDisplay _leftItems = null!;
     [SerializeField] LinearObjectDisplay _rightItems = null!;
     [SerializeField] List<Room> _rooms = null!;
+    [SerializeField] SceneBackground _sceneBackground = null!;
+    [SerializeField] TimedEffect _levelUpRoomPrefab = null!;
     [SerializeField] Room? _curentRoomSelector;
 
     public ObjectDisplay LeftItems => _leftItems;
     public ObjectDisplay RightIems => _rightItems;
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
+
+    public void SetRoomsOnBottom(bool? roomsOnBottom)
+    {
+      if (roomsOnBottom is { } r)
+      {
+        _sceneBackground.SetRoomsOnBottom(r);
+      }
+    }
 
     public Room FindRoom(RoomId roomId)
     {
@@ -96,6 +107,20 @@ namespace Spelldawn.Services
       {
         _curentRoomSelector!.SpriteRenderer.enabled = false;
       }
+    }
+
+    public IEnumerator HandleLevelUpRoom(LevelUpRoomCommand command)
+    {
+      var room = FindRoom(command.RoomId).transform;
+      yield return TweenUtils.Sequence("RoomVisit")
+        .Append(_registry.IdentityCardForPlayer(command.Initiator).transform
+          .DOMove(room.position, 0.3f).SetEase(Ease.OutSine))
+        .AppendCallback(() =>
+        {
+          var effect = _registry.AssetPoolService.Create(_levelUpRoomPrefab, room.position);
+          effect.transform.localScale = 5f * Vector3.one;
+        })
+        .WaitForCompletion();
     }
   }
 }

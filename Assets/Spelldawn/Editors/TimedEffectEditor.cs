@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using JetBrains.Annotations;
 using Spelldawn.Game;
 using UnityEditor;
 using UnityEngine;
@@ -33,6 +34,15 @@ namespace Spelldawn.Editors
         {
           var main = particleSystem.main;
           main.loop = false;
+        }
+      }
+
+      if (GUILayout.Button("Hierarchy Scaling"))
+      {
+        foreach (var particleSystem in ((TimedEffect)target).GetComponentsInChildren<ParticleSystem>())
+        {
+          var main = particleSystem.main;
+          main.scalingMode = ParticleSystemScalingMode.Hierarchy;
         }
       }
     }

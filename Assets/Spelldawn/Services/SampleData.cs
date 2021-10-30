@@ -153,8 +153,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       switch (action.ActionCase)
       {
-        case GameAction.ActionOneofCase.ServerAction:
-          var commands = action.ServerAction.Payload.Unpack<CommandList>();
+        case GameAction.ActionOneofCase.StandardAction:
+          var commands = action.StandardAction.Payload.Unpack<CommandList>();
           return _registry.CommandService.HandleCommands(commands);
         case GameAction.ActionOneofCase.DrawCard:
           return DrawUserCard();
@@ -257,7 +257,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
         Opponent = Player("Opponent", PlayerName.Opponent,
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
-        Arena = new ArenaView()
+        Arena = new ArenaView
+        {
+          IdentityAction = IdentityAction.LevelUpRoom
+        }
       };
 
     static CardId CardId(int id) => new() { Value = id };
@@ -463,7 +466,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Wrap = FlexWrap.WrapReverse,
       }, Button("Continue", action: AccessHandAction(RoomId.Sanctum)));
 
-    ServerAction AccessHandAction(RoomId fromRoom) => new()
+    StandardAction AccessHandAction(RoomId fromRoom) => new()
     {
       OptimisticUpdate = new CommandList
       {
@@ -534,7 +537,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       Button("Gordian Blade\n3\uf06d", action: null, smallText: true, orange: true),
       Button("Continue"));
 
-    Node Button(string label, ServerAction? action = null, bool smallText = false, bool orange = false) => Row("Button",
+    Node Button(string label, StandardAction? action = null, bool smallText = false, bool orange = false) => Row("Button",
       new FlexStyle
       {
         Margin = AllDip(8),
@@ -552,7 +555,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         OnClick = new GameAction
         {
-          ServerAction = action
+          StandardAction = action
         }
       },
       Text(label, new FlexStyle
@@ -565,7 +568,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         TextAlign = TextAlign.MiddleCenter
       }));
 
-    ServerAction CardStrikeAction(RoomId fromRoom) =>
+    StandardAction CardStrikeAction(RoomId fromRoom) =>
       new()
       {
         Payload = Any.Pack(AccessDeck()),
@@ -640,7 +643,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    GameCommand RenderObjectButton(GameObjectId id, string label, ServerAction onClick)
+    GameCommand RenderObjectButton(GameObjectId id, string label, StandardAction onClick)
     {
       return new GameCommand
       {
@@ -709,7 +712,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    ServerAction ScoreAction(int cardId, GameCommand cleanUp) => new()
+    StandardAction ScoreAction(int cardId, GameCommand cleanUp) => new()
     {
       Payload = Any.Pack(new CommandList
       {

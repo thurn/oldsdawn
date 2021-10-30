@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #nullable enable
 
@@ -20,22 +21,27 @@ namespace Spelldawn.Game
 {
   public sealed class SceneBackground : MonoBehaviour
   {
-    [SerializeField] bool _flipped;
+    [FormerlySerializedAs("_flipped")] [SerializeField] bool _roomsOnBottom;
 
     public void Flip()
     {
-      if (_flipped)
+      SetRoomsOnBottom(!_roomsOnBottom);
+    }
+
+    public void SetRoomsOnBottom(bool roomsOnBottom)
+    {
+      if (roomsOnBottom)
       {
         transform.position = new Vector3(0, 0, 36);
         transform.localEulerAngles = new Vector3(0, 0, 0);
-        _flipped = false;
       }
       else
       {
         transform.position = new Vector3(0, 0, 55);
         transform.localEulerAngles = new Vector3(0, 180, 0);
-        _flipped = true;
       }
+
+      _roomsOnBottom = roomsOnBottom;
     }
   }
 }
