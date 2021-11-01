@@ -561,11 +561,11 @@ message ObjectPositionDeckContainer {
     PlayerName owner = 1;
 }
 
-message ObjectPositionDiscard {
+message ObjectPositionDiscardPile {
     PlayerName owner = 1;
 }
 
-message ObjectPositionDiscardContainer {
+message ObjectPositionDiscardPileContainer {
     PlayerName owner = 1;
 }
 
@@ -597,8 +597,8 @@ message ObjectPosition {
         ObjectPositionHandContainer hand_container = 6;
         ObjectPositionDeck deck = 7;
         ObjectPositionDeckContainer deck_container = 8;
-        ObjectPositionDiscard discard = 9;
-        ObjectPositionDiscardContainer discard_container = 10;
+        ObjectPositionDiscardPile discard_pile = 9;
+        ObjectPositionDiscardPileContainer discard_pile_container = 10;
         ObjectPositionScored scored = 11;
         ObjectPositionRaid raid = 12;
         ObjectPositionBrowser browser = 13;

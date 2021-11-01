@@ -12,36 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Spelldawn.Services;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class SceneBackground : MonoBehaviour
+  public sealed class DiscardPile : StackObjectDisplay
   {
-    [FormerlySerializedAs("_flipped")] [SerializeField] bool _roomsOnBottom;
-
-    public void Flip()
-    {
-      SetRoomsOnBottom(!_roomsOnBottom);
-    }
-
-    public void SetRoomsOnBottom(bool roomsOnBottom)
-    {
-      if (roomsOnBottom)
-      {
-        transform.position = new Vector3(0, 0, 55);
-        transform.localEulerAngles = new Vector3(0, 180, 0);
-      }
-      else
-      {
-        transform.position = new Vector3(0, 0, 36);
-        transform.localEulerAngles = new Vector3(0, 0, 0);
-      }
-
-      _roomsOnBottom = roomsOnBottom;
-    }
+    protected override GameContext DefaultGameContext() => GameContext.DiscardPile;
   }
 }

@@ -47,7 +47,7 @@ namespace Spelldawn.Game
     {
       GameContext.Arena => 100,
       GameContext.Deck => 200,
-      GameContext.Discard => 300,
+      GameContext.DiscardPile => 300,
       GameContext.ArenaRaidParticipant => 400,
       GameContext.RaidParticipant => 500,
       GameContext.Hand => 600,

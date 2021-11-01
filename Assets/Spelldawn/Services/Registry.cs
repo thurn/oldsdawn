@@ -81,6 +81,18 @@ namespace Spelldawn.Services
 
     public Deck DeckForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userDeck : _opponentDeck;
 
+    [SerializeField] ObjectDisplay _userDiscardPilePosition = null!;
+    [SerializeField] ObjectDisplay _opponentDiscardPilePosition = null!;
+
+    public ObjectDisplay DiscardPilePositionForPlayer(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userDiscardPilePosition : _opponentDiscardPilePosition;
+
+    [SerializeField] DiscardPile _userDiscardPile = null!;
+    [SerializeField] DiscardPile _opponentDiscardPile = null!;
+
+    public DiscardPile DiscardPileForPlayer(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userDiscardPile : _opponentDiscardPile;
+
     [SerializeField] Transform _cardStagingArea = null!;
     public Transform CardStagingArea => _cardStagingArea;
 

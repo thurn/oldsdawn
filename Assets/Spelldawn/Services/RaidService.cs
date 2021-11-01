@@ -51,6 +51,10 @@ namespace Spelldawn.Services
           case RoomId.Treasury:
             yield return _participants.AddObject(_registry.DeckForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;
+          case RoomId.Crypts:
+            yield return _participants.AddObject(
+              _registry.DiscardPileForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
+            break;
         }
 
         yield return MoveToRaid(room.CardsInRoom);

@@ -40,12 +40,9 @@ namespace Spelldawn.Services
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
-    public void SetRoomsOnBottom(bool? roomsOnBottom)
+    public void SetRoomsOnBottom(bool roomsOnBottom)
     {
-      if (roomsOnBottom is { } r)
-      {
-        _sceneBackground.SetRoomsOnBottom(r);
-      }
+      _sceneBackground.SetRoomsOnBottom(roomsOnBottom);
     }
 
     public Room FindRoom(RoomId roomId)

@@ -22,7 +22,7 @@ namespace Spelldawn.Game
     Unspecified = 0,
     Arena = 1,
     Deck = 2,
-    Discard = 3,
+    DiscardPile = 3,
     ArenaRaidParticipant = 10,
     RaidParticipant = 4,
     Hand = 5,

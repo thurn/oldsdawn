@@ -140,7 +140,7 @@ namespace Spelldawn.Services
         command.Game?.User?.PlayerInfo?.IdentityCard,
         command.Game?.Opponent?.PlayerInfo?.IdentityCard);
 
-      _registry.ArenaService.SetRoomsOnBottom(command.Game?.Arena?.RoomsAtBottom);
+      _registry.ArenaService.SetRoomsOnBottom(command.Game?.Arena?.RoomsAtBottom == true);
       _registry.IdentityCardForPlayer(PlayerName.User).SetScore(command.Game?.User?.Score?.Score);
       _registry.IdentityCardForPlayer(PlayerName.User).IdentityAction = command.Game?.Arena?.IdentityAction;
       yield break;

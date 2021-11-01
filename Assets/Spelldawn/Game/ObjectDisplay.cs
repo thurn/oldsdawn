@@ -35,6 +35,11 @@ namespace Spelldawn.Game
 
     public List<Displayable> AllObjects => new(_objects);
 
+    void Start()
+    {
+      _updateRequired = true;
+    }
+
     void Update()
     {
       if (_updateRequired && !_animationRunning)

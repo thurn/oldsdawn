@@ -241,6 +241,8 @@ namespace Spelldawn.Services
           return _registry.DeckForPlayer(gameObjectId.Deck);
         case GameObjectId.IdOneofCase.Hand:
           return _registry.HandForPlayer(gameObjectId.Hand);
+        case GameObjectId.IdOneofCase.DiscardPile:
+          return _registry.DiscardPileForPlayer(gameObjectId.DiscardPile);
         default:
           throw new ArgumentOutOfRangeException();
       }
@@ -265,8 +267,11 @@ namespace Spelldawn.Services
           return _registry.DeckForPlayer(position.Deck.Owner).AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.DeckContainer:
           return _registry.DeckPositionForPlayer(position.DeckContainer.Owner).AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.Discard:
-          throw new NotImplementedException();
+        case ObjectPosition.PositionOneofCase.DiscardPile:
+          return _registry.DiscardPileForPlayer(position.DiscardPile.Owner).AddObject(displayable, animate);
+        case ObjectPosition.PositionOneofCase.DiscardPileContainer:
+          return _registry.DiscardPilePositionForPlayer(position.DiscardPileContainer.Owner)
+            .AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Scored:
           return _registry.CardScoring.AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.Raid:
@@ -276,8 +281,7 @@ namespace Spelldawn.Services
         case ObjectPosition.PositionOneofCase.Identity:
           return _registry.IdentityCardForPlayer(position.Identity.Owner).AddObject(displayable, animate);
         case ObjectPosition.PositionOneofCase.IdentityContainer:
-          return _registry
-            .IdentityCardPositionForPlayer(position.IdentityContainer.Owner)
+          return _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner)
             .AddObject(displayable, animate);
         default:
           throw new ArgumentOutOfRangeException();

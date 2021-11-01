@@ -20,10 +20,12 @@ namespace Spelldawn.Game
 {
   public abstract class StackObjectDisplay : ObjectDisplay
   {
+    [SerializeField] float _singleElementY = 0.5f;
+
     protected override Vector3 CalculateObjectPosition(int index, int count) =>
       new(
         transform.position.x,
-        transform.position.y + Mathf.Lerp(0f, 1f, count == 1 ? 0.5f : index / ((float)count - 1)),
+        transform.position.y + Mathf.Lerp(0f, 1f, count < 2 ? _singleElementY : index / ((float)count - 1)),
         transform.position.z);
 
     protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;

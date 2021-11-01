@@ -264,7 +264,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
         Arena = new ArenaView
         {
-          IdentityAction = IdentityAction.LevelUpRoom
+          IdentityAction = IdentityAction.InitiateRaid
         }
       };
 
@@ -455,12 +455,45 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             {
               RoomId.Sanctum => SanctumRaidControls(),
               RoomId.Treasury => TreasuryRaidControls(),
+              RoomId.Crypts => CryptsRaidControls(),
               _ => null
             }
           }
         }
       });
     }
+
+    Node CryptsRaidControls() => Row("ControlButtons",
+      new FlexStyle
+      {
+        JustifyContent = FlexJustify.FlexEnd,
+        FlexGrow = 1,
+        AlignItems = FlexAlign.Center,
+        Wrap = FlexWrap.WrapReverse,
+      }, Button("Continue", action: AccessDiscardPileAction()));
+
+    StandardAction AccessDiscardPileAction() => new()
+    {
+      OptimisticUpdate = new CommandList
+      {
+        Commands =
+        {
+          FireProjectile(IdentityCardId(PlayerName.User), DiscardPileObjectId(PlayerName.Opponent), 4)
+        }
+      },
+      Payload = Any.Pack(new CommandList
+      {
+        Commands =
+        {
+          ClearRaidControls(),
+          RunInParallel(
+            EndRaid(),
+            MoveIdentityToContainer(PlayerName.User),
+            MoveDiscardPileToContainer(PlayerName.Opponent)
+          )
+        }
+      })
+    };
 
     Node SanctumRaidControls() => Row("ControlButtons",
       new FlexStyle
@@ -520,6 +553,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     GameObjectId HandObjectId(PlayerName playerName) => new()
     {
       Hand = playerName
+    };
+
+    GameObjectId DiscardPileObjectId(PlayerName playerName) => new()
+    {
+      DiscardPile = playerName
     };
 
     GameCommand UpdateCard(CardView cardView) => new()
@@ -682,6 +720,22 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Position = new ObjectPosition
           {
             IdentityContainer = new ObjectPositionIdentityContainer
+            {
+              Owner = playerName
+            }
+          }
+        }
+      };
+
+    GameCommand MoveDiscardPileToContainer(PlayerName playerName) =>
+      new()
+      {
+        MoveGameObject = new MoveGameObjectCommand
+        {
+          Id = DiscardPileObjectId(playerName),
+          Position = new ObjectPosition
+          {
+            DiscardPileContainer = new ObjectPositionDiscardPileContainer
             {
               Owner = playerName
             }
