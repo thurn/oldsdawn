@@ -31,7 +31,8 @@ namespace Spelldawn.Game
     Browser = 12,
     Scored = 11,
     Effects = 8,
-    Dragging = 9
+    Dragging = 9,
+    UserMessage = 13
   }
 
   public static class GameContextUtil

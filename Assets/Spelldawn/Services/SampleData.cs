@@ -150,6 +150,28 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         StartCoroutine(_registry.CommandService.HandleCommands(MoveToRaidIndex(55555, 1)));
       }
+
+      if (Input.GetKeyDown(KeyCode.M))
+      {
+        StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
+        {
+          DisplayGameMessage = new DisplayGameMessageCommand
+          {
+            MessageType = GameMessageType.Dawn,
+          }
+        }));
+      }
+
+      if (Input.GetKeyDown(KeyCode.N))
+      {
+        StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
+        {
+          DisplayGameMessage = new DisplayGameMessageCommand
+          {
+            MessageType = GameMessageType.Dusk,
+          }
+        }));
+      }
     }
 
     public IEnumerator FakeActionResponse(GameAction action)

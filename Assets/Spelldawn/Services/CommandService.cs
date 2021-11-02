@@ -106,6 +106,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.PlayEffect:
             yield return HandlePlayEffect(command.PlayEffect);
             break;
+          case GameCommand.CommandOneofCase.DisplayGameMessage:
+            yield return _registry.GameMessage.Show(command.DisplayGameMessage);
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;

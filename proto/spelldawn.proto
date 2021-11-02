@@ -1002,6 +1002,18 @@ message PlayEffectCommand {
     TimeValue duration = 4;
 }
 
+enum GameMessageType {
+    GAME_MESSAGE_TYPE_UNSPECIFIED = 0;
+    GAME_MESSAGE_TYPE_DAWN = 1;
+    GAME_MESSAGE_TYPE_DUSK = 2;
+    GAME_MESSAGE_TYPE_VICTORY = 3;
+    GAME_MESSAGE_TYPE_DEFEAT = 4;
+}
+
+message DisplayGameMessageCommand {
+    GameMessageType message_type = 1;
+}
+
 message GameCommand {
     oneof command {
         DebugLogCommand debug_log = 1;
@@ -1019,6 +1031,7 @@ message GameCommand {
         UpdatePlayerStateCommand update_player_state = 13;
         FireProjectileCommand fire_projectile = 14;
         PlayEffectCommand play_effect = 15;
+        DisplayGameMessageCommand display_game_message = 16;
     }
 }
 

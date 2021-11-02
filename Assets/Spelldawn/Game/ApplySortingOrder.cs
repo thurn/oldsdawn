@@ -23,9 +23,24 @@ namespace Spelldawn.Game
   {
     [SerializeField] GameContext _gameContext;
 
+    void OnValidate()
+    {
+      Apply();
+    }
+
     void Start()
     {
-      var group = gameObject.AddComponent<SortingGroup>();
+      Apply();
+    }
+
+    void Apply()
+    {
+      var group = gameObject.GetComponent<SortingGroup>();
+      if (!group)
+      {
+        group = gameObject.AddComponent<SortingGroup>();
+      }
+
       SortingOrder.Create(_gameContext).ApplyTo(group);
     }
   }

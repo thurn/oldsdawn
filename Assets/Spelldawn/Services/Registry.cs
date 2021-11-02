@@ -65,6 +65,9 @@ namespace Spelldawn.Services
     [SerializeField] StackObjectDisplay _cardScoring = null!;
     public StackObjectDisplay CardScoring => _cardScoring;
 
+    [SerializeField] GameMessage _gameMessage = null!;
+    public GameMessage GameMessage => _gameMessage;
+
     [SerializeField] CurveObjectDisplay _userHand = null!;
     [SerializeField] CurveObjectDisplay _opponentHand = null!;
 
