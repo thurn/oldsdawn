@@ -55,7 +55,7 @@ namespace Spelldawn.Game
     {
       content.Effect.transform.position = transform.position;
       content.Text.transform.position = transform.position;
-      
+
       content.Effect.gameObject.SetActive(false);
       content.Effect.gameObject.SetActive(true);
       content.Text.gameObject.SetActive(true);

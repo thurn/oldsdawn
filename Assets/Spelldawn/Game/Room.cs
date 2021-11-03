@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Collections;
-using System.Collections.Generic;
 using Spelldawn.Protos;
 using UnityEngine;
 
@@ -25,12 +24,12 @@ namespace Spelldawn.Game
   {
     [SerializeField] RectangularObjectDisplay _inRoom = null!;
 
-    public IEnumerable<Displayable> CardsInRoom => _inRoom.AllObjects;
+    public ObjectDisplay CardsInRoom => _inRoom;
 
     // Defenders are sorted in order, index 0 represents the rearmost defender
     [SerializeField] RectangularObjectDisplay _defenders = null!;
 
-    public IEnumerable<Displayable> Defenders => _defenders.AllObjects;
+    public ObjectDisplay Defenders => _defenders;
 
     [SerializeField] RoomId _roomId;
     public RoomId RoomId => _roomId;

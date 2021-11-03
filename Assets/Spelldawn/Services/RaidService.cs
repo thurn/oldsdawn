@@ -57,8 +57,8 @@ namespace Spelldawn.Services
             break;
         }
 
-        yield return MoveToRaid(room.CardsInRoom);
-        yield return MoveToRaid(room.Defenders);
+        yield return MoveToRaid(room.CardsInRoom.AllObjects);
+        yield return MoveToRaid(room.Defenders.AllObjects);
 
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;

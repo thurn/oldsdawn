@@ -170,24 +170,40 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
       if (Input.GetKeyDown(KeyCode.V))
       {
-        StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
-        {
-          DisplayGameMessage = new DisplayGameMessageCommand
+        StartCoroutine(_registry.CommandService.HandleCommands(
+          new GameCommand
           {
-            MessageType = GameMessageType.Victory
-          }
-        }));
+            SetGameObjectsEnabled = new SetGameObjectsEnabledCommand
+            {
+              GameObjectsEnabled = false
+            }
+          },
+          new GameCommand
+          {
+            DisplayGameMessage = new DisplayGameMessageCommand
+            {
+              MessageType = GameMessageType.Victory
+            }
+          }));
       }
 
       if (Input.GetKeyDown(KeyCode.B))
       {
-        StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
-        {
-          DisplayGameMessage = new DisplayGameMessageCommand
+        StartCoroutine(_registry.CommandService.HandleCommands(
+          new GameCommand
           {
-            MessageType = GameMessageType.Defeat
-          }
-        }));
+            SetGameObjectsEnabled = new SetGameObjectsEnabledCommand
+            {
+              GameObjectsEnabled = false
+            }
+          },
+          new GameCommand
+          {
+            DisplayGameMessage = new DisplayGameMessageCommand
+            {
+              MessageType = GameMessageType.Defeat
+            }
+          }));
       }
     }
 

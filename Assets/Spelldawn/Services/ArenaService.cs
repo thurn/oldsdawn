@@ -119,5 +119,42 @@ namespace Spelldawn.Services
         })
         .WaitForCompletion();
     }
+
+    public IEnumerator HandleSetGameObjectsEnabled(SetGameObjectsEnabledCommand command)
+    {
+      foreach (var room in _rooms)
+      {
+        SetObjectDisplayActive(room.Defenders, command);
+        SetObjectDisplayActive(room.CardsInRoom, command);
+      }
+
+      SetObjectDisplayActive(_leftItems, command);
+      SetObjectDisplayActive(_rightItems, command);
+
+      SetGameObjectsEnabledForPlayer(PlayerName.User, command);
+      SetGameObjectsEnabledForPlayer(PlayerName.Opponent, command);
+      yield break;
+    }
+
+    void SetGameObjectsEnabledForPlayer(PlayerName playerName, SetGameObjectsEnabledCommand command)
+    {
+      _registry.ActionDisplayForPlayer(playerName).gameObject.SetActive(command.GameObjectsEnabled);
+      _registry.ManaDisplayForPlayer(playerName).gameObject.SetActive(command.GameObjectsEnabled);
+      _registry.IdentityCardForPlayer(playerName).gameObject.SetActive(command.GameObjectsEnabled);
+      SetObjectDisplayActive(_registry.DeckForPlayer(playerName), command);
+      SetObjectDisplayActive(_registry.DiscardPileForPlayer(playerName), command);
+      SetObjectDisplayActive(_registry.IdentityCardForPlayer(playerName), command);
+      SetObjectDisplayActive(_registry.HandForPlayer(playerName), command);
+    }
+
+    void SetObjectDisplayActive(ObjectDisplay objectDisplay, SetGameObjectsEnabledCommand command)
+    {
+      foreach (var child in objectDisplay.AllObjects)
+      {
+        child.gameObject.SetActive(command.GameObjectsEnabled);
+      }
+
+      objectDisplay.gameObject.SetActive(command.GameObjectsEnabled);
+    }
   }
 }

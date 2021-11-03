@@ -109,6 +109,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.DisplayGameMessage:
             yield return _registry.GameMessage.Show(command.DisplayGameMessage);
             break;
+          case GameCommand.CommandOneofCase.SetGameObjectsEnabled:
+            yield return _registry.ArenaService.HandleSetGameObjectsEnabled(command.SetGameObjectsEnabled);
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;

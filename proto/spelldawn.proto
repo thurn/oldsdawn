@@ -1014,6 +1014,11 @@ message DisplayGameMessageCommand {
     GameMessageType message_type = 1;
 }
 
+/** Used to hide and show all game UI elements. */
+message SetGameObjectsEnabledCommand {
+    bool game_objects_enabled = 1;
+}
+
 message GameCommand {
     oneof command {
         DebugLogCommand debug_log = 1;
@@ -1032,6 +1037,7 @@ message GameCommand {
         FireProjectileCommand fire_projectile = 14;
         PlayEffectCommand play_effect = 15;
         DisplayGameMessageCommand display_game_message = 16;
+        SetGameObjectsEnabledCommand set_game_objects_enabled = 17;
     }
 }
 
