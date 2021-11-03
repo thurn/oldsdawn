@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using JetBrains.Annotations;
 using Spelldawn.Game;
 using UnityEditor;
 using UnityEngine;
@@ -24,6 +23,8 @@ namespace Spelldawn.Editors
   [CustomEditor(typeof(TimedEffect))]
   public sealed class TimedEffectEditor : Editor
   {
+    Color _color = Color.clear;
+
     public override void OnInspectorGUI()
     {
       DrawDefaultInspector();
@@ -44,6 +45,23 @@ namespace Spelldawn.Editors
           var main = particleSystem.main;
           main.scalingMode = ParticleSystemScalingMode.Hierarchy;
         }
+      }
+
+      var color = EditorGUILayout.ColorField("Main Color", _color);
+      if (color != _color && color != Color.clear)
+      {
+        _color = color;
+      }
+
+      if (GUILayout.Button("Set Start Color") && _color != Color.clear)
+      {
+        foreach (var particleSystem in ((TimedEffect)target).GetComponentsInChildren<ParticleSystem>())
+        {
+          var main = particleSystem.main;
+          main.startColor = _color;
+        }
+
+        _color = Color.clear;
       }
     }
   }

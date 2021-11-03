@@ -29,13 +29,14 @@ namespace Spelldawn.Game
     [Serializable]
     public class MessageContent
     {
-      [SerializeField] TimedEffect _effect = null!;
-      public TimedEffect Effect => _effect;
+      [SerializeField] GameObject _effect = null!;
+      public GameObject Effect => _effect;
 
       [SerializeField] TextMeshPro _text = null!;
       public TextMeshPro Text => _text;
     }
 
+    [SerializeField] Transform _top = null!;
     [SerializeField] MessageContent _dawn = null!;
     [SerializeField] MessageContent _dusk = null!;
     [SerializeField] MessageContent _victory = null!;
@@ -43,15 +44,18 @@ namespace Spelldawn.Game
 
     public IEnumerator Show(DisplayGameMessageCommand command) => command.MessageType switch
     {
-      GameMessageType.Dawn => ShowContent(_dawn, 1.75f),
-      GameMessageType.Dusk => ShowContent(_dusk, 1.75f),
-      GameMessageType.Victory => ShowContent(_victory, 1.5f),
-      GameMessageType.Defeat => ShowContent(_defeat, 1.5f),
+      GameMessageType.Dawn => ShowContent(_dawn, 1.75f, moveToTop: false),
+      GameMessageType.Dusk => ShowContent(_dusk, 1.75f, moveToTop: false),
+      GameMessageType.Victory => ShowContent(_victory, 2f, moveToTop: true),
+      GameMessageType.Defeat => ShowContent(_defeat, 2f, moveToTop: true),
       _ => CollectionUtils.Yield()
     };
 
-    IEnumerator ShowContent(MessageContent content, float durationSeconds)
+    IEnumerator ShowContent(MessageContent content, float durationSeconds, bool moveToTop)
     {
+      content.Effect.transform.position = transform.position;
+      content.Text.transform.position = transform.position;
+      
       content.Effect.gameObject.SetActive(false);
       content.Effect.gameObject.SetActive(true);
       content.Text.gameObject.SetActive(true);
@@ -60,10 +64,20 @@ namespace Spelldawn.Game
         .To(() => content.Text.alpha, x => content.Text.alpha = x, endValue: 1f, 0.2f)
         .WaitForCompletion();
       yield return new WaitForSeconds(durationSeconds);
-      yield return DOTween
-        .To(() => content.Text.alpha, x => content.Text.alpha = x, endValue: 0f, 0.2f)
-        .WaitForCompletion();
-      content.Text.gameObject.SetActive(false);
+      if (moveToTop)
+      {
+        yield return TweenUtils.Sequence("MoveToTop")
+          .Insert(0, content.Text.transform.DOMove(_top.position, 0.3f))
+          .Insert(0, content.Effect.transform.DOMove(_top.position, 0.3f))
+          .WaitForCompletion();
+      }
+      else
+      {
+        yield return DOTween
+          .To(() => content.Text.alpha, x => content.Text.alpha = x, endValue: 0f, 0.2f)
+          .WaitForCompletion();
+        content.Text.gameObject.SetActive(false);
+      }
     }
   }
 }

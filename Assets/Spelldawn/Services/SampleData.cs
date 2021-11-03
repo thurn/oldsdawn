@@ -146,18 +146,13 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         StartCoroutine(DrawOpponentCard());
       }
 
-      if (Input.GetKeyDown(KeyCode.R))
-      {
-        StartCoroutine(_registry.CommandService.HandleCommands(MoveToRaidIndex(55555, 1)));
-      }
-
       if (Input.GetKeyDown(KeyCode.M))
       {
         StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
         {
           DisplayGameMessage = new DisplayGameMessageCommand
           {
-            MessageType = GameMessageType.Dawn,
+            MessageType = GameMessageType.Dawn
           }
         }));
       }
@@ -168,7 +163,29 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           DisplayGameMessage = new DisplayGameMessageCommand
           {
-            MessageType = GameMessageType.Dusk,
+            MessageType = GameMessageType.Dusk
+          }
+        }));
+      }
+
+      if (Input.GetKeyDown(KeyCode.V))
+      {
+        StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
+        {
+          DisplayGameMessage = new DisplayGameMessageCommand
+          {
+            MessageType = GameMessageType.Victory
+          }
+        }));
+      }
+
+      if (Input.GetKeyDown(KeyCode.B))
+      {
+        StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
+        {
+          DisplayGameMessage = new DisplayGameMessageCommand
+          {
+            MessageType = GameMessageType.Defeat
           }
         }));
       }
