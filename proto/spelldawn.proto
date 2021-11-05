@@ -1019,6 +1019,10 @@ message SetGameObjectsEnabledCommand {
     bool game_objects_enabled = 1;
 }
 
+message DisplayRewardsCommand {
+    repeated CardView rewards = 1;
+}
+
 message GameCommand {
     oneof command {
         DebugLogCommand debug_log = 1;
@@ -1038,6 +1042,7 @@ message GameCommand {
         PlayEffectCommand play_effect = 15;
         DisplayGameMessageCommand display_game_message = 16;
         SetGameObjectsEnabledCommand set_game_objects_enabled = 17;
+        DisplayRewardsCommand display_rewards = 18;
     }
 }
 

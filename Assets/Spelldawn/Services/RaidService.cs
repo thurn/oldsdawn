@@ -26,7 +26,6 @@ namespace Spelldawn.Services
   public sealed class RaidService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] SpriteRenderer _background = null!;
     [SerializeField] ObjectDisplay _participants = null!;
     RoomId? _currentRoom;
 
@@ -38,7 +37,8 @@ namespace Spelldawn.Services
       if (_currentRoom != command.RoomId)
       {
         _currentRoom = command.RoomId;
-        _background.enabled = true;
+        _registry.BlackBackground.enabled = true;
+        _registry.BlackBackground.color = new Color(0, 0, 0, 0.5f);
         _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
 
         var room = _registry.ArenaService.FindRoom(command.RoomId);
@@ -90,7 +90,7 @@ namespace Spelldawn.Services
     public IEnumerator HandleEndRaid(EndRaidCommand endRaidCommand)
     {
       _registry.IdentityCardForPlayer(endRaidCommand.Initiator).RaidSymbolShown = false;
-      _background.enabled = false;
+      _registry.BlackBackground.enabled = false;
       yield break;
     }
   }

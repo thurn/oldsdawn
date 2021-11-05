@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using DG.Tweening;
 using Spelldawn.Protos;
+using Spelldawn.Services;
 using Spelldawn.Utils;
 using TMPro;
 using UnityEngine;
@@ -36,6 +37,7 @@ namespace Spelldawn.Game
       public TextMeshPro Text => _text;
     }
 
+    [SerializeField] Registry _registry = null!;
     [SerializeField] Transform _top = null!;
     [SerializeField] MessageContent _dawn = null!;
     [SerializeField] MessageContent _dusk = null!;
@@ -64,11 +66,15 @@ namespace Spelldawn.Game
         .To(() => content.Text.alpha, x => content.Text.alpha = x, endValue: 1f, 0.2f)
         .WaitForCompletion();
       yield return new WaitForSeconds(durationSeconds);
+
       if (moveToTop)
       {
+        _registry.BlackBackground.enabled = true;
+        _registry.BlackBackground.color = Color.clear;
         yield return TweenUtils.Sequence("MoveToTop")
           .Insert(0, content.Text.transform.DOMove(_top.position, 0.3f))
           .Insert(0, content.Effect.transform.DOMove(_top.position, 0.3f))
+          .Insert(0, _registry.BlackBackground.DOBlendableColor(Color.black, 0.3f))
           .WaitForCompletion();
       }
       else

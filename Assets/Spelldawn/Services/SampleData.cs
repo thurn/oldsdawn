@@ -184,6 +184,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             {
               MessageType = GameMessageType.Victory
             }
+          },
+          new GameCommand
+          {
+            DisplayRewards = new DisplayRewardsCommand()
           }));
       }
 

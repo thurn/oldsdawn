@@ -68,6 +68,12 @@ namespace Spelldawn.Services
     [SerializeField] GameMessage _gameMessage = null!;
     public GameMessage GameMessage => _gameMessage;
 
+    [SerializeField] SpriteRenderer _blackBackground = null!;
+    public SpriteRenderer BlackBackground => _blackBackground;
+
+    [SerializeField] RewardChest _rewardChest = null!;
+    public RewardChest RewardChest => _rewardChest;
+
     [SerializeField] CurveObjectDisplay _userHand = null!;
     [SerializeField] CurveObjectDisplay _opponentHand = null!;
 
