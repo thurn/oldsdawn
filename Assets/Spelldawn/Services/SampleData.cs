@@ -137,6 +137,28 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           yield return DrawOpponentCard(disableAnimation: true);
         }
       }
+
+      yield return new WaitForSeconds(3f);
+
+      StartCoroutine(_registry.CommandService.HandleCommands(
+        new GameCommand
+        {
+          SetGameObjectsEnabled = new SetGameObjectsEnabledCommand
+          {
+            GameObjectsEnabled = false
+          }
+        },
+        new GameCommand
+        {
+          DisplayGameMessage = new DisplayGameMessageCommand
+          {
+            MessageType = GameMessageType.Victory
+          }
+        },
+        new GameCommand
+        {
+          DisplayRewards = new DisplayRewardsCommand()
+        }));
     }
 
     void Update()

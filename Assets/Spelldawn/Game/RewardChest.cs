@@ -26,6 +26,36 @@ namespace Spelldawn.Game
     [SerializeField] GameObject _appearLight = null!;
     [SerializeField] GameObject _chest = null!;
     [SerializeField] float _duration;
+    [SerializeField] GameObject _buildupGlow = null!;
+    [SerializeField] AudioClip _buildUpSound = null!;
+    [SerializeField] Animator _animator = null!;
+    [SerializeField] float _openDelay;
+    [SerializeField] AudioSource _audio = null!;
+    [SerializeField] GameObject _openEffect = null!;
+    [SerializeField] AudioClip _openSound = null!;
+    [SerializeField] bool _canBeOpened;
+
+    static readonly int Open = Animator.StringToHash("Open");
+
+    // ReSharper disable once UnusedMember.Local (Called by Animator)
+    void OnOpened()
+    {
+      _buildupGlow.SetActive(false);
+      _openEffect.SetActive(true);
+      _audio.PlayOneShot(_openSound);
+    }
+
+    IEnumerator OnMouseUpAsButton()
+    {
+      if (_canBeOpened)
+      {
+        _canBeOpened = false;
+        _buildupGlow.SetActive(true);
+        _audio.PlayOneShot(_buildUpSound);
+        yield return new WaitForSecondsRealtime(_openDelay);
+        _animator.SetTrigger(Open);
+      }
+    }
 
     public IEnumerator HandleDisplayRewards(DisplayRewardsCommand command)
     {
@@ -34,6 +64,7 @@ namespace Spelldawn.Game
       _appearLight.SetActive(true);
       yield return new WaitForSeconds(_duration);
       _chest.SetActive(true);
+      _canBeOpened = true;
     }
   }
 }
