@@ -620,10 +620,15 @@ message RevealedCardView {
     RulesText rules_text = 7;
 
     /**
+     * True if this card should be displayed as visible to the opponent when in the arena.
+     */
+    bool revealed_in_arena = 8;
+
+    /**
     * Custom targeting behavior for a card. If unspecified, no targeting UI
     * is shown.
     */
-    CardTargeting targeting = 8;
+    CardTargeting targeting = 9;
 
     /**
     * Where to move a played card. Information from 'targeting' will be
@@ -631,10 +636,10 @@ message RevealedCardView {
     * ObjectPositionRoom is selected here with no RoomId, the targeted room
     * is used.
     */
-    ObjectPosition on_release_position = 9;
+    ObjectPosition on_release_position = 10;
 
     /** Information needed to determine whether a card can be played. */
-    CardCost cost = 10;
+    CardCost cost = 11;
 }
 
 message CardView {

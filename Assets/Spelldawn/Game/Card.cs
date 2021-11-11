@@ -20,7 +20,6 @@ using Spelldawn.Utils;
 using TMPro;
 using TMPro.Examples;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 #nullable enable
 
@@ -50,7 +49,7 @@ namespace Spelldawn.Game
     [SerializeField] Icon _topRightIcon = null!;
     [SerializeField] Icon _bottomRightIcon = null!;
     [SerializeField] Icon _bottomLeftIcon = null!;
-    [FormerlySerializedAs("_centerIcon")] [SerializeField] Icon _arenaIcon = null!;
+    [SerializeField] Icon _arenaIcon = null!;
     [SerializeField] bool _isRevealed;
     [SerializeField] bool _canPlay;
     [SerializeField] bool _isDragging;
@@ -86,7 +85,7 @@ namespace Spelldawn.Game
       GameContext? gameContext = null,
       bool animate = true)
     {
-      if (gameContext is {} gc)
+      if (gameContext is { } gc)
       {
         SetGameContext(gc);
       }
@@ -151,7 +150,7 @@ namespace Spelldawn.Game
     {
       if (newContext.IsArenaContext())
       {
-        _arenaCardBack.SetActive(true);
+        _arenaCardBack.SetActive(!_isRevealed);
         _cardBack.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
         _frame.gameObject.SetActive(false);
         _titleBackground.gameObject.SetActive(false);
@@ -181,7 +180,9 @@ namespace Spelldawn.Game
         _arenaCard.localPosition = ArenaCardOffset;
       }
 
-      UpdateIcons();
+      UpdateIcons(GameContext.IsArenaContext());
+      UpdateRevealedToOpponent(GameContext.IsArenaContext());
+
       if (_revealedCardView != null)
       {
         // TODO: For some reason this is needed to fix the text curve, figure out why
@@ -310,16 +311,31 @@ namespace Spelldawn.Game
       SetTitle(revealed.Title.Text);
       _rulesText.text = revealed.RulesText.Text;
       _jewel.sprite = _registry.AssetService.GetSprite(revealed.Jewel);
-      UpdateIcons();
+      UpdateIcons(GameContext.IsArenaContext());
+      UpdateRevealedToOpponent(GameContext.IsArenaContext());
     }
 
-    void UpdateIcons()
+    void UpdateIcons(bool inArena)
     {
-      SetCardIcon(_topLeftIcon, _cardView?.CardIcons?.TopLeftIcon, !GameContext.IsArenaContext());
-      SetCardIcon(_topRightIcon, _cardView?.CardIcons?.TopRightIcon, !GameContext.IsArenaContext());
-      SetCardIcon(_bottomRightIcon, _cardView?.CardIcons?.BottomRightIcon, !GameContext.IsArenaContext());
-      SetCardIcon(_bottomLeftIcon, _cardView?.CardIcons?.BottomLeftIcon, !GameContext.IsArenaContext());
-      SetCardIcon(_arenaIcon, _cardView?.CardIcons?.ArenaIcon, GameContext.IsArenaContext());
+      SetCardIcon(_topLeftIcon, _cardView?.CardIcons?.TopLeftIcon, !inArena);
+      SetCardIcon(_topRightIcon, _cardView?.CardIcons?.TopRightIcon, !inArena);
+      SetCardIcon(_bottomRightIcon, _cardView?.CardIcons?.BottomRightIcon, !inArena);
+      SetCardIcon(_bottomLeftIcon, _cardView?.CardIcons?.BottomLeftIcon, !inArena);
+      SetCardIcon(_arenaIcon, _cardView?.CardIcons?.ArenaIcon, inArena);
+    }
+
+    void UpdateRevealedToOpponent(bool inArena)
+    {
+      if (inArena && _revealedCardView?.RevealedInArena == false)
+      {
+        _image.color = Color.gray;
+        _arenaFrame.color = Color.gray;
+      }
+      else
+      {
+        _image.color = Color.white;
+        _arenaFrame.color = Color.white;
+      }
     }
 
     void SetCardIcon(Icon icon, CardIcon? cardIcon, bool show)

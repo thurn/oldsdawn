@@ -310,7 +310,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       var cardId = _opponentPlayedCards[0];
       return _registry.CommandService.HandleCommands(
         MoveToStaging(cardId.Value),
-        UpdateCard(OpponentCard("Scheme Card", cardId.Value, 19)),
+        UpdateCard(OpponentCard("Scheme Card", cardId.Value, 19, revealedInArena: false)),
         Delay(1000),
         MoveToRoom(cardId.Value, RoomId.RoomB)
       );
@@ -444,12 +444,13 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             CanPlayAlgorithm = CanPlayAlgorithm.Optimistic,
             ActionCost = 1,
             ManaCost = manaCost
-          }
+          },
+          RevealedInArena = true
         }
       };
     }
 
-    CardView OpponentCard(string title, int cardId, int image) => new()
+    CardView OpponentCard(string title, int cardId, int image, bool revealedInArena = false) => new()
     {
       CardId = CardId(cardId),
       CardBack = Sprite(
@@ -478,7 +479,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         RulesText = new RulesText
         {
           Text = "Some card text"
-        }
+        },
+        RevealedInArena = revealedInArena
       }
     };
 
