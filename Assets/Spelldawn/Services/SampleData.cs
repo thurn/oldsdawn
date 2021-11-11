@@ -112,25 +112,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           yield return DrawOpponentCard(disableAnimation: true);
         }
       }
-
-      yield return new WaitForSeconds(3f);
-
-      StartCoroutine(_registry.CommandService.HandleCommands(
-        new GameCommand
-        {
-          SetGameObjectsEnabled = new SetGameObjectsEnabledCommand
-          {
-            GameObjectsEnabled = false
-          }
-        },
-        new GameCommand
-        {
-          DisplayGameMessage = new DisplayGameMessageCommand
-          {
-            MessageType = GameMessageType.Victory
-          }
-        },
-        DisplayRewards()));
     }
 
     void Update()
@@ -138,6 +119,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       if (Input.GetKeyDown(KeyCode.D))
       {
         StartCoroutine(DrawOpponentCard());
+      }
+
+      if (Input.GetKeyDown(KeyCode.F))
+      {
+        StartCoroutine(PlayOpponentCard());
       }
 
       if (Input.GetKeyDown(KeyCode.M))
@@ -179,10 +165,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               MessageType = GameMessageType.Victory
             }
           },
-          new GameCommand
-          {
-            DisplayRewards = new DisplayRewardsCommand()
-          }));
+          DisplayRewards()));
       }
 
       if (Input.GetKeyDown(KeyCode.B))
@@ -305,6 +288,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           DisableAnimation = disableAnimation
         }
       });
+    }
+
+    IEnumerator PlayOpponentCard()
+    {
+      var cardId = _opponentHandCards[0];
+      _opponentHandCards.RemoveAt(0);
+
+      return _registry.CommandService.HandleCommands(MoveToRoom(cardId.Value, RoomId.RoomB));
     }
 
     CardView Card() => Cards[_lastReturnedCard++ % 10];

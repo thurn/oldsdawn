@@ -31,6 +31,7 @@ namespace Spelldawn.Game
     static readonly Vector3 ArenaCardOffset = new(0, 0.6f, 0);
 
     [Header("Card")] [SerializeField] SpriteRenderer _cardBack = null!;
+    [SerializeField] GameObject _arenaCardBack = null!;
     [SerializeField] Transform _cardFront = null!;
     [SerializeField] GameObject _cardShadow = null!;
     [SerializeField] Transform _arenaCard = null!;
@@ -144,6 +145,8 @@ namespace Spelldawn.Game
     {
       if (newContext.IsArenaContext())
       {
+        _arenaCardBack.SetActive(true);
+        _cardBack.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
         _frame.gameObject.SetActive(false);
         _titleBackground.gameObject.SetActive(false);
         _title.gameObject.SetActive(false);
@@ -159,6 +162,8 @@ namespace Spelldawn.Game
       }
       else
       {
+        _arenaCardBack.SetActive(false);
+        _cardBack.maskInteraction = SpriteMaskInteraction.None;
         _frame.gameObject.SetActive(true);
         _titleBackground.gameObject.SetActive(true);
         _title.gameObject.SetActive(true);
@@ -180,6 +185,7 @@ namespace Spelldawn.Game
 
     void OnMouseDown()
     {
+      Debug.Log($"OnMouseDown: {_isDragging} and {_canPlay} and {InHand()}");
       if (_isDragging)
       {
         // Unity seems to send this event multiple times a lot...
