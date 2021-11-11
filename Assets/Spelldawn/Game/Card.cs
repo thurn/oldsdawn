@@ -185,7 +185,6 @@ namespace Spelldawn.Game
 
     void OnMouseDown()
     {
-      Debug.Log($"OnMouseDown: {_isDragging} and {_canPlay} and {InHand()}");
       if (_isDragging)
       {
         // Unity seems to send this event multiple times a lot...

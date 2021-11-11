@@ -390,7 +390,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &21974844
 Transform:
   m_ObjectHideFlags: 0
@@ -823,7 +823,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _width: 22
   _initialSpacing: 1
   _cardSize: 3.5
@@ -7388,7 +7387,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
 --- !u!1 &276959313
 GameObject:
@@ -8022,7 +8020,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
 --- !u!1 &298016118
 GameObject:
@@ -8739,7 +8736,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
 --- !u!1 &316198698
 GameObject:
@@ -8962,7 +8958,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _zRotationMultiplier: -1
   _sortingGameContext: 5
   _controlPoint1: {fileID: 1807845830}
@@ -16623,7 +16618,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0
 --- !u!1 &588351146
 GameObject:
@@ -17838,7 +17832,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _width: 30
   _initialSpacing: 1
   _cardSize: 3.5
@@ -19485,7 +19478,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
 --- !u!1 &671278169
 GameObject:
@@ -20206,7 +20198,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _zRotationMultiplier: -1
   _sortingGameContext: 14
   _controlPoint1: {fileID: 983233655}
@@ -32731,7 +32722,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _zRotationMultiplier: 1
   _sortingGameContext: 5
   _controlPoint1: {fileID: 1943111019}
@@ -32962,7 +32952,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _zRotationMultiplier: 0
   _sortingGameContext: 7
   _controlPoint1: {fileID: 545354813}
@@ -35188,7 +35177,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _width: 10
   _initialSpacing: 1
   _cardSize: 3.5
@@ -35825,7 +35813,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _width: 46
   _initialSpacing: 5
   _cardSize: 3.5
@@ -42035,7 +42022,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
 --- !u!210 &1417705964
 SortingGroup:
@@ -49903,7 +49889,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _zRotationMultiplier: -1
   _sortingGameContext: 5
   _controlPoint1: {fileID: 1690657433}
@@ -58774,7 +58759,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
 --- !u!1 &2025066581
 GameObject:
@@ -59574,7 +59558,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
 --- !u!210 &2055897285
 SortingGroup:
@@ -62379,7 +62362,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0
 --- !u!1 &2137041222
 GameObject:
@@ -110914,7 +110896,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
   _registry: {fileID: 1445473048}
   _clickable: 0
@@ -117736,7 +117717,6 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
-  _: 
   _singleElementY: 0.5
   _registry: {fileID: 1445473048}
   _clickable: 1

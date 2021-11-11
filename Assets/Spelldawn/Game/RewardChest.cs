@@ -95,6 +95,7 @@ namespace Spelldawn.Game
 
     public IEnumerator HandleDisplayRewards(DisplayRewardsCommand command)
     {
+      gameObject.SetActive(true);
       yield return new WaitForSeconds(0.5f);
       _appearEffect.gameObject.SetActive(true);
       _appearLight.SetActive(true);
