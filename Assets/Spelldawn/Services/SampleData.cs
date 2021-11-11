@@ -32,6 +32,7 @@ namespace Spelldawn.Services
     int _lastReturnedCard;
     int _lastOpponentCardId = 65536;
     readonly List<CardId> _opponentHandCards = new();
+    readonly List<CardId> _opponentPlayedCards = new();
 
     static readonly string Text1 =
       @"<sprite name=""hourglass"">, 2<sprite name=""fire"">: Destroy this token. Add another line of text to this card.
@@ -124,6 +125,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       if (Input.GetKeyDown(KeyCode.F))
       {
         StartCoroutine(PlayOpponentCard());
+      }
+
+      if (Input.GetKeyDown(KeyCode.G))
+      {
+        StartCoroutine(RevealOpponentCard());
       }
 
       if (Input.GetKeyDown(KeyCode.M))
@@ -294,8 +300,20 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       var cardId = _opponentHandCards[0];
       _opponentHandCards.RemoveAt(0);
+      _opponentPlayedCards.Add(cardId);
 
       return _registry.CommandService.HandleCommands(MoveToRoom(cardId.Value, RoomId.RoomB));
+    }
+
+    IEnumerator RevealOpponentCard()
+    {
+      var cardId = _opponentPlayedCards[0];
+      return _registry.CommandService.HandleCommands(
+        MoveToStaging(cardId.Value),
+        UpdateCard(OpponentCard("Scheme Card", cardId.Value, 19)),
+        Delay(1000),
+        MoveToRoom(cardId.Value, RoomId.RoomB)
+      );
     }
 
     CardView Card() => Cards[_lastReturnedCard++ % 10];
@@ -999,6 +1017,18 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             RoomId = roomId,
             RoomLocation = RoomLocation.Front
           }
+        }
+      }
+    };
+
+    GameCommand MoveToStaging(int cardId) => new()
+    {
+      MoveGameObject = new MoveGameObjectCommand
+      {
+        Id = CardObjectId(CardId(cardId)),
+        Position = new ObjectPosition
+        {
+          Staging = new ObjectPositionStaging()
         }
       }
     };

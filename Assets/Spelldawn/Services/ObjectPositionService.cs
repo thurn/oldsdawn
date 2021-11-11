@@ -111,7 +111,6 @@ namespace Spelldawn.Services
       {
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-        card.Render(_registry, command.Card, GameContext.Staging, animate: !command.DisableAnimation);
         StartCoroutine(MoveObjectInternal(card, command.Position, animate: false));
 
         switch (command.Animation)
@@ -123,6 +122,7 @@ namespace Spelldawn.Services
         }
       }
 
+      card.Render(_registry, command.Card, GameContext.Staging, animate: !command.DisableAnimation);
       _cards[ToGameObjectId(command.Card.CardId)] = card;
 
       if (waitForStaging)
@@ -205,8 +205,7 @@ namespace Spelldawn.Services
     public IEnumerator HandleUpdateCardCommand(UpdateCardCommand command)
     {
       var card = (Card)CheckExists(new GameObjectId { CardId = command.Card.CardId });
-      card.Render(_registry, command.Card);
-      yield break;
+      yield return card.Render(_registry, command.Card).WaitForCompletion();
     }
 
     public IEnumerator HandleMoveGameObjectCommand(MoveGameObjectCommand command)

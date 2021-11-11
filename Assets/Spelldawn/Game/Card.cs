@@ -80,7 +80,11 @@ namespace Spelldawn.Game
 
     bool InHand() => HasGameContext && GameContext == GameContext.Hand;
 
-    public void Render(Registry registry, CardView cardView, GameContext? gameContext = null, bool animate = true)
+    public Sequence? Render(
+      Registry registry,
+      CardView cardView,
+      GameContext? gameContext = null,
+      bool animate = true)
     {
       if (gameContext is {} gc)
       {
@@ -97,21 +101,23 @@ namespace Spelldawn.Game
         if (_isRevealed)
         {
           RenderRevealedCard(cardView);
+          return null;
         }
         else
         {
-          Flip(_cardFront, _cardBack, () => RenderRevealedCard(cardView), animate);
+          return Flip(_cardFront, _cardBack, () => RenderRevealedCard(cardView), animate);
         }
       }
       else
       {
         if (_isRevealed)
         {
-          Flip(_cardBack, _cardFront, RenderHiddenCard, animate);
+          return Flip(_cardBack, _cardFront, RenderHiddenCard, animate);
         }
         else
         {
           RenderHiddenCard();
+          return null;
         }
       }
     }
@@ -262,12 +268,12 @@ namespace Spelldawn.Game
     Vector3 DragWorldMousePosition() => _registry.MainCamera.ScreenToWorldPoint(
       new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartScreenZ));
 
-    static void Flip(Component faceUp, Component faceDown, Action onFlipped, bool animate)
+    static Sequence? Flip(Component faceUp, Component faceDown, Action onFlipped, bool animate)
     {
       if (animate)
       {
         const float duration = 0.2f;
-        TweenUtils.Sequence($"{faceUp.transform.parent.gameObject.name} Flip")
+        return TweenUtils.Sequence($"{faceUp.transform.parent.gameObject.name} Flip")
           .Insert(atPosition: 0, faceDown.transform.DOLocalRotate(new Vector3(x: 0, y: 90, z: 0), duration))
           .InsertCallback(atPosition: duration, () =>
           {
@@ -283,6 +289,7 @@ namespace Spelldawn.Game
         faceUp.gameObject.SetActive(value: true);
         faceDown.gameObject.SetActive(value: false);
         onFlipped();
+        return null;
       }
     }
 
