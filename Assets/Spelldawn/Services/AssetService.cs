@@ -92,6 +92,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.PlayEffect:
             LoadEffect(requests, command.PlayEffect.Effect);
             break;
+          case GameCommand.CommandOneofCase.DisplayRewards:
+            LoadCardListAssets(requests, command.DisplayRewards.Rewards);
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;

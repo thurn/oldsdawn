@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
@@ -29,11 +30,16 @@ namespace Spelldawn.Services
     [SerializeField] bool _currentlyHandling;
     readonly Queue<CommandList> _queue = new();
 
-    public IEnumerator HandleCommands(params GameCommand[] commands)
+    public IEnumerator HandleCommands(IEnumerable<GameCommand> commands)
     {
       var list = new CommandList();
       list.Commands.AddRange(commands);
       return HandleCommands(list);
+    }
+
+    public IEnumerator HandleCommands(params GameCommand[] commands)
+    {
+      return HandleCommands(commands.ToList());
     }
 
     public IEnumerator HandleCommands(CommandList commandList)
@@ -47,10 +53,7 @@ namespace Spelldawn.Services
       if (_queue.Count > 0 && !_currentlyHandling)
       {
         _currentlyHandling = true;
-        StartCoroutine(HandleCommandsAsync(_queue.Dequeue(), () =>
-        {
-          _currentlyHandling = false;
-        }));
+        StartCoroutine(HandleCommandsAsync(_queue.Dequeue(), () => { _currentlyHandling = false; }));
       }
     }
 

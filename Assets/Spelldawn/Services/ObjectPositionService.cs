@@ -112,7 +112,7 @@ namespace Spelldawn.Services
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
         card.Render(_registry, command.Card, GameContext.Staging, animate: !command.DisableAnimation);
-        StartCoroutine(MoveObjectInternal(card, command.Card.OnCreatePosition, animate: false));
+        StartCoroutine(MoveObjectInternal(card, command.Position, animate: false));
 
         switch (command.Animation)
         {
@@ -130,6 +130,15 @@ namespace Spelldawn.Services
         yield return new WaitUntil(() => card.IsRevealed && card.StagingAnimationComplete);
         yield return new WaitForSeconds(0.5f);
       }
+    }
+
+    public Card CreateCard(CardView cardView, GameContext gameContext, bool animate)
+    {
+      var card = ComponentUtils.Instantiate(_cardPrefab);
+      card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+      card.Render(_registry, cardView, gameContext, animate: animate);
+      _cards[ToGameObjectId(cardView.CardId)] = card;
+      return card;
     }
 
     public IEnumerator HandleFireProjectileCommand(FireProjectileCommand command)

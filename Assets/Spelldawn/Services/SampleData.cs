@@ -83,33 +83,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     static readonly List<CardView> Cards = new()
     {
       Card1,
-      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4,
-        new CardTargeting
-        {
-          PickRoom = new PickRoom
-          {
-            ValidRooms =
-            {
-              RoomId.Crypts,
-              RoomId.Sanctum,
-              RoomId.Treasury
-            }
-          }
-        }, new ObjectPosition
-        {
-          Room = new ObjectPositionRoom
-          {
-            RoomLocation = RoomLocation.Front
-          }
-        }),
-      RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1,
-        releasePosition: new ObjectPosition
-        {
-          Item = new ObjectPositionItem
-          {
-            ItemLocation = ItemLocation.Left
-          }
-        }),
+      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4),
+      RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1),
       RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16", 15),
       RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42", 4),
       RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37", 2),
@@ -155,10 +130,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             MessageType = GameMessageType.Victory
           }
         },
-        new GameCommand
-        {
-          DisplayRewards = new DisplayRewardsCommand()
-        }));
+        DisplayRewards()));
     }
 
     void Update()
@@ -254,13 +226,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     IEnumerator DrawUserCard(bool directToHand = false)
     {
       var card = Card();
-      card.OnCreatePosition = directToHand ? HandPosition(PlayerName.User) : DeckPosition(PlayerName.User);
+      var position = directToHand ? HandPosition(PlayerName.User) : DeckPosition(PlayerName.User);
 
       yield return _registry.CommandService.HandleCommands(new GameCommand
       {
         CreateCard = new CreateCardCommand
         {
           Card = card,
+          Position = position,
           Animation = directToHand ? CardCreationAnimation.Unspecified : CardCreationAnimation.UserDeckToStaging,
           DisableAnimation = directToHand
         }
@@ -316,9 +289,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Card = new CardView
           {
             CardId = cardId,
-            OnCreatePosition = DeckPosition(PlayerName.Opponent),
             CardBack = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1")
-          }
+          },
+          Position = DeckPosition(PlayerName.Opponent)
         }
       }, new GameCommand
       {
@@ -393,9 +366,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       string title,
       string text,
       string image,
-      int manaCost,
-      CardTargeting? targeting = null,
-      ObjectPosition? releasePosition = null)
+      int manaCost)
     {
       var roomTarget = new CardTargeting
       {
@@ -458,14 +429,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           },
           Targeting = IsItem(cardId) ? null : roomTarget,
           OnReleasePosition = IsItem(cardId) ? itemPos : roomPos,
-          // Targeting = targeting,
-          // OnReleasePosition = releasePosition ?? new CardPosition
-          // {
-          //   Item = new CardPositionItem
-          //   {
-          //     ItemLocation = ItemLocation.Right
-          //   }
-          // },
           Cost = new CardCost
           {
             CanPlay = false,
@@ -488,13 +451,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Background = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"),
           Text = "4"
-        }
-      },
-      OnCreatePosition = new ObjectPosition
-      {
-        Deck = new ObjectPositionDeck
-        {
-          Owner = PlayerName.Opponent
         }
       },
       RevealedCard = new RevealedCardView
@@ -750,7 +706,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           CreateCard = new CreateCardCommand
           {
-            Card = OpponentCard("Scheme", 55555, 92)
+            Card = OpponentCard("Scheme", 55555, 92),
+            Position = new ObjectPosition
+            {
+              Deck = new ObjectPositionDeck
+              {
+                Owner = PlayerName.Opponent
+              }
+            }
           }
         },
         MoveToRaidIndex(55555, 1),
@@ -758,7 +721,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           CreateCard = new CreateCardCommand
           {
-            Card = OpponentCard("Not A Scheme", 55556, 98)
+            Card = OpponentCard("Not A Scheme", 55556, 98),
+            Position = new ObjectPosition
+            {
+              Deck = new ObjectPositionDeck
+              {
+                Owner = PlayerName.Opponent
+              }
+            }
           }
         },
         MoveToRaidIndex(55556, 1),
@@ -1137,5 +1107,21 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       });
     }
+
+    GameCommand DisplayRewards() =>
+      new()
+      {
+        DisplayRewards = new DisplayRewardsCommand
+        {
+          Rewards =
+          {
+            RevealedCard(21, "Reward#1", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_71", 6),
+            RevealedCard(22, "Reward#2", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72", 4),
+            RevealedCard(23, "Reward#3", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73", 3),
+            RevealedCard(24, "Reward#4", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74", 1),
+            RevealedCard(25, "Reward#5", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75", 0)
+          }
+        }
+      };
   }
 }

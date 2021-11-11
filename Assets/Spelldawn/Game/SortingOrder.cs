@@ -58,6 +58,7 @@ namespace Spelldawn.Game
       GameContext.Effects => 1100,
       GameContext.Dragging => 1200,
       GameContext.UserMessage => 1300,
+      GameContext.RewardBrowser => 1400,
       _ => throw new ArgumentOutOfRangeException()
     };
   }

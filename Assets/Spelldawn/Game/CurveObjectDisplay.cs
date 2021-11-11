@@ -27,8 +27,13 @@ namespace Spelldawn.Game
     [SerializeField] Transform _controlPoint2 = null!;
     [SerializeField] Transform _controlPoint3 = null!;
     [SerializeField] Transform _controlPoint4 = null!;
+    [SerializeField] float _gizmoRadius = 1.0f;
+    [SerializeField] float _objectScale;
+    [SerializeField] float _animationDuration = 0.3f;
 
     protected override GameContext DefaultGameContext() => _sortingGameContext;
+
+    protected override float AnimationDuration => _animationDuration;
 
     protected override Vector3 CalculateObjectPosition(int index, int count)
     {
@@ -41,6 +46,8 @@ namespace Spelldawn.Game
       var curvePosition = CalculateCurvePosition(index, count);
       return new Vector3(x: 280, y: 0, _zRotationMultiplier * CalculateZRotation(curvePosition));
     }
+
+    protected override float? CalculateObjectScale(int index, int count) => _objectScale == 0.0 ? null : _objectScale;
 
     float CalculateCurvePosition(int cardIndex, int cardCount)
     {
@@ -85,14 +92,14 @@ namespace Spelldawn.Game
       for (var t = 0.0f; t <= 1; t += 0.05f)
       {
         var position = CalculateBezierPosition(t);
-        Gizmos.DrawSphere(position, radius: 1);
+        Gizmos.DrawSphere(position, radius: _gizmoRadius);
       }
 
       Gizmos.color = Color.green;
-      Gizmos.DrawSphere(_controlPoint1.position, radius: 1);
-      Gizmos.DrawSphere(_controlPoint2.position, radius: 1);
-      Gizmos.DrawSphere(_controlPoint3.position, radius: 1);
-      Gizmos.DrawSphere(_controlPoint4.position, radius: 1);
+      Gizmos.DrawSphere(_controlPoint1.position, radius: _gizmoRadius);
+      Gizmos.DrawSphere(_controlPoint2.position, radius: _gizmoRadius);
+      Gizmos.DrawSphere(_controlPoint3.position, radius: _gizmoRadius);
+      Gizmos.DrawSphere(_controlPoint4.position, radius: _gizmoRadius);
     }
   }
 }

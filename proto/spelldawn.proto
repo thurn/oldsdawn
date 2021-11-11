@@ -587,6 +587,9 @@ message ObjectPositionIdentityContainer {
     PlayerName owner = 1;
 }
 
+message ObjectPositionRewardChest {
+}
+
 message ObjectPosition {
     oneof position {
         ObjectPositionOffscreen offscreen = 1;
@@ -636,7 +639,6 @@ message RevealedCardView {
 
 message CardView {
     CardId card_id = 1;
-    ObjectPosition on_create_position = 2;
     SpriteAddress card_back = 3;
     CardIcons card_icons = 4;
     SpriteAddress arena_frame = 5;
@@ -912,13 +914,15 @@ enum CardCreationAnimation {
 message CreateCardCommand {
     CardView card = 1;
 
+    ObjectPosition position = 2;
+
     /** Optionally, an animation to play after creating the card. */
-    CardCreationAnimation animation = 2;
+    CardCreationAnimation animation = 3;
 
     /**
     * Disable animations when creating this card.
     */
-    bool disable_animation = 3;
+    bool disable_animation = 4;
 }
 
 /**

@@ -24,7 +24,7 @@ namespace Spelldawn.Game
 {
   public abstract class ObjectDisplay : Displayable
   {
-    [Header("Object Display")] [SerializeField]
+    [Space(10)] [Header("Object Display")] [SerializeField]
     List<Displayable> _objects = new();
 
     [SerializeField] bool _updateRequired;

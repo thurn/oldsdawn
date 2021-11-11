@@ -13,7 +13,11 @@
 // limitations under the License.
 
 using System.Collections;
+using System.Linq;
+using DG.Tweening;
 using Spelldawn.Protos;
+using Spelldawn.Services;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -22,6 +26,10 @@ namespace Spelldawn.Game
 {
   public sealed class RewardChest : MonoBehaviour
   {
+    [SerializeField] Registry _registry = null!;
+    [SerializeField] Transform _cardSpawnPosition = null!;
+    [SerializeField] Transform _popUpPosition = null!;
+    [SerializeField] ObjectDisplay _rewardBrowser = null!;
     [SerializeField] TimedEffect _appearEffect = null!;
     [SerializeField] GameObject _appearLight = null!;
     [SerializeField] GameObject _chest = null!;
@@ -34,6 +42,7 @@ namespace Spelldawn.Game
     [SerializeField] GameObject _openEffect = null!;
     [SerializeField] AudioClip _openSound = null!;
     [SerializeField] bool _canBeOpened;
+    DisplayRewardsCommand? _currentCommand;
 
     static readonly int Open = Animator.StringToHash("Open");
 
@@ -43,6 +52,33 @@ namespace Spelldawn.Game
       _buildupGlow.SetActive(false);
       _openEffect.SetActive(true);
       _audio.PlayOneShot(_openSound);
+      if (_currentCommand != null)
+      {
+        StartCoroutine(DisplayCards(_currentCommand));
+      }
+    }
+
+    IEnumerator DisplayCards(DisplayRewardsCommand command)
+    {
+      var cards = command.Rewards
+        .Select(c => _registry.ObjectPositionService.CreateCard(c, GameContext.RewardBrowser, animate: false))
+        .ToList();
+      for (var i = 0; i < cards.Count; ++i)
+      {
+        var card = cards[i];
+        card.transform.position = _cardSpawnPosition.position + new Vector3(i * 0.05f, 0, 0);
+        card.transform.localScale = Vector3.one * 0.05f;
+      }
+
+      foreach (var card in cards)
+      {
+        yield return TweenUtils.Sequence("PopUpReward")
+          .Insert(0, card.transform.DOMove(_popUpPosition.position, 0.3f))
+          .Insert(0, card.transform.DOScale(0.1f * Vector3.one, 0.3f))
+          .SetEase(Ease.InExpo)
+          .WaitForCompletion();
+        yield return _rewardBrowser.AddObject(card);
+      }
     }
 
     IEnumerator OnMouseUpAsButton()
@@ -65,6 +101,7 @@ namespace Spelldawn.Game
       yield return new WaitForSeconds(_duration);
       _chest.SetActive(true);
       _canBeOpened = true;
+      _currentCommand = command;
     }
   }
 }
