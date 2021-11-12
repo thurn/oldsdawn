@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using Spelldawn.Protos;
 using UnityEngine;
@@ -36,6 +37,13 @@ namespace Spelldawn.Game
 
     [SerializeField] SpriteRenderer _spriteRenderer = null!;
     public SpriteRenderer SpriteRenderer => _spriteRenderer;
+
+    public ObjectDisplay ObjectDisplayForLocation(RoomLocation location) => location switch
+    {
+      RoomLocation.Back => _inRoom,
+      RoomLocation.Front => _defenders,
+      _ => throw new ArgumentOutOfRangeException(nameof(location), location, null)
+    };
 
     public IEnumerator AddCard(Displayable card, RoomLocation location, int? index, bool animate) => location switch
     {

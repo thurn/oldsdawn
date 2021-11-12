@@ -95,8 +95,8 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.UpdateCard:
             yield return _registry.ObjectPositionService.HandleUpdateCardCommand(command.UpdateCard);
             break;
-          case GameCommand.CommandOneofCase.MoveGameObject:
-            yield return _registry.ObjectPositionService.HandleMoveGameObjectCommand(command.MoveGameObject);
+          case GameCommand.CommandOneofCase.MoveGameObjects:
+            yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(command.MoveGameObjects);
             break;
           case GameCommand.CommandOneofCase.DestroyCard:
             break;

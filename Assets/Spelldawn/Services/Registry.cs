@@ -56,6 +56,9 @@ namespace Spelldawn.Services
     [SerializeField] RaidService _raidService = null!;
     public RaidService RaidService => _raidService;
 
+    [SerializeField] StackObjectDisplay _offscreenCards = null!;
+    public StackObjectDisplay OffscreenCards => _offscreenCards;
+
     [SerializeField] CurveObjectDisplay _cardStaging = null!;
     public CurveObjectDisplay CardStaging => _cardStaging;
 

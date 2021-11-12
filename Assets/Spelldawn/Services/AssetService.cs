@@ -77,7 +77,7 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.UpdateCard:
             LoadCardAssets(requests, command.UpdateCard.Card);
             break;
-          case GameCommand.CommandOneofCase.MoveGameObject:
+          case GameCommand.CommandOneofCase.MoveGameObjects:
             break;
           case GameCommand.CommandOneofCase.DestroyCard:
             break;

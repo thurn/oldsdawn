@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Spelldawn.Game;
 using Spelldawn.Protos;
@@ -50,7 +51,7 @@ namespace Spelldawn.Services
         SetCardBacks(opponentCard, PlayerName.Opponent);
 
         foreach (var spriteRenderer in _registry.DeckForPlayer(PlayerName.Opponent)
-          .GetComponentsInChildren<SpriteRenderer>())
+                   .GetComponentsInChildren<SpriteRenderer>())
         {
           spriteRenderer.sprite = _registry.AssetService.GetSprite(opponentCard.CardBack);
         }
@@ -62,7 +63,7 @@ namespace Spelldawn.Services
 
     public Displayable Find(GameObjectId id) => CheckExists(id);
 
-    public Card FindCard(CardId id) => (Card) Find(IdUtil.CardObjectId(id));
+    public Card FindCard(CardId id) => (Card)Find(IdUtil.CardObjectId(id));
 
     public void DrawOptimisticCard()
     {
@@ -97,7 +98,9 @@ namespace Spelldawn.Services
       {
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-        StartCoroutine(MoveObjectInternal(card, command.Position, animate: false));
+
+        StartCoroutine(ObjectDisplayForPosition(command.Position).AddObject(card, animate: false));
+        //StartCoroutine(MoveObjectInternal(card, command.Position, animate: false));
 
         switch (command.Animation)
         {
@@ -194,29 +197,27 @@ namespace Spelldawn.Services
       yield return card.Render(_registry, command.Card).WaitForCompletion();
     }
 
-    public IEnumerator HandleMoveGameObjectCommand(MoveGameObjectCommand command)
+    public IEnumerator HandleMoveGameObjectsCommand(MoveGameObjectsCommand command)
     {
-      var card = Find(command.Id);
-      if (card.Parent)
-      {
-        card.Parent!.RemoveObjectIfPresent(card, !command.DisableAnimation);
-      }
-
-      return MoveGameObject(Find(command.Id), command.Position, !command.DisableAnimation);
+      return MoveGameObjects(command.Ids.Select(Find), command.Position, command.Index, !command.DisableAnimation);
     }
 
     public IEnumerator MoveGameObject(
       Displayable displayable,
       ObjectPosition targetPosition,
+      int? index = null,
+      bool animate = true,
+      bool animateRemove = true) =>
+      MoveGameObjects(CollectionUtils.Once(displayable), targetPosition, index, animate, animateRemove);
+
+    public IEnumerator MoveGameObjects(
+      IEnumerable<Displayable> displayable,
+      ObjectPosition targetPosition,
+      int? index = null,
       bool animate = true,
       bool animateRemove = true)
     {
-      if (displayable.Parent)
-      {
-        displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
-      }
-
-      return MoveObjectInternal(displayable, targetPosition, animate);
+      return ObjectDisplayForPosition(targetPosition).AddObjects(displayable, animate, index, animateRemove);
     }
 
     Displayable CheckExists(GameObjectId gameObjectId)
@@ -237,44 +238,40 @@ namespace Spelldawn.Services
       }
     }
 
-    IEnumerator MoveObjectInternal(Displayable displayable, ObjectPosition position, bool animate)
+    ObjectDisplay ObjectDisplayForPosition(ObjectPosition position)
     {
-      switch (position.PositionCase)
+      return position.PositionCase switch
       {
-        case ObjectPosition.PositionOneofCase.Offscreen:
-          displayable.transform.position = Vector3.zero;
-          return CollectionUtils.Yield();
-        case ObjectPosition.PositionOneofCase.Room:
-          return _registry.ArenaService.AddToRoom(displayable, position.Room, animate);
-        case ObjectPosition.PositionOneofCase.Item:
-          return _registry.ArenaService.AddAsItem(displayable, position.Item, animate);
-        case ObjectPosition.PositionOneofCase.Staging:
-          return _registry.CardStaging.AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.Hand:
-          return _registry.HandForPlayer(position.Hand.Owner).AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.Deck:
-          return _registry.DeckForPlayer(position.Deck.Owner).AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.DeckContainer:
-          return _registry.DeckPositionForPlayer(position.DeckContainer.Owner).AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.DiscardPile:
-          return _registry.DiscardPileForPlayer(position.DiscardPile.Owner).AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.DiscardPileContainer:
-          return _registry.DiscardPilePositionForPlayer(position.DiscardPileContainer.Owner)
-            .AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.Scored:
-          return _registry.CardScoring.AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.Raid:
-          return _registry.RaidService.AddToRaid(displayable, position.Raid, animate);
-        case ObjectPosition.PositionOneofCase.Browser:
-          return _registry.CardBrowser.AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.Identity:
-          return _registry.IdentityCardForPlayer(position.Identity.Owner).AddObject(displayable, animate);
-        case ObjectPosition.PositionOneofCase.IdentityContainer:
-          return _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner)
-            .AddObject(displayable, animate);
-        default:
-          throw new ArgumentOutOfRangeException();
-      }
+        ObjectPosition.PositionOneofCase.Offscreen =>
+          _registry.OffscreenCards,
+        ObjectPosition.PositionOneofCase.Room =>
+          _registry.ArenaService.FindRoom(position.Room.RoomId).ObjectDisplayForLocation(position.Room.RoomLocation),
+        ObjectPosition.PositionOneofCase.Item =>
+          _registry.ArenaService.ObjectDisplayForLocation(position.Item.ItemLocation),
+        ObjectPosition.PositionOneofCase.Staging =>
+          _registry.CardStaging,
+        ObjectPosition.PositionOneofCase.Hand =>
+          _registry.HandForPlayer(position.Hand.Owner),
+        ObjectPosition.PositionOneofCase.Deck =>
+          _registry.DeckForPlayer(position.Deck.Owner),
+        ObjectPosition.PositionOneofCase.DeckContainer =>
+          _registry.DeckPositionForPlayer(position.DeckContainer.Owner),
+        ObjectPosition.PositionOneofCase.DiscardPile =>
+          _registry.DiscardPileForPlayer(position.DiscardPile.Owner),
+        ObjectPosition.PositionOneofCase.DiscardPileContainer =>
+          _registry.DiscardPilePositionForPlayer(position.DiscardPileContainer.Owner),
+        ObjectPosition.PositionOneofCase.Scored =>
+          _registry.CardScoring,
+        ObjectPosition.PositionOneofCase.Raid =>
+          _registry.RaidService.RaidParticipants,
+        ObjectPosition.PositionOneofCase.Browser =>
+          _registry.CardBrowser,
+        ObjectPosition.PositionOneofCase.Identity =>
+          _registry.IdentityCardForPlayer(position.Identity.Owner),
+        ObjectPosition.PositionOneofCase.IdentityContainer =>
+          _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner),
+        _ => throw new ArgumentOutOfRangeException()
+      };
     }
 
     void SetCardBacks(CardView? cardView, PlayerName playerName)

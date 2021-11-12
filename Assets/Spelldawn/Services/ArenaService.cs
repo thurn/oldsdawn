@@ -51,6 +51,13 @@ namespace Spelldawn.Services
       return Errors.CheckNotNull(result);
     }
 
+    public ObjectDisplay ObjectDisplayForLocation(ItemLocation location) => location switch
+    {
+      ItemLocation.Left => _leftItems,
+      ItemLocation.Right => _rightItems,
+      _ => throw new ArgumentOutOfRangeException(nameof(location), location, null)
+    };
+
     public IEnumerator AddAsItem(Displayable card, ObjectPositionItem position, bool animate)
     {
       switch (position.ItemLocation)

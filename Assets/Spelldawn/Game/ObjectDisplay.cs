@@ -49,19 +49,27 @@ namespace Spelldawn.Game
       }
     }
 
-    public IEnumerator AddObject(Displayable displayable, bool animate = true, int? index = null)
+    public IEnumerator AddObject(
+      Displayable displayable,
+      bool animate = true,
+      int? index = null,
+      bool animateRemove = true)
     {
       MarkUpdateRequired(animate);
-      Insert(displayable, index);
+      Insert(displayable, animateRemove, index);
       yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
     }
 
-    public IEnumerator AddObjects(IEnumerable<Displayable> objects, bool animate = true)
+    public IEnumerator AddObjects(
+      IEnumerable<Displayable> objects,
+      bool animate = true,
+      int? index = null,
+      bool animateRemove = true)
     {
       MarkUpdateRequired(animate);
       foreach (var displayable in objects)
       {
-        Insert(displayable, null);
+        Insert(displayable, animateRemove, index);
       }
 
       yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
@@ -126,8 +134,13 @@ namespace Spelldawn.Game
       _animateNextUpdate |= animate;
     }
 
-    void Insert(Displayable displayable, int? index)
+    void Insert(Displayable displayable, bool animateRemove, int? index)
     {
+      if (displayable.Parent)
+      {
+        displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
+      }
+
       displayable.Parent = this;
       if (!_objects.Contains(displayable))
       {

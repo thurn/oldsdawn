@@ -232,11 +232,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         yield return _registry.CommandService.HandleCommands(new GameCommand
         {
-          MoveGameObject = new MoveGameObjectCommand
+          MoveGameObjects = new MoveGameObjectsCommand
           {
-            Id = new GameObjectId
+            Ids =
             {
-              CardId = card.CardId
+              new GameObjectId
+              {
+                CardId = card.CardId
+              }
             },
             Position = HandPosition(PlayerName.User),
             DisableAnimation = directToHand
@@ -284,11 +287,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       }, new GameCommand
       {
-        MoveGameObject = new MoveGameObjectCommand
+        MoveGameObjects = new MoveGameObjectsCommand
         {
-          Id = new GameObjectId
+          Ids =
           {
-            CardId = cardId
+            new GameObjectId
+            {
+              CardId = cardId
+            }
           },
           Position = HandPosition(PlayerName.Opponent),
           DisableAnimation = disableAnimation
@@ -774,12 +780,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     GameCommand MoveIdentityToContainer(PlayerName playerName) =>
       new()
       {
-        MoveGameObject = new MoveGameObjectCommand
+        MoveGameObjects = new MoveGameObjectsCommand
         {
-          Id = CardObjectId(new CardId
+          Ids =
           {
-            IdentityCard = playerName
-          }),
+            CardObjectId(new CardId
+            {
+              IdentityCard = playerName
+            })
+          },
           Position = new ObjectPosition
           {
             IdentityContainer = new ObjectPositionIdentityContainer
@@ -793,9 +802,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     GameCommand MoveDiscardPileToContainer(PlayerName playerName) =>
       new()
       {
-        MoveGameObject = new MoveGameObjectCommand
+        MoveGameObjects = new MoveGameObjectsCommand
         {
-          Id = DiscardPileObjectId(playerName),
+          Ids = { DiscardPileObjectId(playerName) },
           Position = new ObjectPosition
           {
             DiscardPileContainer = new ObjectPositionDiscardPileContainer
@@ -810,24 +819,22 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToRaidIndex(GameObjectId id, int index) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = id,
+        Ids = { id },
         Position = new ObjectPosition
         {
-          Raid = new ObjectPositionRaid
-          {
-            Index = index
-          }
-        }
+          Raid = new ObjectPositionRaid()
+        },
+        Index = index
       }
     };
 
     GameCommand MoveToBrowser(GameObjectId id) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = id,
+        Ids = { id },
         Position = new ObjectPosition
         {
           Browser = new ObjectPositionBrowser()
@@ -915,9 +922,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToScored(int cardId) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Ids = { CardObjectId(CardId(cardId)) },
         Position = new ObjectPosition
         {
           Scored = new ObjectPositionScored()
@@ -927,9 +934,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToIdentity(int cardId) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Ids = { CardObjectId(CardId(cardId)) },
         Position = new ObjectPosition
         {
           Identity = new ObjectPositionIdentity
@@ -942,9 +949,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToOffscreen(int cardId) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Ids = { CardObjectId(CardId(cardId)) },
         Position = new ObjectPosition
         {
           Offscreen = new ObjectPositionOffscreen()
@@ -979,9 +986,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToDeck(int cardId, PlayerName owner) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Ids = { CardObjectId(CardId(cardId)) },
         Position = new ObjectPosition
         {
           Deck = new ObjectPositionDeck
@@ -994,9 +1001,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToHand(int cardId, PlayerName owner) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Ids = { CardObjectId(CardId(cardId)) },
         Position = new ObjectPosition
         {
           Hand = new ObjectPositionHand
@@ -1007,12 +1014,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-
     GameCommand MoveToRoom(int cardId, RoomId roomId) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Ids = { CardObjectId(CardId(cardId)) },
         Position = new ObjectPosition
         {
           Room = new ObjectPositionRoom
@@ -1026,9 +1032,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToStaging(int cardId) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = CardObjectId(CardId(cardId)),
+        Ids = { CardObjectId(CardId(cardId)) },
         Position = new ObjectPosition
         {
           Staging = new ObjectPositionStaging()
@@ -1038,11 +1044,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToDeckContainer(PlayerName owner) => new()
     {
-      MoveGameObject = new MoveGameObjectCommand
+      MoveGameObjects = new MoveGameObjectsCommand
       {
-        Id = new GameObjectId
+        Ids =
         {
-          Deck = owner
+          new GameObjectId
+          {
+            Deck = owner
+          }
         },
         Position = new ObjectPosition
         {
@@ -1118,9 +1127,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       }, new GameCommand
       {
-        MoveGameObject = new MoveGameObjectCommand
+        MoveGameObjects = new MoveGameObjectsCommand
         {
-          Id = IdentityCardId(PlayerName.User),
+          Ids = { IdentityCardId(PlayerName.User) },
           Position = new ObjectPosition
           {
             IdentityContainer = new ObjectPositionIdentityContainer

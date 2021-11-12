@@ -29,10 +29,9 @@ namespace Spelldawn.Services
     [SerializeField] ObjectDisplay _participants = null!;
     RoomId? _currentRoom;
 
-    public bool RaidActive => _currentRoom != null;
+    public ObjectDisplay RaidParticipants => _participants;
 
-    public IEnumerator AddToRaid(Displayable card, ObjectPositionRaid position, bool animate) =>
-      _participants.AddObject(card, animate, position.Index);
+    public bool RaidActive => _currentRoom != null;
 
     public IEnumerator HandleInitiateRaid(InitiateRaidCommand command)
     {
