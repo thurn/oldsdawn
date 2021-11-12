@@ -399,6 +399,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _singleElementY: 0.5
   _registry: {fileID: 0}
   _canDrag: 0
   _scoreText: {fileID: 3471970735534257304}

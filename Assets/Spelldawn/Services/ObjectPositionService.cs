@@ -34,22 +34,6 @@ namespace Spelldawn.Services
 
     readonly Dictionary<GameObjectId, Displayable> _cards = new();
 
-    static readonly GameObjectId UserCardId = new()
-    {
-      CardId = new CardId
-      {
-        IdentityCard = PlayerName.User
-      }
-    };
-
-    static readonly GameObjectId OpponentCardId = new()
-    {
-      CardId = new CardId
-      {
-        IdentityCard = PlayerName.Opponent
-      }
-    };
-
     Card? _optimisticCard;
     SpriteAddress? _userCardBack;
 
@@ -72,11 +56,13 @@ namespace Spelldawn.Services
         }
       }
 
-      _cards[UserCardId] = _registry.IdentityCardForPlayer(PlayerName.User);
-      _cards[OpponentCardId] = _registry.IdentityCardForPlayer(PlayerName.Opponent);
+      _cards[IdUtil.UserCardId] = _registry.IdentityCardForPlayer(PlayerName.User);
+      _cards[IdUtil.OpponentCardId] = _registry.IdentityCardForPlayer(PlayerName.Opponent);
     }
 
     public Displayable Find(GameObjectId id) => CheckExists(id);
+
+    public Card FindCard(CardId id) => (Card) Find(IdUtil.CardObjectId(id));
 
     public void DrawOptimisticCard()
     {
@@ -123,7 +109,7 @@ namespace Spelldawn.Services
       }
 
       card.Render(_registry, command.Card, GameContext.Staging, animate: !command.DisableAnimation);
-      _cards[ToGameObjectId(command.Card.CardId)] = card;
+      _cards[IdUtil.CardObjectId(command.Card)] = card;
 
       if (waitForStaging)
       {
@@ -137,7 +123,7 @@ namespace Spelldawn.Services
       var card = ComponentUtils.Instantiate(_cardPrefab);
       card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
       card.Render(_registry, cardView, gameContext, animate: animate);
-      _cards[ToGameObjectId(cardView.CardId)] = card;
+      _cards[IdUtil.CardObjectId(cardView)] = card;
       return card;
     }
 
@@ -232,11 +218,6 @@ namespace Spelldawn.Services
 
       return MoveObjectInternal(displayable, targetPosition, animate);
     }
-
-    static GameObjectId ToGameObjectId(CardId cardId) => new()
-    {
-      CardId = cardId
-    };
 
     Displayable CheckExists(GameObjectId gameObjectId)
     {

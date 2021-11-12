@@ -14,6 +14,7 @@
 
 using System.Collections;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -23,7 +24,15 @@ namespace Spelldawn.Services
   public sealed class ActionService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    bool _currentlyHandlingAction;
+    [SerializeField] PlayerName _currentPriority;
+    [SerializeField] bool _currentlyHandlingAction;
+
+    public bool CurrentlyHandlingAction => _currentlyHandlingAction;
+
+    public PlayerName CurrentPriority
+    {
+      set => _currentPriority = value;
+    }
 
     public void HandleAction(GameAction action)
     {
@@ -35,6 +44,28 @@ namespace Spelldawn.Services
 
       _currentlyHandlingAction = true;
       StartCoroutine(HandleActionAsync(action));
+    }
+
+    void Update()
+    {
+      var userLight = _registry.ActiveLightForPlayer(PlayerName.User);
+      var opponentLight = _registry.ActiveLightForPlayer(PlayerName.Opponent);
+      var canShow = !_currentlyHandlingAction && !_registry.RaidService.RaidActive;
+
+      switch (_currentPriority)
+      {
+        case PlayerName.User when canShow && _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0:
+          userLight.SetActive(true);
+          break;
+        case PlayerName.Opponent when canShow:
+          opponentLight.SetActive(true);
+          break;
+        case PlayerName.Unspecified:
+        default:
+          userLight.SetActive(false);
+          opponentLight.SetActive(false);
+          break;
+      }
     }
 
     IEnumerator HandleActionAsync(GameAction action)
@@ -62,6 +93,9 @@ namespace Spelldawn.Services
         case GameAction.ActionOneofCase.DrawCard:
           _registry.ObjectPositionService.DrawOptimisticCard();
           break;
+        case GameAction.ActionOneofCase.PlayCard:
+          yield return HandlePlayCard(action.PlayCard);
+          break;
         case GameAction.ActionOneofCase.GainMana:
           _registry.ManaDisplayForPlayer(PlayerName.User).Increment();
           break;
@@ -88,6 +122,26 @@ namespace Spelldawn.Services
         default:
           yield break;
       }
+    }
+
+    IEnumerator HandlePlayCard(PlayCardAction action)
+    {
+      var card = _registry.ObjectPositionService.FindCard(action.CardId);
+      var position =
+        Errors.CheckNotNull(card.RevealedCardView?.OnReleasePosition, "Card does not have release position");
+      if (position.PositionCase == ObjectPosition.PositionOneofCase.Room)
+      {
+        if (card.TargetRoom is { } targetRoom)
+        {
+          // Move to targeted room if one is available
+          var newPosition = new ObjectPosition();
+          newPosition.MergeFrom(position);
+          newPosition.Room.RoomId = targetRoom;
+          position = newPosition;
+        }
+      }
+
+      return _registry.ObjectPositionService.MoveGameObject(card, position);
     }
   }
 }

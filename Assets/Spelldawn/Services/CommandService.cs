@@ -78,7 +78,7 @@ namespace Spelldawn.Services
             yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
             break;
           case GameCommand.CommandOneofCase.RenderGame:
-            yield return HandleRenderGame(command.RenderGame);
+            yield return HandleRenderGame(command.RenderGame.Game);
             break;
           case GameCommand.CommandOneofCase.InitiateRaid:
             yield return _registry.RaidService.HandleInitiateRaid(command.InitiateRaid);
@@ -146,15 +146,21 @@ namespace Spelldawn.Services
       _registry.DocumentService.HandleRenderInterface(command);
     }
 
-    IEnumerator HandleRenderGame(RenderGameCommand command)
+    IEnumerator HandleRenderGame(GameView game)
     {
       _registry.ObjectPositionService.Initialize(
-        command.Game?.User?.PlayerInfo?.IdentityCard,
-        command.Game?.Opponent?.PlayerInfo?.IdentityCard);
+        game.User?.PlayerInfo?.IdentityCard,
+        game.Opponent?.PlayerInfo?.IdentityCard);
 
-      _registry.ArenaService.SetRoomsOnBottom(command.Game?.Arena?.RoomsAtBottom == true);
-      _registry.IdentityCardForPlayer(PlayerName.User).SetScore(command.Game?.User?.Score?.Score);
-      _registry.IdentityCardForPlayer(PlayerName.User).IdentityAction = command.Game?.Arena?.IdentityAction;
+      _registry.ArenaService.SetRoomsOnBottom(game.Arena?.RoomsAtBottom == true);
+
+      if (game.CurrentPriority != PlayerName.Unspecified)
+      {
+        _registry.ActionService.CurrentPriority = game.CurrentPriority;
+      }
+
+      _registry.IdentityCardForPlayer(PlayerName.User).SetScore(game.User?.Score?.Score);
+      _registry.IdentityCardForPlayer(PlayerName.User).IdentityAction = game.Arena?.IdentityAction;
       yield break;
     }
 

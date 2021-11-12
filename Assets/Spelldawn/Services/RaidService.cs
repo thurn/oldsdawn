@@ -29,6 +29,8 @@ namespace Spelldawn.Services
     [SerializeField] ObjectDisplay _participants = null!;
     RoomId? _currentRoom;
 
+    public bool RaidActive => _currentRoom != null;
+
     public IEnumerator AddToRaid(Displayable card, ObjectPositionRaid position, bool animate) =>
       _participants.AddObject(card, animate, position.Index);
 
@@ -91,6 +93,7 @@ namespace Spelldawn.Services
     {
       _registry.IdentityCardForPlayer(endRaidCommand.Initiator).RaidSymbolShown = false;
       _registry.BlackBackground.enabled = false;
+      _currentRoom = null;
       yield break;
     }
   }

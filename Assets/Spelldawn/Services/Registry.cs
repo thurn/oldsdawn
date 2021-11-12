@@ -129,6 +129,12 @@ namespace Spelldawn.Services
     public IdentityCard IdentityCardForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userIdentityCard : _opponentIdentityCard;
 
+    [SerializeField] GameObject _userActiveLight = null!;
+    [SerializeField] GameObject _opponentActiveLight = null!;
+
+    public GameObject ActiveLightForPlayer(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userActiveLight : _opponentActiveLight;
+
     void Awake()
     {
       Application.targetFrameRate = 60;

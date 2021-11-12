@@ -727,6 +727,9 @@ message GameView {
     PlayerView user = 1;
     PlayerView opponent = 2;
     ArenaView arena = 3;
+
+    /** The player who is currently able to act. */
+    PlayerName current_priority = 4;
 }
 
 

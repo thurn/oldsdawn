@@ -328,7 +328,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Arena = new ArenaView
         {
           IdentityAction = IdentityAction.InitiateRaid
-        }
+        },
+        CurrentPriority = PlayerName.User
       };
 
     static CardId CardId(int id) => new() { Value = id };

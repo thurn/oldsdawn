@@ -60,9 +60,15 @@ namespace Spelldawn.Game
     [SerializeField] int _handIndex;
 
     Registry _registry = null!;
+
     CardView? _cardView;
+    public CardView? CardView => _cardView;
+
     RevealedCardView? _revealedCardView;
+    public RevealedCardView? RevealedCardView => _revealedCardView;
+
     RoomId? _targetRoom;
+    public RoomId? TargetRoom => _targetRoom;
 
     [Serializable]
     public sealed class Icon
@@ -233,34 +239,52 @@ namespace Spelldawn.Game
     {
       _registry.ArenaService.HideRoomSelector();
       var distance = _dragStartPosition.z - DragWorldMousePosition().z;
-      if (!_isDragging || distance < 3.5f || _revealedCardView?.OnReleasePosition == null)
+      if (!_isDragging || distance < 3.5f || _registry.ActionService.CurrentlyHandlingAction)
       {
         // Return to hand
         StartCoroutine(Parent!.AddObject(this, animate: true, index: _handIndex));
       }
       else
       {
-        var position = _revealedCardView?.OnReleasePosition;
-        if (position?.PositionCase == ObjectPosition.PositionOneofCase.Room)
+        var action = new PlayCardAction
         {
-          if (_targetRoom is { } targetRoom)
+          CardId = _cardView!.CardId,
+        };
+
+        if (_targetRoom is { } room)
+        {
+          action.Target = new CardTarget
           {
-            // Move to targeted room if one is available
-            var newPosition = new ObjectPosition();
-            newPosition.MergeFrom(position);
-            newPosition.Room.RoomId = targetRoom;
-            position = newPosition;
-            _targetRoom = null;
-          }
-          else
-          {
-            position = null;
-          }
+            RoomId = room
+          };
         }
 
-        StartCoroutine(position != null
-          ? _registry.ObjectPositionService.MoveGameObject(this, position)
-          : Parent!.AddObject(this, animate: true, index: _handIndex));
+        _registry.ActionService.HandleAction(new GameAction
+        {
+          PlayCard = action
+        });
+
+        // var position = _revealedCardView?.OnReleasePosition;
+        // if (position?.PositionCase == ObjectPosition.PositionOneofCase.Room)
+        // {
+        //   if (_targetRoom is { } targetRoom)
+        //   {
+        //     // Move to targeted room if one is available
+        //     var newPosition = new ObjectPosition();
+        //     newPosition.MergeFrom(position);
+        //     newPosition.Room.RoomId = targetRoom;
+        //     position = newPosition;
+        //     _targetRoom = null;
+        //   }
+        //   else
+        //   {
+        //     position = null;
+        //   }
+        // }
+        //
+        // StartCoroutine(position != null
+        //   ? _registry.ObjectPositionService.MoveGameObject(this, position)
+        //   : Parent!.AddObject(this, animate: true, index: _handIndex));
       }
 
       _isDragging = false;
