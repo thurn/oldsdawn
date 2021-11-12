@@ -30,6 +30,8 @@ namespace Spelldawn.Services
     [SerializeField] bool _currentlyHandling;
     readonly Queue<CommandList> _queue = new();
 
+    public bool CurrentlyHandlingCommand => _currentlyHandling;
+
     public IEnumerator HandleCommands(IEnumerable<GameCommand> commands)
     {
       var list = new CommandList();

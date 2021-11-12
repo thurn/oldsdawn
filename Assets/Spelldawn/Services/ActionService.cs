@@ -27,7 +27,10 @@ namespace Spelldawn.Services
     [SerializeField] PlayerName _currentPriority;
     [SerializeField] bool _currentlyHandlingAction;
 
-    public bool CurrentlyHandlingAction => _currentlyHandlingAction;
+    public bool UserCanAct() => !_currentlyHandlingAction &&
+                                !_registry.RaidService.RaidActive &&
+                                !_registry.CommandService.CurrentlyHandlingCommand &&
+                                _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0;
 
     public PlayerName CurrentPriority
     {
@@ -50,14 +53,13 @@ namespace Spelldawn.Services
     {
       var userLight = _registry.ActiveLightForPlayer(PlayerName.User);
       var opponentLight = _registry.ActiveLightForPlayer(PlayerName.Opponent);
-      var canShow = !_currentlyHandlingAction && !_registry.RaidService.RaidActive;
 
       switch (_currentPriority)
       {
-        case PlayerName.User when canShow && _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0:
+        case PlayerName.User when UserCanAct():
           userLight.SetActive(true);
           break;
-        case PlayerName.Opponent when canShow:
+        case PlayerName.Opponent:
           opponentLight.SetActive(true);
           break;
         case PlayerName.Unspecified:

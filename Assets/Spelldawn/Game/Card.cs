@@ -239,7 +239,7 @@ namespace Spelldawn.Game
     {
       _registry.ArenaService.HideRoomSelector();
       var distance = _dragStartPosition.z - DragWorldMousePosition().z;
-      if (!_isDragging || distance < 3.5f || _registry.ActionService.CurrentlyHandlingAction)
+      if (!_isDragging || distance < 3.5f || !_registry.ActionService.UserCanAct())
       {
         // Return to hand
         StartCoroutine(Parent!.AddObject(this, animate: true, index: _handIndex));

@@ -43139,7 +43139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _drawHands: 1
+  _startBehavior: 1
 --- !u!114 &1445473051
 MonoBehaviour:
   m_ObjectHideFlags: 0

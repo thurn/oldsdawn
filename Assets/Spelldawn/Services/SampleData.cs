@@ -28,11 +28,18 @@ namespace Spelldawn.Services
   public sealed class SampleData : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] bool _drawHands;
+    [SerializeField] StartBehavior _startBehavior;
     int _lastReturnedCard;
     int _lastOpponentCardId = 65536;
     readonly List<CardId> _opponentHandCards = new();
     readonly List<CardId> _opponentPlayedCards = new();
+
+    public enum StartBehavior
+    {
+      Unspecified,
+      DrawImmediately,
+      ShowOpeningHand
+    }
 
     static readonly string Text1 =
       @"<sprite name=""hourglass"">, 2<sprite name=""fire"">: Destroy this token. Add another line of text to this card.
@@ -105,7 +112,20 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       });
 
-      if (_drawHands)
+      switch (_startBehavior)
+      {
+        case StartBehavior.DrawImmediately:
+          yield return DrawImmediately();
+          break;
+        case StartBehavior.ShowOpeningHand:
+          yield return ShowOpeningHand();
+          break;
+      }
+    }
+
+    IEnumerator DrawImmediately()
+    {
+      if (_startBehavior == StartBehavior.DrawImmediately)
       {
         for (var i = 0; i < 6; ++i)
         {
@@ -114,6 +134,79 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       }
     }
+
+    IEnumerator ShowOpeningHand()
+    {
+      var cards = Cards.Take(5).ToList();
+      return _registry.CommandService.HandleCommands(
+        cards.Select(c => new GameCommand
+        {
+          CreateCard = new CreateCardCommand
+          {
+            Card = c,
+            Position = DeckPosition(PlayerName.User)
+          }
+        }).Interleave(cards.Select(c => new GameCommand
+        {
+          MoveGameObjects = new MoveGameObjectsCommand
+          {
+            Ids = { IdUtil.CardObjectId(c.CardId) },
+            Position = new ObjectPosition
+            {
+              Browser = new ObjectPositionBrowser()
+            }
+          }
+        })).Append(new GameCommand
+        {
+          RenderInterface = new RenderInterfaceCommand
+          {
+            RaidControls = new InterfacePositionRaidControls
+            {
+              Node = MulliganControls(cards)
+            }
+          }
+        }));
+    }
+
+    Node MulliganControls(IEnumerable<CardView> cards) => Row("ControlButtons",
+      new FlexStyle
+      {
+        JustifyContent = FlexJustify.Center,
+        FlexGrow = 1,
+        AlignItems = FlexAlign.Center,
+      },
+      Button("Keep", action: KeepHandAction(cards), orange: true),
+      Button("Mulligan"));
+
+    StandardAction KeepHandAction(IEnumerable<CardView> cards) =>
+      new()
+      {
+        Payload = Any.Pack(new CommandList
+        {
+          Commands = { Delay(1000) }
+        }),
+        OptimisticUpdate = new CommandList
+        {
+          Commands =
+          {
+            ClearRaidControls(),
+            new GameCommand
+            {
+              MoveGameObjects = new MoveGameObjectsCommand
+              {
+                Ids = { cards.Select(IdUtil.CardObjectId) },
+                Position = new ObjectPosition
+                {
+                  Hand = new ObjectPositionHand
+                  {
+                    Owner = PlayerName.User
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
 
     void Update()
     {
@@ -199,8 +292,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.StandardAction:
-          var commands = action.StandardAction.Payload.Unpack<CommandList>();
-          return _registry.CommandService.HandleCommands(commands);
+          return action.StandardAction.Payload is { } p
+            ? _registry.CommandService.HandleCommands(p.Unpack<CommandList>())
+            : CollectionUtils.Yield();
         case GameAction.ActionOneofCase.DrawCard:
           return DrawUserCard();
         case GameAction.ActionOneofCase.InitiateRaid:
@@ -272,7 +366,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     IEnumerator DrawOpponentCard(bool disableAnimation = false)
     {
-      var cardId = CardId(_lastOpponentCardId++);
+      var cardId = IdUtil.CardId(_lastOpponentCardId++);
       _opponentHandCards.Add(cardId);
       return _registry.CommandService.HandleCommands(new GameCommand
       {
@@ -338,10 +432,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         CurrentPriority = PlayerName.User
       };
 
-    static CardId CardId(int id) => new() { Value = id };
-
-    static GameObjectId CardObjectId(CardId cardId) => new() { CardId = cardId };
-
     static TimeValue TimeMs(int ms) => new() { Milliseconds = ms };
 
     static PlayerView Player(string playerName, PlayerName id, string cardBack) => new()
@@ -351,7 +441,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Name = playerName,
         IdentityCard = new CardView
         {
-          CardId = CardId((int)id),
+          CardId = IdUtil.CardId((int)id),
           CardBack = new SpriteAddress
           {
             Address = cardBack
@@ -415,7 +505,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
       return new CardView
       {
-        CardId = CardId(cardId),
+        CardId = IdUtil.CardId(cardId),
         CardBack = Sprite(
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
         CardIcons = new CardIcons
@@ -459,7 +549,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     CardView OpponentCard(string title, int cardId, int image, bool revealedInArena = false) => new()
     {
-      CardId = CardId(cardId),
+      CardId = IdUtil.CardId(cardId),
       CardBack = Sprite(
         "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
       CardIcons = new CardIcons
@@ -533,7 +623,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Commands =
         {
-          FireProjectile(IdentityCardId(PlayerName.User), DiscardPileObjectId(PlayerName.Opponent), 4)
+          FireProjectile(IdUtil.IdentityCardId(PlayerName.User), IdUtil.DiscardPileObjectId(PlayerName.Opponent), 4)
         }
       },
       Payload = Any.Pack(new CommandList
@@ -565,7 +655,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Commands =
         {
-          FireProjectile(CardObjectId(CardId(1)), IdentityCardId(PlayerName.User), 3)
+          FireProjectile(IdUtil.CardObjectId(1), IdUtil.IdentityCardId(PlayerName.User), 3)
         }
       },
       Payload = Any.Pack(new CommandList
@@ -573,7 +663,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Commands =
         {
           MoveToRoom(1, RoomId.Sanctum),
-          FireProjectile(IdentityCardId(PlayerName.User), IdentityCardId(PlayerName.Opponent), 4),
+          FireProjectile(IdUtil.IdentityCardId(PlayerName.User), IdUtil.IdentityCardId(PlayerName.Opponent), 4),
           ClearRaidControls(),
           RunInParallel(
             MoveIdentityToContainer(PlayerName.User),
@@ -581,38 +671,13 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           ),
           UpdateCard(OpponentCard("Revealed Card", 65539, 18)),
           UpdateCard(OpponentCard("Scheme Card", 65541, 19)),
-          RunInParallel(_opponentHandCards.Select(id => MoveToBrowser(CardObjectId(id)))),
-          RenderObjectButton(CardObjectId(CardId(65541)), "Score!", ScoreAction(65541,
+          RunInParallel(_opponentHandCards.Select(id => MoveToBrowser(IdUtil.CardObjectId(id)))),
+          RenderObjectButton(IdUtil.CardObjectId(65541), "Score!", ScoreAction(65541,
             RunInParallel(_opponentHandCards
-              .Except(CollectionUtils.Once(CardId(65541)))
+              .Except(CollectionUtils.Once(IdUtil.CardId(65541)))
               .Select(id => MoveToHand(id.Value, PlayerName.Opponent)))))
         }
       })
-    };
-
-    GameObjectId IdentityCardId(PlayerName playerName) => new()
-    {
-      CardId = new CardId
-      {
-        IdentityCard = playerName
-      }
-    };
-
-    // ReSharper disable once UnusedMember.Local
-    GameObjectId DeckObjectId(PlayerName playerName) => new()
-    {
-      Deck = playerName
-    };
-
-    // ReSharper disable once UnusedMember.Local
-    GameObjectId HandObjectId(PlayerName playerName) => new()
-    {
-      Hand = playerName
-    };
-
-    GameObjectId DiscardPileObjectId(PlayerName playerName) => new()
-    {
-      DiscardPile = playerName
     };
 
     GameCommand UpdateCard(CardView cardView) => new()
@@ -677,8 +742,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             ClearRaidControls(),
             FireProjectile(
-              CardObjectId(CardId(2)),
-              CardObjectId(CardId(1)),
+              IdUtil.CardObjectId(2),
+              IdUtil.CardObjectId(1),
               projectileNumber: 8,
               additionalHit: true,
               hideOnHit: true,
@@ -704,14 +769,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           FireProjectile = new FireProjectileCommand
           {
-            SourceId = CardObjectId(new CardId
-            {
-              IdentityCard = PlayerName.User
-            }),
-            TargetId = new GameObjectId
-            {
-              Deck = PlayerName.Opponent
-            },
+            SourceId = IdUtil.IdentityCardId(PlayerName.User),
+            TargetId = IdUtil.DeckObjectId(PlayerName.Opponent),
             Projectile = new ProjectileAddress
             {
               Address = "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 1"
@@ -751,7 +810,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         },
         MoveToRaidIndex(55556, 1),
         MoveIdentityToContainer(PlayerName.User),
-        RenderObjectButton(CardObjectId(CardId(55555)), "Score!",
+        RenderObjectButton(IdUtil.CardObjectId(55555), "Score!",
           ScoreAction(55555, MoveToDeck(55556, PlayerName.Opponent)))
       }
     };
@@ -784,7 +843,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Ids =
           {
-            CardObjectId(new CardId
+            IdUtil.CardObjectId(new CardId
             {
               IdentityCard = playerName
             })
@@ -804,7 +863,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         MoveGameObjects = new MoveGameObjectsCommand
         {
-          Ids = { DiscardPileObjectId(playerName) },
+          Ids = { IdUtil.DiscardPileObjectId(playerName) },
           Position = new ObjectPosition
           {
             DiscardPileContainer = new ObjectPositionDiscardPileContainer
@@ -815,7 +874,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       };
 
-    GameCommand MoveToRaidIndex(int cardId, int index) => MoveToRaidIndex(CardObjectId(CardId(cardId)), index);
+    GameCommand MoveToRaidIndex(int cardId, int index) => MoveToRaidIndex(IdUtil.CardObjectId(cardId), index);
 
     GameCommand MoveToRaidIndex(GameObjectId id, int index) => new()
     {
@@ -904,7 +963,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           },
           Position = new PlayEffectPosition
           {
-            GameObject = CardObjectId(CardId(cardId))
+            GameObject = IdUtil.CardObjectId(cardId)
           },
           Duration = TimeMs(duration),
           Scale = 2.0f
@@ -924,7 +983,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
-        Ids = { CardObjectId(CardId(cardId)) },
+        Ids = { IdUtil.CardObjectId(cardId) },
         Position = new ObjectPosition
         {
           Scored = new ObjectPositionScored()
@@ -936,7 +995,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
-        Ids = { CardObjectId(CardId(cardId)) },
+        Ids = { IdUtil.CardObjectId(cardId) },
         Position = new ObjectPosition
         {
           Identity = new ObjectPositionIdentity
@@ -951,7 +1010,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
-        Ids = { CardObjectId(CardId(cardId)) },
+        Ids = { IdUtil.CardObjectId(cardId) },
         Position = new ObjectPosition
         {
           Offscreen = new ObjectPositionOffscreen()
@@ -988,7 +1047,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
-        Ids = { CardObjectId(CardId(cardId)) },
+        Ids = { IdUtil.CardObjectId(cardId) },
         Position = new ObjectPosition
         {
           Deck = new ObjectPositionDeck
@@ -1003,7 +1062,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
-        Ids = { CardObjectId(CardId(cardId)) },
+        Ids = { IdUtil.CardObjectId(cardId) },
         Position = new ObjectPosition
         {
           Hand = new ObjectPositionHand
@@ -1018,7 +1077,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
-        Ids = { CardObjectId(CardId(cardId)) },
+        Ids = { IdUtil.CardObjectId(cardId) },
         Position = new ObjectPosition
         {
           Room = new ObjectPositionRoom
@@ -1034,7 +1093,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
-        Ids = { CardObjectId(CardId(cardId)) },
+        Ids = { IdUtil.CardObjectId(cardId) },
         Position = new ObjectPosition
         {
           Staging = new ObjectPositionStaging()
@@ -1129,7 +1188,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         MoveGameObjects = new MoveGameObjectsCommand
         {
-          Ids = { IdentityCardId(PlayerName.User) },
+          Ids = { IdUtil.IdentityCardId(PlayerName.User) },
           Position = new ObjectPosition
           {
             IdentityContainer = new ObjectPositionIdentityContainer
