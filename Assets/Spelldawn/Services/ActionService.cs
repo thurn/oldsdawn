@@ -93,7 +93,7 @@ namespace Spelldawn.Services
 
           break;
         case GameAction.ActionOneofCase.DrawCard:
-          _registry.ObjectPositionService.DrawOptimisticCard();
+          _registry.CardService.DrawOptimisticCard();
           break;
         case GameAction.ActionOneofCase.PlayCard:
           yield return HandlePlayCard(action.PlayCard);
@@ -128,7 +128,7 @@ namespace Spelldawn.Services
 
     IEnumerator HandlePlayCard(PlayCardAction action)
     {
-      var card = _registry.ObjectPositionService.FindCard(action.CardId);
+      var card = _registry.CardService.FindCard(action.CardId);
       var position =
         Errors.CheckNotNull(card.RevealedCardView?.OnReleasePosition, "Card does not have release position");
       if (position.PositionCase == ObjectPosition.PositionOneofCase.Room)

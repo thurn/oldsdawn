@@ -85,21 +85,21 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 <b>Area</b> <i>(this item’s damage persists for the duration of the raid)</i>
 ";
 
-    static readonly CardView Card1 = RevealedCard(1, "Meteor Shower", Text1,
+    static readonly CardView Card1 = RevealedUserCard(1, "Meteor Shower", Text1,
       "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0);
 
     static readonly List<CardView> Cards = new()
     {
       Card1,
-      RevealedCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4),
-      RevealedCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1),
-      RevealedCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16", 15),
-      RevealedCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42", 4),
-      RevealedCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37", 2),
-      RevealedCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40", 3),
-      RevealedCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66", 0),
-      RevealedCard(8, "Divine Bolt", Text8, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_52", 3),
-      RevealedCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68", 6)
+      RevealedUserCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4),
+      RevealedUserCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1),
+      RevealedUserCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16", 15),
+      RevealedUserCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42", 4),
+      RevealedUserCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37", 2),
+      RevealedUserCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40", 3),
+      RevealedUserCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66", 0),
+      RevealedUserCard(8, "Divine Bolt", Text8, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_52", 3),
+      RevealedUserCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68", 6)
     };
 
     IEnumerator Start()
@@ -375,7 +375,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Card = new CardView
           {
             CardId = cardId,
-            CardBack = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1")
+            CardBackPlayer = PlayerName.Opponent
           },
           Position = DeckPosition(PlayerName.Opponent)
         }
@@ -439,13 +439,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       PlayerInfo = new PlayerInfo
       {
         Name = playerName,
-        IdentityCard = new CardView
+        Identity = new RevealedCardView(),
+        CardBack = new SpriteAddress
         {
-          CardId = IdUtil.CardId((int)id),
-          CardBack = new SpriteAddress
-          {
-            Address = cardBack
-          }
+          Address = cardBack
         }
       },
       Score = new ScoreView
@@ -467,7 +464,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static bool IsItem(int cardId) => cardId % 2 == 0;
 
-    static CardView RevealedCard(
+    static CardView RevealedUserCard(
       int cardId,
       string title,
       string text,
@@ -506,8 +503,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       return new CardView
       {
         CardId = IdUtil.CardId(cardId),
-        CardBack = Sprite(
-          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
+        CardBackPlayer = PlayerName.User,
         CardIcons = new CardIcons
         {
           TopLeftIcon = new CardIcon
@@ -550,8 +546,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     CardView OpponentCard(string title, int cardId, int image, bool revealedInArena = false) => new()
     {
       CardId = IdUtil.CardId(cardId),
-      CardBack = Sprite(
-        "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
       CardIcons = new CardIcons
       {
         TopLeftIcon = new CardIcon
@@ -843,10 +837,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Ids =
           {
-            IdUtil.CardObjectId(new CardId
-            {
-              IdentityCard = playerName
-            })
+            IdUtil.IdentityCardId(playerName)
           },
           Position = new ObjectPosition
           {
@@ -1207,11 +1198,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Rewards =
           {
-            RevealedCard(21, "Reward#1", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_71", 6),
-            RevealedCard(22, "Reward#2", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72", 4),
-            RevealedCard(23, "Reward#3", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73", 3),
-            RevealedCard(24, "Reward#4", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74", 1),
-            RevealedCard(25, "Reward#5", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75", 0)
+            RevealedUserCard(21, "Reward#1", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_71", 6),
+            RevealedUserCard(22, "Reward#2", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72", 4),
+            RevealedUserCard(23, "Reward#3", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73", 3),
+            RevealedUserCard(24, "Reward#4", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74", 1),
+            RevealedUserCard(25, "Reward#5", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75", 0)
           }
         }
       };

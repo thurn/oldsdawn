@@ -57,7 +57,8 @@ namespace Spelldawn.Game
     [SerializeField] Vector3 _dragStartPosition;
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
-    [SerializeField] int _handIndex;
+    [SerializeField] ObjectDisplay? _previousParent;
+    [SerializeField] int _previousParentIndex;
 
     Registry _registry = null!;
 
@@ -88,8 +89,7 @@ namespace Spelldawn.Game
     public Sequence? Render(
       Registry registry,
       CardView cardView,
-      GameContext? gameContext = null,
-      bool animate = true)
+      GameContext? gameContext = null, bool animate = true)
     {
       if (gameContext is { } gc)
       {
@@ -97,7 +97,11 @@ namespace Spelldawn.Game
       }
 
       _registry = registry;
-      _cardBack.sprite = _registry.AssetService.GetSprite(cardView.CardBack);
+      if (cardView.CardBackPlayer != PlayerName.Unspecified)
+      {
+        _cardBack.sprite = _registry.AssetService.GetSprite(_registry.CardService.GetCardBack(cardView.CardBackPlayer));
+      }
+
       _outline.sortingOrder = -1;
       _cardView = cardView;
 
@@ -208,7 +212,8 @@ namespace Spelldawn.Game
       {
         _isDragging = true;
         SetGameContext(GameContext.Dragging);
-        _handIndex = Parent!.RemoveObject(this);
+        _previousParent = Parent;
+        _previousParentIndex = _previousParent!.RemoveObject(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
         _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
@@ -239,10 +244,15 @@ namespace Spelldawn.Game
     {
       _registry.ArenaService.HideRoomSelector();
       var distance = _dragStartPosition.z - DragWorldMousePosition().z;
-      if (!_isDragging || distance < 3.5f || !_registry.ActionService.UserCanAct())
+
+      if (!_isDragging ||
+          distance < 3.5f ||
+          !_registry.ActionService.UserCanAct() ||
+          (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom &&
+           _targetRoom == null))
       {
         // Return to hand
-        StartCoroutine(Parent!.AddObject(this, animate: true, index: _handIndex));
+        StartCoroutine(_previousParent!.AddObject(this, animate: true, index: _previousParentIndex));
       }
       else
       {
@@ -263,28 +273,6 @@ namespace Spelldawn.Game
         {
           PlayCard = action
         });
-
-        // var position = _revealedCardView?.OnReleasePosition;
-        // if (position?.PositionCase == ObjectPosition.PositionOneofCase.Room)
-        // {
-        //   if (_targetRoom is { } targetRoom)
-        //   {
-        //     // Move to targeted room if one is available
-        //     var newPosition = new ObjectPosition();
-        //     newPosition.MergeFrom(position);
-        //     newPosition.Room.RoomId = targetRoom;
-        //     position = newPosition;
-        //     _targetRoom = null;
-        //   }
-        //   else
-        //   {
-        //     position = null;
-        //   }
-        // }
-        //
-        // StartCoroutine(position != null
-        //   ? _registry.ObjectPositionService.MoveGameObject(this, position)
-        //   : Parent!.AddObject(this, animate: true, index: _handIndex));
       }
 
       _isDragging = false;

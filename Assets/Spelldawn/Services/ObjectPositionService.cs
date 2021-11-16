@@ -28,107 +28,9 @@ namespace Spelldawn.Services
 {
   public sealed class ObjectPositionService : MonoBehaviour
   {
-    const float CardScale = 1.5f;
-
     [SerializeField] Registry _registry = null!;
-    [SerializeField] Card _cardPrefab = null!;
-
-    readonly Dictionary<GameObjectId, Displayable> _cards = new();
-
-    Card? _optimisticCard;
-    SpriteAddress? _userCardBack;
-
-    public void Initialize(CardView? userCard, CardView? opponentCard)
-    {
-      if (userCard != null)
-      {
-        SetCardBacks(userCard, PlayerName.User);
-        _userCardBack = userCard.CardBack;
-      }
-
-      if (opponentCard != null)
-      {
-        SetCardBacks(opponentCard, PlayerName.Opponent);
-
-        foreach (var spriteRenderer in _registry.DeckForPlayer(PlayerName.Opponent)
-                   .GetComponentsInChildren<SpriteRenderer>())
-        {
-          spriteRenderer.sprite = _registry.AssetService.GetSprite(opponentCard.CardBack);
-        }
-      }
-
-      _cards[IdUtil.UserCardId] = _registry.IdentityCardForPlayer(PlayerName.User);
-      _cards[IdUtil.OpponentCardId] = _registry.IdentityCardForPlayer(PlayerName.Opponent);
-    }
 
     public Displayable Find(GameObjectId id) => CheckExists(id);
-
-    public Card FindCard(CardId id) => (Card)Find(IdUtil.CardObjectId(id));
-
-    public void DrawOptimisticCard()
-    {
-      if (_optimisticCard)
-      {
-        Destroy(_optimisticCard);
-      }
-
-      _optimisticCard = ComponentUtils.Instantiate(_cardPrefab);
-      _optimisticCard.Render(_registry, new CardView
-      {
-        CardBack = _userCardBack
-      }, GameContext.Staging);
-      _optimisticCard.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-      AnimateFromDeckToStaging(_optimisticCard);
-    }
-
-    public IEnumerator HandleCreateCardCommand(CreateCardCommand command)
-    {
-      Errors.CheckNotNull(command.Card);
-      Errors.CheckNotNull(command.Card.CardId);
-
-      var waitForStaging = false;
-      Card card;
-      if (_optimisticCard)
-      {
-        waitForStaging = true;
-        card = _optimisticCard!;
-        _optimisticCard = null;
-      }
-      else
-      {
-        card = ComponentUtils.Instantiate(_cardPrefab);
-        card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-
-        StartCoroutine(ObjectDisplayForPosition(command.Position).AddObject(card, animate: false));
-        //StartCoroutine(MoveObjectInternal(card, command.Position, animate: false));
-
-        switch (command.Animation)
-        {
-          case CardCreationAnimation.UserDeckToStaging:
-            AnimateFromDeckToStaging(card);
-            waitForStaging = true;
-            break;
-        }
-      }
-
-      card.Render(_registry, command.Card, GameContext.Staging, animate: !command.DisableAnimation);
-      _cards[IdUtil.CardObjectId(command.Card)] = card;
-
-      if (waitForStaging)
-      {
-        yield return new WaitUntil(() => card.IsRevealed && card.StagingAnimationComplete);
-        yield return new WaitForSeconds(0.5f);
-      }
-    }
-
-    public Card CreateCard(CardView cardView, GameContext gameContext, bool animate)
-    {
-      var card = ComponentUtils.Instantiate(_cardPrefab);
-      card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
-      card.Render(_registry, cardView, gameContext, animate: animate);
-      _cards[IdUtil.CardObjectId(cardView)] = card;
-      return card;
-    }
 
     public IEnumerator HandleFireProjectileCommand(FireProjectileCommand command)
     {
@@ -191,12 +93,6 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator HandleUpdateCardCommand(UpdateCardCommand command)
-    {
-      var card = (Card)CheckExists(new GameObjectId { CardId = command.Card.CardId });
-      yield return card.Render(_registry, command.Card).WaitForCompletion();
-    }
-
     public IEnumerator HandleMoveGameObjectsCommand(MoveGameObjectsCommand command)
     {
       return MoveGameObjects(command.Ids.Select(Find), command.Position, command.Index, !command.DisableAnimation);
@@ -225,8 +121,9 @@ namespace Spelldawn.Services
       switch (gameObjectId.IdCase)
       {
         case GameObjectId.IdOneofCase.CardId:
-          Errors.CheckState(_cards.ContainsKey(gameObjectId), $"Card not found: {gameObjectId}");
-          return _cards[gameObjectId];
+          return _registry.CardService.FindCard(gameObjectId.CardId);
+        case GameObjectId.IdOneofCase.Identity:
+          return _registry.IdentityCardForPlayer(gameObjectId.Identity);
         case GameObjectId.IdOneofCase.Deck:
           return _registry.DeckForPlayer(gameObjectId.Deck);
         case GameObjectId.IdOneofCase.Hand:
@@ -238,7 +135,7 @@ namespace Spelldawn.Services
       }
     }
 
-    ObjectDisplay ObjectDisplayForPosition(ObjectPosition position)
+    public ObjectDisplay ObjectDisplayForPosition(ObjectPosition position)
     {
       return position.PositionCase switch
       {
@@ -274,15 +171,7 @@ namespace Spelldawn.Services
       };
     }
 
-    void SetCardBacks(CardView? cardView, PlayerName playerName)
-    {
-      if (cardView != null)
-      {
-        _registry.DeckForPlayer(playerName).SetCardBacks(cardView.CardBack);
-      }
-    }
-
-    void AnimateFromDeckToStaging(Card card)
+    public void AnimateFromDeckToStaging(Card card)
     {
       var target = DeckSpawnPosition(PlayerName.User);
       card.transform.position = target;

@@ -393,18 +393,16 @@ enum PlayerName {
 }
 
 message CardId {
-    oneof card_id {
-        PlayerName identity_card = 1;
-        int32 value = 2;
-    }
+    int32 value = 1;
 }
 
 message GameObjectId {
     oneof id {
         CardId card_id = 1;
-        PlayerName deck = 2;
-        PlayerName hand = 3;
-        PlayerName discard_pile = 4;
+        PlayerName identity = 2;
+        PlayerName deck = 3;
+        PlayerName hand = 4;
+        PlayerName discard_pile = 5;
     }
 }
 
@@ -638,10 +636,10 @@ message RevealedCardView {
 
 message CardView {
     CardId card_id = 1;
-    SpriteAddress card_back = 3;
-    CardIcons card_icons = 4;
-    SpriteAddress arena_frame = 5;
-    RevealedCardView revealed_card = 6;
+    CardIcons card_icons = 2;
+    SpriteAddress arena_frame = 3;
+    PlayerName card_back_player = 4;
+    RevealedCardView revealed_card = 5;
 }
 
 message HandView {
@@ -656,12 +654,11 @@ message PlayerInfo {
     string name = 1;
     SpriteAddress portrait = 2;
 
-    /**
-    * Identifies the player's unique powers. The back for this card is used
-    * as the card back for all of this player's cards. The CardIds of the
-    * user's and the opponent's identity cards are conventionally 1 and 2.
-    */
-    CardView identity_card = 3;
+    /** Card back asset to use for this player's cards. */
+    SpriteAddress card_back = 3;
+
+    /** Describes the player's unique powers. */
+    RevealedCardView identity = 4;
 }
 
 message ManaView {

@@ -15,7 +15,6 @@
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 #nullable enable
 
@@ -29,7 +28,7 @@ namespace Spelldawn.Services
     [SerializeField] AssetService _assetService = null!;
     public AssetService AssetService => _assetService;
 
-    [FormerlySerializedAs("_objectPoolService")] [SerializeField] AssetPoolService _assetPoolService = null!;
+    [SerializeField] AssetPoolService _assetPoolService = null!;
     public AssetPoolService AssetPoolService => _assetPoolService;
 
     [SerializeField] ActionService _actionService = null!;
@@ -37,6 +36,9 @@ namespace Spelldawn.Services
 
     [SerializeField] ObjectPositionService _objectPositionService = null!;
     public ObjectPositionService ObjectPositionService => _objectPositionService;
+
+    [SerializeField] CardService _cardService = null!;
+    public CardService CardService => _cardService;
 
     [SerializeField] CommandService _commandService = null!;
     public CommandService CommandService => _commandService;

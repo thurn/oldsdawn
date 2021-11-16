@@ -81,6 +81,7 @@ namespace Spelldawn.Game
       var index = _objects.FindIndex(c => c == displayable);
       Errors.CheckNonNegative(index);
       _objects.RemoveAt(index);
+      displayable.Parent = null;
       return index;
     }
 
@@ -88,6 +89,7 @@ namespace Spelldawn.Game
     {
       MarkUpdateRequired(animate);
       _objects.Remove(displayable);
+      displayable.Parent = null;
     }
 
     public void DebugUpdate()

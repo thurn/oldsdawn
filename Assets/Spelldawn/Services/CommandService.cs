@@ -92,10 +92,10 @@ namespace Spelldawn.Services
             yield return _registry.ArenaService.HandleLevelUpRoom(command.LevelUpRoom);
             break;
           case GameCommand.CommandOneofCase.CreateCard:
-            yield return _registry.ObjectPositionService.HandleCreateCardCommand(command.CreateCard);
+            yield return _registry.CardService.HandleCreateCardCommand(command.CreateCard);
             break;
           case GameCommand.CommandOneofCase.UpdateCard:
-            yield return _registry.ObjectPositionService.HandleUpdateCardCommand(command.UpdateCard);
+            yield return _registry.CardService.HandleUpdateCardCommand(command.UpdateCard);
             break;
           case GameCommand.CommandOneofCase.MoveGameObjects:
             yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(command.MoveGameObjects);
@@ -150,10 +150,7 @@ namespace Spelldawn.Services
 
     IEnumerator HandleRenderGame(GameView game)
     {
-      _registry.ObjectPositionService.Initialize(
-        game.User?.PlayerInfo?.IdentityCard,
-        game.Opponent?.PlayerInfo?.IdentityCard);
-
+      _registry.CardService.SetCardBacks(game.User?.PlayerInfo?.CardBack, game.Opponent?.PlayerInfo?.CardBack);
       _registry.ArenaService.SetRoomsOnBottom(game.Arena?.RoomsAtBottom == true);
 
       if (game.CurrentPriority != PlayerName.Unspecified)

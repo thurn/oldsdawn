@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using DG.Tweening;
 using Spelldawn.Utils;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -43,7 +42,7 @@ namespace Spelldawn.Game
     {
     }
 
-    public GameContext GameContext => Errors.CheckEnum(HasGameContext ? _gameContext : DefaultGameContext());
+    public GameContext GameContext => Errors.CheckNotDefault(HasGameContext ? _gameContext : DefaultGameContext());
 
     public bool HasGameContext => _gameContext != GameContext.Unspecified;
 
@@ -54,7 +53,7 @@ namespace Spelldawn.Game
 
     public void SetGameContext(GameContext gameContext, int? index = null)
     {
-      Errors.CheckEnum(gameContext);
+      Errors.CheckNotDefault(gameContext);
 
       if (_gameContext != gameContext)
       {

@@ -61,7 +61,8 @@ namespace Spelldawn.Game
     IEnumerator DisplayCards(DisplayRewardsCommand command)
     {
       var cards = command.Rewards
-        .Select(c => _registry.ObjectPositionService.CreateCard(c, GameContext.RewardBrowser, animate: false))
+        .Select(c =>
+          _registry.CardService.CreateCard(c, GameContext.RewardBrowser, animate: false))
         .ToList();
       for (var i = 0; i < cards.Count; ++i)
       {

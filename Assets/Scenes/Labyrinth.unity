@@ -42982,6 +42982,7 @@ GameObject:
   - component: {fileID: 1445473046}
   - component: {fileID: 1445473045}
   - component: {fileID: 1445473044}
+  - component: {fileID: 1445473052}
   - component: {fileID: 1445473043}
   - component: {fileID: 1445473051}
   m_Layer: 0
@@ -43018,7 +43019,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _cardPrefab: {fileID: 3573626451624847171, guid: 94ee6780efb164566b7977f07977d072, type: 3}
 --- !u!114 &1445473045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43077,6 +43077,7 @@ MonoBehaviour:
   _assetPoolService: {fileID: 1445473051}
   _actionService: {fileID: 1445473045}
   _objectPositionService: {fileID: 1445473044}
+  _cardService: {fileID: 1445473052}
   _commandService: {fileID: 1445473043}
   _documentService: {fileID: 1445473046}
   _sampleData: {fileID: 1445473050}
@@ -43152,6 +43153,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bd2765999f142f490c1908beb80dc56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1445473052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445473042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c36e9a3e1254f43b71171ed4945a666, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 1445473048}
+  _cardPrefab: {fileID: 3573626451624847171, guid: 94ee6780efb164566b7977f07977d072, type: 3}
 --- !u!1 &1451530778
 GameObject:
   m_ObjectHideFlags: 0

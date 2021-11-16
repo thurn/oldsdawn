@@ -22,27 +22,16 @@ namespace Spelldawn.Utils
   {
     public static readonly GameObjectId UserCardId = new()
     {
-      CardId = new CardId
-      {
-        IdentityCard = PlayerName.User
-      }
+      Identity = PlayerName.User
     };
 
     public static readonly GameObjectId OpponentCardId = new()
     {
-      CardId = new CardId
-      {
-        IdentityCard = PlayerName.Opponent
-      }
+      Identity = PlayerName.Opponent
     };
 
-    public static GameObjectId IdentityCardId(PlayerName playerName) => new()
-    {
-      CardId = new CardId
-      {
-        IdentityCard = playerName
-      }
-    };
+    public static GameObjectId IdentityCardId(PlayerName playerName) =>
+      playerName == PlayerName.User ? UserCardId : OpponentCardId;
 
     // ReSharper disable once UnusedMember.Local
     public static GameObjectId DeckObjectId(PlayerName playerName) => new()

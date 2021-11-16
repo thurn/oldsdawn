@@ -46,7 +46,7 @@ namespace Spelldawn.Utils
       return value.Value;
     }
 
-    public static T CheckEnum<T>(T value) where T : Enum
+    public static T CheckNotDefault<T>(T value) where T : Enum
     {
       if (Equals(value, default(T)))
       {

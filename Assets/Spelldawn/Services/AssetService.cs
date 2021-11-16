@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +20,6 @@ using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 #nullable enable
 
@@ -211,7 +209,6 @@ namespace Spelldawn.Services
     {
       if (card != null)
       {
-        LoadSprite(requests, card.CardBack);
         LoadCardIconsAssets(requests, card.CardIcons);
         LoadSprite(requests, card.ArenaFrame);
         LoadRevealedCardAssets(requests, card.RevealedCard);
@@ -254,8 +251,9 @@ namespace Spelldawn.Services
     {
       if (playerInfo != null)
       {
+        LoadSprite(requests, playerInfo.CardBack);
         LoadSprite(requests, playerInfo.Portrait);
-        LoadCardAssets(requests, playerInfo.IdentityCard);
+        LoadRevealedCardAssets(requests, playerInfo.Identity);
       }
     }
 
