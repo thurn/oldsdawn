@@ -29,6 +29,9 @@ namespace Spelldawn.Services
     const float CardScale = 1.5f;
     [SerializeField] Registry _registry = null!;
     [SerializeField] Card _cardPrefab = null!;
+    [SerializeField] ObjectDisplay _infoZoomLeft = null!;
+    [SerializeField] ObjectDisplay _infoZoomRight = null!;
+
     Card? _optimisticCard;
     SpriteAddress _userCardBack = null!;
     SpriteAddress _opponentCardBack = null!;
@@ -63,11 +66,16 @@ namespace Spelldawn.Services
 
     void Update()
     {
-      if (Input.GetMouseButtonUp(0) && CurrentlyDragging)
+      if (Input.GetMouseButtonUp(0))
       {
-        var card = CurrentlyDragging!;
-        CurrentlyDragging = null;
-        card.MouseUp();
+        ClearInfoZoom();
+
+        if (CurrentlyDragging)
+        {
+          var card = CurrentlyDragging!;
+          CurrentlyDragging = null;
+          card.MouseUp();
+        }
       }
     }
 
@@ -141,6 +149,23 @@ namespace Spelldawn.Services
     public IEnumerator HandleUpdateCardCommand(UpdateCardCommand command)
     {
       yield return FindCard(command.Card!.CardId).Render(_registry, command.Card).WaitForCompletion();
+    }
+
+    public void DisplayInfoZoom(Vector3 worldMousePosition, CardView cardView)
+    {
+      ClearInfoZoom();
+      var card = ComponentUtils.Instantiate(_cardPrefab);
+      card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+      card.Render(_registry, cardView, GameContext.InfoZoom, animate: false);
+      card.gameObject.name = $"{card.gameObject.name} InfoZoom";
+      var container = worldMousePosition.x > 0 ? _infoZoomRight : _infoZoomLeft;
+      StartCoroutine(container.AddObject(card, animate: false));
+    }
+
+    public void ClearInfoZoom()
+    {
+      _infoZoomLeft.DestroyAll();
+      _infoZoomRight.DestroyAll();
     }
   }
 }

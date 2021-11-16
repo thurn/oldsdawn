@@ -33,7 +33,8 @@ namespace Spelldawn.Game
     Effects = 8,
     Dragging = 9,
     UserMessage = 13,
-    RewardBrowser = 14
+    RewardBrowser = 14,
+    InfoZoom = 15
   }
 
   public static class GameContextUtil

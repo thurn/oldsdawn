@@ -92,6 +92,16 @@ namespace Spelldawn.Game
       displayable.Parent = null;
     }
 
+    public void DestroyAll()
+    {
+      foreach (var displayable in _objects)
+      {
+        Destroy(displayable.gameObject);
+      }
+
+      _objects.Clear();
+    }
+
     public void DebugUpdate()
     {
       if (Application.isPlaying)

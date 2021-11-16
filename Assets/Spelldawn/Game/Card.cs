@@ -52,6 +52,7 @@ namespace Spelldawn.Game
     [SerializeField] Icon _arenaIcon = null!;
     [SerializeField] bool _isRevealed;
     [SerializeField] bool _canPlay;
+    [SerializeField] float _mouseDownTime;
     [SerializeField] float _dragStartScreenZ;
     [SerializeField] Vector3 _dragStartPosition;
     [SerializeField] Vector3 _dragOffset;
@@ -206,6 +207,10 @@ namespace Spelldawn.Game
         return;
       }
 
+      _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
+      _dragStartPosition = DragWorldMousePosition();
+      _registry.CardService.DisplayInfoZoom(_dragStartPosition, _cardView!);
+
       if (InHand() && _canPlay)
       {
         _registry.CardService.CurrentlyDragging = this;
@@ -214,8 +219,6 @@ namespace Spelldawn.Game
         _previousParentIndex = _previousParent!.RemoveObject(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
-        _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
-        _dragStartPosition = DragWorldMousePosition();
         _dragOffset = gameObject.transform.position - _dragStartPosition;
       }
     }
@@ -233,6 +236,11 @@ namespace Spelldawn.Game
       transform.position = _dragOffset + mousePosition;
       var rotation = Quaternion.Slerp(_initialDragRotation, Quaternion.Euler(280, 0, 0), t);
       transform.rotation = rotation;
+
+      if (distanceDragged > 0.5f)
+      {
+        _registry.CardService.ClearInfoZoom();
+      }
 
       if (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom)
       {

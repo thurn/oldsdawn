@@ -31,7 +31,7 @@ namespace Spelldawn.Game
     protected override Vector3 CalculateObjectPosition(int index, int count) =>
       transform.position + new Vector3(
         CalculateXOffset(index, count),
-        0,
+        0.5f,
         CalculateZOffset(index, count));
 
     protected override Vector3? CalculateObjectRotation(int index, int count) =>
