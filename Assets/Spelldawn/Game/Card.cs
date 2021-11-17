@@ -52,7 +52,6 @@ namespace Spelldawn.Game
     [SerializeField] Icon _arenaIcon = null!;
     [SerializeField] bool _isRevealed;
     [SerializeField] bool _canPlay;
-    [SerializeField] bool _isDragging;
     [SerializeField] float _dragStartScreenZ;
     [SerializeField] Vector3 _dragStartPosition;
     [SerializeField] Vector3 _dragOffset;
@@ -133,7 +132,7 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      if (!_isDragging && InHand() && _revealedCardView is { Cost: { } cost })
+      if (!CurrentlyDraggingThisCard() && InHand() && _revealedCardView is { Cost: { } cost })
       {
         var haveAvailableResources =
           cost.ManaCost <= _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
@@ -202,15 +201,14 @@ namespace Spelldawn.Game
 
     void OnMouseDown()
     {
-      if (_isDragging)
+      if (_registry.CardService.CurrentlyDragging)
       {
-        // Unity seems to send this event multiple times a lot...
         return;
       }
 
       if (InHand() && _canPlay)
       {
-        _isDragging = true;
+        _registry.CardService.CurrentlyDragging = this;
         SetGameContext(GameContext.Dragging);
         _previousParent = Parent;
         _previousParentIndex = _previousParent!.RemoveObject(this);
@@ -224,30 +222,35 @@ namespace Spelldawn.Game
 
     void OnMouseDrag()
     {
-      if (_isDragging)
+      if (!CurrentlyDraggingThisCard())
       {
-        var mousePosition = DragWorldMousePosition();
-        var distanceDragged = Vector2.Distance(mousePosition, _dragStartPosition);
-        var t = Mathf.Clamp01(distanceDragged / 5);
-        transform.position = _dragOffset + mousePosition;
-        var rotation = Quaternion.Slerp(_initialDragRotation, Quaternion.Euler(280, 0, 0), t);
-        transform.rotation = rotation;
+        return;
+      }
 
-        if (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom)
-        {
-          _targetRoom = _registry.ArenaService.ShowRoomSelectorForMousePosition();
-        }
+      var mousePosition = DragWorldMousePosition();
+      var distanceDragged = Vector2.Distance(mousePosition, _dragStartPosition);
+      var t = Mathf.Clamp01(distanceDragged / 5);
+      transform.position = _dragOffset + mousePosition;
+      var rotation = Quaternion.Slerp(_initialDragRotation, Quaternion.Euler(280, 0, 0), t);
+      transform.rotation = rotation;
+
+      if (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom)
+      {
+        _targetRoom = _registry.ArenaService.ShowRoomSelectorForMousePosition();
       }
     }
 
-    void OnMouseUp()
+    /// <summary>
+    /// Unity does not reliably send OnMouseUp when other colliders get in the way, so we invoke this method from
+    /// <see cref="CardService"/> instead. The value of <see cref="CardService.CurrentlyDragging"/> will be set to null
+    /// before this method is called.
+    /// </summary>
+    public void MouseUp()
     {
       _registry.ArenaService.HideRoomSelector();
       var distance = _dragStartPosition.z - DragWorldMousePosition().z;
-
-      if (!_isDragging ||
-          distance < 3.5f ||
-          !_registry.ActionService.UserCanAct() ||
+      if (distance < 3.5f ||
+          !_registry.ActionService.CanPerformAction(GameAction.ActionOneofCase.PlayCard) ||
           (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom &&
            _targetRoom == null))
       {
@@ -274,9 +277,9 @@ namespace Spelldawn.Game
           PlayCard = action
         });
       }
-
-      _isDragging = false;
     }
+
+    bool CurrentlyDraggingThisCard() => _registry.CardService.CurrentlyDragging == this;
 
     Vector3 DragWorldMousePosition() => _registry.MainCamera.ScreenToWorldPoint(
       new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartScreenZ));

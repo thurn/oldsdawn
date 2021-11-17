@@ -35,6 +35,8 @@ namespace Spelldawn.Services
 
     readonly Dictionary<CardId, Card> _cards = new();
 
+    public Card? CurrentlyDragging { get; set; }
+
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)
     {
       if (userCardBack != null)
@@ -57,6 +59,16 @@ namespace Spelldawn.Services
     {
       Errors.CheckState(_cards.ContainsKey(cardId), $"Card Id {cardId} not found");
       return _cards[cardId];
+    }
+
+    void Update()
+    {
+      if (Input.GetMouseButtonUp(0) && CurrentlyDragging)
+      {
+        var card = CurrentlyDragging!;
+        CurrentlyDragging = null;
+        card.MouseUp();
+      }
     }
 
     public void DrawOptimisticCard()

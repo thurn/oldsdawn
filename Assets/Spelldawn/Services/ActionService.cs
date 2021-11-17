@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
+using System.Text;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 #nullable enable
 
@@ -27,11 +30,6 @@ namespace Spelldawn.Services
     [SerializeField] PlayerName _currentPriority;
     [SerializeField] bool _currentlyHandlingAction;
 
-    public bool UserCanAct() => !_currentlyHandlingAction &&
-                                !_registry.RaidService.RaidActive &&
-                                !_registry.CommandService.CurrentlyHandlingCommand &&
-                                _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0;
-
     public PlayerName CurrentPriority
     {
       set => _currentPriority = value;
@@ -39,15 +37,35 @@ namespace Spelldawn.Services
 
     public void HandleAction(GameAction action)
     {
-      if (_currentlyHandlingAction)
+      if (!CanPerformAction(action.ActionCase))
       {
-        Debug.LogError($"Error: Already handling action, cannot process {action}");
-        return;
+        var message = new StringBuilder();
+        message.Append($"Error: User cannot currently perform action {action}");
+        message.Append($"\nCurrently Handling Action: {_currentlyHandlingAction}");
+        throw new InvalidOperationException(message.ToString());
       }
 
       _currentlyHandlingAction = true;
       StartCoroutine(HandleActionAsync(action));
     }
+
+    public bool CanPerformAction(GameAction.ActionOneofCase actionType) => actionType switch
+    {
+      GameAction.ActionOneofCase.StandardAction => CanAct(allowInRaid: true, actionPointRequired: false),
+      GameAction.ActionOneofCase.GainMana => CanAct(),
+      GameAction.ActionOneofCase.DrawCard => CanAct(),
+      GameAction.ActionOneofCase.PlayCard => CanAct(),
+      GameAction.ActionOneofCase.LevelUpRoom => CanAct(),
+      GameAction.ActionOneofCase.InitiateRaid => CanAct(),
+      _ => false
+    };
+
+    bool CanAct(bool allowInRaid = false, bool actionPointRequired = true) =>
+      !_currentlyHandlingAction &&
+      !_registry.CommandService.CurrentlyHandlingCommand &&
+      _registry.CardService.CurrentlyDragging == null &&
+      (allowInRaid || !_registry.RaidService.RaidActive) &&
+      (!actionPointRequired || _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0);
 
     void Update()
     {
@@ -56,7 +74,7 @@ namespace Spelldawn.Services
 
       switch (_currentPriority)
       {
-        case PlayerName.User when UserCanAct():
+        case PlayerName.User when CanPerformAction(GameAction.ActionOneofCase.PlayCard):
           userLight.SetActive(true);
           break;
         case PlayerName.Opponent:
