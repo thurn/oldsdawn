@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using TMPro;
@@ -23,45 +24,107 @@ namespace Spelldawn.Game
 {
   public sealed class IdentityCard : StackObjectDisplay, ArrowService.IArrowDelegate
   {
-    [SerializeField] Registry _registry = null!;
-    [SerializeField] bool _canDrag;
+    [Header("Identity Card")] [SerializeField]
+    Registry _registry = null!;
+
     [SerializeField] TextMeshPro _scoreText = null!;
     [SerializeField] GameObject _raidSymbol = null!;
+    [SerializeField] PlayerName _owner;
+
+    IdentityAction? _identityAction;
+    Card? _identityCard;
 
     RoomId? _selectedRoom;
-
-    public IdentityAction? IdentityAction { private get; set; }
 
     public bool RaidSymbolShown
     {
       set => _raidSymbol.SetActive(value);
     }
 
-    protected override GameContext DefaultGameContext() => GameContext.Arena;
+    protected override GameContext DefaultGameContext() => GameContext.Identity;
 
-    protected override float? CalculateObjectScale(int index, int count) => 0.1f;
+    protected override float? CalculateObjectScale(int index, int count) => 0f;
 
-    public void SetScore(int? value)
+    public override float DefaultScale => 2.0f;
+
+    public override bool IsContainer() => false;
+
+    public void Render(IdentityAction? identityAction, PlayerView? view)
     {
-      if (value is { } v)
+      _identityAction = identityAction;
+
+      if (view?.PlayerInfo?.IdentityCard is { } ic)
       {
-        _scoreText.text = v.ToString();
+        if (_identityCard)
+        {
+          _identityCard!.Render(_registry, ic, GameContext.Identity, animate: false);
+        }
+        else
+        {
+          _identityCard = _registry.CardService.CreateCard(ic, GameContext.Identity, animate: false);
+          StartCoroutine(AddObject(_identityCard, animate: false));
+        }
+      }
+
+      if (view?.Score?.Score is { } s)
+      {
+        _scoreText.text = s.ToString();
       }
     }
 
-    void OnMouseDown()
+    protected override void MouseDown()
     {
-      if (_canDrag)
+      if (_owner == PlayerName.User && _registry.ActionService.CanInitiateAction())
       {
-        switch (IdentityAction)
+        switch (_identityAction)
         {
-          case Protos.IdentityAction.InitiateRaid:
+          case IdentityAction.InitiateRaid:
             _registry.ArrowService.ShowArrow(ArrowService.Type.Red, transform, this);
             break;
-          case Protos.IdentityAction.LevelUpRoom:
+          case IdentityAction.LevelUpRoom:
             _registry.ArrowService.ShowArrow(ArrowService.Type.Green, transform, this);
             break;
         }
+      }
+    }
+
+    protected override void LongPress()
+    {
+      StartCoroutine(LongPressAsync());
+    }
+
+    IEnumerator LongPressAsync()
+    {
+      if (_identityCard != null && _registry.ActionService.CanInitiateAction())
+      {
+        _registry.ArrowService.HideArrows();
+        var identityPosition = new ObjectPosition
+        {
+          Identity = new ObjectPositionIdentity
+          {
+            Owner = _owner
+          }
+        };
+        var browserPosition = new ObjectPosition
+        {
+          Browser = new ObjectPositionBrowser()
+        };
+
+        yield return _registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(
+          new MoveGameObjectsAtPositionCommand
+          {
+            SourcePosition = identityPosition,
+            TargetPosition = browserPosition,
+          });
+        yield return _registry.DocumentService.RenderMainControls(
+          DocumentService.ControlGroup(DocumentService.Button("Close", new GameCommand
+          {
+            MoveObjectsAtPosition = new MoveGameObjectsAtPositionCommand
+            {
+              SourcePosition = browserPosition,
+              TargetPosition = identityPosition
+            }
+          })));
       }
     }
 
@@ -75,9 +138,9 @@ namespace Spelldawn.Game
       _registry.ArenaService.HideRoomSelector();
       if (_selectedRoom is { } selectedRoom)
       {
-        switch (IdentityAction)
+        switch (_identityAction)
         {
-          case Protos.IdentityAction.InitiateRaid:
+          case IdentityAction.InitiateRaid:
             _registry.ActionService.HandleAction(new GameAction
             {
               InitiateRaid = new InitiateRaidAction
@@ -86,7 +149,7 @@ namespace Spelldawn.Game
               }
             });
             break;
-          case Protos.IdentityAction.LevelUpRoom:
+          case IdentityAction.LevelUpRoom:
             _registry.ActionService.HandleAction(new GameAction
             {
               LevelUpRoom = new LevelUpRoomAction

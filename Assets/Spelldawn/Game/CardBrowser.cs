@@ -12,26 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Spelldawn.Services;
 using UnityEngine;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class CustomDisplayable : Displayable
+  public sealed class CardBrowser : CurveObjectDisplay
   {
-    [SerializeField] float _defaultScale;
+    [SerializeField] Registry _registry = null!;
+    [SerializeField] bool _active;
 
-    protected override void OnStart()
+    protected override void OnUpdated()
     {
-      base.OnStart();
-      _defaultScale = transform.localScale.x;
-    }
-
-    public override float DefaultScale => _defaultScale;
-
-    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
-    {
+      if (ObjectCount > 0)
+      {
+        _registry.BackgroundOverlay.Enable(GameContext.Interface, translucent: true);
+        _active = true;
+      }
+      else if (_active)
+      {
+        _registry.BackgroundOverlay.Disable();
+        _active = false;
+      }
     }
   }
 }

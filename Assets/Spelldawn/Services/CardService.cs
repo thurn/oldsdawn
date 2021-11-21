@@ -26,7 +26,6 @@ namespace Spelldawn.Services
 {
   public sealed class CardService : MonoBehaviour
   {
-    const float CardScale = 1.5f;
     [SerializeField] Registry _registry = null!;
     [SerializeField] Card _cardPrefab = null!;
     [SerializeField] ObjectDisplay _infoZoomLeft = null!;
@@ -87,8 +86,8 @@ namespace Spelldawn.Services
       }
 
       _optimisticCard = ComponentUtils.Instantiate(_cardPrefab);
-      _optimisticCard.Render(_registry, new CardView { CardBackPlayer = PlayerName.User }, GameContext.Staging);
-      _optimisticCard.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+      _optimisticCard.Render(_registry, new CardView { OwningPlayer = PlayerName.User }, GameContext.Staging);
+      _optimisticCard.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       _registry.ObjectPositionService.AnimateFromDeckToStaging(_optimisticCard);
     }
 
@@ -108,7 +107,7 @@ namespace Spelldawn.Services
       else
       {
         card = ComponentUtils.Instantiate(_cardPrefab);
-        card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+        card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
 
         StartCoroutine(_registry.ObjectPositionService.ObjectDisplayForPosition(command.Position)
           .AddObject(card, animate: false));
@@ -140,7 +139,7 @@ namespace Spelldawn.Services
     public Card CreateCard(CardView cardView, GameContext gameContext, bool animate)
     {
       var card = ComponentUtils.Instantiate(_cardPrefab);
-      card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+      card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       card.Render(_registry, cardView, gameContext, animate: animate);
       _cards[cardView.CardId] = card;
       return card;
@@ -155,7 +154,7 @@ namespace Spelldawn.Services
     {
       ClearInfoZoom();
       var card = ComponentUtils.Instantiate(_cardPrefab);
-      card.transform.localScale = new Vector3(CardScale, CardScale, 1f);
+      card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       card.Render(_registry, cardView, GameContext.InfoZoom, animate: false);
       card.gameObject.name = $"{card.gameObject.name} InfoZoom";
       var container = worldMousePosition.x > 0 ? _infoZoomRight : _infoZoomLeft;

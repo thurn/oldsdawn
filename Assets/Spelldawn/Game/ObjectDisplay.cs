@@ -35,7 +35,9 @@ namespace Spelldawn.Game
 
     public List<Displayable> AllObjects => new(_objects);
 
-    void Start()
+    public int ObjectCount => _objects.Count;
+
+    protected override void OnStart()
     {
       _updateRequired = true;
     }
@@ -45,6 +47,7 @@ namespace Spelldawn.Game
       if (_updateRequired && !_animationRunning)
       {
         MoveObjectsToPosition(_animateNextUpdate);
+        OnUpdated();
         _updateRequired = false;
       }
     }
@@ -114,7 +117,7 @@ namespace Spelldawn.Game
       }
     }
 
-    public override bool IsContainer() => _objects.Count > 0;
+    public override bool IsContainer() => true;
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
@@ -137,8 +140,9 @@ namespace Spelldawn.Game
 
     protected virtual float? CalculateObjectScale(int index, int count) => null;
 
-    /// <summary>If true, children will be forced into their assigned positions once per frame.</summary>
-    protected virtual bool LockChildPositions() => false;
+    protected virtual void OnUpdated()
+    {
+    }
 
     void MarkUpdateRequired(bool animate)
     {
@@ -148,6 +152,8 @@ namespace Spelldawn.Game
 
     void Insert(Displayable displayable, bool animateRemove, int? index)
     {
+      Errors.CheckNotNull(displayable);
+
       if (displayable.Parent)
       {
         displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
@@ -181,7 +187,7 @@ namespace Spelldawn.Game
         var displayable = _objects[i];
         var position = CalculateObjectPosition(i, _objects.Count);
         var rotation = CalculateObjectRotation(i, _objects.Count);
-        var scale = CalculateObjectScale(i, _objects.Count);
+        var scale = CalculateObjectScale(i, _objects.Count) ?? displayable.DefaultScale;
 
         var shouldAnimate = animate;
         if (displayable.IsContainer())
@@ -214,16 +220,14 @@ namespace Spelldawn.Game
           }
         }
 
-        if (scale is { } s)
+        if (shouldAnimate)
         {
-          if (shouldAnimate)
-          {
-            sequence.Insert(atPosition: 0, displayable.transform.DOScale(Vector3.one * s, duration: AnimationDuration));
-          }
-          else
-          {
-            displayable.transform.localScale = Vector3.one * s;
-          }
+          sequence.Insert(atPosition: 0,
+            displayable.transform.DOScale(Vector3.one * scale, duration: AnimationDuration));
+        }
+        else
+        {
+          displayable.transform.localScale = Vector3.one * scale;
         }
 
         displayable.SetGameContext(GameContext, 10 + i);

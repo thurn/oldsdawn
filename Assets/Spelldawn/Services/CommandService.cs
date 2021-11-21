@@ -100,6 +100,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.MoveGameObjects:
             yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(command.MoveGameObjects);
             break;
+          case GameCommand.CommandOneofCase.MoveObjectsAtPosition:
+            yield return _registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(command.MoveObjectsAtPosition);
+            break;
           case GameCommand.CommandOneofCase.DestroyCard:
             break;
           case GameCommand.CommandOneofCase.UpdatePlayerState:
@@ -158,8 +161,8 @@ namespace Spelldawn.Services
         _registry.ActionService.CurrentPriority = game.CurrentPriority;
       }
 
-      _registry.IdentityCardForPlayer(PlayerName.User).SetScore(game.User?.Score?.Score);
-      _registry.IdentityCardForPlayer(PlayerName.User).IdentityAction = game.Arena?.IdentityAction;
+      _registry.IdentityCardForPlayer(PlayerName.User).Render(game.Arena?.IdentityAction, game.User);
+      _registry.IdentityCardForPlayer(PlayerName.Opponent).Render(null, game.Opponent);
       yield break;
     }
 

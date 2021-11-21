@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using System.Linq;
 using Spelldawn.Masonry;
 using static Spelldawn.Masonry.MasonUtil;
@@ -58,17 +59,31 @@ namespace Spelldawn.Services
           break;
         case RenderInterfaceCommand.PositionOneofCase.RaidControls:
           _raidControls.Clear();
-          _raidControls.Add(Mason.Render(_registry, RaidControls(command.RaidControls.Node)));
+          _raidControls.Add(Mason.Render(_registry, MainControls(command.RaidControls.Node)));
           break;
         case RenderInterfaceCommand.PositionOneofCase.ObjectControls:
           _cardControls.Clear();
           _cardControls.Add(Mason.Render(_registry,
-            Row("CardControls", new FlexStyle(), command.ObjectControls.ControlNodes.Select(ObjectControl))));
+            Row("ObjectControls", new FlexStyle(), command.ObjectControls.ControlNodes.Select(ObjectControl))));
           break;
         default:
           Debug.LogError($"Unknown interface position: {command.PositionCase}");
           goto case RenderInterfaceCommand.PositionOneofCase.FullScreen;
       }
+    }
+
+    public IEnumerator RenderMainControls(Node node)
+    {
+      return _registry.CommandService.HandleCommands(new GameCommand
+      {
+        RenderInterface = new RenderInterfaceCommand
+        {
+          RaidControls = new InterfacePositionRaidControls
+          {
+            Node = node
+          }
+        }
+      });
     }
 
     void AddRoot(string elementName, out VisualElement element)
@@ -92,8 +107,8 @@ namespace Spelldawn.Services
     static Node FullScreen(Node? content) =>
       Row("FullScreen", new FlexStyle());
 
-    static Node RaidControls(Node? content) =>
-      Row("RaidControls", new FlexStyle
+    static Node MainControls(Node? content) =>
+      Row("MainControls", new FlexStyle
       {
         Position = FlexPosition.Absolute,
         Height = Dip(125),
@@ -119,5 +134,63 @@ namespace Spelldawn.Services
         AlignItems = FlexAlign.Center
       }, controlNode.Node);
     }
+
+    public static Node ControlGroup(params Node[] nodes) => Row("ControlGroup",
+      new FlexStyle
+      {
+        JustifyContent = FlexJustify.Center,
+        FlexGrow = 1,
+        AlignItems = FlexAlign.Center,
+        Wrap = FlexWrap.WrapReverse,
+      },
+      nodes);
+
+    public static Node Button(string label, GameCommand? update, bool primary = false) => Row(
+      $"Button {label}",
+      new FlexStyle
+      {
+        Margin = AllDip(8),
+        Height = Dip(88),
+        MinWidth = Dip(132),
+        JustifyContent = FlexJustify.Center,
+        AlignItems = FlexAlign.Center,
+        FlexShrink = 0,
+        BackgroundImage = Sprite(primary
+          ? "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange"
+          : "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
+        ImageSlice = ImageSlice(0, 16)
+      },
+      new EventHandlers
+      {
+        OnClick = new GameAction
+        {
+          StandardAction = new StandardAction
+          {
+            Update = new CommandList
+            {
+              Commands =
+              {
+                new GameCommand
+                {
+                  RenderInterface = new RenderInterfaceCommand
+                  {
+                    RaidControls = new InterfacePositionRaidControls()
+                  }
+                },
+                update
+              }
+            }
+          }
+        }
+      },
+      Text(label, new FlexStyle
+      {
+        Margin = LeftRightDip(16),
+        Padding = AllDip(0),
+        Color = MakeColor(Color.white),
+        FontSize = Dip(32),
+        Font = Font("Fonts/Roboto"),
+        TextAlign = TextAlign.MiddleCenter
+      }));
   }
 }

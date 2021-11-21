@@ -38,8 +38,7 @@ namespace Spelldawn.Services
       if (_currentRoom != command.RoomId)
       {
         _currentRoom = command.RoomId;
-        _registry.BlackBackground.enabled = true;
-        _registry.BlackBackground.color = new Color(0, 0, 0, 0.5f);
+        _registry.BackgroundOverlay.Enable(GameContext.ArenaRaidParticipant, translucent: true);
         _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
 
         var room = _registry.ArenaService.FindRoom(command.RoomId);
@@ -91,7 +90,7 @@ namespace Spelldawn.Services
     public IEnumerator HandleEndRaid(EndRaidCommand endRaidCommand)
     {
       _registry.IdentityCardForPlayer(endRaidCommand.Initiator).RaidSymbolShown = false;
-      _registry.BlackBackground.enabled = false;
+      _registry.BackgroundOverlay.Disable();
       _currentRoom = null;
       yield break;
     }

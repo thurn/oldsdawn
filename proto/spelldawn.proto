@@ -636,9 +636,14 @@ message RevealedCardView {
 
 message CardView {
     CardId card_id = 1;
+
     CardIcons card_icons = 2;
+
     SpriteAddress arena_frame = 3;
-    PlayerName card_back_player = 4;
+
+    /** Used to e.g. determine which card back to display for this card. */
+    PlayerName owning_player = 4;
+
     RevealedCardView revealed_card = 5;
 }
 
@@ -658,7 +663,7 @@ message PlayerInfo {
     SpriteAddress card_back = 3;
 
     /** Describes the player's unique powers. */
-    RevealedCardView identity = 4;
+    CardView identity_card = 4;
 }
 
 message ManaView {
@@ -733,8 +738,8 @@ message StandardAction {
     /** Opaque payload to send to the server. */
     google.protobuf.Any payload = 1;
 
-    /** Optimistic mutations to game state for this action. */
-    CommandList optimistic_update = 2;
+    /** Immediate optimistic mutations to game state for this action. */
+    CommandList update = 2;
 }
 
 /**
@@ -946,6 +951,15 @@ message MoveGameObjectsCommand {
     bool disable_animation = 4;
 }
 
+/** Request to move all GameObjects located at a specific object position to another object position. */
+message MoveGameObjectsAtPositionCommand {
+    ObjectPosition source_position = 1;
+
+    ObjectPosition target_position = 2;
+
+    bool disable_animation = 3;
+}
+
 message DestroyCardCommand {
     CardId card_id = 1;
 }
@@ -1046,7 +1060,8 @@ message GameCommand {
         LevelUpRoomCommand level_up_room = 8;
         CreateCardCommand create_card = 9;
         UpdateCardCommand update_card = 10;
-        MoveGameObjectsCommand move_game_objects = 12;
+        MoveGameObjectsCommand move_game_objects = 11;
+        MoveGameObjectsAtPositionCommand move_objects_at_position = 12;
         DestroyCardCommand destroy_card = 13;
         UpdatePlayerStateCommand update_player_state = 14;
         FireProjectileCommand fire_projectile = 15;

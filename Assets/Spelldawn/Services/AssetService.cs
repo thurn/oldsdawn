@@ -253,7 +253,7 @@ namespace Spelldawn.Services
       {
         LoadSprite(requests, playerInfo.CardBack);
         LoadSprite(requests, playerInfo.Portrait);
-        LoadRevealedCardAssets(requests, playerInfo.Identity);
+        LoadCardAssets(requests, playerInfo.IdentityCard);
       }
     }
 

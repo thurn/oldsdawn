@@ -185,7 +185,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Commands = { Delay(1000) }
         }),
-        OptimisticUpdate = new CommandList
+        Update = new CommandList
         {
           Commands =
           {
@@ -375,7 +375,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Card = new CardView
           {
             CardId = cardId,
-            CardBackPlayer = PlayerName.Opponent
+            OwningPlayer = PlayerName.Opponent
           },
           Position = DeckPosition(PlayerName.Opponent)
         }
@@ -418,13 +418,19 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     CardView Card() => Cards[_lastReturnedCard++ % 10];
 
-    static GameView SampleGame() =>
+    GameView SampleGame() =>
       new()
       {
-        User = Player("User", PlayerName.User,
-          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"),
-        Opponent = Player("Opponent", PlayerName.Opponent,
-          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
+        User = Player(
+          "User",
+          PlayerName.User,
+          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1",
+          RevealedUserCard(1234, "User Identity", "Identity Card Text", "Enixion/Fantasy Art Pack 2/Resized/2", null)),
+        Opponent = Player(
+          "Opponent",
+          PlayerName.Opponent,
+          "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1",
+          OpponentCard("Opponent Identity", 1235, 12)),
         Arena = new ArenaView
         {
           IdentityAction = IdentityAction.InitiateRaid
@@ -434,12 +440,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static TimeValue TimeMs(int ms) => new() { Milliseconds = ms };
 
-    static PlayerView Player(string playerName, PlayerName id, string cardBack) => new()
+    static PlayerView Player(string playerName, PlayerName id, string cardBack, CardView identityCard) => new()
     {
       PlayerInfo = new PlayerInfo
       {
         Name = playerName,
-        Identity = new RevealedCardView(),
+        IdentityCard = identityCard,
         CardBack = new SpriteAddress
         {
           Address = cardBack
@@ -469,7 +475,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       string title,
       string text,
       string image,
-      int manaCost)
+      int? manaCost)
     {
       var roomTarget = new CardTargeting
       {
@@ -503,14 +509,16 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       return new CardView
       {
         CardId = IdUtil.CardId(cardId),
-        CardBackPlayer = PlayerName.User,
+        OwningPlayer = PlayerName.User,
         CardIcons = new CardIcons
         {
-          TopLeftIcon = new CardIcon
-          {
-            Background = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"),
-            Text = manaCost + ""
-          }
+          TopLeftIcon = manaCost == null
+            ? null
+            : new CardIcon
+            {
+              Background = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"),
+              Text = manaCost + ""
+            }
         },
         RevealedCard = new RevealedCardView
         {
@@ -531,13 +539,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           },
           Targeting = IsItem(cardId) ? null : roomTarget,
           OnReleasePosition = IsItem(cardId) ? itemPos : roomPos,
-          Cost = new CardCost
-          {
-            CanPlay = false,
-            CanPlayAlgorithm = CanPlayAlgorithm.Optimistic,
-            ActionCost = 1,
-            ManaCost = manaCost
-          },
+          Cost = manaCost == null
+            ? null
+            : new CardCost
+            {
+              CanPlay = false,
+              CanPlayAlgorithm = CanPlayAlgorithm.Optimistic,
+              ActionCost = 1,
+              ManaCost = manaCost.Value
+            },
           RevealedInArena = true
         }
       };
@@ -613,7 +623,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     StandardAction AccessDiscardPileAction() => new()
     {
-      OptimisticUpdate = new CommandList
+      Update = new CommandList
       {
         Commands =
         {
@@ -645,7 +655,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     StandardAction AccessHandAction(RoomId fromRoom) => new()
     {
-      OptimisticUpdate = new CommandList
+      Update = new CommandList
       {
         Commands =
         {
@@ -730,7 +740,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       new()
       {
         Payload = Any.Pack(AccessDeck()),
-        OptimisticUpdate = new CommandList
+        Update = new CommandList
         {
           Commands =
           {
@@ -900,12 +910,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           MoveToDeckContainer(PlayerName.Opponent),
           MoveToIdentity(cardId),
-          MoveToOffscreen(cardId),
+//          MoveToOffscreen(cardId),
           SetUserScore(2),
           EndRaid()
         }
       }),
-      OptimisticUpdate = new CommandList
+      Update = new CommandList
       {
         Commands =
         {
@@ -997,6 +1007,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
+    // ReSharper disable once UnusedMember.Local
     GameCommand MoveToOffscreen(int cardId) => new()
     {
       MoveGameObjects = new MoveGameObjectsCommand
@@ -1198,11 +1209,16 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Rewards =
           {
-            RevealedUserCard(21, "Reward#1", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_71", 6),
-            RevealedUserCard(22, "Reward#2", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72", 4),
-            RevealedUserCard(23, "Reward#3", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73", 3),
-            RevealedUserCard(24, "Reward#4", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74", 1),
-            RevealedUserCard(25, "Reward#5", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75", 0)
+            RevealedUserCard(21, "Reward#1", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_71",
+              6),
+            RevealedUserCard(22, "Reward#2", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72",
+              4),
+            RevealedUserCard(23, "Reward#3", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73",
+              3),
+            RevealedUserCard(24, "Reward#4", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74",
+              1),
+            RevealedUserCard(25, "Reward#5", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75",
+              0)
           }
         }
       };

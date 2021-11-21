@@ -64,8 +64,8 @@ namespace Spelldawn.Services
     [SerializeField] CurveObjectDisplay _cardStaging = null!;
     public CurveObjectDisplay CardStaging => _cardStaging;
 
-    [SerializeField] CurveObjectDisplay _cardBrowser = null!;
-    public CurveObjectDisplay CardBrowser => _cardBrowser;
+    [SerializeField] CardBrowser _cardBrowser = null!;
+    public CardBrowser CardBrowser => _cardBrowser;
 
     [SerializeField] StackObjectDisplay _cardScoring = null!;
     public StackObjectDisplay CardScoring => _cardScoring;
@@ -73,8 +73,8 @@ namespace Spelldawn.Services
     [SerializeField] GameMessage _gameMessage = null!;
     public GameMessage GameMessage => _gameMessage;
 
-    [SerializeField] SpriteRenderer _blackBackground = null!;
-    public SpriteRenderer BlackBackground => _blackBackground;
+    [SerializeField] BackgroundOverlay _backgroundOverlay = null!;
+    public BackgroundOverlay BackgroundOverlay => _backgroundOverlay;
 
     [SerializeField] RewardChest _rewardChest = null!;
     public RewardChest RewardChest => _rewardChest;

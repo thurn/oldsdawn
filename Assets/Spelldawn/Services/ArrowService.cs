@@ -49,7 +49,6 @@ namespace Spelldawn.Services
     {
       HideArrows();
       _currentArrow = ArrowForType(type);
-      _currentArrow.gameObject.SetActive(true);
       _startPosition = start.position;
       _delegate = arrowDelegate;
       _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(start.position).z;
@@ -61,10 +60,19 @@ namespace Spelldawn.Services
       {
         var mousePosition = _registry.MainCamera.ScreenToWorldPoint(
           new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartScreenZ));
+
         if (Input.GetMouseButton(0))
         {
-          _currentArrow.SetPositions(_startPosition, mousePosition);
-          _delegate?.OnArrowMoved(mousePosition);
+          if (Vector3.Distance(_startPosition, mousePosition) < 3.0f)
+          {
+            _currentArrow.gameObject.SetActive(false);
+          }
+          else
+          {
+            _currentArrow.gameObject.SetActive(true);
+            _currentArrow.SetPositions(_startPosition, mousePosition);
+            _delegate?.OnArrowMoved(mousePosition);
+          }
         }
         else
         {
@@ -75,8 +83,9 @@ namespace Spelldawn.Services
       }
     }
 
-    void HideArrows()
+    public void HideArrows()
     {
+      _currentArrow = null;
       _redArrow.gameObject.SetActive(false);
       _greenArrow.gameObject.SetActive(false);
       _blueArrow.gameObject.SetActive(false);

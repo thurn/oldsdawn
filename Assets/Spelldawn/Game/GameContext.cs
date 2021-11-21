@@ -23,6 +23,7 @@ namespace Spelldawn.Game
     Arena = 1,
     Deck = 2,
     DiscardPile = 3,
+    Identity = 16,
     ArenaRaidParticipant = 10,
     RaidParticipant = 4,
     Hand = 5,

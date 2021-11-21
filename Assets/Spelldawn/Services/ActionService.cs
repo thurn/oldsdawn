@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
@@ -49,9 +50,26 @@ namespace Spelldawn.Services
       StartCoroutine(HandleActionAsync(action));
     }
 
+    public bool CanInfoZoom(GameContext gameContext)
+    {
+      switch (gameContext)
+      {
+        case GameContext.ArenaRaidParticipant:
+        case GameContext.RaidParticipant:
+        case GameContext.Browser:
+        case GameContext.RewardBrowser:
+          return true;
+        default:
+          return !_registry.BackgroundOverlay.Enabled;
+      }
+    }
+
+    public bool CanInitiateAction() => _registry.CardService.CurrentlyDragging == null &&
+                                     !_registry.BackgroundOverlay.Enabled;
+
     public bool CanPerformAction(GameAction.ActionOneofCase actionType) => actionType switch
     {
-      GameAction.ActionOneofCase.StandardAction => CanAct(allowInRaid: true, actionPointRequired: false),
+      GameAction.ActionOneofCase.StandardAction => CanAct(allowInOverlay: true, actionPointRequired: false),
       GameAction.ActionOneofCase.GainMana => CanAct(),
       GameAction.ActionOneofCase.DrawCard => CanAct(),
       GameAction.ActionOneofCase.PlayCard => CanAct(),
@@ -60,11 +78,12 @@ namespace Spelldawn.Services
       _ => false
     };
 
-    bool CanAct(bool allowInRaid = false, bool actionPointRequired = true) =>
+    bool CanAct(bool allowInOverlay = false, bool actionPointRequired = true) =>
       !_currentlyHandlingAction &&
       !_registry.CommandService.CurrentlyHandlingCommand &&
       _registry.CardService.CurrentlyDragging == null &&
-      (allowInRaid || !_registry.RaidService.RaidActive) &&
+      (allowInOverlay || !_registry.BackgroundOverlay.Enabled) &&
+      (allowInOverlay || !_registry.RaidService.RaidActive) &&
       (!actionPointRequired || _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0);
 
     void Update()
@@ -104,9 +123,9 @@ namespace Spelldawn.Services
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.StandardAction:
-          if (action.StandardAction.OptimisticUpdate is { } response)
+          if (action.StandardAction.Update is { } update)
           {
-            yield return _registry.CommandService.HandleCommands(response);
+            yield return _registry.CommandService.HandleCommands(update);
           }
 
           break;

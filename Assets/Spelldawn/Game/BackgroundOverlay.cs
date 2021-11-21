@@ -12,26 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using DG.Tweening;
 using UnityEngine;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class CustomDisplayable : Displayable
+  public sealed class BackgroundOverlay : MonoBehaviour
   {
-    [SerializeField] float _defaultScale;
+    [SerializeField] SpriteRenderer _renderer = null!;
 
-    protected override void OnStart()
+    public bool Enabled => _renderer.enabled;
+
+    public void Enable(GameContext layer, bool translucent)
     {
-      base.OnStart();
-      _defaultScale = transform.localScale.x;
+      SortingOrder.Create(layer, -1).ApplyTo(_renderer);
+      _renderer.enabled = true;
+      _renderer.color = Color.clear;
+      _renderer.DOBlendableColor(translucent ? new Color(0, 0, 0, 0.5f) : Color.black, 0.3f);
     }
 
-    public override float DefaultScale => _defaultScale;
-
-    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
+    public void Disable()
     {
+      _renderer.enabled = false;
     }
   }
 }

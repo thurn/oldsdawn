@@ -37,6 +37,20 @@ namespace Spelldawn.Game
 
     public virtual bool IsContainer() => false;
 
+    public virtual float DefaultScale => 1.0f;
+
+    protected void Start()
+    {
+      if (_sortingGroup && _gameContext != GameContext.Unspecified)
+      {
+        SortingOrder.Create(_gameContext).ApplyTo(_sortingGroup!);
+      }
+
+      OnStart();
+    }
+
+    protected virtual void OnStart() {}
+
     /// <summary>Called on a child container when the parent is repositioned.</summary>
     public virtual void OnUpdateParentContainer()
     {

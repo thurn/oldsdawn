@@ -98,6 +98,15 @@ namespace Spelldawn.Services
       return MoveGameObjects(command.Ids.Select(Find), command.Position, command.Index, !command.DisableAnimation);
     }
 
+    public IEnumerator HandleMoveGameObjectsAtPosition(MoveGameObjectsAtPositionCommand command)
+    {
+      return MoveGameObjects(
+        ObjectDisplayForPosition(command.SourcePosition).AllObjects,
+        command.TargetPosition,
+        index: null,
+        animate: !command.DisableAnimation);
+    }
+
     public IEnumerator MoveGameObject(
       Displayable displayable,
       ObjectPosition targetPosition,

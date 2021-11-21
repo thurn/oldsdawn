@@ -20,14 +20,55 @@ namespace Spelldawn.Game
 {
   public abstract class StackObjectDisplay : ObjectDisplay
   {
+    const float LongPressTime = 0.5f;
+    const float DragGestureScreenDistance = 10f;
     [SerializeField] float _singleElementY = 0.5f;
+    Vector3? _mouseDownPosition;
+    float? _mouseDownTime;
 
     protected override Vector3 CalculateObjectPosition(int index, int count) =>
       new(
         transform.position.x,
-        transform.position.y + Mathf.Lerp(0f, 1f, count < 2 ? _singleElementY : index / ((float)count - 1)),
+        transform.position.y + YOffset + Mathf.Lerp(0f, 1f, count < 2 ? _singleElementY : index / ((float)count - 1)),
         transform.position.z);
 
+    protected virtual float YOffset => 0f;
+
     protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;
+
+    public void OnMouseDown()
+    {
+      _mouseDownPosition = Input.mousePosition;
+      _mouseDownTime = Time.time;
+      MouseDown();
+    }
+
+    protected virtual void MouseDown()
+    {
+    }
+
+    public void OnMouseDrag()
+    {
+      if (_mouseDownPosition is { } p && Vector3.Distance(Input.mousePosition, p) > DragGestureScreenDistance)
+      {
+        // Drag gesture
+        _mouseDownTime = null;
+      }
+
+      if (_mouseDownTime is { } m && Time.time - m > LongPressTime)
+      {
+        LongPress();
+        _mouseDownTime = null;
+      }
+    }
+
+    protected virtual void LongPress()
+    {
+    }
+
+    public void OnMouseUp()
+    {
+      _mouseDownTime = null;
+    }
   }
 }

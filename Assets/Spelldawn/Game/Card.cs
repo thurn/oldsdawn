@@ -27,6 +27,8 @@ namespace Spelldawn.Game
 {
   public sealed class Card : Displayable
   {
+    public const float CardScale = 1.5f;
+
     static readonly Vector3 ArenaCardOffset = new(0, 0.6f, 0);
 
     [Header("Card")] [SerializeField] SpriteRenderer _cardBack = null!;
@@ -52,7 +54,6 @@ namespace Spelldawn.Game
     [SerializeField] Icon _arenaIcon = null!;
     [SerializeField] bool _isRevealed;
     [SerializeField] bool _canPlay;
-    [SerializeField] float _mouseDownTime;
     [SerializeField] float _dragStartScreenZ;
     [SerializeField] Vector3 _dragStartPosition;
     [SerializeField] Vector3 _dragOffset;
@@ -86,6 +87,8 @@ namespace Spelldawn.Game
 
     bool InHand() => HasGameContext && GameContext == GameContext.Hand;
 
+    public override float DefaultScale => CardScale;
+
     public Sequence? Render(
       Registry registry,
       CardView cardView,
@@ -97,9 +100,9 @@ namespace Spelldawn.Game
       }
 
       _registry = registry;
-      if (cardView.CardBackPlayer != PlayerName.Unspecified)
+      if (cardView.OwningPlayer != PlayerName.Unspecified)
       {
-        _cardBack.sprite = _registry.AssetService.GetSprite(_registry.CardService.GetCardBack(cardView.CardBackPlayer));
+        _cardBack.sprite = _registry.AssetService.GetSprite(_registry.CardService.GetCardBack(cardView.OwningPlayer));
       }
 
       _outline.sortingOrder = -1;
@@ -133,7 +136,10 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      if (!CurrentlyDraggingThisCard() && InHand() && _revealedCardView is { Cost: { } cost })
+      if (!CurrentlyDraggingThisCard() &&
+          InHand() &&
+          _registry.ActionService.CanInitiateAction() &&
+          _revealedCardView is { Cost: { } cost })
       {
         var haveAvailableResources =
           cost.ManaCost <= _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
@@ -145,13 +151,13 @@ namespace Spelldawn.Game
           CanPlayAlgorithm.AdditionalPlay when haveAvailableResources => true,
           _ => _canPlay
         };
-
-        _outline.gameObject.SetActive(_canPlay);
       }
       else
       {
-        _outline.gameObject.SetActive(false);
+        _canPlay = false;
       }
+
+      _outline.gameObject.SetActive(_canPlay);
     }
 
     public override Transform InterfaceAnchor() => _uiAnchor;
@@ -202,14 +208,17 @@ namespace Spelldawn.Game
 
     void OnMouseDown()
     {
-      if (_registry.CardService.CurrentlyDragging)
+      if (_registry.ActionService.CanInfoZoom(GameContext))
+      {
+        _registry.CardService.DisplayInfoZoom(
+          WorldMousePosition(_registry, _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z),
+          _cardView!);
+      }
+
+      if (!_canPlay)
       {
         return;
       }
-
-      _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
-      _dragStartPosition = DragWorldMousePosition();
-      _registry.CardService.DisplayInfoZoom(_dragStartPosition, _cardView!);
 
       if (InHand() && _canPlay)
       {
@@ -219,6 +228,8 @@ namespace Spelldawn.Game
         _previousParentIndex = _previousParent!.RemoveObject(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
+        _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
+        _dragStartPosition = WorldMousePosition(_registry, _dragStartScreenZ);
         _dragOffset = gameObject.transform.position - _dragStartPosition;
       }
     }
@@ -230,7 +241,7 @@ namespace Spelldawn.Game
         return;
       }
 
-      var mousePosition = DragWorldMousePosition();
+      var mousePosition = WorldMousePosition(_registry, _dragStartScreenZ);
       var distanceDragged = Vector2.Distance(mousePosition, _dragStartPosition);
       var t = Mathf.Clamp01(distanceDragged / 5);
       transform.position = _dragOffset + mousePosition;
@@ -256,7 +267,7 @@ namespace Spelldawn.Game
     public void MouseUp()
     {
       _registry.ArenaService.HideRoomSelector();
-      var distance = _dragStartPosition.z - DragWorldMousePosition().z;
+      var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
       if (distance < 3.5f ||
           !_registry.ActionService.CanPerformAction(GameAction.ActionOneofCase.PlayCard) ||
           (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom &&
@@ -269,7 +280,7 @@ namespace Spelldawn.Game
       {
         var action = new PlayCardAction
         {
-          CardId = _cardView!.CardId,
+          CardId = _cardView!.CardId
         };
 
         if (_targetRoom is { } room)
@@ -289,8 +300,9 @@ namespace Spelldawn.Game
 
     bool CurrentlyDraggingThisCard() => _registry.CardService.CurrentlyDragging == this;
 
-    Vector3 DragWorldMousePosition() => _registry.MainCamera.ScreenToWorldPoint(
-      new Vector3(Input.mousePosition.x, Input.mousePosition.y, _dragStartScreenZ));
+    static Vector3 WorldMousePosition(Registry registry, float dragStartScreenZ) =>
+      registry.MainCamera.ScreenToWorldPoint(
+        new Vector3(Input.mousePosition.x, Input.mousePosition.y, dragStartScreenZ));
 
     static Sequence? Flip(Component faceUp, Component faceDown, Action onFlipped, bool animate)
     {
