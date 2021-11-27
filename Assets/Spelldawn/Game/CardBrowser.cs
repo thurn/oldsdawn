@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
+using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
 
@@ -24,6 +26,11 @@ namespace Spelldawn.Game
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _active;
 
+    static readonly ObjectPosition BrowserPosition = new()
+    {
+      Browser = new ObjectPositionBrowser()
+    };
+
     protected override void OnUpdated()
     {
       if (ObjectCount > 0)
@@ -35,6 +42,32 @@ namespace Spelldawn.Game
       {
         _registry.BackgroundOverlay.Disable();
         _active = false;
+      }
+    }
+
+
+    public IEnumerator BrowseCards(ObjectPosition atPosition)
+    {
+      if (_registry.ActionService.CanInitiateAction())
+      {
+        _registry.ArrowService.HideArrows();
+
+        yield return _registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(
+          new MoveGameObjectsAtPositionCommand
+          {
+            SourcePosition = atPosition,
+            TargetPosition = BrowserPosition,
+          });
+
+        yield return _registry.DocumentService.RenderMainControls(
+          DocumentService.ControlGroup(DocumentService.Button("Close", new GameCommand
+          {
+            MoveObjectsAtPosition = new MoveGameObjectsAtPositionCommand
+            {
+              SourcePosition = BrowserPosition,
+              TargetPosition = atPosition
+            }
+          })));
       }
     }
   }

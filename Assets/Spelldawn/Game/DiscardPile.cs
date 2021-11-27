@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
 
@@ -21,6 +22,20 @@ namespace Spelldawn.Game
 {
   public sealed class DiscardPile : StackObjectDisplay
   {
+    [SerializeField] Registry _registry = null!;
+    [SerializeField] PlayerName _owner;
+
     protected override GameContext DefaultGameContext() => GameContext.DiscardPile;
+
+    protected override void LongPress()
+    {
+      StartCoroutine(_registry.CardBrowser.BrowseCards(new ObjectPosition
+      {
+        DiscardPile = new ObjectPositionDiscardPile
+        {
+          Owner = _owner
+        }
+      }));
+    }
   }
 }

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using TMPro;
@@ -90,42 +89,13 @@ namespace Spelldawn.Game
 
     protected override void LongPress()
     {
-      StartCoroutine(LongPressAsync());
-    }
-
-    IEnumerator LongPressAsync()
-    {
-      if (_identityCard != null && _registry.ActionService.CanInitiateAction())
+      StartCoroutine(_registry.CardBrowser.BrowseCards(new ObjectPosition
       {
-        _registry.ArrowService.HideArrows();
-        var identityPosition = new ObjectPosition
+        Identity = new ObjectPositionIdentity
         {
-          Identity = new ObjectPositionIdentity
-          {
-            Owner = _owner
-          }
-        };
-        var browserPosition = new ObjectPosition
-        {
-          Browser = new ObjectPositionBrowser()
-        };
-
-        yield return _registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(
-          new MoveGameObjectsAtPositionCommand
-          {
-            SourcePosition = identityPosition,
-            TargetPosition = browserPosition,
-          });
-        yield return _registry.DocumentService.RenderMainControls(
-          DocumentService.ControlGroup(DocumentService.Button("Close", new GameCommand
-          {
-            MoveObjectsAtPosition = new MoveGameObjectsAtPositionCommand
-            {
-              SourcePosition = browserPosition,
-              TargetPosition = identityPosition
-            }
-          })));
-      }
+          Owner = _owner
+        }
+      }));
     }
 
     public void OnArrowMoved(Vector3 position)

@@ -269,7 +269,7 @@ namespace Spelldawn.Game
       _registry.ArenaService.HideRoomSelector();
       var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
       if (distance < 3.5f ||
-          !_registry.ActionService.CanPerformAction(GameAction.ActionOneofCase.PlayCard) ||
+          !_registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard) ||
           (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom &&
            _targetRoom == null))
       {

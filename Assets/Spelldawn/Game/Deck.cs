@@ -25,6 +25,7 @@ namespace Spelldawn.Game
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _clickable;
+    [SerializeField] PlayerName _owner;
 
     protected override GameContext DefaultGameContext() => GameContext.Deck;
 
@@ -36,9 +37,20 @@ namespace Spelldawn.Game
       }
     }
 
+    protected override void LongPress()
+    {
+      StartCoroutine(_registry.CardBrowser.BrowseCards(new ObjectPosition
+      {
+        Deck = new ObjectPositionDeck
+        {
+          Owner = _owner
+        }
+      }));
+    }
+
     void OnMouseUpAsButton()
     {
-      if (_clickable)
+      if (_clickable && _registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.DrawCard))
       {
         _registry.ActionService.HandleAction(new GameAction
         {

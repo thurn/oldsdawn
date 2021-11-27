@@ -29371,6 +29371,7 @@ GameObject:
   - component: {fileID: 979722409}
   - component: {fileID: 979722410}
   - component: {fileID: 7866940080095470550}
+  - component: {fileID: 7866940080095470551}
   m_Layer: 0
   m_Name: UserDeckCard2
   m_TagString: Untagged
@@ -29902,6 +29903,7 @@ GameObject:
   - component: {fileID: 993645328}
   - component: {fileID: 993645329}
   - component: {fileID: 7459750019749913751}
+  - component: {fileID: 7459750019749913752}
   m_Layer: 0
   m_Name: UserDeckCard4
   m_TagString: Untagged
@@ -33775,7 +33777,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1117679868}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10, y: -0.5, z: -0}
+  m_LocalPosition: {x: -9, y: -0.5, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42268,6 +42270,8 @@ MonoBehaviour:
   _animateNextUpdate: 0
   _animationRunning: 0
   _singleElementY: 0.5
+  _registry: {fileID: 1445473048}
+  _owner: 2
 --- !u!210 &1417705964
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -50231,7 +50235,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1690657432}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10, y: -0.5, z: -0}
+  m_LocalPosition: {x: 9, y: -0.5, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -54125,6 +54129,7 @@ GameObject:
   - component: {fileID: 1852704567}
   - component: {fileID: 1852704568}
   - component: {fileID: 7963273496569408263}
+  - component: {fileID: 7963273496569408264}
   m_Layer: 0
   m_Name: UserDeckCard3
   m_TagString: Untagged
@@ -59970,6 +59975,8 @@ MonoBehaviour:
   _animateNextUpdate: 0
   _animationRunning: 0
   _singleElementY: 0.5
+  _registry: {fileID: 1445473048}
+  _owner: 1
 --- !u!210 &2055897285
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -107413,7 +107420,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _parent: {fileID: 0}
   _gameContext: 2
-  _sortingGroup: {fileID: 0}
+  _sortingGroup: {fileID: 5519798290036191187}
   _defaultScale: 1
 --- !u!4 &2233573693941330877
 Transform:
@@ -108447,6 +108454,7 @@ GameObject:
   - component: {fileID: 4079848414987978248}
   - component: {fileID: 5519798290036191186}
   - component: {fileID: 1860439344793962278}
+  - component: {fileID: 5519798290036191187}
   m_Layer: 0
   m_Name: UserDeckCard1
   m_TagString: Untagged
@@ -111311,6 +111319,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!210 &5519798290036191187
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3660651566239282635}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!114 &5710788211466930190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111337,6 +111356,7 @@ MonoBehaviour:
   _singleElementY: 0.5
   _registry: {fileID: 1445473048}
   _clickable: 0
+  _owner: 2
 --- !u!1 &5712712941872864272
 GameObject:
   m_ObjectHideFlags: 0
@@ -111561,8 +111581,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _parent: {fileID: 0}
   _gameContext: 2
-  _sortingGroup: {fileID: 0}
+  _sortingGroup: {fileID: 7459750019749913752}
   _defaultScale: 1
+--- !u!210 &7459750019749913752
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993645327}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!23 &7718390321402354113
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -116113,8 +116144,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _parent: {fileID: 0}
   _gameContext: 2
-  _sortingGroup: {fileID: 0}
+  _sortingGroup: {fileID: 7866940080095470551}
   _defaultScale: 1
+--- !u!210 &7866940080095470551
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979722408}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!114 &7963273496569408263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116129,8 +116171,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _parent: {fileID: 0}
   _gameContext: 2
-  _sortingGroup: {fileID: 0}
+  _sortingGroup: {fileID: 7963273496569408264}
   _defaultScale: 1
+--- !u!210 &7963273496569408264
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1852704566}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!212 &8121512440767625931
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -118164,6 +118217,7 @@ MonoBehaviour:
   _singleElementY: 0.5
   _registry: {fileID: 1445473048}
   _clickable: 1
+  _owner: 1
 --- !u!4 &8727127253450567171
 Transform:
   m_ObjectHideFlags: 0

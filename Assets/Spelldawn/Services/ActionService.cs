@@ -38,7 +38,7 @@ namespace Spelldawn.Services
 
     public void HandleAction(GameAction action)
     {
-      if (!CanPerformAction(action.ActionCase))
+      if (!CanExecuteAction(action.ActionCase))
       {
         var message = new StringBuilder();
         message.Append($"Error: User cannot currently perform action {action}");
@@ -50,6 +50,9 @@ namespace Spelldawn.Services
       StartCoroutine(HandleActionAsync(action));
     }
 
+    /// <summary>
+    /// Can the user currently zoom a card that exists in the provided GameContext.
+    /// </summary>
     public bool CanInfoZoom(GameContext gameContext)
     {
       switch (gameContext)
@@ -64,10 +67,18 @@ namespace Spelldawn.Services
       }
     }
 
+    /// <summary>
+    /// Can the user *start* performing an action such as dragging a card out of their hand, dragging a raid arrow, or
+    /// long-pressing for information. This is allowed more leniently than actually *performing* an action as defined
+    /// by <see cref="CanExecuteAction"/> below.
+    /// </summary>
     public bool CanInitiateAction() => _registry.CardService.CurrentlyDragging == null &&
-                                     !_registry.BackgroundOverlay.Enabled;
+                                       !_registry.BackgroundOverlay.Enabled;
 
-    public bool CanPerformAction(GameAction.ActionOneofCase actionType) => actionType switch
+    /// <summary>
+    /// Can the user currently perform a game action of the provided type?
+    /// </summary>
+    public bool CanExecuteAction(GameAction.ActionOneofCase actionType) => actionType switch
     {
       GameAction.ActionOneofCase.StandardAction => CanAct(allowInOverlay: true, actionPointRequired: false),
       GameAction.ActionOneofCase.GainMana => CanAct(),
@@ -93,7 +104,7 @@ namespace Spelldawn.Services
 
       switch (_currentPriority)
       {
-        case PlayerName.User when CanPerformAction(GameAction.ActionOneofCase.PlayCard):
+        case PlayerName.User when CanExecuteAction(GameAction.ActionOneofCase.PlayCard):
           userLight.SetActive(true);
           break;
         case PlayerName.Opponent:
