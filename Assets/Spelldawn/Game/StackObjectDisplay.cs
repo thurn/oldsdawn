@@ -36,7 +36,7 @@ namespace Spelldawn.Game
 
     protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;
 
-    public void OnMouseDown()
+    public override void MouseDown()
     {
       _mouseDownPosition = Input.mousePosition;
       _mouseDownTime = Time.time;
@@ -47,7 +47,7 @@ namespace Spelldawn.Game
     {
     }
 
-    public void OnMouseDrag()
+    public override void MouseDrag()
     {
       if (_mouseDownPosition is { } p && Vector3.Distance(Input.mousePosition, p) > DragGestureScreenDistance)
       {
@@ -66,7 +66,7 @@ namespace Spelldawn.Game
     {
     }
 
-    public void OnMouseUp()
+    public override void MouseUp()
     {
       _mouseDownTime = null;
     }
