@@ -124,11 +124,11 @@ namespace Spelldawn.Services
         case RenderInterfaceCommand.PositionOneofCase.FullScreen:
           LoadNodeAssets(requests, command.FullScreen.Node);
           break;
-        case RenderInterfaceCommand.PositionOneofCase.RaidControls:
-          LoadNodeAssets(requests, command.RaidControls.Node);
+        case RenderInterfaceCommand.PositionOneofCase.MainControls:
+          LoadNodeAssets(requests, command.MainControls.Node);
           break;
-        case RenderInterfaceCommand.PositionOneofCase.ObjectControls:
-          foreach (var controlNode in command.ObjectControls.ControlNodes)
+        case RenderInterfaceCommand.PositionOneofCase.CardAnchors:
+          foreach (var controlNode in command.CardAnchors.AnchorNodes)
           {
             LoadNodeAssets(requests, controlNode.Node);
           }
@@ -224,6 +224,7 @@ namespace Spelldawn.Services
         LoadSprite(requests, card.Jewel);
         LoadSprite(requests, card.ImageBackground);
         LoadSprite(requests, card.Image);
+        LoadNodeAssets(requests, card.SupplementalInfo);
       }
     }
 

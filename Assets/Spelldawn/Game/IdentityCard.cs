@@ -71,7 +71,7 @@ namespace Spelldawn.Game
       }
     }
 
-    protected override void MouseDown()
+    protected override void RunMouseDown()
     {
       if (_owner == PlayerName.User && _registry.ActionService.CanInitiateAction())
       {

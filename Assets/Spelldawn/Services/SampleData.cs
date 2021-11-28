@@ -85,25 +85,38 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 <b>Area</b> <i>(this item’s damage persists for the duration of the raid)</i>
 ";
 
-    static readonly CardView Card1 = RevealedUserCard(1, "Meteor Shower", Text1,
-      "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", 0);
+    CardView _card1 = null!;
 
-    static readonly List<CardView> Cards = new()
-    {
-      Card1,
-      RevealedUserCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25", 4),
-      RevealedUserCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13", 1),
-      RevealedUserCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16", 15),
-      RevealedUserCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42", 4),
-      RevealedUserCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37", 2),
-      RevealedUserCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40", 3),
-      RevealedUserCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66", 0),
-      RevealedUserCard(8, "Divine Bolt", Text8, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_52", 3),
-      RevealedUserCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68", 6)
-    };
+    static List<CardView> _cards = null!;
 
     IEnumerator Start()
     {
+      _card1 = RevealedUserCard(1, "Meteor Shower", Text1,
+        "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", "Spell • Legendary • Lightning", 0);
+
+      _cards = new List<CardView>
+      {
+        _card1,
+        RevealedUserCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25",
+          "Weapon • Abyssal", 4),
+        RevealedUserCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13",
+          "Weapon • Infernal", 1),
+        RevealedUserCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16",
+          "Weapon • Mortal", 15, showExtraHelpers: true),
+        RevealedUserCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42",
+          "Weapon • Abyssal", 4),
+        RevealedUserCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37",
+          "Artifact • Ring", 2),
+        RevealedUserCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40",
+          "Minion • Abyssal", 3),
+        RevealedUserCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66", "Scheme",
+          0),
+        RevealedUserCard(8, "Divine Bolt", Text8, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_52",
+          "Spell • Arcane", 3),
+        RevealedUserCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68",
+          "Project • Mining", 6)
+      };
+
       yield return _registry.CommandService.HandleCommands(new GameCommand
       {
         RenderGame = new RenderGameCommand
@@ -137,7 +150,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     IEnumerator ShowOpeningHand()
     {
-      var cards = Cards.Take(5).ToList();
+      var cards = _cards.Take(5).ToList();
       return _registry.CommandService.HandleCommands(
         cards.Select(c => new GameCommand
         {
@@ -160,7 +173,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           RenderInterface = new RenderInterfaceCommand
           {
-            RaidControls = new InterfacePositionRaidControls
+            MainControls = new InterfacePositionMainControls
             {
               Node = MulliganControls(cards)
             }
@@ -189,7 +202,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Commands =
           {
-            ClearRaidControls(),
+            ClearMainControls(),
             new GameCommand
             {
               MoveGameObjects = new MoveGameObjectsCommand
@@ -416,19 +429,17 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       );
     }
 
-    CardView Card() => Cards[_lastReturnedCard++ % 10];
+    CardView Card() => _cards[_lastReturnedCard++ % 10];
 
     GameView SampleGame() =>
       new()
       {
         User = Player(
           "User",
-          PlayerName.User,
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1",
-          RevealedUserCard(1234, "User Identity", "Identity Card Text", "Enixion/Fantasy Art Pack 2/Resized/2", null)),
+          RevealedUserCard(1234, "User Identity", "Identity Card Text", "Enixion/Fantasy Art Pack 2/Resized/2")),
         Opponent = Player(
           "Opponent",
-          PlayerName.Opponent,
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1",
           OpponentCard("Opponent Identity", 1235, 12)),
         Arena = new ArenaView
@@ -440,7 +451,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static TimeValue TimeMs(int ms) => new() { Milliseconds = ms };
 
-    static PlayerView Player(string playerName, PlayerName id, string cardBack, CardView identityCard) => new()
+    static PlayerView Player(string playerName, string cardBack, CardView identityCard) => new()
     {
       PlayerInfo = new PlayerInfo
       {
@@ -470,12 +481,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static bool IsItem(int cardId) => cardId % 2 == 0;
 
-    static CardView RevealedUserCard(
+    CardView RevealedUserCard(
       int cardId,
       string title,
       string text,
       string image,
-      int? manaCost)
+      string cardType = "Card • Type",
+      int? manaCost = null,
+      bool showExtraHelpers = false)
     {
       var roomTarget = new CardTargeting
       {
@@ -548,7 +561,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               ActionCost = 1,
               ManaCost = manaCost.Value
             },
-          RevealedInArena = true
+          RevealedInArena = true,
+          SupplementalInfo = SupplementalInfo(cardType, showExtraHelpers)
         }
       };
     }
@@ -598,7 +612,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          RaidControls = new InterfacePositionRaidControls
+          MainControls = new InterfacePositionMainControls
           {
             Node = action.RoomId switch
             {
@@ -634,7 +648,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Commands =
         {
-          ClearRaidControls(),
+          ClearMainControls(),
           RunInParallel(
             EndRaid(),
             MoveIdentityToContainer(PlayerName.User),
@@ -668,7 +682,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           MoveToRoom(1, RoomId.Sanctum),
           FireProjectile(IdUtil.IdentityCardId(PlayerName.User), IdUtil.IdentityCardId(PlayerName.Opponent), 4),
-          ClearRaidControls(),
+          ClearMainControls(),
           RunInParallel(
             MoveIdentityToContainer(PlayerName.User),
             MoveIdentityToContainer(PlayerName.Opponent)
@@ -676,7 +690,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           UpdateCard(OpponentCard("Revealed Card", 65539, 18)),
           UpdateCard(OpponentCard("Scheme Card", 65541, 19)),
           RunInParallel(_opponentHandCards.Select(id => MoveToBrowser(IdUtil.CardObjectId(id)))),
-          RenderObjectButton(IdUtil.CardObjectId(65541), "Score!", ScoreAction(65541,
+          RenderCardButton(IdUtil.CardId(65541), "Score!", ScoreAction(65541,
             RunInParallel(_opponentHandCards
               .Except(CollectionUtils.Once(IdUtil.CardId(65541)))
               .Select(id => MoveToHand(id.Value, PlayerName.Opponent)))))
@@ -710,7 +724,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Margin = AllDip(8),
         Height = Dip(88),
-        MinWidth = Dip(132),
+        MinWidth = Dip(88),
         JustifyContent = FlexJustify.Center,
         AlignItems = FlexAlign.Center,
         FlexShrink = 0,
@@ -744,7 +758,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Commands =
           {
-            ClearRaidControls(),
+            ClearMainControls(),
             FireProjectile(
               IdUtil.CardObjectId(2),
               IdUtil.CardObjectId(1),
@@ -756,12 +770,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         }
       };
 
-    GameCommand ClearRaidControls() =>
+    GameCommand ClearMainControls() =>
       new()
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          RaidControls = new InterfacePositionRaidControls()
+          MainControls = new InterfacePositionMainControls()
         }
       };
 
@@ -814,25 +828,26 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         },
         MoveToRaidIndex(55556, 1),
         MoveIdentityToContainer(PlayerName.User),
-        RenderObjectButton(IdUtil.CardObjectId(55555), "Score!",
+        RenderCardButton(IdUtil.CardId(55555), "Score!",
           ScoreAction(55555, MoveToDeck(55556, PlayerName.Opponent)))
       }
     };
 
-    GameCommand RenderObjectButton(GameObjectId id, string label, StandardAction onClick)
+    GameCommand RenderCardButton(CardId id, string label, StandardAction onClick)
     {
       return new GameCommand
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          ObjectControls = new InterfacePositionObjectControls
+          CardAnchors = new InterfacePositionCardAnchors
           {
-            ControlNodes =
+            AnchorNodes =
             {
-              new ObjectControlNode
+              new CardAnchorNode
               {
-                GameObjectId = id,
-                Node = Button(label, action: onClick, smallText: false, orange: true)
+                CardId = id,
+                Node = Button(label, action: onClick, smallText: false, orange: true),
+                AnchorPosition = CardNodeAnchorPosition.Bottom
               }
             }
           }
@@ -910,7 +925,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           MoveToDeckContainer(PlayerName.Opponent),
           MoveToIdentity(cardId),
-//          MoveToOffscreen(cardId),
           SetUserScore(2),
           EndRaid()
         }
@@ -923,7 +937,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             RenderInterface = new RenderInterfaceCommand
             {
-              ObjectControls = new InterfacePositionObjectControls()
+              CardAnchors = new InterfacePositionCardAnchors()
             }
           },
           MoveToScored(cardId),
@@ -1174,7 +1188,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     IEnumerator LevelUpRoom()
     {
-      var updated = Card1.Clone();
+      var updated = _card1.Clone();
       updated.CardIcons.ArenaIcon = new CardIcon
       {
         Text = "1",
@@ -1210,17 +1224,59 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Rewards =
           {
             RevealedUserCard(21, "Reward#1", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_71",
+              "Weapon • Abyssal",
               6),
             RevealedUserCard(22, "Reward#2", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72",
+              "Weapon • Infernal",
               4),
             RevealedUserCard(23, "Reward#3", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73",
+              "Spell • Arcane • Abyssal",
               3),
             RevealedUserCard(24, "Reward#4", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74",
-              1),
+              "Artifact • Lightning"),
             RevealedUserCard(25, "Reward#5", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75",
+              "Spell • Elemental • Abyssal",
               0)
           }
         }
       };
+
+    Node SupplementalInfo(string cardType, bool showExtraHelpers) => Column(
+      "SupplementalInfo",
+      new FlexStyle
+      {
+        JustifyContent = FlexJustify.FlexStart,
+        AlignItems = FlexAlign.FlexStart,
+        Margin = LeftRightDip(16),
+        MaxWidth = Dip(600),
+        MaxHeight = Dip(600)
+      },
+      SupplementalInfoText(cardType, isFirst: true),
+      showExtraHelpers ? SupplementalInfoText("<b>Store:</b> Place \uf06d on this card") : null,
+      showExtraHelpers
+        ? SupplementalInfoText("<b>Take:</b> Remove \uf06d from this card and add to your mana pool")
+        : null,
+      showExtraHelpers ? SupplementalInfoText("<u>Shatter:</u> 2\uf06d: Destroy target artifact") : null);
+
+    Node SupplementalInfoText(string text, bool isFirst = false) => Row(
+      $"SupplementalInfoText",
+      new FlexStyle
+      {
+        Margin = isFirst ? BottomDip(4) : TopBottomDip(4),
+        BackgroundColor = MakeColor(Color.black, 0.75f),
+        BorderRadius = AllBordersRadiusDip(12),
+        JustifyContent = FlexJustify.Center,
+        AlignItems = FlexAlign.Center,
+      },
+      Text(text, new FlexStyle
+      {
+        Margin = AllDip(16),
+        Padding = AllDip(0),
+        Color = MakeColor(Color.white),
+        FontSize = Dip(32),
+        Font = Font("Fonts/Roboto"),
+        TextAlign = TextAlign.MiddleLeft,
+        WhiteSpace = WhiteSpace.Normal
+      }));
   }
 }

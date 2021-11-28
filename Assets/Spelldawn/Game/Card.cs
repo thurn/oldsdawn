@@ -46,7 +46,10 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _arenaFrame = null!;
     [SerializeField] GameObject _arenaShadow = null!;
     [SerializeField] WarpTextExample _warpText = null!;
-    [SerializeField] Transform _uiAnchor = null!;
+    [SerializeField] Transform _topLeftAnchor = null!;
+    [SerializeField] Transform _topRightAnchor = null!;
+    [SerializeField] Transform _bottomLeftAnchor = null!;
+    [SerializeField] Transform _bottomRightAnchor = null!;
     [SerializeField] Icon _topLeftIcon = null!;
     [SerializeField] Icon _topRightIcon = null!;
     [SerializeField] Icon _bottomRightIcon = null!;
@@ -88,6 +91,14 @@ namespace Spelldawn.Game
     bool InHand() => HasGameContext && GameContext == GameContext.Hand;
 
     public override float DefaultScale => CardScale;
+
+    public Transform TopLeftAnchor => _topLeftAnchor;
+
+    public Transform TopRightAnchor => _topRightAnchor;
+
+    public Transform BottomLeftAnchor => _bottomLeftAnchor;
+
+    public Transform BottomRightAnchor => _bottomRightAnchor;
 
     public Sequence? Render(
       Registry registry,
@@ -136,8 +147,7 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      if (!CurrentlyDraggingThisCard() &&
-          InHand() &&
+      if (InHand() &&
           _registry.ActionService.CanInitiateAction() &&
           _revealedCardView is { Cost: { } cost })
       {
@@ -159,8 +169,6 @@ namespace Spelldawn.Game
 
       _outline.gameObject.SetActive(_canPlay);
     }
-
-    public override Transform InterfaceAnchor() => _uiAnchor;
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
@@ -206,23 +214,18 @@ namespace Spelldawn.Game
       }
     }
 
-    void OnMouseDown()
+    public override void MouseDown()
     {
-      if (_registry.ActionService.CanInfoZoom(GameContext))
+      if (_registry.ActionService.CanInfoZoom(GameContext) && _revealedCardView != null)
       {
         _registry.CardService.DisplayInfoZoom(
           WorldMousePosition(_registry, _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z),
-          _cardView!);
-      }
-
-      if (!_canPlay)
-      {
-        return;
+          this);
       }
 
       if (InHand() && _canPlay)
       {
-        _registry.CardService.CurrentlyDragging = this;
+        _registry.CardService.CurrentlyDragging = true;
         SetGameContext(GameContext.Dragging);
         _previousParent = Parent;
         _previousParentIndex = _previousParent!.RemoveObject(this);
@@ -234,9 +237,9 @@ namespace Spelldawn.Game
       }
     }
 
-    void OnMouseDrag()
+    public override void MouseDrag()
     {
-      if (!CurrentlyDraggingThisCard())
+      if (!_registry.CardService.CurrentlyDragging)
       {
         return;
       }
@@ -259,13 +262,16 @@ namespace Spelldawn.Game
       }
     }
 
-    /// <summary>
-    /// Unity does not reliably send OnMouseUp when other colliders get in the way, so we invoke this method from
-    /// <see cref="CardService"/> instead. The value of <see cref="CardService.CurrentlyDragging"/> will be set to null
-    /// before this method is called.
-    /// </summary>
-    public void MouseUp()
+    public override void MouseUp()
     {
+      _registry.CardService.ClearInfoZoom();
+
+      if (!_registry.CardService.CurrentlyDragging)
+      {
+        return;
+      }
+
+      _registry.CardService.CurrentlyDragging = false;
       _registry.ArenaService.HideRoomSelector();
       var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
       if (distance < 3.5f ||
@@ -297,8 +303,6 @@ namespace Spelldawn.Game
         });
       }
     }
-
-    bool CurrentlyDraggingThisCard() => _registry.CardService.CurrentlyDragging == this;
 
     static Vector3 WorldMousePosition(Registry registry, float dragStartScreenZ) =>
       registry.MainCamera.ScreenToWorldPoint(

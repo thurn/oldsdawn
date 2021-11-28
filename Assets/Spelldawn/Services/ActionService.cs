@@ -27,9 +27,11 @@ namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
   {
+    readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
     [SerializeField] Registry _registry = null!;
     [SerializeField] PlayerName _currentPriority;
     [SerializeField] bool _currentlyHandlingAction;
+    Clickable? _lastClicked;
 
     public PlayerName CurrentPriority
     {
@@ -72,7 +74,7 @@ namespace Spelldawn.Services
     /// long-pressing for information. This is allowed more leniently than actually *performing* an action as defined
     /// by <see cref="CanExecuteAction"/> below.
     /// </summary>
-    public bool CanInitiateAction() => _registry.CardService.CurrentlyDragging == null &&
+    public bool CanInitiateAction() => !_registry.CardService.CurrentlyDragging &&
                                        !_registry.BackgroundOverlay.Enabled;
 
     /// <summary>
@@ -92,7 +94,7 @@ namespace Spelldawn.Services
     bool CanAct(bool allowInOverlay = false, bool actionPointRequired = true) =>
       !_currentlyHandlingAction &&
       !_registry.CommandService.CurrentlyHandlingCommand &&
-      _registry.CardService.CurrentlyDragging == null &&
+      !_registry.CardService.CurrentlyDragging &&
       (allowInOverlay || !_registry.BackgroundOverlay.Enabled) &&
       (allowInOverlay || !_registry.RaidService.RaidActive) &&
       (!actionPointRequired || _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0);
@@ -116,6 +118,48 @@ namespace Spelldawn.Services
           opponentLight.SetActive(false);
           break;
       }
+
+      switch (Input.GetMouseButton(0))
+      {
+        case true when _lastClicked:
+          _lastClicked!.MouseDrag();
+          break;
+        case true when !_lastClicked:
+          _lastClicked = FireMouseDown();
+          break;
+        case false when _lastClicked:
+          _lastClicked!.MouseUp();
+          _lastClicked = null;
+          break;
+      }
+    }
+
+    Clickable? FireMouseDown()
+    {
+      var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
+      var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
+      Clickable? fired = null;
+
+      for (var i = 0; i < hits; ++i)
+      {
+        var hit = _raycastHitsTempBuffer[i];
+        var clickable = hit.collider.GetComponent<Clickable>();
+        if (clickable)
+        {
+          if (fired)
+          {
+            Debug.LogWarning($"Ignoring click on {clickable}, already handling click on {fired}");
+          }
+          else
+          {
+            clickable.MouseDown();
+            fired = clickable;
+          }
+        }
+      }
+
+      Array.Clear(_raycastHitsTempBuffer, 0, _raycastHitsTempBuffer.Length);
+      return fired;
     }
 
     IEnumerator HandleActionAsync(GameAction action)

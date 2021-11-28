@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Linq;
+using Spelldawn.Game;
 using Spelldawn.Masonry;
 using static Spelldawn.Masonry.MasonUtil;
 using Spelldawn.Protos;
@@ -43,11 +45,20 @@ namespace Spelldawn.Services
 
     float ScreenPxToElementDip(float value) => value * _document.panelSettings.referenceDpi / Screen.dpi;
 
-    public Vector2 ScreenPositionToElementPosition(Vector3 screenPosition) =>
-      new(ScreenPxToElementDip(screenPosition.x), ScreenPxToElementDip(Screen.height - screenPosition.y));
+    /// <summary>
+    /// Returns a (left, top) position vector in interface coordinates corresponding to a screen position.
+    /// If 'anchorRight' is true, returns a (right, top) vector instead.
+    /// </summary>
+    public Vector2 ScreenPositionToElementPosition(Vector3 screenPosition, bool anchorRight = false) =>
+      new(ScreenPxToElementDip(anchorRight ? Screen.width - screenPosition.x : screenPosition.x),
+        ScreenPxToElementDip(Screen.height - screenPosition.y));
 
-    public Vector2 TransformPositionToElementPosition(Transform t) =>
-      ScreenPositionToElementPosition(_registry.MainCamera.WorldToScreenPoint(t.position));
+    /// <summary>
+    /// Returns a (left, top) position vector in interface coordinates corresponding to the position of the
+    /// provided transform. If 'anchorRight' is true, returns a (right, top) vector instead.
+    /// </summary>
+    public Vector2 TransformPositionToElementPosition(Transform t, bool anchorRight = false) =>
+      ScreenPositionToElementPosition(_registry.MainCamera.WorldToScreenPoint(t.position), anchorRight);
 
     public void HandleRenderInterface(RenderInterfaceCommand command)
     {
@@ -57,14 +68,14 @@ namespace Spelldawn.Services
           _fullScreen.Clear();
           _fullScreen.Add(Mason.Render(_registry, FullScreen(command.FullScreen.Node)));
           break;
-        case RenderInterfaceCommand.PositionOneofCase.RaidControls:
+        case RenderInterfaceCommand.PositionOneofCase.MainControls:
           _raidControls.Clear();
-          _raidControls.Add(Mason.Render(_registry, MainControls(command.RaidControls.Node)));
+          _raidControls.Add(Mason.Render(_registry, MainControls(command.MainControls.Node)));
           break;
-        case RenderInterfaceCommand.PositionOneofCase.ObjectControls:
+        case RenderInterfaceCommand.PositionOneofCase.CardAnchors:
           _cardControls.Clear();
           _cardControls.Add(Mason.Render(_registry,
-            Row("ObjectControls", new FlexStyle(), command.ObjectControls.ControlNodes.Select(ObjectControl))));
+            Row("CardAnchors", new FlexStyle(), command.CardAnchors.AnchorNodes.Select(RenderCardAnchorNode))));
           break;
         default:
           Debug.LogError($"Unknown interface position: {command.PositionCase}");
@@ -78,12 +89,23 @@ namespace Spelldawn.Services
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          RaidControls = new InterfacePositionRaidControls
+          MainControls = new InterfacePositionMainControls
           {
             Node = node
           }
         }
       });
+    }
+
+    public void ClearCardControls()
+    {
+      _cardControls.Clear();
+    }
+
+    public void RenderSupplementalCardInfo(Card card, Node node, CardNodeAnchorPosition position)
+    {
+      ClearCardControls();
+      _cardControls.Add(Mason.Render(_registry, WrapCardAnchor(card, node, position)));
     }
 
     void AddRoot(string elementName, out VisualElement element)
@@ -120,19 +142,51 @@ namespace Spelldawn.Services
         }
       }, content);
 
-    Node ObjectControl(ObjectControlNode controlNode)
-    {
-      var position = TransformPositionToElementPosition(
-        _registry.ObjectPositionService.Find(controlNode.GameObjectId).InterfaceAnchor());
+    Node RenderCardAnchorNode(CardAnchorNode controlNode) =>
+      WrapCardAnchor(
+        _registry.CardService.FindCard(controlNode.CardId),
+        controlNode.Node,
+        controlNode.AnchorPosition);
 
-      return Column("ObjectControl", new FlexStyle
+    Node WrapCardAnchor(Card card, Node node, CardNodeAnchorPosition anchorPosition)
+    {
+      // Left-side nodes get anchored on their right.
+      var anchorRight = anchorPosition == CardNodeAnchorPosition.Left;
+      var anchor = anchorPosition switch
+      {
+        CardNodeAnchorPosition.Bottom => card.BottomLeftAnchor,
+        CardNodeAnchorPosition.Left => card.TopLeftAnchor,
+        CardNodeAnchorPosition.Right => card.TopRightAnchor,
+        _ => throw new ArgumentOutOfRangeException()
+      };
+
+      var position = TransformPositionToElementPosition(anchor, anchorRight);
+
+      return Column("CardAnchor", new FlexStyle
       {
         Position = FlexPosition.Absolute,
-        Inset = PositionDip(position.x - 250, position.y),
-        Width = Dip(500),
+        Inset = anchorPosition switch
+        {
+          CardNodeAnchorPosition.Bottom => GroupDip(
+            position.y,
+            TransformPositionToElementPosition(card.BottomRightAnchor, anchorRight: true).x,
+            0,
+            position.x),
+          CardNodeAnchorPosition.Left =>
+            GroupDip(position.y, position.x, 0, 0),
+          CardNodeAnchorPosition.Right =>
+            GroupDip(position.y, 0, 0, position.x),
+          _ => throw new ArgumentOutOfRangeException()
+        },
         JustifyContent = FlexJustify.FlexStart,
-        AlignItems = FlexAlign.Center
-      }, controlNode.Node);
+        AlignItems = anchorPosition switch
+        {
+          CardNodeAnchorPosition.Bottom => FlexAlign.Center,
+          CardNodeAnchorPosition.Left => FlexAlign.FlexEnd,
+          CardNodeAnchorPosition.Right => FlexAlign.FlexStart,
+          _ => throw new ArgumentOutOfRangeException()
+        }
+      }, node);
     }
 
     public static Node ControlGroup(params Node[] nodes) => Row("ControlGroup",
@@ -174,7 +228,7 @@ namespace Spelldawn.Services
                 {
                   RenderInterface = new RenderInterfaceCommand
                   {
-                    RaidControls = new InterfacePositionRaidControls()
+                    MainControls = new InterfacePositionMainControls()
                   }
                 },
                 update

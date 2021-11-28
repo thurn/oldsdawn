@@ -20,7 +20,7 @@ namespace Spelldawn.Game
 {
   public abstract class StackObjectDisplay : ObjectDisplay
   {
-    const float LongPressTime = 0.5f;
+    const float LongPressTime = 1.0f;
     const float DragGestureScreenDistance = 10f;
     [SerializeField] float _singleElementY = 0.5f;
     Vector3? _mouseDownPosition;
@@ -40,10 +40,10 @@ namespace Spelldawn.Game
     {
       _mouseDownPosition = Input.mousePosition;
       _mouseDownTime = Time.time;
-      MouseDown();
+      RunMouseDown();
     }
 
-    protected virtual void MouseDown()
+    protected virtual void RunMouseDown()
     {
     }
 

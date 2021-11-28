@@ -20,7 +20,7 @@ using UnityEngine.Rendering;
 
 namespace Spelldawn.Game
 {
-  public abstract class Displayable : MonoBehaviour
+  public abstract class Displayable : Clickable
   {
     [Header("Displayable")] [SerializeField]
     ObjectDisplay? _parent;
@@ -61,9 +61,6 @@ namespace Spelldawn.Game
     public bool HasGameContext => _gameContext != GameContext.Unspecified;
 
     protected virtual GameContext DefaultGameContext() => GameContext.Unspecified;
-
-    /// <summary>Anchor point for UI controls</summary>
-    public virtual Transform InterfaceAnchor() => transform;
 
     public void SetGameContext(GameContext gameContext, int? index = null)
     {

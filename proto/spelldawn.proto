@@ -164,9 +164,16 @@ enum WhiteSpace {
 }
 
 message FlexColor {
+    /** Red color component, specified in the range 0.0 to 1.0 inclusive. */
     float red = 1;
+
+    /** Green color component, specified in the range 0.0 to 1.0 inclusive. */
     float green = 2;
+
+    /** Blue color component, specified in the range 0.0 to 1.0 inclusive. */
     float blue = 3;
+
+    /** Alpha color component, specified in the range 0.0 (transparent) to 1.0 (opaque) inclusive. */
     float alpha = 4;
 }
 
@@ -632,6 +639,9 @@ message RevealedCardView {
 
     /** Information needed to determine whether a card can be played. */
     CardCost cost = 11;
+
+    /** Additional interface element rendered to the side of the card during an info zoom. */
+    Node supplemental_info = 12;
 }
 
 message CardView {
@@ -850,17 +860,29 @@ message InterfacePositionFullScreen {
     Node node = 1;
 }
 
-message InterfacePositionRaidControls {
+message InterfacePositionMainControls {
     Node node = 1;
 }
 
-message ObjectControlNode {
-    GameObjectId game_object_id = 1;
-    Node node = 2;
+enum CardNodeAnchorPosition {
+    CARD_NODE_ANCHOR_POSITION_UNSPECIFIED = 0;
+
+    CARD_NODE_ANCHOR_POSITION_BOTTOM = 1;
+
+    CARD_NODE_ANCHOR_POSITION_LEFT = 2;
+
+    CARD_NODE_ANCHOR_POSITION_RIGHT = 3;
 }
 
-message InterfacePositionObjectControls {
-    repeated ObjectControlNode control_nodes = 1;
+/** Render an interface element attached to a specific card. */
+message CardAnchorNode {
+    CardId card_id = 1;
+    Node node = 2;
+    CardNodeAnchorPosition anchor_position = 3;
+}
+
+message InterfacePositionCardAnchors {
+    repeated CardAnchorNode anchor_nodes = 1;
 }
 
 /**
@@ -870,8 +892,8 @@ message InterfacePositionObjectControls {
 message RenderInterfaceCommand {
     oneof position {
         InterfacePositionFullScreen full_screen = 1;
-        InterfacePositionRaidControls raid_controls = 2;
-        InterfacePositionObjectControls object_controls = 3;
+        InterfacePositionMainControls main_controls = 2;
+        InterfacePositionCardAnchors card_anchors = 3;
     }
 }
 

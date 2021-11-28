@@ -37,7 +37,7 @@ namespace Spelldawn.Services
 
     readonly Dictionary<CardId, Card> _cards = new();
 
-    public Card? CurrentlyDragging { get; set; }
+    public bool CurrentlyDragging { get; set; }
 
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)
     {
@@ -61,21 +61,6 @@ namespace Spelldawn.Services
     {
       Errors.CheckState(_cards.ContainsKey(cardId), $"Card Id {cardId} not found");
       return _cards[cardId];
-    }
-
-    void Update()
-    {
-      if (Input.GetMouseButtonUp(0))
-      {
-        ClearInfoZoom();
-
-        if (CurrentlyDragging)
-        {
-          var card = CurrentlyDragging!;
-          CurrentlyDragging = null;
-          card.MouseUp();
-        }
-      }
     }
 
     public void DrawOptimisticCard()
@@ -150,19 +135,37 @@ namespace Spelldawn.Services
       yield return FindCard(command.Card!.CardId).Render(_registry, command.Card).WaitForCompletion();
     }
 
-    public void DisplayInfoZoom(Vector3 worldMousePosition, CardView cardView)
+    public void DisplayInfoZoom(Vector3 worldMousePosition, Card card)
+    {
+      StartCoroutine(InfoZoom(worldMousePosition, card));
+    }
+
+    IEnumerator InfoZoom(Vector3 worldMousePosition, Card card)
     {
       ClearInfoZoom();
-      var card = ComponentUtils.Instantiate(_cardPrefab);
-      card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
-      card.Render(_registry, cardView, GameContext.InfoZoom, animate: false);
-      card.gameObject.name = $"{card.gameObject.name} InfoZoom";
+
+      var cardView = Errors.CheckNotNull(card.CardView);
+      var revealed = Errors.CheckNotNull(cardView.RevealedCard);
+      var zoomed = ComponentUtils.Instantiate(_cardPrefab);
+      zoomed.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
+      zoomed.Render(_registry, card.CardView!, GameContext.InfoZoom, animate: false);
+      zoomed.gameObject.name = $"{card.name} InfoZoom";
       var container = worldMousePosition.x > 0 ? _infoZoomRight : _infoZoomLeft;
-      StartCoroutine(container.AddObject(card, animate: false));
+
+      yield return container.AddObject(zoomed, animate: false);
+
+      if (revealed.SupplementalInfo != null)
+      {
+        _registry.DocumentService.RenderSupplementalCardInfo(
+          zoomed,
+          revealed.SupplementalInfo,
+          worldMousePosition.x > 0 ? CardNodeAnchorPosition.Left : CardNodeAnchorPosition.Right);
+      }
     }
 
     public void ClearInfoZoom()
     {
+      _registry.DocumentService.ClearCardControls();
       _infoZoomLeft.DestroyAll();
       _infoZoomRight.DestroyAll();
     }
