@@ -29,22 +29,16 @@ namespace Spelldawn.Game
     protected override Vector3 CalculateObjectPosition(int index, int count) =>
       new(
         transform.position.x,
-        transform.position.y + YOffset + Mathf.Lerp(0f, 1f, count < 2 ? _singleElementY : index / ((float)count - 1)),
+        transform.position.y + Mathf.Lerp(0f, 1f, count < 2 ? _singleElementY : index / ((float)count - 1)),
         transform.position.z);
-
-    protected virtual float YOffset => 0f;
 
     protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;
 
-    public override void MouseDown()
+    public override bool MouseDown()
     {
       _mouseDownPosition = Input.mousePosition;
       _mouseDownTime = Time.time;
-      RunMouseDown();
-    }
-
-    protected virtual void RunMouseDown()
-    {
+      return true;
     }
 
     public override void MouseDrag()

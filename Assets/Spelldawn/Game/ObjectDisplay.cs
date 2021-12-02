@@ -15,6 +15,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Spelldawn.Services;
 using Spelldawn.Utils;
 using UnityEngine;
 
@@ -35,7 +36,9 @@ namespace Spelldawn.Game
 
     public List<Displayable> AllObjects => new(_objects);
 
-    public int ObjectCount => _objects.Count;
+    protected int ObjectCount => _objects.Count;
+
+    protected abstract Registry? Registry { get; }
 
     protected override void OnStart()
     {
@@ -128,7 +131,6 @@ namespace Spelldawn.Game
     {
       MarkUpdateRequired(true);
     }
-
 
     protected abstract override GameContext DefaultGameContext();
 

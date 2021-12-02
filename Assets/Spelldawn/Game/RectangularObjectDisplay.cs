@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Spelldawn.Services;
 using UnityEngine;
 
 #nullable enable
@@ -25,6 +26,9 @@ namespace Spelldawn.Game
     [SerializeField] float _height;
     [SerializeField] float _initialSpacing;
     [SerializeField] float _cardSize;
+    [SerializeField] Registry _registry = null!;
+
+    protected override Registry Registry => _registry;
 
     protected override GameContext DefaultGameContext() => Game.GameContext.Arena;
 

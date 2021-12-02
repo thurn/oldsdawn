@@ -193,6 +193,10 @@ message EffectAddress {
     string address = 1;
 }
 
+message AudioClipAddress {
+    string address = 1;
+}
+
 message FlexVector2 {
     float x = 1;
     float y = 2;
@@ -993,6 +997,21 @@ message UpdatePlayerStateCommand {
     ActionTrackerView action_tracker = 4;
 }
 
+message PlaySoundCommand {
+    AudioClipAddress sound = 1;
+}
+
+enum MusicState {
+    MUSIC_STATE_UNSPECIFIED = 0;
+    MUSIC_STATE_SILENT = 1;
+    MUSIC_STATE_GAMEPLAY = 2;
+    MUSIC_STATE_RAID = 3;
+}
+
+message SetMusicCommand {
+    MusicState music_state = 1;
+}
+
 /**
  * Fire a projectile from one game object at another.
  */
@@ -1006,30 +1025,34 @@ message FireProjectileCommand {
     /** How long the projectile should take to hit its target. */
     TimeValue travel_duration = 4;
 
+    AudioClipAddress fire_sound = 5;
+
+    AudioClipAddress impact_sound = 6;
+
     /** Additional effect to display on the target on hit. */
-    EffectAddress additional_hit = 5;
+    EffectAddress additional_hit = 7;
 
     /**
      * Delay before showing the additional hit. If provided, the original
      * projectile Hit effect will be hidden before showing the new hit effect.
      */
-    TimeValue additional_hit_delay = 6;
+    TimeValue additional_hit_delay = 8;
 
     /**
      * During to wait for the project's impact effect before continuing
      */
-    TimeValue wait_duration = 7;
+    TimeValue wait_duration = 9;
 
     /**
      * If true, the target will be hidden after being hit during the
      * 'wait_duration' and before jumping to 'jump_to_position'.
      */
-    bool hide_on_hit = 8;
+    bool hide_on_hit = 10;
 
     /**
      * Position for the target to jump to after being hit.
      */
-    ObjectPosition jump_to_position = 9;
+    ObjectPosition jump_to_position = 11;
 }
 
 message PlayEffectPosition {
@@ -1047,6 +1070,8 @@ message PlayEffectCommand {
 
     /** How long to wait before continuing. */
     TimeValue duration = 4;
+
+    AudioClipAddress sound = 5;
 }
 
 enum GameMessageType {
@@ -1086,11 +1111,13 @@ message GameCommand {
         MoveGameObjectsAtPositionCommand move_objects_at_position = 12;
         DestroyCardCommand destroy_card = 13;
         UpdatePlayerStateCommand update_player_state = 14;
-        FireProjectileCommand fire_projectile = 15;
-        PlayEffectCommand play_effect = 16;
-        DisplayGameMessageCommand display_game_message = 17;
-        SetGameObjectsEnabledCommand set_game_objects_enabled = 18;
-        DisplayRewardsCommand display_rewards = 19;
+        PlaySoundCommand play_sound = 15;
+        SetMusicCommand set_music = 16;
+        FireProjectileCommand fire_projectile = 17;
+        PlayEffectCommand play_effect = 18;
+        DisplayGameMessageCommand display_game_message = 19;
+        SetGameObjectsEnabledCommand set_game_objects_enabled = 20;
+        DisplayRewardsCommand display_rewards = 21;
     }
 }
 

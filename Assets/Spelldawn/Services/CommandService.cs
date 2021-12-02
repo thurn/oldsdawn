@@ -107,6 +107,12 @@ namespace Spelldawn.Services
             break;
           case GameCommand.CommandOneofCase.UpdatePlayerState:
             break;
+          case GameCommand.CommandOneofCase.PlaySound:
+            _registry.MainAudioSource.PlayOneShot(_registry.AssetService.GetAudioClip(command.PlaySound.Sound));
+            break;
+          case GameCommand.CommandOneofCase.SetMusic:
+            _registry.MusicService.SetMusicState(command.SetMusic.MusicState);
+            break;
           case GameCommand.CommandOneofCase.FireProjectile:
             yield return
               _registry.ObjectPositionService.HandleFireProjectileCommand(command.FireProjectile);
@@ -181,6 +187,11 @@ namespace Spelldawn.Services
       if (command.Scale is { } scale)
       {
         effect.transform.localScale = scale * Vector3.one;
+      }
+
+      if (command.Sound != null)
+      {
+        _registry.MainAudioSource.PlayOneShot(_registry.AssetService.GetAudioClip(command.Sound));
       }
 
       yield return new WaitForSeconds(DataUtils.ToSeconds(command.Duration, 0));

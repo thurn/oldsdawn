@@ -25,6 +25,9 @@ namespace Spelldawn.Services
     [SerializeField] Camera _mainCamera = null!;
     public Camera MainCamera => _mainCamera;
 
+    [SerializeField] AudioSource _mainAudioSource = null!;
+    public AudioSource MainAudioSource => _mainAudioSource;
+
     [SerializeField] AssetService _assetService = null!;
     public AssetService AssetService => _assetService;
 
@@ -45,6 +48,9 @@ namespace Spelldawn.Services
 
     [SerializeField] DocumentService _documentService = null!;
     public DocumentService DocumentService => _documentService;
+
+    [SerializeField] MusicService _musicService = null!;
+    public MusicService MusicService => _musicService;
 
     public SampleData SampleData => _sampleData;
     [SerializeField] SampleData _sampleData = null!;
@@ -75,6 +81,9 @@ namespace Spelldawn.Services
 
     [SerializeField] BackgroundOverlay _backgroundOverlay = null!;
     public BackgroundOverlay BackgroundOverlay => _backgroundOverlay;
+
+    [SerializeField] StaticAssets _staticAssets = null!;
+    public StaticAssets StaticAssets => _staticAssets;
 
     [SerializeField] RewardChest _rewardChest = null!;
     public RewardChest RewardChest => _rewardChest;

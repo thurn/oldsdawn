@@ -25,6 +25,8 @@ namespace Spelldawn.Game
     [SerializeField] Registry _registry = null!;
     [SerializeField] PlayerName _owner;
 
+    protected override Registry Registry => _registry;
+
     protected override GameContext DefaultGameContext() => GameContext.DiscardPile;
 
     protected override void LongPress()

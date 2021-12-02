@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Spelldawn.Services;
 using UnityEngine;
 
 #nullable enable
@@ -30,6 +31,9 @@ namespace Spelldawn.Game
     [SerializeField] float _gizmoRadius = 1.0f;
     [SerializeField] float _objectScale;
     [SerializeField] float _animationDuration = 0.3f;
+    [SerializeField] Registry _registry = null!;
+
+    protected override Registry Registry => _registry;
 
     protected override GameContext DefaultGameContext() => _sortingGameContext;
 

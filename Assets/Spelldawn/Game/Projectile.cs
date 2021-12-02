@@ -41,7 +41,9 @@ namespace Spelldawn.Game
       Transform target,
       TimeValue? duration,
       EffectAddress? additionalHit,
-      TimeValue? additionalHitDelay)
+      TimeValue? additionalHitDelay,
+      AudioClipAddress? fireSound,
+      AudioClipAddress? impactSound)
     {
       transform.localScale = _scale * Vector3.one;
       transform.LookAt(target);
@@ -54,6 +56,15 @@ namespace Spelldawn.Game
         flash.transform.localScale = _scale * Vector3.one;
       }
 
+      if (fireSound != null)
+      {
+        registry.MainAudioSource.PlayOneShot(registry.AssetService.GetAudioClip(fireSound));
+      }
+      else
+      {
+        registry.StaticAssets.PlayFireProjectileSound();
+      }
+
       yield return TweenUtils.Sequence($"{name} Projectile")
         .Append(transform.DOMove(target.position, DataUtils.ToSeconds(duration, 300)).SetEase(Ease.Linear))
         .WaitForCompletion();
@@ -64,6 +75,15 @@ namespace Spelldawn.Game
         hit = registry.AssetPoolService.Create(_hit, transform.position);
         hit.transform.rotation = rotation;
         hit.transform.localScale = _scale * Vector3.one;
+      }
+
+      if (impactSound != null)
+      {
+        registry.MainAudioSource.PlayOneShot(registry.AssetService.GetAudioClip(impactSound));
+      }
+      else
+      {
+        registry.StaticAssets.PlayImpactSound();
       }
 
       gameObject.SetActive(value: false);

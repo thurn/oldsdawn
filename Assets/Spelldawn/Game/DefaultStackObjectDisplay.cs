@@ -12,12 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Spelldawn.Services;
+using UnityEngine;
+
 #nullable enable
 
 namespace Spelldawn.Game
 {
   public sealed class DefaultStackObjectDisplay : StackObjectDisplay
   {
+    [SerializeField] Registry _registry = null!;
+
+    protected override Registry Registry => _registry;
+
     protected override GameContext DefaultGameContext() => GameContext;
   }
 }

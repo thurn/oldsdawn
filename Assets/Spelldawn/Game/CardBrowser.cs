@@ -23,7 +23,6 @@ namespace Spelldawn.Game
 {
   public sealed class CardBrowser : CurveObjectDisplay
   {
-    [SerializeField] Registry _registry = null!;
     [SerializeField] bool _active;
 
     static readonly ObjectPosition BrowserPosition = new()
@@ -33,33 +32,34 @@ namespace Spelldawn.Game
 
     protected override void OnUpdated()
     {
-      if (ObjectCount > 0)
+      switch (ObjectCount)
       {
-        _registry.BackgroundOverlay.Enable(GameContext.Interface, translucent: true);
-        _active = true;
-      }
-      else if (_active)
-      {
-        _registry.BackgroundOverlay.Disable();
-        _active = false;
+        case > 0 when !_active:
+          Registry.BackgroundOverlay.Enable(GameContext.Interface, translucent: true);
+          _active = true;
+          break;
+        case 0 when _active:
+          Registry.BackgroundOverlay.Disable();
+          _active = false;
+          break;
       }
     }
 
 
     public IEnumerator BrowseCards(ObjectPosition atPosition)
     {
-      if (_registry.ActionService.CanInitiateAction())
+      if (Registry.ActionService.CanInitiateAction())
       {
-        _registry.ArrowService.HideArrows();
+        Registry.ArrowService.HideArrows();
 
-        yield return _registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(
+        yield return Registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(
           new MoveGameObjectsAtPositionCommand
           {
             SourcePosition = atPosition,
             TargetPosition = BrowserPosition,
           });
 
-        yield return _registry.DocumentService.RenderMainControls(
+        yield return Registry.DocumentService.RenderMainControls(
           DocumentService.ControlGroup(DocumentService.Button("Close", new GameCommand
           {
             MoveObjectsAtPosition = new MoveGameObjectsAtPositionCommand

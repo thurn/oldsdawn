@@ -44,20 +44,39 @@ namespace Spelldawn.Game
     [SerializeField] MessageContent _victory = null!;
     [SerializeField] MessageContent _defeat = null!;
 
-    public IEnumerator Show(DisplayGameMessageCommand command) => command.MessageType switch
+    public IEnumerator Show(DisplayGameMessageCommand command)
     {
-      GameMessageType.Dawn => ShowContent(_dawn, 1.75f, moveToTop: false),
-      GameMessageType.Dusk => ShowContent(_dusk, 1.75f, moveToTop: false),
-      GameMessageType.Victory => ShowContent(_victory, 2f, moveToTop: true),
-      GameMessageType.Defeat => ShowContent(_defeat, 2f, moveToTop: true),
-      _ => CollectionUtils.Yield()
-    };
+      switch (command.MessageType)
+      {
+        case GameMessageType.Dawn:
+          _registry.StaticAssets.PlayDawnSound();
+          break;
+        case GameMessageType.Dusk:
+          _registry.StaticAssets.PlayDuskSound();
+          break;
+        case GameMessageType.Victory:
+          _registry.MusicService.SetMusicState(MusicState.Silent);
+          _registry.StaticAssets.PlayVictorySound();
+          break;
+        case GameMessageType.Defeat:
+          _registry.MusicService.SetMusicState(MusicState.Silent);
+          _registry.StaticAssets.PlayDefeatSound();
+          break;
+      }
+
+      return command.MessageType switch
+      {
+        GameMessageType.Dawn => ShowContent(_dawn, 1.75f, moveToTop: false),
+        GameMessageType.Dusk => ShowContent(_dusk, 1.75f, moveToTop: false),
+        GameMessageType.Victory => ShowContent(_victory, 2f, moveToTop: true),
+        GameMessageType.Defeat => ShowContent(_defeat, 2f, moveToTop: true),
+        _ => CollectionUtils.Yield()
+      };
+    }
 
     IEnumerator ShowContent(MessageContent content, float durationSeconds, bool moveToTop)
     {
-      content.Effect.transform.position = transform.position;
       content.Text.transform.position = transform.position;
-
       content.Effect.gameObject.SetActive(false);
       content.Effect.gameObject.SetActive(true);
       content.Text.gameObject.SetActive(true);

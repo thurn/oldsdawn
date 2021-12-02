@@ -152,8 +152,11 @@ namespace Spelldawn.Services
           }
           else
           {
-            clickable.MouseDown();
-            fired = clickable;
+            var consumed = clickable.MouseDown();
+            if (consumed)
+            {
+              fired = clickable;
+            }
           }
         }
       }
@@ -178,6 +181,7 @@ namespace Spelldawn.Services
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.StandardAction:
+          _registry.StaticAssets.PlayButtonSound();
           if (action.StandardAction.Update is { } update)
           {
             yield return _registry.CommandService.HandleCommands(update);
@@ -185,12 +189,15 @@ namespace Spelldawn.Services
 
           break;
         case GameAction.ActionOneofCase.DrawCard:
+          _registry.StaticAssets.PlayDrawCardStartSound();
           _registry.CardService.DrawOptimisticCard();
           break;
         case GameAction.ActionOneofCase.PlayCard:
+          _registry.StaticAssets.PlayWhooshSound();
           yield return HandlePlayCard(action.PlayCard);
           break;
         case GameAction.ActionOneofCase.GainMana:
+          _registry.StaticAssets.PlayAddManaSound();
           _registry.ManaDisplayForPlayer(PlayerName.User).Increment();
           break;
         case GameAction.ActionOneofCase.InitiateRaid:

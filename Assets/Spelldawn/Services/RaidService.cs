@@ -37,6 +37,8 @@ namespace Spelldawn.Services
     {
       if (_currentRoom != command.RoomId)
       {
+        _registry.StaticAssets.PlayWhooshSound();
+        _registry.MusicService.SetMusicState(MusicState.Raid);
         _currentRoom = command.RoomId;
         _registry.BackgroundOverlay.Enable(GameContext.ArenaRaidParticipant, translucent: true);
         _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
@@ -58,11 +60,14 @@ namespace Spelldawn.Services
         }
 
         yield return MoveToRaid(room.CardsInRoom.AllObjects);
+
+        _registry.StaticAssets.PlayWhooshSound();
         yield return MoveToRaid(room.Defenders.AllObjects);
 
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;
 
+        _registry.StaticAssets.PlayWhooshSound();
         yield return _registry.ObjectPositionService.MoveGameObject(identity, new ObjectPosition
         {
           Raid = new ObjectPositionRaid()
@@ -89,6 +94,7 @@ namespace Spelldawn.Services
 
     public IEnumerator HandleEndRaid(EndRaidCommand endRaidCommand)
     {
+      _registry.MusicService.SetMusicState(MusicState.Gameplay);
       _registry.IdentityCardForPlayer(endRaidCommand.Initiator).RaidSymbolShown = false;
       _registry.BackgroundOverlay.Disable();
       _currentRoom = null;

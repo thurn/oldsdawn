@@ -214,13 +214,17 @@ namespace Spelldawn.Game
       }
     }
 
-    public override void MouseDown()
+    public override bool MouseDown()
     {
+      var result = false;
+
       if (_registry.ActionService.CanInfoZoom(GameContext) && _revealedCardView != null)
       {
+        _registry.StaticAssets.PlayCardSound();
         _registry.CardService.DisplayInfoZoom(
           WorldMousePosition(_registry, _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z),
           this);
+        result = true;
       }
 
       if (InHand() && _canPlay)
@@ -234,7 +238,10 @@ namespace Spelldawn.Game
         _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
         _dragStartPosition = WorldMousePosition(_registry, _dragStartScreenZ);
         _dragOffset = gameObject.transform.position - _dragStartPosition;
+        result = true;
       }
+
+      return result;
     }
 
     public override void MouseDrag()
@@ -268,11 +275,13 @@ namespace Spelldawn.Game
 
       if (!_registry.CardService.CurrentlyDragging)
       {
+        _registry.StaticAssets.PlayCardSound();
         return;
       }
 
       _registry.CardService.CurrentlyDragging = false;
       _registry.ArenaService.HideRoomSelector();
+
       var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
       if (distance < 3.5f ||
           !_registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard) ||
@@ -280,6 +289,7 @@ namespace Spelldawn.Game
            _targetRoom == null))
       {
         // Return to hand
+        _registry.StaticAssets.PlayCardSound();
         StartCoroutine(_previousParent!.AddObject(this, animate: true, index: _previousParentIndex));
       }
       else

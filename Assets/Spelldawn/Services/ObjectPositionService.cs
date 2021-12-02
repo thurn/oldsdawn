@@ -70,7 +70,9 @@ namespace Spelldawn.Services
         target.transform,
         command.TravelDuration,
         command.AdditionalHit,
-        command.AdditionalHitDelay);
+        command.AdditionalHitDelay,
+        command.FireSound,
+        command.ImpactSound);
 
       if (command.HideOnHit)
       {
@@ -95,11 +97,13 @@ namespace Spelldawn.Services
 
     public IEnumerator HandleMoveGameObjectsCommand(MoveGameObjectsCommand command)
     {
+      _registry.StaticAssets.PlayCardSound();
       return MoveGameObjects(command.Ids.Select(Find), command.Position, command.Index, !command.DisableAnimation);
     }
 
     public IEnumerator HandleMoveGameObjectsAtPosition(MoveGameObjectsAtPositionCommand command)
     {
+      _registry.StaticAssets.PlayCardSound();
       return MoveGameObjects(
         ObjectDisplayForPosition(command.SourcePosition).AllObjects,
         command.TargetPosition,
@@ -197,6 +201,7 @@ namespace Spelldawn.Services
         .Insert(0, card.transform.DOLocalRotate(new Vector3(270, 0, 0), 0.5f))
         .Insert(0.5f, card.transform.DOMove(_registry.CardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
         .Insert(0.5f, card.transform.DORotateQuaternion(_registry.CardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
+        .InsertCallback(0.5f, () => _registry.StaticAssets.PlayDrawCardSound())
         .AppendCallback(() => card.StagingAnimationComplete = true);
     }
 

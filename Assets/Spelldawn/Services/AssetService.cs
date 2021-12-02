@@ -53,6 +53,11 @@ namespace Spelldawn.Services
       return ComponentUtils.GetComponent<TimedEffect>((GameObject)_assets[address.Address]);
     }
 
+    public AudioClip GetAudioClip(AudioClipAddress address)
+    {
+      return (AudioClip)_assets[address.Address];
+    }
+
     public IEnumerator LoadAssets(CommandList commandList)
     {
       var requests = new Dictionary<string, ResourceRequest>();
@@ -83,12 +88,18 @@ namespace Spelldawn.Services
             LoadPlayerInfoAssets(requests, command.UpdatePlayerState.Info);
             LoadScoreViewAssets(requests, command.UpdatePlayerState.Score);
             break;
+          case GameCommand.CommandOneofCase.PlaySound:
+            LoadAudioClip(requests, command.PlaySound.Sound);
+            break;
           case GameCommand.CommandOneofCase.FireProjectile:
             LoadProjectile(requests, command.FireProjectile.Projectile);
             LoadEffect(requests, command.FireProjectile.AdditionalHit);
+            LoadAudioClip(requests, command.FireProjectile.FireSound);
+            LoadAudioClip(requests, command.FireProjectile.ImpactSound);
             break;
           case GameCommand.CommandOneofCase.PlayEffect:
             LoadEffect(requests, command.PlayEffect.Effect);
+            LoadAudioClip(requests, command.PlayEffect.Sound);
             break;
           case GameCommand.CommandOneofCase.DisplayRewards:
             LoadCardListAssets(requests, command.DisplayRewards.Rewards);
@@ -132,6 +143,7 @@ namespace Spelldawn.Services
           {
             LoadNodeAssets(requests, controlNode.Node);
           }
+
           break;
       }
     }
@@ -295,6 +307,14 @@ namespace Spelldawn.Services
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
         requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
+      }
+    }
+
+    void LoadAudioClip(IDictionary<string, ResourceRequest> requests, AudioClipAddress? address)
+    {
+      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+      {
+        requests[address.Address] = Resources.LoadAsync<AudioClip>(address.Address);
       }
     }
   }

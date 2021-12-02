@@ -40,6 +40,8 @@ namespace Spelldawn.Game
       set => _raidSymbol.SetActive(value);
     }
 
+    protected override Registry Registry => _registry;
+
     protected override GameContext DefaultGameContext() => GameContext.Identity;
 
     protected override float? CalculateObjectScale(int index, int count) => 0f;
@@ -71,10 +73,13 @@ namespace Spelldawn.Game
       }
     }
 
-    protected override void RunMouseDown()
+    public override bool MouseDown()
     {
+      base.MouseDown();
+
       if (_owner == PlayerName.User && _registry.ActionService.CanInitiateAction())
       {
+        _registry.StaticAssets.PlayCardSound();
         switch (_identityAction)
         {
           case IdentityAction.InitiateRaid:
@@ -85,6 +90,8 @@ namespace Spelldawn.Game
             break;
         }
       }
+
+      return true;
     }
 
     protected override void LongPress()
@@ -129,6 +136,10 @@ namespace Spelldawn.Game
             });
             break;
         }
+      }
+      else
+      {
+        _registry.StaticAssets.PlayCardSound();
       }
     }
 

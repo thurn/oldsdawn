@@ -131,6 +131,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           yield return DrawImmediately();
           break;
         case StartBehavior.ShowOpeningHand:
+          yield return new WaitForSeconds(0.5f);
           yield return ShowOpeningHand();
           break;
       }
@@ -940,10 +941,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               CardAnchors = new InterfacePositionCardAnchors()
             }
           },
+          SetMusic(MusicState.Silent),
+          PlaySound("Cafofo/Fantasy Music Pack Vol 1/Events/Positive Event 01"),
           MoveToScored(cardId),
           cleanUp,
-          PlayHitEffect(cardId, 4, 700),
-          PlayHitEffect(cardId, 4)
+          PlayHitEffect(cardId, 4, 700, "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_Large_RR1_mono"),
+          PlayHitEffect(cardId, 4, 300, "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_RR1_mono")
         }
       }
     };
@@ -967,7 +970,26 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
     }
 
-    GameCommand PlayHitEffect(int cardId, int i, int duration = 300) =>
+    GameCommand PlaySound(string address) => new()
+    {
+      PlaySound = new PlaySoundCommand
+      {
+        Sound = new AudioClipAddress
+        {
+          Address = address
+        }
+      }
+    };
+
+    GameCommand SetMusic(MusicState musicState) => new()
+    {
+      SetMusic = new SetMusicCommand
+      {
+        MusicState = musicState
+      }
+    };
+
+    GameCommand PlayHitEffect(int cardId, int i, int duration = 300, string? sound = null) =>
       new()
       {
         PlayEffect = new PlayEffectCommand
@@ -981,7 +1003,13 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             GameObject = IdUtil.CardObjectId(cardId)
           },
           Duration = TimeMs(duration),
-          Scale = 2.0f
+          Scale = 2.0f,
+          Sound = sound is null
+            ? null
+            : new AudioClipAddress
+            {
+              Address = sound
+            }
         }
       };
 

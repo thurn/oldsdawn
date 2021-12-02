@@ -27,6 +27,8 @@ namespace Spelldawn.Game
     [SerializeField] bool _clickable;
     [SerializeField] PlayerName _owner;
 
+    protected override Registry Registry => _registry;
+
     protected override GameContext DefaultGameContext() => GameContext.Deck;
 
     public void SetCardBacks(SpriteAddress spriteAddress)
