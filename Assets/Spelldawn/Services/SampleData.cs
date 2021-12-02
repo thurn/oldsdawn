@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,32 +90,41 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     static List<CardView> _cards = null!;
 
+    enum CardType
+    {
+      Abyssal,
+      Infernal,
+      Mortal,
+      Artifact,
+      Spell
+    }
+
     IEnumerator Start()
     {
       _card1 = RevealedUserCard(1, "Meteor Shower", Text1,
-        "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", "Spell • Legendary • Lightning", 0);
+        "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", CardType.Spell, 0);
 
       _cards = new List<CardView>
       {
         _card1,
         RevealedUserCard(2, "The Maker's Eye", Text2, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25",
-          "Weapon • Abyssal", 4),
+          CardType.Abyssal, 4),
         RevealedUserCard(3, "Gordian Blade", Text3, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_13",
-          "Weapon • Infernal", 1),
+          CardType.Infernal, 1),
         RevealedUserCard(4, "Personal Touch", Text4, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16",
-          "Weapon • Mortal", 15, showExtraHelpers: true),
+          CardType.Mortal, 15, showExtraHelpers: true),
         RevealedUserCard(5, "Secret Key", Text5, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42",
-          "Weapon • Abyssal", 4),
+          CardType.Spell, 4),
         RevealedUserCard(6, "Femme Fatale", Text6, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_37",
-          "Artifact • Ring", 2),
+          CardType.Artifact, 2),
         RevealedUserCard(7, "Magic Missile", Text7, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_40",
-          "Minion • Abyssal", 3),
-        RevealedUserCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66", "Scheme",
-          0),
+          CardType.Abyssal, 3),
+        RevealedUserCard(9, "Sleep Ray", Text9, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_66",
+          CardType.Infernal, 0),
         RevealedUserCard(8, "Divine Bolt", Text8, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_52",
-          "Spell • Arcane", 3),
+          CardType.Spell, 3),
         RevealedUserCard(10, "Hideous Laughter", Text10, "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_68",
-          "Project • Mining", 6)
+          CardType.Spell, 6)
       };
 
       yield return _registry.CommandService.HandleCommands(new GameCommand
@@ -389,7 +399,8 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Card = new CardView
           {
             CardId = cardId,
-            OwningPlayer = PlayerName.Opponent
+            OwningPlayer = PlayerName.Opponent,
+            ArenaFrame = Sprite("SpriteWay/Icons/Clean Frames/9048")
           },
           Position = DeckPosition(PlayerName.Opponent)
         }
@@ -487,7 +498,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       string title,
       string text,
       string image,
-      string cardType = "Card • Type",
+      CardType cardType = CardType.Artifact,
       int? manaCost = null,
       bool showExtraHelpers = false)
     {
@@ -524,6 +535,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         CardId = IdUtil.CardId(cardId),
         OwningPlayer = PlayerName.User,
+        ArenaFrame = Sprite(cardType switch
+        {
+          CardType.Abyssal => "SpriteWay/Icons/Clean Frames/9055",
+          CardType.Infernal => "SpriteWay/Icons/Clean Frames/9054",
+          CardType.Mortal => "SpriteWay/Icons/Clean Frames/9048",
+          CardType.Artifact => "SpriteWay/Icons/Clean Frames/9047",
+          CardType.Spell => "SpriteWay/Icons/Clean Frames/9020",
+          _ => throw new ArgumentOutOfRangeException(nameof(cardType), cardType, null)
+        }),
         CardIcons = new CardIcons
         {
           TopLeftIcon = manaCost == null
@@ -538,8 +558,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           CardFrame = Sprite(
             "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"),
-          TitleBackground = Sprite(
-            "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"),
+          TitleBackground = Sprite(cardType switch
+          {
+            CardType.Abyssal => "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape",
+            CardType.Infernal => "LittleSweetDaemon/TCG_Card_Design/Animal_Card/Animal_Card_Face_Tape",
+            CardType.Mortal => "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape",
+            CardType.Artifact => "LittleSweetDaemon/TCG_Card_Design/Sci-Fi_Card/Sci-Fi_Card_Face_Tape",
+            CardType.Spell => "LittleSweetDaemon/TCG_Card_Design/Warrior_Card/Warrior_Card Face_Tape",
+            _ => throw new ArgumentOutOfRangeException(nameof(cardType), cardType, null)
+          }),
           Jewel = Sprite(
             "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"),
           Image = Sprite(image),
@@ -563,7 +590,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               ManaCost = manaCost.Value
             },
           RevealedInArena = true,
-          SupplementalInfo = SupplementalInfo(cardType, showExtraHelpers)
+          SupplementalInfo = SupplementalInfo(cardType switch
+          {
+            CardType.Abyssal => "Weapon • Abyssal",
+            CardType.Infernal => "Weapon • Infernal",
+            CardType.Mortal => "Weapon • Mortal",
+            CardType.Artifact => "Artifact",
+            CardType.Spell => "Spell",
+            _ => throw new ArgumentOutOfRangeException(nameof(cardType), cardType, null)
+          }, showExtraHelpers)
         }
       };
     }
@@ -1252,18 +1287,18 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Rewards =
           {
             RevealedUserCard(21, "Reward#1", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_71",
-              "Weapon • Abyssal",
+              CardType.Abyssal,
               6),
             RevealedUserCard(22, "Reward#2", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72",
-              "Weapon • Infernal",
+              CardType.Infernal,
               4),
             RevealedUserCard(23, "Reward#3", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73",
-              "Spell • Arcane • Abyssal",
+              CardType.Infernal,
               3),
             RevealedUserCard(24, "Reward#4", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74",
-              "Artifact • Lightning"),
+              CardType.Spell),
             RevealedUserCard(25, "Reward#5", "Card Text", "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75",
-              "Spell • Elemental • Abyssal",
+              CardType.Spell,
               0)
           }
         }

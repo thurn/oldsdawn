@@ -119,6 +119,11 @@ namespace Spelldawn.Game
       _outline.sortingOrder = -1;
       _cardView = cardView;
 
+      if (cardView.ArenaFrame != null)
+      {
+        _arenaFrame.sprite = registry.AssetService.GetSprite(cardView.ArenaFrame);
+      }
+
       if (cardView.RevealedCard != null)
       {
         if (_isRevealed)
