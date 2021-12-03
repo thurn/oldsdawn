@@ -25,28 +25,44 @@ namespace Spelldawn.Game
   public sealed class ManaDisplay : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] bool _clickable;
+    [SerializeField] PlayerName _owner;
     [SerializeField] GameObject _pressEffect = null!;
+    [SerializeField] GameObject _changeEffect = null!;
     [SerializeField] TextMeshPro _manaText = null!;
     [SerializeField] int _currentMana = 5;
 
     public int CurrentMana => _currentMana;
 
-    public void Increment()
+    bool Clickable => _owner == PlayerName.User &&
+                      _registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.GainMana);
+
+    public void GainMana(int amount)
     {
-      SetMana(_currentMana + 1);
+      SetMana(_currentMana + amount);
+    }
+
+    public void SpendMana(int amount)
+    {
+      SetMana(_currentMana - amount);
     }
 
     public void SetMana(int currentMana)
     {
       Errors.CheckNonNegative(currentMana);
+
+      if (currentMana != _currentMana)
+      {
+        _changeEffect.SetActive(false);
+        _changeEffect.SetActive(true);
+      }
+
       _currentMana = currentMana;
       _manaText.text = "" + _currentMana;
     }
 
     void OnMouseDown()
     {
-      if (_clickable)
+      if (Clickable)
       {
         transform.localScale = 0.95f * Vector3.one;
       }
@@ -54,7 +70,7 @@ namespace Spelldawn.Game
 
     void OnMouseUp()
     {
-      if (_clickable)
+      if (Clickable)
       {
         transform.localScale = Vector3.one;
       }
@@ -62,7 +78,7 @@ namespace Spelldawn.Game
 
     void OnMouseUpAsButton()
     {
-      if (_clickable)
+      if (Clickable)
       {
         _pressEffect.SetActive(false);
         _pressEffect.SetActive(true);

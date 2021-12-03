@@ -190,17 +190,19 @@ namespace Spelldawn.Services
           break;
         case GameAction.ActionOneofCase.DrawCard:
           _registry.StaticAssets.PlayDrawCardStartSound();
+          _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(1);
           _registry.CardService.DrawOptimisticCard();
           break;
         case GameAction.ActionOneofCase.PlayCard:
-          _registry.StaticAssets.PlayWhooshSound();
           yield return HandlePlayCard(action.PlayCard);
           break;
         case GameAction.ActionOneofCase.GainMana:
           _registry.StaticAssets.PlayAddManaSound();
-          _registry.ManaDisplayForPlayer(PlayerName.User).Increment();
+          _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(1);
+          _registry.ManaDisplayForPlayer(PlayerName.User).GainMana(1);
           break;
         case GameAction.ActionOneofCase.InitiateRaid:
+          _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(1);
           yield return _registry.CommandService.HandleCommands(new GameCommand
           {
             InitiateRaid = new InitiateRaidCommand
@@ -211,6 +213,7 @@ namespace Spelldawn.Services
           });
           break;
         case GameAction.ActionOneofCase.LevelUpRoom:
+          _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(1);
           yield return _registry.CommandService.HandleCommands(new GameCommand
           {
             LevelUpRoom = new LevelUpRoomCommand
@@ -228,8 +231,11 @@ namespace Spelldawn.Services
     IEnumerator HandlePlayCard(PlayCardAction action)
     {
       var card = _registry.CardService.FindCard(action.CardId);
+      _registry.StaticAssets.PlayWhooshSound();
       var position =
         Errors.CheckNotNull(card.RevealedCardView?.OnReleasePosition, "Card does not have release position");
+      var cost = Errors.CheckNotNull(card.RevealedCardView?.Cost, "Card has no cost");
+
       if (position.PositionCase == ObjectPosition.PositionOneofCase.Room)
       {
         if (card.TargetRoom is { } targetRoom)
@@ -240,6 +246,12 @@ namespace Spelldawn.Services
           newPosition.Room.RoomId = targetRoom;
           position = newPosition;
         }
+      }
+
+      if (cost.SpendCostAlgorithm == SpendCostAlgorithm.Optimistic)
+      {
+        _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(cost.ActionCost);
+        _registry.ManaDisplayForPlayer(PlayerName.User).SpendMana(cost.ManaCost);
       }
 
       return _registry.ObjectPositionService.MoveGameObject(card, position);

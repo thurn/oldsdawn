@@ -612,6 +612,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             : new CardCost
             {
               CanPlay = false,
+              SpendCostAlgorithm = SpendCostAlgorithm.Optimistic,
               CanPlayAlgorithm = CanPlayAlgorithm.Optimistic,
               ActionCost = 1,
               ManaCost = manaCost.Value
