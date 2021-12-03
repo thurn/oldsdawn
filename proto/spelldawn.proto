@@ -438,6 +438,7 @@ enum RoomId {
 message CardIcon {
     SpriteAddress background = 1;
     string text = 2;
+    float background_scale = 3;
 }
 
 message CardIcons {

@@ -544,6 +544,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           CardType.Spell => "SpriteWay/Icons/Clean Frames/9020",
           _ => throw new ArgumentOutOfRangeException(nameof(cardType), cardType, null)
         }),
+
         CardIcons = new CardIcons
         {
           TopLeftIcon = manaCost == null
@@ -552,8 +553,34 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             {
               Background = Sprite("LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"),
               Text = manaCost + ""
-            }
+            },
+          BottomLeftIcon = cardType != CardType.Infernal
+            ? null
+            : new CardIcon
+            {
+              Background = Sprite("LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Icons/Number_Icons_Color_6"),
+              Text = "1",
+              BackgroundScale = 1.1f
+            },
+          BottomRightIcon = cardType switch
+          {
+            CardType.Infernal => new CardIcon
+            {
+              Background = Sprite("LittleSweetDaemon/TCG_Card_Elemental_Design/Heart_Icons/Heart_Icons_Color_5"),
+              Text = "4",
+              BackgroundScale = 1.5f
+            },
+            CardType.Mortal => new CardIcon
+            {
+              Background =
+                Sprite("LittleSweetDaemon/TCG_Card_Elemental_Design/Attack_Icons/Attack_Icons_Color_4"),
+              Text = "4",
+              BackgroundScale = 1.75f
+            },
+            _ => null
+          }
         },
+
         RevealedCard = new RevealedCardView
         {
           CardFrame = Sprite(
@@ -563,7 +590,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             CardType.Abyssal => "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape",
             CardType.Infernal => "LittleSweetDaemon/TCG_Card_Design/Animal_Card/Animal_Card_Face_Tape",
             CardType.Mortal => "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape",
-            CardType.Artifact => "LittleSweetDaemon/TCG_Card_Design/Sci-Fi_Card/Sci-Fi_Card_Face_Tape",
+            CardType.Artifact => "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape",
             CardType.Spell => "LittleSweetDaemon/TCG_Card_Design/Warrior_Card/Warrior_Card Face_Tape",
             _ => throw new ArgumentOutOfRangeException(nameof(cardType), cardType, null)
           }),
