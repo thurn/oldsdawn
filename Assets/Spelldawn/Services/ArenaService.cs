@@ -40,9 +40,29 @@ namespace Spelldawn.Services
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
-    public void SetRoomsOnBottom(bool roomsOnBottom)
+    public IEnumerator RenderArenaView(ArenaView arenaView)
     {
-      _sceneBackground.SetRoomsOnBottom(roomsOnBottom);
+      if (arenaView.RoomsAtBottom is { } b)
+      {
+        _sceneBackground.SetRoomsOnBottom(b);
+      }
+
+      if (arenaView.LeftItems != null)
+      {
+        yield return _registry.CardService.UpdateCardsInDisplay(_leftItems, arenaView.LeftItems);
+      }
+
+      if (arenaView.RightItems != null)
+      {
+        yield return _registry.CardService.UpdateCardsInDisplay(_rightItems, arenaView.RightItems);
+      }
+
+      foreach (var roomView in arenaView.Rooms)
+      {
+        var room = FindRoom(roomView.RoomId);
+        yield return _registry.CardService.UpdateCardsInDisplay(room.BackCards, roomView.BackCards);
+        yield return _registry.CardService.UpdateCardsInDisplay(room.FrontCards, roomView.FrontCards);
+      }
     }
 
     public Room FindRoom(RoomId roomId)
@@ -131,8 +151,8 @@ namespace Spelldawn.Services
     {
       foreach (var room in _rooms)
       {
-        SetObjectDisplayActive(room.Defenders, command);
-        SetObjectDisplayActive(room.CardsInRoom, command);
+        SetObjectDisplayActive(room.FrontCards, command);
+        SetObjectDisplayActive(room.BackCards, command);
       }
 
       SetObjectDisplayActive(_leftItems, command);

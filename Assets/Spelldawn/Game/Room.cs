@@ -25,12 +25,12 @@ namespace Spelldawn.Game
   {
     [SerializeField] RectangularObjectDisplay _inRoom = null!;
 
-    public ObjectDisplay CardsInRoom => _inRoom;
+    public ObjectDisplay BackCards => _inRoom;
 
     // Defenders are sorted in order, index 0 represents the rearmost defender
     [SerializeField] RectangularObjectDisplay _defenders = null!;
 
-    public ObjectDisplay Defenders => _defenders;
+    public ObjectDisplay FrontCards => _defenders;
 
     [SerializeField] RoomId _roomId;
     public RoomId RoomId => _roomId;

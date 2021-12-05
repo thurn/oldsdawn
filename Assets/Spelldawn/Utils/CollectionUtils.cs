@@ -34,5 +34,15 @@ namespace Spelldawn.Utils
     {
       yield return value;
     }
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : struct
+    {
+      return source.Where(t => t != null).Select(t => t.GetValueOrDefault());
+    }
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
+    {
+      return source.Where(t => t != null).Select(t => t!);
+    }
   }
 }

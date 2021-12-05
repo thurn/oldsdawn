@@ -15,7 +15,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Google.Protobuf.Collections;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
@@ -199,14 +198,16 @@ namespace Spelldawn.Services
       {
         foreach (var room in arenaView.Rooms)
         {
-          LoadCardListAssets(requests, room.Cards);
+          LoadCardListAssets(requests, room.FrontCards);
+          LoadCardListAssets(requests, room.BackCards);
         }
 
-        LoadCardListAssets(requests, arenaView.Items);
+        LoadCardListAssets(requests, arenaView.LeftItems);
+        LoadCardListAssets(requests, arenaView.RightItems);
       }
     }
 
-    void LoadCardListAssets(IDictionary<string, ResourceRequest> requests, RepeatedField<CardView>? cards)
+    void LoadCardListAssets(IDictionary<string, ResourceRequest> requests, IEnumerable<CardView>? cards)
     {
       if (cards != null)
       {

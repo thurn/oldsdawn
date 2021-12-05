@@ -103,7 +103,8 @@ namespace Spelldawn.Game
     public Sequence? Render(
       Registry registry,
       CardView cardView,
-      GameContext? gameContext = null, bool animate = true)
+      GameContext? gameContext = null,
+      bool animate = true)
     {
       if (gameContext is { } gc)
       {

@@ -401,9 +401,11 @@ MonoBehaviour:
   _animationRunning: 0
   _singleElementY: 0.5
   _registry: {fileID: 0}
-  _canDrag: 0
+  _image: {fileID: 3471970737235737659}
+  _frame: {fileID: 3471970735344309018}
   _scoreText: {fileID: 3471970735534257304}
   _raidSymbol: {fileID: 8860615117535787749}
+  _owner: 0
 --- !u!65 &6381433577306138343
 BoxCollider:
   m_ObjectHideFlags: 0

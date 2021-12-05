@@ -62,7 +62,7 @@ namespace Spelldawn.Game
     {
       var cards = command.Rewards
         .Select(c =>
-          _registry.CardService.CreateCard(c, GameContext.RewardBrowser, animate: false))
+          _registry.CardService.CreateAndAddCard(c, GameContext.RewardBrowser, animate: false))
         .ToList();
       for (var i = 0; i < cards.Count; ++i)
       {

@@ -673,12 +673,13 @@ message DiscardPileView {
 message PlayerInfo {
     string name = 1;
     SpriteAddress portrait = 2;
+    SpriteAddress portrait_frame = 3;
 
     /** Card back asset to use for this player's cards. */
-    SpriteAddress card_back = 3;
+    SpriteAddress card_back = 4;
 
     /** Describes the player's unique powers. */
-    CardView identity_card = 4;
+    CardView identity_card = 5;
 }
 
 message ManaView {
@@ -692,7 +693,8 @@ message ScoreView {
 
 message RoomView {
     RoomId room_id = 1;
-    repeated CardView cards = 2;
+    repeated CardView back_cards = 2;
+    repeated CardView front_cards = 3;
 }
 
 enum IdentityAction {
@@ -706,7 +708,7 @@ message ArenaView {
     * If true, render rooms at the bottom of the screen, if false, render items
     * at the bottom.
     */
-    bool rooms_at_bottom = 1;
+    google.protobuf.BoolValue rooms_at_bottom = 1;
 
     /**
      * Controls the drag action taken for the player's identity card.
@@ -714,7 +716,8 @@ message ArenaView {
     IdentityAction identity_action = 2;
 
     repeated RoomView rooms = 3;
-    repeated CardView items = 4;
+    repeated CardView left_items = 4;
+    repeated CardView right_items = 5;
 }
 
 message ActionTrackerView {
@@ -722,6 +725,7 @@ message ActionTrackerView {
 }
 
 message DeckView {
+    repeated CardView top_cards = 1;
 }
 
 message PlayerView {

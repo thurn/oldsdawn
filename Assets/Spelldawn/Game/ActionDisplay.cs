@@ -14,6 +14,7 @@
 
 using System.Collections.Generic;
 using DG.Tweening;
+using Spelldawn.Protos;
 using Spelldawn.Utils;
 using TMPro;
 using UnityEngine;
@@ -40,6 +41,11 @@ namespace Spelldawn.Game
       _filled[_left] = true;
       _filled[_center] = true;
       _filled[_right] = true;
+    }
+
+    public void RenderActionTrackerView(ActionTrackerView actionTrackerView)
+    {
+      SetAvailableActions(actionTrackerView.AvailableActionCount);
     }
 
     public void SpendActions(int amount)

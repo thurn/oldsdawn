@@ -14,6 +14,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Spelldawn.Game;
 using Spelldawn.Protos;
@@ -112,7 +113,7 @@ namespace Spelldawn.Services
         GameContext.Staging,
         animate: !command.DisableAnimation);
 
-      _cards[command.Card.CardId] = card;
+      _cards[Errors.CheckNotNull(command.Card.CardId)] = card;
 
       if (waitForStaging)
       {
@@ -121,12 +122,12 @@ namespace Spelldawn.Services
       }
     }
 
-    public Card CreateCard(CardView cardView, GameContext gameContext, bool animate)
+    public Card CreateAndAddCard(CardView cardView, GameContext gameContext, bool animate)
     {
       var card = ComponentUtils.Instantiate(_cardPrefab);
       card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       card.Render(_registry, cardView, gameContext, animate: animate);
-      _cards[cardView.CardId] = card;
+      _cards[Errors.CheckNotNull(cardView.CardId)] = card;
       return card;
     }
 
@@ -168,6 +169,35 @@ namespace Spelldawn.Services
       _registry.DocumentService.ClearCardControls();
       _infoZoomLeft.DestroyAll();
       _infoZoomRight.DestroyAll();
+    }
+
+    public IEnumerator UpdateCardsInDisplay(ObjectDisplay cardDisplay, IEnumerable<CardView> cards)
+    {
+      var currentCards = new HashSet<Displayable>(cardDisplay.AllObjects);
+      var incomingCards = new HashSet<Displayable>();
+
+      foreach (var cardView in cards)
+      {
+        if (_cards.ContainsKey(cardView.CardId))
+        {
+          _cards[cardView.CardId].Render(_registry, cardView, animate: false);
+          incomingCards.Add(_cards[cardView.CardId]);
+        }
+        else
+        {
+          CreateAndAddCard(cardView, cardDisplay.GameContext, animate: false);
+        }
+
+        if (!currentCards.Contains(_cards[cardView.CardId]))
+        {
+          yield return cardDisplay.AddObject(_cards[cardView.CardId], animate: false);
+        }
+      }
+
+      foreach (var displayable in currentCards.Where(d => !incomingCards.Contains(d)))
+      {
+        yield return cardDisplay.RemoveObject(displayable, animate: false);
+      }
     }
   }
 }

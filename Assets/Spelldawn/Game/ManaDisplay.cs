@@ -36,6 +36,11 @@ namespace Spelldawn.Game
     bool Clickable => _owner == PlayerName.User &&
                       _registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.GainMana);
 
+    public void RenderManaDisplay(ManaView manaView)
+    {
+      SetMana(manaView.Amount);
+    }
+
     public void GainMana(int amount)
     {
       SetMana(_currentMana + amount);

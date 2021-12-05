@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using Spelldawn.Utils;
@@ -30,6 +31,11 @@ namespace Spelldawn.Game
     protected override Registry Registry => _registry;
 
     protected override GameContext DefaultGameContext() => GameContext.Deck;
+
+    public IEnumerator RenderDeckView(DeckView deckView)
+    {
+      return _registry.CardService.UpdateCardsInDisplay(this, deckView.TopCards);
+    }
 
     public void SetCardBacks(SpriteAddress spriteAddress)
     {

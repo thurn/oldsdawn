@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
+using System.Linq;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using TMPro;
@@ -23,14 +25,14 @@ namespace Spelldawn.Game
 {
   public sealed class IdentityCard : StackObjectDisplay, ArrowService.IArrowDelegate
   {
-    [Header("Identity Card")] [SerializeField]
-    Registry _registry = null!;
-
+    [Header("Identity")] [SerializeField] Registry _registry = null!;
+    [SerializeField] SpriteRenderer _image = null!;
+    [SerializeField] SpriteRenderer _frame = null!;
     [SerializeField] TextMeshPro _scoreText = null!;
     [SerializeField] GameObject _raidSymbol = null!;
     [SerializeField] PlayerName _owner;
 
-    IdentityAction? _identityAction;
+    public IdentityAction? DragAction { get; set; }
     Card? _identityCard;
 
     RoomId? _selectedRoom;
@@ -50,11 +52,19 @@ namespace Spelldawn.Game
 
     public override bool IsContainer() => false;
 
-    public void Render(IdentityAction? identityAction, PlayerView? view)
+    public IEnumerator RenderPlayerInfo(PlayerInfo playerInfo)
     {
-      _identityAction = identityAction;
+      if (playerInfo.Portrait != null)
+      {
+        _image.sprite = _registry.AssetService.GetSprite(playerInfo.Portrait);
+      }
 
-      if (view?.PlayerInfo?.IdentityCard is { } ic)
+      if (playerInfo.PortraitFrame != null)
+      {
+        _frame.sprite = _registry.AssetService.GetSprite(playerInfo.PortraitFrame);
+      }
+
+      if (playerInfo.IdentityCard is { } ic)
       {
         if (_identityCard)
         {
@@ -62,15 +72,16 @@ namespace Spelldawn.Game
         }
         else
         {
-          _identityCard = _registry.CardService.CreateCard(ic, GameContext.Identity, animate: false);
-          StartCoroutine(AddObject(_identityCard, animate: false));
+          _identityCard = _registry.CardService.CreateAndAddCard(ic, GameContext.Identity, animate: false);
+          yield return AddObject(_identityCard, animate: false);
         }
       }
+    }
 
-      if (view?.Score?.Score is { } s)
-      {
-        _scoreText.text = s.ToString();
-      }
+    public IEnumerator RenderScore(ScoreView scoreView)
+    {
+      _scoreText.text = scoreView.Score.ToString();
+      return _registry.CardService.UpdateCardsInDisplay(this, scoreView.ScoredCards);
     }
 
     public override bool MouseDown()
@@ -80,7 +91,7 @@ namespace Spelldawn.Game
       if (_owner == PlayerName.User && _registry.ActionService.CanInitiateAction())
       {
         _registry.StaticAssets.PlayCardSound();
-        switch (_identityAction)
+        switch (DragAction)
         {
           case IdentityAction.InitiateRaid:
             _registry.ArrowService.ShowArrow(ArrowService.Type.Red, transform, this);
@@ -115,7 +126,7 @@ namespace Spelldawn.Game
       _registry.ArenaService.HideRoomSelector();
       if (_selectedRoom is { } selectedRoom)
       {
-        switch (_identityAction)
+        switch (DragAction)
         {
           case IdentityAction.InitiateRaid:
             _registry.ActionService.HandleAction(new GameAction

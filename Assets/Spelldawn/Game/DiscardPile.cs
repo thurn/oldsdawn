@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
@@ -28,6 +29,11 @@ namespace Spelldawn.Game
     protected override Registry Registry => _registry;
 
     protected override GameContext DefaultGameContext() => GameContext.DiscardPile;
+
+    public IEnumerator RenderDiscardPileView(DiscardPileView discardPileView)
+    {
+      return _registry.CardService.UpdateCardsInDisplay(this, discardPileView.Cards);
+    }
 
     protected override void LongPress()
     {

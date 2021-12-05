@@ -59,10 +59,10 @@ namespace Spelldawn.Services
             break;
         }
 
-        yield return MoveToRaid(room.CardsInRoom.AllObjects);
+        yield return MoveToRaid(room.BackCards.AllObjects);
 
         _registry.StaticAssets.PlayWhooshSound();
-        yield return MoveToRaid(room.Defenders.AllObjects);
+        yield return MoveToRaid(room.FrontCards.AllObjects);
 
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;

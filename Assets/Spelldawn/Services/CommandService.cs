@@ -157,21 +157,6 @@ namespace Spelldawn.Services
       _registry.DocumentService.HandleRenderInterface(command);
     }
 
-    IEnumerator HandleRenderGame(GameView game)
-    {
-      _registry.CardService.SetCardBacks(game.User?.PlayerInfo?.CardBack, game.Opponent?.PlayerInfo?.CardBack);
-      _registry.ArenaService.SetRoomsOnBottom(game.Arena?.RoomsAtBottom == true);
-
-      if (game.CurrentPriority != PlayerName.Unspecified)
-      {
-        _registry.ActionService.CurrentPriority = game.CurrentPriority;
-      }
-
-      _registry.IdentityCardForPlayer(PlayerName.User).Render(game.Arena?.IdentityAction, game.User);
-      _registry.IdentityCardForPlayer(PlayerName.Opponent).Render(null, game.Opponent);
-      yield break;
-    }
-
     IEnumerator HandlePlayEffect(PlayEffectCommand command)
     {
       var position = command.Position.EffectPositionCase switch
@@ -195,6 +180,77 @@ namespace Spelldawn.Services
       }
 
       yield return new WaitForSeconds(DataUtils.ToSeconds(command.Duration, 0));
+    }
+
+    IEnumerator HandleRenderGame(GameView game)
+    {
+      _registry.CardService.SetCardBacks(game.User?.PlayerInfo?.CardBack, game.Opponent?.PlayerInfo?.CardBack);
+
+      if (game.CurrentPriority != PlayerName.Unspecified)
+      {
+        _registry.ActionService.CurrentPriority = game.CurrentPriority;
+      }
+
+      if (game.User != null)
+      {
+        yield return HandleRenderPlayer(PlayerName.User, game.User);
+      }
+
+      if (game.Opponent != null)
+      {
+        yield return HandleRenderPlayer(PlayerName.User, game.Opponent);
+      }
+
+      if (game.Arena != null)
+      {
+        yield return HandleRenderArena(game.Arena);
+      }
+    }
+
+    IEnumerator HandleRenderPlayer(PlayerName playerName, PlayerView playerView)
+    {
+      if (playerView.PlayerInfo != null)
+      {
+        yield return _registry.IdentityCardForPlayer(playerName).RenderPlayerInfo(playerView.PlayerInfo);
+      }
+
+      if (playerView.Score != null)
+      {
+        yield return _registry.IdentityCardForPlayer(playerName).RenderScore(playerView.Score);
+      }
+
+      if (playerView.Hand != null)
+      {
+        yield return _registry.CardService.UpdateCardsInDisplay(
+          _registry.HandForPlayer(playerName),
+          playerView.Hand.Cards);
+      }
+
+      if (playerView.Mana != null)
+      {
+        _registry.ManaDisplayForPlayer(playerName).RenderManaDisplay(playerView.Mana);
+      }
+
+      if (playerView.DiscardPile != null)
+      {
+        yield return _registry.DiscardPileForPlayer(playerName).RenderDiscardPileView(playerView.DiscardPile);
+      }
+
+      if (playerView.ActionTracker != null)
+      {
+        _registry.ActionDisplayForPlayer(playerName).RenderActionTrackerView(playerView.ActionTracker);
+      }
+
+      if (playerView.Deck != null)
+      {
+        yield return _registry.DeckForPlayer(playerName).RenderDeckView(playerView.Deck);
+      }
+    }
+
+    IEnumerator HandleRenderArena(ArenaView arenaView)
+    {
+      _registry.IdentityCardForPlayer(PlayerName.User).DragAction = arenaView.IdentityAction;
+      return _registry.ArenaService.RenderArenaView(arenaView);
     }
   }
 }
