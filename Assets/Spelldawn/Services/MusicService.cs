@@ -26,8 +26,6 @@ namespace Spelldawn.Services
 {
   public sealed class MusicService : MonoBehaviour
   {
-    const float MusicVolume = 0.5f;
-
     [SerializeField] MusicState _audioState = MusicState.Unspecified;
     [SerializeField] List<AudioClip> _gameplayTracks = null!;
     [SerializeField] AudioSource _gameplayAudioSource = null!;
@@ -38,6 +36,9 @@ namespace Spelldawn.Services
     void Start()
     {
       SetMusicState(MusicState.Gameplay);
+
+      _gameplayAudioSource.volume = PlayerPrefs.GetFloat(Preferences.MusicVolume);
+      _raidAudioSource.volume = PlayerPrefs.GetFloat(Preferences.MusicVolume);
     }
 
     public void SetMusicState(MusicState state)
@@ -76,7 +77,7 @@ namespace Spelldawn.Services
 
         _currentAudioSource.clip = track;
         _currentAudioSource.volume = 0f;
-        _currentAudioSource.DOFade(MusicVolume, 1.0f);
+        _currentAudioSource.DOFade(PlayerPrefs.GetFloat(Preferences.MusicVolume), 1.0f);
         _currentAudioSource.Play();
       }
     }
