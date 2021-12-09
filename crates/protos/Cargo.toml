@@ -1,0 +1,21 @@
+[package]
+name = "protos"
+version = "0.0.0"
+authors = ["Spelldawn Team"]
+homepage = "https://github.com/thurn/spelldawn"
+description = "Generated protocol buffers code for the GRPC layer"
+license = "Apache-2.0"
+edition = "2021"
+
+[lib]
+doctest = false
+
+[[bin]]
+name = "gen_protos"
+path = "src/gen_protos.rs"
+
+[dependencies]
+prost = "0.9.0"
+prost-types = "0.9.0"
+tonic = "0.6.1"
+tonic-build = "0.6.0"

@@ -1,0 +1,24 @@
+[package]
+name = "spelldawn"
+version = "0.0.0"
+authors = ["Spelldawn Team"]
+homepage = "https://github.com/thurn/spelldawn"
+description = "An asymmetric trading card game"
+license = "Apache-2.0"
+default-run = "spelldawn"
+edition = "2021"
+rust-version = "1.57"
+
+[[bin]]
+name = "spelldawn"
+path = "src/main.rs"
+
+[dependencies]
+prost = "0.9.0"
+prost-types = "0.9.0"
+tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread", "sync", "time"] }
+tokio-stream = "0.1.8"
+tonic = "0.6.1"
+tonic-web = "0.2"
+
+protos = { path = "../protos", version = "0.0.0" }
