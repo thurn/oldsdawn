@@ -28,6 +28,9 @@ namespace Spelldawn.Services
     [SerializeField] AudioSource _mainAudioSource = null!;
     public AudioSource MainAudioSource => _mainAudioSource;
 
+    [SerializeField] GameService _gameService = null!;
+    public GameService GameService => _gameService;
+
     [SerializeField] AssetService _assetService = null!;
     public AssetService AssetService => _assetService;
 

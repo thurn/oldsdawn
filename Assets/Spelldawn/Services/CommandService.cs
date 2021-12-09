@@ -184,6 +184,11 @@ namespace Spelldawn.Services
 
     IEnumerator HandleRenderGame(GameView game)
     {
+      if (game.GameId != null)
+      {
+        _registry.GameService.CurrentGameId = game.GameId.Value;
+      }
+
       _registry.CardService.SetCardBacks(game.User?.PlayerInfo?.CardBack, game.Opponent?.PlayerInfo?.CardBack);
 
       if (game.CurrentPriority != PlayerName.Unspecified)

@@ -12,18 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Proto compilation requires that the $PROTOC and $PROTOC_INCLUDE
-    // environment variables be set. For example if protoc is installed via
-    // Homebrew for OSX, this might mean:
-    //
-    // - PROTOC="/opt/homebrew/bin/protoc"
-    // - PROTOC_INCLUDE="/opt/homebrew/include"
+using Spelldawn.Protos;
+using UnityEngine;
 
-    println!("Building rust protocol buffers");
-    tonic_build::configure()
-        .build_client(false)
-        .out_dir("crates/protos/src")
-        .compile(&["proto/spelldawn.proto"], &["proto/"])?;
-    Ok(())
+#nullable enable
+
+namespace Spelldawn.Services
+{
+  public sealed class GameService : MonoBehaviour
+  {
+    [SerializeField] Registry _registry = null!;
+    [SerializeField] string? _currentGameId;
+
+    public string? CurrentGameId
+    {
+      get => _currentGameId;
+      set => _currentGameId = value;
+    }
+
+    void Start()
+    {
+      _registry.ActionService.HandleAction(new GameAction
+      {
+        Connect = new ConnectAction()
+      });
+    }
+  }
 }

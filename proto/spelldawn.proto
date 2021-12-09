@@ -14,7 +14,7 @@
 
 syntax = "proto3";
 
-package com.spelldawn;
+package spelldawn;
 option csharp_namespace = "Spelldawn.Protos";
 
 import "google/protobuf/wrappers.proto";
@@ -396,6 +396,9 @@ message Node {
 // Game Primitives
 // ============================================================================
 
+message GameId {
+    string value = 1;
+}
 
 enum PlayerName {
     PLAYER_NAME_UNSPECIFIED = 0;
@@ -739,12 +742,13 @@ message PlayerView {
 }
 
 message GameView {
-    PlayerView user = 1;
-    PlayerView opponent = 2;
-    ArenaView arena = 3;
+    GameId game_id = 1;
+    PlayerView user = 2;
+    PlayerView opponent = 3;
+    ArenaView arena = 4;
 
     /** The player who is currently able to act. */
-    PlayerName current_priority = 4;
+    PlayerName current_priority = 5;
 }
 
 
@@ -752,6 +756,13 @@ message GameView {
 // Actions
 // ============================================================================
 
+/** 
+ * Start a game. If game_id is provided, connects to an ongoing game.
+ * Otherwise creates a new game.
+ */
+message ConnectAction {
+    GameId game_id = 1;
+}
 
 message StandardAction {
     /** Opaque payload to send to the server. */
@@ -835,14 +846,21 @@ message InitiateRaidAction {
 message GameAction {
     oneof action {
         StandardAction standard_action = 1;
-        GainManaAction gain_mana = 2;
-        DrawCardAction draw_card = 3;
-        PlayCardAction play_card = 4;
-        LevelUpRoomAction level_up_room = 5;
-        InitiateRaidAction initiate_raid = 6;
+        ConnectAction connect = 2;
+        GainManaAction gain_mana = 3;
+        DrawCardAction draw_card = 4;
+        PlayCardAction play_card = 5;
+        LevelUpRoomAction level_up_room = 6;
+        InitiateRaidAction initiate_raid = 7;
     }
 }
 
+message GameRequest {
+    GameAction action = 1;
+    
+    /** Current game_id, if a game is currently ongoing. */
+    GameId game_id = 2;
+}
 
 // ============================================================================
 // Commands
@@ -1128,4 +1146,9 @@ message GameCommand {
 
 message CommandList {
     repeated GameCommand commands = 1;
+}
+
+service Spelldawn {
+    // Our SayHello rpc accepts HelloRequests and returns HelloReplies
+    rpc PerformAction(GameRequest) returns (CommandList);
 }

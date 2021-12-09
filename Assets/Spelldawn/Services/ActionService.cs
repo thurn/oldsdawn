@@ -32,6 +32,15 @@ namespace Spelldawn.Services
   public sealed class ActionService : MonoBehaviour
   {
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
+
+    readonly Protos.Spelldawn.SpelldawnClient _client = new(GrpcChannel.ForAddress(
+      "http://localhost:50052", new GrpcChannelOptions
+      {
+        HttpHandler = new GrpcWebHandler(new HttpClientHandler()),
+        Credentials = ChannelCredentials.Insecure
+      }));
+
+    [SerializeField] bool _fakeActionResponse;
     [SerializeField] Registry _registry = null!;
     [SerializeField] PlayerName _currentPriority;
     [SerializeField] bool _currentlyHandlingAction;
@@ -40,29 +49,6 @@ namespace Spelldawn.Services
     public PlayerName CurrentPriority
     {
       set => _currentPriority = value;
-    }
-
-    void Start()
-    {
-      Run();
-    }
-
-    async void Run()
-    {
-      var channel = GrpcChannel.ForAddress("http://localhost:50052", new GrpcChannelOptions
-      {
-        HttpHandler = new GrpcWebHandler(new HttpClientHandler()),
-        Credentials = ChannelCredentials.Insecure
-      });
-      var client = new Greeter.GreeterClient(channel);
-      var request = new HelloRequest
-      {
-        Name = "Name"
-      };
-
-      Debug.Log($"Start: Sending Request {request}");
-      var response = await client.SayHelloAsync(request);
-      Debug.Log($"Start: Got Response: {response}");
     }
 
     public void HandleAction(GameAction action)
@@ -110,6 +96,7 @@ namespace Spelldawn.Services
     public bool CanExecuteAction(GameAction.ActionOneofCase actionType) => actionType switch
     {
       GameAction.ActionOneofCase.StandardAction => CanAct(allowInOverlay: true, actionPointRequired: false),
+      GameAction.ActionOneofCase.Connect => true,
       GameAction.ActionOneofCase.GainMana => CanAct(),
       GameAction.ActionOneofCase.DrawCard => CanAct(),
       GameAction.ActionOneofCase.PlayCard => CanAct(),
@@ -195,11 +182,30 @@ namespace Spelldawn.Services
     IEnumerator HandleActionAsync(GameAction action)
     {
       yield return ApplyOptimisticResponse(action);
-
-      // Send to server
+      // Introduce simulated server delay
       yield return new WaitForSeconds(Random.Range(0.1f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
 
-      yield return _registry.SampleData.FakeActionResponse(action);
+      // Send to server
+      if (_fakeActionResponse)
+      {
+        yield return _registry.SampleData.FakeActionResponse(action);
+      }
+      else
+      {
+        var request = new GameRequest
+        {
+          Action = action,
+          GameId = new GameId
+          {
+            Value = _registry.GameService.CurrentGameId
+          }
+        };
+
+        var task = _client.PerformActionAsync(request).GetAwaiter();
+        yield return new WaitUntil(() => task.IsCompleted);
+        yield return _registry.CommandService.HandleCommands(task.GetResult());
+      }
+
       _currentlyHandlingAction = false;
     }
 

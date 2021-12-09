@@ -43643,6 +43643,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1445473049}
   - component: {fileID: 1445473048}
+  - component: {fileID: 1445473055}
   - component: {fileID: 1445473053}
   - component: {fileID: 1445473050}
   - component: {fileID: 1445473047}
@@ -43699,6 +43700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f756b6a03824a098e8b2aac0f4b1e0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _fakeActionResponse: 0
   _registry: {fileID: 1445473048}
   _currentPriority: 0
   _currentlyHandlingAction: 0
@@ -43742,6 +43744,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 963194227}
   _mainAudioSource: {fileID: 963194234}
+  _gameService: {fileID: 1445473055}
   _assetService: {fileID: 1445473047}
   _assetPoolService: {fileID: 1445473051}
   _actionService: {fileID: 1445473045}
@@ -43908,6 +43911,20 @@ MonoBehaviour:
   _raidTracks:
   - {fileID: 8300000, guid: 44354bbaa0eef554aa861ea1c2dd84ea, type: 3}
   _raidAudioSource: {fileID: 1845110550}
+--- !u!114 &1445473055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445473042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0abe00566ce479b9191caf1ceea60a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 1445473048}
+  _currentGameId: 
 --- !u!1 &1451530778
 GameObject:
   m_ObjectHideFlags: 0
