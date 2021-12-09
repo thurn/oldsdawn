@@ -24,21 +24,24 @@ namespace Spelldawn.Protos {
     static ColorReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cgtjb2xvci5wcm90bxIJc3BlbGxkYXduIhwKDEhlbGxvUmVxdWVzdBIMCgRu",
-            "YW1lGAEgASgJIh0KCkhlbGxvUmVwbHkSDwoHbWVzc2FnZRgBIAEoCSIsCgxD",
-            "dXJyZW50Q29sb3ISDQoFY29sb3IYASABKAkSDQoFZGVyZWsYAiABKAkiGQoI",
-            "TmV3Q29sb3ISDQoFY29sb3IYASABKAkyRQoHR3JlZXRlchI6CghTYXlIZWxs",
-            "bxIXLnNwZWxsZGF3bi5IZWxsb1JlcXVlc3QaFS5zcGVsbGRhd24uSGVsbG9S",
-            "ZXBseTJSCg5Db2xvckdlbmVyYXRvchJACg5HZXRSYW5kb21Db2xvchIXLnNw",
-            "ZWxsZGF3bi5DdXJyZW50Q29sb3IaEy5zcGVsbGRhd24uTmV3Q29sb3IiAEIT",
-            "qgIQU3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
+            "Cgtjb2xvci5wcm90bxIKcHJvdG9jb2xvchoeZ29vZ2xlL3Byb3RvYnVmL3dy",
+            "YXBwZXJzLnByb3RvGhlnb29nbGUvcHJvdG9idWYvYW55LnByb3RvIhwKDEhl",
+            "bGxvUmVxdWVzdBIMCgRuYW1lGAEgASgJIh0KCkhlbGxvUmVwbHkSDwoHbWVz",
+            "c2FnZRgBIAEoCSIsCgxDdXJyZW50Q29sb3ISDQoFY29sb3IYASABKAkSDQoF",
+            "ZGVyZWsYAiABKAkibAoITmV3Q29sb3ISDQoFY29sb3IYASABKAkSKgoFZmxv",
+            "YXQYAiABKAsyGy5nb29nbGUucHJvdG9idWYuRmxvYXRWYWx1ZRIlCgdwYXls",
+            "b2FkGAMgASgLMhQuZ29vZ2xlLnByb3RvYnVmLkFueTJHCgdHcmVldGVyEjwK",
+            "CFNheUhlbGxvEhgucHJvdG9jb2xvci5IZWxsb1JlcXVlc3QaFi5wcm90b2Nv",
+            "bG9yLkhlbGxvUmVwbHkyVAoOQ29sb3JHZW5lcmF0b3ISQgoOR2V0UmFuZG9t",
+            "Q29sb3ISGC5wcm90b2NvbG9yLkN1cnJlbnRDb2xvchoULnByb3RvY29sb3Iu",
+            "TmV3Q29sb3IiAEITqgIQU3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.AnyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.HelloRequest), global::Spelldawn.Protos.HelloRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.HelloReply), global::Spelldawn.Protos.HelloReply.Parser, new[]{ "Message" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.CurrentColor), global::Spelldawn.Protos.CurrentColor.Parser, new[]{ "Color", "Derek" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.NewColor), global::Spelldawn.Protos.NewColor.Parser, new[]{ "Color" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Spelldawn.Protos.NewColor), global::Spelldawn.Protos.NewColor.Parser, new[]{ "Color", "Float", "Payload" }, null, null, null, null)
           }));
     }
     #endregion
@@ -636,6 +639,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public NewColor(NewColor other) : this() {
       color_ = other.color_;
+      Float = other.Float;
+      payload_ = other.payload_ != null ? other.payload_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -655,6 +660,30 @@ namespace Spelldawn.Protos {
       }
     }
 
+    /// <summary>Field number for the "float" field.</summary>
+    public const int FloatFieldNumber = 2;
+    private static readonly pb::FieldCodec<float?> _single_float_codec = pb::FieldCodec.ForStructWrapper<float>(18);
+    private float? float_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float? Float {
+      get { return float_; }
+      set {
+        float_ = value;
+      }
+    }
+
+
+    /// <summary>Field number for the "payload" field.</summary>
+    public const int PayloadFieldNumber = 3;
+    private global::Google.Protobuf.WellKnownTypes.Any payload_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Google.Protobuf.WellKnownTypes.Any Payload {
+      get { return payload_; }
+      set {
+        payload_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as NewColor);
@@ -669,6 +698,8 @@ namespace Spelldawn.Protos {
         return true;
       }
       if (Color != other.Color) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.Equals(Float, other.Float)) return false;
+      if (!object.Equals(Payload, other.Payload)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -676,6 +707,8 @@ namespace Spelldawn.Protos {
     public override int GetHashCode() {
       int hash = 1;
       if (Color.Length != 0) hash ^= Color.GetHashCode();
+      if (float_ != null) hash ^= pbc::ProtobufEqualityComparers.BitwiseNullableSingleEqualityComparer.GetHashCode(Float);
+      if (payload_ != null) hash ^= Payload.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -696,6 +729,13 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteString(Color);
       }
+      if (float_ != null) {
+        _single_float_codec.WriteTagAndValue(output, Float);
+      }
+      if (payload_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Payload);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -709,6 +749,13 @@ namespace Spelldawn.Protos {
         output.WriteRawTag(10);
         output.WriteString(Color);
       }
+      if (float_ != null) {
+        _single_float_codec.WriteTagAndValue(ref output, Float);
+      }
+      if (payload_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Payload);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -720,6 +767,12 @@ namespace Spelldawn.Protos {
       int size = 0;
       if (Color.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Color);
+      }
+      if (float_ != null) {
+        size += _single_float_codec.CalculateSizeWithTag(Float);
+      }
+      if (payload_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Payload);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -734,6 +787,17 @@ namespace Spelldawn.Protos {
       }
       if (other.Color.Length != 0) {
         Color = other.Color;
+      }
+      if (other.float_ != null) {
+        if (float_ == null || other.Float != 0F) {
+          Float = other.Float;
+        }
+      }
+      if (other.payload_ != null) {
+        if (payload_ == null) {
+          Payload = new global::Google.Protobuf.WellKnownTypes.Any();
+        }
+        Payload.MergeFrom(other.Payload);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -753,6 +817,20 @@ namespace Spelldawn.Protos {
             Color = input.ReadString();
             break;
           }
+          case 18: {
+            float? value = _single_float_codec.Read(input);
+            if (float_ == null || value != 0F) {
+              Float = value;
+            }
+            break;
+          }
+          case 26: {
+            if (payload_ == null) {
+              Payload = new global::Google.Protobuf.WellKnownTypes.Any();
+            }
+            input.ReadMessage(Payload);
+            break;
+          }
         }
       }
     #endif
@@ -769,6 +847,20 @@ namespace Spelldawn.Protos {
             break;
           case 10: {
             Color = input.ReadString();
+            break;
+          }
+          case 18: {
+            float? value = _single_float_codec.Read(ref input);
+            if (float_ == null || value != 0F) {
+              Float = value;
+            }
+            break;
+          }
+          case 26: {
+            if (payload_ == null) {
+              Payload = new global::Google.Protobuf.WellKnownTypes.Any();
+            }
+            input.ReadMessage(Payload);
             break;
           }
         }

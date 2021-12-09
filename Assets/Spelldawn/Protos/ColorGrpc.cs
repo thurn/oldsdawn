@@ -10,7 +10,7 @@ using grpc = global::Grpc.Core;
 namespace Spelldawn.Protos {
   public static partial class Greeter
   {
-    static readonly string __ServiceName = "spelldawn.Greeter";
+    static readonly string __ServiceName = "protocolor.Greeter";
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static void __Helper_SerializeMessage(global::Google.Protobuf.IMessage message, grpc::SerializationContext context)
@@ -46,17 +46,17 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Spelldawn.Protos.HelloRequest> __Marshaller_spelldawn_HelloRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.HelloRequest.Parser));
+    static readonly grpc::Marshaller<global::Spelldawn.Protos.HelloRequest> __Marshaller_protocolor_HelloRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.HelloRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Spelldawn.Protos.HelloReply> __Marshaller_spelldawn_HelloReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.HelloReply.Parser));
+    static readonly grpc::Marshaller<global::Spelldawn.Protos.HelloReply> __Marshaller_protocolor_HelloReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.HelloReply.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Spelldawn.Protos.HelloRequest, global::Spelldawn.Protos.HelloReply> __Method_SayHello = new grpc::Method<global::Spelldawn.Protos.HelloRequest, global::Spelldawn.Protos.HelloReply>(
         grpc::MethodType.Unary,
         __ServiceName,
         "SayHello",
-        __Marshaller_spelldawn_HelloRequest,
-        __Marshaller_spelldawn_HelloReply);
+        __Marshaller_protocolor_HelloRequest,
+        __Marshaller_protocolor_HelloReply);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -187,7 +187,7 @@ namespace Spelldawn.Protos {
   }
   public static partial class ColorGenerator
   {
-    static readonly string __ServiceName = "spelldawn.ColorGenerator";
+    static readonly string __ServiceName = "protocolor.ColorGenerator";
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static void __Helper_SerializeMessage(global::Google.Protobuf.IMessage message, grpc::SerializationContext context)
@@ -223,17 +223,17 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Spelldawn.Protos.CurrentColor> __Marshaller_spelldawn_CurrentColor = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.CurrentColor.Parser));
+    static readonly grpc::Marshaller<global::Spelldawn.Protos.CurrentColor> __Marshaller_protocolor_CurrentColor = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.CurrentColor.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Spelldawn.Protos.NewColor> __Marshaller_spelldawn_NewColor = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.NewColor.Parser));
+    static readonly grpc::Marshaller<global::Spelldawn.Protos.NewColor> __Marshaller_protocolor_NewColor = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.NewColor.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Spelldawn.Protos.CurrentColor, global::Spelldawn.Protos.NewColor> __Method_GetRandomColor = new grpc::Method<global::Spelldawn.Protos.CurrentColor, global::Spelldawn.Protos.NewColor>(
         grpc::MethodType.Unary,
         __ServiceName,
         "GetRandomColor",
-        __Marshaller_spelldawn_CurrentColor,
-        __Marshaller_spelldawn_NewColor);
+        __Marshaller_protocolor_CurrentColor,
+        __Marshaller_protocolor_NewColor);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor

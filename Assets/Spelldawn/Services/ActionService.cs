@@ -14,7 +14,11 @@
 
 using System;
 using System.Collections;
+using System.Net.Http;
 using System.Text;
+using Grpc.Core;
+using Grpc.Net.Client;
+using Grpc.Net.Client.Web;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
@@ -36,6 +40,29 @@ namespace Spelldawn.Services
     public PlayerName CurrentPriority
     {
       set => _currentPriority = value;
+    }
+
+    void Start()
+    {
+      Run();
+    }
+
+    async void Run()
+    {
+      var channel = GrpcChannel.ForAddress("http://localhost:50052", new GrpcChannelOptions
+      {
+        HttpHandler = new GrpcWebHandler(new HttpClientHandler()),
+        Credentials = ChannelCredentials.Insecure
+      });
+      var client = new Greeter.GreeterClient(channel);
+      var request = new HelloRequest
+      {
+        Name = "Name"
+      };
+
+      Debug.Log($"Start: Sending Request {request}");
+      var response = await client.SayHelloAsync(request);
+      Debug.Log($"Start: Got Response: {response}");
     }
 
     public void HandleAction(GameAction action)

@@ -1,7 +1,10 @@
 syntax = "proto3";
 
-package spelldawn;
+package protocolor;
 option csharp_namespace = "Spelldawn.Protos";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/any.proto";
 
 service Greeter {
     // Our SayHello rpc accepts HelloRequests and returns HelloReplies
@@ -31,4 +34,6 @@ message CurrentColor {
 
 message NewColor {
     string color = 1;
+    google.protobuf.FloatValue float = 2;
+    google.protobuf.Any payload = 3;
 }
