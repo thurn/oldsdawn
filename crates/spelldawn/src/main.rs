@@ -49,6 +49,11 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
+use model::card_definition::CardDefinition;
+use model::events;
+use model::events::{EventContext, GameEvent};
+use model::game::GameState;
+use model::primitives::{CardId, EventId, Side};
 use tonic::{transport::Server, Request, Response, Status};
 
 use protos::spelldawn::game_command::Command;
@@ -56,6 +61,8 @@ use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
 use protos::spelldawn::{
     CommandList, GameCommand, GameId, GameRequest, GameView, RenderGameCommand,
 };
+
+use cards::ALL_CARDS;
 
 #[derive(Default)]
 pub struct GameService {}
@@ -92,8 +99,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .allow_origins(vec!["127.0.0.1"])
         .enable(SpelldawnServer::new(GameService::default()));
 
-    println!("Server listening on {}", address);
+    println!("Num CARDS {:?}", ALL_CARDS.len());
 
+    let mut cards: Vec<CardDefinition> = vec![];
+    for card_fn in ALL_CARDS {
+        cards.push(card_fn());
+    }
+
+    let mut game = GameState::default();
+    let context = EventContext { event_id: EventId(12), side: Side::Champion, this: CardId(4) };
+
+    println!("Mana: {:?}", game.champion.state.mana);
+
+    for card in cards {
+        println!("{:?}", card);
+        for handler in card.behavior.handlers {
+            events::invoke_if_matching(&mut game, context, GameEvent::OnPlay, &handler.callback);
+        }
+    }
+
+    println!("Mana: {:?}", game.champion.state.mana);
+    println!("Server listening on {}", address);
     Server::builder().accept_http1(true).add_service(service).serve(address).await?;
 
     Ok(())
