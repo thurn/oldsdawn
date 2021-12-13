@@ -18,11 +18,41 @@ pub struct CardId(pub usize);
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct EventId(pub u32);
 
+/// Identifies an ability within a card. Abilities are the only game entity which may contain
+/// delegates. Abilities are identified by their position within the card's 'abilities',
+/// or 'activated_abilities' vector.
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Ord, PartialOrd)]
+pub struct AbilityIndex(pub usize);
+
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct AbilityId {
+    pub card_id: CardId,
+    pub index: AbilityIndex,
+}
+
+impl AbilityId {
+    pub fn new(card_id: CardId, index: AbilityIndex) -> Self {
+        Self { card_id, index }
+    }
+}
+
+/// Uniquely identifies a raid within a given game
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct RaidId(pub u32);
+
+/// Identifies an encounter within a given raid
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct EncounterId {
+    pub raid_id: RaidId,
+    pub step_id: u32,
+}
+
 pub type TurnNumber = u32;
 pub type ManaValue = u32;
 pub type ActionCount = u32;
 pub type Score = u32;
 pub type HealthValue = u32;
+pub type AttackValue = u32;
 pub type ShieldValue = u32;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
@@ -53,16 +83,18 @@ pub enum RoomId {
     RoomE,
 }
 
+pub type DefenderIndex = u32;
+
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum RoomLocation {
-    Defender,
+    Defender(DefenderIndex),
     InRoom,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum ItemLocation {
     Weapons,
-    NonWeapons,
+    Artifacts,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]

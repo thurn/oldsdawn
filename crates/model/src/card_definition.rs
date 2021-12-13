@@ -13,57 +13,82 @@
 // limitations under the License.
 
 use crate::card_name::CardName;
-use crate::events::EventHandler;
+use crate::delegates::Delegate;
 use crate::primitives::{
-    ActionCount, CardSubtype, CardType, HealthValue, ManaValue, Rarity, School, ShieldValue, Side,
-    SpriteAddress,
+    ActionCount, AttackValue, CardSubtype, CardType, HealthValue, ManaValue, Rarity, School,
+    ShieldValue, Side, SpriteAddress,
 };
+use std::fmt::Debug;
 
+/// Cost to play a card or activate an ability
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub struct CardTitle(pub String);
-
-/// Rules text to display on a card
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub struct CardText {
-    pub paragraphs: Vec<String>,
-}
-
-/// Cost to play a card
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub struct CardCost {
+pub struct Cost {
     pub mana: ManaValue,
     pub actions: ActionCount,
 }
 
-/// Card numeric values
+/// An activated ability used by Weapons to increase their attack value by paying a mana cost during
+/// a raid encounter. Can be used any number of times. By default, attack bonuses last for the
+/// duration of the current encounter only.
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+pub struct PowerUp {
+    pub cost: ManaValue,
+    pub bonus: AttackValue,
+}
+
+/// Base card numeric values
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct CardStats {
     pub health: Option<HealthValue>,
-    pub attack: Option<HealthValue>,
     pub shield: Option<ShieldValue>,
+    pub base_attack: Option<AttackValue>,
+    pub power_up: Option<PowerUp>,
 }
 
-/// Individual card configuration, properties which are not universal
-#[derive(Debug, Default)]
+/// Possible types of ability
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+pub enum AbilityType {
+    /// Standard abilities function at all times without requiring activation
+    Standard,
+
+    /// Activated abilities have an associated cost in order to be used
+    Activated(Cost),
+}
+
+/// Text describing what an ability does
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+pub struct CardText {
+    pub text: String,
+}
+
+/// Abilities are the unit of action in Spelldawn. Their behavior is provided by the Delegate
+/// system, see delegates.rs for more information.
+#[derive(Debug, Clone)]
+pub struct Ability {
+    pub text: CardText,
+    pub ability_type: AbilityType,
+    pub delegates: Vec<Delegate>,
+}
+
+/// Individual card configuration; properties which are not universal for all cards
+#[derive(Debug, Default, Clone)]
 pub struct CardConfig {
-    pub handlers: Vec<EventHandler>,
-    pub subtypes: Vec<CardSubtype>,
     pub stats: CardStats,
+    pub subtypes: Vec<CardSubtype>,
 }
 
 /// The fundamental object defining the behavior of a given card in Spelldawn
 ///
-/// This struct contains properties which every card has
-#[derive(Debug)]
+/// This struct's top-level fields should be universal properties which apply to every card
+#[derive(Debug, Clone)]
 pub struct CardDefinition {
     pub name: CardName,
-    pub title: CardTitle,
-    pub text: CardText,
-    pub cost: CardCost,
+    pub cost: Cost,
     pub image: SpriteAddress,
     pub card_type: CardType,
     pub side: Side,
     pub school: School,
     pub rarity: Rarity,
-    pub behavior: CardConfig,
+    pub abilities: Vec<Ability>,
+    pub config: CardConfig,
 }

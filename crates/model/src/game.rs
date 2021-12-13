@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::card_state::{CardPosition, CardState};
-use crate::primitives::{ActionCount, CardId, ManaValue, Score, Side};
+use crate::card_name::CardName;
+use crate::card_state::{AbilityState, CardPosition, CardState};
+use crate::primitives::{
+    AbilityId, AbilityIndex, ActionCount, CardId, EncounterId, ManaValue, Score, Side, TurnNumber,
+};
+use std::collections::btree_map::Entry;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct PlayerState {
@@ -35,13 +39,20 @@ pub struct ChampionState {
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct AnimationBuffer {}
 
+/// Stores the primary state for an ongoing game
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct GameState {
+    /// Card states
     cards: Vec<CardState>,
+    /// Overlord player state
     pub overlord: OverlordState,
+    /// Champion player state
     pub champion: ChampionState,
-
-    /** Optionally, animations to include in the next response to the client. */
+    /// Current game turn
+    pub turn_number: TurnNumber,
+    /// Current raid state, if any
+    pub active_raid: Option<EncounterId>,
+    /// Animations to send on the next client response
     pub animations: Option<AnimationBuffer>,
 }
 
@@ -102,4 +113,20 @@ impl GameState {
     pub fn discard_pile_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
         self.cards_in_position_mut(CardPosition::DiscardPile(side))
     }
+
+    pub fn ability(&self, ability_id: AbilityId) -> Option<&AbilityState> {
+        self.card(ability_id.card_id).state.get(&ability_id.index)
+    }
+
+    pub fn ability_mut(&mut self, ability_id: AbilityId) -> Entry<AbilityIndex, AbilityState> {
+        self.card_mut(ability_id.card_id).state.entry(ability_id.index)
+    }
+}
+
+/// Data for an ongoing game, containing the game state and set of card definitions used in this
+/// game
+#[derive(PartialEq, Eq, Debug, Clone, Default)]
+pub struct GameData {
+    pub state: GameState,
+    pub card_names: Vec<(CardId, CardName)>,
 }

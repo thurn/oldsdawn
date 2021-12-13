@@ -301,7 +301,7 @@ pub mod node_type {
 pub struct Node {
     ///*
     /// Used to identify this node in the hierarchy, should be unique among
-    /// sibilings. If not provided, index will be used instead.
+    /// siblings. If not provided, index will be used instead.
     #[prost(string, tag = "1")]
     pub id: ::prost::alloc::string::String,
     ///*

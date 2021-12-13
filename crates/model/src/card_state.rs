@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::card_name::CardName;
-use crate::primitives::{CardId, ItemLocation, RoomId, RoomLocation, Side};
+use crate::primitives::{
+    AbilityIndex, CardId, EncounterId, ItemLocation, RoomId, RoomLocation, Side, TurnNumber,
+};
+use std::collections::BTreeMap;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum CardPosition {
@@ -25,9 +27,23 @@ pub enum CardPosition {
     Scored(Side),
 }
 
+/// Stores the last activation turn & encounter for an ability. This value is automatically updated
+/// by the system when an ability is activated, immediately before the ON_ABILITY_ACTIVATED event
+/// is sent.
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+pub struct LastActivated {
+    pub turn_number: TurnNumber,
+    pub encounter_id: EncounterId,
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+pub struct AbilityState {
+    pub last_activated: Option<LastActivated>,
+}
+
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct CardState {
     pub id: CardId,
-    pub name: CardName,
     pub position: CardPosition,
+    pub state: BTreeMap<AbilityIndex, AbilityState>,
 }

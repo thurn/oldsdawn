@@ -22,17 +22,13 @@ use crate::card_helpers::*;
 pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
         name: CardName::ArcaneRecovery,
-        title: title("Arcane Recovery"),
-        text: text("Gain 9 [Mana]"),
         cost: cost(5),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
         card_type: CardType::Spell,
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        behavior: CardConfig {
-            handlers: on_play(|g, c| gain_mana(g, c, 9)),
-            ..CardConfig::default()
-        },
+        abilities: vec![on_play("Gain 9 [Mana]", |g, c, _| gain_mana(g, c, 9))],
+        config: CardConfig::default(),
     }
 }

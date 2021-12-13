@@ -50,10 +50,27 @@
 #![allow(unused_variables)]
 
 use model::card_definition::CardDefinition;
-
-// TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
-pub static ALL_CARDS: &[fn() -> CardDefinition] = &[champion_spells::arcane_recovery];
+use model::card_name::CardName;
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
 
 mod card_helpers;
 mod champion_spells;
 mod weapons;
+
+// TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
+static DEFINITIONS: &[fn() -> CardDefinition] =
+    &[champion_spells::arcane_recovery, weapons::greataxe];
+
+pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
+    let mut map = HashMap::new();
+    for card_fn in DEFINITIONS {
+        let card = card_fn();
+        map.insert(card.name, card);
+    }
+    map
+});
+
+pub fn get(name: CardName) -> &'static CardDefinition {
+    CARDS.get(&name).expect("Card is not defined")
+}

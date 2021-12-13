@@ -21,14 +21,16 @@ use crate::card_helpers::*;
 pub fn greataxe() -> CardDefinition {
     CardDefinition {
         name: CardName::Greataxe,
-        title: title("Greataxe"),
-        text: text("2[Mana]: +1 damage"),
         cost: cost(3),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        behavior: CardConfig { stats: attack(3), ..CardConfig::default() },
+        abilities: vec![],
+        config: CardConfig {
+            stats: WeaponStats { base_attack: 3, bonus_cost: 2, attack_bonus: 1 }.into(),
+            ..CardConfig::default()
+        },
     }
 }
