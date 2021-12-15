@@ -53,9 +53,10 @@ use model::card_name::CardName;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
+pub mod card_helpers;
 pub mod dispatch;
+pub mod queries;
 
-mod card_helpers;
 mod champion_spells;
 mod weapons;
 

@@ -84,12 +84,12 @@ impl GameState {
         (0..self.cards.len()).map(|index| CardId { index })
     }
 
-    pub fn card(&self, card_id: CardId) -> &CardState {
-        &self.cards[card_id.index]
+    pub fn card(&self, card_id: impl Into<CardId>) -> &CardState {
+        &self.cards[card_id.into().index]
     }
 
-    pub fn card_mut(&mut self, card_id: CardId) -> &mut CardState {
-        &mut self.cards[card_id.index]
+    pub fn card_mut(&mut self, card_id: impl Into<CardId>) -> &mut CardState {
+        &mut self.cards[card_id.into().index]
     }
 
     pub fn player_state(&self, side: Side) -> &PlayerState {

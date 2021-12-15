@@ -29,6 +29,13 @@ pub enum CardPosition {
     Scored(Side),
 }
 
+impl CardPosition {
+    /// Returns true if this position is an arena position
+    pub fn in_play(&self) -> bool {
+        matches!(self, Self::Room(_, _) | Self::ArenaItem(_))
+    }
+}
+
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct AbilityState {}
 
@@ -43,12 +50,12 @@ pub struct CardState {
     pub state: BTreeMap<AbilityIndex, AbilityState>,
     /// How many times the boost ability of this card has been activated -- typically used to
     /// increase weapon attack power during a raid.
-    pub boost_count: Option<BoostCount>,
+    pub boost_count: BoostCount,
 }
 
 impl CardState {
     pub fn new(id: CardId, name: CardName, position: CardPosition) -> Self {
-        Self { id, name, state: BTreeMap::new(), position, boost_count: None }
+        Self { id, name, state: BTreeMap::new(), position, boost_count: 0 }
     }
 
     pub fn id(&self) -> CardId {

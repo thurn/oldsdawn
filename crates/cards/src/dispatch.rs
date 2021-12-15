@@ -34,7 +34,7 @@ pub fn invoke_event<T: Copy>(
 }
 
 pub fn perform_query<T: Copy, R>(
-    game: &mut GameState,
+    game: &GameState,
     query: fn(&GameState, Context, Delegate, T, R) -> R,
     data: T,
     initial_value: R,

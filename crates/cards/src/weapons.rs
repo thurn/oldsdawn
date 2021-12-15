@@ -27,7 +27,7 @@ pub fn greataxe() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![],
+        abilities: vec![encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 2, bonus: 1 }),
             ..CardConfig::default()

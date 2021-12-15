@@ -28,6 +28,12 @@ pub struct CardId {
     pub index: usize,
 }
 
+impl CardId {
+    pub fn new(index: usize) -> Self {
+        Self { index }
+    }
+}
+
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct EventId(pub u32);
 
@@ -46,6 +52,12 @@ pub struct AbilityId {
 impl AbilityId {
     pub fn new(card_id: CardId, index: usize) -> Self {
         Self { card_id, index: AbilityIndex(index) }
+    }
+}
+
+impl From<AbilityId> for CardId {
+    fn from(id: AbilityId) -> Self {
+        id.card_id
     }
 }
 
@@ -131,4 +143,19 @@ pub enum CardType {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum CardSubtype {
     Silvered,
+}
+
+/// Describes a boost ability activation
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+pub struct BoostData {
+    /// Boosted card
+    pub card_id: CardId,
+    /// How many times was the boost applied?
+    pub count: u32,
+}
+
+impl From<BoostData> for CardId {
+    fn from(data: BoostData) -> Self {
+        data.card_id
+    }
 }

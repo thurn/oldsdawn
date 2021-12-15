@@ -51,7 +51,7 @@
 
 use model::card_definition::{Ability, CardDefinition};
 use model::game::GameState;
-use model::primitives::{AbilityId, AbilityIndex, CardId, EventId, Side};
+use model::primitives::{AbilityId, AbilityIndex, BoostData, CardId, EventId, Side};
 use tonic::{transport::Server, Request, Response, Status};
 
 use protos::spelldawn::game_command::Command;
@@ -60,7 +60,7 @@ use protos::spelldawn::{
     CommandList, GameCommand, GameId, GameRequest, GameView, RenderGameCommand,
 };
 
-use cards::{dispatch, CARDS};
+use cards::{dispatch, queries, CARDS};
 use model::card_name::CardName;
 use model::card_state::CardState;
 use model::delegates;
@@ -97,12 +97,19 @@ impl Spelldawn for GameService {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
-    let card_id = CardId { index: 0 };
 
-    let mut game = GameState::new(vec![CardName::ArcaneRecovery], vec![]);
-    println!("Mana: {:?}", game.champion.state.mana);
-    dispatch::invoke_event(&mut game, delegates::on_play_card, card_id);
-    println!("Mana: {:?}", game.champion.state.mana);
+    let mut game = GameState::new(vec![CardName::ArcaneRecovery, CardName::Greataxe], vec![]);
+    println!("Arcane Recovery. Starting Mana: {:?}", game.champion.state.mana);
+    dispatch::invoke_event(&mut game, delegates::on_play_card, CardId::new(0));
+    println!("Updated Mana: {:?}", game.champion.state.mana);
+
+    println!("Greataxe. Starting Attack: {:?}", queries::attack(&game, CardId::new(1)));
+    dispatch::invoke_event(
+        &mut game,
+        delegates::on_activate_boost,
+        BoostData { card_id: CardId::new(1), count: 2 },
+    );
+    println!("Greataxe. Updated Attack: {:?}", queries::attack(&game, CardId::new(1)));
 
     let address = "127.0.0.1:50052".parse().expect("valid address");
     let service = tonic_web::config()

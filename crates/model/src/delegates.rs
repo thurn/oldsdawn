@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::card_definition::CardStats;
+use crate::card_state::CardState;
 use crate::game::GameState;
-use crate::primitives::{AbilityId, AttackValue, CardId, EncounterId, HealthValue, Side};
+use crate::primitives::{
+    AbilityId, AttackValue, BoostCount, BoostData, CardId, EncounterId, HealthValue, Side,
+};
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 use strum_macros::EnumDiscriminants;
@@ -26,6 +30,12 @@ pub struct Context {
 
     /// Ability which owns this delegate.
     ability_id: AbilityId,
+}
+
+impl From<Context> for CardId {
+    fn from(context: Context) -> Self {
+        context.ability_id.into()
+    }
 }
 
 impl Context {
@@ -56,18 +66,22 @@ pub struct EventDelegate<T> {
     pub mutation: MutationFn<T>,
 }
 
+impl<T> EventDelegate<T> {
+    pub fn new(requirement: RequirementFn<T>, mutation: MutationFn<T>) -> Self {
+        EventDelegate { requirement, mutation }
+    }
+}
+
 #[derive(Clone, Copy)]
 pub struct QueryDelegate<T, R> {
     pub requirement: RequirementFn<T>,
     pub transformation: TransformationFn<T, R>,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
-pub struct BoostAbility {
-    /// Boot ability used
-    pub ability: AbilityId,
-    /// How many times was the boost applied?
-    pub count: u32,
+impl<T, R> QueryDelegate<T, R> {
+    pub fn new(requirement: RequirementFn<T>, transformation: TransformationFn<T, R>) -> Self {
+        QueryDelegate { requirement, transformation }
+    }
 }
 
 #[derive(Clone, Copy, EnumDiscriminants)]
@@ -82,16 +96,18 @@ pub enum Delegate {
     OnDrawCard(EventDelegate<CardId>),
     /// A player plays a card
     OnPlayCard(EventDelegate<CardId>),
-    /// A weapon boost is activated
-    OnActivateBoost(EventDelegate<BoostAbility>),
+    /// A weapon boost is activated for a given card
+    OnActivateBoost(EventDelegate<BoostData>),
 
     /// Query whether a given card can currently be played
     CanPlayCard(QueryDelegate<CardId, bool>),
 
-    /// Query the current attack value of a card. Invoked with the value of its 'base_attack' stat.
+    /// Query the current attack value of a card. Invoked with [CardStats::base_attack] or 0.
     GetAttackValue(QueryDelegate<CardId, AttackValue>),
-    /// Query the current health value of a card. Invoked with the value of its 'health' stat.
+    /// Query the current health value of a card. Invoked with [CardStats::health] or 0.
     GetHealthValue(QueryDelegate<CardId, HealthValue>),
+    /// Get the current boost count of a card. Invoked with [CardState::boost_count].
+    GetBoostCount(QueryDelegate<CardId, BoostCount>),
 }
 
 impl Debug for Delegate {
@@ -114,6 +130,22 @@ pub fn on_draw_card(game: &mut GameState, context: Context, delegate: Delegate, 
 pub fn on_play_card(game: &mut GameState, context: Context, delegate: Delegate, data: CardId) {
     match delegate {
         Delegate::OnPlayCard(EventDelegate { requirement, mutation })
+            if requirement(game, context, data) =>
+        {
+            mutation(game, context, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_activate_boost(
+    game: &mut GameState,
+    context: Context,
+    delegate: Delegate,
+    data: BoostData,
+) {
+    match delegate {
+        Delegate::OnActivateBoost(EventDelegate { requirement, mutation })
             if requirement(game, context, data) =>
         {
             mutation(game, context, data)
@@ -165,6 +197,23 @@ pub fn get_health_value(
 ) -> HealthValue {
     match delegate {
         Delegate::GetHealthValue(QueryDelegate { requirement, transformation })
+            if requirement(game, context, data) =>
+        {
+            transformation(game, context, data, current)
+        }
+        _ => current,
+    }
+}
+
+pub fn get_boost_count(
+    game: &GameState,
+    context: Context,
+    delegate: Delegate,
+    data: CardId,
+    current: BoostCount,
+) -> BoostCount {
+    match delegate {
+        Delegate::GetBoostCount(QueryDelegate { requirement, transformation })
             if requirement(game, context, data) =>
         {
             transformation(game, context, data, current)
