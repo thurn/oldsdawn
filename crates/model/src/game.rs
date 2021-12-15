@@ -13,11 +13,14 @@
 // limitations under the License.
 
 use crate::card_name::CardName;
+use crate::card_state;
 use crate::card_state::{AbilityState, CardPosition, CardState};
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, CardId, EncounterId, ManaValue, Score, Side, TurnNumber,
 };
 use std::collections::btree_map::Entry;
+use std::iter::{Enumerate, Map};
+use std::slice::Iter;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct PlayerState {
@@ -57,12 +60,36 @@ pub struct GameState {
 }
 
 impl GameState {
+    pub fn new(overlord_deck: Vec<CardName>, champion_deck: Vec<CardName>) -> Self {
+        let champion_start = overlord_deck.len();
+        Self {
+            cards: Self::make_deck(overlord_deck, Side::Overlord, 0)
+                .chain(Self::make_deck(champion_deck, Side::Champion, champion_start))
+                .collect(),
+            overlord: OverlordState::default(),
+            champion: ChampionState::default(),
+            turn_number: 0,
+            active_raid: None,
+            animations: None,
+        }
+    }
+
+    fn make_deck(deck: Vec<CardName>, side: Side, base: usize) -> impl Iterator<Item = CardState> {
+        deck.into_iter().enumerate().map(move |(index, name)| {
+            CardState::new(CardId { index: index + base }, name, CardPosition::Deck(side))
+        })
+    }
+
+    pub fn card_ids(&self) -> impl Iterator<Item = CardId> {
+        (0..self.cards.len()).map(|index| CardId { index })
+    }
+
     pub fn card(&self, card_id: CardId) -> &CardState {
-        &self.cards[card_id.0]
+        &self.cards[card_id.index]
     }
 
     pub fn card_mut(&mut self, card_id: CardId) -> &mut CardState {
-        &mut self.cards[card_id.0]
+        &mut self.cards[card_id.index]
     }
 
     pub fn player_state(&self, side: Side) -> &PlayerState {
@@ -121,12 +148,4 @@ impl GameState {
     pub fn ability_mut(&mut self, ability_id: AbilityId) -> Entry<AbilityIndex, AbilityState> {
         self.card_mut(ability_id.card_id).state.entry(ability_id.index)
     }
-}
-
-/// Data for an ongoing game, containing the game state and set of card definitions used in this
-/// game
-#[derive(PartialEq, Eq, Debug, Clone, Default)]
-pub struct GameData {
-    pub state: GameState,
-    pub card_names: Vec<(CardId, CardName)>,
 }

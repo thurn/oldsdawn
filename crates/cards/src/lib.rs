@@ -44,15 +44,16 @@
 #![deny(clippy::use_self)]
 #![deny(clippy::used_underscore_binding)]
 #![deny(clippy::useless_let_if_seq)]
-#![allow(clippy::needless_update)]
 #![allow(dead_code)]
-#![deny(unused_imports)]
 #![allow(unused_variables)]
+#![allow(unused_imports)]
 
 use model::card_definition::CardDefinition;
 use model::card_name::CardName;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
+
+pub mod dispatch;
 
 mod card_helpers;
 mod champion_spells;

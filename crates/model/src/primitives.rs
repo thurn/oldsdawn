@@ -12,8 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::card_name::CardName;
+
+pub type TurnNumber = u32;
+pub type ManaValue = u32;
+pub type ActionCount = u32;
+pub type Score = u32;
+pub type HealthValue = u32;
+pub type AttackValue = u32;
+pub type ShieldValue = u32;
+pub type BoostCount = u32;
+
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub struct CardId(pub usize);
+pub struct CardId {
+    pub index: usize,
+}
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct EventId(pub u32);
@@ -31,8 +44,8 @@ pub struct AbilityId {
 }
 
 impl AbilityId {
-    pub fn new(card_id: CardId, index: AbilityIndex) -> Self {
-        Self { card_id, index }
+    pub fn new(card_id: CardId, index: usize) -> Self {
+        Self { card_id, index: AbilityIndex(index) }
     }
 }
 
@@ -46,14 +59,6 @@ pub struct EncounterId {
     pub raid_id: RaidId,
     pub step_id: u32,
 }
-
-pub type TurnNumber = u32;
-pub type ManaValue = u32;
-pub type ActionCount = u32;
-pub type Score = u32;
-pub type HealthValue = u32;
-pub type AttackValue = u32;
-pub type ShieldValue = u32;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct SpriteAddress(pub String);

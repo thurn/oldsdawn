@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::card_definition::CardDefinition;
+use crate::card_name::CardName;
 use crate::primitives::{
-    AbilityIndex, CardId, EncounterId, ItemLocation, RoomId, RoomLocation, Side, TurnNumber,
+    AbilityIndex, BoostCount, CardId, ItemLocation, RoomId, RoomLocation, Side,
 };
 use std::collections::BTreeMap;
 
@@ -27,23 +29,29 @@ pub enum CardPosition {
     Scored(Side),
 }
 
-/// Stores the last activation turn & encounter for an ability. This value is automatically updated
-/// by the system when an ability is activated, immediately before the ON_ABILITY_ACTIVATED event
-/// is sent.
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub struct LastActivated {
-    pub turn_number: TurnNumber,
-    pub encounter_id: EncounterId,
-}
-
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
-pub struct AbilityState {
-    pub last_activated: Option<LastActivated>,
-}
+pub struct AbilityState {}
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct CardState {
-    pub id: CardId,
+    /// ID for this card.
+    id: CardId,
+    pub name: CardName,
+    /// Where this card is located in the game
     pub position: CardPosition,
+    /// State for this card's abilities
     pub state: BTreeMap<AbilityIndex, AbilityState>,
+    /// How many times the boost ability of this card has been activated -- typically used to
+    /// increase weapon attack power during a raid.
+    pub boost_count: Option<BoostCount>,
+}
+
+impl CardState {
+    pub fn new(id: CardId, name: CardName, position: CardPosition) -> Self {
+        Self { id, name, state: BTreeMap::new(), position, boost_count: None }
+    }
+
+    pub fn id(&self) -> CardId {
+        self.id
+    }
 }

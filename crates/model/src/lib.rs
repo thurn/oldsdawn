@@ -46,6 +46,7 @@
 #![deny(clippy::wildcard_imports)]
 #![allow(dead_code)]
 #![allow(unused_variables)]
+#![allow(unused_imports)]
 
 pub mod card_definition;
 pub mod card_name;

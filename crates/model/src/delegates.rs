@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::game::GameState;
-use crate::primitives::{AbilityId, AttackValue, CardId, HealthValue, Side};
+use crate::primitives::{AbilityId, AttackValue, CardId, EncounterId, HealthValue, Side};
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 use strum_macros::EnumDiscriminants;
@@ -50,33 +50,47 @@ pub type RequirementFn<T> = fn(&GameState, Context, T) -> bool;
 pub type MutationFn<T> = fn(&mut GameState, Context, T);
 pub type TransformationFn<T, R> = fn(&GameState, Context, T, R) -> R;
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct EventDelegate<T> {
     pub requirement: RequirementFn<T>,
     pub mutation: MutationFn<T>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct QueryDelegate<T, R> {
     pub requirement: RequirementFn<T>,
     pub transformation: TransformationFn<T, R>,
 }
 
-#[derive(Clone, EnumDiscriminants)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+pub struct BoostAbility {
+    /// Boot ability used
+    pub ability: AbilityId,
+    /// How many times was the boost applied?
+    pub count: u32,
+}
+
+#[derive(Clone, Copy, EnumDiscriminants)]
 pub enum Delegate {
-    /// Event when either player draws a card
+    /// A minion is encountered during a raid
+    OnEncounterBegin(EventDelegate<EncounterId>),
+    /// A minion finishes being encountered during a raid. Invokes regardless of whether the
+    /// encounter was successful.
+    OnEncounterEnd(EventDelegate<EncounterId>),
+
+    /// A player draws a card
     OnDrawCard(EventDelegate<CardId>),
-    /// Event when either player plays a card
+    /// A player plays a card
     OnPlayCard(EventDelegate<CardId>),
-    /// Event when a raid ability is activated
-    OnActivateRaidAbility(EventDelegate<AbilityId>),
+    /// A weapon boost is activated
+    OnActivateBoost(EventDelegate<BoostAbility>),
 
     /// Query whether a given card can currently be played
     CanPlayCard(QueryDelegate<CardId, bool>),
 
-    /// Query the current attack value of a card
+    /// Query the current attack value of a card. Invoked with the value of its 'base_attack' stat.
     GetAttackValue(QueryDelegate<CardId, AttackValue>),
-    /// Query the current health value of a card
+    /// Query the current health value of a card. Invoked with the value of its 'health' stat.
     GetHealthValue(QueryDelegate<CardId, HealthValue>),
 }
 
@@ -86,7 +100,7 @@ impl Debug for Delegate {
     }
 }
 
-pub fn on_draw_card(game: &mut GameState, context: Context, delegate: &Delegate, data: CardId) {
+pub fn on_draw_card(game: &mut GameState, context: Context, delegate: Delegate, data: CardId) {
     match delegate {
         Delegate::OnDrawCard(EventDelegate { requirement, mutation })
             if requirement(game, context, data) =>
@@ -97,7 +111,7 @@ pub fn on_draw_card(game: &mut GameState, context: Context, delegate: &Delegate,
     }
 }
 
-pub fn on_play_card(game: &mut GameState, context: Context, delegate: &Delegate, data: CardId) {
+pub fn on_play_card(game: &mut GameState, context: Context, delegate: Delegate, data: CardId) {
     match delegate {
         Delegate::OnPlayCard(EventDelegate { requirement, mutation })
             if requirement(game, context, data) =>
@@ -111,7 +125,7 @@ pub fn on_play_card(game: &mut GameState, context: Context, delegate: &Delegate,
 pub fn can_play_card(
     game: &GameState,
     context: Context,
-    delegate: &Delegate,
+    delegate: Delegate,
     data: CardId,
     current: bool,
 ) -> bool {
@@ -128,7 +142,7 @@ pub fn can_play_card(
 pub fn get_attack_value(
     game: &GameState,
     context: Context,
-    delegate: &Delegate,
+    delegate: Delegate,
     data: CardId,
     current: AttackValue,
 ) -> AttackValue {
@@ -145,7 +159,7 @@ pub fn get_attack_value(
 pub fn get_health_value(
     game: &GameState,
     context: Context,
-    delegate: &Delegate,
+    delegate: Delegate,
     data: CardId,
     current: HealthValue,
 ) -> HealthValue {

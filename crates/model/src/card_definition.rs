@@ -28,10 +28,9 @@ pub struct Cost {
 }
 
 /// An activated ability used by Weapons to increase their attack value by paying a mana cost during
-/// a raid encounter. Can be used any number of times. By default, attack bonuses last for the
-/// duration of the current encounter only.
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub struct PowerUp {
+/// a raid encounter. Can be used any number of times.
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct AttackBoost {
     pub cost: ManaValue,
     pub bonus: AttackValue,
 }
@@ -42,16 +41,20 @@ pub struct CardStats {
     pub health: Option<HealthValue>,
     pub shield: Option<ShieldValue>,
     pub base_attack: Option<AttackValue>,
-    pub power_up: Option<PowerUp>,
+    pub attack_boost: Option<AttackBoost>,
 }
 
 /// Possible types of ability
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub enum AbilityType {
-    /// Standard abilities function at all times without requiring activation
+    /// Standard abilities function at all times without requiring activation.
     Standard,
 
-    /// Activated abilities have an associated cost in order to be used
+    /// Encounter abilities can be activated by the Champion during a raid encounter, typically
+    /// in order to increase a Weapon's attack.  
+    Encounter,
+
+    /// Activated abilities have an associated cost in order to be used.
     Activated(Cost),
 }
 

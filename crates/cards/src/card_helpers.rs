@@ -15,14 +15,19 @@
 //! Helpers for defining card behaviors. This file is intended be be used via wildcard import in
 //! card definition files.
 
-use model::card_definition::{Ability, AbilityType, CardStats, CardText, Cost, PowerUp};
-use model::delegates::{Context, Delegate, EventDelegate, MutationFn};
+use crate::dispatch;
+use model::card_definition::{Ability, AbilityType, AttackBoost, CardStats, CardText, Cost};
+use model::delegates;
+use model::delegates::{Context, Delegate, EventDelegate, MutationFn, QueryDelegate};
 use model::game::GameState;
 use model::primitives::{AbilityId, AttackValue, CardId, ManaValue, SpriteAddress};
 
 /// Provides the rules text for a card
-pub fn text(text: &str) -> CardText {
-    CardText { text: text.to_owned() }
+pub fn text<T>(text: T) -> CardText
+where
+    T: Into<String>,
+{
+    CardText { text: text.into() }
 }
 
 /// Provides the cost for a card
@@ -59,18 +64,32 @@ pub fn gain_mana(game: &mut GameState, context: Context, amount: ManaValue) {
     game.player_state_mut(context.side()).mana += amount;
 }
 
-pub struct WeaponStats {
-    pub base_attack: AttackValue,
-    pub bonus_cost: ManaValue,
-    pub attack_bonus: AttackValue,
+pub fn attack(base_attack: AttackValue, boost: AttackBoost) -> CardStats {
+    CardStats { base_attack: Some(base_attack), attack_boost: Some(boost), ..CardStats::default() }
 }
 
-impl From<WeaponStats> for CardStats {
-    fn from(stats: WeaponStats) -> Self {
-        Self {
-            base_attack: Some(stats.base_attack),
-            power_up: Some(PowerUp { cost: stats.bonus_cost, bonus: stats.attack_bonus }),
-            ..Self::default()
-        }
+pub fn get_stats(game: &GameState, card_id: CardId) -> &CardStats {
+    &crate::get(game.card(card_id).name).config.stats
+}
+
+pub fn add_boost(
+    game: &GameState,
+    context: Context,
+    card_id: CardId,
+    current: AttackValue,
+) -> AttackValue {
+    game.card(card_id).boost_count.map_or(current, |boost| {
+        current + (boost * get_stats(game, card_id).attack_boost.expect("Expected boost").bonus)
+    })
+}
+
+pub fn encounter_boost(boost: AttackBoost) -> Ability {
+    Ability {
+        text: text(format!("{}[Mana]: +{} Attack", boost.cost, boost.bonus)),
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::GetAttackValue(QueryDelegate {
+            requirement: this_card,
+            transformation: add_boost,
+        })],
     }
 }

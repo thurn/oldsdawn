@@ -50,7 +50,7 @@
 #![allow(unused_variables)]
 
 use model::card_definition::{Ability, CardDefinition};
-use model::game::{GameData, GameState};
+use model::game::GameState;
 use model::primitives::{AbilityId, AbilityIndex, CardId, EventId, Side};
 use tonic::{transport::Server, Request, Response, Status};
 
@@ -60,7 +60,7 @@ use protos::spelldawn::{
     CommandList, GameCommand, GameId, GameRequest, GameView, RenderGameCommand,
 };
 
-use cards::CARDS;
+use cards::{dispatch, CARDS};
 use model::card_name::CardName;
 use model::card_state::CardState;
 use model::delegates;
@@ -94,50 +94,15 @@ impl Spelldawn for GameService {
     }
 }
 
-pub fn invoke_event<T: Copy>(
-    game: &mut GameData,
-    event: fn(&mut GameState, Context, &Delegate, T),
-    data: T,
-) {
-    for (card_id, card_name) in game.card_names.iter() {
-        let definition = cards::get(*card_name);
-        for (index, ability) in definition.abilities.iter().enumerate() {
-            let context = Context::new(&game.state, AbilityId::new(*card_id, AbilityIndex(index)));
-            for delegate in &ability.delegates {
-                event(&mut game.state, context, delegate, data)
-            }
-        }
-    }
-}
-
-pub fn perform_query<T: Copy, R>(
-    game: &GameData,
-    query: fn(&GameState, Context, &Delegate, T, R) -> R,
-    data: T,
-    initial_value: R,
-) -> R {
-    let mut result = initial_value;
-    for (card_id, card_name) in game.card_names.iter() {
-        let definition = cards::get(*card_name);
-        for (index, ability) in definition.abilities.iter().enumerate() {
-            let context = Context::new(&game.state, AbilityId::new(*card_id, AbilityIndex(index)));
-            for delegate in &ability.delegates {
-                result = query(&game.state, context, delegate, data, result)
-            }
-        }
-    }
-    result
-}
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
-    let card_id = CardId(4);
-    let mut game = GameData::default();
-    game.card_names.push((card_id, CardName::ArcaneRecovery));
-    println!("Mana: {:?}", game.state.champion.state.mana);
-    invoke_event(&mut game, delegates::on_play_card, card_id);
-    println!("Mana: {:?}", game.state.champion.state.mana);
+    let card_id = CardId { index: 0 };
+
+    let mut game = GameState::new(vec![CardName::ArcaneRecovery], vec![]);
+    println!("Mana: {:?}", game.champion.state.mana);
+    dispatch::invoke_event(&mut game, delegates::on_play_card, card_id);
+    println!("Mana: {:?}", game.champion.state.mana);
 
     let address = "127.0.0.1:50052".parse().expect("valid address");
     let service = tonic_web::config()
