@@ -20,11 +20,12 @@ use crate::primitives::{
 };
 use std::fmt;
 use std::fmt::{Debug, Formatter};
+use std::sync::Arc;
 use strum_macros::EnumDiscriminants;
 
-/// Context for which ability owns a delegate
+/// Scope for which ability owns a delegate
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub struct Context {
+pub struct Scope {
     /// Side which owns this delegate.  
     side: Side,
 
@@ -32,13 +33,13 @@ pub struct Context {
     ability_id: AbilityId,
 }
 
-impl From<Context> for CardId {
-    fn from(context: Context) -> Self {
-        context.ability_id.into()
+impl From<Scope> for CardId {
+    fn from(scope: Scope) -> Self {
+        scope.ability_id.into()
     }
 }
 
-impl Context {
+impl Scope {
     pub fn new(game: &GameState, ability_id: AbilityId) -> Self {
         Self { side: Side::Champion, ability_id }
     }
@@ -56,11 +57,14 @@ impl Context {
     }
 }
 
-pub type RequirementFn<T> = fn(&GameState, Context, T) -> bool;
-pub type MutationFn<T> = fn(&mut GameState, Context, T);
-pub type TransformationFn<T, R> = fn(&GameState, Context, T, R) -> R;
+pub type RequirementFn<T> = fn(&GameState, Scope, T) -> bool;
+pub type MutationFn<T> = fn(&mut GameState, Scope, T);
+pub type TransformationFn<T, R> = fn(&GameState, Scope, T, R) -> R;
 
-#[derive(Clone, Copy)]
+// pub type RequirementFn<T> = Arc<dyn Fn(&GameState, Scope, T) -> bool>;
+// pub type MutationFn<T> = Arc<dyn Fn(&mut GameState, Scope, T)>;
+// pub type TransformationFn<T, R> = Arc<dyn Fn(&GameState, Scope, T, R) -> R>;
+
 pub struct EventDelegate<T> {
     pub requirement: RequirementFn<T>,
     pub mutation: MutationFn<T>,
@@ -72,7 +76,6 @@ impl<T> EventDelegate<T> {
     }
 }
 
-#[derive(Clone, Copy)]
 pub struct QueryDelegate<T, R> {
     pub requirement: RequirementFn<T>,
     pub transformation: TransformationFn<T, R>,
@@ -84,7 +87,7 @@ impl<T, R> QueryDelegate<T, R> {
     }
 }
 
-#[derive(Clone, Copy, EnumDiscriminants)]
+#[derive(EnumDiscriminants)]
 pub enum Delegate {
     /// A minion is encountered during a raid
     OnEncounterBegin(EventDelegate<EncounterId>),
@@ -116,39 +119,34 @@ impl Debug for Delegate {
     }
 }
 
-pub fn on_draw_card(game: &mut GameState, context: Context, delegate: Delegate, data: CardId) {
+pub fn on_draw_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
     match delegate {
         Delegate::OnDrawCard(EventDelegate { requirement, mutation })
-            if requirement(game, context, data) =>
+            if requirement(game, scope, data) =>
         {
-            mutation(game, context, data)
+            mutation(game, scope, data)
         }
         _ => (),
     }
 }
 
-pub fn on_play_card(game: &mut GameState, context: Context, delegate: Delegate, data: CardId) {
+pub fn on_play_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
     match delegate {
         Delegate::OnPlayCard(EventDelegate { requirement, mutation })
-            if requirement(game, context, data) =>
+            if requirement(game, scope, data) =>
         {
-            mutation(game, context, data)
+            mutation(game, scope, data)
         }
         _ => (),
     }
 }
 
-pub fn on_activate_boost(
-    game: &mut GameState,
-    context: Context,
-    delegate: Delegate,
-    data: BoostData,
-) {
+pub fn on_activate_boost(game: &mut GameState, scope: Scope, delegate: &Delegate, data: BoostData) {
     match delegate {
         Delegate::OnActivateBoost(EventDelegate { requirement, mutation })
-            if requirement(game, context, data) =>
+            if requirement(game, scope, data) =>
         {
-            mutation(game, context, data)
+            mutation(game, scope, data)
         }
         _ => (),
     }
@@ -156,16 +154,16 @@ pub fn on_activate_boost(
 
 pub fn can_play_card(
     game: &GameState,
-    context: Context,
-    delegate: Delegate,
+    scope: Scope,
+    delegate: &Delegate,
     data: CardId,
     current: bool,
 ) -> bool {
     match delegate {
         Delegate::CanPlayCard(QueryDelegate { requirement, transformation })
-            if requirement(game, context, data) =>
+            if requirement(game, scope, data) =>
         {
-            transformation(game, context, data, current)
+            transformation(game, scope, data, current)
         }
         _ => current,
     }
@@ -173,16 +171,16 @@ pub fn can_play_card(
 
 pub fn get_attack_value(
     game: &GameState,
-    context: Context,
-    delegate: Delegate,
+    scope: Scope,
+    delegate: &Delegate,
     data: CardId,
     current: AttackValue,
 ) -> AttackValue {
     match delegate {
         Delegate::GetAttackValue(QueryDelegate { requirement, transformation })
-            if requirement(game, context, data) =>
+            if requirement(game, scope, data) =>
         {
-            transformation(game, context, data, current)
+            transformation(game, scope, data, current)
         }
         _ => current,
     }
@@ -190,16 +188,16 @@ pub fn get_attack_value(
 
 pub fn get_health_value(
     game: &GameState,
-    context: Context,
-    delegate: Delegate,
+    scope: Scope,
+    delegate: &Delegate,
     data: CardId,
     current: HealthValue,
 ) -> HealthValue {
     match delegate {
         Delegate::GetHealthValue(QueryDelegate { requirement, transformation })
-            if requirement(game, context, data) =>
+            if requirement(game, scope, data) =>
         {
-            transformation(game, context, data, current)
+            transformation(game, scope, data, current)
         }
         _ => current,
     }
@@ -207,16 +205,16 @@ pub fn get_health_value(
 
 pub fn get_boost_count(
     game: &GameState,
-    context: Context,
-    delegate: Delegate,
+    scope: Scope,
+    delegate: &Delegate,
     data: CardId,
     current: BoostCount,
 ) -> BoostCount {
     match delegate {
         Delegate::GetBoostCount(QueryDelegate { requirement, transformation })
-            if requirement(game, context, data) =>
+            if requirement(game, scope, data) =>
         {
-            transformation(game, context, data, current)
+            transformation(game, scope, data, current)
         }
         _ => current,
     }

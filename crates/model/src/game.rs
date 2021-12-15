@@ -142,10 +142,10 @@ impl GameState {
     }
 
     pub fn ability(&self, ability_id: AbilityId) -> Option<&AbilityState> {
-        self.card(ability_id.card_id).state.get(&ability_id.index)
+        self.card(ability_id.card_id).abilities.get(&ability_id.index)
     }
 
     pub fn ability_mut(&mut self, ability_id: AbilityId) -> Entry<AbilityIndex, AbilityState> {
-        self.card_mut(ability_id.card_id).state.entry(ability_id.index)
+        self.card_mut(ability_id.card_id).abilities.entry(ability_id.index)
     }
 }

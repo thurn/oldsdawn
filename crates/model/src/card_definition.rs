@@ -13,12 +13,55 @@
 // limitations under the License.
 
 use crate::card_name::CardName;
-use crate::delegates::Delegate;
+use crate::delegates::{Delegate, Scope};
+use crate::game::GameState;
 use crate::primitives::{
     ActionCount, AttackValue, CardSubtype, CardType, HealthValue, ManaValue, Rarity, School,
     ShieldValue, Side, SpriteAddress,
 };
-use std::fmt::Debug;
+use std::fmt;
+use std::fmt::{Debug, Formatter};
+
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub enum Keyword {
+    Play,
+    Dawn,
+    Dusk,
+    Store,
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub enum NumericOperator {
+    None,
+    Add,
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+pub enum TextToken {
+    Literal(String),
+    Number(NumericOperator, u32),
+    Mana(ManaValue),
+    Keyword(Keyword),
+    Cost(Vec<TextToken>),
+}
+
+pub type TextFn = fn(&GameState, Scope) -> Vec<TextToken>;
+
+/// Text describing what an ability does
+#[derive(Clone)]
+pub enum CardText {
+    Text(Vec<TextToken>),
+    TextFn(TextFn),
+}
+
+impl Debug for CardText {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            CardText::Text(tokens) => write!(f, "{:?}", tokens),
+            CardText::TextFn(_) => write!(f, "<TextFn>"),
+        }
+    }
+}
 
 /// Cost to play a card or activate an ability
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
@@ -38,10 +81,16 @@ pub struct AttackBoost {
 /// Base card numeric values
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct CardStats {
+    /// Damage required to destroy this card
     pub health: Option<HealthValue>,
+    /// Mana cost required in order to attack this card
     pub shield: Option<ShieldValue>,
+    /// Base damage dealt by this card during an encounter
     pub base_attack: Option<AttackValue>,
+    /// An increase in base attack damage for a fixed cost which an ability can apply to this card
     pub attack_boost: Option<AttackBoost>,
+    /// An amount of mana which an ability can store in this card
+    pub store_mana: Option<ManaValue>,
 }
 
 /// Possible types of ability
@@ -58,15 +107,9 @@ pub enum AbilityType {
     Activated(Cost),
 }
 
-/// Text describing what an ability does
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
-pub struct CardText {
-    pub text: String,
-}
-
 /// Abilities are the unit of action in Spelldawn. Their behavior is provided by the Delegate
 /// system, see delegates.rs for more information.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Ability {
     pub text: CardText,
     pub ability_type: AbilityType,
@@ -74,7 +117,7 @@ pub struct Ability {
 }
 
 /// Individual card configuration; properties which are not universal for all cards
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default)]
 pub struct CardConfig {
     pub stats: CardStats,
     pub subtypes: Vec<CardSubtype>,
@@ -83,7 +126,7 @@ pub struct CardConfig {
 /// The fundamental object defining the behavior of a given card in Spelldawn
 ///
 /// This struct's top-level fields should be universal properties which apply to every card
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CardDefinition {
     pub name: CardName,
     pub cost: Cost,

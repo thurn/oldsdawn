@@ -64,7 +64,7 @@ use cards::{dispatch, queries, CARDS};
 use model::card_name::CardName;
 use model::card_state::CardState;
 use model::delegates;
-use model::delegates::{Context, Delegate};
+use model::delegates::{Delegate, Scope};
 
 #[derive(Default)]
 pub struct GameService {}

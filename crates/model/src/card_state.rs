@@ -15,7 +15,8 @@
 use crate::card_definition::CardDefinition;
 use crate::card_name::CardName;
 use crate::primitives::{
-    AbilityIndex, BoostCount, CardId, ItemLocation, RoomId, RoomLocation, Side,
+    AbilityIndex, BoostCount, CardId, CardLevel, ItemLocation, ManaValue, RoomId, RoomLocation,
+    Side,
 };
 use std::collections::BTreeMap;
 
@@ -39,6 +40,17 @@ impl CardPosition {
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct AbilityState {}
 
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+pub struct CardData {
+    /// How many times the boost ability of this card has been activated -- typically used to
+    /// increase weapon attack power during a raid.
+    pub boost_count: BoostCount,
+    /// How much mana is stored in this card?
+    pub stored_mana: ManaValue,
+    /// How many times has this card been leveled up?
+    pub card_level: CardLevel,
+}
+
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct CardState {
     /// ID for this card.
@@ -46,16 +58,15 @@ pub struct CardState {
     pub name: CardName,
     /// Where this card is located in the game
     pub position: CardPosition,
+    /// Optional state for this card
+    pub data: CardData,
     /// State for this card's abilities
-    pub state: BTreeMap<AbilityIndex, AbilityState>,
-    /// How many times the boost ability of this card has been activated -- typically used to
-    /// increase weapon attack power during a raid.
-    pub boost_count: BoostCount,
+    pub abilities: BTreeMap<AbilityIndex, AbilityState>,
 }
 
 impl CardState {
     pub fn new(id: CardId, name: CardName, position: CardPosition) -> Self {
-        Self { id, name, state: BTreeMap::new(), position, boost_count: 0 }
+        Self { id, name, abilities: BTreeMap::new(), position, data: CardData::default() }
     }
 
     pub fn id(&self) -> CardId {

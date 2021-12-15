@@ -51,18 +51,21 @@
 use model::card_definition::CardDefinition;
 use model::card_name::CardName;
 use once_cell::sync::Lazy;
+use std::borrow::Borrow;
 use std::collections::HashMap;
+use std::sync::Mutex;
 
 pub mod card_helpers;
 pub mod dispatch;
 pub mod queries;
 
 mod champion_spells;
+mod projects;
 mod weapons;
 
 // TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
 static DEFINITIONS: &[fn() -> CardDefinition] =
-    &[champion_spells::arcane_recovery, weapons::greataxe];
+    &[champion_spells::arcane_recovery, weapons::greataxe, projects::gold_mine];
 
 pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
     let mut map = HashMap::new();

@@ -12,26 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::card_definition::{CardConfig, CardDefinition, CardText, Keyword};
-use std::sync::Arc;
-
+use model::card_definition::{CardConfig, CardDefinition};
 use model::card_name::CardName;
 use model::primitives::{CardType, Rarity, School, Side};
 
 use crate::card_helpers::*;
 
-pub fn arcane_recovery() -> CardDefinition {
+pub fn gold_mine() -> CardDefinition {
     CardDefinition {
-        name: CardName::ArcaneRecovery,
-        cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
-        card_type: CardType::Spell,
-        side: Side::Champion,
+        name: CardName::GoldMine,
+        cost: cost(4),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_43"),
+        card_type: CardType::Project,
+        side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_play(CardText::Text(vec![text("Gain"), mana_symbol(9)]), |g, s, _| {
-            gain_mana(g, s, 9)
-        })],
+        abilities: vec![],
         config: CardConfig::default(),
     }
 }

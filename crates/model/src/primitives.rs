@@ -22,6 +22,7 @@ pub type HealthValue = u32;
 pub type AttackValue = u32;
 pub type ShieldValue = u32;
 pub type BoostCount = u32;
+pub type CardLevel = u32;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardId {

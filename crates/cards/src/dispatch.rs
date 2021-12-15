@@ -13,21 +13,21 @@
 // limitations under the License.
 
 use model::card_name::CardName;
-use model::delegates::{Context, Delegate};
+use model::delegates::{Delegate, Scope};
 use model::game::GameState;
 use model::primitives::{AbilityId, AbilityIndex, CardId};
 
 pub fn invoke_event<T: Copy>(
     game: &mut GameState,
-    event: fn(&mut GameState, Context, Delegate, T),
+    event: fn(&mut GameState, Scope, &Delegate, T),
     data: T,
 ) {
     for card_id in game.card_ids() {
         let definition = crate::get(game.card(card_id).name);
         for (index, ability) in definition.abilities.iter().enumerate() {
-            let context = Context::new(game, AbilityId::new(card_id, index));
+            let scope = Scope::new(game, AbilityId::new(card_id, index));
             for delegate in &ability.delegates {
-                event(game, context, *delegate, data)
+                event(game, scope, delegate, data)
             }
         }
     }
@@ -35,7 +35,7 @@ pub fn invoke_event<T: Copy>(
 
 pub fn perform_query<T: Copy, R>(
     game: &GameState,
-    query: fn(&GameState, Context, Delegate, T, R) -> R,
+    query: fn(&GameState, Scope, &Delegate, T, R) -> R,
     data: T,
     initial_value: R,
 ) -> R {
@@ -43,9 +43,9 @@ pub fn perform_query<T: Copy, R>(
     for card_id in game.card_ids() {
         let definition = crate::get(game.card(card_id).name);
         for (index, ability) in definition.abilities.iter().enumerate() {
-            let context = Context::new(game, AbilityId::new(card_id, index));
+            let scope = Scope::new(game, AbilityId::new(card_id, index));
             for delegate in &ability.delegates {
-                result = query(game, context, *delegate, data, result)
+                result = query(game, scope, delegate, data, result)
             }
         }
     }

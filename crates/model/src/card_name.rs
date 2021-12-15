@@ -16,4 +16,5 @@
 pub enum CardName {
     ArcaneRecovery,
     Greataxe,
+    GoldMine,
 }

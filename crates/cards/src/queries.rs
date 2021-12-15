@@ -46,6 +46,6 @@ pub fn boost_count(game: &GameState, card_id: impl Into<CardId> + Copy) -> Boost
         game,
         delegates::get_boost_count,
         card_id.into(),
-        game.card(card_id).boost_count,
+        game.card(card_id).data.boost_count,
     )
 }
