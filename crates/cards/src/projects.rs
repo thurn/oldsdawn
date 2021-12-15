@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::card_definition::{CardConfig, CardDefinition};
+use crate::abilities;
+use model::card_definition::{CardConfig, CardDefinition, CardText, Keyword};
 use model::card_name::CardName;
 use model::primitives::{CardType, Rarity, School, Side};
 
@@ -27,7 +28,20 @@ pub fn gold_mine() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![],
+        abilities: vec![
+            abilities::store_mana::<12>(),
+            at_dusk(
+                CardText::Text(vec![
+                    keyword(Keyword::Dusk),
+                    text("Gain"),
+                    mana_symbol(3),
+                    text("from this card"),
+                ]),
+                |g, s, _| {
+                    take_stored_mana(g, s, 3);
+                },
+            ),
+        ],
         config: CardConfig::default(),
     }
 }

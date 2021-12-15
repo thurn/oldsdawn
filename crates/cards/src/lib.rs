@@ -59,6 +59,7 @@ pub mod card_helpers;
 pub mod dispatch;
 pub mod queries;
 
+mod abilities;
 mod champion_spells;
 mod projects;
 mod weapons;

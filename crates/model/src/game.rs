@@ -46,7 +46,8 @@ pub struct AnimationBuffer {}
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct GameState {
     /// Card states
-    cards: Vec<CardState>,
+    overlord_cards: Vec<CardState>,
+    champion_cards: Vec<CardState>,
     /// Overlord player state
     pub overlord: OverlordState,
     /// Champion player state
@@ -63,9 +64,8 @@ impl GameState {
     pub fn new(overlord_deck: Vec<CardName>, champion_deck: Vec<CardName>) -> Self {
         let champion_start = overlord_deck.len();
         Self {
-            cards: Self::make_deck(overlord_deck, Side::Overlord, 0)
-                .chain(Self::make_deck(champion_deck, Side::Champion, champion_start))
-                .collect(),
+            overlord_cards: Self::make_deck(overlord_deck, Side::Overlord),
+            champion_cards: Self::make_deck(champion_deck, Side::Champion),
             overlord: OverlordState::default(),
             champion: ChampionState::default(),
             turn_number: 0,
@@ -74,22 +74,43 @@ impl GameState {
         }
     }
 
-    fn make_deck(deck: Vec<CardName>, side: Side, base: usize) -> impl Iterator<Item = CardState> {
-        deck.into_iter().enumerate().map(move |(index, name)| {
-            CardState::new(CardId { index: index + base }, name, CardPosition::Deck(side))
-        })
+    fn make_deck(deck: Vec<CardName>, side: Side) -> Vec<CardState> {
+        deck.into_iter()
+            .enumerate()
+            .map(move |(index, name)| {
+                CardState::new(CardId::new(side, index), name, CardPosition::Deck(side))
+            })
+            .collect()
+    }
+
+    fn cards(&self, side: Side) -> &Vec<CardState> {
+        match side {
+            Side::Overlord => &self.overlord_cards,
+            Side::Champion => &self.champion_cards,
+        }
+    }
+
+    fn cards_mut(&mut self, side: Side) -> &mut Vec<CardState> {
+        match side {
+            Side::Overlord => &mut self.overlord_cards,
+            Side::Champion => &mut self.champion_cards,
+        }
     }
 
     pub fn card_ids(&self) -> impl Iterator<Item = CardId> {
-        (0..self.cards.len()).map(|index| CardId { index })
+        (0..self.overlord_cards.len())
+            .map(|index| CardId::new(Side::Overlord, index))
+            .chain((0..self.champion_cards.len()).map(|index| CardId::new(Side::Champion, index)))
     }
 
     pub fn card(&self, card_id: impl Into<CardId>) -> &CardState {
-        &self.cards[card_id.into().index]
+        let id = card_id.into();
+        &self.cards(id.side)[id.index]
     }
 
     pub fn card_mut(&mut self, card_id: impl Into<CardId>) -> &mut CardState {
-        &mut self.cards[card_id.into().index]
+        let id = card_id.into();
+        &mut self.cards_mut(id.side)[id.index]
     }
 
     pub fn player_state(&self, side: Side) -> &PlayerState {
@@ -106,39 +127,28 @@ impl GameState {
         }
     }
 
-    pub fn cards_in_position(&self, position: CardPosition) -> impl Iterator<Item = &CardState> {
-        self.cards.iter().filter(move |card| card.position == position)
-    }
-
-    pub fn cards_in_position_mut(
-        &mut self,
-        position: CardPosition,
-    ) -> impl Iterator<Item = &mut CardState> {
-        self.cards.iter_mut().filter(move |card| card.position == position)
-    }
-
     pub fn hand(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards_in_position(CardPosition::Hand(side))
+        self.cards(side).iter().filter(|c| c.position.in_hand())
     }
 
     pub fn hand_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_in_position_mut(CardPosition::Hand(side))
+        self.cards_mut(side).iter_mut().filter(|c| c.position.in_hand())
     }
 
     pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards_in_position(CardPosition::Deck(side))
+        self.cards(side).iter().filter(|c| c.position.in_deck())
     }
 
     pub fn deck_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_in_position_mut(CardPosition::Deck(side))
+        self.cards_mut(side).iter_mut().filter(|c| c.position.in_deck())
     }
 
     pub fn discard_pile(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards_in_position(CardPosition::DiscardPile(side))
+        self.cards(side).iter().filter(|c| c.position.in_discard_pile())
     }
 
     pub fn discard_pile_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_in_position_mut(CardPosition::DiscardPile(side))
+        self.cards_mut(side).iter_mut().filter(|c| c.position.in_discard_pile())
     }
 
     pub fn ability(&self, ability_id: AbilityId) -> Option<&AbilityState> {

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::abilities;
 use model::card_definition::{AttackBoost, CardConfig, CardDefinition};
 use model::card_name::CardName;
 use model::primitives::{CardType, Rarity, School, Side};
@@ -27,7 +28,7 @@ pub fn greataxe() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![encounter_boost()],
+        abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 2, bonus: 1 }),
             ..CardConfig::default()

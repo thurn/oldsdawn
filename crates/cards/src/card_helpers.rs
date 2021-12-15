@@ -20,11 +20,13 @@ use model::card_definition::{
     Ability, AbilityType, AttackBoost, CardStats, CardText, Cost, Keyword, NumericOperator,
     TextToken,
 };
-use model::card_state::{CardPosition, CardState};
+use model::card_state::{CardPosition, CardPositionTypes, CardState};
 use model::delegates;
-use model::delegates::{Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
+use model::delegates::{CardMoved, Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
 use model::game::GameState;
-use model::primitives::{AbilityId, AttackValue, BoostData, CardId, ManaValue, SpriteAddress};
+use model::primitives::{
+    AbilityId, AttackValue, BoostData, CardId, ManaValue, SpriteAddress, TurnNumber,
+};
 use std::sync::Arc;
 
 /// Provides the rules text for a card
@@ -91,6 +93,24 @@ pub fn on_play(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
     }
 }
 
+/// An ability which triggers at dawn if a card is in play
+pub fn at_dawn(rules: CardText, mutation: MutationFn<TurnNumber>) -> Ability {
+    Ability {
+        text: rules,
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::OnDawn(EventDelegate { requirement: in_play, mutation })],
+    }
+}
+
+/// An ability which triggers at dusk if a card is in play
+pub fn at_dusk(rules: CardText, mutation: MutationFn<TurnNumber>) -> Ability {
+    Ability {
+        text: rules,
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::OnDusk(EventDelegate { requirement: in_play, mutation })],
+    }
+}
+
 /// Give mana to the player who owns this delegate
 pub fn gain_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
     game.player_state_mut(scope.side()).mana += amount;
@@ -101,52 +121,32 @@ pub fn attack(base_attack: AttackValue, boost: AttackBoost) -> CardStats {
     CardStats { base_attack: Some(base_attack), attack_boost: Some(boost), ..CardStats::default() }
 }
 
-/// Overwrites the value of [CardState::boost_count] to match the provided [BoostData]
-pub fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
-    game.card_mut(data).data.boost_count = data.count
-}
+pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
+    let old_position = game.card(card_id).position;
+    game.card_mut(card_id).position = new_position;
 
-/// Applies this card's `attack_boost` stat a number of times equal to its [CardState::boost_count]
-pub fn add_boost(
-    game: &GameState,
-    scope: Scope,
-    card_id: CardId,
-    current: AttackValue,
-) -> AttackValue {
-    let boost_count = queries::boost_count(game, card_id);
-    let bonus = queries::stats(game, card_id).attack_boost.expect("Expected boost").bonus;
+    dispatch::invoke_event(
+        game,
+        delegates::on_card_moved,
+        CardMoved { old_position, new_position },
+    );
 
-    current + (boost_count * bonus)
-}
+    if old_position.in_deck() && new_position.in_hand() {
+        dispatch::invoke_event(game, delegates::on_draw_card, card_id);
+    }
 
-/// Set the boost count to zero for the card in `scope`
-pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
-    game.card_mut(scope).data.boost_count = 0
-}
-
-/// The standard weapon ability; applies an attack boost for the duration of a single encounter.
-pub fn encounter_boost() -> Ability {
-    Ability {
-        text: CardText::TextFn(|g, s| {
-            let boost = queries::stats(g, s).attack_boost.expect("attack_boost");
-            vec![mana_cost_text(boost.cost), add_number(boost.bonus), text("Attack")]
-        }),
-        ability_type: AbilityType::Encounter,
-        delegates: vec![
-            Delegate::OnActivateBoost(EventDelegate::new(this_card, write_boost)),
-            Delegate::GetAttackValue(QueryDelegate::new(this_card, add_boost)),
-            Delegate::OnEncounterEnd(EventDelegate::new(always, clear_boost)),
-        ],
+    if old_position.in_hand() && new_position.in_play() {
+        dispatch::invoke_event(game, delegates::on_play_card, card_id);
     }
 }
 
-pub fn store_mana() -> Ability {
-    Ability {
-        text: CardText::TextFn(|g, s| {
-            let store_amount = queries::stats(g, s).store_mana.expect("store_mana");
-            vec![keyword(Keyword::Play), keyword(Keyword::Store), mana_symbol(store_amount)]
-        }),
-        ability_type: AbilityType::Standard,
-        delegates: vec![],
-    }
+/// Takes *up to* `amount` stored mana from a card and gives it to the player who owns this
+/// delegate. Panics if there is no stored mana available.
+pub fn take_stored_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
+    let available = game.card(scope).data.stored_mana;
+    assert!(available > 0, "No stored mana available!");
+    let taken = std::cmp::min(available, amount);
+    game.card_mut(scope).data.stored_mana -= taken;
+    dispatch::invoke_event(game, delegates::on_stored_mana_taken, scope.card_id());
+    gain_mana(game, scope, taken);
 }

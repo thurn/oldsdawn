@@ -51,7 +51,9 @@
 
 use model::card_definition::{Ability, CardDefinition};
 use model::game::GameState;
-use model::primitives::{AbilityId, AbilityIndex, BoostData, CardId, EventId, Side};
+use model::primitives::{
+    AbilityId, AbilityIndex, BoostData, CardId, EventId, RoomId, RoomLocation, Side,
+};
 use tonic::{transport::Server, Request, Response, Status};
 
 use protos::spelldawn::game_command::Command;
@@ -60,9 +62,9 @@ use protos::spelldawn::{
     CommandList, GameCommand, GameId, GameRequest, GameView, RenderGameCommand,
 };
 
-use cards::{dispatch, queries, CARDS};
+use cards::{card_helpers, dispatch, queries, CARDS};
 use model::card_name::CardName;
-use model::card_state::CardState;
+use model::card_state::{CardPosition, CardState};
 use model::delegates;
 use model::delegates::{Delegate, Scope};
 
@@ -98,18 +100,45 @@ impl Spelldawn for GameService {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
 
-    let mut game = GameState::new(vec![CardName::ArcaneRecovery, CardName::Greataxe], vec![]);
+    let mut game = GameState::new(
+        vec![CardName::GoldMine],
+        vec![CardName::ArcaneRecovery, CardName::Greataxe],
+    );
+
+    let arcane_recovery = CardId::new(Side::Champion, 0);
     println!("Arcane Recovery. Starting Mana: {:?}", game.champion.state.mana);
-    dispatch::invoke_event(&mut game, delegates::on_play_card, CardId::new(0));
+    dispatch::invoke_event(&mut game, delegates::on_play_card, arcane_recovery);
     println!("Updated Mana: {:?}", game.champion.state.mana);
 
-    println!("Greataxe. Starting Attack: {:?}", queries::attack(&game, CardId::new(1)));
+    let greataxe = CardId::new(Side::Champion, 1);
+    println!("Greataxe. Starting Attack: {:?}", queries::attack(&game, greataxe));
     dispatch::invoke_event(
         &mut game,
         delegates::on_activate_boost,
-        BoostData { card_id: CardId::new(1), count: 2 },
+        BoostData { card_id: greataxe, count: 2 },
     );
-    println!("Greataxe. Updated Attack: {:?}", queries::attack(&game, CardId::new(1)));
+    println!("Greataxe. Updated Attack: {:?}", queries::attack(&game, greataxe));
+
+    let gold_mine = CardId::new(Side::Overlord, 0);
+    game.card_mut(gold_mine).position = CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom);
+    dispatch::invoke_event(&mut game, delegates::on_play_card, gold_mine);
+    println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data.stored_mana);
+    dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
+    println!(
+        "Gold Mine. Stored Mana: {:?} Overlord Mana: {:?}",
+        game.card(gold_mine).data.stored_mana,
+        game.overlord.state.mana
+    );
+    dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
+    dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
+    dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
+    dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
+    println!(
+        "Gold Mine. Stored Mana: {:?} Overlord Mana: {:?} Card Position: {:?}",
+        game.card(gold_mine).data.stored_mana,
+        game.overlord.state.mana,
+        game.card(gold_mine).position
+    );
 
     let address = "127.0.0.1:50052".parse().expect("valid address");
     let service = tonic_web::config()

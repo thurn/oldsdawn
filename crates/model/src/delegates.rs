@@ -13,10 +13,11 @@
 // limitations under the License.
 
 use crate::card_definition::CardStats;
-use crate::card_state::CardState;
+use crate::card_state::{CardPosition, CardState};
 use crate::game::GameState;
 use crate::primitives::{
     AbilityId, AttackValue, BoostCount, BoostData, CardId, EncounterId, HealthValue, Side,
+    TurnNumber,
 };
 use std::fmt;
 use std::fmt::{Debug, Formatter};
@@ -26,9 +27,6 @@ use strum_macros::EnumDiscriminants;
 /// Scope for which ability owns a delegate
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct Scope {
-    /// Side which owns this delegate.  
-    side: Side,
-
     /// Ability which owns this delegate.
     ability_id: AbilityId,
 }
@@ -40,12 +38,12 @@ impl From<Scope> for CardId {
 }
 
 impl Scope {
-    pub fn new(game: &GameState, ability_id: AbilityId) -> Self {
-        Self { side: Side::Champion, ability_id }
+    pub fn new(ability_id: AbilityId) -> Self {
+        Self { ability_id }
     }
 
     pub fn side(&self) -> Side {
-        self.side
+        self.card_id().side
     }
 
     pub fn ability_id(&self) -> AbilityId {
@@ -87,20 +85,36 @@ impl<T, R> QueryDelegate<T, R> {
     }
 }
 
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct CardMoved {
+    pub old_position: CardPosition,
+    pub new_position: CardPosition,
+}
+
 #[derive(EnumDiscriminants)]
 pub enum Delegate {
+    /// The Champion's turn begins
+    OnDawn(EventDelegate<TurnNumber>),
+    /// The Overlord's turn begins
+    OnDusk(EventDelegate<TurnNumber>),
+
     /// A minion is encountered during a raid
     OnEncounterBegin(EventDelegate<EncounterId>),
     /// A minion finishes being encountered during a raid. Invokes regardless of whether the
     /// encounter was successful.
     OnEncounterEnd(EventDelegate<EncounterId>),
 
-    /// A player draws a card
+    /// A card is moved from a Deck position to a Hand position
     OnDrawCard(EventDelegate<CardId>),
-    /// A player plays a card
+    /// A card is moved from a Hand position to an Arena position *or* explicitly played via the
+    /// 'play' action
     OnPlayCard(EventDelegate<CardId>),
+    /// A card is moved to a new position
+    OnCardMoved(EventDelegate<CardMoved>),
     /// A weapon boost is activated for a given card
     OnActivateBoost(EventDelegate<BoostData>),
+    /// Stored mana is taken from a card
+    OnStoredManaTaken(EventDelegate<CardId>),
 
     /// Query whether a given card can currently be played
     CanPlayCard(QueryDelegate<CardId, bool>),
@@ -116,6 +130,28 @@ pub enum Delegate {
 impl Debug for Delegate {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "Delegate::{:?}", DelegateDiscriminants::from(self))
+    }
+}
+
+pub fn on_dawn(game: &mut GameState, scope: Scope, delegate: &Delegate, data: TurnNumber) {
+    match delegate {
+        Delegate::OnDawn(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_dusk(game: &mut GameState, scope: Scope, delegate: &Delegate, data: TurnNumber) {
+    match delegate {
+        Delegate::OnDusk(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
     }
 }
 
@@ -141,9 +177,31 @@ pub fn on_play_card(game: &mut GameState, scope: Scope, delegate: &Delegate, dat
     }
 }
 
+pub fn on_card_moved(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardMoved) {
+    match delegate {
+        Delegate::OnCardMoved(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
 pub fn on_activate_boost(game: &mut GameState, scope: Scope, delegate: &Delegate, data: BoostData) {
     match delegate {
         Delegate::OnActivateBoost(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_stored_mana_taken(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
+    match delegate {
+        Delegate::OnStoredManaTaken(EventDelegate { requirement, mutation })
             if requirement(game, scope, data) =>
         {
             mutation(game, scope, data)

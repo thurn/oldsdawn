@@ -19,8 +19,10 @@ use crate::primitives::{
     Side,
 };
 use std::collections::BTreeMap;
+use strum_macros::EnumDiscriminants;
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants)]
+#[strum_discriminants(name(CardPositionTypes))]
 pub enum CardPosition {
     Room(RoomId, RoomLocation),
     ArenaItem(ItemLocation),
@@ -33,7 +35,23 @@ pub enum CardPosition {
 impl CardPosition {
     /// Returns true if this position is an arena position
     pub fn in_play(&self) -> bool {
-        matches!(self, Self::Room(_, _) | Self::ArenaItem(_))
+        matches!(self.into(), CardPositionTypes::Room | CardPositionTypes::ArenaItem)
+    }
+
+    pub fn in_hand(&self) -> bool {
+        CardPositionTypes::Hand == self.into()
+    }
+
+    pub fn in_deck(&self) -> bool {
+        CardPositionTypes::Deck == self.into()
+    }
+
+    pub fn in_discard_pile(&self) -> bool {
+        CardPositionTypes::DiscardPile == self.into()
+    }
+
+    pub fn in_score_pile(&self) -> bool {
+        CardPositionTypes::Scored == self.into()
     }
 }
 

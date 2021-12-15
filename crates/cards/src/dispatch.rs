@@ -25,7 +25,7 @@ pub fn invoke_event<T: Copy>(
     for card_id in game.card_ids() {
         let definition = crate::get(game.card(card_id).name);
         for (index, ability) in definition.abilities.iter().enumerate() {
-            let scope = Scope::new(game, AbilityId::new(card_id, index));
+            let scope = Scope::new(AbilityId::new(card_id, index));
             for delegate in &ability.delegates {
                 event(game, scope, delegate, data)
             }
@@ -43,7 +43,7 @@ pub fn perform_query<T: Copy, R>(
     for card_id in game.card_ids() {
         let definition = crate::get(game.card(card_id).name);
         for (index, ability) in definition.abilities.iter().enumerate() {
-            let scope = Scope::new(game, AbilityId::new(card_id, index));
+            let scope = Scope::new(AbilityId::new(card_id, index));
             for delegate in &ability.delegates {
                 result = query(game, scope, delegate, data, result)
             }

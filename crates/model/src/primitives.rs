@@ -26,12 +26,13 @@ pub type CardLevel = u32;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardId {
+    pub side: Side,
     pub index: usize,
 }
 
 impl CardId {
-    pub fn new(index: usize) -> Self {
-        Self { index }
+    pub fn new(side: Side, index: usize) -> Self {
+        Self { side, index }
     }
 }
 
