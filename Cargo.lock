@@ -80,6 +80,7 @@ dependencies = [
  "enumset",
  "model",
  "once_cell",
+ "rand",
 ]
 
 [[package]]
@@ -409,7 +410,7 @@ dependencies = [
 name = "model"
 version = "0.0.0"
 dependencies = [
- "anyhow",
+ "rand",
  "strum",
  "strum_macros",
 ]

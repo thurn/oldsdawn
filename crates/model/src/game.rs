@@ -18,6 +18,10 @@ use crate::card_state::{AbilityState, CardPosition, CardState};
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, CardId, EncounterId, ManaValue, Score, Side, TurnNumber,
 };
+use rand::rngs::ThreadRng;
+use rand::seq::IteratorRandom;
+use rand::{thread_rng, Rng, RngCore};
+use std::cell::RefCell;
 use std::collections::btree_map::Entry;
 use std::iter::{Enumerate, Map};
 use std::slice::Iter;
@@ -43,11 +47,13 @@ pub struct ChampionState {
 pub struct AnimationBuffer {}
 
 /// Stores the primary state for an ongoing game
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct GameState {
     /// Card states
     overlord_cards: Vec<CardState>,
     champion_cards: Vec<CardState>,
+    /// Random number generator to use for this game, can be set in tests for deterministic outcomes
+    pub rng: ThreadRng,
     /// Overlord player state
     pub overlord: OverlordState,
     /// Champion player state
@@ -66,6 +72,7 @@ impl GameState {
         Self {
             overlord_cards: Self::make_deck(overlord_deck, Side::Overlord),
             champion_cards: Self::make_deck(champion_deck, Side::Champion),
+            rng: thread_rng(),
             overlord: OverlordState::default(),
             champion: ChampionState::default(),
             turn_number: 0,
@@ -81,6 +88,10 @@ impl GameState {
                 CardState::new(CardId::new(side, index), name, CardPosition::Deck(side))
             })
             .collect()
+    }
+
+    fn all_cards(&self) -> impl Iterator<Item = &CardState> {
+        self.overlord_cards.iter().chain(self.champion_cards.iter())
     }
 
     fn cards(&self, side: Side) -> &Vec<CardState> {
@@ -125,6 +136,16 @@ impl GameState {
             Side::Overlord => &mut self.overlord.state,
             Side::Champion => &mut self.champion.state,
         }
+    }
+
+    /// Return a random card in the provided `position`, or None if there are no cards in that
+    /// position
+    pub fn random_card(&mut self, position: CardPosition) -> Option<CardId> {
+        self.overlord_cards
+            .iter()
+            .chain(self.champion_cards.iter())
+            .choose(&mut self.rng)
+            .map(CardState::id)
     }
 
     pub fn hand(&self, side: Side) -> impl Iterator<Item = &CardState> {

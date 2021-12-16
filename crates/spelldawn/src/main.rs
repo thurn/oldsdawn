@@ -52,7 +52,8 @@
 use model::card_definition::{Ability, CardDefinition};
 use model::game::GameState;
 use model::primitives::{
-    AbilityId, AbilityIndex, BoostData, CardId, EventId, RoomId, RoomLocation, Side,
+    AbilityId, AbilityIndex, BoostData, CardId, EncounterId, EventId, RaidId, RoomId, RoomLocation,
+    Side,
 };
 use tonic::{transport::Server, Request, Response, Status};
 
@@ -101,7 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
 
     let mut game = GameState::new(
-        vec![CardName::GoldMine],
+        vec![CardName::GoldMine, CardName::IceDragon],
         vec![CardName::ArcaneRecovery, CardName::Greataxe],
     );
 
@@ -140,12 +141,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         game.card(gold_mine).position
     );
 
-    let address = "127.0.0.1:50052".parse().expect("valid address");
-    let service = tonic_web::config()
-        .allow_origins(vec!["127.0.0.1"])
-        .enable(SpelldawnServer::new(GameService::default()));
-    println!("Server listening on {}", address);
-    Server::builder().accept_http1(true).add_service(service).serve(address).await?;
+    let ice_dragon = CardId::new(Side::Overlord, 1);
+    game.card_mut(arcane_recovery).position = CardPosition::Hand(Side::Champion);
+    game.card_mut(ice_dragon).position =
+        CardPosition::Room(RoomId::RoomB, RoomLocation::Defender(0));
+    game.active_raid = Some(EncounterId { raid_id: RaidId(0), step_id: 0 });
+    println!(
+        "Ice Dragon. Starting Hand Size: {:?}. Raid: {:?}",
+        game.hand(Side::Champion).count(),
+        game.active_raid
+    );
+    dispatch::invoke_event(&mut game, delegates::on_minion_combat_ability, ice_dragon);
+    println!(
+        "Ice Dragon. Hand Size: {:?}. Raid: {:?}.",
+        game.hand(Side::Champion).count(),
+        game.active_raid
+    );
+
+    // let address = "127.0.0.1:50052".parse().expect("valid address");
+    // let service = tonic_web::config()
+    //     .allow_origins(vec!["127.0.0.1"])
+    //     .enable(SpelldawnServer::new(GameService::default()));
+    // println!("Server listening on {}", address);
+    // Server::builder().accept_http1(true).add_service(service).serve(address).await?;
 
     Ok(())
 }

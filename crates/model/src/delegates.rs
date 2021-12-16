@@ -16,7 +16,7 @@ use crate::card_definition::CardStats;
 use crate::card_state::{CardPosition, CardState};
 use crate::game::GameState;
 use crate::primitives::{
-    AbilityId, AttackValue, BoostCount, BoostData, CardId, EncounterId, HealthValue, Side,
+    AbilityId, AttackValue, BoostCount, BoostData, CardId, EncounterId, HealthValue, RaidId, Side,
     TurnNumber,
 };
 use std::fmt;
@@ -97,13 +97,6 @@ pub enum Delegate {
     OnDawn(EventDelegate<TurnNumber>),
     /// The Overlord's turn begins
     OnDusk(EventDelegate<TurnNumber>),
-
-    /// A minion is encountered during a raid
-    OnEncounterBegin(EventDelegate<EncounterId>),
-    /// A minion finishes being encountered during a raid. Invokes regardless of whether the
-    /// encounter was successful.
-    OnEncounterEnd(EventDelegate<EncounterId>),
-
     /// A card is moved from a Deck position to a Hand position
     OnDrawCard(EventDelegate<CardId>),
     /// A card is moved from a Hand position to an Arena position *or* explicitly played via the
@@ -111,8 +104,24 @@ pub enum Delegate {
     OnPlayCard(EventDelegate<CardId>),
     /// A card is moved to a new position
     OnCardMoved(EventDelegate<CardMoved>),
+
+    /// A Raid is initiated
+    OnRaidBegin(EventDelegate<RaidId>),
+    /// A minion is encountered during a raid
+    OnEncounterBegin(EventDelegate<EncounterId>),
     /// A weapon boost is activated for a given card
     OnActivateBoost(EventDelegate<BoostData>),
+    /// A minion is defeated during an encounter by dealing damage to it equal to its health
+    OnMinionDefeated(EventDelegate<CardId>),
+    /// A minion's 'combat' ability is triggered during an encounter, typically because the minion
+    /// was not defeated by the Champion.
+    OnMinionCombatAbility(EventDelegate<CardId>),
+    /// A minion finishes being encountered during a raid. Invokes regardless of whether the
+    /// encounter was successful.
+    OnEncounterEnd(EventDelegate<EncounterId>),
+    /// A Raid is completed, either successfully or unsuccessfully.
+    OnRaidEnd(EventDelegate<RaidId>),
+
     /// Stored mana is taken from a card
     OnStoredManaTaken(EventDelegate<CardId>),
 
@@ -188,6 +197,22 @@ pub fn on_card_moved(game: &mut GameState, scope: Scope, delegate: &Delegate, da
     }
 }
 
+pub fn on_minion_combat_ability(
+    game: &mut GameState,
+    scope: Scope,
+    delegate: &Delegate,
+    data: CardId,
+) {
+    match delegate {
+        Delegate::OnMinionCombatAbility(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
 pub fn on_activate_boost(game: &mut GameState, scope: Scope, delegate: &Delegate, data: BoostData) {
     match delegate {
         Delegate::OnActivateBoost(EventDelegate { requirement, mutation })
@@ -202,6 +227,28 @@ pub fn on_activate_boost(game: &mut GameState, scope: Scope, delegate: &Delegate
 pub fn on_stored_mana_taken(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
     match delegate {
         Delegate::OnStoredManaTaken(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_raid_begin(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidId) {
+    match delegate {
+        Delegate::OnRaidBegin(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_raid_end(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidId) {
+    match delegate {
+        Delegate::OnRaidEnd(EventDelegate { requirement, mutation })
             if requirement(game, scope, data) =>
         {
             mutation(game, scope, data)

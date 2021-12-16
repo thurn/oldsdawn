@@ -25,8 +25,10 @@ use model::delegates;
 use model::delegates::{CardMoved, Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
 use model::game::GameState;
 use model::primitives::{
-    AbilityId, AttackValue, BoostData, CardId, ManaValue, SpriteAddress, TurnNumber,
+    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, SpriteAddress, TurnNumber,
 };
+use rand::seq::IteratorRandom;
+use std::cell::{RefCell, RefMut};
 use std::sync::Arc;
 
 /// Provides the rules text for a card
@@ -111,6 +113,18 @@ pub fn at_dusk(rules: CardText, mutation: MutationFn<TurnNumber>) -> Ability {
     }
 }
 
+/// A minion combat ability
+pub fn combat(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
+    Ability {
+        text: rules,
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::OnMinionCombatAbility(EventDelegate {
+            requirement: this_card,
+            mutation,
+        })],
+    }
+}
+
 /// Give mana to the player who owns this delegate
 pub fn gain_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
     game.player_state_mut(scope.side()).mana += amount;
@@ -119,6 +133,10 @@ pub fn gain_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
 /// Helper to create a [CardStats] with the given `base_attack` and [AttackBoost]
 pub fn attack(base_attack: AttackValue, boost: AttackBoost) -> CardStats {
     CardStats { base_attack: Some(base_attack), attack_boost: Some(boost), ..CardStats::default() }
+}
+
+pub fn health(health: HealthValue) -> CardStats {
+    CardStats { health: Some(health), ..CardStats::default() }
 }
 
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
@@ -149,4 +167,13 @@ pub fn take_stored_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
     game.card_mut(scope).data.stored_mana -= taken;
     dispatch::invoke_event(game, delegates::on_stored_mana_taken, scope.card_id());
     gain_mana(game, scope, taken);
+}
+
+pub fn set_raid_ended(game: &mut GameState) {
+    dispatch::invoke_event(
+        game,
+        delegates::on_raid_end,
+        game.active_raid.expect("Active raid").raid_id,
+    );
+    game.active_raid = None;
 }

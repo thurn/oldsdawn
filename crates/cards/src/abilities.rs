@@ -18,7 +18,7 @@ use model::card_definition::{Ability, AbilityType, CardText, Keyword};
 use model::card_state::CardPosition;
 use model::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use model::game::GameState;
-use model::primitives::{AttackValue, BoostData, CardId, ManaValue};
+use model::primitives::{AttackValue, BoostData, CardId, ManaValue, Side};
 
 /// Overwrites the value of [CardState::boost_count] to match the provided [BoostData]
 fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
@@ -54,10 +54,10 @@ pub fn encounter_boost() -> Ability {
     }
 }
 
-/// Store N mana in this card. Move it to the discard pile when the stored mana is taken.
+/// Store N mana in this card. Move it to the discard pile when the stored mana is depleted.
 pub fn store_mana<const N: ManaValue>() -> Ability {
     Ability {
-        text: CardText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store), mana_symbol(N)]),
+        text: CardText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),
         ability_type: AbilityType::Standard,
         delegates: vec![
             Delegate::OnPlayCard(EventDelegate::new(this_card, |g, s, card_id| {
@@ -70,4 +70,28 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
             })),
         ],
     }
+}
+
+/// Discard a random card from the hand of the `side` player, if there are any cards present.
+pub fn discard_random_card(game: &mut GameState, side: Side) {
+    if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
+        move_card(game, card_id, CardPosition::DiscardPile(side));
+    }
+}
+
+pub fn strike<const N: u32>() -> Ability {
+    combat(
+        CardText::Text(vec![keyword(Keyword::Combat), keyword(Keyword::Strike(N))]),
+        |g, _, _| {
+            for _ in 0..N {
+                discard_random_card(g, Side::Champion);
+            }
+        },
+    )
+}
+
+pub fn end_raid() -> Ability {
+    combat(CardText::Text(vec![keyword(Keyword::Combat), text("End the raid.")]), |g, _, _| {
+        set_raid_ended(g);
+    })
 }

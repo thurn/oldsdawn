@@ -85,6 +85,7 @@ pub enum Side {
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum School {
+    Neutral,
     Shadow,
     Nature,
     Time,

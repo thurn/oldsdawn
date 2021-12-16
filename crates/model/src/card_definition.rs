@@ -16,8 +16,8 @@ use crate::card_name::CardName;
 use crate::delegates::{Delegate, Scope};
 use crate::game::GameState;
 use crate::primitives::{
-    ActionCount, AttackValue, CardSubtype, CardType, HealthValue, ManaValue, Rarity, School,
-    ShieldValue, Side, SpriteAddress,
+    ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue, ManaValue, Rarity,
+    School, ShieldValue, Side, SpriteAddress,
 };
 use std::fmt;
 use std::fmt::{Debug, Formatter};
@@ -27,7 +27,9 @@ pub enum Keyword {
     Play,
     Dawn,
     Dusk,
-    Store,
+    Combat,
+    Strike(u32),
+    Store(u32),
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
@@ -120,6 +122,7 @@ pub struct Ability {
 #[derive(Debug, Default)]
 pub struct CardConfig {
     pub stats: CardStats,
+    pub faction: Option<Faction>,
     pub subtypes: Vec<CardSubtype>,
 }
 

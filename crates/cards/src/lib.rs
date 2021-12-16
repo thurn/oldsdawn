@@ -61,12 +61,17 @@ pub mod queries;
 
 mod abilities;
 mod champion_spells;
+mod minions;
 mod projects;
 mod weapons;
 
 // TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
-static DEFINITIONS: &[fn() -> CardDefinition] =
-    &[champion_spells::arcane_recovery, weapons::greataxe, projects::gold_mine];
+static DEFINITIONS: &[fn() -> CardDefinition] = &[
+    champion_spells::arcane_recovery,
+    weapons::greataxe,
+    projects::gold_mine,
+    minions::ice_dragon,
+];
 
 pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
     let mut map = HashMap::new();

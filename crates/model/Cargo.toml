@@ -9,6 +9,6 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-anyhow = "1.0.51"
+rand = "0.8.4"
 strum = "0.23"
 strum_macros = "0.23"
