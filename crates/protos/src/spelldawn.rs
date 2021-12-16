@@ -964,22 +964,6 @@ pub struct MoveGameObjectsAtPositionCommand {
     pub disable_animation: bool,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct DestroyCardCommand {
-    #[prost(message, optional, tag = "1")]
-    pub card_id: ::core::option::Option<CardId>,
-}
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UpdatePlayerStateCommand {
-    #[prost(enumeration = "PlayerName", tag = "1")]
-    pub player_name: i32,
-    #[prost(message, optional, tag = "2")]
-    pub info: ::core::option::Option<PlayerInfo>,
-    #[prost(message, optional, tag = "3")]
-    pub score: ::core::option::Option<ScoreView>,
-    #[prost(message, optional, tag = "4")]
-    pub action_tracker: ::core::option::Option<ActionTrackerView>,
-}
-#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlaySoundCommand {
     #[prost(message, optional, tag = "1")]
     pub sound: ::core::option::Option<AudioClipAddress>,
@@ -1076,7 +1060,7 @@ pub struct DisplayRewardsCommand {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21"
+        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1109,22 +1093,18 @@ pub mod game_command {
         #[prost(message, tag = "12")]
         MoveObjectsAtPosition(super::MoveGameObjectsAtPositionCommand),
         #[prost(message, tag = "13")]
-        DestroyCard(super::DestroyCardCommand),
-        #[prost(message, tag = "14")]
-        UpdatePlayerState(super::UpdatePlayerStateCommand),
-        #[prost(message, tag = "15")]
         PlaySound(super::PlaySoundCommand),
-        #[prost(message, tag = "16")]
+        #[prost(message, tag = "14")]
         SetMusic(super::SetMusicCommand),
-        #[prost(message, tag = "17")]
+        #[prost(message, tag = "15")]
         FireProjectile(super::FireProjectileCommand),
-        #[prost(message, tag = "18")]
+        #[prost(message, tag = "16")]
         PlayEffect(super::PlayEffectCommand),
-        #[prost(message, tag = "19")]
+        #[prost(message, tag = "17")]
         DisplayGameMessage(super::DisplayGameMessageCommand),
-        #[prost(message, tag = "20")]
+        #[prost(message, tag = "18")]
         SetGameObjectsEnabled(super::SetGameObjectsEnabledCommand),
-        #[prost(message, tag = "21")]
+        #[prost(message, tag = "19")]
         DisplayRewards(super::DisplayRewardsCommand),
     }
 }

@@ -103,10 +103,6 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.MoveObjectsAtPosition:
             yield return _registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(command.MoveObjectsAtPosition);
             break;
-          case GameCommand.CommandOneofCase.DestroyCard:
-            break;
-          case GameCommand.CommandOneofCase.UpdatePlayerState:
-            break;
           case GameCommand.CommandOneofCase.PlaySound:
             _registry.MainAudioSource.PlayOneShot(_registry.AssetService.GetAudioClip(command.PlaySound.Sound));
             break;

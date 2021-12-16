@@ -125,6 +125,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "diff-struct"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fbd63e076e9b19a4e083242a2b88e8cbce374aad6f8df8c8d217a59ffd30392f"
+dependencies = [
+ "diff_derive",
+ "serde",
+]
+
+[[package]]
+name = "diff_derive"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e3d07736a099d3ae4447d13bf3c5172be2f3c52e6cac8ef75cdfd312226f008"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "display"
+version = "0.0.0"
+dependencies = [
+ "cards",
+ "diff-struct",
+ "model",
+ "protos",
+]
+
+[[package]]
 name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -410,6 +441,7 @@ dependencies = [
 name = "model"
 version = "0.0.0"
 dependencies = [
+ "diff-struct",
  "rand",
  "strum",
  "strum_macros",
@@ -661,6 +693,26 @@ name = "rustversion"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2cc38e8fa666e2de3c4aba7edeb5ffc5246c1c2ed0e3d17e560aeeba736b23f"
+
+[[package]]
+name = "serde"
+version = "1.0.131"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b4ad69dfbd3e45369132cc64e6748c2d65cdfb001a2b1c232d128b4ad60561c1"
+dependencies = [
+ "serde_derive",
+]
+
+[[package]]
+name = "serde_derive"
+version = "1.0.131"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b710a83c4e0dff6a3d511946b95274ad9ca9e5d3ae497b63fda866ac955358d2"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "slab"

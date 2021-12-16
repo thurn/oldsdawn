@@ -81,12 +81,6 @@ namespace Spelldawn.Services
             break;
           case GameCommand.CommandOneofCase.MoveGameObjects:
             break;
-          case GameCommand.CommandOneofCase.DestroyCard:
-            break;
-          case GameCommand.CommandOneofCase.UpdatePlayerState:
-            LoadPlayerInfoAssets(requests, command.UpdatePlayerState.Info);
-            LoadScoreViewAssets(requests, command.UpdatePlayerState.Score);
-            break;
           case GameCommand.CommandOneofCase.PlaySound:
             LoadAudioClip(requests, command.PlaySound.Sound);
             break;

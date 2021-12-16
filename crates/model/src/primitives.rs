@@ -25,6 +25,12 @@ pub type BoostCount = u32;
 pub type LevelValue = u32;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub enum Side {
+    Champion,
+    Overlord,
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardId {
     pub side: Side,
     pub index: usize,
@@ -67,21 +73,8 @@ impl From<AbilityId> for CardId {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct RaidId(pub u32);
 
-/// Identifies an encounter within a given raid
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub struct EncounterId {
-    pub raid_id: RaidId,
-    pub step_id: u32,
-}
-
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct SpriteAddress(pub String);
-
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub enum Side {
-    Champion,
-    Overlord,
-}
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum School {

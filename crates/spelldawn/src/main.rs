@@ -50,10 +50,9 @@
 #![allow(unused_variables)]
 
 use model::card_definition::{Ability, CardDefinition};
-use model::game::GameState;
+use model::game::{GameState, RaidState};
 use model::primitives::{
-    AbilityId, AbilityIndex, BoostData, CardId, EncounterId, EventId, RaidId, RoomId, RoomLocation,
-    Side,
+    AbilityId, AbilityIndex, BoostData, CardId, EventId, RaidId, RoomId, RoomLocation, Side,
 };
 use tonic::{transport::Server, Request, Response, Status};
 
@@ -101,15 +100,16 @@ impl Spelldawn for GameService {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
 
-    let mut game = GameState::new(
+    let mut game = GameState::new_game(
+        "GameId".to_owned(),
         vec![CardName::GoldMine, CardName::IceDragon, CardName::DungeonAnnex],
         vec![CardName::ArcaneRecovery, CardName::Greataxe],
     );
 
     let arcane_recovery = CardId::new(Side::Champion, 0);
-    println!("Arcane Recovery. Starting Mana: {:?}", game.champion.state.mana);
+    println!("Arcane Recovery. Starting Mana: {:?}", game.player(Side::Champion).mana);
     dispatch::invoke_event(&mut game, delegates::on_play_card, arcane_recovery);
-    println!("Updated Mana: {:?}", game.champion.state.mana);
+    println!("Updated Mana: {:?}", game.player(Side::Champion).mana);
 
     let greataxe = CardId::new(Side::Champion, 1);
     println!("Greataxe. Starting Attack: {:?}", queries::attack(&game, greataxe));
@@ -121,14 +121,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Greataxe. Updated Attack: {:?}", queries::attack(&game, greataxe));
 
     let gold_mine = CardId::new(Side::Overlord, 0);
-    game.card_mut(gold_mine).position = CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom);
+    game.card_mut(gold_mine).move_to(CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom));
     dispatch::invoke_event(&mut game, delegates::on_play_card, gold_mine);
-    println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data.stored_mana);
+    println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data().stored_mana);
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
     println!(
         "Gold Mine. Stored Mana: {:?} Overlord Mana: {:?}",
-        game.card(gold_mine).data.stored_mana,
-        game.overlord.state.mana
+        game.card(gold_mine).data().stored_mana,
+        game.player(Side::Overlord).mana
     );
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
@@ -136,32 +136,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
     println!(
         "Gold Mine. Stored Mana: {:?} Overlord Mana: {:?} Card Position: {:?}",
-        game.card(gold_mine).data.stored_mana,
-        game.overlord.state.mana,
-        game.card(gold_mine).position
+        game.card(gold_mine).data().stored_mana,
+        game.player(Side::Overlord).mana,
+        game.card(gold_mine).position()
     );
 
     let ice_dragon = CardId::new(Side::Overlord, 1);
-    game.card_mut(arcane_recovery).position = CardPosition::Hand(Side::Champion);
-    game.card_mut(ice_dragon).position =
-        CardPosition::Room(RoomId::RoomB, RoomLocation::Defender(0));
-    game.active_raid = Some(EncounterId { raid_id: RaidId(0), step_id: 0 });
+    game.card_mut(arcane_recovery).move_to(CardPosition::Hand(Side::Champion));
+    game.card_mut(ice_dragon).move_to(CardPosition::Room(RoomId::RoomB, RoomLocation::Defender(0)));
+    game.data_mut().raid =
+        Some(RaidState { raid_id: RaidId(0), encounter_number: 0, priority: Side::Overlord });
     println!(
         "Ice Dragon. Starting Hand Size: {:?}. Raid: {:?}",
         game.hand(Side::Champion).count(),
-        game.active_raid
+        game.data().raid
     );
     dispatch::invoke_event(&mut game, delegates::on_minion_combat_ability, ice_dragon);
     println!(
         "Ice Dragon. Hand Size: {:?}. Raid: {:?}.",
         game.hand(Side::Champion).count(),
-        game.active_raid
+        game.data().raid
     );
 
-    println!("Dungeon Annex. Starting Mana: {:?}", game.overlord.state.mana);
+    println!("Dungeon Annex. Starting Mana: {:?}", game.player(Side::Overlord).mana);
     let dungeon_annex = CardId::new(Side::Overlord, 2);
     dispatch::invoke_event(&mut game, delegates::on_score_scheme, dungeon_annex);
-    println!("Dungeon Annex. Resulting Mana: {:?}", game.overlord.state.mana);
+    println!("Dungeon Annex. Resulting Mana: {:?}", game.player(Side::Overlord).mana);
 
     // let address = "127.0.0.1:50052".parse().expect("valid address");
     // let service = tonic_web::config()

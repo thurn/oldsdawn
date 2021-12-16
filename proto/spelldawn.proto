@@ -1009,17 +1009,6 @@ message MoveGameObjectsAtPositionCommand {
     bool disable_animation = 3;
 }
 
-message DestroyCardCommand {
-    CardId card_id = 1;
-}
-
-message UpdatePlayerStateCommand {
-    PlayerName player_name = 1;
-    PlayerInfo info = 2;
-    ScoreView score = 3;
-    ActionTrackerView action_tracker = 4;
-}
-
 message PlaySoundCommand {
     AudioClipAddress sound = 1;
 }
@@ -1132,15 +1121,13 @@ message GameCommand {
         UpdateCardCommand update_card = 10;
         MoveGameObjectsCommand move_game_objects = 11;
         MoveGameObjectsAtPositionCommand move_objects_at_position = 12;
-        DestroyCardCommand destroy_card = 13;
-        UpdatePlayerStateCommand update_player_state = 14;
-        PlaySoundCommand play_sound = 15;
-        SetMusicCommand set_music = 16;
-        FireProjectileCommand fire_projectile = 17;
-        PlayEffectCommand play_effect = 18;
-        DisplayGameMessageCommand display_game_message = 19;
-        SetGameObjectsEnabledCommand set_game_objects_enabled = 20;
-        DisplayRewardsCommand display_rewards = 21;
+        PlaySoundCommand play_sound = 13;
+        SetMusicCommand set_music = 14;
+        FireProjectileCommand fire_projectile = 15;
+        PlayEffectCommand play_effect = 16;
+        DisplayGameMessageCommand display_game_message = 17;
+        SetGameObjectsEnabledCommand set_game_objects_enabled = 18;
+        DisplayRewardsCommand display_rewards = 19;
     }
 }
 

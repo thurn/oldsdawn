@@ -22,7 +22,7 @@ use model::primitives::{AttackValue, BoostData, CardId, ManaValue, Side};
 
 /// Overwrites the value of [CardState::boost_count] to match the provided [BoostData]
 fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
-    game.card_mut(data).data.boost_count = data.count
+    game.card_mut(data).data_mut().boost_count = data.count
 }
 
 /// Applies this card's `attack_boost` stat a number of times equal to its [CardState::boost_count]
@@ -35,7 +35,7 @@ fn add_boost(game: &GameState, scope: Scope, card_id: CardId, current: AttackVal
 
 /// Set the boost count to zero for the card in `scope`
 fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
-    game.card_mut(scope).data.boost_count = 0
+    game.card_mut(scope).data_mut().boost_count = 0
 }
 
 /// The standard weapon ability; applies an attack boost for the duration of a single encounter.
@@ -61,10 +61,10 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
         ability_type: AbilityType::Standard,
         delegates: vec![
             Delegate::OnPlayCard(EventDelegate::new(this_card, |g, s, card_id| {
-                g.card_mut(card_id).data.stored_mana = N;
+                g.card_mut(card_id).data_mut().stored_mana = N;
             })),
             Delegate::OnStoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
-                if g.card(card_id).data.stored_mana == 0 {
+                if g.card(card_id).data().stored_mana == 0 {
                     move_card(g, card_id, CardPosition::DiscardPile(s.side()))
                 }
             })),

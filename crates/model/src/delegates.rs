@@ -13,11 +13,10 @@
 // limitations under the License.
 
 use crate::card_definition::CardStats;
-use crate::card_state::{CardPosition, CardState};
-use crate::game::GameState;
+use crate::card_state::{CardData, CardPosition};
+use crate::game::{GameState, RaidState};
 use crate::primitives::{
-    AbilityId, AttackValue, BoostCount, BoostData, CardId, EncounterId, HealthValue, RaidId, Side,
-    TurnNumber,
+    AbilityId, AttackValue, BoostCount, BoostData, CardId, HealthValue, RaidId, Side, TurnNumber,
 };
 use std::fmt;
 use std::fmt::{Debug, Formatter};
@@ -109,9 +108,9 @@ pub enum Delegate {
     OnStealScheme(EventDelegate<CardId>),
 
     /// A Raid is initiated
-    OnRaidBegin(EventDelegate<RaidId>),
+    OnRaidBegin(EventDelegate<RaidState>),
     /// A minion is encountered during a raid
-    OnEncounterBegin(EventDelegate<EncounterId>),
+    OnEncounterBegin(EventDelegate<RaidState>),
     /// A weapon boost is activated for a given card
     OnActivateBoost(EventDelegate<BoostData>),
     /// A minion is defeated during an encounter by dealing damage to it equal to its health
@@ -121,9 +120,9 @@ pub enum Delegate {
     OnMinionCombatAbility(EventDelegate<CardId>),
     /// A minion finishes being encountered during a raid. Invokes regardless of whether the
     /// encounter was successful.
-    OnEncounterEnd(EventDelegate<EncounterId>),
+    OnEncounterEnd(EventDelegate<RaidState>),
     /// A Raid is completed, either successfully or unsuccessfully.
-    OnRaidEnd(EventDelegate<RaidId>),
+    OnRaidEnd(EventDelegate<RaidState>),
 
     /// Stored mana is taken from a card
     OnStoredManaTaken(EventDelegate<CardId>),
@@ -135,7 +134,7 @@ pub enum Delegate {
     GetAttackValue(QueryDelegate<CardId, AttackValue>),
     /// Query the current health value of a card. Invoked with [CardStats::health] or 0.
     GetHealthValue(QueryDelegate<CardId, HealthValue>),
-    /// Get the current boost count of a card. Invoked with [CardState::boost_count].
+    /// Get the current boost count of a card. Invoked with the value of [CardData::boost_count].
     GetBoostCount(QueryDelegate<CardId, BoostCount>),
 }
 
@@ -249,7 +248,7 @@ pub fn on_stored_mana_taken(game: &mut GameState, scope: Scope, delegate: &Deleg
     }
 }
 
-pub fn on_raid_begin(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidId) {
+pub fn on_raid_begin(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidState) {
     match delegate {
         Delegate::OnRaidBegin(EventDelegate { requirement, mutation })
             if requirement(game, scope, data) =>
@@ -260,7 +259,7 @@ pub fn on_raid_begin(game: &mut GameState, scope: Scope, delegate: &Delegate, da
     }
 }
 
-pub fn on_raid_end(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidId) {
+pub fn on_raid_end(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidState) {
     match delegate {
         Delegate::OnRaidEnd(EventDelegate { requirement, mutation })
             if requirement(game, scope, data) =>

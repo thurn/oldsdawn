@@ -67,27 +67,79 @@ pub struct CardData {
     pub stored_mana: ManaValue,
     /// How many times has this card been leveled up?
     pub card_level: LevelValue,
+    /// State for this card's abilities
+    pub ability_state: BTreeMap<AbilityIndex, AbilityState>,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct CardState {
-    /// ID for this card.
     id: CardId,
-    pub name: CardName,
-    /// Where this card is located in the game
-    pub position: CardPosition,
-    /// Optional state for this card
-    pub data: CardData,
-    /// State for this card's abilities
-    pub abilities: BTreeMap<AbilityIndex, AbilityState>,
+    name: CardName,
+    position: CardPosition,
+    position_modified: bool,
+    data: CardData,
+    data_modified: bool,
 }
 
 impl CardState {
     pub fn new(id: CardId, name: CardName, position: CardPosition) -> Self {
-        Self { id, name, abilities: BTreeMap::new(), position, data: CardData::default() }
+        Self {
+            id,
+            name,
+            position,
+            position_modified: false,
+            data: CardData::default(),
+            data_modified: false,
+        }
     }
 
+    /// Reset the value of 'modified' flags to false
+    pub fn clear_modified_flags(&mut self) {
+        self.position_modified = false;
+        self.data_modified = false;
+    }
+
+    /// ID for this card.
     pub fn id(&self) -> CardId {
         self.id
+    }
+
+    /// Card name, can be used to look up this card's [CardDefinition]
+    pub fn name(&self) -> CardName {
+        self.name
+    }
+
+    /// Where this card is located in the game
+    pub fn position(&self) -> CardPosition {
+        self.position
+    }
+
+    /// Move this card to a new position
+    pub fn move_to(&mut self, new_position: CardPosition) {
+        self.position_modified = true;
+        self.position = new_position;
+    }
+
+    /// Whether [Self::position] has been modified since the last call to
+    /// [CardState::clear_modified_flags]    
+    pub fn position_modified(&self) -> bool {
+        self.position_modified
+    }
+
+    /// Optional state for this card
+    pub fn data(&self) -> &CardData {
+        &self.data
+    }
+
+    /// Mutable version of [Self::data]
+    pub fn data_mut(&mut self) -> &mut CardData {
+        self.data_modified = true;
+        &mut self.data
+    }
+
+    /// Whether [Self::data] has been modified since the last call to
+    /// [CardState::clear_modified_flags]
+    pub fn data_modified(&self) -> bool {
+        self.data_modified
     }
 }

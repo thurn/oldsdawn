@@ -20,7 +20,7 @@ use model::primitives::{AttackValue, BoostCount, CardId, HealthValue};
 
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: impl Into<CardId>) -> &CardStats {
-    &crate::get(game.card(card_id).name).config.stats
+    &crate::get(game.card(card_id).name()).config.stats
 }
 
 pub fn attack(game: &GameState, card_id: impl Into<CardId> + Copy) -> AttackValue {
@@ -46,6 +46,6 @@ pub fn boost_count(game: &GameState, card_id: impl Into<CardId> + Copy) -> Boost
         game,
         delegates::get_boost_count,
         card_id.into(),
-        game.card(card_id).data.boost_count,
+        game.card(card_id).data().boost_count,
     )
 }
