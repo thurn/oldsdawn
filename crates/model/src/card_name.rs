@@ -18,4 +18,5 @@ pub enum CardName {
     Greataxe,
     GoldMine,
     IceDragon,
+    DungeonAnnex,
 }

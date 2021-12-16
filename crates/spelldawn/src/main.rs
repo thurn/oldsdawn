@@ -102,7 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
 
     let mut game = GameState::new(
-        vec![CardName::GoldMine, CardName::IceDragon],
+        vec![CardName::GoldMine, CardName::IceDragon, CardName::DungeonAnnex],
         vec![CardName::ArcaneRecovery, CardName::Greataxe],
     );
 
@@ -157,6 +157,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         game.hand(Side::Champion).count(),
         game.active_raid
     );
+
+    println!("Dungeon Annex. Starting Mana: {:?}", game.overlord.state.mana);
+    let dungeon_annex = CardId::new(Side::Overlord, 2);
+    dispatch::invoke_event(&mut game, delegates::on_score_scheme, dungeon_annex);
+    println!("Dungeon Annex. Resulting Mana: {:?}", game.overlord.state.mana);
 
     // let address = "127.0.0.1:50052".parse().expect("valid address");
     // let service = tonic_web::config()

@@ -17,12 +17,12 @@ use crate::card_name::CardName;
 pub type TurnNumber = u32;
 pub type ManaValue = u32;
 pub type ActionCount = u32;
-pub type Score = u32;
+pub type PointsValue = u32;
 pub type HealthValue = u32;
 pub type AttackValue = u32;
 pub type ShieldValue = u32;
 pub type BoostCount = u32;
-pub type CardLevel = u32;
+pub type LevelValue = u32;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardId {

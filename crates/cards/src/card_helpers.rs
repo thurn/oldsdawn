@@ -18,14 +18,15 @@
 use crate::{dispatch, queries};
 use model::card_definition::{
     Ability, AbilityType, AttackBoost, CardStats, CardText, Cost, Keyword, NumericOperator,
-    TextToken,
+    SchemePoints, TextToken,
 };
 use model::card_state::{CardPosition, CardPositionTypes, CardState};
 use model::delegates;
 use model::delegates::{CardMoved, Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
 use model::game::GameState;
 use model::primitives::{
-    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, SpriteAddress, TurnNumber,
+    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Side, SpriteAddress,
+    TurnNumber,
 };
 use rand::seq::IteratorRandom;
 use std::cell::{RefCell, RefMut};
@@ -125,9 +126,21 @@ pub fn combat(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
     }
 }
 
+/// An ability when a card is scored
+pub fn on_score(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
+    Ability {
+        text: rules,
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::OnScoreScheme(EventDelegate {
+            requirement: this_card,
+            mutation,
+        })],
+    }
+}
+
 /// Give mana to the player who owns this delegate
-pub fn gain_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
-    game.player_state_mut(scope.side()).mana += amount;
+pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
+    game.player_state_mut(side).mana += amount;
 }
 
 /// Helper to create a [CardStats] with the given `base_attack` and [AttackBoost]
@@ -139,15 +152,15 @@ pub fn health(health: HealthValue) -> CardStats {
     CardStats { health: Some(health), ..CardStats::default() }
 }
 
+pub fn scheme_points(points: SchemePoints) -> CardStats {
+    CardStats { scheme_points: Some(points), ..CardStats::default() }
+}
+
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
     let old_position = game.card(card_id).position;
     game.card_mut(card_id).position = new_position;
 
-    dispatch::invoke_event(
-        game,
-        delegates::on_card_moved,
-        CardMoved { old_position, new_position },
-    );
+    dispatch::invoke_event(game, delegates::on_move_card, CardMoved { old_position, new_position });
 
     if old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, delegates::on_draw_card, card_id);
@@ -166,7 +179,7 @@ pub fn take_stored_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
     let taken = std::cmp::min(available, amount);
     game.card_mut(scope).data.stored_mana -= taken;
     dispatch::invoke_event(game, delegates::on_stored_mana_taken, scope.card_id());
-    gain_mana(game, scope, taken);
+    gain_mana(game, scope.side(), taken);
 }
 
 pub fn set_raid_ended(game: &mut GameState) {

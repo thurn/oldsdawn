@@ -15,7 +15,7 @@
 use crate::card_definition::CardDefinition;
 use crate::card_name::CardName;
 use crate::primitives::{
-    AbilityIndex, BoostCount, CardId, CardLevel, ItemLocation, ManaValue, RoomId, RoomLocation,
+    AbilityIndex, BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RoomId, RoomLocation,
     Side,
 };
 use std::collections::BTreeMap;
@@ -33,7 +33,7 @@ pub enum CardPosition {
 }
 
 impl CardPosition {
-    /// Returns true if this position is an arena position
+    /// Returns true if this card is in a room or has been played as an item
     pub fn in_play(&self) -> bool {
         matches!(self.into(), CardPositionTypes::Room | CardPositionTypes::ArenaItem)
     }
@@ -66,7 +66,7 @@ pub struct CardData {
     /// How much mana is stored in this card?
     pub stored_mana: ManaValue,
     /// How many times has this card been leveled up?
-    pub card_level: CardLevel,
+    pub card_level: LevelValue,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]

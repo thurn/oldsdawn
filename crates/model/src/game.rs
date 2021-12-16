@@ -16,7 +16,8 @@ use crate::card_name::CardName;
 use crate::card_state;
 use crate::card_state::{AbilityState, CardPosition, CardState};
 use crate::primitives::{
-    AbilityId, AbilityIndex, ActionCount, CardId, EncounterId, ManaValue, Score, Side, TurnNumber,
+    AbilityId, AbilityIndex, ActionCount, CardId, EncounterId, ManaValue, PointsValue, Side,
+    TurnNumber,
 };
 use rand::rngs::ThreadRng;
 use rand::seq::IteratorRandom;
@@ -30,7 +31,7 @@ use std::slice::Iter;
 pub struct PlayerState {
     pub mana: ManaValue,
     pub actions: ActionCount,
-    pub score: Score,
+    pub score: PointsValue,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]

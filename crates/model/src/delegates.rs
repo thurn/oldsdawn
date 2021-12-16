@@ -103,7 +103,10 @@ pub enum Delegate {
     /// 'play' action
     OnPlayCard(EventDelegate<CardId>),
     /// A card is moved to a new position
-    OnCardMoved(EventDelegate<CardMoved>),
+    OnMoveCard(EventDelegate<CardMoved>),
+    /// A card is scored by the Overlord
+    OnScoreScheme(EventDelegate<CardId>),
+    OnStealScheme(EventDelegate<CardId>),
 
     /// A Raid is initiated
     OnRaidBegin(EventDelegate<RaidId>),
@@ -186,9 +189,20 @@ pub fn on_play_card(game: &mut GameState, scope: Scope, delegate: &Delegate, dat
     }
 }
 
-pub fn on_card_moved(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardMoved) {
+pub fn on_move_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardMoved) {
     match delegate {
-        Delegate::OnCardMoved(EventDelegate { requirement, mutation })
+        Delegate::OnMoveCard(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_score_scheme(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
+    match delegate {
+        Delegate::OnScoreScheme(EventDelegate { requirement, mutation })
             if requirement(game, scope, data) =>
         {
             mutation(game, scope, data)

@@ -63,6 +63,7 @@ mod abilities;
 mod champion_spells;
 mod minions;
 mod projects;
+mod schemes;
 mod weapons;
 
 // TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
@@ -71,6 +72,7 @@ static DEFINITIONS: &[fn() -> CardDefinition] = &[
     weapons::greataxe,
     projects::gold_mine,
     minions::ice_dragon,
+    schemes::dungeon_annex,
 ];
 
 pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
