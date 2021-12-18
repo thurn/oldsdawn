@@ -14,7 +14,7 @@
 
 use crate::card_name::CardName;
 use crate::card_state;
-use crate::card_state::{AbilityState, CardPosition, CardState};
+use crate::card_state::{AbilityState, CardPosition, CardPositionTypes, CardState};
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, CardId, ManaValue, PointsValue, RaidId, Side, TurnNumber,
 };
@@ -23,6 +23,7 @@ use rand::seq::IteratorRandom;
 use rand::{thread_rng, Rng, RngCore};
 use std::cell::RefCell;
 use std::collections::btree_map::Entry;
+use std::iter;
 use std::iter::{Enumerate, Map};
 use std::slice::Iter;
 
@@ -56,6 +57,12 @@ pub struct GameData {
     pub raid: Option<RaidState>,
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct NewGameOptions {
+    /// Whether animations should be produced for this game
+    pub enable_animations: bool,
+}
+
 /// Stores the primary state for an ongoing game
 #[derive(Debug, Clone)]
 pub struct GameState {
@@ -67,36 +74,40 @@ pub struct GameState {
     champion: PlayerState,
     data: GameData,
     modified: bool,
-    animations: AnimationBuffer,
+    animations: Option<AnimationBuffer>,
 }
 
 impl GameState {
+    /// Creates a new game with the provided `id` and identity cards and decks for both players
     pub fn new_game(
         id: String,
+        overlord_identity: CardName,
         overlord_deck: Vec<CardName>,
+        champion_identity: CardName,
         champion_deck: Vec<CardName>,
+        options: NewGameOptions,
     ) -> Self {
         let champion_start = overlord_deck.len();
         Self {
             id,
-            overlord_cards: Self::make_deck(overlord_deck, Side::Overlord),
-            champion_cards: Self::make_deck(champion_deck, Side::Champion),
+            overlord_cards: Self::make_deck(overlord_identity, overlord_deck, Side::Overlord),
+            champion_cards: Self::make_deck(champion_identity, champion_deck, Side::Champion),
             rng: thread_rng(),
             overlord: PlayerState::default(),
             champion: PlayerState::default(),
             data: GameData { turn: Side::Overlord, turn_number: 1, raid: None },
             modified: false,
-            animations: AnimationBuffer::default(),
+            animations: options.enable_animations.then(AnimationBuffer::default),
         }
     }
 
-    /// Reset the value of 'modified' flags to false
-    pub fn clear_modified_flags(&mut self) {
+    /// Reset the value of the 'modified' flag to false
+    pub fn clear_modified_flag(&mut self) {
         self.modified = false;
     }
 
     /// Whether the player or game state has been modified since the last call to
-    /// [Self::clear_modified_flags]
+    /// [Self::clear_modified_flag]
     pub fn modified(&self) -> bool {
         self.modified
     }
@@ -106,8 +117,20 @@ impl GameState {
         &self.id
     }
 
+    /// Returns the identity card for the provided Side.
+    ///
+    /// It is an error for there to be zero or multiple cards in the `Identity` card position. If
+    /// this does occur, this method will panic (in the case of zero cards) or return an arbitrary
+    /// identity card (in the case of multiples).
+    pub fn identity(&self, side: Side) -> &CardState {
+        self.cards(side)
+            .iter()
+            .find(|c| CardPositionTypes::Identity == c.position().into())
+            .expect("Identity Card")
+    }
+
     /// All Card IDs present in this game
-    pub fn card_ids(&self) -> impl Iterator<Item = CardId> {
+    pub fn all_card_ids(&self) -> impl Iterator<Item = CardId> {
         (0..self.overlord_cards.len())
             .map(|index| CardId::new(Side::Overlord, index))
             .chain((0..self.champion_cards.len()).map(|index| CardId::new(Side::Champion, index)))
@@ -198,19 +221,21 @@ impl GameState {
         &mut self.data
     }
 
-    /// Animations to send on the next client response
-    pub fn animations(&self) -> &AnimationBuffer {
+    /// Animations to send on the next client response. If animations are currently disabled,
+    /// will return None.
+    pub fn animations(&self) -> &Option<AnimationBuffer> {
         &self.animations
     }
 
     /// Mutable version of [Self::animations]
-    pub fn animations_mut(&mut self) -> &mut AnimationBuffer {
+    pub fn animations_mut(&mut self) -> &mut Option<AnimationBuffer> {
         &mut self.animations
     }
 
     /// Create card states for a deck
-    fn make_deck(deck: Vec<CardName>, side: Side) -> Vec<CardState> {
-        deck.into_iter()
+    fn make_deck(identity: CardName, deck: Vec<CardName>, side: Side) -> Vec<CardState> {
+        iter::once(identity)
+            .chain(deck.into_iter())
             .enumerate()
             .map(move |(index, name)| {
                 CardState::new(CardId::new(side, index), name, CardPosition::Deck(side))

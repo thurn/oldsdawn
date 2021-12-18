@@ -17,7 +17,7 @@
 
 use crate::{dispatch, queries};
 use model::card_definition::{
-    Ability, AbilityType, AttackBoost, CardStats, CardText, Cost, Keyword, NumericOperator,
+    Ability, AbilityText, AbilityType, AttackBoost, CardStats, Cost, Keyword, NumericOperator,
     SchemePoints, TextToken,
 };
 use model::card_state::{CardPosition, CardPositionTypes, CardState};
@@ -25,8 +25,7 @@ use model::delegates;
 use model::delegates::{CardMoved, Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
 use model::game::GameState;
 use model::primitives::{
-    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Side, SpriteAddress,
-    TurnNumber,
+    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Side, Sprite, TurnNumber,
 };
 use rand::seq::IteratorRandom;
 use std::cell::{RefCell, RefMut};
@@ -59,12 +58,12 @@ pub fn keyword(keyword: Keyword) -> TextToken {
 
 /// Provides the cost for a card
 pub fn cost(mana: ManaValue) -> Cost {
-    Cost { mana, actions: 1 }
+    Cost { mana: Some(mana), actions: 1 }
 }
 
 /// Provides an image for a card
-pub fn sprite(text: &str) -> SpriteAddress {
-    SpriteAddress(text.to_owned())
+pub fn sprite(text: &str) -> Sprite {
+    Sprite::new(text.to_string())
 }
 
 /// RequirementFn which always returns true
@@ -88,7 +87,7 @@ pub fn this_ability(game: &GameState, scope: Scope, ability_id: impl Into<Abilit
 }
 
 /// An ability which triggers when a card is played
-pub fn on_play(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
+pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
@@ -97,7 +96,7 @@ pub fn on_play(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
 }
 
 /// An ability which triggers at dawn if a card is in play
-pub fn at_dawn(rules: CardText, mutation: MutationFn<TurnNumber>) -> Ability {
+pub fn at_dawn(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
@@ -106,7 +105,7 @@ pub fn at_dawn(rules: CardText, mutation: MutationFn<TurnNumber>) -> Ability {
 }
 
 /// An ability which triggers at dusk if a card is in play
-pub fn at_dusk(rules: CardText, mutation: MutationFn<TurnNumber>) -> Ability {
+pub fn at_dusk(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
@@ -115,7 +114,7 @@ pub fn at_dusk(rules: CardText, mutation: MutationFn<TurnNumber>) -> Ability {
 }
 
 /// A minion combat ability
-pub fn combat(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
+pub fn combat(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
@@ -127,7 +126,7 @@ pub fn combat(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
 }
 
 /// An ability when a card is scored
-pub fn on_score(rules: CardText, mutation: MutationFn<CardId>) -> Ability {
+pub fn on_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,

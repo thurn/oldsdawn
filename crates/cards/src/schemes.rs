@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::card_definition::{CardConfig, CardDefinition, CardText, Keyword, SchemePoints};
+use model::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword, SchemePoints};
 use model::card_name::CardName;
 use model::primitives::{CardType, Rarity, School, Side};
 
@@ -28,7 +28,7 @@ pub fn dungeon_annex() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![on_score(
-            CardText::Text(vec![keyword(Keyword::Score), text("Gain"), mana_symbol(7)]),
+            AbilityText::Text(vec![keyword(Keyword::Score), text("Gain"), mana_symbol(7)]),
             |g, s, _| {
                 gain_mana(g, s.side(), 7);
             },

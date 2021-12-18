@@ -16,11 +16,31 @@ use crate::dispatch;
 use model::card_definition::CardStats;
 use model::delegates;
 use model::game::GameState;
-use model::primitives::{AttackValue, BoostCount, CardId, HealthValue};
+use model::primitives::{
+    ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue,
+};
 
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: impl Into<CardId>) -> &CardStats {
     &crate::get(game.card(card_id).name()).config.stats
+}
+
+pub fn mana_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> Option<ManaValue> {
+    dispatch::perform_query(
+        game,
+        delegates::get_mana_cost,
+        card_id.into(),
+        crate::get(game.card(card_id.into()).name()).cost.mana,
+    )
+}
+
+pub fn action_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> ActionCount {
+    dispatch::perform_query(
+        game,
+        delegates::get_action_cost,
+        card_id.into(),
+        crate::get(game.card(card_id.into()).name()).cost.actions,
+    )
 }
 
 pub fn attack(game: &GameState, card_id: impl Into<CardId> + Copy) -> AttackValue {
@@ -38,6 +58,15 @@ pub fn health(game: &GameState, card_id: impl Into<CardId> + Copy) -> HealthValu
         delegates::get_health_value,
         card_id.into(),
         stats(game, card_id).health.unwrap_or(0),
+    )
+}
+
+pub fn shield(game: &GameState, card_id: impl Into<CardId> + Copy) -> ShieldValue {
+    dispatch::perform_query(
+        game,
+        delegates::get_shield_value,
+        card_id.into(),
+        stats(game, card_id).shield.unwrap_or(0),
     )
 }
 

@@ -30,11 +30,6 @@ namespace Spelldawn.Game
 
     protected override GameContext DefaultGameContext() => GameContext.DiscardPile;
 
-    public IEnumerator RenderDiscardPileView(DiscardPileView discardPileView)
-    {
-      return _registry.CardService.UpdateCardsInDisplay(this, discardPileView.Cards);
-    }
-
     protected override void LongPress()
     {
       StartCoroutine(_registry.CardBrowser.BrowseCards(new ObjectPosition

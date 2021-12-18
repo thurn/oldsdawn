@@ -17,7 +17,7 @@ use crate::delegates::{Delegate, Scope};
 use crate::game::GameState;
 use crate::primitives::{
     ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue, LevelValue, ManaValue,
-    PointsValue, Rarity, School, ShieldValue, Side, SpriteAddress,
+    PointsValue, Rarity, School, ShieldValue, Side, Sprite,
 };
 use std::fmt;
 use std::fmt::{Debug, Formatter};
@@ -52,24 +52,24 @@ pub type TextFn = fn(&GameState, Scope) -> Vec<TextToken>;
 
 /// Text describing what an ability does
 #[derive(Clone)]
-pub enum CardText {
+pub enum AbilityText {
     Text(Vec<TextToken>),
     TextFn(TextFn),
 }
 
-impl Debug for CardText {
+impl Debug for AbilityText {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            CardText::Text(tokens) => write!(f, "{:?}", tokens),
-            CardText::TextFn(_) => write!(f, "<TextFn>"),
+            AbilityText::Text(tokens) => write!(f, "{:?}", tokens),
+            AbilityText::TextFn(_) => write!(f, "<TextFn>"),
         }
     }
 }
 
 /// Cost to play a card or activate an ability
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct Cost {
-    pub mana: ManaValue,
+    pub mana: Option<ManaValue>,
     pub actions: ActionCount,
 }
 
@@ -122,7 +122,7 @@ pub enum AbilityType {
 /// system, see delegates.rs for more information.
 #[derive(Debug)]
 pub struct Ability {
-    pub text: CardText,
+    pub text: AbilityText,
     pub ability_type: AbilityType,
     pub delegates: Vec<Delegate>,
 }
@@ -142,7 +142,7 @@ pub struct CardConfig {
 pub struct CardDefinition {
     pub name: CardName,
     pub cost: Cost,
-    pub image: SpriteAddress,
+    pub image: Sprite,
     pub card_type: CardType,
     pub side: Side,
     pub school: School,

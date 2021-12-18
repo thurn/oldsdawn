@@ -79,8 +79,8 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.Delay:
             yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
             break;
-          case GameCommand.CommandOneofCase.RenderGame:
-            yield return HandleRenderGame(command.RenderGame.Game);
+          case GameCommand.CommandOneofCase.UpdateGameView:
+            yield return HandleUpdateGameView(command.UpdateGameView.Game);
             break;
           case GameCommand.CommandOneofCase.InitiateRaid:
             yield return _registry.RaidService.HandleInitiateRaid(command.InitiateRaid);
@@ -91,11 +91,8 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.LevelUpRoom:
             yield return _registry.ArenaService.HandleLevelUpRoom(command.LevelUpRoom);
             break;
-          case GameCommand.CommandOneofCase.CreateCard:
-            yield return _registry.CardService.HandleCreateCardCommand(command.CreateCard);
-            break;
-          case GameCommand.CommandOneofCase.UpdateCard:
-            yield return _registry.CardService.HandleUpdateCardCommand(command.UpdateCard);
+          case GameCommand.CommandOneofCase.CreateOrUpdateCard:
+            yield return _registry.CardService.HandleCreateOrUpdateCardCommand(command.CreateOrUpdateCard);
             break;
           case GameCommand.CommandOneofCase.MoveGameObjects:
             yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(command.MoveGameObjects);
@@ -178,7 +175,7 @@ namespace Spelldawn.Services
       yield return new WaitForSeconds(DataUtils.ToSeconds(command.Duration, 0));
     }
 
-    IEnumerator HandleRenderGame(GameView game)
+    IEnumerator HandleUpdateGameView(GameView game)
     {
       if (game.GameId != null)
       {
@@ -220,31 +217,14 @@ namespace Spelldawn.Services
         yield return _registry.IdentityCardForPlayer(playerName).RenderScore(playerView.Score);
       }
 
-      if (playerView.Hand != null)
-      {
-        yield return _registry.CardService.UpdateCardsInDisplay(
-          _registry.HandForPlayer(playerName),
-          playerView.Hand.Cards);
-      }
-
       if (playerView.Mana != null)
       {
         _registry.ManaDisplayForPlayer(playerName).RenderManaDisplay(playerView.Mana);
       }
 
-      if (playerView.DiscardPile != null)
-      {
-        yield return _registry.DiscardPileForPlayer(playerName).RenderDiscardPileView(playerView.DiscardPile);
-      }
-
       if (playerView.ActionTracker != null)
       {
         _registry.ActionDisplayForPlayer(playerName).RenderActionTrackerView(playerView.ActionTracker);
-      }
-
-      if (playerView.Deck != null)
-      {
-        yield return _registry.DeckForPlayer(playerName).RenderDeckView(playerView.Deck);
       }
     }
 

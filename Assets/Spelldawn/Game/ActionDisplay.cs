@@ -25,7 +25,7 @@ namespace Spelldawn.Game
 {
   public sealed class ActionDisplay : MonoBehaviour
   {
-    [SerializeField] int _availableActions = 3;
+    [SerializeField] uint _availableActions = 3;
     [SerializeField] Material _activeMaterial = null!;
     [SerializeField] Material _inactiveMaterial = null!;
     [SerializeField] TextMeshPro _number = null!;
@@ -34,7 +34,7 @@ namespace Spelldawn.Game
     [SerializeField] TextMeshPro _right = null!;
     readonly Dictionary<TextMeshPro, bool> _filled = new();
 
-    public int AvailableActions => _availableActions;
+    public uint AvailableActions => _availableActions;
 
     void Start()
     {
@@ -48,19 +48,19 @@ namespace Spelldawn.Game
       SetAvailableActions(actionTrackerView.AvailableActionCount);
     }
 
-    public void SpendActions(int amount)
+    public void SpendActions(uint amount)
     {
+      Errors.CheckArgument(amount <= _availableActions, "Not enough actions available");
       SetAvailableActions(_availableActions - amount);
     }
 
-    public void GainActions(int amount)
+    public void GainActions(uint amount)
     {
       SetAvailableActions(_availableActions + amount);
     }
 
-    public void SetAvailableActions(int availableActions)
+    public void SetAvailableActions(uint availableActions)
     {
-      Errors.CheckNonNegative(availableActions);
       _availableActions = availableActions;
       _number.gameObject.SetActive(false);
 

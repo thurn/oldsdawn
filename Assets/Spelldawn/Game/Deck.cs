@@ -32,11 +32,6 @@ namespace Spelldawn.Game
 
     protected override GameContext DefaultGameContext() => GameContext.Deck;
 
-    public IEnumerator RenderDeckView(DeckView deckView)
-    {
-      return _registry.CardService.UpdateCardsInDisplay(this, deckView.TopCards);
-    }
-
     public void SetCardBacks(SpriteAddress spriteAddress)
     {
       foreach (var obj in AllObjects)

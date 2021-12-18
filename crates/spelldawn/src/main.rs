@@ -50,16 +50,16 @@
 #![allow(unused_variables)]
 
 use model::card_definition::{Ability, CardDefinition};
-use model::game::{GameState, RaidState};
+use model::game::{GameState, NewGameOptions, RaidState};
 use model::primitives::{
-    AbilityId, AbilityIndex, BoostData, CardId, EventId, RaidId, RoomId, RoomLocation, Side,
+    AbilityId, AbilityIndex, BoostData, CardId, RaidId, RoomId, RoomLocation, Side,
 };
 use tonic::{transport::Server, Request, Response, Status};
 
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
 use protos::spelldawn::{
-    CommandList, GameCommand, GameId, GameRequest, GameView, RenderGameCommand,
+    CommandList, GameCommand, GameId, GameRequest, GameView, UpdateGameViewCommand,
 };
 
 use cards::{card_helpers, dispatch, queries, CARDS};
@@ -81,9 +81,9 @@ impl Spelldawn for GameService {
 
         let reply = CommandList {
             commands: vec![GameCommand {
-                command: Some(Command::RenderGame(RenderGameCommand {
+                command: Some(Command::UpdateGameView(UpdateGameViewCommand {
                     game: Some(GameView {
-                        game_id: Some(GameId { value: "GAME_ID".to_owned() }),
+                        game_id: Some(GameId { value: "GAME_ID".to_string() }),
                         user: None,
                         opponent: None,
                         arena: None,
@@ -101,17 +101,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
 
     let mut game = GameState::new_game(
-        "GameId".to_owned(),
+        "GameId".to_string(),
+        CardName::TestOverlordIdentity,
         vec![CardName::GoldMine, CardName::IceDragon, CardName::DungeonAnnex],
+        CardName::TestChampionIdentity,
         vec![CardName::ArcaneRecovery, CardName::Greataxe],
+        NewGameOptions::default(),
     );
 
-    let arcane_recovery = CardId::new(Side::Champion, 0);
+    let arcane_recovery = CardId::new(Side::Champion, 1);
     println!("Arcane Recovery. Starting Mana: {:?}", game.player(Side::Champion).mana);
     dispatch::invoke_event(&mut game, delegates::on_play_card, arcane_recovery);
     println!("Updated Mana: {:?}", game.player(Side::Champion).mana);
 
-    let greataxe = CardId::new(Side::Champion, 1);
+    let greataxe = CardId::new(Side::Champion, 2);
     println!("Greataxe. Starting Attack: {:?}", queries::attack(&game, greataxe));
     dispatch::invoke_event(
         &mut game,
@@ -120,7 +123,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     println!("Greataxe. Updated Attack: {:?}", queries::attack(&game, greataxe));
 
-    let gold_mine = CardId::new(Side::Overlord, 0);
+    let gold_mine = CardId::new(Side::Overlord, 1);
     game.card_mut(gold_mine).move_to(CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom));
     dispatch::invoke_event(&mut game, delegates::on_play_card, gold_mine);
     println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data().stored_mana);
@@ -141,7 +144,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         game.card(gold_mine).position()
     );
 
-    let ice_dragon = CardId::new(Side::Overlord, 1);
+    let ice_dragon = CardId::new(Side::Overlord, 2);
     game.card_mut(arcane_recovery).move_to(CardPosition::Hand(Side::Champion));
     game.card_mut(ice_dragon).move_to(CardPosition::Room(RoomId::RoomB, RoomLocation::Defender(0)));
     game.data_mut().raid =
@@ -159,7 +162,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     println!("Dungeon Annex. Starting Mana: {:?}", game.player(Side::Overlord).mana);
-    let dungeon_annex = CardId::new(Side::Overlord, 2);
+    let dungeon_annex = CardId::new(Side::Overlord, 3);
     dispatch::invoke_event(&mut game, delegates::on_score_scheme, dungeon_annex);
     println!("Dungeon Annex. Resulting Mana: {:?}", game.player(Side::Overlord).mana);
 

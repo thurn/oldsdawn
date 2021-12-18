@@ -48,8 +48,9 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 
-use model::card_definition::CardDefinition;
+use model::card_definition::{CardConfig, CardDefinition, Cost};
 use model::card_name::CardName;
+use model::primitives::{CardType, Rarity, School, Side};
 use once_cell::sync::Lazy;
 use std::borrow::Borrow;
 use std::collections::HashMap;
@@ -68,6 +69,8 @@ mod weapons;
 
 // TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
 static DEFINITIONS: &[fn() -> CardDefinition] = &[
+    test_overlord_identity,
+    test_champion_identity,
     champion_spells::arcane_recovery,
     weapons::greataxe,
     projects::gold_mine,
@@ -85,5 +88,27 @@ pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
 });
 
 pub fn get(name: CardName) -> &'static CardDefinition {
-    CARDS.get(&name).expect("Card is not defined")
+    CARDS.get(&name).unwrap_or_else(|| panic!("Card not found: {:?}", name))
+}
+
+fn test_overlord_identity() -> CardDefinition {
+    test_identity(CardName::TestOverlordIdentity, Side::Overlord)
+}
+
+fn test_champion_identity() -> CardDefinition {
+    test_identity(CardName::TestChampionIdentity, Side::Champion)
+}
+
+fn test_identity(name: CardName, side: Side) -> CardDefinition {
+    CardDefinition {
+        name,
+        cost: card_helpers::cost(0),
+        image: card_helpers::sprite(""),
+        card_type: CardType::Identity,
+        side,
+        school: School::Neutral,
+        rarity: Rarity::None,
+        abilities: vec![],
+        config: CardConfig::default(),
+    }
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::card_definition::{CardConfig, CardDefinition, CardText, Keyword};
+use model::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
 use std::sync::Arc;
 
 use model::card_name::CardName;
@@ -29,9 +29,10 @@ pub fn arcane_recovery() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_play(CardText::Text(vec![text("Gain"), mana_symbol(9)]), |g, s, _| {
-            gain_mana(g, s.side(), 9)
-        })],
+        abilities: vec![on_play(
+            AbilityText::Text(vec![text("Gain"), mana_symbol(9)]),
+            |g, s, _| gain_mana(g, s.side(), 9),
+        )],
         config: CardConfig::default(),
     }
 }

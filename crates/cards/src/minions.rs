@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::abilities;
-use model::card_definition::{CardConfig, CardDefinition, CardStats, CardText, Keyword};
+use model::card_definition::{AbilityText, CardConfig, CardDefinition, CardStats, Keyword};
 use model::card_name::CardName;
 use model::primitives::{CardType, Faction, Rarity, School, Side};
 

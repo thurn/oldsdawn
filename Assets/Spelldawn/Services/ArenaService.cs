@@ -47,22 +47,7 @@ namespace Spelldawn.Services
         _sceneBackground.SetRoomsOnBottom(b);
       }
 
-      if (arenaView.LeftItems != null)
-      {
-        yield return _registry.CardService.UpdateCardsInDisplay(_leftItems, arenaView.LeftItems);
-      }
-
-      if (arenaView.RightItems != null)
-      {
-        yield return _registry.CardService.UpdateCardsInDisplay(_rightItems, arenaView.RightItems);
-      }
-
-      foreach (var roomView in arenaView.Rooms)
-      {
-        var room = FindRoom(roomView.RoomId);
-        yield return _registry.CardService.UpdateCardsInDisplay(room.BackCards, roomView.BackCards);
-        yield return _registry.CardService.UpdateCardsInDisplay(room.FrontCards, roomView.FrontCards);
-      }
+      yield break;
     }
 
     public Room FindRoom(RoomId roomId)

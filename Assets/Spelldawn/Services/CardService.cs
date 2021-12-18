@@ -14,7 +14,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using Spelldawn.Game;
 using Spelldawn.Protos;
@@ -74,14 +73,27 @@ namespace Spelldawn.Services
       _optimisticCard = ComponentUtils.Instantiate(_cardPrefab);
       _optimisticCard.Render(_registry, new CardView { OwningPlayer = PlayerName.User }, GameContext.Staging);
       _optimisticCard.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
-      _registry.ObjectPositionService.AnimateFromDeckToStaging(_optimisticCard);
+      _registry.ObjectPositionService.PlayDrawCardAnimation(_optimisticCard);
     }
 
-    public IEnumerator HandleCreateCardCommand(CreateCardCommand command)
+    public IEnumerator HandleCreateOrUpdateCardCommand(CreateOrUpdateCardCommand command)
     {
-      Errors.CheckNotNull(command.Card);
-      Errors.CheckNotNull(command.Card.CardId);
+      var cardId = Errors.CheckNotNull(command.Card.CardId);
 
+      if (_cards.ContainsKey(cardId))
+      {
+        yield return FindCard(command.Card!.CardId)
+          .Render(_registry, command.Card, animate: !command.DisableFlipAnimation)
+          .WaitForCompletion();
+      }
+      else
+      {
+        yield return HandleCreateCard(command);
+      }
+    }
+
+    IEnumerator HandleCreateCard(CreateOrUpdateCardCommand command)
+    {
       var waitForStaging = false;
       Card card;
       if (_optimisticCard)
@@ -95,13 +107,13 @@ namespace Spelldawn.Services
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
 
-        StartCoroutine(_registry.ObjectPositionService.ObjectDisplayForPosition(command.Position)
+        StartCoroutine(_registry.ObjectPositionService.ObjectDisplayForPosition(command.CreatePosition)
           .AddObject(card, animate: false));
 
-        switch (command.Animation)
+        switch (command.CreateAnimation)
         {
-          case CardCreationAnimation.UserDeckToStaging:
-            _registry.ObjectPositionService.AnimateFromDeckToStaging(card);
+          case CardCreationAnimation.DrawCard:
+            _registry.ObjectPositionService.PlayDrawCardAnimation(card);
             waitForStaging = true;
             break;
         }
@@ -111,7 +123,7 @@ namespace Spelldawn.Services
         _registry,
         command.Card,
         GameContext.Staging,
-        animate: !command.DisableAnimation);
+        animate: !command.DisableFlipAnimation);
 
       _cards[Errors.CheckNotNull(command.Card.CardId)] = card;
 
@@ -129,11 +141,6 @@ namespace Spelldawn.Services
       card.Render(_registry, cardView, gameContext, animate: animate);
       _cards[Errors.CheckNotNull(cardView.CardId)] = card;
       return card;
-    }
-
-    public IEnumerator HandleUpdateCardCommand(UpdateCardCommand command)
-    {
-      yield return FindCard(command.Card!.CardId).Render(_registry, command.Card).WaitForCompletion();
     }
 
     public void DisplayInfoZoom(Vector3 worldMousePosition, Card card)
@@ -169,35 +176,6 @@ namespace Spelldawn.Services
       _registry.DocumentService.ClearCardControls();
       _infoZoomLeft.DestroyAll();
       _infoZoomRight.DestroyAll();
-    }
-
-    public IEnumerator UpdateCardsInDisplay(ObjectDisplay cardDisplay, IEnumerable<CardView> cards)
-    {
-      var currentCards = new HashSet<Displayable>(cardDisplay.AllObjects);
-      var incomingCards = new HashSet<Displayable>();
-
-      foreach (var cardView in cards)
-      {
-        if (_cards.ContainsKey(cardView.CardId))
-        {
-          _cards[cardView.CardId].Render(_registry, cardView, animate: false);
-          incomingCards.Add(_cards[cardView.CardId]);
-        }
-        else
-        {
-          CreateAndAddCard(cardView, cardDisplay.GameContext, animate: false);
-        }
-
-        if (!currentCards.Contains(_cards[cardView.CardId]))
-        {
-          yield return cardDisplay.AddObject(_cards[cardView.CardId], animate: false);
-        }
-      }
-
-      foreach (var displayable in currentCards.Where(d => !incomingCards.Contains(d)))
-      {
-        yield return cardDisplay.RemoveObject(displayable, animate: false);
-      }
     }
   }
 }

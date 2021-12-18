@@ -22,7 +22,7 @@ pub fn invoke_event<T: Copy>(
     event: fn(&mut GameState, Scope, &Delegate, T),
     data: T,
 ) {
-    for card_id in game.card_ids() {
+    for card_id in game.all_card_ids() {
         let definition = crate::get(game.card(card_id).name());
         for (index, ability) in definition.abilities.iter().enumerate() {
             let scope = Scope::new(AbilityId::new(card_id, index));
@@ -40,7 +40,7 @@ pub fn perform_query<T: Copy, R>(
     initial_value: R,
 ) -> R {
     let mut result = initial_value;
-    for card_id in game.card_ids() {
+    for card_id in game.all_card_ids() {
         let definition = crate::get(game.card(card_id).name());
         for (index, ability) in definition.abilities.iter().enumerate() {
             let scope = Scope::new(AbilityId::new(card_id, index));

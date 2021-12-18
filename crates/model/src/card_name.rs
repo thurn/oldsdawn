@@ -12,11 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+use strum_macros::Display;
+
+use convert_case::{Case, Casing};
+
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display)]
 pub enum CardName {
+    /// Empty identity cards with no associated rules text, for use in unit tests
+    TestChampionIdentity,
+    TestOverlordIdentity,
+
     ArcaneRecovery,
     Greataxe,
     GoldMine,
     IceDragon,
     DungeonAnnex,
+}
+
+impl CardName {
+    pub fn displayed_name(&self) -> String {
+        format!("{}", self).from_case(Case::Pascal).to_case(Case::Title)
+    }
 }

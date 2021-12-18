@@ -29,9 +29,9 @@ namespace Spelldawn.Game
     [SerializeField] GameObject _pressEffect = null!;
     [SerializeField] GameObject _changeEffect = null!;
     [SerializeField] TextMeshPro _manaText = null!;
-    [SerializeField] int _currentMana = 5;
+    [SerializeField] uint _currentMana = 5;
 
-    public int CurrentMana => _currentMana;
+    public uint CurrentMana => _currentMana;
 
     bool Clickable => _owner == PlayerName.User &&
                       _registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.GainMana);
@@ -41,17 +41,18 @@ namespace Spelldawn.Game
       SetMana(manaView.Amount);
     }
 
-    public void GainMana(int amount)
+    public void GainMana(uint amount)
     {
       SetMana(_currentMana + amount);
     }
 
-    public void SpendMana(int amount)
+    public void SpendMana(uint amount)
     {
+      Errors.CheckArgument(amount <= _currentMana, "Not enough mana available");
       SetMana(_currentMana - amount);
     }
 
-    public void SetMana(int currentMana)
+    public void SetMana(uint currentMana)
     {
       Errors.CheckNonNegative(currentMana);
 

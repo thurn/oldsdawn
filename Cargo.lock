@@ -90,6 +90,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "convert_case"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
+
+[[package]]
 name = "darling"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -150,7 +156,6 @@ name = "display"
 version = "0.0.0"
 dependencies = [
  "cards",
- "diff-struct",
  "model",
  "protos",
 ]
@@ -223,10 +228,11 @@ checksum = "dabf1872aaab32c886832f2276d2f5399887e2bd613698a02359e4ea83f8de12"
 
 [[package]]
 name = "futures-util"
-version = "0.3.18"
+version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "41d22213122356472061ac0f1ab2cee28d2bac8491410fd68c2af53d1cedb83e"
+checksum = "36568465210a3a6ee45e1f165136d68671471a501e632e9a98d96872222b5481"
 dependencies = [
+ "autocfg",
  "futures-core",
  "futures-task",
  "pin-project-lite",
@@ -441,6 +447,7 @@ dependencies = [
 name = "model"
 version = "0.0.0"
 dependencies = [
+ "convert_case",
  "diff-struct",
  "rand",
  "strum",
@@ -735,6 +742,7 @@ name = "spelldawn"
 version = "0.0.0"
 dependencies = [
  "cards",
+ "display",
  "model",
  "prost",
  "prost-types",

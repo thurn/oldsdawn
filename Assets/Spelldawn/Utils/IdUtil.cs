@@ -50,13 +50,6 @@ namespace Spelldawn.Utils
       DiscardPile = playerName
     };
 
-    public static CardId CardId(int cardId) => new()
-    {
-      Value = cardId
-    };
-
-    public static GameObjectId CardObjectId(int cardId) => CardObjectId(CardId(cardId));
-
     public static GameObjectId CardObjectId(CardView card) => CardObjectId(card.CardId);
 
     public static GameObjectId CardObjectId(CardId cardId) => new()

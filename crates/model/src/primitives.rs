@@ -24,12 +24,23 @@ pub type ShieldValue = u32;
 pub type BoostCount = u32;
 pub type LevelValue = u32;
 
+/// The two players in a game: Overlord & Champion
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum Side {
-    Champion,
     Overlord,
+    Champion,
 }
 
+impl Side {
+    pub fn opponent(&self) -> Self {
+        match self {
+            Side::Champion => Side::Overlord,
+            Side::Overlord => Side::Champion,
+        }
+    }
+}
+
+/// Identifies a card in an ongoing game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardId {
     pub side: Side,
@@ -41,9 +52,6 @@ impl CardId {
         Self { side, index }
     }
 }
-
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub struct EventId(pub u32);
 
 /// Identifies an ability within a card. Abilities are the only game entity which may contain
 /// delegates. Abilities are identified by their position within the card's 'abilities',
@@ -74,7 +82,15 @@ impl From<AbilityId> for CardId {
 pub struct RaidId(pub u32);
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub struct SpriteAddress(pub String);
+pub struct Sprite {
+    pub address: String,
+}
+
+impl Sprite {
+    pub fn new(address: impl Into<String>) -> Self {
+        Self { address: address.into() }
+    }
+}
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum School {
@@ -123,15 +139,20 @@ pub enum Rarity {
     Uncommon,
     Rare,
     Epic,
+
+    /// Card cannot be obtained via random rewards
+    None,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum CardType {
     Spell,
     Weapon,
+    Artifact,
     Minion,
     Project,
     Scheme,
+    Upgrade,
     Identity,
     Token,
 }

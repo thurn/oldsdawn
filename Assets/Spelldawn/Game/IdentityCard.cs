@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Collections;
-using System.Linq;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using TMPro;
@@ -33,7 +32,6 @@ namespace Spelldawn.Game
     [SerializeField] PlayerName _owner;
 
     public IdentityAction? DragAction { get; set; }
-    Card? _identityCard;
 
     RoomId? _selectedRoom;
 
@@ -64,24 +62,13 @@ namespace Spelldawn.Game
         _frame.sprite = _registry.AssetService.GetSprite(playerInfo.PortraitFrame);
       }
 
-      if (playerInfo.IdentityCard is { } ic)
-      {
-        if (_identityCard)
-        {
-          _identityCard!.Render(_registry, ic, GameContext.Identity, animate: false);
-        }
-        else
-        {
-          _identityCard = _registry.CardService.CreateAndAddCard(ic, GameContext.Identity, animate: false);
-          yield return AddObject(_identityCard, animate: false);
-        }
-      }
+      yield break;
     }
 
     public IEnumerator RenderScore(ScoreView scoreView)
     {
       _scoreText.text = scoreView.Score.ToString();
-      return _registry.CardService.UpdateCardsInDisplay(this, scoreView.ScoredCards);
+      yield break;
     }
 
     public override bool MouseDown()

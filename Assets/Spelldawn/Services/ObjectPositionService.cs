@@ -114,7 +114,7 @@ namespace Spelldawn.Services
     public IEnumerator MoveGameObject(
       Displayable displayable,
       ObjectPosition targetPosition,
-      int? index = null,
+      uint? index = null,
       bool animate = true,
       bool animateRemove = true) =>
       MoveGameObjects(CollectionUtils.Once(displayable), targetPosition, index, animate, animateRemove);
@@ -122,7 +122,7 @@ namespace Spelldawn.Services
     public IEnumerator MoveGameObjects(
       IEnumerable<Displayable> displayable,
       ObjectPosition targetPosition,
-      int? index = null,
+      uint? index = null,
       bool animate = true,
       bool animateRemove = true)
     {
@@ -170,7 +170,7 @@ namespace Spelldawn.Services
           _registry.DiscardPileForPlayer(position.DiscardPile.Owner),
         ObjectPosition.PositionOneofCase.DiscardPileContainer =>
           _registry.DiscardPilePositionForPlayer(position.DiscardPileContainer.Owner),
-        ObjectPosition.PositionOneofCase.Scored =>
+        ObjectPosition.PositionOneofCase.ScoreAnimation =>
           _registry.CardScoring,
         ObjectPosition.PositionOneofCase.Raid =>
           _registry.RaidService.RaidParticipants,
@@ -184,7 +184,7 @@ namespace Spelldawn.Services
       };
     }
 
-    public void AnimateFromDeckToStaging(Card card)
+    public void PlayDrawCardAnimation(Card card)
     {
       var target = DeckSpawnPosition(PlayerName.User);
       card.transform.position = target;

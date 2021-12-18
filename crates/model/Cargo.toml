@@ -9,6 +9,7 @@ edition = "2021"
 doctest = false
 
 [dependencies]
+convert_case = "0.4.0"
 diff-struct = "0.4.0"
 rand = "0.8.4"
 strum = "0.23"

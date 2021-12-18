@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -38,6 +39,11 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _spriteRenderer = null!;
     public SpriteRenderer SpriteRenderer => _spriteRenderer;
 
+    void Start()
+    {
+      _spriteRenderer = ComponentUtils.GetComponent<SpriteRenderer>(this);
+    }
+
     public ObjectDisplay ObjectDisplayForLocation(RoomLocation location) => location switch
     {
       RoomLocation.Back => _inRoom,
@@ -45,7 +51,7 @@ namespace Spelldawn.Game
       _ => throw new ArgumentOutOfRangeException(nameof(location), location, null)
     };
 
-    public IEnumerator AddCard(Displayable card, RoomLocation location, int? index, bool animate) => location switch
+    public IEnumerator AddCard(Displayable card, RoomLocation location, uint? index, bool animate) => location switch
     {
       RoomLocation.Back => _inRoom.AddObject(card, animate, index),
       _ => _defenders.AddObject(card, animate, index)

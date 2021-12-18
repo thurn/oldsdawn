@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::abilities;
-use model::card_definition::{CardConfig, CardDefinition, CardText, Keyword};
+use model::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
 use model::card_name::CardName;
 use model::primitives::{CardType, Rarity, School, Side};
 
@@ -31,7 +31,7 @@ pub fn gold_mine() -> CardDefinition {
         abilities: vec![
             abilities::store_mana::<12>(),
             at_dusk(
-                CardText::Text(vec![
+                AbilityText::Text(vec![
                     keyword(Keyword::Dusk),
                     text("Gain"),
                     mana_symbol(3),

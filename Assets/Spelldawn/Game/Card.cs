@@ -62,7 +62,7 @@ namespace Spelldawn.Game
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] ObjectDisplay? _previousParent;
-    [SerializeField] int _previousParentIndex;
+    [SerializeField] uint _previousParentIndex;
 
     Registry _registry = null!;
 

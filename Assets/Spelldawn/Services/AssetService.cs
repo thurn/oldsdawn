@@ -68,16 +68,13 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.RenderInterface:
             LoadRenderInterfaceAssets(requests, command.RenderInterface);
             break;
-          case GameCommand.CommandOneofCase.RenderGame:
-            LoadGameAssets(requests, command.RenderGame.Game);
+          case GameCommand.CommandOneofCase.UpdateGameView:
+            LoadGameAssets(requests, command.UpdateGameView.Game);
             break;
           case GameCommand.CommandOneofCase.InitiateRaid:
             break;
-          case GameCommand.CommandOneofCase.CreateCard:
-            LoadCardAssets(requests, command.CreateCard.Card);
-            break;
-          case GameCommand.CommandOneofCase.UpdateCard:
-            LoadCardAssets(requests, command.UpdateCard.Card);
+          case GameCommand.CommandOneofCase.CreateOrUpdateCard:
+            LoadCardAssets(requests, command.CreateOrUpdateCard.Card);
             break;
           case GameCommand.CommandOneofCase.MoveGameObjects:
             break;
@@ -171,7 +168,6 @@ namespace Spelldawn.Services
       {
         LoadPlayerAssets(requests, game.User);
         LoadPlayerAssets(requests, game.Opponent);
-        LoadArenaAssets(requests, game.Arena);
       }
     }
 
@@ -180,24 +176,6 @@ namespace Spelldawn.Services
       if (playerView != null)
       {
         LoadPlayerInfoAssets(requests, playerView.PlayerInfo);
-        LoadScoreViewAssets(requests, playerView.Score);
-        LoadCardListAssets(requests, playerView.Hand?.Cards);
-        LoadCardListAssets(requests, playerView.DiscardPile?.Cards);
-      }
-    }
-
-    void LoadArenaAssets(IDictionary<string, ResourceRequest> requests, ArenaView? arenaView)
-    {
-      if (arenaView != null)
-      {
-        foreach (var room in arenaView.Rooms)
-        {
-          LoadCardListAssets(requests, room.FrontCards);
-          LoadCardListAssets(requests, room.BackCards);
-        }
-
-        LoadCardListAssets(requests, arenaView.LeftItems);
-        LoadCardListAssets(requests, arenaView.RightItems);
       }
     }
 
@@ -229,7 +207,6 @@ namespace Spelldawn.Services
         LoadSprite(requests, card.CardFrame);
         LoadSprite(requests, card.TitleBackground);
         LoadSprite(requests, card.Jewel);
-        LoadSprite(requests, card.ImageBackground);
         LoadSprite(requests, card.Image);
         LoadNodeAssets(requests, card.SupplementalInfo);
       }
@@ -261,15 +238,6 @@ namespace Spelldawn.Services
       {
         LoadSprite(requests, playerInfo.CardBack);
         LoadSprite(requests, playerInfo.Portrait);
-        LoadCardAssets(requests, playerInfo.IdentityCard);
-      }
-    }
-
-    void LoadScoreViewAssets(IDictionary<string, ResourceRequest> requests, ScoreView? scoreView)
-    {
-      if (scoreView != null)
-      {
-        LoadCardListAssets(requests, scoreView.ScoredCards);
       }
     }
 

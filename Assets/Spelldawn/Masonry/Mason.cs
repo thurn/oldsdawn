@@ -148,7 +148,7 @@ namespace Spelldawn.Masonry
 
     static StyleFloat AdaptFloat(float? input) => input ?? new StyleFloat(StyleKeyword.Null);
 
-    static StyleInt AdaptInt(int? input) => input ?? new StyleInt(StyleKeyword.Null);
+    static StyleInt AdaptInt(uint? input) => (int?)input ?? new StyleInt(StyleKeyword.Null);
 
     static Vector2 AdaptVector2(FlexVector2? input) => input is { } v ? new Vector2(v.X, v.Y) : Vector2.zero;
 

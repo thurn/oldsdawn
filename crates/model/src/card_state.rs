@@ -30,6 +30,10 @@ pub enum CardPosition {
     Deck(Side),
     DiscardPile(Side),
     Scored(Side),
+
+    /// Marks the identity card for a side. It is an error for a game to contain more than one
+    /// identity card per side.
+    Identity(Side),
 }
 
 impl CardPosition {
@@ -60,13 +64,15 @@ pub struct AbilityState {}
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct CardData {
+    // Has this card been revealed to the opponent?
+    pub revealed: bool,
+    /// How many times has this card been leveled up?
+    pub card_level: LevelValue,
     /// How many times the boost ability of this card has been activated -- typically used to
     /// increase weapon attack power during a raid.
     pub boost_count: BoostCount,
     /// How much mana is stored in this card?
     pub stored_mana: ManaValue,
-    /// How many times has this card been leveled up?
-    pub card_level: LevelValue,
     /// State for this card's abilities
     pub ability_state: BTreeMap<AbilityIndex, AbilityState>,
 }

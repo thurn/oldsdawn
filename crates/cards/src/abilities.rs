@@ -14,7 +14,7 @@
 
 use crate::card_helpers::*;
 use crate::queries;
-use model::card_definition::{Ability, AbilityType, CardText, Keyword};
+use model::card_definition::{Ability, AbilityText, AbilityType, Keyword};
 use model::card_state::CardPosition;
 use model::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use model::game::GameState;
@@ -41,7 +41,7 @@ fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
 /// The standard weapon ability; applies an attack boost for the duration of a single encounter.
 pub fn encounter_boost() -> Ability {
     Ability {
-        text: CardText::TextFn(|g, s| {
+        text: AbilityText::TextFn(|g, s| {
             let boost = queries::stats(g, s).attack_boost.expect("attack_boost");
             vec![mana_cost_text(boost.cost), add_number(boost.bonus), text("Attack")]
         }),
@@ -57,7 +57,7 @@ pub fn encounter_boost() -> Ability {
 /// Store N mana in this card. Move it to the discard pile when the stored mana is depleted.
 pub fn store_mana<const N: ManaValue>() -> Ability {
     Ability {
-        text: CardText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),
+        text: AbilityText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),
         ability_type: AbilityType::Standard,
         delegates: vec![
             Delegate::OnPlayCard(EventDelegate::new(this_card, |g, s, card_id| {
@@ -81,7 +81,7 @@ pub fn discard_random_card(game: &mut GameState, side: Side) {
 
 pub fn strike<const N: u32>() -> Ability {
     combat(
-        CardText::Text(vec![keyword(Keyword::Combat), keyword(Keyword::Strike(N))]),
+        AbilityText::Text(vec![keyword(Keyword::Combat), keyword(Keyword::Strike(N))]),
         |g, _, _| {
             for _ in 0..N {
                 discard_random_card(g, Side::Champion);
@@ -91,7 +91,7 @@ pub fn strike<const N: u32>() -> Ability {
 }
 
 pub fn end_raid() -> Ability {
-    combat(CardText::Text(vec![keyword(Keyword::Combat), text("End the raid.")]), |g, _, _| {
+    combat(AbilityText::Text(vec![keyword(Keyword::Combat), text("End the raid.")]), |g, _, _| {
         set_raid_ended(g);
     })
 }

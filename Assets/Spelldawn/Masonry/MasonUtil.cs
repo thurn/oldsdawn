@@ -244,17 +244,17 @@ namespace Spelldawn.Masonry
     };
 
 
-    public static TimeValue DurationMs(int ms) => new()
+    public static TimeValue DurationMs(uint ms) => new()
     {
       Milliseconds = ms
     };
 
-    public static ImageSlice ImageSlice(int slice) => ImageSlice(slice, slice);
+    public static ImageSlice ImageSlice(uint slice) => ImageSlice(slice, slice);
 
-    public static ImageSlice ImageSlice(int topBottom, int rightLeft) =>
+    public static ImageSlice ImageSlice(uint topBottom, uint rightLeft) =>
       ImageSlice(topBottom, rightLeft, topBottom, rightLeft);
 
-    public static ImageSlice ImageSlice(int top, int right, int bottom, int left) => new()
+    public static ImageSlice ImageSlice(uint top, uint right, uint bottom, uint left) => new()
     {
       Top = top,
       Right = right,

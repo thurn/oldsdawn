@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::card_definition::CardStats;
+use crate::card_definition::{CardStats, Cost};
 use crate::card_state::{CardData, CardPosition};
 use crate::game::{GameState, RaidState};
 use crate::primitives::{
-    AbilityId, AttackValue, BoostCount, BoostData, CardId, HealthValue, RaidId, Side, TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
+    RaidId, ShieldValue, Side, TurnNumber,
 };
 use std::fmt;
 use std::fmt::{Debug, Formatter};
@@ -130,10 +131,16 @@ pub enum Delegate {
     /// Query whether a given card can currently be played
     CanPlayCard(QueryDelegate<CardId, bool>),
 
+    /// Query the current mana cost of a card. Invoked with [Cost::mana].
+    GetManaCost(QueryDelegate<CardId, Option<ManaValue>>),
+    /// Query the current mana cost of a card. Invoked with [Cost::actions].
+    GetActionCost(QueryDelegate<CardId, ActionCount>),
     /// Query the current attack value of a card. Invoked with [CardStats::base_attack] or 0.
     GetAttackValue(QueryDelegate<CardId, AttackValue>),
     /// Query the current health value of a card. Invoked with [CardStats::health] or 0.
     GetHealthValue(QueryDelegate<CardId, HealthValue>),
+    /// Query the current shield value of a card. Invoked with [CardStats::shield] or 0.
+    GetShieldValue(QueryDelegate<CardId, ShieldValue>),
     /// Get the current boost count of a card. Invoked with the value of [CardData::boost_count].
     GetBoostCount(QueryDelegate<CardId, BoostCount>),
 }
@@ -287,6 +294,40 @@ pub fn can_play_card(
     }
 }
 
+pub fn get_mana_cost(
+    game: &GameState,
+    scope: Scope,
+    delegate: &Delegate,
+    data: CardId,
+    current: Option<ManaValue>,
+) -> Option<ManaValue> {
+    match delegate {
+        Delegate::GetManaCost(QueryDelegate { requirement, transformation })
+            if requirement(game, scope, data) =>
+        {
+            transformation(game, scope, data, current)
+        }
+        _ => current,
+    }
+}
+
+pub fn get_action_cost(
+    game: &GameState,
+    scope: Scope,
+    delegate: &Delegate,
+    data: CardId,
+    current: ActionCount,
+) -> ActionCount {
+    match delegate {
+        Delegate::GetActionCost(QueryDelegate { requirement, transformation })
+            if requirement(game, scope, data) =>
+        {
+            transformation(game, scope, data, current)
+        }
+        _ => current,
+    }
+}
+
 pub fn get_attack_value(
     game: &GameState,
     scope: Scope,
@@ -313,6 +354,23 @@ pub fn get_health_value(
 ) -> HealthValue {
     match delegate {
         Delegate::GetHealthValue(QueryDelegate { requirement, transformation })
+            if requirement(game, scope, data) =>
+        {
+            transformation(game, scope, data, current)
+        }
+        _ => current,
+    }
+}
+
+pub fn get_shield_value(
+    game: &GameState,
+    scope: Scope,
+    delegate: &Delegate,
+    data: CardId,
+    current: ShieldValue,
+) -> ShieldValue {
+    match delegate {
+        Delegate::GetShieldValue(QueryDelegate { requirement, transformation })
             if requirement(game, scope, data) =>
         {
             transformation(game, scope, data, current)

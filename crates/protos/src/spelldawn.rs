@@ -135,19 +135,19 @@ pub struct TextShadow {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TimeValue {
-    #[prost(int32, tag = "1")]
-    pub milliseconds: i32,
+    #[prost(uint32, tag = "1")]
+    pub milliseconds: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ImageSlice {
-    #[prost(int32, tag = "1")]
-    pub top: i32,
-    #[prost(int32, tag = "2")]
-    pub right: i32,
-    #[prost(int32, tag = "3")]
-    pub bottom: i32,
-    #[prost(int32, tag = "4")]
-    pub left: i32,
+    #[prost(uint32, tag = "1")]
+    pub top: u32,
+    #[prost(uint32, tag = "2")]
+    pub right: u32,
+    #[prost(uint32, tag = "3")]
+    pub bottom: u32,
+    #[prost(uint32, tag = "4")]
+    pub left: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FlexStyle {
@@ -332,8 +332,10 @@ pub struct GameId {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardId {
-    #[prost(int32, tag = "1")]
-    pub value: i32,
+    #[prost(uint32, tag = "1")]
+    pub side: u32,
+    #[prost(uint32, tag = "2")]
+    pub index: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameObjectId {
@@ -362,10 +364,13 @@ pub mod game_object_id {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardIcon {
+    ///* Background for the icon.
     #[prost(message, optional, tag = "1")]
     pub background: ::core::option::Option<SpriteAddress>,
+    ///* Text to display on the icon.
     #[prost(string, tag = "2")]
     pub text: ::prost::alloc::string::String,
+    ///* Scale for the background image to render at. A value of 0.0 will be treated as 1.0.
     #[prost(float, tag = "3")]
     pub background_scale: f32,
 }
@@ -392,11 +397,9 @@ pub struct RulesText {
     #[prost(string, tag = "1")]
     pub text: ::prost::alloc::string::String,
 }
+///* This card should prompt for a room to be played into.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct PickRoom {
-    #[prost(enumeration = "RoomId", repeated, tag = "2")]
-    pub valid_rooms: ::prost::alloc::vec::Vec<i32>,
-}
+pub struct PickRoom {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardTargeting {
     #[prost(oneof = "card_targeting::Targeting", tags = "1")]
@@ -406,17 +409,17 @@ pub struct CardTargeting {
 pub mod card_targeting {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Targeting {
-        ///* Pick one of these valid rooms.
         #[prost(message, tag = "1")]
         PickRoom(super::PickRoom),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardCost {
-    #[prost(int32, tag = "1")]
-    pub mana_cost: i32,
-    #[prost(int32, tag = "2")]
-    pub action_cost: i32,
+    ///* Mana cost for the card, 0 is used to represent 'no cost'.
+    #[prost(uint32, tag = "1")]
+    pub mana_cost: u32,
+    #[prost(uint32, tag = "2")]
+    pub action_cost: u32,
     #[prost(bool, tag = "3")]
     pub can_play: bool,
     #[prost(enumeration = "CanPlayAlgorithm", tag = "4")]
@@ -433,7 +436,7 @@ pub struct ObjectPositionRoom {
     #[prost(enumeration = "RoomLocation", tag = "2")]
     pub room_location: i32,
     #[prost(message, optional, tag = "3")]
-    pub index: ::core::option::Option<i32>,
+    pub index: ::core::option::Option<u32>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionItem {
@@ -467,8 +470,11 @@ pub struct ObjectPositionDiscardPileContainer {
     #[prost(enumeration = "PlayerName", tag = "1")]
     pub owner: i32,
 }
+///*
+/// Large display of cards *while* the score animation is playing. After the score animation
+/// finishes, scored cards move to 'Identity' position.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ObjectPositionScored {}
+pub struct ObjectPositionScoreAnimation {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionRaid {}
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -516,7 +522,7 @@ pub mod object_position {
         #[prost(message, tag = "9")]
         DiscardPileContainer(super::ObjectPositionDiscardPileContainer),
         #[prost(message, tag = "10")]
-        Scored(super::ObjectPositionScored),
+        ScoreAnimation(super::ObjectPositionScoreAnimation),
         #[prost(message, tag = "11")]
         Raid(super::ObjectPositionRaid),
         #[prost(message, tag = "12")]
@@ -536,34 +542,32 @@ pub struct RevealedCardView {
     #[prost(message, optional, tag = "3")]
     pub jewel: ::core::option::Option<SpriteAddress>,
     #[prost(message, optional, tag = "4")]
-    pub image_background: ::core::option::Option<SpriteAddress>,
-    #[prost(message, optional, tag = "5")]
     pub image: ::core::option::Option<SpriteAddress>,
-    #[prost(message, optional, tag = "6")]
+    #[prost(message, optional, tag = "5")]
     pub title: ::core::option::Option<CardTitle>,
-    #[prost(message, optional, tag = "7")]
+    #[prost(message, optional, tag = "6")]
     pub rules_text: ::core::option::Option<RulesText>,
     ///*
     /// True if this card should be displayed as visible to the opponent when in the arena.
-    #[prost(bool, tag = "8")]
+    #[prost(bool, tag = "7")]
     pub revealed_in_arena: bool,
     ///*
     /// Custom targeting behavior for a card. If unspecified, no targeting UI
     /// is shown.
-    #[prost(message, optional, tag = "9")]
+    #[prost(message, optional, tag = "8")]
     pub targeting: ::core::option::Option<CardTargeting>,
     ///*
     /// Where to move a played card. Information from 'targeting' will be
     /// incorporated to fill this in, e.g. if a room is targeted and
     /// ObjectPositionRoom is selected here with no RoomId, the targeted room
     /// is used.
-    #[prost(message, optional, tag = "10")]
+    #[prost(message, optional, tag = "9")]
     pub on_release_position: ::core::option::Option<ObjectPosition>,
     ///* Information needed to determine whether a card can be played.
-    #[prost(message, optional, tag = "11")]
+    #[prost(message, optional, tag = "10")]
     pub cost: ::core::option::Option<CardCost>,
     ///* Additional interface element rendered to the side of the card during an info zoom.
-    #[prost(message, optional, tag = "12")]
+    #[prost(message, optional, tag = "11")]
     pub supplemental_info: ::core::option::Option<Node>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -601,21 +605,16 @@ pub struct PlayerInfo {
     ///* Card back asset to use for this player's cards.
     #[prost(message, optional, tag = "4")]
     pub card_back: ::core::option::Option<SpriteAddress>,
-    ///* Describes the player's unique powers.
-    #[prost(message, optional, tag = "5")]
-    pub identity_card: ::core::option::Option<CardView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ManaView {
-    #[prost(int32, tag = "1")]
-    pub amount: i32,
+    #[prost(uint32, tag = "1")]
+    pub amount: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ScoreView {
-    #[prost(int32, tag = "1")]
-    pub score: i32,
-    #[prost(message, repeated, tag = "2")]
-    pub scored_cards: ::prost::alloc::vec::Vec<CardView>,
+    #[prost(uint32, tag = "1")]
+    pub score: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RoomView {
@@ -637,17 +636,11 @@ pub struct ArenaView {
     /// Controls the drag action taken for the player's identity card.
     #[prost(enumeration = "IdentityAction", tag = "2")]
     pub identity_action: i32,
-    #[prost(message, repeated, tag = "3")]
-    pub rooms: ::prost::alloc::vec::Vec<RoomView>,
-    #[prost(message, repeated, tag = "4")]
-    pub left_items: ::prost::alloc::vec::Vec<CardView>,
-    #[prost(message, repeated, tag = "5")]
-    pub right_items: ::prost::alloc::vec::Vec<CardView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ActionTrackerView {
-    #[prost(int32, tag = "1")]
-    pub available_action_count: i32,
+    #[prost(uint32, tag = "1")]
+    pub available_action_count: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeckView {
@@ -661,15 +654,9 @@ pub struct PlayerView {
     #[prost(message, optional, tag = "2")]
     pub score: ::core::option::Option<ScoreView>,
     #[prost(message, optional, tag = "3")]
-    pub hand: ::core::option::Option<HandView>,
-    #[prost(message, optional, tag = "4")]
     pub mana: ::core::option::Option<ManaView>,
-    #[prost(message, optional, tag = "5")]
-    pub discard_pile: ::core::option::Option<DiscardPileView>,
-    #[prost(message, optional, tag = "6")]
+    #[prost(message, optional, tag = "4")]
     pub action_tracker: ::core::option::Option<ActionTrackerView>,
-    #[prost(message, optional, tag = "7")]
-    pub deck: ::core::option::Option<DeckView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameView {
@@ -886,7 +873,7 @@ pub mod render_interface_command {
 /// differentiated in order to simplify the diffing logic the client needs
 /// to perform to detect and animate changes.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct RenderGameCommand {
+pub struct UpdateGameViewCommand {
     #[prost(message, optional, tag = "1")]
     pub game: ::core::option::Option<GameView>,
 }
@@ -916,29 +903,34 @@ pub struct LevelUpRoomCommand {
     pub room_id: i32,
 }
 ///*
-/// Makes a new card.
+/// Creates a new card, or updates an existing card if one is already present
+/// with the provided CardId.
+///
+/// When a user takes the 'draw card' game action, an optimistically-created
+/// card is constructed and animated to the staging area face down. If an
+/// optimistically-created card is found, that card is updated with the 'card'
+/// value here instead.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CreateCardCommand {
+pub struct CreateOrUpdateCardCommand {
     #[prost(message, optional, tag = "1")]
     pub card: ::core::option::Option<CardView>,
-    #[prost(message, optional, tag = "2")]
-    pub position: ::core::option::Option<ObjectPosition>,
-    ///* Optionally, an animation to play after creating the card.
-    #[prost(enumeration = "CardCreationAnimation", tag = "3")]
-    pub animation: i32,
     ///*
-    /// Disable animations when creating this card.
+    /// Optionally, a position in which to create this card. Ignored if the
+    /// card already exists. Ignored during optimistic card draw.
+    #[prost(message, optional, tag = "2")]
+    pub create_position: ::core::option::Option<ObjectPosition>,
+    ///*
+    /// Optionally, an animation to play after creating the card. Ignored if
+    /// the card already exists. Ignored during optimistic card draw.
+    #[prost(enumeration = "CardCreationAnimation", tag = "3")]
+    pub create_animation: i32,
+    ///*
+    /// Disables the flip animation for this card, allowing it immediately transition to a revealed state.
     #[prost(bool, tag = "4")]
-    pub disable_animation: bool,
+    pub disable_flip_animation: bool,
 }
 ///*
-/// Updates a card. Note that changes to 'on_create_position' are ignored here,
-/// use MoveCardCommand instead to reposition cards.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UpdateCardCommand {
-    #[prost(message, optional, tag = "1")]
-    pub card: ::core::option::Option<CardView>,
-}
+/// Moves a list of GameObjects to a new position. Objects already in the target position are skipped.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MoveGameObjectsCommand {
     #[prost(message, repeated, tag = "1")]
@@ -949,7 +941,7 @@ pub struct MoveGameObjectsCommand {
     /// Position at which to insert. If multiple IDs are specified, they will
     /// be sequentially added at this position
     #[prost(message, optional, tag = "3")]
-    pub index: ::core::option::Option<i32>,
+    pub index: ::core::option::Option<u32>,
     #[prost(bool, tag = "4")]
     pub disable_animation: bool,
 }
@@ -1060,7 +1052,7 @@ pub struct DisplayRewardsCommand {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19"
+        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1077,7 +1069,7 @@ pub mod game_command {
         #[prost(message, tag = "4")]
         RenderInterface(super::RenderInterfaceCommand),
         #[prost(message, tag = "5")]
-        RenderGame(super::RenderGameCommand),
+        UpdateGameView(super::UpdateGameViewCommand),
         #[prost(message, tag = "6")]
         InitiateRaid(super::InitiateRaidCommand),
         #[prost(message, tag = "7")]
@@ -1085,9 +1077,7 @@ pub mod game_command {
         #[prost(message, tag = "8")]
         LevelUpRoom(super::LevelUpRoomCommand),
         #[prost(message, tag = "9")]
-        CreateCard(super::CreateCardCommand),
-        #[prost(message, tag = "10")]
-        UpdateCard(super::UpdateCardCommand),
+        CreateOrUpdateCard(super::CreateOrUpdateCardCommand),
         #[prost(message, tag = "11")]
         MoveGameObjects(super::MoveGameObjectsCommand),
         #[prost(message, tag = "12")]
@@ -1372,7 +1362,8 @@ pub enum CardNodeAnchorPosition {
 #[repr(i32)]
 pub enum CardCreationAnimation {
     Unspecified = 0,
-    UserDeckToStaging = 1,
+    ///* Animates the card moving from the deck to the staging area.
+    DrawCard = 1,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

@@ -58,7 +58,7 @@ namespace Spelldawn.Game
     public IEnumerator AddObject(
       Displayable displayable,
       bool animate = true,
-      int? index = null,
+      uint? index = null,
       bool animateRemove = true)
     {
       MarkUpdateRequired(animate);
@@ -69,7 +69,7 @@ namespace Spelldawn.Game
     public IEnumerator AddObjects(
       IEnumerable<Displayable> objects,
       bool animate = true,
-      int? index = null,
+      uint? index = null,
       bool animateRemove = true)
     {
       MarkUpdateRequired(animate);
@@ -81,14 +81,14 @@ namespace Spelldawn.Game
       yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
     }
 
-    public int RemoveObject(Displayable displayable, bool animate = true)
+    public uint RemoveObject(Displayable displayable, bool animate = true)
     {
       MarkUpdateRequired(animate);
       var index = _objects.FindIndex(c => c == displayable);
       Errors.CheckNonNegative(index);
       _objects.RemoveAt(index);
       displayable.Parent = null;
-      return index;
+      return (uint)index;
     }
 
     public void RemoveObjectIfPresent(Displayable displayable, bool animate = true)
@@ -152,7 +152,7 @@ namespace Spelldawn.Game
       _animateNextUpdate |= animate;
     }
 
-    void Insert(Displayable displayable, bool animateRemove, int? index)
+    void Insert(Displayable displayable, bool animateRemove, uint? index)
     {
       Errors.CheckNotNull(displayable);
 
@@ -166,7 +166,7 @@ namespace Spelldawn.Game
       {
         if (index is { } i)
         {
-          _objects.Insert(i, displayable);
+          _objects.Insert((int)i, displayable);
         }
         else
         {

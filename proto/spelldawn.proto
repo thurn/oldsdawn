@@ -270,14 +270,14 @@ message TextShadow {
 }
 
 message TimeValue {
-    int32 milliseconds = 1;
+    uint32 milliseconds = 1;
 }
 
 message ImageSlice {
-    int32 top = 1;
-    int32 right = 2;
-    int32 bottom = 3;
-    int32 left = 4;
+    uint32 top = 1;
+    uint32 right = 2;
+    uint32 bottom = 3;
+    uint32 left = 4;
 }
 
 message FlexStyle {
@@ -407,7 +407,8 @@ enum PlayerName {
 }
 
 message CardId {
-    int32 value = 1;
+    uint32 side = 1;
+    uint32 index = 2;
 }
 
 message GameObjectId {
@@ -439,8 +440,11 @@ enum RoomId {
 
 
 message CardIcon {
+    /** Background for the icon. */
     SpriteAddress background = 1;
+    /** Text to display on the icon. */
     string text = 2;
+    /** Scale for the background image to render at. A value of 0.0 will be treated as 1.0. */
     float background_scale = 3;
 }
 
@@ -467,13 +471,12 @@ enum TargetingArrow {
     TARGETING_ARROW_GREEN = 3;
 }
 
+/** This card should prompt for a room to be played into. */
 message PickRoom {
-    repeated RoomId valid_rooms = 2;
 }
 
 message CardTargeting {
     oneof targeting {
-        /** Pick one of these valid rooms. */
         PickRoom pick_room = 1;
     }
 }
@@ -519,9 +522,10 @@ enum SpendCostAlgorithm {
 }
 
 message CardCost {
-    int32 mana_cost = 1;
+    /** Mana cost for the card, 0 is used to represent 'no cost'. */
+    uint32 mana_cost = 1;
 
-    int32 action_cost = 2;
+    uint32 action_cost = 2;
 
     bool can_play = 3;
 
@@ -542,7 +546,7 @@ enum RoomLocation {
 message ObjectPositionRoom {
     RoomId room_id = 1;
     RoomLocation room_location = 2;
-    google.protobuf.Int32Value index = 3;
+    google.protobuf.UInt32Value index = 3;
 }
 
 enum ItemLocation {
@@ -578,7 +582,11 @@ message ObjectPositionDiscardPileContainer {
     PlayerName owner = 1;
 }
 
-message ObjectPositionScored {
+/** 
+ * Large display of cards *while* the score animation is playing. After the score animation
+ * finishes, scored cards move to 'Identity' position.
+ */
+message ObjectPositionScoreAnimation {
 }
 
 message ObjectPositionRaid {
@@ -609,7 +617,7 @@ message ObjectPosition {
         ObjectPositionDeckContainer deck_container = 7;
         ObjectPositionDiscardPile discard_pile = 8;
         ObjectPositionDiscardPileContainer discard_pile_container = 9;
-        ObjectPositionScored scored = 10;
+        ObjectPositionScoreAnimation score_animation = 10;
         ObjectPositionRaid raid = 11;
         ObjectPositionBrowser browser = 12;
         ObjectPositionIdentity identity = 13;
@@ -621,21 +629,20 @@ message RevealedCardView {
     SpriteAddress card_frame = 1;
     SpriteAddress title_background = 2;
     SpriteAddress jewel = 3;
-    SpriteAddress image_background = 4;
-    SpriteAddress image = 5;
-    CardTitle title = 6;
-    RulesText rules_text = 7;
+    SpriteAddress image = 4;
+    CardTitle title = 5;
+    RulesText rules_text = 6;
 
     /**
      * True if this card should be displayed as visible to the opponent when in the arena.
      */
-    bool revealed_in_arena = 8;
+    bool revealed_in_arena = 7;
 
     /**
     * Custom targeting behavior for a card. If unspecified, no targeting UI
     * is shown.
     */
-    CardTargeting targeting = 9;
+    CardTargeting targeting = 8;
 
     /**
     * Where to move a played card. Information from 'targeting' will be
@@ -643,13 +650,13 @@ message RevealedCardView {
     * ObjectPositionRoom is selected here with no RoomId, the targeted room
     * is used.
     */
-    ObjectPosition on_release_position = 10;
+    ObjectPosition on_release_position = 9;
 
     /** Information needed to determine whether a card can be played. */
-    CardCost cost = 11;
+    CardCost cost = 10;
 
     /** Additional interface element rendered to the side of the card during an info zoom. */
-    Node supplemental_info = 12;
+    Node supplemental_info = 11;
 }
 
 message CardView {
@@ -677,21 +684,16 @@ message PlayerInfo {
     string name = 1;
     SpriteAddress portrait = 2;
     SpriteAddress portrait_frame = 3;
-
     /** Card back asset to use for this player's cards. */
     SpriteAddress card_back = 4;
-
-    /** Describes the player's unique powers. */
-    CardView identity_card = 5;
 }
 
 message ManaView {
-    int32 amount = 1;
+    uint32 amount = 1;
 }
 
 message ScoreView {
-    int32 score = 1;
-    repeated CardView scored_cards = 2;
+    uint32 score = 1;
 }
 
 message RoomView {
@@ -717,14 +719,10 @@ message ArenaView {
      * Controls the drag action taken for the player's identity card.
      */
     IdentityAction identity_action = 2;
-
-    repeated RoomView rooms = 3;
-    repeated CardView left_items = 4;
-    repeated CardView right_items = 5;
 }
 
 message ActionTrackerView {
-    int32 available_action_count = 1;
+    uint32 available_action_count = 1;
 }
 
 message DeckView {
@@ -734,11 +732,8 @@ message DeckView {
 message PlayerView {
     PlayerInfo player_info = 1;
     ScoreView score = 2;
-    HandView hand = 3;
-    ManaView mana = 4;
-    DiscardPileView discard_pile = 5;
-    ActionTrackerView action_tracker = 6;
-    DeckView deck = 7;
+    ManaView mana = 3;
+    ActionTrackerView action_tracker = 4;
 }
 
 message GameView {
@@ -746,7 +741,6 @@ message GameView {
     PlayerView user = 2;
     PlayerView opponent = 3;
     ArenaView arena = 4;
-
     /** The player who is currently able to act. */
     PlayerName current_priority = 5;
 }
@@ -929,7 +923,7 @@ message RenderInterfaceCommand {
 * differentiated in order to simplify the diffing logic the client needs
 * to perform to detect and animate changes.
 */
-message RenderGameCommand {
+message UpdateGameViewCommand {
     GameView game = 1;
 }
 
@@ -958,34 +952,43 @@ message LevelUpRoomCommand {
 enum CardCreationAnimation {
     CARD_CREATION_ANIMATION_UNSPECIFIED = 0;
 
-    CARD_CREATION_ANIMATION_USER_DECK_TO_STAGING = 1;
+    /** Animates the card moving from the deck to the staging area. */
+    CARD_CREATION_ANIMATION_DRAW_CARD = 1;
 }
 
 /**
-* Makes a new card.
-*/
-message CreateCardCommand {
+ * Creates a new card, or updates an existing card if one is already present
+ * with the provided CardId.
+ *
+ * When a user takes the 'draw card' game action, an optimistically-created
+ * card is constructed and animated to the staging area face down. If an
+ * optimistically-created card is found, that card is updated with the 'card'
+ * value here instead.
+ */
+message CreateOrUpdateCardCommand {
     CardView card = 1;
 
-    ObjectPosition position = 2;
+    /** 
+     * Optionally, a position in which to create this card. Ignored if the
+     * card already exists. Ignored during optimistic card draw.
+     */
+    ObjectPosition create_position = 2;
 
-    /** Optionally, an animation to play after creating the card. */
-    CardCreationAnimation animation = 3;
+    /** 
+     * Optionally, an animation to play after creating the card. Ignored if
+     * the card already exists. Ignored during optimistic card draw.
+     */
+    CardCreationAnimation create_animation = 3;
 
     /**
-    * Disable animations when creating this card.
+    * Disables the flip animation for this card, allowing it immediately transition to a revealed state.
     */
-    bool disable_animation = 4;
+    bool disable_flip_animation = 4;
 }
 
 /**
-* Updates a card. Note that changes to 'on_create_position' are ignored here,
-* use MoveCardCommand instead to reposition cards.
-*/
-message UpdateCardCommand {
-    CardView card = 1;
-}
-
+ * Moves a list of GameObjects to a new position. Objects already in the target position are skipped.
+ */
 message MoveGameObjectsCommand {
     repeated GameObjectId ids = 1;
 
@@ -995,7 +998,7 @@ message MoveGameObjectsCommand {
      * Position at which to insert. If multiple IDs are specified, they will
      * be sequentially added at this position
      */
-    google.protobuf.Int32Value index = 3;
+    google.protobuf.UInt32Value index = 3;
 
     bool disable_animation = 4;
 }
@@ -1113,12 +1116,11 @@ message GameCommand {
         RunInParallelCommand run_in_parallel = 2;
         DelayCommand delay = 3;
         RenderInterfaceCommand render_interface = 4;
-        RenderGameCommand render_game = 5;
+        UpdateGameViewCommand update_game_view = 5;
         InitiateRaidCommand initiate_raid = 6;
         EndRaidCommand end_raid = 7;
         LevelUpRoomCommand level_up_room = 8;
-        CreateCardCommand create_card = 9;
-        UpdateCardCommand update_card = 10;
+        CreateOrUpdateCardCommand create_or_update_card = 9;
         MoveGameObjectsCommand move_game_objects = 11;
         MoveGameObjectsAtPositionCommand move_objects_at_position = 12;
         PlaySoundCommand play_sound = 13;
