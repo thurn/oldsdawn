@@ -34,8 +34,8 @@ use protos::spelldawn::{
     ScoreView, SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
 };
 
-/// Produces a [CommandList] representing required updates to the provided [GameState].
-pub fn server_response(game: &GameState, user_side: Side) -> CommandList {
+/// Produces a [GameCommand] list representing required updates to the provided [GameState].
+pub fn server_response(game: &GameState, user_side: Side) -> Vec<GameCommand> {
     let mut commands = vec![];
 
     if game.modified() {
@@ -58,12 +58,12 @@ pub fn server_response(game: &GameState, user_side: Side) -> CommandList {
         }
     }
 
-    CommandList { commands }
+    commands
 }
 
 fn game_view(game: &GameState, user_side: Side) -> GameView {
     GameView {
-        game_id: Some(adapt_game_id(game.id())),
+        game_id: Some(GameId { value: game.id().value }),
         user: Some(player_view(game, user_side)),
         opponent: Some(player_view(game, user_side.opponent())),
         arena: Some(ArenaView {
@@ -103,11 +103,7 @@ fn create_or_update_card(
                 definition.config.faction,
             )),
             owning_player: to_player_name(definition.side, user_side).into(),
-            revealed_card: if revealed {
-                Some(revealed_card(game, card, definition, user_side))
-            } else {
-                None
-            },
+            revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
         }),
         create_position: Some(adapt_position(card.position(), user_side)),
         create_animation: CardCreationAnimation::Unspecified.into(),
@@ -179,15 +175,11 @@ fn card_icons(
         }
     } else {
         CardIcons {
-            arena_icon: if card.data().card_level > 0 {
-                Some(CardIcon {
-                    background: Some(assets::card_icon(CardIconType::LevelCounter)),
-                    text: card.data().card_level.to_string(),
-                    background_scale: 1.0,
-                })
-            } else {
-                None
-            },
+            arena_icon: (card.data().card_level > 0).then(|| CardIcon {
+                background: Some(assets::card_icon(CardIconType::LevelCounter)),
+                text: card.data().card_level.to_string(),
+                background_scale: 1.0,
+            }),
             ..CardIcons::default()
         }
     }
@@ -242,9 +234,11 @@ fn adapt_position(position: CardPosition, user_side: Side) -> ObjectPosition {
             CardPosition::Deck(side) => {
                 Position::Deck(ObjectPositionDeck { owner: to_player_name(side, user_side).into() })
             }
-            CardPosition::DiscardPile(side) => Position::DiscardPile(ObjectPositionDiscardPile {
-                owner: to_player_name(side, user_side).into(),
-            }),
+            CardPosition::DiscardPile(side, index) => {
+                Position::DiscardPile(ObjectPositionDiscardPile {
+                    owner: to_player_name(side, user_side).into(),
+                })
+            }
             CardPosition::Scored(side) => Position::Identity(ObjectPositionIdentity {
                 owner: to_player_name(side, user_side).into(),
             }),
@@ -260,15 +254,14 @@ fn adapt_position(position: CardPosition, user_side: Side) -> ObjectPosition {
 fn card_targeting(definition: &CardDefinition) -> CardTargeting {
     CardTargeting {
         targeting: match definition.card_type {
-            CardType::Spell => None,
-            CardType::Weapon => None,
-            CardType::Artifact => None,
-            CardType::Minion => Some(Targeting::PickRoom(PickRoom {})),
-            CardType::Project => Some(Targeting::PickRoom(PickRoom {})),
-            CardType::Scheme => Some(Targeting::PickRoom(PickRoom {})),
-            CardType::Upgrade => Some(Targeting::PickRoom(PickRoom {})),
-            CardType::Identity => None,
-            CardType::Token => None,
+            CardType::Spell
+            | CardType::Weapon
+            | CardType::Artifact
+            | CardType::Identity
+            | CardType::Token => None,
+            CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
+                Some(Targeting::PickRoom(PickRoom {}))
+            }
         },
     }
 }
@@ -276,19 +269,18 @@ fn card_targeting(definition: &CardDefinition) -> CardTargeting {
 fn release_position(definition: &CardDefinition) -> ObjectPosition {
     ObjectPosition {
         position: Some(match definition.card_type {
-            CardType::Spell => Position::Staging(ObjectPositionStaging {}),
+            CardType::Spell | CardType::Identity | CardType::Token => {
+                Position::Staging(ObjectPositionStaging {})
+            }
             CardType::Weapon => {
                 Position::Item(ObjectPositionItem { item_location: ItemLocation::Left.into() })
             }
             CardType::Artifact => {
                 Position::Item(ObjectPositionItem { item_location: ItemLocation::Right.into() })
             }
-            CardType::Minion => Position::Room(ObjectPositionRoom::default()),
-            CardType::Project => Position::Room(ObjectPositionRoom::default()),
-            CardType::Scheme => Position::Room(ObjectPositionRoom::default()),
-            CardType::Upgrade => Position::Room(ObjectPositionRoom::default()),
-            CardType::Identity => Position::Staging(ObjectPositionStaging {}),
-            CardType::Token => Position::Staging(ObjectPositionStaging {}),
+            CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
+                Position::Room(ObjectPositionRoom::default())
+            }
         }),
     }
 }
@@ -313,10 +305,6 @@ fn to_player_name(side: Side, user_side: Side) -> PlayerName {
 
 fn command(command: Command) -> GameCommand {
     GameCommand { command: Some(command) }
-}
-
-fn adapt_game_id(string: &str) -> GameId {
-    GameId { value: string.to_string() }
 }
 
 fn adapt_game_object_id(id: primitives::CardId) -> GameObjectId {

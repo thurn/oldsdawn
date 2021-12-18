@@ -124,7 +124,7 @@ namespace Spelldawn.Protos {
             "YW5kbGVycxIjCgVzdHlsZRgGIAEoCzIULnNwZWxsZGF3bi5GbGV4U3R5bGUS",
             "KQoLaG92ZXJfc3R5bGUYByABKAsyFC5zcGVsbGRhd24uRmxleFN0eWxlEisK",
             "DXByZXNzZWRfc3R5bGUYCCABKAsyFC5zcGVsbGRhd24uRmxleFN0eWxlIhcK",
-            "BkdhbWVJZBINCgV2YWx1ZRgBIAEoCSIlCgZDYXJkSWQSDAoEc2lkZRgBIAEo",
+            "BkdhbWVJZBINCgV2YWx1ZRgBIAEoBCIlCgZDYXJkSWQSDAoEc2lkZRgBIAEo",
             "DRINCgVpbmRleBgCIAEoDSLiAQoMR2FtZU9iamVjdElkEiQKB2NhcmRfaWQY",
             "ASABKAsyES5zcGVsbGRhd24uQ2FyZElkSAASKQoIaWRlbnRpdHkYAiABKA4y",
             "FS5zcGVsbGRhd24uUGxheWVyTmFtZUgAEiUKBGRlY2sYAyABKA4yFS5zcGVs",
@@ -8812,12 +8812,12 @@ namespace Spelldawn.Protos {
 
     /// <summary>Field number for the "value" field.</summary>
     public const int ValueFieldNumber = 1;
-    private string value_ = "";
+    private ulong value_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Value {
+    public ulong Value {
       get { return value_; }
       set {
-        value_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        value_ = value;
       }
     }
 
@@ -8841,7 +8841,7 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (Value.Length != 0) hash ^= Value.GetHashCode();
+      if (Value != 0UL) hash ^= Value.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -8858,9 +8858,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Value.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Value);
+      if (Value != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(Value);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -8871,9 +8871,9 @@ namespace Spelldawn.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Value.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Value);
+      if (Value != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(Value);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -8884,8 +8884,8 @@ namespace Spelldawn.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (Value.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Value);
+      if (Value != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Value);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -8898,7 +8898,7 @@ namespace Spelldawn.Protos {
       if (other == null) {
         return;
       }
-      if (other.Value.Length != 0) {
+      if (other.Value != 0UL) {
         Value = other.Value;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -8915,8 +8915,8 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            Value = input.ReadString();
+          case 8: {
+            Value = input.ReadUInt64();
             break;
           }
         }
@@ -8933,8 +8933,8 @@ namespace Spelldawn.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
-            Value = input.ReadString();
+          case 8: {
+            Value = input.ReadUInt64();
             break;
           }
         }

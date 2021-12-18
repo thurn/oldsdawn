@@ -99,8 +99,12 @@ pub fn card_frame(school: School) -> SpriteAddress {
 }
 
 pub fn title_background(faction: Option<Faction>) -> SpriteAddress {
-    if let Some(f) = faction {
-        SpriteAddress {
+    faction.map_or_else(
+        || SpriteAddress {
+            address: "LittleSweetDaemon/TCG_Card_Design/Warrior_Card/Warrior_Card Face_Tape"
+                .to_string(),
+        },
+        |f| SpriteAddress {
             address: match f {
                 Faction::Mortal => {
                     "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape"
@@ -113,46 +117,40 @@ pub fn title_background(faction: Option<Faction>) -> SpriteAddress {
                 }
             }
             .to_string(),
-        }
-    } else {
-        SpriteAddress {
-            address: "LittleSweetDaemon/TCG_Card_Design/Warrior_Card/Warrior_Card Face_Tape"
-                .to_string(),
-        }
-    }
+        },
+    )
 }
 
 pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) -> SpriteAddress {
-    if let Some(f) = faction {
-        SpriteAddress {
+    faction.map_or_else(
+        || SpriteAddress {
+            address: match card_type {
+                CardType::Spell | CardType::Minion | CardType::Upgrade | CardType::Token => {
+                    "SpriteWay/Icons/Clean Frames/9020".to_string()
+                }
+                CardType::Weapon | CardType::Artifact | CardType::Project | CardType::Scheme => {
+                    "SpriteWay/Icons/Clean Frames/9047".to_string()
+                }
+                CardType::Identity => identity_card_frame_string(side),
+            },
+        },
+        |f| SpriteAddress {
             address: match f {
                 Faction::Mortal => "SpriteWay/Icons/Clean Frames/9048",
                 Faction::Abyssal => "SpriteWay/Icons/Clean Frames/9055",
                 Faction::Infernal => "SpriteWay/Icons/Clean Frames/9054",
             }
             .to_string(),
-        }
-    } else {
-        SpriteAddress {
-            address: match card_type {
-                CardType::Spell => "SpriteWay/Icons/Clean Frames/9020".to_string(),
-                CardType::Weapon => "SpriteWay/Icons/Clean Frames/9047".to_string(),
-                CardType::Artifact => "SpriteWay/Icons/Clean Frames/9047".to_string(),
-                CardType::Minion => "SpriteWay/Icons/Clean Frames/9020".to_string(),
-                CardType::Project => "SpriteWay/Icons/Clean Frames/9047".to_string(),
-                CardType::Scheme => "SpriteWay/Icons/Clean Frames/9047".to_string(),
-                CardType::Upgrade => "SpriteWay/Icons/Clean Frames/9020".to_string(),
-                CardType::Identity => identity_card_frame_string(side),
-                CardType::Token => "SpriteWay/Icons/Clean Frames/9020".to_string(),
-            },
-        }
-    }
+        },
+    )
 }
 
 pub fn jewel(rarity: Rarity) -> SpriteAddress {
     SpriteAddress {
         address: match rarity {
-            Rarity::Common => "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01",
+            Rarity::Common | Rarity::None => {
+                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01"
+            }
             Rarity::Uncommon => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"
             }
@@ -160,7 +158,6 @@ pub fn jewel(rarity: Rarity) -> SpriteAddress {
             Rarity::Epic => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_02"
             }
-            Rarity::None => "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01",
         }
         .to_string(),
     }

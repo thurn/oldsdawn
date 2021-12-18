@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use convert_case::{Case, Casing};
+use serde::{Deserialize, Serialize};
+use std::cmp::Ordering;
 use strum_macros::Display;
 
-use convert_case::{Case, Casing};
-
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display, Serialize, Deserialize)]
 pub enum CardName {
-    /// Empty identity cards with no associated rules text, for use in unit tests
+    /// Empty identity cards with no associated rules text, for use in tests
     TestChampionIdentity,
     TestOverlordIdentity,
 
@@ -32,5 +33,17 @@ pub enum CardName {
 impl CardName {
     pub fn displayed_name(&self) -> String {
         format!("{}", self).from_case(Case::Pascal).to_case(Case::Title)
+    }
+}
+
+impl PartialOrd<Self> for CardName {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for CardName {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.to_string().cmp(&other.to_string())
     }
 }

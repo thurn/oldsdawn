@@ -49,18 +49,19 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
+pub mod database;
+pub mod server;
+
 use model::card_definition::{Ability, CardDefinition};
 use model::game::{GameState, NewGameOptions, RaidState};
 use model::primitives::{
-    AbilityId, AbilityIndex, BoostData, CardId, RaidId, RoomId, RoomLocation, Side,
+    AbilityId, AbilityIndex, BoostData, CardId, GameId, RaidId, RoomId, RoomLocation, Side,
 };
 use tonic::{transport::Server, Request, Response, Status};
 
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
-use protos::spelldawn::{
-    CommandList, GameCommand, GameId, GameRequest, GameView, UpdateGameViewCommand,
-};
+use protos::spelldawn::{CommandList, GameCommand, GameRequest, GameView, UpdateGameViewCommand};
 
 use cards::{card_helpers, dispatch, queries, CARDS};
 use model::card_name::CardName;
@@ -68,44 +69,60 @@ use model::card_state::{CardPosition, CardState};
 use model::delegates;
 use model::delegates::{Delegate, Scope};
 
-#[derive(Default)]
-pub struct GameService {}
+use crate::server::GameService;
+use maplit::hashmap;
+use model::card_name::CardName::TestOverlordIdentity;
+use model::deck::Deck;
 
-#[tonic::async_trait]
-impl Spelldawn for GameService {
-    async fn perform_action(
-        &self,
-        request: Request<GameRequest>,
-    ) -> Result<Response<CommandList>, Status> {
-        println!("Got a request from {:?}", request.remote_addr());
+//#[derive(Default)]
+//pub struct GameService {}
 
-        let reply = CommandList {
-            commands: vec![GameCommand {
-                command: Some(Command::UpdateGameView(UpdateGameViewCommand {
-                    game: Some(GameView {
-                        game_id: Some(GameId { value: "GAME_ID".to_string() }),
-                        user: None,
-                        opponent: None,
-                        arena: None,
-                        current_priority: 0,
-                    }),
-                })),
-            }],
-        };
-        Ok(Response::new(reply))
-    }
-}
+// #[tonic::async_trait]
+// impl Spelldawn for GameService {
+//     async fn perform_action(
+//         &self,
+//         request: Request<GameRequest>,
+//     ) -> Result<Response<CommandList>, Status> {
+//         println!("Got a request from {:?}", request.remote_addr());
+//
+//         let reply = CommandList {
+//             commands: vec![GameCommand {
+//                 command: Some(Command::UpdateGameView(UpdateGameViewCommand {
+//                     game: Some(GameView {
+//                         game_id: Some(GameId { value: "GAME_ID".to_string() }),
+//                         user: None,
+//                         opponent: None,
+//                         arena: None,
+//                         current_priority: 0,
+//                     }),
+//                 })),
+//             }],
+//         };
+//         Ok(Response::new(reply))
+//     }
+// }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Num CARDS {:?}", CARDS.len());
 
     let mut game = GameState::new_game(
-        "GameId".to_string(),
-        CardName::TestOverlordIdentity,
-        vec![CardName::GoldMine, CardName::IceDragon, CardName::DungeonAnnex],
-        CardName::TestChampionIdentity,
-        vec![CardName::ArcaneRecovery, CardName::Greataxe],
+        GameId::new(1),
+        Deck {
+            identity: CardName::TestOverlordIdentity,
+            cards: hashmap! {
+                CardName::DungeonAnnex => 1,
+                CardName::GoldMine => 1,
+                CardName::IceDragon => 1
+            },
+        },
+        Deck {
+            identity: CardName::TestChampionIdentity,
+            cards: hashmap! {
+                CardName::ArcaneRecovery => 1,
+                CardName::Greataxe => 1
+            },
+        },
         NewGameOptions::default(),
     );
 
@@ -123,7 +140,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     println!("Greataxe. Updated Attack: {:?}", queries::attack(&game, greataxe));
 
-    let gold_mine = CardId::new(Side::Overlord, 1);
+    let gold_mine = CardId::new(Side::Overlord, 2);
     game.card_mut(gold_mine).move_to(CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom));
     dispatch::invoke_event(&mut game, delegates::on_play_card, gold_mine);
     println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data().stored_mana);
@@ -144,7 +161,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         game.card(gold_mine).position()
     );
 
-    let ice_dragon = CardId::new(Side::Overlord, 2);
+    let ice_dragon = CardId::new(Side::Overlord, 3);
     game.card_mut(arcane_recovery).move_to(CardPosition::Hand(Side::Champion));
     game.card_mut(ice_dragon).move_to(CardPosition::Room(RoomId::RoomB, RoomLocation::Defender(0)));
     game.data_mut().raid =
@@ -162,16 +179,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     println!("Dungeon Annex. Starting Mana: {:?}", game.player(Side::Overlord).mana);
-    let dungeon_annex = CardId::new(Side::Overlord, 3);
+    let dungeon_annex = CardId::new(Side::Overlord, 1);
     dispatch::invoke_event(&mut game, delegates::on_score_scheme, dungeon_annex);
     println!("Dungeon Annex. Resulting Mana: {:?}", game.player(Side::Overlord).mana);
 
-    // let address = "127.0.0.1:50052".parse().expect("valid address");
-    // let service = tonic_web::config()
-    //     .allow_origins(vec!["127.0.0.1"])
-    //     .enable(SpelldawnServer::new(GameService::default()));
-    // println!("Server listening on {}", address);
-    // Server::builder().accept_http1(true).add_service(service).serve(address).await?;
+    let address = "127.0.0.1:50052".parse().expect("valid address");
+    let service = tonic_web::config()
+        .allow_origins(vec!["127.0.0.1"])
+        .enable(SpelldawnServer::new(GameService::default()));
+    println!("Server listening on {}", address);
+    Server::builder().accept_http1(true).add_service(service).serve(address).await?;
 
     Ok(())
 }

@@ -327,8 +327,8 @@ pub struct Node {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameId {
-    #[prost(string, tag = "1")]
-    pub value: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "1")]
+    pub value: u64,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardId {

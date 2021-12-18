@@ -179,7 +179,7 @@ namespace Spelldawn.Services
     {
       if (game.GameId != null)
       {
-        _registry.GameService.CurrentGameId = game.GameId.Value;
+        _registry.GameService.CurrentGameId = game.GameId;
       }
 
       _registry.CardService.SetCardBacks(game.User?.PlayerInfo?.CardBack, game.Opponent?.PlayerInfo?.CardBack);

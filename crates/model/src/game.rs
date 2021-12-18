@@ -15,29 +15,32 @@
 use crate::card_name::CardName;
 use crate::card_state;
 use crate::card_state::{AbilityState, CardPosition, CardPositionTypes, CardState};
+use crate::deck::Deck;
 use crate::primitives::{
-    AbilityId, AbilityIndex, ActionCount, CardId, ManaValue, PointsValue, RaidId, Side, TurnNumber,
+    AbilityId, AbilityIndex, ActionCount, CardId, GameId, ManaValue, PointsValue, RaidId, Side,
+    TurnNumber,
 };
 use rand::rngs::ThreadRng;
 use rand::seq::IteratorRandom;
 use rand::{thread_rng, Rng, RngCore};
+use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::btree_map::Entry;
 use std::iter;
 use std::iter::{Enumerate, Map};
 use std::slice::Iter;
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct PlayerState {
     pub mana: ManaValue,
     pub actions: ActionCount,
     pub score: PointsValue,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AnimationBuffer {}
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct RaidState {
     /// Unique ID for this raid
     pub raid_id: RaidId,
@@ -47,7 +50,7 @@ pub struct RaidState {
     pub priority: Side,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct GameData {
     /// Current player whose turn it is
     pub turn: Side,
@@ -57,19 +60,18 @@ pub struct GameData {
     pub raid: Option<RaidState>,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct NewGameOptions {
     /// Whether animations should be produced for this game
     pub enable_animations: bool,
 }
 
 /// Stores the primary state for an ongoing game
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameState {
-    id: String,
+    id: GameId,
     overlord_cards: Vec<CardState>,
     champion_cards: Vec<CardState>,
-    rng: ThreadRng,
     overlord: PlayerState,
     champion: PlayerState,
     data: GameData,
@@ -80,19 +82,15 @@ pub struct GameState {
 impl GameState {
     /// Creates a new game with the provided `id` and identity cards and decks for both players
     pub fn new_game(
-        id: String,
-        overlord_identity: CardName,
-        overlord_deck: Vec<CardName>,
-        champion_identity: CardName,
-        champion_deck: Vec<CardName>,
+        id: GameId,
+        overlord_deck: Deck,
+        champion_deck: Deck,
         options: NewGameOptions,
     ) -> Self {
-        let champion_start = overlord_deck.len();
         Self {
             id,
-            overlord_cards: Self::make_deck(overlord_identity, overlord_deck, Side::Overlord),
-            champion_cards: Self::make_deck(champion_identity, champion_deck, Side::Champion),
-            rng: thread_rng(),
+            overlord_cards: Self::make_deck(overlord_deck, Side::Overlord),
+            champion_cards: Self::make_deck(champion_deck, Side::Champion),
             overlord: PlayerState::default(),
             champion: PlayerState::default(),
             data: GameData { turn: Side::Overlord, turn_number: 1, raid: None },
@@ -113,8 +111,8 @@ impl GameState {
     }
 
     /// ID for this game
-    pub fn id(&self) -> &String {
-        &self.id
+    pub fn id(&self) -> GameId {
+        self.id
     }
 
     /// Returns the identity card for the provided Side.
@@ -148,11 +146,6 @@ impl GameState {
         &mut self.cards_mut(id.side)[id.index]
     }
 
-    /// Random number generator to use for this game, can be set in tests for deterministic outcomes
-    pub fn rng(&self) -> &ThreadRng {
-        &self.rng
-    }
-
     /// State for the players in the game
     pub fn player(&self, side: Side) -> &PlayerState {
         match side {
@@ -176,7 +169,7 @@ impl GameState {
         self.overlord_cards
             .iter()
             .chain(self.champion_cards.iter())
-            .choose(&mut self.rng)
+            .choose(&mut rand::thread_rng())
             .map(CardState::id)
     }
 
@@ -233,12 +226,12 @@ impl GameState {
     }
 
     /// Create card states for a deck
-    fn make_deck(identity: CardName, deck: Vec<CardName>, side: Side) -> Vec<CardState> {
-        iter::once(identity)
-            .chain(deck.into_iter())
+    fn make_deck(deck: Deck, side: Side) -> Vec<CardState> {
+        deck.card_names()
+            .iter()
             .enumerate()
             .map(move |(index, name)| {
-                CardState::new(CardId::new(side, index), name, CardPosition::Deck(side))
+                CardState::new(CardId::new(side, index), *name, CardPosition::Deck(side))
             })
             .collect()
     }

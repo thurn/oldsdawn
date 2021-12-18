@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use crate::card_name::CardName;
+use serde::{Deserialize, Serialize};
 
 pub type TurnNumber = u32;
 pub type ManaValue = u32;
@@ -24,8 +25,23 @@ pub type ShieldValue = u32;
 pub type BoostCount = u32;
 pub type LevelValue = u32;
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+pub struct GameId {
+    pub value: u64,
+}
+
+impl GameId {
+    pub fn new(value: u64) -> Self {
+        Self { value }
+    }
+
+    pub fn key(&self) -> [u8; 8] {
+        self.value.to_be_bytes()
+    }
+}
+
 /// The two players in a game: Overlord & Champion
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Side {
     Overlord,
     Champion,
@@ -41,7 +57,7 @@ impl Side {
 }
 
 /// Identifies a card in an ongoing game
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct CardId {
     pub side: Side,
     pub index: usize,
@@ -56,10 +72,10 @@ impl CardId {
 /// Identifies an ability within a card. Abilities are the only game entity which may contain
 /// delegates. Abilities are identified by their position within the card's 'abilities',
 /// or 'activated_abilities' vector.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Ord, PartialOrd)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct AbilityIndex(pub usize);
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct AbilityId {
     pub card_id: CardId,
     pub index: AbilityIndex,
@@ -78,10 +94,10 @@ impl From<AbilityId> for CardId {
 }
 
 /// Uniquely identifies a raid within a given game
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct RaidId(pub u32);
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct Sprite {
     pub address: String,
 }
@@ -92,7 +108,7 @@ impl Sprite {
     }
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum School {
     Neutral,
     Shadow,
@@ -100,7 +116,7 @@ pub enum School {
     Time,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomId {
     Treasury,
     Sanctum,
@@ -114,26 +130,26 @@ pub enum RoomId {
 
 pub type DefenderIndex = u32;
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomLocation {
     Defender(DefenderIndex),
     InRoom,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum ItemLocation {
     Weapons,
     Artifacts,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Faction {
     Mortal,
     Abyssal,
     Infernal,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Rarity {
     Common,
     Uncommon,
@@ -144,7 +160,7 @@ pub enum Rarity {
     None,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum CardType {
     Spell,
     Weapon,
@@ -157,13 +173,13 @@ pub enum CardType {
     Token,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum CardSubtype {
     Silvered,
 }
 
 /// Describes a boost ability activation
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct BoostData {
     /// Boosted card
     pub card_id: CardId,

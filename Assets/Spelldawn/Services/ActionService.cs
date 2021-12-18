@@ -195,10 +195,7 @@ namespace Spelldawn.Services
         var request = new GameRequest
         {
           Action = action,
-          GameId = new GameId
-          {
-            Value = _registry.GameService.CurrentGameId
-          }
+          GameId = _registry.GameService.CurrentGameId
         };
 
         var task = _client.PerformActionAsync(request).GetAwaiter();

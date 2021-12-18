@@ -51,6 +51,7 @@
 pub mod card_definition;
 pub mod card_name;
 pub mod card_state;
+pub mod deck;
 pub mod delegates;
 pub mod game;
 pub mod primitives;

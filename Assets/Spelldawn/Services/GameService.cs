@@ -22,19 +22,30 @@ namespace Spelldawn.Services
   public sealed class GameService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
-    [SerializeField] string? _currentGameId;
 
-    public string? CurrentGameId
+    // ReSharper disable once NotAccessedField.Local
+    [SerializeField] string? _debugGameId;
+
+    GameId? _currentGameId;
+
+    public GameId? CurrentGameId
     {
       get => _currentGameId;
-      set => _currentGameId = value;
+      set
+      {
+        _debugGameId = value == null ? "None" : value.ToString();
+        _currentGameId = value;
+      }
     }
 
     void Start()
     {
       _registry.ActionService.HandleAction(new GameAction
       {
-        Connect = new ConnectAction()
+        Connect = new ConnectAction
+        {
+          GameId = CurrentGameId
+        }
       });
     }
   }

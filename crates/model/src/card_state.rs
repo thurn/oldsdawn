@@ -18,17 +18,18 @@ use crate::primitives::{
     AbilityIndex, BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RoomId, RoomLocation,
     Side,
 };
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use strum_macros::EnumDiscriminants;
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
 #[strum_discriminants(name(CardPositionTypes))]
 pub enum CardPosition {
     Room(RoomId, RoomLocation),
     ArenaItem(ItemLocation),
     Hand(Side),
     Deck(Side),
-    DiscardPile(Side),
+    DiscardPile(Side, usize),
     Scored(Side),
 
     /// Marks the identity card for a side. It is an error for a game to contain more than one
@@ -59,10 +60,10 @@ impl CardPosition {
     }
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AbilityState {}
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CardData {
     // Has this card been revealed to the opponent?
     pub revealed: bool,
@@ -77,7 +78,7 @@ pub struct CardData {
     pub ability_state: BTreeMap<AbilityIndex, AbilityState>,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct CardState {
     id: CardId,
     name: CardName,
