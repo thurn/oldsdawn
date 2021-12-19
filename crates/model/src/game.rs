@@ -14,7 +14,7 @@
 
 use crate::card_name::CardName;
 use crate::card_state;
-use crate::card_state::{AbilityState, CardPosition, CardPositionTypes, CardState};
+use crate::card_state::{AbilityState, CardPosition, CardPositionTypes, CardState, SortingKey};
 use crate::deck::Deck;
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, CardId, GameId, ManaValue, PointsValue, RaidId, Side,
@@ -77,6 +77,7 @@ pub struct GameState {
     data: GameData,
     modified: bool,
     animations: Option<AnimationBuffer>,
+    next_sorting_key: SortingKey,
 }
 
 impl GameState {
@@ -96,6 +97,7 @@ impl GameState {
             data: GameData { turn: Side::Overlord, turn_number: 1, raid: None },
             modified: false,
             animations: options.enable_animations.then(AnimationBuffer::default),
+            next_sorting_key: 1,
         }
     }
 
@@ -163,6 +165,18 @@ impl GameState {
         }
     }
 
+    /// Moves a card to a new [CardPosition].
+    pub fn move_card(&mut self, card_id: impl Into<CardId>, new_position: CardPosition) {
+        let key = self.next_sorting_key;
+        self.card_mut(card_id).move_to(new_position, key);
+        self.next_sorting_key += 1;
+    }
+
+    /// Finds the [CardPosition] of a given card.
+    pub fn card_position(&self, card_id: impl Into<CardId>) -> CardPosition {
+        self.card(card_id).position()
+    }
+
     /// Return a random card in the provided `position`, or None if there are no cards in that
     /// position
     pub fn random_card(&mut self, position: CardPosition) -> Option<CardId> {
@@ -181,16 +195,6 @@ impl GameState {
     /// Mutable version of [Self::hand]
     pub fn hand_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
         self.cards_mut(side).iter_mut().filter(|c| c.position().in_hand())
-    }
-
-    /// Cards in a player's deck
-    pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards(side).iter().filter(|c| c.position().in_deck())
-    }
-
-    /// Mutable version of [Self::deck]
-    pub fn deck_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_mut(side).iter_mut().filter(|c| c.position().in_deck())
     }
 
     /// Cards in a player's discard pile
@@ -230,9 +234,7 @@ impl GameState {
         deck.card_names()
             .iter()
             .enumerate()
-            .map(move |(index, name)| {
-                CardState::new(CardId::new(side, index), *name, CardPosition::Deck(side))
-            })
+            .map(move |(index, name)| CardState::new(CardId::new(side, index), *name, side))
             .collect()
     }
 

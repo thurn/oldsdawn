@@ -54,7 +54,8 @@ pub fn server_response(game: &GameState, user_side: Side) -> Vec<GameCommand> {
         }
 
         if card.position_modified() {
-            commands.push(command(Command::MoveGameObjects(move_card(card, user_side, false))));
+            commands
+                .push(command(Command::MoveGameObjects(move_card(game, card, user_side, false))));
         }
     }
 
@@ -77,11 +78,15 @@ fn game_view(game: &GameState, user_side: Side) -> GameView {
     }
 }
 
-fn move_card(card: &CardState, user_side: Side, disable_animation: bool) -> MoveGameObjectsCommand {
+fn move_card(
+    game: &GameState,
+    card: &CardState,
+    user_side: Side,
+    disable_animation: bool,
+) -> MoveGameObjectsCommand {
     MoveGameObjectsCommand {
         ids: vec![adapt_game_object_id(card.id())],
-        position: Some(adapt_position(card.position(), user_side)),
-        index: None,
+        position: Some(adapt_position(card, game.card_position(card.id()), user_side)),
         disable_animation,
     }
 }
@@ -105,7 +110,7 @@ fn create_or_update_card(
             owning_player: to_player_name(definition.side, user_side).into(),
             revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
         }),
-        create_position: Some(adapt_position(card.position(), user_side)),
+        create_position: Some(adapt_position(card, game.card_position(card.id()), user_side)),
         create_animation: CardCreationAnimation::Unspecified.into(),
         disable_flip_animation: false,
     }
@@ -206,20 +211,19 @@ fn revealed_card(
     }
 }
 
-fn adapt_position(position: CardPosition, user_side: Side) -> ObjectPosition {
+/// Converts a card position into a rendered [ObjectPosition]. Returns None if this card is not
+/// expected to exist as a GameObject (e.g. because it is currently in the user's deck).
+fn adapt_position(card: &CardState, position: CardPosition, user_side: Side) -> ObjectPosition {
     ObjectPosition {
+        sorting_key: Some(card.sorting_key()),
         position: Some(match position {
             CardPosition::Room(room_id, location) => Position::Room(ObjectPositionRoom {
                 room_id: adapt_room_id(room_id).into(),
                 room_location: match location {
-                    primitives::RoomLocation::Defender(_) => RoomLocation::Front,
+                    primitives::RoomLocation::Defender => RoomLocation::Front,
                     primitives::RoomLocation::InRoom => RoomLocation::Back,
                 }
                 .into(),
-                index: match location {
-                    primitives::RoomLocation::Defender(position) => Some(position),
-                    primitives::RoomLocation::InRoom => None,
-                },
             }),
             CardPosition::ArenaItem(location) => Position::Item(ObjectPositionItem {
                 item_location: match location {
@@ -231,14 +235,12 @@ fn adapt_position(position: CardPosition, user_side: Side) -> ObjectPosition {
             CardPosition::Hand(side) => {
                 Position::Hand(ObjectPositionHand { owner: to_player_name(side, user_side).into() })
             }
-            CardPosition::Deck(side) => {
+            CardPosition::DeckKnown(side, _) | CardPosition::DeckUnknown(side) => {
                 Position::Deck(ObjectPositionDeck { owner: to_player_name(side, user_side).into() })
             }
-            CardPosition::DiscardPile(side, index) => {
-                Position::DiscardPile(ObjectPositionDiscardPile {
-                    owner: to_player_name(side, user_side).into(),
-                })
-            }
+            CardPosition::DiscardPile(side) => Position::DiscardPile(ObjectPositionDiscardPile {
+                owner: to_player_name(side, user_side).into(),
+            }),
             CardPosition::Scored(side) => Position::Identity(ObjectPositionIdentity {
                 owner: to_player_name(side, user_side).into(),
             }),
@@ -268,6 +270,7 @@ fn card_targeting(definition: &CardDefinition) -> CardTargeting {
 
 fn release_position(definition: &CardDefinition) -> ObjectPosition {
     ObjectPosition {
+        sorting_key: None,
         position: Some(match definition.card_type {
             CardType::Spell | CardType::Identity | CardType::Token => {
                 Position::Staging(ObjectPositionStaging {})

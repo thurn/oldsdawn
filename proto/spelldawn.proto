@@ -173,7 +173,10 @@ message FlexColor {
     /** Blue color component, specified in the range 0.0 to 1.0 inclusive. */
     float blue = 3;
 
-    /** Alpha color component, specified in the range 0.0 (transparent) to 1.0 (opaque) inclusive. */
+    /** 
+     * Alpha color component, specified in the range 0.0 (transparent) to 1.0
+     * (opaque) inclusive.
+     */
     float alpha = 4;
 }
 
@@ -444,7 +447,10 @@ message CardIcon {
     SpriteAddress background = 1;
     /** Text to display on the icon. */
     string text = 2;
-    /** Scale for the background image to render at. A value of 0.0 will be treated as 1.0. */
+    /** 
+     * Scale for the background image to render at. A value of 0.0 will be
+     * treated as 1.0
+     */
     float background_scale = 3;
 }
 
@@ -546,7 +552,6 @@ enum RoomLocation {
 message ObjectPositionRoom {
     RoomId room_id = 1;
     RoomLocation room_location = 2;
-    google.protobuf.UInt32Value index = 3;
 }
 
 enum ItemLocation {
@@ -583,8 +588,8 @@ message ObjectPositionDiscardPileContainer {
 }
 
 /** 
- * Large display of cards *while* the score animation is playing. After the score animation
- * finishes, scored cards move to 'Identity' position.
+ * Large display of cards *while* the score animation is playing. After the
+ * score animation finishes, scored cards move to 'Identity' position.
  */
 message ObjectPositionScoreAnimation {
 }
@@ -607,21 +612,28 @@ message ObjectPositionRewardChest {
 }
 
 message ObjectPosition {
+    /**
+     * Optionally, a key by which to sort this object. If not provided, the
+     * object will be appended to the end of the list (which is typically the
+     * 'top' of the display).
+     */
+     google.protobuf.UInt32Value sorting_key = 1;
+    
     oneof position {
-        ObjectPositionOffscreen offscreen = 1;
-        ObjectPositionRoom room = 2;
-        ObjectPositionItem item = 3;
-        ObjectPositionStaging staging = 4;
-        ObjectPositionHand hand = 5;
-        ObjectPositionDeck deck = 6;
-        ObjectPositionDeckContainer deck_container = 7;
-        ObjectPositionDiscardPile discard_pile = 8;
-        ObjectPositionDiscardPileContainer discard_pile_container = 9;
-        ObjectPositionScoreAnimation score_animation = 10;
-        ObjectPositionRaid raid = 11;
-        ObjectPositionBrowser browser = 12;
-        ObjectPositionIdentity identity = 13;
-        ObjectPositionIdentityContainer identity_container = 14;
+        ObjectPositionOffscreen offscreen = 2;
+        ObjectPositionRoom room = 3;
+        ObjectPositionItem item = 4;
+        ObjectPositionStaging staging = 5;
+        ObjectPositionHand hand = 6;
+        ObjectPositionDeck deck = 7;
+        ObjectPositionDeckContainer deck_container = 8;
+        ObjectPositionDiscardPile discard_pile = 9;
+        ObjectPositionDiscardPileContainer discard_pile_container = 10;
+        ObjectPositionScoreAnimation score_animation = 11;
+        ObjectPositionRaid raid = 12;
+        ObjectPositionBrowser browser = 13;
+        ObjectPositionIdentity identity = 14;
+        ObjectPositionIdentityContainer identity_container = 15;
     }
 }
 
@@ -634,7 +646,8 @@ message RevealedCardView {
     RulesText rules_text = 6;
 
     /**
-     * True if this card should be displayed as visible to the opponent when in the arena.
+     * True if this card should be displayed as visible to the opponent when in
+     * the arena.
      */
     bool revealed_in_arena = 7;
 
@@ -655,7 +668,10 @@ message RevealedCardView {
     /** Information needed to determine whether a card can be played. */
     CardCost cost = 10;
 
-    /** Additional interface element rendered to the side of the card during an info zoom. */
+    /** 
+     * Additional interface element rendered to the side of the card during an
+     * info zoom.
+     */
     Node supplemental_info = 11;
 }
 
@@ -812,8 +828,8 @@ message CardTarget {
 *     the options optimistically, instead they animate to the reveal card area
 *   - Item cards which don't require a choice to be made or target simply
 *     animate into the play area optimistically
-*   - Spell cards animate to the reveal card area and wait for their effects to be
-*     applied
+*   - Spell cards animate to the reveal card area and wait for their effects to
+*     be applied
 *   - Minion and Project cards animate to their selected room optimistically
 */
 message PlayCardAction {
@@ -865,8 +881,8 @@ message DebugLogCommand {
 }
 
 /**
- * Run a series of command lists simultaneously. Warning: applying multiple commands
- * to the same game object will have unpredictable results.
+ * Run a series of command lists simultaneously. Warning: applying multiple
+ * commands to the same game object will have unpredictable results.
  */
 message RunInParallelCommand {
     repeated CommandList commands = 1;
@@ -981,29 +997,32 @@ message CreateOrUpdateCardCommand {
     CardCreationAnimation create_animation = 3;
 
     /**
-    * Disables the flip animation for this card, allowing it immediately transition to a revealed state.
+    * Disables the flip animation for this card, allowing it immediately
+    * transition to a revealed state.
     */
     bool disable_flip_animation = 4;
 }
 
 /**
- * Moves a list of GameObjects to a new position. Objects already in the target position are skipped.
+ * Moves a list of GameObjects to a new position. Objects already in the target
+ * position are skipped.
  */
 message MoveGameObjectsCommand {
     repeated GameObjectId ids = 1;
 
-    ObjectPosition position = 2;
-
     /**
      * Position at which to insert. If multiple IDs are specified, they will
      * be sequentially added at this position
-     */
-    google.protobuf.UInt32Value index = 3;
-
-    bool disable_animation = 4;
+     */    
+    ObjectPosition position = 2;
+    
+    bool disable_animation = 3;
 }
 
-/** Request to move all GameObjects located at a specific object position to another object position. */
+/** 
+ * Request to move all GameObjects located at a specific object position to
+ * another object position.
+ */
 message MoveGameObjectsAtPositionCommand {
     ObjectPosition source_position = 1;
 

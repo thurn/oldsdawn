@@ -141,7 +141,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Greataxe. Updated Attack: {:?}", queries::attack(&game, greataxe));
 
     let gold_mine = CardId::new(Side::Overlord, 2);
-    game.card_mut(gold_mine).move_to(CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom));
+    game.move_card(gold_mine, CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom));
     dispatch::invoke_event(&mut game, delegates::on_play_card, gold_mine);
     println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data().stored_mana);
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
@@ -158,12 +158,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "Gold Mine. Stored Mana: {:?} Overlord Mana: {:?} Card Position: {:?}",
         game.card(gold_mine).data().stored_mana,
         game.player(Side::Overlord).mana,
-        game.card(gold_mine).position()
+        game.card_position(gold_mine)
     );
 
     let ice_dragon = CardId::new(Side::Overlord, 3);
-    game.card_mut(arcane_recovery).move_to(CardPosition::Hand(Side::Champion));
-    game.card_mut(ice_dragon).move_to(CardPosition::Room(RoomId::RoomB, RoomLocation::Defender(0)));
+    game.move_card(arcane_recovery, CardPosition::Hand(Side::Champion));
+    game.move_card(ice_dragon, CardPosition::Room(RoomId::RoomB, RoomLocation::Defender));
     game.data_mut().raid =
         Some(RaidState { raid_id: RaidId(0), encounter_number: 0, priority: Side::Overlord });
     println!(

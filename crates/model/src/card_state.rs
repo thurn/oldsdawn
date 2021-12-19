@@ -14,6 +14,8 @@
 
 use crate::card_definition::CardDefinition;
 use crate::card_name::CardName;
+use crate::deck::Deck;
+use crate::game::GameState;
 use crate::primitives::{
     AbilityIndex, BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RoomId, RoomLocation,
     Side,
@@ -22,16 +24,32 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use strum_macros::EnumDiscriminants;
 
+/// Determines display order when multiple cards are in the same position. Typically, this is taken
+/// from an opaque, sequentially increasing counter representing what time the card first moved to
+/// this position.
+pub type SortingKey = u32;
+
+/// Possible known positions of cards within a deck
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum DeckPosition {
+    Top,
+    Bottom,
+}
+
+/// Identifies the location of a card during an active game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
 #[strum_discriminants(name(CardPositionTypes))]
 pub enum CardPosition {
+    /// An unspecified random position within a user's deck. The default position of all cards
+    /// when a new game is started.
+    DeckUnknown(Side),
+    /// A position within a user's deck which is known to at least one player.
+    DeckKnown(Side, DeckPosition),
+    Hand(Side),
     Room(RoomId, RoomLocation),
     ArenaItem(ItemLocation),
-    Hand(Side),
-    Deck(Side),
-    DiscardPile(Side, usize),
+    DiscardPile(Side),
     Scored(Side),
-
     /// Marks the identity card for a side. It is an error for a game to contain more than one
     /// identity card per side.
     Identity(Side),
@@ -47,8 +65,9 @@ impl CardPosition {
         CardPositionTypes::Hand == self.into()
     }
 
+    /// Returns true if this card is in a known or unknown deck position
     pub fn in_deck(&self) -> bool {
-        CardPositionTypes::Deck == self.into()
+        matches!(self.into(), CardPositionTypes::DeckUnknown | CardPositionTypes::DeckKnown)
     }
 
     pub fn in_discard_pile(&self) -> bool {
@@ -82,19 +101,23 @@ pub struct CardData {
 pub struct CardState {
     id: CardId,
     name: CardName,
+    side: Side,
     position: CardPosition,
+    sorting_key: SortingKey,
     position_modified: bool,
     data: CardData,
     data_modified: bool,
 }
 
 impl CardState {
-    pub fn new(id: CardId, name: CardName, position: CardPosition) -> Self {
+    pub fn new(id: CardId, name: CardName, side: Side) -> Self {
         Self {
             id,
             name,
-            position,
+            side,
+            position: CardPosition::DeckUnknown(side),
             position_modified: false,
+            sorting_key: 0,
             data: CardData::default(),
             data_modified: false,
         }
@@ -116,21 +139,33 @@ impl CardState {
         self.name
     }
 
-    /// Where this card is located in the game
-    pub fn position(&self) -> CardPosition {
+    pub fn side(&self) -> Side {
+        self.side
+    }
+
+    /// Where this card is located in the game. Use [GameState::card_position] instead of invoking
+    /// this directly.
+    pub(crate) fn position(&self) -> CardPosition {
         self.position
     }
 
-    /// Move this card to a new position
-    pub fn move_to(&mut self, new_position: CardPosition) {
+    /// Move this card to a new position. Use [GameState::move_card] instead of invoking this
+    /// directly.
+    pub(crate) fn move_to(&mut self, new_position: CardPosition, key: SortingKey) {
         self.position_modified = true;
         self.position = new_position;
+        self.sorting_key = key;
     }
 
     /// Whether [Self::position] has been modified since the last call to
     /// [CardState::clear_modified_flags]    
     pub fn position_modified(&self) -> bool {
         self.position_modified
+    }
+
+    /// Opaque value identifying this card's sort order within its position
+    pub fn sorting_key(&self) -> SortingKey {
+        self.sorting_key
     }
 
     /// Optional state for this card

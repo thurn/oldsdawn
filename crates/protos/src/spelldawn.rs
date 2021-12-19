@@ -9,7 +9,9 @@ pub struct FlexColor {
     ///* Blue color component, specified in the range 0.0 to 1.0 inclusive.
     #[prost(float, tag = "3")]
     pub blue: f32,
-    ///* Alpha color component, specified in the range 0.0 (transparent) to 1.0 (opaque) inclusive.
+    ///*
+    /// Alpha color component, specified in the range 0.0 (transparent) to 1.0
+    /// (opaque) inclusive.
     #[prost(float, tag = "4")]
     pub alpha: f32,
 }
@@ -370,7 +372,9 @@ pub struct CardIcon {
     ///* Text to display on the icon.
     #[prost(string, tag = "2")]
     pub text: ::prost::alloc::string::String,
-    ///* Scale for the background image to render at. A value of 0.0 will be treated as 1.0.
+    ///*
+    /// Scale for the background image to render at. A value of 0.0 will be
+    /// treated as 1.0
     #[prost(float, tag = "3")]
     pub background_scale: f32,
 }
@@ -435,8 +439,6 @@ pub struct ObjectPositionRoom {
     pub room_id: i32,
     #[prost(enumeration = "RoomLocation", tag = "2")]
     pub room_location: i32,
-    #[prost(message, optional, tag = "3")]
-    pub index: ::core::option::Option<u32>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionItem {
@@ -471,8 +473,8 @@ pub struct ObjectPositionDiscardPileContainer {
     pub owner: i32,
 }
 ///*
-/// Large display of cards *while* the score animation is playing. After the score animation
-/// finishes, scored cards move to 'Identity' position.
+/// Large display of cards *while* the score animation is playing. After the
+/// score animation finishes, scored cards move to 'Identity' position.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionScoreAnimation {}
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -493,9 +495,15 @@ pub struct ObjectPositionIdentityContainer {
 pub struct ObjectPositionRewardChest {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPosition {
+    ///*
+    /// Optionally, a key by which to sort this object. If not provided, the
+    /// object will be appended to the end of the list (which is typically the
+    /// 'top' of the display).
+    #[prost(message, optional, tag = "1")]
+    pub sorting_key: ::core::option::Option<u32>,
     #[prost(
         oneof = "object_position::Position",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"
+        tags = "2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15"
     )]
     pub position: ::core::option::Option<object_position::Position>,
 }
@@ -503,33 +511,33 @@ pub struct ObjectPosition {
 pub mod object_position {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Position {
-        #[prost(message, tag = "1")]
-        Offscreen(super::ObjectPositionOffscreen),
         #[prost(message, tag = "2")]
-        Room(super::ObjectPositionRoom),
+        Offscreen(super::ObjectPositionOffscreen),
         #[prost(message, tag = "3")]
-        Item(super::ObjectPositionItem),
+        Room(super::ObjectPositionRoom),
         #[prost(message, tag = "4")]
-        Staging(super::ObjectPositionStaging),
+        Item(super::ObjectPositionItem),
         #[prost(message, tag = "5")]
-        Hand(super::ObjectPositionHand),
+        Staging(super::ObjectPositionStaging),
         #[prost(message, tag = "6")]
-        Deck(super::ObjectPositionDeck),
+        Hand(super::ObjectPositionHand),
         #[prost(message, tag = "7")]
-        DeckContainer(super::ObjectPositionDeckContainer),
+        Deck(super::ObjectPositionDeck),
         #[prost(message, tag = "8")]
-        DiscardPile(super::ObjectPositionDiscardPile),
+        DeckContainer(super::ObjectPositionDeckContainer),
         #[prost(message, tag = "9")]
-        DiscardPileContainer(super::ObjectPositionDiscardPileContainer),
+        DiscardPile(super::ObjectPositionDiscardPile),
         #[prost(message, tag = "10")]
-        ScoreAnimation(super::ObjectPositionScoreAnimation),
+        DiscardPileContainer(super::ObjectPositionDiscardPileContainer),
         #[prost(message, tag = "11")]
-        Raid(super::ObjectPositionRaid),
+        ScoreAnimation(super::ObjectPositionScoreAnimation),
         #[prost(message, tag = "12")]
-        Browser(super::ObjectPositionBrowser),
+        Raid(super::ObjectPositionRaid),
         #[prost(message, tag = "13")]
-        Identity(super::ObjectPositionIdentity),
+        Browser(super::ObjectPositionBrowser),
         #[prost(message, tag = "14")]
+        Identity(super::ObjectPositionIdentity),
+        #[prost(message, tag = "15")]
         IdentityContainer(super::ObjectPositionIdentityContainer),
     }
 }
@@ -548,7 +556,8 @@ pub struct RevealedCardView {
     #[prost(message, optional, tag = "6")]
     pub rules_text: ::core::option::Option<RulesText>,
     ///*
-    /// True if this card should be displayed as visible to the opponent when in the arena.
+    /// True if this card should be displayed as visible to the opponent when in
+    /// the arena.
     #[prost(bool, tag = "7")]
     pub revealed_in_arena: bool,
     ///*
@@ -566,7 +575,9 @@ pub struct RevealedCardView {
     ///* Information needed to determine whether a card can be played.
     #[prost(message, optional, tag = "10")]
     pub cost: ::core::option::Option<CardCost>,
-    ///* Additional interface element rendered to the side of the card during an info zoom.
+    ///*
+    /// Additional interface element rendered to the side of the card during an
+    /// info zoom.
     #[prost(message, optional, tag = "11")]
     pub supplemental_info: ::core::option::Option<Node>,
 }
@@ -742,8 +753,8 @@ pub mod card_target {
 ///     the options optimistically, instead they animate to the reveal card area
 ///   - Item cards which don't require a choice to be made or target simply
 ///     animate into the play area optimistically
-///   - Spell cards animate to the reveal card area and wait for their effects to be
-///     applied
+///   - Spell cards animate to the reveal card area and wait for their effects to
+///     be applied
 ///   - Minion and Project cards animate to their selected room optimistically
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayCardAction {
@@ -810,8 +821,8 @@ pub struct DebugLogCommand {
     pub message: ::prost::alloc::string::String,
 }
 ///*
-/// Run a series of command lists simultaneously. Warning: applying multiple commands
-/// to the same game object will have unpredictable results.
+/// Run a series of command lists simultaneously. Warning: applying multiple
+/// commands to the same game object will have unpredictable results.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RunInParallelCommand {
     #[prost(message, repeated, tag = "1")]
@@ -925,27 +936,29 @@ pub struct CreateOrUpdateCardCommand {
     #[prost(enumeration = "CardCreationAnimation", tag = "3")]
     pub create_animation: i32,
     ///*
-    /// Disables the flip animation for this card, allowing it immediately transition to a revealed state.
+    /// Disables the flip animation for this card, allowing it immediately
+    /// transition to a revealed state.
     #[prost(bool, tag = "4")]
     pub disable_flip_animation: bool,
 }
 ///*
-/// Moves a list of GameObjects to a new position. Objects already in the target position are skipped.
+/// Moves a list of GameObjects to a new position. Objects already in the target
+/// position are skipped.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MoveGameObjectsCommand {
     #[prost(message, repeated, tag = "1")]
     pub ids: ::prost::alloc::vec::Vec<GameObjectId>,
-    #[prost(message, optional, tag = "2")]
-    pub position: ::core::option::Option<ObjectPosition>,
     ///*
     /// Position at which to insert. If multiple IDs are specified, they will
     /// be sequentially added at this position
-    #[prost(message, optional, tag = "3")]
-    pub index: ::core::option::Option<u32>,
-    #[prost(bool, tag = "4")]
+    #[prost(message, optional, tag = "2")]
+    pub position: ::core::option::Option<ObjectPosition>,
+    #[prost(bool, tag = "3")]
     pub disable_animation: bool,
 }
-///* Request to move all GameObjects located at a specific object position to another object position.
+///*
+/// Request to move all GameObjects located at a specific object position to
+/// another object position.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MoveGameObjectsAtPositionCommand {
     #[prost(message, optional, tag = "1")]

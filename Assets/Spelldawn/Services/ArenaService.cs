@@ -77,11 +77,6 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator AddToRoom(Displayable card, ObjectPositionRoom position, bool animate)
-    {
-      return FindRoom(position.RoomId).AddCard(card, position.RoomLocation, position.Index, animate);
-    }
-
     public RoomId? ShowRoomSelectorForMousePosition()
     {
       if (_curentRoomSelector)

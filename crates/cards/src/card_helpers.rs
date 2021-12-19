@@ -73,7 +73,7 @@ pub fn always<T>(_: &GameState, _: Scope, _: T) -> bool {
 
 /// RequirementFn that this delegate's card is currently in play
 pub fn in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
-    game.card(scope.card_id()).position().in_play()
+    game.card_position(scope.card_id()).in_play()
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their own card.
@@ -156,8 +156,8 @@ pub fn scheme_points(points: SchemePoints) -> CardStats {
 }
 
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
-    let old_position = game.card(card_id).position();
-    game.card_mut(card_id).move_to(new_position);
+    let old_position = game.card_position(card_id);
+    game.move_card(card_id, new_position);
 
     dispatch::invoke_event(game, delegates::on_move_card, CardMoved { old_position, new_position });
 

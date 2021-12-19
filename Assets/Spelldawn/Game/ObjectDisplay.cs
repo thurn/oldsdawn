@@ -164,7 +164,7 @@ namespace Spelldawn.Game
       displayable.Parent = this;
       if (!_objects.Contains(displayable))
       {
-        if (index is { } i)
+        if (index is { } i && i < _objects.Count)
         {
           _objects.Insert((int)i, displayable);
         }

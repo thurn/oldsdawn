@@ -132,7 +132,7 @@ pub type DefenderIndex = u32;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomLocation {
-    Defender(DefenderIndex),
+    Defender,
     InRoom,
 }
 

@@ -65,7 +65,7 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
             })),
             Delegate::OnStoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
                 if g.card(card_id).data().stored_mana == 0 {
-                    move_card(g, card_id, CardPosition::DiscardPile(s.side(), 0))
+                    move_card(g, card_id, CardPosition::DiscardPile(s.side()))
                 }
             })),
         ],
@@ -75,7 +75,7 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
 /// Discard a random card from the hand of the `side` player, if there are any cards present.
 pub fn discard_random_card(game: &mut GameState, side: Side) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
-        move_card(game, card_id, CardPosition::DiscardPile(side, 0));
+        move_card(game, card_id, CardPosition::DiscardPile(side));
     }
 }
 

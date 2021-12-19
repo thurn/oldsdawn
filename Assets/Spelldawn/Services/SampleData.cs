@@ -986,9 +986,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { id },
         Position = new ObjectPosition
         {
+          SortingKey = index,
           Raid = new ObjectPositionRaid()
-        },
-        Index = index
+        }
       }
     };
 
