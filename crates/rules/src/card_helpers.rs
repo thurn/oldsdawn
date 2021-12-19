@@ -172,13 +172,13 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 
 /// Takes *up to* `amount` stored mana from a card and gives it to the player who owns this
 /// delegate. Panics if there is no stored mana available.
-pub fn take_stored_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
-    let available = game.card(scope).data.stored_mana;
+pub fn take_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue) {
+    let available = game.card(card_id).data.stored_mana;
     assert!(available > 0, "No stored mana available!");
     let taken = std::cmp::min(available, amount);
-    game.card_mut(scope).data.stored_mana -= taken;
-    dispatch::invoke_event(game, delegates::on_stored_mana_taken, scope.card_id());
-    gain_mana(game, scope.side(), taken);
+    game.card_mut(card_id).data.stored_mana -= taken;
+    dispatch::invoke_event(game, delegates::on_stored_mana_taken, card_id);
+    gain_mana(game, card_id.side, taken);
 }
 
 pub fn set_raid_ended(game: &mut GameState) {
