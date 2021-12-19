@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::primitives::{CardType, Faction, Rarity, School, Side};
+use data::primitives::{CardType, Faction, Rarity, School, Side};
 use protos::spelldawn::SpriteAddress;
 
 pub enum CardIconType {

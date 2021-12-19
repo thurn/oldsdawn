@@ -22,7 +22,7 @@ use std::iter;
 pub struct Deck {
     /// Identity card for this deck
     pub identity: CardName,
-    /// How many cards with each name are present in this deck?
+    /// How many rules with each name are present in this deck?
     pub cards: HashMap<CardName, u32>,
 }
 

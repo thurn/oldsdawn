@@ -13,10 +13,10 @@
 // limitations under the License.
 
 use crate::dispatch;
-use model::card_definition::CardStats;
-use model::delegates;
-use model::game::GameState;
-use model::primitives::{
+use data::card_definition::CardStats;
+use data::delegates;
+use data::game::GameState;
+use data::primitives::{
     ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue,
 };
 

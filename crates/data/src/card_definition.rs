@@ -127,7 +127,7 @@ pub struct Ability {
     pub delegates: Vec<Delegate>,
 }
 
-/// Individual card configuration; properties which are not universal for all cards
+/// Individual card configuration; properties which are not universal for all rules
 #[derive(Debug, Default)]
 pub struct CardConfig {
     pub stats: CardStats,

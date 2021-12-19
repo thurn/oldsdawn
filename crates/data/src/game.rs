@@ -81,7 +81,7 @@ pub struct GameState {
 }
 
 impl GameState {
-    /// Creates a new game with the provided `id` and identity cards and decks for both players
+    /// Creates a new game with the provided `id` and identity rules and decks for both players
     pub fn new_game(
         id: GameId,
         overlord_deck: Deck,
@@ -119,8 +119,8 @@ impl GameState {
 
     /// Returns the identity card for the provided Side.
     ///
-    /// It is an error for there to be zero or multiple cards in the `Identity` card position. If
-    /// this does occur, this method will panic (in the case of zero cards) or return an arbitrary
+    /// It is an error for there to be zero or multiple rules in the `Identity` card position. If
+    /// this does occur, this method will panic (in the case of zero rules) or return an arbitrary
     /// identity card (in the case of multiples).
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
@@ -177,7 +177,7 @@ impl GameState {
         self.card(card_id).position()
     }
 
-    /// Return a random card in the provided `position`, or None if there are no cards in that
+    /// Return a random card in the provided `position`, or None if there are no rules in that
     /// position
     pub fn random_card(&mut self, position: CardPosition) -> Option<CardId> {
         self.overlord_cards
@@ -238,7 +238,7 @@ impl GameState {
             .collect()
     }
 
-    /// All cards in this game
+    /// All rules in this game
     fn all_cards(&self) -> impl Iterator<Item = &CardState> {
         self.overlord_cards.iter().chain(self.champion_cards.iter())
     }
@@ -251,7 +251,7 @@ impl GameState {
         }
     }
 
-    /// Mutable version of [Self::cards]
+    /// Mutable version of [Self::rules]
     fn cards_mut(&mut self, side: Side) -> &mut Vec<CardState> {
         match side {
             Side::Overlord => &mut self.overlord_cards,

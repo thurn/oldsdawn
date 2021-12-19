@@ -89,16 +89,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4872d67bab6358e59559027aa3b9157c53d9358c51423c17554809a8858e0f8"
 
 [[package]]
-name = "cards"
-version = "0.0.0"
-dependencies = [
- "enumset",
- "model",
- "once_cell",
- "rand",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -178,6 +168,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "data"
+version = "0.0.0"
+dependencies = [
+ "convert_case",
+ "diff-struct",
+ "rand",
+ "serde",
+ "strum",
+ "strum_macros",
+]
+
+[[package]]
 name = "diff-struct"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -202,9 +204,9 @@ dependencies = [
 name = "display"
 version = "0.0.0"
 dependencies = [
- "cards",
- "model",
+ "data",
  "protos",
+ "rules",
 ]
 
 [[package]]
@@ -543,18 +545,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "model"
-version = "0.0.0"
-dependencies = [
- "convert_case",
- "diff-struct",
- "rand",
- "serde",
- "strum",
- "strum_macros",
-]
-
-[[package]]
 name = "multimap"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -821,6 +811,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "rules"
+version = "0.0.0"
+dependencies = [
+ "data",
+ "enumset",
+ "once_cell",
+ "rand",
+]
+
+[[package]]
 name = "rustversion"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -896,14 +896,14 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "bincode",
- "cards",
+ "data",
  "display",
  "maplit",
- "model",
  "once_cell",
  "prost",
  "prost-types",
  "protos",
+ "rules",
  "sled",
  "tokio",
  "tokio-stream",

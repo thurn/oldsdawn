@@ -14,8 +14,8 @@
 
 use anyhow::{Context, Result};
 use bincode;
-use model::game::GameState;
-use model::primitives::GameId;
+use data::game::GameState;
+use data::primitives::GameId;
 use once_cell::sync::Lazy;
 use sled::{Db, Tree};
 

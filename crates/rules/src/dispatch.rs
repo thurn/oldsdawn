@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::card_name::CardName;
-use model::delegates::{Delegate, Scope};
-use model::game::GameState;
-use model::primitives::{AbilityId, AbilityIndex, CardId};
+use data::card_name::CardName;
+use data::delegates::{Delegate, Scope};
+use data::game::GameState;
+use data::primitives::{AbilityId, AbilityIndex, CardId};
 
 pub fn invoke_event<T: Copy>(
     game: &mut GameState,

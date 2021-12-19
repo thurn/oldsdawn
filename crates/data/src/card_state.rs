@@ -24,12 +24,12 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use strum_macros::EnumDiscriminants;
 
-/// Determines display order when multiple cards are in the same position. Typically, this is taken
+/// Determines display order when multiple rules are in the same position. Typically, this is taken
 /// from an opaque, sequentially increasing counter representing what time the card first moved to
 /// this position.
 pub type SortingKey = u32;
 
-/// Possible known positions of cards within a deck
+/// Possible known positions of rules within a deck
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum DeckPosition {
     Top,
@@ -40,7 +40,7 @@ pub enum DeckPosition {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
 #[strum_discriminants(name(CardPositionTypes))]
 pub enum CardPosition {
-    /// An unspecified random position within a user's deck. The default position of all cards
+    /// An unspecified random position within a user's deck. The default position of all rules
     /// when a new game is started.
     DeckUnknown(Side),
     /// A position within a user's deck which is known to at least one player.

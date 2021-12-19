@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::card_definition::{AbilityText, CardDefinition, Keyword, NumericOperator, TextToken};
-use model::card_state::CardState;
-use model::delegates::Scope;
-use model::game::GameState;
-use model::primitives::{AbilityId, Side};
+use data::card_definition::{AbilityText, CardDefinition, Keyword, NumericOperator, TextToken};
+use data::card_state::CardState;
+use data::delegates::Scope;
+use data::game::GameState;
+use data::primitives::{AbilityId, Side};
 use protos::spelldawn::RulesText;
 
 pub fn build(

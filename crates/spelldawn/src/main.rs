@@ -52,9 +52,9 @@
 pub mod database;
 pub mod server;
 
-use model::card_definition::{Ability, CardDefinition};
-use model::game::{GameState, NewGameOptions, RaidState};
-use model::primitives::{
+use data::card_definition::{Ability, CardDefinition};
+use data::game::{GameState, NewGameOptions, RaidState};
+use data::primitives::{
     AbilityId, AbilityIndex, BoostData, CardId, GameId, RaidId, RoomId, RoomLocation, Side,
 };
 use tonic::{transport::Server, Request, Response, Status};
@@ -63,16 +63,16 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
 use protos::spelldawn::{CommandList, GameCommand, GameRequest, GameView, UpdateGameViewCommand};
 
-use cards::{card_helpers, dispatch, queries, CARDS};
-use model::card_name::CardName;
-use model::card_state::{CardPosition, CardState};
-use model::delegates;
-use model::delegates::{Delegate, Scope};
+use rules::{card_helpers, dispatch, queries, CARDS};
+use data::card_name::CardName;
+use data::card_state::{CardPosition, CardState};
+use data::delegates;
+use data::delegates::{Delegate, Scope};
 
 use crate::server::GameService;
 use maplit::hashmap;
-use model::card_name::CardName::TestOverlordIdentity;
-use model::deck::Deck;
+use data::card_name::CardName::TestOverlordIdentity;
+use data::deck::Deck;
 
 //#[derive(Default)]
 //pub struct GameService {}

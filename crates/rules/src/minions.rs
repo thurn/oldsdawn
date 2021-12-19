@@ -13,24 +13,24 @@
 // limitations under the License.
 
 use crate::abilities;
-use model::card_definition::{AttackBoost, CardConfig, CardDefinition};
-use model::card_name::CardName;
-use model::primitives::{CardType, Faction, Rarity, School, Side};
+use data::card_definition::{AbilityText, CardConfig, CardDefinition, CardStats, Keyword};
+use data::card_name::CardName;
+use data::primitives::{CardType, Faction, Rarity, School, Side};
 
 use crate::card_helpers::*;
 
-pub fn greataxe() -> CardDefinition {
+pub fn ice_dragon() -> CardDefinition {
     CardDefinition {
-        name: CardName::Greataxe,
-        cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42"),
-        card_type: CardType::Weapon,
-        side: Side::Champion,
+        name: CardName::IceDragon,
+        cost: cost(8),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![abilities::encounter_boost()],
+        abilities: vec![abilities::strike::<2>(), abilities::end_raid()],
         config: CardConfig {
-            stats: attack(3, AttackBoost { cost: 2, bonus: 1 }),
+            stats: health(5),
             faction: Some(Faction::Infernal),
             ..CardConfig::default()
         },

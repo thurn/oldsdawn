@@ -9,6 +9,6 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-cards = { path = "../cards", version = "0.0.0" }
-model = { path = "../model", version = "0.0.0" }
+rules = { path = "../rules", version = "0.0.0" }
+data = { path = "../data", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }

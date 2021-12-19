@@ -25,7 +25,7 @@ tokio-stream = "0.1.8"
 tonic = "0.6.1"
 tonic-web = "0.2"
 
-model = { path = "../model", version = "0.0.0" }
+data = { path = "../data", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
-cards = { path = "../cards", version = "0.0.0" }
+rules = { path = "../rules", version = "0.0.0" }
 display = { path = "../display", version = "0.0.0" }

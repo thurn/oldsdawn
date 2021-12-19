@@ -14,12 +14,12 @@
 
 use crate::assets::{jewel, CardIconType};
 use crate::{assets, rules_text};
-use cards::queries;
-use model::card_definition::CardDefinition;
-use model::card_state::{CardPosition, CardState};
-use model::game::GameState;
-use model::primitives;
-use model::primitives::{CardType, Side, Sprite};
+use rules::queries;
+use data::card_definition::CardDefinition;
+use data::card_state::{CardPosition, CardState};
+use data::game::GameState;
+use data::primitives;
+use data::primitives::{CardType, Side, Sprite};
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
@@ -96,7 +96,7 @@ fn create_or_update_card(
     card: &CardState,
     user_side: Side,
 ) -> CreateOrUpdateCardCommand {
-    let definition = cards::get(card.name());
+    let definition = rules::get(card.name());
     let revealed = definition.side == user_side || card.data().revealed;
     CreateOrUpdateCardCommand {
         card: Some(CardView {
@@ -122,9 +122,9 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
     PlayerView {
         player_info: Some(PlayerInfo {
             name: identity.name().displayed_name(),
-            portrait: Some(sprite(&cards::get(identity.name()).image)),
+            portrait: Some(sprite(&rules::get(identity.name()).image)),
             portrait_frame: Some(assets::identity_card_frame(side)),
-            card_back: Some(assets::card_back(cards::get(identity.name()).school)),
+            card_back: Some(assets::card_back(rules::get(identity.name()).school)),
         }),
         score: Some(ScoreView { score: data.score }),
         mana: Some(ManaView { amount: data.mana }),

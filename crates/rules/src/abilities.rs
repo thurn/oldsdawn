@@ -14,11 +14,11 @@
 
 use crate::card_helpers::*;
 use crate::queries;
-use model::card_definition::{Ability, AbilityText, AbilityType, Keyword};
-use model::card_state::CardPosition;
-use model::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
-use model::game::GameState;
-use model::primitives::{AttackValue, BoostData, CardId, ManaValue, Side};
+use data::card_definition::{Ability, AbilityText, AbilityType, Keyword};
+use data::card_state::CardPosition;
+use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
+use data::game::GameState;
+use data::primitives::{AttackValue, BoostData, CardId, ManaValue, Side};
 
 /// Overwrites the value of [CardState::boost_count] to match the provided [BoostData]
 fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
@@ -72,7 +72,7 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
     }
 }
 
-/// Discard a random card from the hand of the `side` player, if there are any cards present.
+/// Discard a random card from the hand of the `side` player, if there are any rules present.
 pub fn discard_random_card(game: &mut GameState, side: Side) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
         move_card(game, card_id, CardPosition::DiscardPile(side));

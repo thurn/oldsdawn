@@ -1,5 +1,5 @@
 [package]
-name = "model"
+name = "data"
 version = "0.0.0"
 description = "Data types used to represent game state"
 license = "Apache-2.0"

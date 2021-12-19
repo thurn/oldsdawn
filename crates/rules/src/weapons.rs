@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use model::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
-use std::sync::Arc;
-
-use model::card_name::CardName;
-use model::primitives::{CardType, Rarity, School, Side};
+use crate::abilities;
+use data::card_definition::{AttackBoost, CardConfig, CardDefinition};
+use data::card_name::CardName;
+use data::primitives::{CardType, Faction, Rarity, School, Side};
 
 use crate::card_helpers::*;
 
-pub fn arcane_recovery() -> CardDefinition {
+pub fn greataxe() -> CardDefinition {
     CardDefinition {
-        name: CardName::ArcaneRecovery,
-        cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
-        card_type: CardType::Spell,
+        name: CardName::Greataxe,
+        cost: cost(3),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42"),
+        card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_play(
-            AbilityText::Text(vec![text("Gain"), mana_symbol(9)]),
-            |g, s, _| gain_mana(g, s.side(), 9),
-        )],
-        config: CardConfig::default(),
+        abilities: vec![abilities::encounter_boost()],
+        config: CardConfig {
+            stats: attack(3, AttackBoost { cost: 2, bonus: 1 }),
+            faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
     }
 }

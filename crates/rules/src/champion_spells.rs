@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::abilities;
-use model::card_definition::{AbilityText, CardConfig, CardDefinition, CardStats, Keyword};
-use model::card_name::CardName;
-use model::primitives::{CardType, Faction, Rarity, School, Side};
+use data::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
+use std::sync::Arc;
+
+use data::card_name::CardName;
+use data::primitives::{CardType, Rarity, School, Side};
 
 use crate::card_helpers::*;
 
-pub fn ice_dragon() -> CardDefinition {
+pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
-        name: CardName::IceDragon,
-        cost: cost(8),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
-        card_type: CardType::Minion,
-        side: Side::Overlord,
+        name: CardName::ArcaneRecovery,
+        cost: cost(5),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
+        card_type: CardType::Spell,
+        side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![abilities::strike::<2>(), abilities::end_raid()],
-        config: CardConfig {
-            stats: health(5),
-            faction: Some(Faction::Infernal),
-            ..CardConfig::default()
-        },
+        abilities: vec![on_play(
+            AbilityText::Text(vec![text("Gain"), mana_symbol(9)]),
+            |g, s, _| gain_mana(g, s.side(), 9),
+        )],
+        config: CardConfig::default(),
     }
 }

@@ -14,10 +14,10 @@
 
 use anyhow::{Context, Result};
 use maplit::hashmap;
-use model::card_name::CardName;
-use model::deck::Deck;
-use model::game::{GameState, NewGameOptions};
-use model::primitives;
+use data::card_name::CardName;
+use data::deck::Deck;
+use data::game::{GameState, NewGameOptions};
+use data::primitives;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;

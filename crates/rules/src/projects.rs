@@ -13,9 +13,9 @@
 // limitations under the License.
 
 use crate::abilities;
-use model::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
-use model::card_name::CardName;
-use model::primitives::{CardType, Rarity, School, Side};
+use data::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
+use data::card_name::CardName;
+use data::primitives::{CardType, Rarity, School, Side};
 
 use crate::card_helpers::*;
 

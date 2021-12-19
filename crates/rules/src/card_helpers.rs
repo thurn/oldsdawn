@@ -16,15 +16,15 @@
 //! card definition files.
 
 use crate::{dispatch, queries};
-use model::card_definition::{
+use data::card_definition::{
     Ability, AbilityText, AbilityType, AttackBoost, CardStats, Cost, Keyword, NumericOperator,
     SchemePoints, TextToken,
 };
-use model::card_state::{CardPosition, CardPositionTypes, CardState};
-use model::delegates;
-use model::delegates::{CardMoved, Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
-use model::game::GameState;
-use model::primitives::{
+use data::card_state::{CardPosition, CardPositionTypes, CardState};
+use data::delegates;
+use data::delegates::{CardMoved, Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
+use data::game::GameState;
+use data::primitives::{
     AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Side, Sprite, TurnNumber,
 };
 use rand::seq::IteratorRandom;
