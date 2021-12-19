@@ -30,7 +30,7 @@ pub fn build(
         result.push(match &ability.text {
             AbilityText::Text(text) => ability_text(text),
             AbilityText::TextFn(function) => {
-                let tokens = function(game, Scope::new(AbilityId::new(card.id(), index)));
+                let tokens = function(game, Scope::new(AbilityId::new(card.id, index)));
                 ability_text(&tokens)
             }
         });

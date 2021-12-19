@@ -426,7 +426,7 @@ message GameObjectId {
 
 enum RoomId {
     ROOM_ID_UNSPECIFIED = 0;
-    ROOM_ID_TREASURY = 1;
+    ROOM_ID_VAULT = 1;
     ROOM_ID_SANCTUM = 2;
     ROOM_ID_CRYPTS = 3;
     ROOM_ID_ROOM_A = 4;

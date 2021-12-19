@@ -20,6 +20,7 @@ use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, CardId, GameId, ManaValue, PointsValue, RaidId, Side,
     TurnNumber,
 };
+use crate::updates::GameUpdate;
 use rand::rngs::ThreadRng;
 use rand::seq::IteratorRandom;
 use rand::{thread_rng, Rng, RngCore};
@@ -69,19 +70,32 @@ pub struct NewGameOptions {
 /// Stores the primary state for an ongoing game
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameState {
-    id: GameId,
-    overlord_cards: Vec<CardState>,
-    champion_cards: Vec<CardState>,
-    overlord: PlayerState,
-    champion: PlayerState,
-    data: GameData,
-    modified: bool,
-    animations: Option<AnimationBuffer>,
-    next_sorting_key: SortingKey,
+    /// Unique identifier for this game
+    pub id: GameId,
+    /// General game state
+    pub data: GameData,
+    /// Used to track changes to game state in order to update the client. If a vector is present
+    /// here, then code which mutates the GameState is also responsible for appending a [GameUpdate]
+    /// which describes the mutation. If no vector is present it means update tracking is currently
+    /// disabled (e.g. because we are running in simulation mode).
+    pub updates: Option<Vec<GameUpdate>>,
+    /// Cards for the overlord player. In general, code should use one of the helper methods below
+    /// instead of accessing this directly.
+    pub overlord_cards: Vec<CardState>,
+    /// Cards for the champion player. In general, code should use one of the helper methods below
+    /// instead of accessing this directly.
+    pub champion_cards: Vec<CardState>,
+    /// State for the overlord player
+    pub overlord: PlayerState,
+    /// State for the champion player
+    pub champion: PlayerState,
+    /// Next sorting key to use for card moves. Automatically updated by [Self::move_card], do not
+    /// mutate this directly.
+    pub next_sorting_key: SortingKey,
 }
 
 impl GameState {
-    /// Creates a new game with the provided `id` and identity rules and decks for both players
+    /// Creates a new game with the provided `id` and decks for both players
     pub fn new_game(
         id: GameId,
         overlord_deck: Deck,
@@ -95,37 +109,20 @@ impl GameState {
             overlord: PlayerState::default(),
             champion: PlayerState::default(),
             data: GameData { turn: Side::Overlord, turn_number: 1, raid: None },
-            modified: false,
-            animations: options.enable_animations.then(AnimationBuffer::default),
+            updates: options.enable_animations.then(Vec::new),
             next_sorting_key: 1,
         }
     }
 
-    /// Reset the value of the 'modified' flag to false
-    pub fn clear_modified_flag(&mut self) {
-        self.modified = false;
-    }
-
-    /// Whether the player or game state has been modified since the last call to
-    /// [Self::clear_modified_flag]
-    pub fn modified(&self) -> bool {
-        self.modified
-    }
-
-    /// ID for this game
-    pub fn id(&self) -> GameId {
-        self.id
-    }
-
     /// Returns the identity card for the provided Side.
     ///
-    /// It is an error for there to be zero or multiple rules in the `Identity` card position. If
-    /// this does occur, this method will panic (in the case of zero rules) or return an arbitrary
+    /// It is an error for there to be zero or multiple cards in the `Identity` card position. If
+    /// this does occur, this method will panic (in the case of zero cards) or return an arbitrary
     /// identity card (in the case of multiples).
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
             .iter()
-            .find(|c| CardPositionTypes::Identity == c.position().into())
+            .find(|c| CardPositionTypes::Identity == c.position.into())
             .expect("Identity Card")
     }
 
@@ -148,6 +145,22 @@ impl GameState {
         &mut self.cards_mut(id.side)[id.index]
     }
 
+    /// Cards for a player
+    pub fn cards(&self, side: Side) -> &Vec<CardState> {
+        match side {
+            Side::Overlord => &self.overlord_cards,
+            Side::Champion => &self.champion_cards,
+        }
+    }
+
+    /// Mutable version of [Self::cards]
+    pub fn cards_mut(&mut self, side: Side) -> &mut Vec<CardState> {
+        match side {
+            Side::Overlord => &mut self.overlord_cards,
+            Side::Champion => &mut self.champion_cards,
+        }
+    }
+
     /// State for the players in the game
     pub fn player(&self, side: Side) -> &PlayerState {
         match side {
@@ -158,7 +171,6 @@ impl GameState {
 
     /// Mutable version of [Self::player]
     pub fn player_mut(&mut self, side: Side) -> &mut PlayerState {
-        self.modified = true;
         match side {
             Side::Overlord => &mut self.overlord,
             Side::Champion => &mut self.champion,
@@ -168,65 +180,40 @@ impl GameState {
     /// Moves a card to a new [CardPosition].
     pub fn move_card(&mut self, card_id: impl Into<CardId>, new_position: CardPosition) {
         let key = self.next_sorting_key;
-        self.card_mut(card_id).move_to(new_position, key);
+        let mut card = self.card_mut(card_id);
+        card.position = new_position;
+        card.sorting_key = key;
         self.next_sorting_key += 1;
     }
 
-    /// Finds the [CardPosition] of a given card.
-    pub fn card_position(&self, card_id: impl Into<CardId>) -> CardPosition {
-        self.card(card_id).position()
-    }
-
-    /// Return a random card in the provided `position`, or None if there are no rules in that
+    /// Return a random card in the provided `position`, or None if there are no cards in that
     /// position
     pub fn random_card(&mut self, position: CardPosition) -> Option<CardId> {
         self.overlord_cards
             .iter()
             .chain(self.champion_cards.iter())
             .choose(&mut rand::thread_rng())
-            .map(CardState::id)
+            .map(|c| c.id)
     }
 
     /// Cards in a player's hand
     pub fn hand(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards(side).iter().filter(|c| c.position().in_hand())
+        self.cards(side).iter().filter(|c| c.position.in_hand())
     }
 
     /// Mutable version of [Self::hand]
     pub fn hand_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_mut(side).iter_mut().filter(|c| c.position().in_hand())
+        self.cards_mut(side).iter_mut().filter(|c| c.position.in_hand())
     }
 
     /// Cards in a player's discard pile
     pub fn discard_pile(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards(side).iter().filter(|c| c.position().in_discard_pile())
+        self.cards(side).iter().filter(|c| c.position.in_discard_pile())
     }
 
     /// Mutable version of [Self::discard_pile]
     pub fn discard_pile_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_mut(side).iter_mut().filter(|c| c.position().in_discard_pile())
-    }
-
-    /// General game state
-    pub fn data(&self) -> &GameData {
-        &self.data
-    }
-
-    /// Mutable version of [Self::data]
-    pub fn data_mut(&mut self) -> &mut GameData {
-        self.modified = true;
-        &mut self.data
-    }
-
-    /// Animations to send on the next client response. If animations are currently disabled,
-    /// will return None.
-    pub fn animations(&self) -> &Option<AnimationBuffer> {
-        &self.animations
-    }
-
-    /// Mutable version of [Self::animations]
-    pub fn animations_mut(&mut self) -> &mut Option<AnimationBuffer> {
-        &mut self.animations
+        self.cards_mut(side).iter_mut().filter(|c| c.position.in_discard_pile())
     }
 
     /// Create card states for a deck
@@ -238,24 +225,8 @@ impl GameState {
             .collect()
     }
 
-    /// All rules in this game
-    fn all_cards(&self) -> impl Iterator<Item = &CardState> {
+    /// All cards in this game
+    pub fn all_cards(&self) -> impl Iterator<Item = &CardState> {
         self.overlord_cards.iter().chain(self.champion_cards.iter())
-    }
-
-    /// Cards for a player
-    fn cards(&self, side: Side) -> &Vec<CardState> {
-        match side {
-            Side::Overlord => &self.overlord_cards,
-            Side::Champion => &self.champion_cards,
-        }
-    }
-
-    /// Mutable version of [Self::rules]
-    fn cards_mut(&mut self, side: Side) -> &mut Vec<CardState> {
-        match side {
-            Side::Overlord => &mut self.overlord_cards,
-            Side::Champion => &mut self.champion_cards,
-        }
     }
 }

@@ -40,9 +40,9 @@ pub fn game(id: GameId) -> Result<GameState> {
 
 pub fn write_game(game: &GameState) -> Result<()> {
     let serialized = bincode::serialize(game)
-        .with_context(|| format!("Error serializing game {:?}", game.id()))?;
+        .with_context(|| format!("Error serializing game {:?}", game.id))?;
     games()?
-        .insert(game.id().key(), serialized)
+        .insert(game.id.key(), serialized)
         .map(|_| ())
-        .with_context(|| format!("Error writing game {:?}", game.id()))
+        .with_context(|| format!("Error writing game {:?}", game.id))
 }

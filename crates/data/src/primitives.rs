@@ -118,7 +118,7 @@ pub enum School {
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomId {
-    Treasury,
+    Vault,
     Sanctum,
     Crypts,
     RoomA,

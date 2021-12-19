@@ -19,7 +19,7 @@ use strum_macros::Display;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display, Serialize, Deserialize)]
 pub enum CardName {
-    /// Empty identity rules with no associated rules text, for use in tests
+    /// Empty identity cards with no associated rules text, for use in tests
     TestChampionIdentity,
     TestOverlordIdentity,
 

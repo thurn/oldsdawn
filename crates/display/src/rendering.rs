@@ -14,7 +14,6 @@
 
 use crate::assets::{jewel, CardIconType};
 use crate::{assets, rules_text};
-use rules::queries;
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardState};
 use data::game::GameState;
@@ -33,38 +32,11 @@ use protos::spelldawn::{
     PickRoom, PlayerInfo, PlayerName, PlayerView, RevealedCardView, RoomId, RoomLocation,
     ScoreView, SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
 };
-
-/// Produces a [GameCommand] list representing required updates to the provided [GameState].
-pub fn server_response(game: &GameState, user_side: Side) -> Vec<GameCommand> {
-    let mut commands = vec![];
-
-    if game.modified() {
-        commands.push(command(Command::UpdateGameView(UpdateGameViewCommand {
-            game: Some(game_view(game, user_side)),
-        })));
-    }
-
-    for id in game.all_card_ids() {
-        let card = game.card(id);
-
-        if card.data_modified() {
-            commands.push(command(Command::CreateOrUpdateCard(create_or_update_card(
-                game, card, user_side,
-            ))))
-        }
-
-        if card.position_modified() {
-            commands
-                .push(command(Command::MoveGameObjects(move_card(game, card, user_side, false))));
-        }
-    }
-
-    commands
-}
+use rules::queries;
 
 fn game_view(game: &GameState, user_side: Side) -> GameView {
     GameView {
-        game_id: Some(GameId { value: game.id().value }),
+        game_id: Some(GameId { value: game.id.value }),
         user: Some(player_view(game, user_side)),
         opponent: Some(player_view(game, user_side.opponent())),
         arena: Some(ArenaView {
@@ -85,8 +57,8 @@ fn move_card(
     disable_animation: bool,
 ) -> MoveGameObjectsCommand {
     MoveGameObjectsCommand {
-        ids: vec![adapt_game_object_id(card.id())],
-        position: Some(adapt_position(card, game.card_position(card.id()), user_side)),
+        ids: vec![adapt_game_object_id(card.id)],
+        position: Some(adapt_position(card, game.card(card.id).position, user_side)),
         disable_animation,
     }
 }
@@ -96,11 +68,11 @@ fn create_or_update_card(
     card: &CardState,
     user_side: Side,
 ) -> CreateOrUpdateCardCommand {
-    let definition = rules::get(card.name());
-    let revealed = definition.side == user_side || card.data().revealed;
+    let definition = rules::get(card.name);
+    let revealed = definition.side == user_side || card.data.revealed;
     CreateOrUpdateCardCommand {
         card: Some(CardView {
-            card_id: Some(adapt_card_id(card.id())),
+            card_id: Some(adapt_card_id(card.id)),
             card_icons: Some(card_icons(game, card, definition, revealed)),
             arena_frame: Some(assets::arena_frame(
                 definition.side,
@@ -110,7 +82,7 @@ fn create_or_update_card(
             owning_player: to_player_name(definition.side, user_side).into(),
             revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
         }),
-        create_position: Some(adapt_position(card, game.card_position(card.id()), user_side)),
+        create_position: Some(adapt_position(card, game.card(card.id).position, user_side)),
         create_animation: CardCreationAnimation::Unspecified.into(),
         disable_flip_animation: false,
     }
@@ -121,10 +93,10 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
     let data = game.player(side);
     PlayerView {
         player_info: Some(PlayerInfo {
-            name: identity.name().displayed_name(),
-            portrait: Some(sprite(&rules::get(identity.name()).image)),
+            name: identity.name.displayed_name(),
+            portrait: Some(sprite(&rules::get(identity.name).image)),
             portrait_frame: Some(assets::identity_card_frame(side)),
-            card_back: Some(assets::card_back(rules::get(identity.name()).school)),
+            card_back: Some(assets::card_back(rules::get(identity.name).school)),
         }),
         score: Some(ScoreView { score: data.score }),
         mana: Some(ManaView { amount: data.mana }),
@@ -134,9 +106,9 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
 
 fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
     to_player_name(
-        match game.data().raid {
+        match game.data.raid {
             Some(raid) => raid.priority,
-            None => game.data().turn,
+            None => game.data.turn,
         },
         user_side,
     )
@@ -150,14 +122,14 @@ fn card_icons(
 ) -> CardIcons {
     if revealed {
         CardIcons {
-            top_left_icon: queries::mana_cost(game, card.id()).map(|mana| CardIcon {
+            top_left_icon: queries::mana_cost(game, card.id).map(|mana| CardIcon {
                 background: Some(assets::card_icon(CardIconType::Mana)),
                 text: mana.to_string(),
                 background_scale: 1.0,
             }),
             bottom_left_icon: definition.config.stats.shield.map(|_| CardIcon {
                 background: Some(assets::card_icon(CardIconType::Shield)),
-                text: queries::shield(game, card.id()).to_string(),
+                text: queries::shield(game, card.id).to_string(),
                 background_scale: 1.0,
             }),
             bottom_right_icon: definition
@@ -166,13 +138,13 @@ fn card_icons(
                 .base_attack
                 .map(|_| CardIcon {
                     background: Some(assets::card_icon(CardIconType::Shield)),
-                    text: queries::attack(game, card.id()).to_string(),
+                    text: queries::attack(game, card.id).to_string(),
                     background_scale: 1.0,
                 })
                 .or_else(|| {
                     definition.config.stats.health.map(|_| CardIcon {
                         background: Some(assets::card_icon(CardIconType::Health)),
-                        text: queries::health(game, card.id()).to_string(),
+                        text: queries::health(game, card.id).to_string(),
                         background_scale: 1.0,
                     })
                 }),
@@ -180,9 +152,9 @@ fn card_icons(
         }
     } else {
         CardIcons {
-            arena_icon: (card.data().card_level > 0).then(|| CardIcon {
+            arena_icon: (card.data.card_level > 0).then(|| CardIcon {
                 background: Some(assets::card_icon(CardIconType::LevelCounter)),
-                text: card.data().card_level.to_string(),
+                text: card.data.card_level.to_string(),
                 background_scale: 1.0,
             }),
             ..CardIcons::default()
@@ -203,7 +175,7 @@ fn revealed_card(
         image: Some(sprite(&definition.image)),
         title: Some(CardTitle { text: definition.name.displayed_name() }),
         rules_text: Some(rules_text::build(game, card, definition, user_side)),
-        revealed_in_arena: card.data().revealed,
+        revealed_in_arena: card.data.revealed,
         targeting: Some(card_targeting(definition)),
         on_release_position: Some(release_position(definition)),
         cost: Some(card_cost(game, card)),
@@ -215,7 +187,7 @@ fn revealed_card(
 /// expected to exist as a GameObject (e.g. because it is currently in the user's deck).
 fn adapt_position(card: &CardState, position: CardPosition, user_side: Side) -> ObjectPosition {
     ObjectPosition {
-        sorting_key: Some(card.sorting_key()),
+        sorting_key: Some(card.sorting_key),
         position: Some(match position {
             CardPosition::Room(room_id, location) => Position::Room(ObjectPositionRoom {
                 room_id: adapt_room_id(room_id).into(),
@@ -290,8 +262,8 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
 
 fn card_cost(game: &GameState, card: &CardState) -> CardCost {
     CardCost {
-        mana_cost: queries::mana_cost(game, card.id()).unwrap_or(0),
-        action_cost: queries::action_cost(game, card.id()),
+        mana_cost: queries::mana_cost(game, card.id).unwrap_or(0),
+        action_cost: queries::action_cost(game, card.id),
         can_play: false,
         can_play_algorithm: CanPlayAlgorithm::Optimistic.into(),
         spend_cost_algorithm: SpendCostAlgorithm::Optimistic.into(),
@@ -320,7 +292,7 @@ fn adapt_card_id(card_id: primitives::CardId) -> CardId {
 
 fn adapt_room_id(room_id: primitives::RoomId) -> RoomId {
     match room_id {
-        primitives::RoomId::Treasury => RoomId::Treasury,
+        primitives::RoomId::Vault => RoomId::Vault,
         primitives::RoomId::Sanctum => RoomId::Sanctum,
         primitives::RoomId::Crypts => RoomId::Crypts,
         primitives::RoomId::RoomA => RoomId::RoomA,

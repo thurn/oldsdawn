@@ -63,16 +63,16 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
 use protos::spelldawn::{CommandList, GameCommand, GameRequest, GameView, UpdateGameViewCommand};
 
-use rules::{card_helpers, dispatch, queries, CARDS};
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
 use data::delegates;
 use data::delegates::{Delegate, Scope};
+use rules::{card_helpers, dispatch, queries, CARDS};
 
 use crate::server::GameService;
-use maplit::hashmap;
 use data::card_name::CardName::TestOverlordIdentity;
 use data::deck::Deck;
+use maplit::hashmap;
 
 //#[derive(Default)]
 //pub struct GameService {}
@@ -143,11 +143,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let gold_mine = CardId::new(Side::Overlord, 2);
     game.move_card(gold_mine, CardPosition::Room(RoomId::RoomA, RoomLocation::InRoom));
     dispatch::invoke_event(&mut game, delegates::on_play_card, gold_mine);
-    println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data().stored_mana);
+    println!("Gold Mine. Starting Stored Mana: {:?}", game.card(gold_mine).data.stored_mana);
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
     println!(
         "Gold Mine. Stored Mana: {:?} Overlord Mana: {:?}",
-        game.card(gold_mine).data().stored_mana,
+        game.card(gold_mine).data.stored_mana,
         game.player(Side::Overlord).mana
     );
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
@@ -156,26 +156,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dispatch::invoke_event(&mut game, delegates::on_dusk, 1);
     println!(
         "Gold Mine. Stored Mana: {:?} Overlord Mana: {:?} Card Position: {:?}",
-        game.card(gold_mine).data().stored_mana,
+        game.card(gold_mine).data.stored_mana,
         game.player(Side::Overlord).mana,
-        game.card_position(gold_mine)
+        game.card(gold_mine).position
     );
 
     let ice_dragon = CardId::new(Side::Overlord, 3);
     game.move_card(arcane_recovery, CardPosition::Hand(Side::Champion));
     game.move_card(ice_dragon, CardPosition::Room(RoomId::RoomB, RoomLocation::Defender));
-    game.data_mut().raid =
+    game.data.raid =
         Some(RaidState { raid_id: RaidId(0), encounter_number: 0, priority: Side::Overlord });
     println!(
         "Ice Dragon. Starting Hand Size: {:?}. Raid: {:?}",
         game.hand(Side::Champion).count(),
-        game.data().raid
+        game.data.raid
     );
     dispatch::invoke_event(&mut game, delegates::on_minion_combat_ability, ice_dragon);
     println!(
         "Ice Dragon. Hand Size: {:?}. Raid: {:?}.",
         game.hand(Side::Champion).count(),
-        game.data().raid
+        game.data.raid
     );
 
     println!("Dungeon Annex. Starting Mana: {:?}", game.player(Side::Overlord).mana);

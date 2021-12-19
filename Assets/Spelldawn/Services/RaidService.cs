@@ -50,7 +50,7 @@ namespace Spelldawn.Services
             yield return _participants.AddObject(
               _registry.IdentityCardForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;
-          case RoomId.Treasury:
+          case RoomId.Vault:
             yield return _participants.AddObject(_registry.DeckForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;
           case RoomId.Crypts:

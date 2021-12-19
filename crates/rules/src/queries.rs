@@ -22,7 +22,7 @@ use data::primitives::{
 
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: impl Into<CardId>) -> &CardStats {
-    &crate::get(game.card(card_id).name()).config.stats
+    &crate::get(game.card(card_id).name).config.stats
 }
 
 pub fn mana_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> Option<ManaValue> {
@@ -30,7 +30,7 @@ pub fn mana_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> Option<
         game,
         delegates::get_mana_cost,
         card_id.into(),
-        crate::get(game.card(card_id.into()).name()).cost.mana,
+        crate::get(game.card(card_id).name).cost.mana,
     )
 }
 
@@ -39,7 +39,7 @@ pub fn action_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> Actio
         game,
         delegates::get_action_cost,
         card_id.into(),
-        crate::get(game.card(card_id.into()).name()).cost.actions,
+        crate::get(game.card(card_id).name).cost.actions,
     )
 }
 
@@ -75,6 +75,6 @@ pub fn boost_count(game: &GameState, card_id: impl Into<CardId> + Copy) -> Boost
         game,
         delegates::get_boost_count,
         card_id.into(),
-        game.card(card_id).data().boost_count,
+        game.card(card_id).data.boost_count,
     )
 }

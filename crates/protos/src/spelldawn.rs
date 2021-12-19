@@ -473,8 +473,8 @@ pub struct ObjectPositionDiscardPileContainer {
     pub owner: i32,
 }
 ///*
-/// Large display of rules *while* the score animation is playing. After the
-/// score animation finishes, scored rules move to 'Identity' position.
+/// Large display of cards *while* the score animation is playing. After the
+/// score animation finishes, scored cards move to 'Identity' position.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionScoreAnimation {}
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -613,7 +613,7 @@ pub struct PlayerInfo {
     pub portrait: ::core::option::Option<SpriteAddress>,
     #[prost(message, optional, tag = "3")]
     pub portrait_frame: ::core::option::Option<SpriteAddress>,
-    ///* Card back asset to use for this player's rules.
+    ///* Card back asset to use for this player's cards.
     #[prost(message, optional, tag = "4")]
     pub card_back: ::core::option::Option<SpriteAddress>,
 }
@@ -743,19 +743,19 @@ pub mod card_target {
 ///
 /// Optimistic:
 ///   - Mana and action cost is spent immediately, and 'can play' values for
-///     other rules in hand are optimistically updated
+///     other cards in hand are optimistically updated
 ///   - Other costs like 'sacrifice an artifact' are not optimistic and are
 ///     handled like choices
-///   - Targeted rules select their *first* valid target (rules, rooms, players)
+///   - Targeted cards select their *first* valid target (cards, rooms, players)
 ///     optimistically. If additional targets are required, they're not handled
 ///     optimistically, and this play pattern should possibly be avoided.
 ///   - Cards that require a choice to be made before resolving do not display
 ///     the options optimistically, instead they animate to the reveal card area
-///   - Item rules which don't require a choice to be made or target simply
+///   - Item cards which don't require a choice to be made or target simply
 ///     animate into the play area optimistically
-///   - Spell rules animate to the reveal card area and wait for their effects to
+///   - Spell cards animate to the reveal card area and wait for their effects to
 ///     be applied
-///   - Minion and Project rules animate to their selected room optimistically
+///   - Minion and Project cards animate to their selected room optimistically
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayCardAction {
     #[prost(message, optional, tag = "1")]
@@ -1293,7 +1293,7 @@ pub enum PlayerName {
 #[repr(i32)]
 pub enum RoomId {
     Unspecified = 0,
-    Treasury = 1,
+    Vault = 1,
     Sanctum = 2,
     Crypts = 3,
     RoomA = 4,
@@ -1319,12 +1319,12 @@ pub enum CanPlayAlgorithm {
     /// and actions.
     Optimistic = 1,
     ///*
-    /// 'Optimistic False' algorithm for rules with an additional cost. Will
+    /// 'Optimistic False' algorithm for cards with an additional cost. Will
     /// transition the 'can_play' state to false based on available mana and
     /// actions, but not to true.
     AdditionalCost = 2,
     ///*
-    /// 'Optimistic True' algorithm, for rules which can always be played for
+    /// 'Optimistic True' algorithm, for cards which can always be played for
     /// their normal cost, but have other valid play windows as well. Will
     /// transition the 'can_play' state to true based on available mana and
     /// actions, but not to false.

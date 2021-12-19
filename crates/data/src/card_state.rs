@@ -24,14 +24,15 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use strum_macros::EnumDiscriminants;
 
-/// Determines display order when multiple rules are in the same position. Typically, this is taken
+/// Determines display order when multiple cards are in the same position. Typically, this is taken
 /// from an opaque, sequentially increasing counter representing what time the card first moved to
 /// this position.
 pub type SortingKey = u32;
 
-/// Possible known positions of rules within a deck
+/// Possible known positions of cards within a deck
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum DeckPosition {
+    Unknown,
     Top,
     Bottom,
 }
@@ -40,7 +41,7 @@ pub enum DeckPosition {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
 #[strum_discriminants(name(CardPositionTypes))]
 pub enum CardPosition {
-    /// An unspecified random position within a user's deck. The default position of all rules
+    /// An unspecified random position within a user's deck. The default position of all cards
     /// when a new game is started.
     DeckUnknown(Side),
     /// A position within a user's deck which is known to at least one player.
@@ -99,14 +100,19 @@ pub struct CardData {
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct CardState {
-    id: CardId,
-    name: CardName,
-    side: Side,
-    position: CardPosition,
-    sorting_key: SortingKey,
-    position_modified: bool,
-    data: CardData,
-    data_modified: bool,
+    /// ID for this card.
+    pub id: CardId,
+    /// Card name, can be used to look up this card's [CardDefinition]
+    pub name: CardName,
+    /// Player who owns this card
+    pub side: Side,
+    /// Where this card is located in the game. Use [GameState::move_card] instead of modifying
+    /// this directly.
+    pub position: CardPosition,
+    /// Opaque value identifying this card's sort order within its position
+    pub sorting_key: SortingKey,
+    /// Optional state for this card
+    pub data: CardData,
 }
 
 impl CardState {
@@ -116,72 +122,8 @@ impl CardState {
             name,
             side,
             position: CardPosition::DeckUnknown(side),
-            position_modified: false,
             sorting_key: 0,
             data: CardData::default(),
-            data_modified: false,
         }
-    }
-
-    /// Reset the value of 'modified' flags to false
-    pub fn clear_modified_flags(&mut self) {
-        self.position_modified = false;
-        self.data_modified = false;
-    }
-
-    /// ID for this card.
-    pub fn id(&self) -> CardId {
-        self.id
-    }
-
-    /// Card name, can be used to look up this card's [CardDefinition]
-    pub fn name(&self) -> CardName {
-        self.name
-    }
-
-    pub fn side(&self) -> Side {
-        self.side
-    }
-
-    /// Where this card is located in the game. Use [GameState::card_position] instead of invoking
-    /// this directly.
-    pub(crate) fn position(&self) -> CardPosition {
-        self.position
-    }
-
-    /// Move this card to a new position. Use [GameState::move_card] instead of invoking this
-    /// directly.
-    pub(crate) fn move_to(&mut self, new_position: CardPosition, key: SortingKey) {
-        self.position_modified = true;
-        self.position = new_position;
-        self.sorting_key = key;
-    }
-
-    /// Whether [Self::position] has been modified since the last call to
-    /// [CardState::clear_modified_flags]    
-    pub fn position_modified(&self) -> bool {
-        self.position_modified
-    }
-
-    /// Opaque value identifying this card's sort order within its position
-    pub fn sorting_key(&self) -> SortingKey {
-        self.sorting_key
-    }
-
-    /// Optional state for this card
-    pub fn data(&self) -> &CardData {
-        &self.data
-    }
-
-    /// Mutable version of [Self::data]
-    pub fn data_mut(&mut self) -> &mut CardData {
-        self.data_modified = true;
-        &mut self.data
-    }
-
-    /// Whether [Self::data] has been modified since the last call to
-    /// [CardState::clear_modified_flags]
-    pub fn data_modified(&self) -> bool {
-        self.data_modified
     }
 }

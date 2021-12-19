@@ -704,7 +704,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             Node = action.RoomId switch
             {
               RoomId.Sanctum => SanctumRaidControls(),
-              RoomId.Treasury => TreasuryRaidControls(),
+              RoomId.Vault => VaultRaidControls(),
               RoomId.Crypts => CryptsRaidControls(),
               _ => null
             }
@@ -793,7 +793,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    Node TreasuryRaidControls() => Row("ControlButtons",
+    Node VaultRaidControls() => Row("ControlButtons",
       new FlexStyle
       {
         JustifyContent = FlexJustify.FlexEnd,
@@ -801,7 +801,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         AlignItems = FlexAlign.Center,
         Wrap = FlexWrap.WrapReverse,
       },
-      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(RoomId.Treasury), smallText: true, orange: true),
+      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(RoomId.Vault), smallText: true, orange: true),
       Button("Gordian Blade\n3\uf06d", action: null, smallText: true, orange: true),
       Button("Continue"));
 

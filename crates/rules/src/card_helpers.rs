@@ -73,7 +73,7 @@ pub fn always<T>(_: &GameState, _: Scope, _: T) -> bool {
 
 /// RequirementFn that this delegate's card is currently in play
 pub fn in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
-    game.card_position(scope.card_id()).in_play()
+    game.card(scope.card_id()).position.in_play()
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their own card.
@@ -156,7 +156,7 @@ pub fn scheme_points(points: SchemePoints) -> CardStats {
 }
 
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
-    let old_position = game.card_position(card_id);
+    let old_position = game.card(card_id).position;
     game.move_card(card_id, new_position);
 
     dispatch::invoke_event(game, delegates::on_move_card, CardMoved { old_position, new_position });
@@ -173,15 +173,15 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 /// Takes *up to* `amount` stored mana from a card and gives it to the player who owns this
 /// delegate. Panics if there is no stored mana available.
 pub fn take_stored_mana(game: &mut GameState, scope: Scope, amount: ManaValue) {
-    let available = game.card(scope).data().stored_mana;
+    let available = game.card(scope).data.stored_mana;
     assert!(available > 0, "No stored mana available!");
     let taken = std::cmp::min(available, amount);
-    game.card_mut(scope).data_mut().stored_mana -= taken;
+    game.card_mut(scope).data.stored_mana -= taken;
     dispatch::invoke_event(game, delegates::on_stored_mana_taken, scope.card_id());
     gain_mana(game, scope.side(), taken);
 }
 
 pub fn set_raid_ended(game: &mut GameState) {
-    dispatch::invoke_event(game, delegates::on_raid_end, game.data().raid.expect("Active raid"));
-    game.data_mut().raid = None;
+    dispatch::invoke_event(game, delegates::on_raid_end, game.data.raid.expect("Active raid"));
+    game.data.raid = None;
 }
