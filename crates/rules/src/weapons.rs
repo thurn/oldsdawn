@@ -17,7 +17,7 @@ use data::card_definition::{AttackBoost, CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Faction, Rarity, School, Side};
 
-use crate::card_helpers::*;
+use crate::helpers::*;
 
 pub fn greataxe() -> CardDefinition {
     CardDefinition {

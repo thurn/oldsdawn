@@ -17,7 +17,8 @@ use data::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 
-use crate::card_helpers::*;
+use crate::helpers::*;
+use crate::mutations;
 
 pub fn gold_mine() -> CardDefinition {
     CardDefinition {
@@ -38,7 +39,7 @@ pub fn gold_mine() -> CardDefinition {
                     text("from this card"),
                 ]),
                 |g, s, _| {
-                    take_stored_mana(g, s, 3);
+                    mutations::take_stored_mana(g, s.card_id(), 3);
                 },
             ),
         ],

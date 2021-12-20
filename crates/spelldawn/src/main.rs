@@ -55,7 +55,7 @@ pub mod server;
 use data::card_definition::{Ability, CardDefinition};
 use data::game::{GameState, NewGameOptions, RaidState};
 use data::primitives::{
-    AbilityId, AbilityIndex, BoostData, CardId, GameId, RaidId, RoomId, RoomLocation, Side,
+    AbilityId, AbilityIndex, BoostData, CardId, GameId, RaidId, RoomId, RoomLocation, Side, UserId,
 };
 use tonic::{transport::Server, Request, Response, Status};
 
@@ -67,7 +67,7 @@ use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
 use data::delegates;
 use data::delegates::{Delegate, Scope};
-use rules::{card_helpers, dispatch, queries, CARDS};
+use rules::{dispatch, helpers, queries, CARDS};
 
 use crate::server::GameService;
 use data::card_name::CardName::TestOverlordIdentity;
@@ -109,6 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut game = GameState::new_game(
         GameId::new(1),
         Deck {
+            owner_id: UserId::new(2),
             identity: CardName::TestOverlordIdentity,
             cards: hashmap! {
                 CardName::DungeonAnnex => 1,
@@ -117,6 +118,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
         },
         Deck {
+            owner_id: UserId::new(1),
             identity: CardName::TestChampionIdentity,
             cards: hashmap! {
                 CardName::ArcaneRecovery => 1,

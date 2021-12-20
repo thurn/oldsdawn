@@ -42,10 +42,7 @@ namespace Spelldawn.Services
     {
       _registry.ActionService.HandleAction(new GameAction
       {
-        Connect = new ConnectAction
-        {
-          GameId = CurrentGameId
-        }
+        Connect = new ConnectAction()
       });
     }
   }

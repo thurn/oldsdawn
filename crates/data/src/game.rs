@@ -14,13 +14,13 @@
 
 use crate::card_name::CardName;
 use crate::card_state;
-use crate::card_state::{AbilityState, CardPosition, CardPositionTypes, CardState, SortingKey};
+use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState, SortingKey};
 use crate::deck::Deck;
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, CardId, GameId, ManaValue, PointsValue, RaidId, Side,
-    TurnNumber,
+    TurnNumber, UserId,
 };
-use crate::updates::GameUpdate;
+use crate::updates::{GameUpdate, UpdateTracker};
 use rand::rngs::ThreadRng;
 use rand::seq::IteratorRandom;
 use rand::{thread_rng, Rng, RngCore};
@@ -31,11 +31,18 @@ use std::iter;
 use std::iter::{Enumerate, Map};
 use std::slice::Iter;
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerState {
+    pub id: UserId,
     pub mana: ManaValue,
     pub actions: ActionCount,
     pub score: PointsValue,
+}
+
+impl PlayerState {
+    pub fn new_game(id: UserId, actions: ActionCount) -> PlayerState {
+        PlayerState { id, mana: 5, actions, score: 0 }
+    }
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
@@ -63,8 +70,8 @@ pub struct GameData {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct NewGameOptions {
-    /// Whether animations should be produced for this game
-    pub enable_animations: bool,
+    /// Whether to run in simulation mode and thus disable update tracking
+    pub simulation: bool,
 }
 
 /// Stores the primary state for an ongoing game
@@ -74,11 +81,14 @@ pub struct GameState {
     pub id: GameId,
     /// General game state
     pub data: GameData,
-    /// Used to track changes to game state in order to update the client. If a vector is present
-    /// here, then code which mutates the GameState is also responsible for appending a [GameUpdate]
-    /// which describes the mutation. If no vector is present it means update tracking is currently
-    /// disabled (e.g. because we are running in simulation mode).
-    pub updates: Option<Vec<GameUpdate>>,
+    /// Used to track changes to game state in order to update the client. Code which mutates the
+    /// game state is responsible for appending a description of the change to `updates` via
+    /// [UpdateTracker::push].
+    ///
+    /// A new `updates` buffer should be set for each network request to track changes in response
+    /// to that request. Consequently, its value is not serialized.
+    #[serde(skip)]
+    pub updates: UpdateTracker,
     /// Cards for the overlord player. In general, code should use one of the helper methods below
     /// instead of accessing this directly.
     pub overlord_cards: Vec<CardState>,
@@ -104,12 +114,16 @@ impl GameState {
     ) -> Self {
         Self {
             id,
-            overlord_cards: Self::make_deck(overlord_deck, Side::Overlord),
-            champion_cards: Self::make_deck(champion_deck, Side::Champion),
-            overlord: PlayerState::default(),
-            champion: PlayerState::default(),
+            overlord_cards: Self::make_deck(&overlord_deck, Side::Overlord),
+            champion_cards: Self::make_deck(&champion_deck, Side::Champion),
+            overlord: PlayerState::new_game(overlord_deck.owner_id, 3 /* actions */),
+            champion: PlayerState::new_game(champion_deck.owner_id, 0 /* actions */),
             data: GameData { turn: Side::Overlord, turn_number: 1, raid: None },
-            updates: options.enable_animations.then(Vec::new),
+            updates: if options.simulation {
+                UpdateTracker::default()
+            } else {
+                UpdateTracker { update_list: Some(vec![]) }
+            },
             next_sorting_key: 1,
         }
     }
@@ -122,7 +136,7 @@ impl GameState {
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
             .iter()
-            .find(|c| CardPositionTypes::Identity == c.position.into())
+            .find(|c| c.position.kind() == CardPositionKind::Identity)
             .expect("Identity Card")
     }
 
@@ -217,12 +231,19 @@ impl GameState {
     }
 
     /// Create card states for a deck
-    fn make_deck(deck: Deck, side: Side) -> Vec<CardState> {
-        deck.card_names()
-            .iter()
-            .enumerate()
-            .map(move |(index, name)| CardState::new(CardId::new(side, index), *name, side))
-            .collect()
+    fn make_deck(deck: &Deck, side: Side) -> Vec<CardState> {
+        let mut result = vec![CardState::new(
+            CardId::new(side, 0),
+            deck.identity,
+            side,
+            true, /* is_identity */
+        )];
+
+        result.extend(deck.card_names().iter().enumerate().map(move |(index, name)| {
+            CardState::new(CardId::new(side, index + 1), *name, side, false /* is_identity */)
+        }));
+
+        result
     }
 
     /// All cards in this game

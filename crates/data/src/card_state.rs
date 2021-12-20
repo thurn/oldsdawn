@@ -29,23 +29,15 @@ use strum_macros::EnumDiscriminants;
 /// this position.
 pub type SortingKey = u32;
 
-/// Possible known positions of cards within a deck
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum DeckPosition {
-    Unknown,
-    Top,
-    Bottom,
-}
-
 /// Identifies the location of a card during an active game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
-#[strum_discriminants(name(CardPositionTypes))]
+#[strum_discriminants(name(CardPositionKind))]
 pub enum CardPosition {
     /// An unspecified random position within a user's deck. The default position of all cards
     /// when a new game is started.
     DeckUnknown(Side),
-    /// A position within a user's deck which is known to at least one player.
-    DeckKnown(Side, DeckPosition),
+    /// A card which is known to at least one player to be on the top of a deck
+    DeckTop(Side),
     Hand(Side),
     Room(RoomId, RoomLocation),
     ArenaItem(ItemLocation),
@@ -57,26 +49,30 @@ pub enum CardPosition {
 }
 
 impl CardPosition {
+    pub fn kind(&self) -> CardPositionKind {
+        self.into()
+    }
+
     /// Returns true if this card is in a room or has been played as an item
     pub fn in_play(&self) -> bool {
-        matches!(self.into(), CardPositionTypes::Room | CardPositionTypes::ArenaItem)
+        matches!(self.kind(), CardPositionKind::Room | CardPositionKind::ArenaItem)
     }
 
     pub fn in_hand(&self) -> bool {
-        CardPositionTypes::Hand == self.into()
+        self.kind() == CardPositionKind::Hand
     }
 
     /// Returns true if this card is in a known or unknown deck position
     pub fn in_deck(&self) -> bool {
-        matches!(self.into(), CardPositionTypes::DeckUnknown | CardPositionTypes::DeckKnown)
+        matches!(self.kind(), CardPositionKind::DeckUnknown | CardPositionKind::DeckTop)
     }
 
     pub fn in_discard_pile(&self) -> bool {
-        CardPositionTypes::DiscardPile == self.into()
+        self.kind() == CardPositionKind::DiscardPile
     }
 
     pub fn in_score_pile(&self) -> bool {
-        CardPositionTypes::Scored == self.into()
+        self.kind() == CardPositionKind::Scored
     }
 }
 
@@ -116,14 +112,18 @@ pub struct CardState {
 }
 
 impl CardState {
-    pub fn new(id: CardId, name: CardName, side: Side) -> Self {
+    pub fn new(id: CardId, name: CardName, side: Side, is_identity: bool) -> Self {
         Self {
             id,
             name,
             side,
-            position: CardPosition::DeckUnknown(side),
+            position: if is_identity {
+                CardPosition::Identity(side)
+            } else {
+                CardPosition::DeckUnknown(side)
+            },
             sorting_key: 0,
-            data: CardData::default(),
+            data: CardData { revealed: is_identity, ..CardData::default() },
         }
     }
 }

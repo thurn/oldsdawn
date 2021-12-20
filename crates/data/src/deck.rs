@@ -13,13 +13,15 @@
 // limitations under the License.
 
 use crate::card_name::CardName;
-use crate::primitives::Side;
+use crate::primitives::{Side, UserId};
 use std::collections::HashMap;
 use std::iter;
 
 /// Represents a player deck outside of an active game
 #[derive(Debug, Clone)]
 pub struct Deck {
+    /// Identifies the user who owns this deck
+    pub owner_id: UserId,
     /// Identity card for this deck
     pub identity: CardName,
     /// How many cards with each name are present in this deck?
@@ -27,8 +29,9 @@ pub struct Deck {
 }
 
 impl Deck {
-    /// Returns a vector which contains the identity card name, then repeats each [CardName] in
-    /// this deck in alphabetical order a number of times equal to its deck count.
+    /// Returns a vector which repeats each [CardName] in [self.cards] in alphabetical order a
+    /// number of times equal to its deck count. Note: The returned vector does *not* contain
+    /// [self.identity].
     pub fn card_names(&self) -> Vec<CardName> {
         let mut result = self
             .cards
@@ -36,7 +39,6 @@ impl Deck {
             .flat_map(|(name, count)| iter::repeat(*name).take(*count as usize))
             .collect::<Vec<_>>();
         result.sort();
-        result.insert(0, self.identity);
         result
     }
 }

@@ -38,7 +38,7 @@ pub struct TargetedInteraction {
 }
 
 /// Represents an update to the state of the game which should be translated into a client update
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum GameUpdate {
     /// Indicates a general game state change, such as modifying a player's mana or the current
     /// turn number.
@@ -71,4 +71,21 @@ pub enum GameUpdate {
     EndRaid,
     /// The game has ended and the indicated player has won
     GameOver(Side),
+}
+
+/// Tracks game mutations for a given network request. If a vector is present here, then code which
+/// mutates the GameState is also responsible for appending a [GameUpdate] which describes the
+/// mutation. If no vector is present it means update tracking is currently disabled (e.g. because
+/// we are running in simulation mode).
+#[derive(Debug, Clone, Default)]
+pub struct UpdateTracker {
+    pub update_list: Option<Vec<GameUpdate>>,
+}
+
+impl UpdateTracker {
+    pub fn push(&mut self, update: GameUpdate) {
+        if let Some(vec) = &mut self.update_list {
+            vec.push(update)
+        }
+    }
 }

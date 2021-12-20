@@ -16,7 +16,8 @@ use data::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword, Sc
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 
-use crate::card_helpers::*;
+use crate::helpers::*;
+use crate::mutations;
 
 pub fn dungeon_annex() -> CardDefinition {
     CardDefinition {
@@ -30,7 +31,7 @@ pub fn dungeon_annex() -> CardDefinition {
         abilities: vec![on_score(
             AbilityText::Text(vec![keyword(Keyword::Score), text("Gain"), mana_symbol(7)]),
             |g, s, _| {
-                gain_mana(g, s.side(), 7);
+                mutations::gain_mana(g, s.side(), 7);
             },
         )],
         config: CardConfig {

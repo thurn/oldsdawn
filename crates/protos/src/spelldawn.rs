@@ -334,8 +334,8 @@ pub struct GameId {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardId {
-    #[prost(uint32, tag = "1")]
-    pub side: u32,
+    #[prost(enumeration = "PlayerSide", tag = "1")]
+    pub side: i32,
     #[prost(uint32, tag = "2")]
     pub index: u32,
 }
@@ -688,13 +688,10 @@ pub struct GameView {
 // ============================================================================
 
 ///*
-/// Start a game. If game_id is provided, connects to an ongoing game.
-/// Otherwise creates a new game.
+/// Initiate a play session. If a game_id is provided in the GameRequest,
+/// connects to an ongoing game. Otherwise, creates a new game.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ConnectAction {
-    #[prost(message, optional, tag = "1")]
-    pub game_id: ::core::option::Option<GameId>,
-}
+pub struct ConnectAction {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
     ///* Opaque payload to send to the server.
@@ -810,6 +807,12 @@ pub struct GameRequest {
     ///* Current game_id, if a game is currently ongoing.
     #[prost(message, optional, tag = "2")]
     pub game_id: ::core::option::Option<GameId>,
+    ///*
+    /// Identifies the user making this request. At some point I'm going to
+    /// figure out how to set up authentication, but currently we operate on
+    /// the honor system :)
+    #[prost(uint64, tag = "3")]
+    pub user_id: u64,
 }
 // ============================================================================
 // Commands
@@ -1281,6 +1284,13 @@ pub enum DimensionUnit {
     Dip = 1,
     Percentage = 2,
     Vmin = 3,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PlayerSide {
+    Unspecified = 0,
+    Overlord = 1,
+    Champion = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

@@ -403,6 +403,12 @@ message GameId {
     uint64 value = 1;
 }
 
+enum PlayerSide {
+    PLAYER_SIDE_UNSPECIFIED = 0;
+    PLAYER_SIDE_OVERLORD = 1;
+    PLAYER_SIDE_CHAMPION = 2;
+}
+
 enum PlayerName {
     PLAYER_NAME_UNSPECIFIED = 0;
     PLAYER_NAME_USER = 1;
@@ -410,7 +416,7 @@ enum PlayerName {
 }
 
 message CardId {
-    uint32 side = 1;
+    PlayerSide side = 1;
     uint32 index = 2;
 }
 
@@ -767,11 +773,10 @@ message GameView {
 // ============================================================================
 
 /** 
- * Start a game. If game_id is provided, connects to an ongoing game.
- * Otherwise creates a new game.
+ * Initiate a play session. If a game_id is provided in the GameRequest,
+ * connects to an ongoing game. Otherwise, creates a new game.
  */
 message ConnectAction {
-    GameId game_id = 1;
 }
 
 message StandardAction {
@@ -870,6 +875,13 @@ message GameRequest {
     
     /** Current game_id, if a game is currently ongoing. */
     GameId game_id = 2;
+    
+    /** 
+     * Identifies the user making this request. At some point I'm going to
+     * figure out how to set up authentication, but currently we operate on
+     * the honor system :)
+     */
+    uint64 user_id = 3;
 }
 
 // ============================================================================

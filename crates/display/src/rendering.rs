@@ -15,7 +15,7 @@
 use crate::assets::{jewel, CardIconType};
 use crate::{assets, rules_text};
 use data::card_definition::CardDefinition;
-use data::card_state::{CardPosition, CardState};
+use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::GameState;
 use data::primitives;
 use data::primitives::{CardType, Side, Sprite};
@@ -29,27 +29,45 @@ use protos::spelldawn::{
     IdentityAction, ItemLocation, ManaView, MoveGameObjectsCommand, ObjectPosition,
     ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
     ObjectPositionIdentityContainer, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
-    PickRoom, PlayerInfo, PlayerName, PlayerView, RevealedCardView, RoomId, RoomLocation,
-    ScoreView, SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
+    PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomId,
+    RoomLocation, ScoreView, SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
 };
 use rules::queries;
 
-fn game_view(game: &GameState, user_side: Side) -> GameView {
-    GameView {
-        game_id: Some(GameId { value: game.id.value }),
-        user: Some(player_view(game, user_side)),
-        opponent: Some(player_view(game, user_side.opponent())),
-        arena: Some(ArenaView {
-            rooms_at_bottom: Some(user_side == Side::Overlord),
-            identity_action: match user_side {
-                Side::Overlord => IdentityAction::LevelUpRoom.into(),
-                Side::Champion => IdentityAction::InitiateRaid.into(),
-            },
-        }),
-        current_priority: current_priority(game, user_side).into(),
+/// Builds a series of [GameCommand]s to fully represent the current state of this game in the
+/// client, for use e.g. in response to a reconnect request.
+pub fn full_sync(game: &GameState, user_side: Side) -> Vec<GameCommand> {
+    let mut result = vec![game_view(game, user_side)];
+    result.extend(
+        game.all_cards()
+            .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
+            .map(|c| create_or_update_card(game, c, user_side)),
+    );
+    result
+}
+
+fn game_view(game: &GameState, user_side: Side) -> GameCommand {
+    GameCommand {
+        command: Some(Command::UpdateGameView(UpdateGameViewCommand {
+            game: Some(GameView {
+                game_id: Some(GameId { value: game.id.value }),
+                user: Some(player_view(game, user_side)),
+                opponent: Some(player_view(game, user_side.opponent())),
+                arena: Some(ArenaView {
+                    rooms_at_bottom: Some(user_side == Side::Overlord),
+                    identity_action: match user_side {
+                        Side::Overlord => IdentityAction::LevelUpRoom.into(),
+                        Side::Champion => IdentityAction::InitiateRaid.into(),
+                    },
+                }),
+                current_priority: current_priority(game, user_side).into(),
+            }),
+        })),
     }
 }
 
+/// Creates a move card command to move a card to its current location. Panics if this card isn't
+/// in a valid game position, e.g. if it is in [CardPosition::DeckUnknown].
 fn move_card(
     game: &GameState,
     card: &CardState,
@@ -63,28 +81,29 @@ fn move_card(
     }
 }
 
-fn create_or_update_card(
-    game: &GameState,
-    card: &CardState,
-    user_side: Side,
-) -> CreateOrUpdateCardCommand {
+/// Creates a create/update card command. Panics if this card isn't in a valid game position, e.g
+/// if it is in [CardPosition::DeckUnknown].
+fn create_or_update_card(game: &GameState, card: &CardState, user_side: Side) -> GameCommand {
     let definition = rules::get(card.name);
     let revealed = definition.side == user_side || card.data.revealed;
-    CreateOrUpdateCardCommand {
-        card: Some(CardView {
-            card_id: Some(adapt_card_id(card.id)),
-            card_icons: Some(card_icons(game, card, definition, revealed)),
-            arena_frame: Some(assets::arena_frame(
-                definition.side,
-                definition.card_type,
-                definition.config.faction,
-            )),
-            owning_player: to_player_name(definition.side, user_side).into(),
-            revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
-        }),
-        create_position: Some(adapt_position(card, game.card(card.id).position, user_side)),
-        create_animation: CardCreationAnimation::Unspecified.into(),
-        disable_flip_animation: false,
+
+    GameCommand {
+        command: Some(Command::CreateOrUpdateCard(CreateOrUpdateCardCommand {
+            card: Some(CardView {
+                card_id: Some(adapt_card_id(card.id)),
+                card_icons: Some(card_icons(game, card, definition, revealed)),
+                arena_frame: Some(assets::arena_frame(
+                    definition.side,
+                    definition.card_type,
+                    definition.config.faction,
+                )),
+                owning_player: to_player_name(definition.side, user_side).into(),
+                revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
+            }),
+            create_position: Some(adapt_position(card, game.card(card.id).position, user_side)),
+            create_animation: CardCreationAnimation::Unspecified.into(),
+            disable_flip_animation: false,
+        })),
     }
 }
 
@@ -183,8 +202,8 @@ fn revealed_card(
     }
 }
 
-/// Converts a card position into a rendered [ObjectPosition]. Returns None if this card is not
-/// expected to exist as a GameObject (e.g. because it is currently in the user's deck).
+/// Converts a card position into a rendered [ObjectPosition]. Panics if this [CardPosition] has no
+/// equivalent object position, e.g. if the card is currently shuffled into the deck.
 fn adapt_position(card: &CardState, position: CardPosition, user_side: Side) -> ObjectPosition {
     ObjectPosition {
         sorting_key: Some(card.sorting_key),
@@ -207,20 +226,18 @@ fn adapt_position(card: &CardState, position: CardPosition, user_side: Side) -> 
             CardPosition::Hand(side) => {
                 Position::Hand(ObjectPositionHand { owner: to_player_name(side, user_side).into() })
             }
-            CardPosition::DeckKnown(side, _) | CardPosition::DeckUnknown(side) => {
+            CardPosition::DeckTop(side) => {
                 Position::Deck(ObjectPositionDeck { owner: to_player_name(side, user_side).into() })
             }
             CardPosition::DiscardPile(side) => Position::DiscardPile(ObjectPositionDiscardPile {
                 owner: to_player_name(side, user_side).into(),
             }),
-            CardPosition::Scored(side) => Position::Identity(ObjectPositionIdentity {
-                owner: to_player_name(side, user_side).into(),
-            }),
-            CardPosition::Identity(side) => {
-                Position::IdentityContainer(ObjectPositionIdentityContainer {
+            CardPosition::Scored(side) | CardPosition::Identity(side) => {
+                Position::Identity(ObjectPositionIdentity {
                     owner: to_player_name(side, user_side).into(),
                 })
             }
+            CardPosition::DeckUnknown(side) => panic!("Card has no game position."),
         }),
     }
 }
@@ -287,7 +304,14 @@ fn adapt_game_object_id(id: primitives::CardId) -> GameObjectId {
 }
 
 fn adapt_card_id(card_id: primitives::CardId) -> CardId {
-    CardId { side: card_id.side as u32, index: card_id.index as u32 }
+    CardId {
+        side: match card_id.side {
+            Side::Overlord => PlayerSide::Overlord,
+            Side::Champion => PlayerSide::Champion,
+        }
+        .into(),
+        index: card_id.index as u32,
+    }
 }
 
 fn adapt_room_id(room_id: primitives::RoomId) -> RoomId {

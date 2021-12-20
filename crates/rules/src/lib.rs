@@ -56,16 +56,16 @@ use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-pub mod card_helpers;
+pub mod abilities;
+pub mod champion_spells;
 pub mod dispatch;
+pub mod helpers;
+pub mod minions;
+pub mod mutations;
+pub mod projects;
 pub mod queries;
-
-mod abilities;
-mod champion_spells;
-mod minions;
-mod projects;
-mod schemes;
-mod weapons;
+pub mod schemes;
+pub mod weapons;
 
 // TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
 static DEFINITIONS: &[fn() -> CardDefinition] = &[
@@ -92,21 +92,27 @@ pub fn get(name: CardName) -> &'static CardDefinition {
 }
 
 fn test_overlord_identity() -> CardDefinition {
-    test_identity(CardName::TestOverlordIdentity, Side::Overlord)
+    CardDefinition {
+        name: CardName::TestOverlordIdentity,
+        cost: Cost { mana: None, actions: 0 },
+        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/3"),
+        card_type: CardType::Identity,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::None,
+        abilities: vec![],
+        config: CardConfig::default(),
+    }
 }
 
 fn test_champion_identity() -> CardDefinition {
-    test_identity(CardName::TestChampionIdentity, Side::Champion)
-}
-
-fn test_identity(name: CardName, side: Side) -> CardDefinition {
     CardDefinition {
-        name,
-        cost: card_helpers::cost(0),
-        image: card_helpers::sprite(""),
+        name: CardName::TestChampionIdentity,
+        cost: Cost { mana: None, actions: 0 },
+        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/2"),
         card_type: CardType::Identity,
-        side,
-        school: School::Neutral,
+        side: Side::Champion,
+        school: School::Nature,
         rarity: Rarity::None,
         abilities: vec![],
         config: CardConfig::default(),

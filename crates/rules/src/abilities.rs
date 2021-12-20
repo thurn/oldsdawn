@@ -12,30 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::card_helpers::*;
-use crate::queries;
+use crate::helpers::*;
+use crate::mutations::move_card;
+use crate::mutations::set_raid_ended;
+use crate::{mutations, queries};
 use data::card_definition::{Ability, AbilityText, AbilityType, Keyword};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use data::game::GameState;
-use data::primitives::{AttackValue, BoostData, CardId, ManaValue, Side};
-
-/// Overwrites the value of [CardState::boost_count] to match the provided [BoostData]
-fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
-    game.card_mut(data).data.boost_count = data.count
-}
+use data::primitives::{AttackValue, CardId, ManaValue, Side};
 
 /// Applies this card's `attack_boost` stat a number of times equal to its [CardState::boost_count]
 fn add_boost(game: &GameState, scope: Scope, card_id: CardId, current: AttackValue) -> AttackValue {
     let boost_count = queries::boost_count(game, card_id);
     let bonus = queries::stats(game, card_id).attack_boost.expect("Expected boost").bonus;
-
     current + (boost_count * bonus)
-}
-
-/// Set the boost count to zero for the card in `scope`
-fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
-    game.card_mut(scope).data.boost_count = 0
 }
 
 /// The standard weapon ability; applies an attack boost for the duration of a single encounter.
@@ -47,14 +38,15 @@ pub fn encounter_boost() -> Ability {
         }),
         ability_type: AbilityType::Encounter,
         delegates: vec![
-            Delegate::OnActivateBoost(EventDelegate::new(this_card, write_boost)),
+            Delegate::OnActivateBoost(EventDelegate::new(this_boost, mutations::write_boost)),
             Delegate::GetAttackValue(QueryDelegate::new(this_card, add_boost)),
-            Delegate::OnEncounterEnd(EventDelegate::new(always, clear_boost)),
+            Delegate::OnEncounterEnd(EventDelegate::new(always, mutations::clear_boost)),
         ],
     }
 }
 
-/// Store N mana in this card. Move it to the discard pile when the stored mana is depleted.
+/// Store N mana in this card when played. Move it to the discard pile when the stored mana is
+/// depleted.
 pub fn store_mana<const N: ManaValue>() -> Ability {
     Ability {
         text: AbilityText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),

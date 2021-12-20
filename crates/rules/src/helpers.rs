@@ -15,21 +15,15 @@
 //! Helpers for defining card behaviors. This file is intended be be used via wildcard import in
 //! card definition files.
 
-use crate::{dispatch, queries};
 use data::card_definition::{
     Ability, AbilityText, AbilityType, AttackBoost, CardStats, Cost, Keyword, NumericOperator,
     SchemePoints, TextToken,
 };
-use data::card_state::{CardPosition, CardPositionTypes, CardState};
-use data::delegates;
-use data::delegates::{CardMoved, Delegate, EventDelegate, MutationFn, QueryDelegate, Scope};
+use data::delegates::{Delegate, EventDelegate, MutationFn, Scope};
 use data::game::GameState;
 use data::primitives::{
-    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Side, Sprite, TurnNumber,
+    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Sprite, TurnNumber,
 };
-use rand::seq::IteratorRandom;
-use std::cell::{RefCell, RefMut};
-use std::sync::Arc;
 
 /// Provides the rules text for a card
 pub fn text(text: impl Into<String>) -> TextToken {
@@ -86,6 +80,12 @@ pub fn this_ability(game: &GameState, scope: Scope, ability_id: impl Into<Abilit
     scope.ability_id() == ability_id.into()
 }
 
+/// A RequirementFn which restricts delegates to only listen to [BoostData] events matching their
+/// card.
+pub fn this_boost(game: &GameState, scope: Scope, boost_data: BoostData) -> bool {
+    scope.card_id() == boost_data.card_id
+}
+
 /// An ability which triggers when a card is played
 pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
@@ -137,11 +137,6 @@ pub fn on_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     }
 }
 
-/// Give mana to the player who owns this delegate
-pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
-    game.player_mut(side).mana += amount;
-}
-
 /// Helper to create a [CardStats] with the given `base_attack` and [AttackBoost]
 pub fn attack(base_attack: AttackValue, boost: AttackBoost) -> CardStats {
     CardStats { base_attack: Some(base_attack), attack_boost: Some(boost), ..CardStats::default() }
@@ -153,35 +148,4 @@ pub fn health(health: HealthValue) -> CardStats {
 
 pub fn scheme_points(points: SchemePoints) -> CardStats {
     CardStats { scheme_points: Some(points), ..CardStats::default() }
-}
-
-pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
-    let old_position = game.card(card_id).position;
-    game.move_card(card_id, new_position);
-
-    dispatch::invoke_event(game, delegates::on_move_card, CardMoved { old_position, new_position });
-
-    if old_position.in_deck() && new_position.in_hand() {
-        dispatch::invoke_event(game, delegates::on_draw_card, card_id);
-    }
-
-    if old_position.in_hand() && new_position.in_play() {
-        dispatch::invoke_event(game, delegates::on_play_card, card_id);
-    }
-}
-
-/// Takes *up to* `amount` stored mana from a card and gives it to the player who owns this
-/// delegate. Panics if there is no stored mana available.
-pub fn take_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue) {
-    let available = game.card(card_id).data.stored_mana;
-    assert!(available > 0, "No stored mana available!");
-    let taken = std::cmp::min(available, amount);
-    game.card_mut(card_id).data.stored_mana -= taken;
-    dispatch::invoke_event(game, delegates::on_stored_mana_taken, card_id);
-    gain_mana(game, card_id.side, taken);
-}
-
-pub fn set_raid_ended(game: &mut GameState) {
-    dispatch::invoke_event(game, delegates::on_raid_end, game.data.raid.expect("Active raid"));
-    game.data.raid = None;
 }

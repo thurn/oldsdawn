@@ -43696,7 +43696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f756b6a03824a098e8b2aac0f4b1e0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fakeActionResponse: 1
+  _fakeActionResponse: 0
   _registry: {fileID: 1445473048}
   _currentPriority: 0
   _currentlyHandlingAction: 0
@@ -43810,7 +43810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _startBehavior: 2
+  _startBehavior: 0
 --- !u!114 &1445473051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43920,7 +43920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _currentGameId: 
+  _debugGameId: 
 --- !u!1 &1451530778
 GameObject:
   m_ObjectHideFlags: 0

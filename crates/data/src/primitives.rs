@@ -25,7 +25,24 @@ pub type ShieldValue = u32;
 pub type BoostCount = u32;
 pub type LevelValue = u32;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+/// Identifies a user across different games
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+pub struct UserId {
+    pub value: u64,
+}
+
+impl UserId {
+    pub fn new(value: u64) -> Self {
+        Self { value }
+    }
+
+    pub fn key(&self) -> [u8; 8] {
+        self.value.to_be_bytes()
+    }
+}
+
+/// Identifies an ongoing game
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct GameId {
     pub value: u64,
 }
@@ -185,10 +202,4 @@ pub struct BoostData {
     pub card_id: CardId,
     /// How many times was the boost applied?
     pub count: u32,
-}
-
-impl From<BoostData> for CardId {
-    fn from(data: BoostData) -> Self {
-        data.card_id
-    }
 }

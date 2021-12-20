@@ -196,7 +196,7 @@ namespace Spelldawn.Services
 
       if (game.Opponent != null)
       {
-        yield return HandleRenderPlayer(PlayerName.User, game.Opponent);
+        yield return HandleRenderPlayer(PlayerName.Opponent, game.Opponent);
       }
 
       if (game.Arena != null)

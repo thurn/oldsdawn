@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use data::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
-use std::sync::Arc;
-
+use data::card_definition::{AbilityText, CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 
-use crate::card_helpers::*;
+use crate::helpers::*;
+use crate::mutations;
 
 pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
@@ -31,7 +30,7 @@ pub fn arcane_recovery() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![on_play(
             AbilityText::Text(vec![text("Gain"), mana_symbol(9)]),
-            |g, s, _| gain_mana(g, s.side(), 9),
+            |g, s, _| mutations::gain_mana(g, s.side(), 9),
         )],
         config: CardConfig::default(),
     }

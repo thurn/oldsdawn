@@ -103,6 +103,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     IEnumerator Start()
     {
+      if (_startBehavior == StartBehavior.Unspecified)
+      {
+        yield break;
+      }
+
       _card1 = RevealedUserCard(1, "Meteor Shower", Text1,
         "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_21", CardType.Spell, 0);
 
@@ -180,7 +185,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     public static CardId CardId(uint cardId) => new()
     {
-      Side = 1,
+      Side = PlayerSide.Champion,
       Index = cardId
     };
 
