@@ -18,6 +18,7 @@ use data::deck::Deck;
 use data::game::{GameState, NewGameOptions};
 use data::primitives;
 use data::primitives::{Side, UserId};
+use data::updates::UpdateTracker;
 use display::rendering;
 use maplit::hashmap;
 use once_cell::sync::Lazy;
@@ -27,6 +28,7 @@ use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
 use protos::spelldawn::{
     CommandList, ConnectAction, GameCommand, GameId, GameRequest, GameView, UpdateGameViewCommand,
 };
+use rules::actions;
 use sled::{Db, IVec, Tree};
 use tonic::{transport::Server, Code, Request, Response, Status};
 
@@ -42,10 +44,13 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        Ok(Response::new(CommandList {
-            commands: handle_request(request.get_ref())
-                .map_err(|err| Status::internal("Server Error"))?,
-        }))
+        match handle_request(request.get_ref()) {
+            Ok(commands) => Ok(Response::new(CommandList { commands })),
+            Err(error) => {
+                eprintln!("Server Error: {:#}", error);
+                Err(Status::internal("Server Error"))
+            }
+        }
     }
 }
 
@@ -62,10 +67,13 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         .as_ref()
         .with_context(|| "GameAction is required")?;
     println!("Got request in game {:?} from user {:?}: {:?}", game_id, user_id, game_action);
-    match game_action {
+    let result = match game_action {
         Action::Connect(action) => handle_connect(*user_id, game_id),
+        Action::DrawCard(action) => handle_draw_card(*user_id, find_game(game_id)?),
         _ => Ok(vec![]),
-    }
+    }?;
+    println!("Handled successfully, sending result {:?}", result);
+    Ok(result)
 }
 
 fn handle_connect(user_id: u64, game_id: &Option<GameId>) -> Result<Vec<GameCommand>> {
@@ -73,7 +81,7 @@ fn handle_connect(user_id: u64, game_id: &Option<GameId>) -> Result<Vec<GameComm
         database::game(primitives::GameId::new(game_id.value))?
     } else {
         let id = database::generate_id()?;
-        let game = GameState::new_game(
+        let mut game = GameState::new_game(
             primitives::GameId::new(id),
             Deck {
                 owner_id: UserId::new(2),
@@ -91,12 +99,32 @@ fn handle_connect(user_id: u64, game_id: &Option<GameId>) -> Result<Vec<GameComm
             },
             NewGameOptions::default(),
         );
+
+        game.data.turn = Side::Champion;
+        game.overlord.actions = 0;
+        game.champion.actions = 3;
+
         database::write_game(&game)?;
         game
     };
 
     let side = user_side(user_id, &game);
     Ok(rendering::full_sync(&game, side))
+}
+
+fn handle_draw_card(user_id: u64, mut game: GameState) -> Result<Vec<GameCommand>> {
+    let side = user_side(user_id, &game);
+    actions::draw_card(&mut game, side)?;
+    Ok(rendering::render_updates(&game, side))
+}
+
+/// Look up the state for a game which is expected to exist and assigns an [UpdateTracker] to it
+/// for the duration of this request.
+fn find_game(game_id: &Option<GameId>) -> Result<GameState> {
+    let id = game_id.as_ref().with_context(|| "GameId not provided!")?.value;
+    let mut game = database::game(primitives::GameId::new(id))?;
+    game.updates = UpdateTracker { update_list: Some(vec![]) };
+    Ok(game)
 }
 
 /// Returns the [Side] the indicated user is representing in ths game

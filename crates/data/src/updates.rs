@@ -14,6 +14,7 @@
 
 use crate::primitives::{CardId, PointsValue, RoomId, Side};
 use serde::{Deserialize, Serialize};
+use std::iter;
 
 /// Identifies the source or target of a game interaction
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
@@ -53,7 +54,9 @@ pub enum GameUpdate {
     StartTurn(Side),
     /// A card has moved from a player's deck to that player's hand.
     DrawCard(CardId),
-    /// A card has been removed from the game or shuffled back into a player's deck
+    /// A card has been shuffled back into a player's deck
+    ShuffleIntoDeck(CardId),
+    /// A card has been completely removed from the game
     DestroyCard(CardId),
     /// A card has been moved to a new game location
     MoveCard(CardId),
@@ -83,9 +86,15 @@ pub struct UpdateTracker {
 }
 
 impl UpdateTracker {
+    /// Appends a [GameUpdate] to the update list.
+    ///
+    /// Duplicate Updates: If the provided update is exactly identical to the most recent update, it
+    /// is skipped. This is intended to reduce redundancy.
     pub fn push(&mut self, update: GameUpdate) {
         if let Some(vec) = &mut self.update_list {
-            vec.push(update)
+            if vec.iter().last() != Some(&update) {
+                vec.push(update)
+            }
         }
     }
 }

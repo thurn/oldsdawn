@@ -14,11 +14,22 @@
 
 use crate::dispatch;
 use data::card_definition::CardStats;
+use data::card_state::CardPosition;
 use data::delegates;
 use data::game::GameState;
 use data::primitives::{
-    ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue,
+    ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue, Side,
 };
+
+/// Returns the top card of the indicated player's deck, selecting randomly if no cards are known
+/// to be present there. Returns None if the deck is empty.
+pub fn top_of_deck(game: &GameState, side: Side) -> Option<CardId> {
+    game.cards(side)
+        .iter()
+        .filter(|c| c.position == CardPosition::DeckTop(side))
+        .max_by_key(|c| c.sorting_key)
+        .map_or_else(|| game.random_card(CardPosition::DeckUnknown(side)), |card| Some(card.id))
+}
 
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: impl Into<CardId>) -> &CardStats {

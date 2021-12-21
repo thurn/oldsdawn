@@ -202,7 +202,7 @@ impl GameState {
 
     /// Return a random card in the provided `position`, or None if there are no cards in that
     /// position
-    pub fn random_card(&mut self, position: CardPosition) -> Option<CardId> {
+    pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
         self.overlord_cards
             .iter()
             .chain(self.champion_cards.iter())

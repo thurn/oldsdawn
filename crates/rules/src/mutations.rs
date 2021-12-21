@@ -20,7 +20,7 @@ use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates;
 use data::delegates::{CardMoved, Scope};
 use data::game::GameState;
-use data::primitives::{BoostData, CardId, ManaValue, Side};
+use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
 use data::updates::GameUpdate;
 
 /// Overwrites the value of [CardData::boost_count] to match the provided [BoostData]
@@ -67,6 +67,14 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 /// Give mana to the indicated player. Appends [GameUpdate::UpdateGame].
 pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     game.player_mut(side).mana += amount;
+    game.updates.push(GameUpdate::UpdateGame);
+}
+
+/// Spends a player's action points. Appends [GameUpdate::UpdateGame]. Panics if sufficient action
+/// points are not available.
+pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount) {
+    assert!(game.player(side).actions >= amount, "Insufficient action points available");
+    game.player_mut(side).actions -= amount;
     game.updates.push(GameUpdate::UpdateGame);
 }
 

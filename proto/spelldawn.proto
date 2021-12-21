@@ -774,7 +774,8 @@ message GameView {
 
 /** 
  * Initiate a play session. If a game_id is provided in the GameRequest,
- * connects to an ongoing game. Otherwise, creates a new game.
+ * connects to an ongoing game. Otherwise, creates a new game. This command
+ * must be sent from an empty game scene. 
  */
 message ConnectAction {
 }
@@ -1016,6 +1017,13 @@ message CreateOrUpdateCardCommand {
 }
 
 /**
+ * Requests to destroy a card game object.
+ */
+message DestroyCardCommand {
+    CardId card_id = 1;
+}
+
+/**
  * Moves a list of GameObjects to a new position. Objects already in the target
  * position are skipped.
  */
@@ -1152,6 +1160,7 @@ message GameCommand {
         EndRaidCommand end_raid = 7;
         LevelUpRoomCommand level_up_room = 8;
         CreateOrUpdateCardCommand create_or_update_card = 9;
+        DestroyCardCommand destroy_card = 10;
         MoveGameObjectsCommand move_game_objects = 11;
         MoveGameObjectsAtPositionCommand move_objects_at_position = 12;
         PlaySoundCommand play_sound = 13;
