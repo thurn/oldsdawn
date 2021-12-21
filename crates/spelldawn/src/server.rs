@@ -66,13 +66,13 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         .action
         .as_ref()
         .with_context(|| "GameAction is required")?;
-    println!("Got request in game {:?} from user {:?}: {:?}", game_id, user_id, game_action);
+    println!(">>> Got request in game {:?} from user {:?}: {:?}", game_id, user_id, game_action);
     let result = match game_action {
         Action::Connect(action) => handle_connect(*user_id, game_id),
         Action::DrawCard(action) => handle_draw_card(*user_id, find_game(game_id)?),
         _ => Ok(vec![]),
     }?;
-    println!("Handled successfully, sending result {:?}", result);
+    println!(">>> Handled successfully, sending result {:?}", result);
     Ok(result)
 }
 
@@ -115,6 +115,7 @@ fn handle_connect(user_id: u64, game_id: &Option<GameId>) -> Result<Vec<GameComm
 fn handle_draw_card(user_id: u64, mut game: GameState) -> Result<Vec<GameCommand>> {
     let side = user_side(user_id, &game);
     actions::draw_card(&mut game, side)?;
+    database::write_game(&game)?;
     Ok(rendering::render_updates(&game, side))
 }
 

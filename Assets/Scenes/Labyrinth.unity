@@ -27451,11 +27451,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040626, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -1
+      value: -0.56
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040626, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.08
+      value: 0.11
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040626, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -27479,11 +27479,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040629, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_fontSize
-      value: 26
+      value: 28
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040629, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_fontSizeBase
-      value: 26
+      value: 28
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
@@ -108833,11 +108833,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040626, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -1
+      value: -0.65
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040626, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.23
       objectReference: {fileID: 0}
     - target: {fileID: 8076396049406040626, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -108858,6 +108858,14 @@ PrefabInstance:
     - target: {fileID: 8076396049406040628, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
       propertyPath: m_SortingOrder
       value: -9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8076396049406040629, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
+      propertyPath: m_fontSize
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 8076396049406040629, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 26
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}

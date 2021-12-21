@@ -1,5 +1,11 @@
 FontAwesome glyphs:
+
+Need to modify Assets/ThirdParty/Resources/Fonts/FontAwesomeSDF.asset
+
+You *can* modify this while the game is running, changes will be saved
+
 Mana is 190 (page 7)
   - Defaults: BX: 0 BY: 14.25 AD: 12
   - Updated to BX: 2, BY: 15, AD: 16
+  - Updated to BX: 5, BY: 26, Scale: 0.8
 Bolt is 266 (page 12)
