@@ -300,7 +300,7 @@ fn adapt_position(
         CardPosition::DeckUnknown(side) => None,
     };
 
-    result.map(|p| ObjectPosition { sorting_key: Some(card.sorting_key), position: Some(p) })
+    result.map(|p| ObjectPosition { sorting_key: card.sorting_key, position: Some(p) })
 }
 
 fn card_targeting(definition: &CardDefinition) -> CardTargeting {
@@ -316,7 +316,7 @@ fn card_targeting(definition: &CardDefinition) -> CardTargeting {
 
 fn release_position(definition: &CardDefinition) -> ObjectPosition {
     ObjectPosition {
-        sorting_key: None,
+        sorting_key: u32::MAX,
         position: Some(match definition.card_type {
             CardType::Spell | CardType::Identity => Position::Staging(ObjectPositionStaging {}),
             CardType::Weapon => {

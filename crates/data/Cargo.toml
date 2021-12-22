@@ -11,7 +11,12 @@ doctest = false
 [dependencies]
 convert_case = "0.4.0"
 diff-struct = "0.4.0"
+proc-macro2 = "1.0.3"
 rand = "0.8.4"
 serde = { version = "1.0.132", features = ["derive"] }
 strum = "0.23"
 strum_macros = "0.23"
+syn = "1.0.82"
+tracing = "0.1.29"
+
+macros = { path = "../macros", version = "0.0.0" }

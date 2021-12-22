@@ -1,0 +1,17 @@
+[package]
+name = "macros"
+version = "0.0.0"
+description = "Macros used throughout the project"
+license = "Apache-2.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+doctest = false
+
+[dependencies]
+heck = "0.4.0"
+proc-macro2 = "1.0.3"
+quote = "1.0.10" 
+syn = { version = "1.0.82", features = ["parsing", "extra-traits"] }
+

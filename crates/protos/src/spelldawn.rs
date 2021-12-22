@@ -496,11 +496,11 @@ pub struct ObjectPositionRewardChest {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPosition {
     ///*
-    /// Optionally, a key by which to sort this object. If not provided, the
-    /// object will be appended to the end of the list (which is typically the
-    /// 'top' of the display).
-    #[prost(message, optional, tag = "1")]
-    pub sorting_key: ::core::option::Option<u32>,
+    /// A key by which to sort this object -- objects with higher sorting keys
+    /// should be displayed 'on top' of objects with lower sorting keys. In the
+    /// case of ties, any ordering is acceptable.
+    #[prost(uint32, tag = "1")]
+    pub sorting_key: u32,
     #[prost(
         oneof = "object_position::Position",
         tags = "2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15"
@@ -689,7 +689,8 @@ pub struct GameView {
 
 ///*
 /// Initiate a play session. If a game_id is provided in the GameRequest,
-/// connects to an ongoing game. Otherwise, creates a new game.
+/// connects to an ongoing game. Otherwise, creates a new game. This command
+/// must be sent from an empty game scene.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ConnectAction {}
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -945,6 +946,13 @@ pub struct CreateOrUpdateCardCommand {
     pub disable_flip_animation: bool,
 }
 ///*
+/// Requests to destroy a card game object.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DestroyCardCommand {
+    #[prost(message, optional, tag = "1")]
+    pub card_id: ::core::option::Option<CardId>,
+}
+///*
 /// Moves a list of GameObjects to a new position. Objects already in the target
 /// position are skipped.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1068,7 +1076,7 @@ pub struct DisplayRewardsCommand {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19"
+        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1094,6 +1102,8 @@ pub mod game_command {
         LevelUpRoom(super::LevelUpRoomCommand),
         #[prost(message, tag = "9")]
         CreateOrUpdateCard(super::CreateOrUpdateCardCommand),
+        #[prost(message, tag = "10")]
+        DestroyCard(super::DestroyCardCommand),
         #[prost(message, tag = "11")]
         MoveGameObjects(super::MoveGameObjectsCommand),
         #[prost(message, tag = "12")]

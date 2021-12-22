@@ -19,10 +19,13 @@ use crate::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
     RaidId, ShieldValue, Side, TurnNumber,
 };
+use macros::DelegateEnum;
 use std::fmt;
 use std::fmt::{Debug, Formatter};
+use std::marker::PhantomData;
 use std::sync::Arc;
 use strum_macros::EnumDiscriminants;
+use tracing::{info_span, Span};
 
 /// Scope for which ability owns a delegate
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
@@ -59,6 +62,7 @@ pub type RequirementFn<T> = fn(&GameState, Scope, T) -> bool;
 pub type MutationFn<T> = fn(&mut GameState, Scope, T);
 pub type TransformationFn<T, R> = fn(&GameState, Scope, T, R) -> R;
 
+#[derive(Copy, Clone)]
 pub struct EventDelegate<T> {
     pub requirement: RequirementFn<T>,
     pub mutation: MutationFn<T>,
@@ -70,6 +74,7 @@ impl<T> EventDelegate<T> {
     }
 }
 
+#[derive(Copy, Clone)]
 pub struct QueryDelegate<T, R> {
     pub requirement: RequirementFn<T>,
     pub transformation: TransformationFn<T, R>,
@@ -125,7 +130,8 @@ pub struct CardMoved {
     pub new_position: CardPosition,
 }
 
-#[derive(EnumDiscriminants)]
+#[derive(EnumDiscriminants, DelegateEnum)]
+#[strum_discriminants(name(DelegateKind))]
 pub enum Delegate {
     /// The Champion's turn begins
     OnDawn(EventDelegate<TurnNumber>),
@@ -184,7 +190,35 @@ pub enum Delegate {
 
 impl Debug for Delegate {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "Delegate::{:?}", DelegateDiscriminants::from(self))
+        write!(f, "Delegate::{:?}", DelegateKind::from(self))
+    }
+}
+
+pub trait EventData<T> {
+    fn data(&self) -> T;
+
+    fn get(delegate: &Delegate) -> Option<EventDelegate<T>>;
+
+    fn span(&self) -> Span;
+}
+
+pub struct OnPlayCard(pub CardId);
+
+impl EventData<CardId> for OnPlayCard {
+    fn data(&self) -> CardId {
+        self.0
+    }
+
+    fn get(delegate: &Delegate) -> Option<EventDelegate<CardId>> {
+        match delegate {
+            Delegate::OnPlayCard(d) => Some(*d),
+            _ => None,
+        }
+    }
+
+    fn span(&self) -> Span {
+        let data = self.data();
+        info_span!("OnPlayCard", ?data)
     }
 }
 

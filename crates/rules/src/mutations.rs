@@ -64,13 +64,13 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     }
 }
 
-/// Give mana to the indicated player. Appends [GameUpdate::UpdateGame].
+/// Give mana to the indicated player. Appends [GameUpdate::UpdateGameState].
 pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     game.player_mut(side).mana += amount;
     game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Spends a player's mana. Appends [GameUpdate::UpdateGame]. Panics if sufficient action
+/// Spends a player's mana. Appends [GameUpdate::UpdateGameState]. Panics if sufficient action
 /// points are not available
 pub fn spend_mana(game: &mut GameState, side: Side, amount: ActionCount) {
     assert!(game.player(side).mana >= amount, "Insufficient mana available");
@@ -78,7 +78,7 @@ pub fn spend_mana(game: &mut GameState, side: Side, amount: ActionCount) {
     game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Spends a player's action points. Appends [GameUpdate::UpdateGame]. Panics if sufficient action
+/// Spends a player's action points. Appends [GameUpdate::UpdateGameState]. Panics if sufficient action
 /// points are not available.
 pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount) {
     assert!(game.player(side).actions >= amount, "Insufficient action points available");

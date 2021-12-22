@@ -173,10 +173,14 @@ version = "0.0.0"
 dependencies = [
  "convert_case",
  "diff-struct",
+ "macros",
+ "proc-macro2",
  "rand",
  "serde",
  "strum",
  "strum_macros",
+ "syn",
+ "tracing",
 ]
 
 [[package]]
@@ -207,6 +211,7 @@ dependencies = [
  "data",
  "protos",
  "rules",
+ "tracing",
 ]
 
 [[package]]
@@ -351,6 +356,12 @@ checksum = "6d621efb26863f0e9924c6ac577e8275e5e6b77455db64ffa6c65c904e9e132c"
 dependencies = [
  "unicode-segmentation",
 ]
+
+[[package]]
+name = "heck"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2540771e65fc8cb83cd6e8a237f70c319bd5c29f78ed1084ba5d50eeac86f7f9"
 
 [[package]]
 name = "hermit-abi"
@@ -499,6 +510,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "51b9bbe6c47d51fc3e1a9b945965946b4c44142ab8792c50835a980d362c2710"
 dependencies = [
  "cfg-if",
+]
+
+[[package]]
+name = "macros"
+version = "0.0.0"
+dependencies = [
+ "heck 0.4.0",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -680,7 +701,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62941722fb675d463659e49c4f3fe1fe792ff24fe5bbaa9c08cd3b98a1c354f5"
 dependencies = [
  "bytes",
- "heck",
+ "heck 0.3.3",
  "itertools",
  "lazy_static",
  "log",
@@ -819,6 +840,7 @@ dependencies = [
  "enumset",
  "once_cell",
  "rand",
+ "tracing",
 ]
 
 [[package]]
@@ -910,6 +932,7 @@ dependencies = [
  "tokio-stream",
  "tonic",
  "tonic-web",
+ "tracing",
 ]
 
 [[package]]
@@ -930,7 +953,7 @@ version = "0.23.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5bb0dc7ee9c15cea6199cde9a127fa16a4c5819af85395457ad72d68edc85a38"
 dependencies = [
- "heck",
+ "heck 0.3.3",
  "proc-macro2",
  "quote",
  "rustversion",

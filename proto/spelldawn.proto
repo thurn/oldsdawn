@@ -619,11 +619,11 @@ message ObjectPositionRewardChest {
 
 message ObjectPosition {
     /**
-     * Optionally, a key by which to sort this object. If not provided, the
-     * object will be appended to the end of the list (which is typically the
-     * 'top' of the display).
-     */
-     google.protobuf.UInt32Value sorting_key = 1;
+    * A key by which to sort this object -- objects with higher sorting keys
+    * should be displayed 'on top' of objects with lower sorting keys. In the
+    * case of ties, any ordering is acceptable.
+    */
+    uint32 sorting_key = 1;
     
     oneof position {
         ObjectPositionOffscreen offscreen = 2;
