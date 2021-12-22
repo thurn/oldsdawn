@@ -50,7 +50,7 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
         pushed_update = true;
     }
 
-    if old_position.in_hand() && new_position.in_play() {
+    if !old_position.in_play() && new_position.in_play() {
         dispatch::invoke_event(game, delegates::on_play_card, card_id);
     }
 
@@ -67,7 +67,15 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 /// Give mana to the indicated player. Appends [GameUpdate::UpdateGame].
 pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     game.player_mut(side).mana += amount;
-    game.updates.push(GameUpdate::UpdateGame);
+    game.updates.push(GameUpdate::UpdateGameState);
+}
+
+/// Spends a player's mana. Appends [GameUpdate::UpdateGame]. Panics if sufficient action
+/// points are not available
+pub fn spend_mana(game: &mut GameState, side: Side, amount: ActionCount) {
+    assert!(game.player(side).mana >= amount, "Insufficient mana available");
+    game.player_mut(side).mana -= amount;
+    game.updates.push(GameUpdate::UpdateGameState);
 }
 
 /// Spends a player's action points. Appends [GameUpdate::UpdateGame]. Panics if sufficient action
@@ -75,7 +83,7 @@ pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
 pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount) {
     assert!(game.player(side).actions >= amount, "Insufficient action points available");
     game.player_mut(side).actions -= amount;
-    game.updates.push(GameUpdate::UpdateGame);
+    game.updates.push(GameUpdate::UpdateGameState);
 }
 
 /// Takes *up to* `amount` stored mana from a card and gives it to the player who owns this

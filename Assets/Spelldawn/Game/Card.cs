@@ -157,14 +157,15 @@ namespace Spelldawn.Game
           _registry.ActionService.CanInitiateAction() &&
           _revealedCardView is { Cost: { } cost })
       {
-        var haveAvailableResources =
+        var canPlayCard =
+          cost.CanPlay &&
           cost.ManaCost <= _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
           cost.ActionCost <= _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions;
         _canPlay = cost.CanPlayAlgorithm switch
         {
-          CanPlayAlgorithm.Optimistic => haveAvailableResources,
-          CanPlayAlgorithm.AdditionalCost when !haveAvailableResources => false,
-          CanPlayAlgorithm.AdditionalPlay when haveAvailableResources => true,
+          CanPlayAlgorithm.Optimistic => canPlayCard,
+          CanPlayAlgorithm.AdditionalCost when !canPlayCard => false,
+          CanPlayAlgorithm.AdditionalPlay when canPlayCard => true,
           _ => _canPlay
         };
       }

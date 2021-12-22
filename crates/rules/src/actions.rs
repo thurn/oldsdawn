@@ -18,37 +18,69 @@
 //! requests and returning [Result] accordingly. Beyond this point, game functions typically assume
 //! the game is in a valid state and will panic if that is not true.
 
-use crate::{mutations, queries};
-use anyhow::{anyhow, Context, Result};
+use crate::{dispatch, mutations, queries};
+use anyhow::{anyhow, bail, ensure, Context, Result};
 use data::card_state::CardPosition;
+use data::delegates;
 use data::game::GameState;
-use data::primitives::Side;
+use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 
 /// The basic game action to draw a card.
 pub fn draw_card(game: &mut GameState, side: Side) -> Result<()> {
-    check_in_main_phase(game, side, |game, side| {
-        let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
-        mutations::spend_action_points(game, side, 1);
-        mutations::move_card(game, card, CardPosition::Hand(side));
-        Ok(())
-    })
+    ensure!(queries::in_main_phase(game, side), "Not in main phase for {:?}", side);
+    let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
+    mutations::spend_action_points(game, side, 1);
+    mutations::move_card(game, card, CardPosition::Hand(side));
+    Ok(())
 }
 
-// Validates that the indicated player is currently in their Main phase, i.e. that it is their
-// turn, that they have action points available, that a raid is not currently ongoing, that we are
-// not currently waiting for an interface prompt response, etc.
-fn check_in_main_phase(
+/// Possible targets for the 'play card' action. Note that many types of targets are *not* selected
+/// in the original PlayCard action request but are instead selected via a follow-up prompt, and
+/// thus are not represented here.
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub enum PlayCardTarget {
+    None,
+    Room(RoomId),
+}
+
+impl PlayCardTarget {
+    pub fn room_id(&self) -> Result<RoomId> {
+        match self {
+            PlayCardTarget::Room(room_id) => Ok(*room_id),
+            _ => Err(anyhow!("Expected a RoomId to be provided but got {:?}", self)),
+        }
+    }
+}
+
+/// The basic game action to play a card
+pub fn play_card(
     game: &mut GameState,
     side: Side,
-    function: fn(&mut GameState, Side) -> Result<()>,
+    card_id: CardId,
+    target: PlayCardTarget,
 ) -> Result<()> {
-    if game.player(side).actions == 0 {
-        Err(anyhow!("No action points available for {:?}", side))
-    } else if game.data.turn != side {
-        Err(anyhow!("Not currently {:?}'s turn", side))
-    } else if game.data.raid.is_some() {
-        Err(anyhow!("Raid is currently active"))
-    } else {
-        function(game, side)
+    ensure!(queries::can_play(game, side, card_id), "Cannot play card {:?}", card_id);
+    let card = game.card(card_id);
+    let definition = crate::get(card.name);
+
+    if let Some(mana_cost) = definition.cost.mana {
+        mutations::spend_mana(game, side, mana_cost);
     }
+    mutations::spend_action_points(game, side, definition.cost.actions);
+    dispatch::invoke_event(game, delegates::on_pay_card_costs, card_id);
+
+    dispatch::invoke_event(game, delegates::on_cast_card, card_id);
+
+    let new_position = match definition.card_type {
+        CardType::Spell => CardPosition::DiscardPile(side),
+        CardType::Weapon => CardPosition::ArenaItem(ItemLocation::Weapons),
+        CardType::Artifact => CardPosition::ArenaItem(ItemLocation::Artifacts),
+        CardType::Minion => CardPosition::Room(target.room_id()?, RoomLocation::Defender),
+        CardType::Project | CardType::Scheme | CardType::Upgrade => {
+            CardPosition::Room(target.room_id()?, RoomLocation::InRoom)
+        }
+        CardType::Identity => CardPosition::Identity(side),
+    };
+    mutations::move_card(game, card_id, new_position);
+    Ok(())
 }

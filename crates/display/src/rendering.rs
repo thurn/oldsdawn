@@ -25,20 +25,22 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     game_object_id, ActionTrackerView, ArenaView, CanPlayAlgorithm, CardCost,
-    CardCreationAnimation, CardIcon, CardIcons, CardId, CardTargeting, CardTitle, CardView,
-    CommandList, CreateOrUpdateCardCommand, GameCommand, GameId, GameObjectId, GameView,
+    CardCreationAnimation, CardIcon, CardIcons, CardId, CardTarget, CardTargeting, CardTitle,
+    CardView, CommandList, CreateOrUpdateCardCommand, GameCommand, GameId, GameObjectId, GameView,
     IdentityAction, ItemLocation, ManaView, MoveGameObjectsCommand, ObjectPosition,
     ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
     ObjectPositionIdentityContainer, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
     PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomId,
     RoomLocation, ScoreView, SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
 };
+use rules::actions::PlayCardTarget;
 use rules::queries;
 
 /// Builds a series of [GameCommand]s to fully represent the current state of this game in the
 /// client, for use e.g. in response to a reconnect request.
 pub fn full_sync(game: &GameState, user_side: Side) -> Vec<GameCommand> {
-    let mut result = vec![GameCommand { command: Some(game_view(game, user_side)) }];
+    let mut result =
+        vec![GameCommand { command: Some(game_view(game, user_side, GameUpdateType::Full)) }];
     result.extend(
         game.all_cards()
             .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
@@ -64,7 +66,7 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<GameCommand> {
 /// Converts a [GameUpdate] into a [Command] list describing the required client changes.
 pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Vec<Command> {
     match update {
-        GameUpdate::UpdateGame => vec![game_view(game, user_side)],
+        GameUpdate::UpdateGameState => vec![game_view(game, user_side, GameUpdateType::State)],
         GameUpdate::UpdateCard(card_id) => create_or_update_card(
             game,
             game.card(card_id),
@@ -73,23 +75,38 @@ pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Ve
         )
         .map_or_else(Vec::new, |c| vec![c]),
         GameUpdate::DrawCard(card_id) => draw_card(game, game.card(card_id), user_side),
+        GameUpdate::MoveCard(card_id) => {
+            filtered(vec![move_card(game, game.card(card_id), user_side)])
+        }
         _ => todo!(),
     }
 }
 
-fn game_view(game: &GameState, user_side: Side) -> Command {
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+enum GameUpdateType {
+    /// Sync all game state, including arena info and player info
+    Full,
+    /// Sync only normally mutable game state, such as player mana and current priority
+    State,
+}
+
+fn game_view(game: &GameState, user_side: Side, update_type: GameUpdateType) -> Command {
     Command::UpdateGameView(UpdateGameViewCommand {
         game: Some(GameView {
             game_id: Some(GameId { value: game.id.value }),
-            user: Some(player_view(game, user_side)),
-            opponent: Some(player_view(game, user_side.opponent())),
-            arena: Some(ArenaView {
-                rooms_at_bottom: Some(user_side == Side::Overlord),
-                identity_action: match user_side {
-                    Side::Overlord => IdentityAction::LevelUpRoom.into(),
-                    Side::Champion => IdentityAction::InitiateRaid.into(),
-                },
-            }),
+            user: Some(player_view(game, user_side, update_type)),
+            opponent: Some(player_view(game, user_side.opponent(), update_type)),
+            arena: if update_type == GameUpdateType::State {
+                None
+            } else {
+                Some(ArenaView {
+                    rooms_at_bottom: Some(user_side == Side::Overlord),
+                    identity_action: match user_side {
+                        Side::Overlord => IdentityAction::LevelUpRoom.into(),
+                        Side::Champion => IdentityAction::InitiateRaid.into(),
+                    },
+                })
+            },
             current_priority: current_priority(game, user_side).into(),
         }),
     })
@@ -98,23 +115,18 @@ fn game_view(game: &GameState, user_side: Side) -> Command {
 fn draw_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command> {
     filtered(vec![
         create_or_update_card(game, card, user_side, CardCreationAnimation::DrawCard),
-        move_card(game, card, user_side, false /* disable_animation */),
+        move_card(game, card, user_side),
     ])
 }
 
 /// Creates a move card command to move a card to its current location. Returns None if the
 /// destination would not be a valid game position, e.g. if it is [CardPosition::DeckUnknown].
-fn move_card(
-    game: &GameState,
-    card: &CardState,
-    user_side: Side,
-    disable_animation: bool,
-) -> Option<Command> {
+fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Command> {
     adapt_position(card, game.card(card.id).position, user_side).map(|position| {
         Command::MoveGameObjects(MoveGameObjectsCommand {
             ids: vec![adapt_game_object_id(card.id)],
             position: Some(position),
-            disable_animation,
+            disable_animation: false,
         })
     })
 }
@@ -149,16 +161,20 @@ fn create_or_update_card(
     })
 }
 
-fn player_view(game: &GameState, side: Side) -> PlayerView {
+fn player_view(game: &GameState, side: Side, update_type: GameUpdateType) -> PlayerView {
     let identity = game.identity(side);
     let data = game.player(side);
     PlayerView {
-        player_info: Some(PlayerInfo {
-            name: identity.name.displayed_name(),
-            portrait: Some(sprite(&rules::get(identity.name).image)),
-            portrait_frame: Some(assets::identity_card_frame(side)),
-            card_back: Some(assets::card_back(rules::get(identity.name).school)),
-        }),
+        player_info: if update_type == GameUpdateType::State {
+            None
+        } else {
+            Some(PlayerInfo {
+                name: identity.name.displayed_name(),
+                portrait: Some(sprite(&rules::get(identity.name).image)),
+                portrait_frame: Some(assets::identity_card_frame(side)),
+                card_back: Some(assets::card_back(rules::get(identity.name).school)),
+            })
+        },
         score: Some(ScoreView { score: data.score }),
         mana: Some(ManaView { amount: data.mana }),
         action_tracker: Some(ActionTrackerView { available_action_count: data.actions }),
@@ -239,7 +255,7 @@ fn revealed_card(
         revealed_in_arena: card.data.revealed,
         targeting: Some(card_targeting(definition)),
         on_release_position: Some(release_position(definition)),
-        cost: Some(card_cost(game, card)),
+        cost: Some(card_cost(game, user_side, card)),
         supplemental_info: None,
     }
 }
@@ -290,11 +306,7 @@ fn adapt_position(
 fn card_targeting(definition: &CardDefinition) -> CardTargeting {
     CardTargeting {
         targeting: match definition.card_type {
-            CardType::Spell
-            | CardType::Weapon
-            | CardType::Artifact
-            | CardType::Identity
-            | CardType::Token => None,
+            CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Identity => None,
             CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
                 Some(Targeting::PickRoom(PickRoom {}))
             }
@@ -306,9 +318,7 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     ObjectPosition {
         sorting_key: None,
         position: Some(match definition.card_type {
-            CardType::Spell | CardType::Identity | CardType::Token => {
-                Position::Staging(ObjectPositionStaging {})
-            }
+            CardType::Spell | CardType::Identity => Position::Staging(ObjectPositionStaging {}),
             CardType::Weapon => {
                 Position::Item(ObjectPositionItem { item_location: ItemLocation::Left.into() })
             }
@@ -322,11 +332,11 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     }
 }
 
-fn card_cost(game: &GameState, card: &CardState) -> CardCost {
+fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardCost {
     CardCost {
         mana_cost: queries::mana_cost(game, card.id).unwrap_or(0),
         action_cost: queries::action_cost(game, card.id),
-        can_play: false,
+        can_play: queries::can_play(game, user_side, card.id),
         can_play_algorithm: CanPlayAlgorithm::Optimistic.into(),
         spend_cost_algorithm: SpendCostAlgorithm::Optimistic.into(),
     }
@@ -348,7 +358,7 @@ fn adapt_game_object_id(id: primitives::CardId) -> GameObjectId {
     GameObjectId { id: Some(game_object_id::Id::CardId(adapt_card_id(id))) }
 }
 
-fn adapt_card_id(card_id: primitives::CardId) -> CardId {
+pub fn adapt_card_id(card_id: primitives::CardId) -> CardId {
     CardId {
         side: match card_id.side {
             Side::Overlord => PlayerSide::Overlord,

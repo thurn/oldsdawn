@@ -86,6 +86,15 @@ pub fn this_boost(game: &GameState, scope: Scope, boost_data: BoostData) -> bool
     scope.card_id() == boost_data.card_id
 }
 
+/// An ability which triggers when a card is cast
+pub fn on_cast(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
+    Ability {
+        text: rules,
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::OnCastCard(EventDelegate { requirement: this_card, mutation })],
+    }
+}
+
 /// An ability which triggers when a card is played
 pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {

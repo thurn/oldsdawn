@@ -59,10 +59,6 @@ pub type RequirementFn<T> = fn(&GameState, Scope, T) -> bool;
 pub type MutationFn<T> = fn(&mut GameState, Scope, T);
 pub type TransformationFn<T, R> = fn(&GameState, Scope, T, R) -> R;
 
-// pub type RequirementFn<T> = Arc<dyn Fn(&GameState, Scope, T) -> bool>;
-// pub type MutationFn<T> = Arc<dyn Fn(&mut GameState, Scope, T)>;
-// pub type TransformationFn<T, R> = Arc<dyn Fn(&GameState, Scope, T, R) -> R>;
-
 pub struct EventDelegate<T> {
     pub requirement: RequirementFn<T>,
     pub mutation: MutationFn<T>,
@@ -85,6 +81,44 @@ impl<T, R> QueryDelegate<T, R> {
     }
 }
 
+/// A Flag is a variant of boolean which typically indicates whether some game action can currently
+/// be taken. Flags have a 'default' state, which is the value of the flag based on standard game
+/// rules, and an 'override' state, which is a value set by specific delegates. An override of
+/// 'false' takes precedence over an override of 'true'.
+///
+/// For example, the 'CanPlay' delegate will be invoked with Flag::Default(false) if a card cannot
+/// currently be played according to the standard game rules (sufficient mana available, correct
+/// player's turn, etc). A delegate could transform this via `with_override(true)` to allow the
+/// card to be played. A second delegate could set `with_override(false)` to prevent the card from
+/// being played, and this would take priority.
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub enum Flag {
+    Default(bool),
+    Override(bool),
+}
+
+impl Flag {
+    pub fn new(value: bool) -> Self {
+        Flag::Default(value)
+    }
+
+    /// Incorporates an override into this flag, following the precedence rules described above
+    pub fn with_override(self, value: bool) -> Self {
+        match self {
+            Self::Default(current) => Self::Override(value),
+            Self::Override(current) => Self::Override(current && value),
+        }
+    }
+}
+
+impl From<Flag> for bool {
+    fn from(flag: Flag) -> Self {
+        match flag {
+            Flag::Default(value) | Flag::Override(value) => value,
+        }
+    }
+}
+
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardMoved {
     pub old_position: CardPosition,
@@ -99,15 +133,19 @@ pub enum Delegate {
     OnDusk(EventDelegate<TurnNumber>),
     /// A card is moved from a Deck position to a Hand position
     OnDrawCard(EventDelegate<CardId>),
-    /// A card is moved from a Hand position to an Arena position *or* explicitly played via the
-    /// 'play' action
+    /// A card has been selected to play via the Play action and should have additional costs
+    /// deducted.
+    OnPayCardCosts(EventDelegate<CardId>),
+    /// A card has been played via the Play action and has had its costs paid
+    OnCastCard(EventDelegate<CardId>),
+    /// A card is moved from a non-arena position to an arena position
     OnPlayCard(EventDelegate<CardId>),
     /// A card is moved to a new position
     OnMoveCard(EventDelegate<CardMoved>),
     /// A card is scored by the Overlord
     OnScoreScheme(EventDelegate<CardId>),
+    /// A card is scored by the Champion
     OnStealScheme(EventDelegate<CardId>),
-
     /// A Raid is initiated
     OnRaidBegin(EventDelegate<RaidState>),
     /// A minion is encountered during a raid
@@ -124,12 +162,11 @@ pub enum Delegate {
     OnEncounterEnd(EventDelegate<RaidState>),
     /// A Raid is completed, either successfully or unsuccessfully.
     OnRaidEnd(EventDelegate<RaidState>),
-
     /// Stored mana is taken from a card
     OnStoredManaTaken(EventDelegate<CardId>),
 
-    /// Query whether a given card can currently be played
-    CanPlayCard(QueryDelegate<CardId, bool>),
+    /// Query whether a given card can currently be played.
+    CanPlayCard(QueryDelegate<CardId, Flag>),
 
     /// Query the current mana cost of a card. Invoked with [Cost::mana].
     GetManaCost(QueryDelegate<CardId, Option<ManaValue>>),
@@ -176,6 +213,28 @@ pub fn on_dusk(game: &mut GameState, scope: Scope, delegate: &Delegate, data: Tu
 pub fn on_draw_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
     match delegate {
         Delegate::OnDrawCard(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_pay_card_costs(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
+    match delegate {
+        Delegate::OnPayCardCosts(EventDelegate { requirement, mutation })
+            if requirement(game, scope, data) =>
+        {
+            mutation(game, scope, data)
+        }
+        _ => (),
+    }
+}
+
+pub fn on_cast_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
+    match delegate {
+        Delegate::OnCastCard(EventDelegate { requirement, mutation })
             if requirement(game, scope, data) =>
         {
             mutation(game, scope, data)
@@ -282,8 +341,8 @@ pub fn can_play_card(
     scope: Scope,
     delegate: &Delegate,
     data: CardId,
-    current: bool,
-) -> bool {
+    current: Flag,
+) -> Flag {
     match delegate {
         Delegate::CanPlayCard(QueryDelegate { requirement, transformation })
             if requirement(game, scope, data) =>

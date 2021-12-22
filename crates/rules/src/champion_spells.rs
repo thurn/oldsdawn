@@ -23,12 +23,12 @@ pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
         name: CardName::ArcaneRecovery,
         cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_24"),
         card_type: CardType::Spell,
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_play(
+        abilities: vec![on_cast(
             AbilityText::Text(vec![text("Gain"), mana_symbol(9)]),
             |g, s, _| mutations::gain_mana(g, s.side(), 9),
         )],

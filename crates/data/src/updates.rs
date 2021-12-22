@@ -42,8 +42,9 @@ pub struct TargetedInteraction {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum GameUpdate {
     /// Indicates a general game state change, such as modifying a player's mana or the current
-    /// turn number.
-    UpdateGame,
+    /// turn number. Does not request a full state sync, so e.g. player card backs and portrait
+    /// images are not modified.
+    UpdateGameState,
     /// Indicates a general card state change, such as a modification to its attack value.
     UpdateCard(CardId),
     /// Indicates that a player's opening hand has been drawn and may be kept or mulliganed
@@ -52,7 +53,7 @@ pub enum GameUpdate {
     KeepOpeningHand(Side),
     /// Indicates that a player's turn has started
     StartTurn(Side),
-    /// A card has moved from a player's deck to that player's hand.
+    /// A card has moved from a deck to a player's hand.
     DrawCard(CardId),
     /// A card has been shuffled back into a player's deck
     ShuffleIntoDeck(CardId),

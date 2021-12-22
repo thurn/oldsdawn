@@ -16,6 +16,7 @@ use crate::dispatch;
 use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates;
+use data::delegates::Flag;
 use data::game::GameState;
 use data::primitives::{
     ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue, Side,
@@ -36,11 +37,19 @@ pub fn stats(game: &GameState, card_id: impl Into<CardId>) -> &CardStats {
     &crate::get(game.card(card_id).name).config.stats
 }
 
-pub fn mana_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> Option<ManaValue> {
+/// Returns whether a given card can currently be played
+pub fn can_play(game: &GameState, side: Side, card_id: CardId) -> bool {
+    let can_play = in_main_phase(game, side)
+        && side == card_id.side
+        && matches!(mana_cost(game, card_id), Some(cost) if cost <= game.player(side).mana);
+    dispatch::perform_query(game, delegates::can_play_card, card_id, Flag::new(can_play)).into()
+}
+
+pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
     dispatch::perform_query(
         game,
         delegates::get_mana_cost,
-        card_id.into(),
+        card_id,
         crate::get(game.card(card_id).name).cost.mana,
     )
 }
@@ -88,4 +97,11 @@ pub fn boost_count(game: &GameState, card_id: impl Into<CardId> + Copy) -> Boost
         card_id.into(),
         game.card(card_id).data.boost_count,
     )
+}
+
+// Returns true if the provided `side` player is currently in their Main phase, i.e. that it is
+// their turn, that they have action points available, that a raid is not currently ongoing, that we
+// are not currently waiting for an interface prompt response, etc.
+pub fn in_main_phase(game: &GameState, side: Side) -> bool {
+    game.player(side).actions > 0 && game.data.turn == side && game.data.raid.is_none()
 }

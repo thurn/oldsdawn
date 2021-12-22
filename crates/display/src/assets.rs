@@ -125,7 +125,7 @@ pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) ->
     faction.map_or_else(
         || SpriteAddress {
             address: match card_type {
-                CardType::Spell | CardType::Minion | CardType::Upgrade | CardType::Token => {
+                CardType::Spell | CardType::Minion | CardType::Upgrade => {
                     "SpriteWay/Icons/Clean Frames/9020".to_string()
                 }
                 CardType::Weapon | CardType::Artifact | CardType::Project | CardType::Scheme => {

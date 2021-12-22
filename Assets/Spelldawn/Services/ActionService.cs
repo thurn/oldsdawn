@@ -77,6 +77,9 @@ namespace Spelldawn.Services
         case GameContext.Browser:
         case GameContext.RewardBrowser:
           return true;
+        case GameContext.Deck:
+        case GameContext.DiscardPile:
+          return false;
         default:
           return !_registry.BackgroundOverlay.Enabled;
       }
@@ -162,7 +165,7 @@ namespace Spelldawn.Services
         {
           if (fired)
           {
-            Debug.LogWarning($"Ignoring click on {clickable}, already handling click on {fired}");
+            Debug.LogWarning($"Ignoring click on {clickable}, already handled click on {fired}");
           }
           else
           {

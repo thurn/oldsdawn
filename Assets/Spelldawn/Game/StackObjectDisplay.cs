@@ -29,7 +29,7 @@ namespace Spelldawn.Game
     protected override Vector3 CalculateObjectPosition(int index, int count) =>
       new(
         transform.position.x,
-        transform.position.y + Mathf.Lerp(0f, 1f, count < 2 ? _singleElementY : index / ((float)count - 1)),
+        transform.position.y + Mathf.Lerp(0f, 1f, YPosition(index, count)),
         transform.position.z);
 
     protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;
@@ -64,5 +64,14 @@ namespace Spelldawn.Game
     {
       _mouseDownTime = null;
     }
+
+    float YPosition(int index, int count) => count switch
+    {
+      0 => _singleElementY,
+      1 => _singleElementY,
+      2 => new[] { 0.4f, 0.6f }[index],
+      3 => new[] { 0.3f, 0.5f, 0.7f }[index],
+      _ => index / ((float)count - 1)
+    };
   }
 }

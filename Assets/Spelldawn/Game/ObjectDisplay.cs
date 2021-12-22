@@ -43,6 +43,10 @@ namespace Spelldawn.Game
     protected override void OnStart()
     {
       _updateRequired = true;
+      foreach (var child in _objects)
+      {
+        child.Parent = this;
+      }
     }
 
     void Update()

@@ -187,7 +187,6 @@ pub enum CardType {
     Scheme,
     Upgrade,
     Identity,
-    Token,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
