@@ -20,7 +20,8 @@ use heck::ToSnakeCase;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens};
 use syn::{
-    Attribute, Data, DeriveInput, Fields, GenericArgument, LitStr, Path, PathArguments, Type,
+    AngleBracketedGenericArguments, Attribute, Data, DeriveInput, Fields, GenericArgument, LitStr,
+    Path, PathArguments, Type,
 };
 
 /// Generates Event & Query structs for the delegates in the delegate enum.
@@ -30,7 +31,6 @@ use syn::{
 pub fn delegate_enum(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse_macro_input!(input as DeriveInput);
     let tokens = implementation(&ast).unwrap_or_else(|err| err.to_compile_error());
-    println!("Result: {}", tokens);
     tokens.into()
 }
 
@@ -71,16 +71,21 @@ fn parse(ast: &DeriveInput) -> syn::Result<Vec<ParsedVariant>> {
             .filter(|attribute| attribute.path.is_ident("doc"))
             .cloned()
             .collect();
-        let field = &fields.unnamed[0];
+        let Some(field) = &fields.unnamed.iter().nth(0) else {
+            return Err(error("Enum field not found"));
+        };
 
         let Type::Path(p) = &field.ty else {
-                    return Err(error("Expected a path type"));
-            };
+            return Err(error("Expected a path type"));
+        };
 
-        let segment = &p.path.segments[0];
+        let Some(segment) = &p.path.segments.iter().nth(0) else {
+            return Err(error("Expected an enum type parameter"));
+        };
+
         let PathArguments::AngleBracketed(args) = &segment.arguments else {
-                return Err(error("Expected generic arguments"));
-            };
+            return Err(error("Expected generic arguments"));
+        };
 
         let delegate_type = if segment.ident == "QueryDelegate" {
             DelegateType::Query
@@ -91,11 +96,11 @@ fn parse(ast: &DeriveInput) -> syn::Result<Vec<ParsedVariant>> {
         result.push(ParsedVariant {
             name: variant.ident.clone(),
             docs,
-            data: generic_argument(&args.args[0])?.clone(),
+            data: generic_argument(args, 0)?.clone(),
             output: if delegate_type == DelegateType::Event {
                 None
             } else {
-                Some(generic_argument(&args.args[1])?.clone())
+                Some(generic_argument(args, 1)?.clone())
             },
             delegate_type,
         });
@@ -123,7 +128,7 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
     let data = &variant.data;
 
     let (trait_value, return_value) = if variant.delegate_type == DelegateType::Event {
-        (quote! {EventData<#data>}, quote! {Option<EventDelegate<#data>>} )
+        (quote! {EventData<#data>}, quote! {Option<EventDelegate<#data>>})
     } else {
         let output = variant.output.as_ref().unwrap();
         (quote! {QueryData<#data, #output>}, quote! {Option<QueryDelegate<#data, #output>>})
@@ -154,7 +159,11 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
     }
 }
 
-fn generic_argument(arg: &GenericArgument) -> syn::Result<&Path> {
+fn generic_argument(input: &AngleBracketedGenericArguments, index: usize) -> syn::Result<&Path> {
+    let Some(arg) = input.args.iter().nth(index) else {
+        return Err(error("Expected generic parameter not found"))
+    };
+
     let GenericArgument::Type(Type::Path(path)) = arg else {
         return Err(error("Expected a type parameter"))
     };

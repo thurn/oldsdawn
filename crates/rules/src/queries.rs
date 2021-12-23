@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::dispatch;
 use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates;
@@ -22,8 +21,10 @@ use data::primitives::{
     ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue, Side,
 };
 
-/// Returns the top card of the indicated player's deck, selecting randomly if no cards are known
-/// to be present there. Returns None if the deck is empty.
+use crate::dispatch;
+
+/// Returns the top card of the indicated player's deck, selecting randomly if
+/// no cards are known to be present there. Returns None if the deck is empty.
 pub fn top_of_deck(game: &GameState, side: Side) -> Option<CardId> {
     game.cards(side)
         .iter()
@@ -99,9 +100,10 @@ pub fn boost_count(game: &GameState, card_id: impl Into<CardId> + Copy) -> Boost
     )
 }
 
-// Returns true if the provided `side` player is currently in their Main phase, i.e. that it is
-// their turn, that they have action points available, that a raid is not currently ongoing, that we
-// are not currently waiting for an interface prompt response, etc.
+// Returns true if the provided `side` player is currently in their Main phase,
+// i.e. that it is their turn, that they have action points available, that a
+// raid is not currently ongoing, that we are not currently waiting for an
+// interface prompt response, etc.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {
     game.player(side).actions > 0 && game.data.turn == side && game.data.raid.is_none()
 }

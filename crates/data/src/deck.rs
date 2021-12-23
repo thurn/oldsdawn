@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::card_name::CardName;
-use crate::primitives::{Side, UserId};
 use std::collections::HashMap;
 use std::iter;
+
+use crate::card_name::CardName;
+use crate::primitives::{Side, UserId};
 
 /// Represents a player deck outside of an active game
 #[derive(Debug, Clone)]
@@ -29,9 +30,9 @@ pub struct Deck {
 }
 
 impl Deck {
-    /// Returns a vector which repeats each [CardName] in [self.cards] in alphabetical order a
-    /// number of times equal to its deck count. Note: The returned vector does *not* contain
-    /// [self.identity].
+    /// Returns a vector which repeats each [CardName] in [self.cards] in
+    /// alphabetical order a number of times equal to its deck count. Note:
+    /// The returned vector does *not* contain [self.identity].
     pub fn card_names(&self) -> Vec<CardName> {
         let mut result = self
             .cards

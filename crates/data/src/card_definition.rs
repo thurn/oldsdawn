@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::fmt;
+use std::fmt::{Debug, Formatter};
+
 use crate::card_name::CardName;
 use crate::delegates::{Delegate, Scope};
 use crate::game::GameState;
@@ -19,8 +22,6 @@ use crate::primitives::{
     ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue, LevelValue, ManaValue,
     PointsValue, Rarity, School, ShieldValue, Side, Sprite,
 };
-use std::fmt;
-use std::fmt::{Debug, Formatter};
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum Keyword {
@@ -73,16 +74,16 @@ pub struct Cost {
     pub actions: ActionCount,
 }
 
-/// An activated ability used by Weapons to increase their attack value by paying a mana cost during
-/// a raid encounter. Can be used any number of times.
+/// An activated ability used by Weapons to increase their attack value by
+/// paying a mana cost during a raid encounter. Can be used any number of times.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct AttackBoost {
     pub cost: ManaValue,
     pub bonus: AttackValue,
 }
 
-/// An activated ability used by Weapons to increase their attack value by paying a mana cost during
-/// a raid encounter. Can be used any number of times.
+/// An activated ability used by Weapons to increase their attack value by
+/// paying a mana cost during a raid encounter. Can be used any number of times.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct SchemePoints {
     pub level_requirement: LevelValue,
@@ -98,7 +99,8 @@ pub struct CardStats {
     pub shield: Option<ShieldValue>,
     /// Base damage dealt by this card during an encounter
     pub base_attack: Option<AttackValue>,
-    /// An increase in base attack damage for a fixed cost which an ability can apply to this card
+    /// An increase in base attack damage for a fixed cost which an ability can
+    /// apply to this card
     pub attack_boost: Option<AttackBoost>,
     /// Level Requirement & points for scoring this card
     pub scheme_points: Option<SchemePoints>,
@@ -110,16 +112,16 @@ pub enum AbilityType {
     /// Standard abilities function at all times without requiring activation.
     Standard,
 
-    /// Encounter abilities can be activated by the Champion during a raid encounter, typically
-    /// in order to increase a Weapon's attack.  
+    /// Encounter abilities can be activated by the Champion during a raid
+    /// encounter, typically in order to increase a Weapon's attack.  
     Encounter,
 
     /// Activated abilities have an associated cost in order to be used.
     Activated(Cost),
 }
 
-/// Abilities are the unit of action in Spelldawn. Their behavior is provided by the Delegate
-/// system, see delegates.rs for more information.
+/// Abilities are the unit of action in Spelldawn. Their behavior is provided by
+/// the Delegate system, see delegates.rs for more information.
 #[derive(Debug)]
 pub struct Ability {
     pub text: AbilityText,
@@ -127,7 +129,8 @@ pub struct Ability {
     pub delegates: Vec<Delegate>,
 }
 
-/// Individual card configuration; properties which are not universal for all cards
+/// Individual card configuration; properties which are not universal for all
+/// cards
 #[derive(Debug, Default)]
 pub struct CardConfig {
     pub stats: CardStats,
@@ -137,7 +140,8 @@ pub struct CardConfig {
 
 /// The fundamental object defining the behavior of a given card in Spelldawn
 ///
-/// This struct's top-level fields should be universal properties which apply to every card
+/// This struct's top-level fields should be universal properties which apply to
+/// every card
 #[derive(Debug)]
 pub struct CardDefinition {
     pub name: CardName,

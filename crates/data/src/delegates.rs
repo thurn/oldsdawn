@@ -12,6 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::fmt;
+use std::fmt::{Debug, Formatter};
+use std::marker::PhantomData;
+use std::sync::Arc;
+
+use macros::DelegateEnum;
+use strum_macros::EnumDiscriminants;
+use tracing::{info_span, Span};
+
 use crate::card_definition::{CardStats, Cost};
 use crate::card_state::{CardData, CardPosition};
 use crate::game::{GameState, RaidState};
@@ -19,13 +28,6 @@ use crate::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
     RaidId, ShieldValue, Side, TurnNumber,
 };
-use macros::DelegateEnum;
-use std::fmt;
-use std::fmt::{Debug, Formatter};
-use std::marker::PhantomData;
-use std::sync::Arc;
-use strum_macros::EnumDiscriminants;
-use tracing::{info_span, Span};
 
 /// Scope for which ability owns a delegate
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
@@ -86,16 +88,18 @@ impl<T, R> QueryDelegate<T, R> {
     }
 }
 
-/// A Flag is a variant of boolean which typically indicates whether some game action can currently
-/// be taken. Flags have a 'default' state, which is the value of the flag based on standard game
-/// rules, and an 'override' state, which is a value set by specific delegates. An override of
-/// 'false' takes precedence over an override of 'true'.
+/// A Flag is a variant of boolean which typically indicates whether some game
+/// action can currently be taken. Flags have a 'default' state, which is the
+/// value of the flag based on standard game rules, and an 'override' state,
+/// which is a value set by specific delegates. An override of 'false' takes
+/// precedence over an override of 'true'.
 ///
-/// For example, the 'CanPlay' delegate will be invoked with Flag::Default(false) if a card cannot
-/// currently be played according to the standard game rules (sufficient mana available, correct
-/// player's turn, etc). A delegate could transform this via `with_override(true)` to allow the
-/// card to be played. A second delegate could set `with_override(false)` to prevent the card from
-/// being played, and this would take priority.
+/// For example, the 'CanPlay' delegate will be invoked with
+/// Flag::Default(false) if a card cannot currently be played according to the
+/// standard game rules (sufficient mana available, correct player's turn, etc).
+/// A delegate could transform this via `with_override(true)` to allow the
+/// card to be played. A second delegate could set `with_override(false)` to
+/// prevent the card from being played, and this would take priority.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum Flag {
     Default(bool),
@@ -107,7 +111,8 @@ impl Flag {
         Flag::Default(value)
     }
 
-    /// Incorporates an override into this flag, following the precedence rules described above
+    /// Incorporates an override into this flag, following the precedence rules
+    /// described above
     pub fn with_override(self, value: bool) -> Self {
         match self {
             Self::Default(current) => Self::Override(value),
@@ -130,15 +135,7 @@ pub struct CardMoved {
     pub new_position: CardPosition,
 }
 
-#[derive(DelegateEnum)]
-pub enum Delegate2 {
-    /// The Champion's turn begins
-    OnDawn(EventDelegate<TurnNumber>),
-    /// Query the current mana cost of a card. Invoked with [Cost::mana].
-    GetManaCost(QueryDelegate<CardId, Option<ManaValue>>),
-}
-
-#[derive(EnumDiscriminants)]
+#[derive(EnumDiscriminants, DelegateEnum)]
 #[strum_discriminants(name(DelegateKind))]
 pub enum Delegate {
     /// The Champion's turn begins
@@ -147,8 +144,8 @@ pub enum Delegate {
     OnDusk(EventDelegate<TurnNumber>),
     /// A card is moved from a Deck position to a Hand position
     OnDrawCard(EventDelegate<CardId>),
-    /// A card has been selected to play via the Play action and should have additional costs
-    /// deducted.
+    /// A card has been selected to play via the Play action and should have
+    /// additional costs deducted.
     OnPayCardCosts(EventDelegate<CardId>),
     /// A card has been played via the Play action and has had its costs paid
     OnCastCard(EventDelegate<CardId>),
@@ -166,13 +163,14 @@ pub enum Delegate {
     OnEncounterBegin(EventDelegate<RaidState>),
     /// A weapon boost is activated for a given card
     OnActivateBoost(EventDelegate<BoostData>),
-    /// A minion is defeated during an encounter by dealing damage to it equal to its health
+    /// A minion is defeated during an encounter by dealing damage to it equal
+    /// to its health
     OnMinionDefeated(EventDelegate<CardId>),
-    /// A minion's 'combat' ability is triggered during an encounter, typically because the minion
-    /// was not defeated by the Champion.
+    /// A minion's 'combat' ability is triggered during an encounter, typically
+    /// because the minion was not defeated by the Champion.
     OnMinionCombatAbility(EventDelegate<CardId>),
-    /// A minion finishes being encountered during a raid. Invokes regardless of whether the
-    /// encounter was successful.
+    /// A minion finishes being encountered during a raid. Invokes regardless of
+    /// whether the encounter was successful.
     OnEncounterEnd(EventDelegate<RaidState>),
     /// A Raid is completed, either successfully or unsuccessfully.
     OnRaidEnd(EventDelegate<RaidState>),
@@ -186,13 +184,17 @@ pub enum Delegate {
     GetManaCost(QueryDelegate<CardId, Option<ManaValue>>),
     /// Query the current mana cost of a card. Invoked with [Cost::actions].
     GetActionCost(QueryDelegate<CardId, ActionCount>),
-    /// Query the current attack value of a card. Invoked with [CardStats::base_attack] or 0.
+    /// Query the current attack value of a card. Invoked with
+    /// [CardStats::base_attack] or 0.
     GetAttackValue(QueryDelegate<CardId, AttackValue>),
-    /// Query the current health value of a card. Invoked with [CardStats::health] or 0.
+    /// Query the current health value of a card. Invoked with
+    /// [CardStats::health] or 0.
     GetHealthValue(QueryDelegate<CardId, HealthValue>),
-    /// Query the current shield value of a card. Invoked with [CardStats::shield] or 0.
+    /// Query the current shield value of a card. Invoked with
+    /// [CardStats::shield] or 0.
     GetShieldValue(QueryDelegate<CardId, ShieldValue>),
-    /// Get the current boost count of a card. Invoked with the value of [CardData::boost_count].
+    /// Get the current boost count of a card. Invoked with the value of
+    /// [CardData::boost_count].
     GetBoostCount(QueryDelegate<CardId, BoostCount>),
 }
 

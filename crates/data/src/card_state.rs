@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::BTreeMap;
+
+use serde::{Deserialize, Serialize};
+use strum_macros::EnumDiscriminants;
+
 use crate::card_definition::CardDefinition;
 use crate::card_name::CardName;
 use crate::deck::Deck;
@@ -20,21 +25,18 @@ use crate::primitives::{
     AbilityIndex, BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RoomId, RoomLocation,
     Side,
 };
-use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
-use strum_macros::EnumDiscriminants;
 
-/// Determines display order when multiple cards are in the same position. Typically, this is taken
-/// from an opaque, sequentially increasing counter representing what time the card first moved to
-/// this position.
+/// Determines display order when multiple cards are in the same position.
+/// Typically, this is taken from an opaque, sequentially increasing counter
+/// representing what time the card first moved to this position.
 pub type SortingKey = u32;
 
 /// Identifies the location of a card during an active game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
 #[strum_discriminants(name(CardPositionKind))]
 pub enum CardPosition {
-    /// An unspecified random position within a user's deck. The default position of all cards
-    /// when a new game is started.
+    /// An unspecified random position within a user's deck. The default
+    /// position of all cards when a new game is started.
     DeckUnknown(Side),
     /// A card which is known to at least one player to be on the top of a deck
     DeckTop(Side),
@@ -43,8 +45,8 @@ pub enum CardPosition {
     ArenaItem(ItemLocation),
     DiscardPile(Side),
     Scored(Side),
-    /// Marks the identity card for a side. It is an error for a game to contain more than one
-    /// identity card per side.
+    /// Marks the identity card for a side. It is an error for a game to contain
+    /// more than one identity card per side.
     Identity(Side),
 }
 
@@ -85,8 +87,8 @@ pub struct CardData {
     pub revealed: bool,
     /// How many times has this card been leveled up?
     pub card_level: LevelValue,
-    /// How many times the boost ability of this card has been activated -- typically used to
-    /// increase weapon attack power during a raid.
+    /// How many times the boost ability of this card has been activated --
+    /// typically used to increase weapon attack power during a raid.
     pub boost_count: BoostCount,
     /// How much mana is stored in this card?
     pub stored_mana: ManaValue,
@@ -104,8 +106,8 @@ pub struct CardState {
     pub name: CardName,
     /// Player who owns this card
     pub side: Side,
-    /// Where this card is located in the game. Use [GameState::move_card] instead of modifying
-    /// this directly.
+    /// Where this card is located in the game. Use [GameState::move_card]
+    /// instead of modifying this directly.
     pub position: CardPosition,
     /// Opaque value identifying this card's sort order within its position
     pub sorting_key: SortingKey,

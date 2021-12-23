@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Core game mutations. In general, functions in this module are the only ones expected to append
-//! updates to [GameState::updates].
+//! Core game mutations. In general, functions in this module are the only ones
+//! expected to append updates to [GameState::updates].
 
-use crate::dispatch;
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates;
 use data::delegates::{CardMoved, Scope};
@@ -23,7 +22,10 @@ use data::game::GameState;
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
 use data::updates::GameUpdate;
 
-/// Overwrites the value of [CardData::boost_count] to match the provided [BoostData]
+use crate::dispatch;
+
+/// Overwrites the value of [CardData::boost_count] to match the provided
+/// [BoostData]
 pub fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
     game.card_mut(data.card_id).data.boost_count = data.count;
     game.updates.push(GameUpdate::UpdateCard(data.card_id));
@@ -35,8 +37,9 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
     game.updates.push(GameUpdate::UpdateCard(scope.card_id()));
 }
 
-/// Move a card to a new position. Detects cases like drawing cards, playing cards, and shuffling
-/// cards back into the deck and fires events appropriately.
+/// Move a card to a new position. Detects cases like drawing cards, playing
+/// cards, and shuffling cards back into the deck and fires events
+/// appropriately.
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
     let mut pushed_update = false;
     let old_position = game.card(card_id).position;
@@ -70,24 +73,24 @@ pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Spends a player's mana. Appends [GameUpdate::UpdateGameState]. Panics if sufficient action
-/// points are not available
+/// Spends a player's mana. Appends [GameUpdate::UpdateGameState]. Panics if
+/// sufficient action points are not available
 pub fn spend_mana(game: &mut GameState, side: Side, amount: ActionCount) {
     assert!(game.player(side).mana >= amount, "Insufficient mana available");
     game.player_mut(side).mana -= amount;
     game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Spends a player's action points. Appends [GameUpdate::UpdateGameState]. Panics if sufficient action
-/// points are not available.
+/// Spends a player's action points. Appends [GameUpdate::UpdateGameState].
+/// Panics if sufficient action points are not available.
 pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount) {
     assert!(game.player(side).actions >= amount, "Insufficient action points available");
     game.player_mut(side).actions -= amount;
     game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Takes *up to* `amount` stored mana from a card and gives it to the player who owns this
-/// card. Panics if there is no stored mana available.233z
+/// Takes *up to* `amount` stored mana from a card and gives it to the player
+/// who owns this card. Panics if there is no stored mana available.233z
 pub fn take_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue) {
     let available = game.card(card_id).data.stored_mana;
     assert!(available > 0, "No stored mana available!");

@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use data::delegates::QueryData;
-use data::delegates::{Delegate, EventData, Flag, MutationFn, RequirementFn, Scope};
-use data::game::GameState;
-use data::primitives::{AbilityId, AbilityIndex, BoostCount, CardId};
-use data::{
-    card_name::CardName,
-    delegates::{GetManaCostQuery, OnDawnEvent},
-    primitives::ManaValue,
+use data::card_name::CardName;
+use data::delegates::{
+    Delegate, EventData, Flag, GetManaCostQuery, MutationFn, OnDawnEvent, QueryData, RequirementFn,
+    Scope,
 };
+use data::game::GameState;
+use data::primitives::{AbilityId, AbilityIndex, BoostCount, CardId, ManaValue};
 
 pub fn invoke2<D: Copy, E: EventData<D>>(game: &mut GameState, event: E) {
     let span = event.span();
@@ -65,7 +63,7 @@ pub fn query2<D: Copy, R, E: QueryData<D, R>>(
 }
 
 pub fn test(game: &mut GameState, card_id: CardId) {
-    invoke2(game, OnDawnEvent(1));
+    invoke2(game, OnDawnEvent(8));
 }
 
 pub fn test2(game: &mut GameState, card_id: CardId) -> Option<ManaValue> {

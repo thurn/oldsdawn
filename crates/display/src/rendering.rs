@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::assets::{jewel, CardIconType};
-use crate::{assets, rules_text};
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::GameState;
@@ -36,8 +34,11 @@ use protos::spelldawn::{
 use rules::actions::PlayCardTarget;
 use rules::queries;
 
-/// Builds a series of [GameCommand]s to fully represent the current state of this game in the
-/// client, for use e.g. in response to a reconnect request.
+use crate::assets::{jewel, CardIconType};
+use crate::{assets, rules_text};
+
+/// Builds a series of [GameCommand]s to fully represent the current state of
+/// this game in the client, for use e.g. in response to a reconnect request.
 pub fn full_sync(game: &GameState, user_side: Side) -> Vec<GameCommand> {
     let mut result =
         vec![GameCommand { command: Some(game_view(game, user_side, GameUpdateType::Full)) }];
@@ -52,7 +53,8 @@ pub fn full_sync(game: &GameState, user_side: Side) -> Vec<GameCommand> {
     result
 }
 
-/// Builds a series of [GameCommand]s to represent the updates present in [GameState::updates].
+/// Builds a series of [GameCommand]s to represent the updates present in
+/// [GameState::updates].
 pub fn render_updates(game: &GameState, user_side: Side) -> Vec<GameCommand> {
     game.updates.update_list.as_ref().map_or_else(Vec::new, |updates| {
         updates
@@ -63,7 +65,8 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<GameCommand> {
     })
 }
 
-/// Converts a [GameUpdate] into a [Command] list describing the required client changes.
+/// Converts a [GameUpdate] into a [Command] list describing the required client
+/// changes.
 pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Vec<Command> {
     match update {
         GameUpdate::UpdateGameState => vec![game_view(game, user_side, GameUpdateType::State)],
@@ -86,7 +89,8 @@ pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Ve
 enum GameUpdateType {
     /// Sync all game state, including arena info and player info
     Full,
-    /// Sync only normally mutable game state, such as player mana and current priority
+    /// Sync only normally mutable game state, such as player mana and current
+    /// priority
     State,
 }
 
@@ -119,8 +123,9 @@ fn draw_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command
     ])
 }
 
-/// Creates a move card command to move a card to its current location. Returns None if the
-/// destination would not be a valid game position, e.g. if it is [CardPosition::DeckUnknown].
+/// Creates a move card command to move a card to its current location. Returns
+/// None if the destination would not be a valid game position, e.g. if it is
+/// [CardPosition::DeckUnknown].
 fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Command> {
     adapt_position(card, game.card(card.id).position, user_side).map(|position| {
         Command::MoveGameObjects(MoveGameObjectsCommand {
@@ -131,8 +136,8 @@ fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Comm
     })
 }
 
-/// Creates a create/update card command. Returns None if this card isn't in a valid game position,
-/// e.g if it is in [CardPosition::DeckUnknown].
+/// Creates a create/update card command. Returns None if this card isn't in a
+/// valid game position, e.g if it is in [CardPosition::DeckUnknown].
 fn create_or_update_card(
     game: &GameState,
     card: &CardState,
@@ -260,8 +265,9 @@ fn revealed_card(
     }
 }
 
-/// Converts a card position into a rendered [ObjectPosition]. Returns None if this [CardPosition]
-/// has no equivalent object position, e.g. if the card is currently shuffled into the deck.
+/// Converts a card position into a rendered [ObjectPosition]. Returns None if
+/// this [CardPosition] has no equivalent object position, e.g. if the card is
+/// currently shuffled into the deck.
 fn adapt_position(
     card: &CardState,
     position: CardPosition,

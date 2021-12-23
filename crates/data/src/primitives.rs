@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::card_name::CardName;
 use serde::{Deserialize, Serialize};
+
+use crate::card_name::CardName;
 
 pub type TurnNumber = u32;
 pub type ManaValue = u32;
@@ -86,9 +87,9 @@ impl CardId {
     }
 }
 
-/// Identifies an ability within a card. Abilities are the only game entity which may contain
-/// delegates. Abilities are identified by their position within the card's 'abilities',
-/// or 'activated_abilities' vector.
+/// Identifies an ability within a card. Abilities are the only game entity
+/// which may contain delegates. Abilities are identified by their position
+/// within the card's 'abilities', or 'activated_abilities' vector.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct AbilityIndex(pub usize);
 

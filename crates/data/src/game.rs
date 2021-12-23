@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::cell::RefCell;
+use std::collections::btree_map::Entry;
+use std::iter;
+use std::iter::{Enumerate, Map};
+use std::slice::Iter;
+
+use rand::rngs::ThreadRng;
+use rand::seq::IteratorRandom;
+use rand::{thread_rng, Rng, RngCore};
+use serde::{Deserialize, Serialize};
+
 use crate::card_name::CardName;
 use crate::card_state;
 use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState, SortingKey};
@@ -21,15 +32,6 @@ use crate::primitives::{
     TurnNumber, UserId,
 };
 use crate::updates::{GameUpdate, UpdateTracker};
-use rand::rngs::ThreadRng;
-use rand::seq::IteratorRandom;
-use rand::{thread_rng, Rng, RngCore};
-use serde::{Deserialize, Serialize};
-use std::cell::RefCell;
-use std::collections::btree_map::Entry;
-use std::iter;
-use std::iter::{Enumerate, Map};
-use std::slice::Iter;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerState {
@@ -81,26 +83,27 @@ pub struct GameState {
     pub id: GameId,
     /// General game state
     pub data: GameData,
-    /// Used to track changes to game state in order to update the client. Code which mutates the
-    /// game state is responsible for appending a description of the change to `updates` via
-    /// [UpdateTracker::push].
+    /// Used to track changes to game state in order to update the client. Code
+    /// which mutates the game state is responsible for appending a
+    /// description of the change to `updates` via [UpdateTracker::push].
     ///
-    /// A new `updates` buffer should be set for each network request to track changes in response
-    /// to that request. Consequently, its value is not serialized.
+    /// A new `updates` buffer should be set for each network request to track
+    /// changes in response to that request. Consequently, its value is not
+    /// serialized.
     #[serde(skip)]
     pub updates: UpdateTracker,
-    /// Cards for the overlord player. In general, code should use one of the helper methods below
-    /// instead of accessing this directly.
+    /// Cards for the overlord player. In general, code should use one of the
+    /// helper methods below instead of accessing this directly.
     pub overlord_cards: Vec<CardState>,
-    /// Cards for the champion player. In general, code should use one of the helper methods below
-    /// instead of accessing this directly.
+    /// Cards for the champion player. In general, code should use one of the
+    /// helper methods below instead of accessing this directly.
     pub champion_cards: Vec<CardState>,
     /// State for the overlord player
     pub overlord: PlayerState,
     /// State for the champion player
     pub champion: PlayerState,
-    /// Next sorting key to use for card moves. Automatically updated by [Self::move_card], do not
-    /// mutate this directly.
+    /// Next sorting key to use for card moves. Automatically updated by
+    /// [Self::move_card], do not mutate this directly.
     pub next_sorting_key: SortingKey,
 }
 
@@ -130,9 +133,10 @@ impl GameState {
 
     /// Returns the identity card for the provided Side.
     ///
-    /// It is an error for there to be zero or multiple cards in the `Identity` card position. If
-    /// this does occur, this method will panic (in the case of zero cards) or return an arbitrary
-    /// identity card (in the case of multiples).
+    /// It is an error for there to be zero or multiple cards in the `Identity`
+    /// card position. If this does occur, this method will panic (in the
+    /// case of zero cards) or return an arbitrary identity card (in the
+    /// case of multiples).
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
             .iter()
@@ -200,8 +204,8 @@ impl GameState {
         self.next_sorting_key += 1;
     }
 
-    /// Return a random card in the provided `position`, or None if there are no cards in that
-    /// position
+    /// Return a random card in the provided `position`, or None if there are no
+    /// cards in that position
     pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
         self.all_cards()
             .filter(|c| c.position == position)

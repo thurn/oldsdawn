@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::primitives::{CardId, PointsValue, RoomId, Side};
-use serde::{Deserialize, Serialize};
 use std::iter;
+
+use serde::{Deserialize, Serialize};
+
+use crate::primitives::{CardId, PointsValue, RoomId, Side};
 
 /// Identifies the source or target of a game interaction
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
@@ -33,21 +35,24 @@ pub struct TargetedInteraction {
     pub source: InteractionObjectId,
     /// Target of the effect
     pub target: InteractionObjectId,
-    /// If true, the target will be removed from the raid display and returned to its original game
-    /// position
+    /// If true, the target will be removed from the raid display and returned
+    /// to its original game position
     pub remove_from_raid: bool,
 }
 
-/// Represents an update to the state of the game which should be translated into a client update
+/// Represents an update to the state of the game which should be translated
+/// into a client update
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum GameUpdate {
-    /// Indicates a general game state change, such as modifying a player's mana or the current
-    /// turn number. Does not request a full state sync, so e.g. player card backs and portrait
-    /// images are not modified.
+    /// Indicates a general game state change, such as modifying a player's mana
+    /// or the current turn number. Does not request a full state sync, so
+    /// e.g. player card backs and portrait images are not modified.
     UpdateGameState,
-    /// Indicates a general card state change, such as a modification to its attack value.
+    /// Indicates a general card state change, such as a modification to its
+    /// attack value.
     UpdateCard(CardId),
-    /// Indicates that a player's opening hand has been drawn and may be kept or mulliganed
+    /// Indicates that a player's opening hand has been drawn and may be kept or
+    /// mulliganed
     ShowOpeningHand(Side),
     /// Indicates that a player has kept their current hand
     KeepOpeningHand(Side),
@@ -77,9 +82,10 @@ pub enum GameUpdate {
     GameOver(Side),
 }
 
-/// Tracks game mutations for a given network request. If a vector is present here, then code which
-/// mutates the GameState is also responsible for appending a [GameUpdate] which describes the
-/// mutation. If no vector is present it means update tracking is currently disabled (e.g. because
+/// Tracks game mutations for a given network request. If a vector is present
+/// here, then code which mutates the GameState is also responsible for
+/// appending a [GameUpdate] which describes the mutation. If no vector is
+/// present it means update tracking is currently disabled (e.g. because
 /// we are running in simulation mode).
 #[derive(Debug, Clone, Default)]
 pub struct UpdateTracker {
@@ -89,8 +95,9 @@ pub struct UpdateTracker {
 impl UpdateTracker {
     /// Appends a [GameUpdate] to the update list.
     ///
-    /// Duplicate Updates: If the provided update is exactly identical to the most recent update, it
-    /// is skipped. This is intended to reduce redundancy.
+    /// Duplicate Updates: If the provided update is exactly identical to the
+    /// most recent update, it is skipped. This is intended to reduce
+    /// redundancy.
     pub fn push(&mut self, update: GameUpdate) {
         if let Some(vec) = &mut self.update_list {
             if vec.iter().last() != Some(&update) {

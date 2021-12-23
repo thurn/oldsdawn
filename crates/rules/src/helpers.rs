@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Helpers for defining card behaviors. This file is intended be be used via wildcard import in
-//! card definition files.
+//! Helpers for defining card behaviors. This file is intended be be used via
+//! wildcard import in card definition files.
 
 use data::card_definition::{
     Ability, AbilityText, AbilityType, AttackBoost, CardStats, Cost, Keyword, NumericOperator,
@@ -70,18 +70,20 @@ pub fn in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
     game.card(scope.card_id()).position.in_play()
 }
 
-/// A RequirementFn which restricts delegates to only listen to events for their own card.
+/// A RequirementFn which restricts delegates to only listen to events for their
+/// own card.
 pub fn this_card(game: &GameState, scope: Scope, card_id: impl Into<CardId>) -> bool {
     scope.card_id() == card_id.into()
 }
 
-/// A RequirementFn which restricts delegates to only listen to events for their own ability.
+/// A RequirementFn which restricts delegates to only listen to events for their
+/// own ability.
 pub fn this_ability(game: &GameState, scope: Scope, ability_id: impl Into<AbilityId>) -> bool {
     scope.ability_id() == ability_id.into()
 }
 
-/// A RequirementFn which restricts delegates to only listen to [BoostData] events matching their
-/// card.
+/// A RequirementFn which restricts delegates to only listen to [BoostData]
+/// events matching their card.
 pub fn this_boost(game: &GameState, scope: Scope, boost_data: BoostData) -> bool {
     scope.card_id() == boost_data.card_id
 }
@@ -146,7 +148,8 @@ pub fn on_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     }
 }
 
-/// Helper to create a [CardStats] with the given `base_attack` and [AttackBoost]
+/// Helper to create a [CardStats] with the given `base_attack` and
+/// [AttackBoost]
 pub fn attack(base_attack: AttackValue, boost: AttackBoost) -> CardStats {
     CardStats { base_attack: Some(base_attack), attack_boost: Some(boost), ..CardStats::default() }
 }

@@ -52,29 +52,26 @@
 pub mod database;
 pub mod server;
 
-use data::{game::{GameState, NewGameOptions, RaidState}, card_state::CardPositionKind};
+use data::card_definition::{Ability, CardDefinition};
+use data::card_name::CardName;
+use data::card_name::CardName::TestOverlordIdentity;
+use data::card_state::{CardPosition, CardPositionKind, CardState};
+use data::deck::Deck;
+use data::delegates;
+use data::delegates::{Delegate, Scope};
+use data::game::{GameState, NewGameOptions, RaidState};
 use data::primitives::{
     AbilityId, AbilityIndex, BoostData, CardId, GameId, RaidId, RoomId, RoomLocation, Side, UserId,
 };
-use data::{
-    card_definition::{Ability, CardDefinition},
-};
-use tonic::{transport::Server, Request, Response, Status};
-
+use maplit::hashmap;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
 use protos::spelldawn::{CommandList, GameCommand, GameRequest, GameView, UpdateGameViewCommand};
-
-use data::card_name::CardName;
-use data::card_state::{CardPosition, CardState};
-use data::delegates;
-use data::delegates::{Delegate, Scope};
 use rules::{dispatch, helpers, queries, CARDS};
+use tonic::transport::Server;
+use tonic::{Request, Response, Status};
 
 use crate::server::GameService;
-use data::card_name::CardName::TestOverlordIdentity;
-use data::deck::Deck;
-use maplit::hashmap;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

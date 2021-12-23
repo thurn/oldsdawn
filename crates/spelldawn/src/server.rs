@@ -33,7 +33,8 @@ use protos::spelldawn::{
 use rules::actions;
 use rules::actions::PlayCardTarget;
 use sled::{Db, IVec, Tree};
-use tonic::{transport::Server, Code, Request, Response, Status};
+use tonic::transport::Server;
+use tonic::{Code, Request, Response, Status};
 
 use crate::database;
 use crate::database::game;
@@ -57,8 +58,8 @@ impl Spelldawn for GameService {
     }
 }
 
-/// Processes an incoming client request and returns a vector of [GameCommand] objects describing
-/// required updates to the client UI.
+/// Processes an incoming client request and returns a vector of [GameCommand]
+/// objects describing required updates to the client UI.
 fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
     let game_id = &request.game_id;
     let user_id = request.user_id;
@@ -136,8 +137,8 @@ fn handle_action(
     Ok(result)
 }
 
-/// Look up the state for a game which is expected to exist and assigns an [UpdateTracker] to it
-/// for the duration of this request.
+/// Look up the state for a game which is expected to exist and assigns an
+/// [UpdateTracker] to it for the duration of this request.
 fn find_game(game_id: &Option<GameId>) -> Result<GameState> {
     let id = game_id.as_ref().with_context(|| "GameId not provided!")?.value;
     let mut game = database::game(primitives::GameId::new(id))?;

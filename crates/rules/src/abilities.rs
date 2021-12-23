@@ -12,24 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::helpers::*;
-use crate::mutations::move_card;
-use crate::mutations::set_raid_ended;
-use crate::{mutations, queries};
 use data::card_definition::{Ability, AbilityText, AbilityType, Keyword};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use data::game::GameState;
 use data::primitives::{AttackValue, CardId, ManaValue, Side};
 
-/// Applies this card's `attack_boost` stat a number of times equal to its [CardState::boost_count]
+use crate::helpers::*;
+use crate::mutations::{move_card, set_raid_ended};
+use crate::{mutations, queries};
+
+/// Applies this card's `attack_boost` stat a number of times equal to its
+/// [CardState::boost_count]
 fn add_boost(game: &GameState, scope: Scope, card_id: CardId, current: AttackValue) -> AttackValue {
     let boost_count = queries::boost_count(game, card_id);
     let bonus = queries::stats(game, card_id).attack_boost.expect("Expected boost").bonus;
     current + (boost_count * bonus)
 }
 
-/// The standard weapon ability; applies an attack boost for the duration of a single encounter.
+/// The standard weapon ability; applies an attack boost for the duration of a
+/// single encounter.
 pub fn encounter_boost() -> Ability {
     Ability {
         text: AbilityText::TextFn(|g, s| {
@@ -45,8 +47,8 @@ pub fn encounter_boost() -> Ability {
     }
 }
 
-/// Store N mana in this card when played. Move it to the discard pile when the stored mana is
-/// depleted.
+/// Store N mana in this card when played. Move it to the discard pile when the
+/// stored mana is depleted.
 pub fn store_mana<const N: ManaValue>() -> Ability {
     Ability {
         text: AbilityText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),
@@ -64,7 +66,8 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
     }
 }
 
-/// Discard a random card from the hand of the `side` player, if there are any cards present.
+/// Discard a random card from the hand of the `side` player, if there are any
+/// cards present.
 pub fn discard_random_card(game: &mut GameState, side: Side) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
         move_card(game, card_id, CardPosition::DiscardPile(side));

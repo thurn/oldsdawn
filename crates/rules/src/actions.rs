@@ -12,18 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Contains functions for responding to user-initiated game actions received from the client.
+//! Contains functions for responding to user-initiated game actions received
+//! from the client.
 //!
-//! By convention, functions in this module are responsible for validating the legality of
-//! requests and returning [Result] accordingly. Beyond this point, game functions typically assume
-//! the game is in a valid state and will panic if that is not true.
+//! By convention, functions in this module are responsible for validating the
+//! legality of requests and returning [Result] accordingly. Beyond this point,
+//! game functions typically assume the game is in a valid state and will panic
+//! if that is not true.
 
-use crate::{dispatch, mutations, queries};
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use data::card_state::CardPosition;
 use data::delegates;
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
+
+use crate::{dispatch, mutations, queries};
 
 /// The basic game action to draw a card.
 pub fn draw_card(game: &mut GameState, side: Side) -> Result<()> {
@@ -34,9 +37,9 @@ pub fn draw_card(game: &mut GameState, side: Side) -> Result<()> {
     Ok(())
 }
 
-/// Possible targets for the 'play card' action. Note that many types of targets are *not* selected
-/// in the original PlayCard action request but are instead selected via a follow-up prompt, and
-/// thus are not represented here.
+/// Possible targets for the 'play card' action. Note that many types of targets
+/// are *not* selected in the original PlayCard action request but are instead
+/// selected via a follow-up prompt, and thus are not represented here.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum PlayCardTarget {
     None,

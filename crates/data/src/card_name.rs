@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::cmp::Ordering;
+
 use convert_case::{Case, Casing};
 use serde::{Deserialize, Serialize};
-use std::cmp::Ordering;
 use strum_macros::Display;
 
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display, Serialize, Deserialize)]
