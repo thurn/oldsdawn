@@ -52,10 +52,12 @@
 pub mod database;
 pub mod server;
 
-use data::card_definition::{Ability, CardDefinition};
-use data::game::{GameState, NewGameOptions, RaidState};
+use data::{game::{GameState, NewGameOptions, RaidState}, card_state::CardPositionKind};
 use data::primitives::{
     AbilityId, AbilityIndex, BoostData, CardId, GameId, RaidId, RoomId, RoomLocation, Side, UserId,
+};
+use data::{
+    card_definition::{Ability, CardDefinition},
 };
 use tonic::{transport::Server, Request, Response, Status};
 
@@ -73,34 +75,6 @@ use crate::server::GameService;
 use data::card_name::CardName::TestOverlordIdentity;
 use data::deck::Deck;
 use maplit::hashmap;
-
-//#[derive(Default)]
-//pub struct GameService {}
-
-// #[tonic::async_trait]
-// impl Spelldawn for GameService {
-//     async fn perform_action(
-//         &self,
-//         request: Request<GameRequest>,
-//     ) -> Result<Response<CommandList>, Status> {
-//         println!("Got a request from {:?}", request.remote_addr());
-//
-//         let reply = CommandList {
-//             commands: vec![GameCommand {
-//                 command: Some(Command::UpdateGameView(UpdateGameViewCommand {
-//                     game: Some(GameView {
-//                         game_id: Some(GameId { value: "GAME_ID".to_string() }),
-//                         user: None,
-//                         opponent: None,
-//                         arena: None,
-//                         current_priority: 0,
-//                     }),
-//                 })),
-//             }],
-//         };
-//         Ok(Response::new(reply))
-//     }
-// }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

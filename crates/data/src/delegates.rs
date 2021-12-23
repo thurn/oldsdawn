@@ -130,7 +130,15 @@ pub struct CardMoved {
     pub new_position: CardPosition,
 }
 
-#[derive(EnumDiscriminants, DelegateEnum)]
+#[derive(DelegateEnum)]
+pub enum Delegate2 {
+    /// The Champion's turn begins
+    OnDawn(EventDelegate<TurnNumber>),
+    /// Query the current mana cost of a card. Invoked with [Cost::mana].
+    GetManaCost(QueryDelegate<CardId, Option<ManaValue>>),
+}
+
+#[derive(EnumDiscriminants)]
 #[strum_discriminants(name(DelegateKind))]
 pub enum Delegate {
     /// The Champion's turn begins
@@ -202,25 +210,40 @@ pub trait EventData<T> {
     fn span(&self) -> Span;
 }
 
-pub struct OnPlayCard(pub CardId);
+pub trait QueryData<TData, TResult> {
+    fn data(&self) -> TData;
 
-impl EventData<CardId> for OnPlayCard {
-    fn data(&self) -> CardId {
+    fn get(delegate: &Delegate) -> Option<QueryDelegate<TData, TResult>>;
+
+    fn span(&self) -> Span;
+}
+
+/*
+
+Example of the code generated in this file:
+
+#[derive(Debug, Copy, Clone)]
+pub struct OnDawnEvent(pub TurnNumber);
+
+impl EventData<TurnNumber> for OnDawnEvent {
+    fn data(&self) -> TurnNumber {
         self.0
     }
 
-    fn get(delegate: &Delegate) -> Option<EventDelegate<CardId>> {
+    fn get(delegate: &Delegate) -> Option<EventDelegate<TurnNumber>> {
         match delegate {
-            Delegate::OnPlayCard(d) => Some(*d),
+            Delegate::OnDawn(d) => Some(*d),
             _ => None,
         }
     }
 
     fn span(&self) -> Span {
         let data = self.data();
-        info_span!("OnPlayCard", ?data)
+        info_span!("on_dawn", ?data)
     }
 }
+
+*/
 
 pub fn on_dawn(game: &mut GameState, scope: Scope, delegate: &Delegate, data: TurnNumber) {
     match delegate {

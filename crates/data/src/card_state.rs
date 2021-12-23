@@ -94,6 +94,8 @@ pub struct CardData {
     pub ability_state: BTreeMap<AbilityIndex, AbilityState>,
 }
 
+/// Stores the state of a Card during an ongoing game. The game rules for a
+/// card are not part of its state, see [CardDefinition] for that.
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct CardState {
     /// ID for this card.

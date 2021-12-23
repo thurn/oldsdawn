@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use data::card_name::CardName;
-use data::delegates::OnPlayCard;
-use data::delegates::{Delegate, EventData, MutationFn, RequirementFn, Scope};
+use data::delegates::QueryData;
+use data::delegates::{Delegate, EventData, Flag, MutationFn, RequirementFn, Scope};
 use data::game::GameState;
-use data::primitives::{AbilityId, AbilityIndex, CardId};
+use data::primitives::{AbilityId, AbilityIndex, BoostCount, CardId};
+use data::{
+    card_name::CardName,
+    delegates::{GetManaCostQuery, OnDawnEvent},
+    primitives::ManaValue,
+};
 
 pub fn invoke2<D: Copy, E: EventData<D>>(game: &mut GameState, event: E) {
     let span = event.span();
@@ -36,8 +40,36 @@ pub fn invoke2<D: Copy, E: EventData<D>>(game: &mut GameState, event: E) {
     }
 }
 
+pub fn query2<D: Copy, R, E: QueryData<D, R>>(
+    game: &mut GameState,
+    event: E,
+    initial_value: R,
+) -> R {
+    let span = event.span();
+    let mut result = initial_value;
+    for card_id in game.all_card_ids() {
+        let definition = crate::get(game.card(card_id).name);
+        for (index, ability) in definition.abilities.iter().enumerate() {
+            let scope = Scope::new(AbilityId::new(card_id, index));
+            for delegate in &ability.delegates {
+                if let Some(functions) = E::get(delegate) {
+                    let data = event.data();
+                    if (functions.requirement)(game, scope, data) {
+                        result = (functions.transformation)(game, scope, data, result);
+                    }
+                }
+            }
+        }
+    }
+    result
+}
+
 pub fn test(game: &mut GameState, card_id: CardId) {
-    invoke2(game, OnPlayCard(card_id));
+    invoke2(game, OnDawnEvent(1));
+}
+
+pub fn test2(game: &mut GameState, card_id: CardId) -> Option<ManaValue> {
+    query2(game, GetManaCostQuery(card_id), Some(3))
 }
 
 pub fn invoke_event<T: Copy>(
