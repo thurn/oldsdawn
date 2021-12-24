@@ -21,25 +21,19 @@ use data::primitives::{Side, UserId};
 use data::updates::UpdateTracker;
 use display::rendering;
 use maplit::hashmap;
-use once_cell::sync::Lazy;
-use protos::spelldawn;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::game_command::Command;
-use protos::spelldawn::spelldawn_server::{Spelldawn, SpelldawnServer};
+use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
-    card_target, CardId, CardTarget, CommandList, ConnectAction, GameCommand, GameId, GameRequest,
-    GameView, PlayerSide, RoomId, UpdateGameViewCommand,
+    card_target, CardId, CardTarget, CommandList, GameCommand, GameId, GameRequest, PlayerSide,
+    RoomId,
 };
 use rules::actions;
 use rules::actions::PlayCardTarget;
-use sled::{Db, IVec, Tree};
-use tonic::transport::Server;
-use tonic::{Code, Request, Response, Status};
+use tonic::{Request, Response, Status};
+use tracing::{info, info_span};
 
 use crate::database;
-use crate::database::game;
 
-#[derive(Default)]
 pub struct GameService {}
 
 #[tonic::async_trait]
@@ -63,6 +57,8 @@ impl Spelldawn for GameService {
 fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
     let game_id = &request.game_id;
     let user_id = request.user_id;
+    let span = info_span!("Request", ?user_id, ?game_id, ?request).entered();
+    info!("Handling request. user_id={:?}, game_id={:?}", user_id, game_id);
     let game_action = request
         .action
         .as_ref()
@@ -70,7 +66,6 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         .action
         .as_ref()
         .with_context(|| "GameAction is required")?;
-    println!(">>> Got request in game {:?} from user {:?}: {:?}", game_id, user_id, game_action);
     let result = match game_action {
         Action::Connect(_) => handle_connect(user_id, game_id),
         Action::DrawCard(_) => handle_action(user_id, game_id, actions::draw_card),
@@ -84,7 +79,8 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         }),
         _ => Ok(vec![]),
     }?;
-    println!(">>> Handled successfully, sending result {:?}", result);
+    info!("Handled request successfully");
+
     Ok(result)
 }
 

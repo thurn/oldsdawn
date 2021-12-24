@@ -14,8 +14,10 @@
 
 use data::card_definition::CardStats;
 use data::card_state::CardPosition;
-use data::delegates;
-use data::delegates::Flag;
+use data::delegates::{
+    self, ActionCostQuery, AttackValueQuery, BoostCountQuery, CanPlayCardQuery, Flag,
+    HealthValueQuery, ManaCostQuery, ShieldValueQuery,
+};
 use data::game::GameState;
 use data::primitives::{
     ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue, Side,
@@ -43,14 +45,13 @@ pub fn can_play(game: &GameState, side: Side, card_id: CardId) -> bool {
     let can_play = in_main_phase(game, side)
         && side == card_id.side
         && matches!(mana_cost(game, card_id), Some(cost) if cost <= game.player(side).mana);
-    dispatch::perform_query(game, delegates::can_play_card, card_id, Flag::new(can_play)).into()
+    dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
 }
 
 pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
     dispatch::perform_query(
         game,
-        delegates::get_mana_cost,
-        card_id,
+        ManaCostQuery(card_id),
         crate::get(game.card(card_id).name).cost.mana,
     )
 }
@@ -58,8 +59,7 @@ pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
 pub fn action_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> ActionCount {
     dispatch::perform_query(
         game,
-        delegates::get_action_cost,
-        card_id.into(),
+        ActionCostQuery(card_id.into()),
         crate::get(game.card(card_id).name).cost.actions,
     )
 }
@@ -67,8 +67,7 @@ pub fn action_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> Actio
 pub fn attack(game: &GameState, card_id: impl Into<CardId> + Copy) -> AttackValue {
     dispatch::perform_query(
         game,
-        delegates::get_attack_value,
-        card_id.into(),
+        AttackValueQuery(card_id.into()),
         stats(game, card_id).base_attack.unwrap_or(0),
     )
 }
@@ -76,8 +75,7 @@ pub fn attack(game: &GameState, card_id: impl Into<CardId> + Copy) -> AttackValu
 pub fn health(game: &GameState, card_id: impl Into<CardId> + Copy) -> HealthValue {
     dispatch::perform_query(
         game,
-        delegates::get_health_value,
-        card_id.into(),
+        HealthValueQuery(card_id.into()),
         stats(game, card_id).health.unwrap_or(0),
     )
 }
@@ -85,8 +83,7 @@ pub fn health(game: &GameState, card_id: impl Into<CardId> + Copy) -> HealthValu
 pub fn shield(game: &GameState, card_id: impl Into<CardId> + Copy) -> ShieldValue {
     dispatch::perform_query(
         game,
-        delegates::get_shield_value,
-        card_id.into(),
+        ShieldValueQuery(card_id.into()),
         stats(game, card_id).shield.unwrap_or(0),
     )
 }
@@ -94,8 +91,7 @@ pub fn shield(game: &GameState, card_id: impl Into<CardId> + Copy) -> ShieldValu
 pub fn boost_count(game: &GameState, card_id: impl Into<CardId> + Copy) -> BoostCount {
     dispatch::perform_query(
         game,
-        delegates::get_boost_count,
-        card_id.into(),
+        BoostCountQuery(card_id.into()),
         game.card(card_id).data.boost_count,
     )
 }

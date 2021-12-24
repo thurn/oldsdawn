@@ -40,9 +40,9 @@ pub fn encounter_boost() -> Ability {
         }),
         ability_type: AbilityType::Encounter,
         delegates: vec![
-            Delegate::OnActivateBoost(EventDelegate::new(this_boost, mutations::write_boost)),
-            Delegate::GetAttackValue(QueryDelegate::new(this_card, add_boost)),
-            Delegate::OnEncounterEnd(EventDelegate::new(always, mutations::clear_boost)),
+            Delegate::ActivateBoost(EventDelegate::new(this_boost, mutations::write_boost)),
+            Delegate::AttackValue(QueryDelegate::new(this_card, add_boost)),
+            Delegate::EncounterEnd(EventDelegate::new(always, mutations::clear_boost)),
         ],
     }
 }
@@ -54,10 +54,10 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
         text: AbilityText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),
         ability_type: AbilityType::Standard,
         delegates: vec![
-            Delegate::OnPlayCard(EventDelegate::new(this_card, |g, s, card_id| {
+            Delegate::PlayCard(EventDelegate::new(this_card, |g, s, card_id| {
                 g.card_mut(card_id).data.stored_mana = N;
             })),
-            Delegate::OnStoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
+            Delegate::StoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
                 if g.card(card_id).data.stored_mana == 0 {
                     move_card(g, card_id, CardPosition::DiscardPile(s.side()))
                 }

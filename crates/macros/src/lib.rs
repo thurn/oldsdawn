@@ -16,12 +16,11 @@
 
 extern crate proc_macro;
 
-use heck::ToSnakeCase;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens};
 use syn::{
-    AngleBracketedGenericArguments, Attribute, Data, DeriveInput, Fields, GenericArgument, LitStr,
-    Path, PathArguments, Type,
+    AngleBracketedGenericArguments, Attribute, Data, DeriveInput, Fields, GenericArgument, Path,
+    PathArguments, Type,
 };
 
 /// Generates Event & Query structs for the delegates in the delegate enum.
@@ -124,7 +123,6 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
         if variant.delegate_type == DelegateType::Event { "Event" } else { "Query" }
     );
     let docs = &variant.docs;
-    let name_string = LitStr::new(&variant.name.to_string().to_snake_case(), variant.name.span());
     let data = &variant.data;
 
     let (trait_value, return_value) = if variant.delegate_type == DelegateType::Event {
@@ -149,11 +147,6 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
                     Delegate::#name(d) => Some(*d),
                     _ => None,
                 }
-            }
-
-            fn span(&self) -> Span {
-                let data = self.data();
-                info_span!(#name_string, ?data)
             }
         }
     }

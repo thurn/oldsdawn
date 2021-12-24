@@ -22,9 +22,10 @@
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use data::card_state::CardPosition;
-use data::delegates;
+use data::delegates::{self, CastCardEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
+use tracing::info_span;
 
 use crate::{dispatch, mutations, queries};
 
@@ -62,6 +63,7 @@ pub fn play_card(
     card_id: CardId,
     target: PlayCardTarget,
 ) -> Result<()> {
+    info_span!("play_card");
     ensure!(queries::can_play(game, side, card_id), "Cannot play card {:?}", card_id);
     let card = game.card(card_id);
     let definition = crate::get(card.name);
@@ -70,9 +72,9 @@ pub fn play_card(
         mutations::spend_mana(game, side, mana_cost);
     }
     mutations::spend_action_points(game, side, definition.cost.actions);
-    dispatch::invoke_event(game, delegates::on_pay_card_costs, card_id);
+    dispatch::invoke_event(game, PayCardCostsEvent(card_id));
 
-    dispatch::invoke_event(game, delegates::on_cast_card, card_id);
+    dispatch::invoke_event(game, CastCardEvent(card_id));
 
     let new_position = match definition.card_type {
         CardType::Spell => CardPosition::DiscardPile(side),

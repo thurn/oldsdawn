@@ -9,7 +9,7 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-tracing = "0.1.29"
+tracing = { version = "0.1.29", features = ["max_level_debug", "release_max_level_warn"] }
 
 rules = { path = "../rules", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }

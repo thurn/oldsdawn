@@ -16,11 +16,14 @@
 //! expected to append updates to [GameState::updates].
 
 use data::card_state::{CardData, CardPosition, CardPositionKind};
-use data::delegates;
-use data::delegates::{CardMoved, Scope};
+use data::delegates::{
+    self, CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, Scope,
+    StoredManaTakenEvent,
+};
 use data::game::GameState;
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
 use data::updates::GameUpdate;
+use tracing::{info, instrument};
 
 use crate::dispatch;
 
@@ -40,21 +43,23 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events
 /// appropriately.
+#[instrument(skip(game))]
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
     let mut pushed_update = false;
     let old_position = game.card(card_id).position;
     game.move_card(card_id, new_position);
 
-    dispatch::invoke_event(game, delegates::on_move_card, CardMoved { old_position, new_position });
+    dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }));
+    info!("Move Card: {:?}", card_id);
 
     if old_position.in_deck() && new_position.in_hand() {
-        dispatch::invoke_event(game, delegates::on_draw_card, card_id);
+        dispatch::invoke_event(game, DrawCardEvent(card_id));
         game.updates.push(GameUpdate::DrawCard(card_id));
         pushed_update = true;
     }
 
     if !old_position.in_play() && new_position.in_play() {
-        dispatch::invoke_event(game, delegates::on_play_card, card_id);
+        dispatch::invoke_event(game, PlayCardEvent(card_id));
     }
 
     if new_position.kind() == CardPositionKind::DeckUnknown {
@@ -68,14 +73,18 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 }
 
 /// Give mana to the indicated player. Appends [GameUpdate::UpdateGameState].
+#[instrument(skip(game))]
 pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
+    info!("Gain mana: {:?} {:?}", side, amount);
     game.player_mut(side).mana += amount;
     game.updates.push(GameUpdate::UpdateGameState);
 }
 
 /// Spends a player's mana. Appends [GameUpdate::UpdateGameState]. Panics if
 /// sufficient action points are not available
-pub fn spend_mana(game: &mut GameState, side: Side, amount: ActionCount) {
+#[instrument(skip(game))]
+pub fn spend_mana(game: &mut GameState, side: Side, amount: ManaValue) {
+    info!("Spend mana: {:?} {:?}", side, amount);
     assert!(game.player(side).mana >= amount, "Insufficient mana available");
     game.player_mut(side).mana -= amount;
     game.updates.push(GameUpdate::UpdateGameState);
@@ -96,14 +105,14 @@ pub fn take_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue
     assert!(available > 0, "No stored mana available!");
     let taken = std::cmp::min(available, amount);
     game.card_mut(card_id).data.stored_mana -= taken;
-    dispatch::invoke_event(game, delegates::on_stored_mana_taken, card_id);
+    dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
     game.updates.push(GameUpdate::UpdateCard(card_id));
     gain_mana(game, card_id.side, taken);
 }
 
 /// Ends the current raid.
 pub fn set_raid_ended(game: &mut GameState) {
-    dispatch::invoke_event(game, delegates::on_raid_end, game.data.raid.expect("Active raid"));
+    dispatch::invoke_event(game, RaidEndEvent(game.data.raid.expect("Active raid")));
     game.data.raid = None;
     game.updates.push(GameUpdate::EndRaid);
 }

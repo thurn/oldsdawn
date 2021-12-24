@@ -93,7 +93,7 @@ pub fn on_cast(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::OnCastCard(EventDelegate { requirement: this_card, mutation })],
+        delegates: vec![Delegate::CastCard(EventDelegate { requirement: this_card, mutation })],
     }
 }
 
@@ -102,7 +102,7 @@ pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::OnPlayCard(EventDelegate { requirement: this_card, mutation })],
+        delegates: vec![Delegate::PlayCard(EventDelegate { requirement: this_card, mutation })],
     }
 }
 
@@ -111,7 +111,7 @@ pub fn at_dawn(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability 
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::OnDawn(EventDelegate { requirement: in_play, mutation })],
+        delegates: vec![Delegate::Dawn(EventDelegate { requirement: in_play, mutation })],
     }
 }
 
@@ -120,7 +120,7 @@ pub fn at_dusk(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability 
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::OnDusk(EventDelegate { requirement: in_play, mutation })],
+        delegates: vec![Delegate::Dusk(EventDelegate { requirement: in_play, mutation })],
     }
 }
 
@@ -129,7 +129,7 @@ pub fn combat(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::OnMinionCombatAbility(EventDelegate {
+        delegates: vec![Delegate::MinionCombatAbility(EventDelegate {
             requirement: this_card,
             mutation,
         })],
@@ -141,10 +141,7 @@ pub fn on_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::OnScoreScheme(EventDelegate {
-            requirement: this_card,
-            mutation,
-        })],
+        delegates: vec![Delegate::ScoreScheme(EventDelegate { requirement: this_card, mutation })],
     }
 }
 

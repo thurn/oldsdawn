@@ -139,63 +139,63 @@ pub struct CardMoved {
 #[strum_discriminants(name(DelegateKind))]
 pub enum Delegate {
     /// The Champion's turn begins
-    OnDawn(EventDelegate<TurnNumber>),
+    Dawn(EventDelegate<TurnNumber>),
     /// The Overlord's turn begins
-    OnDusk(EventDelegate<TurnNumber>),
+    Dusk(EventDelegate<TurnNumber>),
     /// A card is moved from a Deck position to a Hand position
-    OnDrawCard(EventDelegate<CardId>),
+    DrawCard(EventDelegate<CardId>),
     /// A card has been selected to play via the Play action and should have
     /// additional costs deducted.
-    OnPayCardCosts(EventDelegate<CardId>),
+    PayCardCosts(EventDelegate<CardId>),
     /// A card has been played via the Play action and has had its costs paid
-    OnCastCard(EventDelegate<CardId>),
+    CastCard(EventDelegate<CardId>),
     /// A card is moved from a non-arena position to an arena position
-    OnPlayCard(EventDelegate<CardId>),
+    PlayCard(EventDelegate<CardId>),
     /// A card is moved to a new position
-    OnMoveCard(EventDelegate<CardMoved>),
+    MoveCard(EventDelegate<CardMoved>),
     /// A card is scored by the Overlord
-    OnScoreScheme(EventDelegate<CardId>),
+    ScoreScheme(EventDelegate<CardId>),
     /// A card is scored by the Champion
-    OnStealScheme(EventDelegate<CardId>),
+    StealScheme(EventDelegate<CardId>),
     /// A Raid is initiated
-    OnRaidBegin(EventDelegate<RaidState>),
+    RaidBegin(EventDelegate<RaidState>),
     /// A minion is encountered during a raid
-    OnEncounterBegin(EventDelegate<RaidState>),
+    EncounterBegin(EventDelegate<RaidState>),
     /// A weapon boost is activated for a given card
-    OnActivateBoost(EventDelegate<BoostData>),
+    ActivateBoost(EventDelegate<BoostData>),
     /// A minion is defeated during an encounter by dealing damage to it equal
     /// to its health
-    OnMinionDefeated(EventDelegate<CardId>),
+    MinionDefeated(EventDelegate<CardId>),
     /// A minion's 'combat' ability is triggered during an encounter, typically
     /// because the minion was not defeated by the Champion.
-    OnMinionCombatAbility(EventDelegate<CardId>),
+    MinionCombatAbility(EventDelegate<CardId>),
     /// A minion finishes being encountered during a raid. Invokes regardless of
     /// whether the encounter was successful.
-    OnEncounterEnd(EventDelegate<RaidState>),
+    EncounterEnd(EventDelegate<RaidState>),
     /// A Raid is completed, either successfully or unsuccessfully.
-    OnRaidEnd(EventDelegate<RaidState>),
+    RaidEnd(EventDelegate<RaidState>),
     /// Stored mana is taken from a card
-    OnStoredManaTaken(EventDelegate<CardId>),
+    StoredManaTaken(EventDelegate<CardId>),
 
     /// Query whether a given card can currently be played.
     CanPlayCard(QueryDelegate<CardId, Flag>),
 
     /// Query the current mana cost of a card. Invoked with [Cost::mana].
-    GetManaCost(QueryDelegate<CardId, Option<ManaValue>>),
+    ManaCost(QueryDelegate<CardId, Option<ManaValue>>),
     /// Query the current mana cost of a card. Invoked with [Cost::actions].
-    GetActionCost(QueryDelegate<CardId, ActionCount>),
+    ActionCost(QueryDelegate<CardId, ActionCount>),
     /// Query the current attack value of a card. Invoked with
     /// [CardStats::base_attack] or 0.
-    GetAttackValue(QueryDelegate<CardId, AttackValue>),
+    AttackValue(QueryDelegate<CardId, AttackValue>),
     /// Query the current health value of a card. Invoked with
     /// [CardStats::health] or 0.
-    GetHealthValue(QueryDelegate<CardId, HealthValue>),
+    HealthValue(QueryDelegate<CardId, HealthValue>),
     /// Query the current shield value of a card. Invoked with
     /// [CardStats::shield] or 0.
-    GetShieldValue(QueryDelegate<CardId, ShieldValue>),
+    ShieldValue(QueryDelegate<CardId, ShieldValue>),
     /// Get the current boost count of a card. Invoked with the value of
     /// [CardData::boost_count].
-    GetBoostCount(QueryDelegate<CardId, BoostCount>),
+    BoostCount(QueryDelegate<CardId, BoostCount>),
 }
 
 impl Debug for Delegate {
@@ -204,20 +204,16 @@ impl Debug for Delegate {
     }
 }
 
-pub trait EventData<T> {
+pub trait EventData<T: Debug>: Debug {
     fn data(&self) -> T;
 
     fn get(delegate: &Delegate) -> Option<EventDelegate<T>>;
-
-    fn span(&self) -> Span;
 }
 
-pub trait QueryData<TData, TResult> {
+pub trait QueryData<TData: Debug, TResult: Debug>: Debug {
     fn data(&self) -> TData;
 
     fn get(delegate: &Delegate) -> Option<QueryDelegate<TData, TResult>>;
-
-    fn span(&self) -> Span;
 }
 
 /*
@@ -246,270 +242,3 @@ impl EventData<TurnNumber> for OnDawnEvent {
 }
 
 */
-
-pub fn on_dawn(game: &mut GameState, scope: Scope, delegate: &Delegate, data: TurnNumber) {
-    match delegate {
-        Delegate::OnDawn(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_dusk(game: &mut GameState, scope: Scope, delegate: &Delegate, data: TurnNumber) {
-    match delegate {
-        Delegate::OnDusk(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_draw_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
-    match delegate {
-        Delegate::OnDrawCard(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_pay_card_costs(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
-    match delegate {
-        Delegate::OnPayCardCosts(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_cast_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
-    match delegate {
-        Delegate::OnCastCard(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_play_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
-    match delegate {
-        Delegate::OnPlayCard(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_move_card(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardMoved) {
-    match delegate {
-        Delegate::OnMoveCard(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_score_scheme(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
-    match delegate {
-        Delegate::OnScoreScheme(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_minion_combat_ability(
-    game: &mut GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-) {
-    match delegate {
-        Delegate::OnMinionCombatAbility(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_activate_boost(game: &mut GameState, scope: Scope, delegate: &Delegate, data: BoostData) {
-    match delegate {
-        Delegate::OnActivateBoost(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_stored_mana_taken(game: &mut GameState, scope: Scope, delegate: &Delegate, data: CardId) {
-    match delegate {
-        Delegate::OnStoredManaTaken(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_raid_begin(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidState) {
-    match delegate {
-        Delegate::OnRaidBegin(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn on_raid_end(game: &mut GameState, scope: Scope, delegate: &Delegate, data: RaidState) {
-    match delegate {
-        Delegate::OnRaidEnd(EventDelegate { requirement, mutation })
-            if requirement(game, scope, data) =>
-        {
-            mutation(game, scope, data)
-        }
-        _ => (),
-    }
-}
-
-pub fn can_play_card(
-    game: &GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-    current: Flag,
-) -> Flag {
-    match delegate {
-        Delegate::CanPlayCard(QueryDelegate { requirement, transformation })
-            if requirement(game, scope, data) =>
-        {
-            transformation(game, scope, data, current)
-        }
-        _ => current,
-    }
-}
-
-pub fn get_mana_cost(
-    game: &GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-    current: Option<ManaValue>,
-) -> Option<ManaValue> {
-    match delegate {
-        Delegate::GetManaCost(QueryDelegate { requirement, transformation })
-            if requirement(game, scope, data) =>
-        {
-            transformation(game, scope, data, current)
-        }
-        _ => current,
-    }
-}
-
-pub fn get_action_cost(
-    game: &GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-    current: ActionCount,
-) -> ActionCount {
-    match delegate {
-        Delegate::GetActionCost(QueryDelegate { requirement, transformation })
-            if requirement(game, scope, data) =>
-        {
-            transformation(game, scope, data, current)
-        }
-        _ => current,
-    }
-}
-
-pub fn get_attack_value(
-    game: &GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-    current: AttackValue,
-) -> AttackValue {
-    match delegate {
-        Delegate::GetAttackValue(QueryDelegate { requirement, transformation })
-            if requirement(game, scope, data) =>
-        {
-            transformation(game, scope, data, current)
-        }
-        _ => current,
-    }
-}
-
-pub fn get_health_value(
-    game: &GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-    current: HealthValue,
-) -> HealthValue {
-    match delegate {
-        Delegate::GetHealthValue(QueryDelegate { requirement, transformation })
-            if requirement(game, scope, data) =>
-        {
-            transformation(game, scope, data, current)
-        }
-        _ => current,
-    }
-}
-
-pub fn get_shield_value(
-    game: &GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-    current: ShieldValue,
-) -> ShieldValue {
-    match delegate {
-        Delegate::GetShieldValue(QueryDelegate { requirement, transformation })
-            if requirement(game, scope, data) =>
-        {
-            transformation(game, scope, data, current)
-        }
-        _ => current,
-    }
-}
-
-pub fn get_boost_count(
-    game: &GameState,
-    scope: Scope,
-    delegate: &Delegate,
-    data: CardId,
-    current: BoostCount,
-) -> BoostCount {
-    match delegate {
-        Delegate::GetBoostCount(QueryDelegate { requirement, transformation })
-            if requirement(game, scope, data) =>
-        {
-            transformation(game, scope, data, current)
-        }
-        _ => current,
-    }
-}
