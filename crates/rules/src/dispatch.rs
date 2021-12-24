@@ -30,7 +30,7 @@ pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, even
                 if let Some(functions) = E::get(delegate) {
                     let data = event.data();
                     if (functions.requirement)(game, scope, data) {
-                        info!("Invoking Event {:?} for {:?}", event, scope);
+                        info!(?event, ?scope, "invoke_event");
                         (functions.mutation)(game, scope, data)
                     }
                 }
@@ -54,7 +54,7 @@ pub fn perform_query<D: Copy + Debug, R: Debug, E: QueryData<D, R>>(
                 if let Some(functions) = E::get(delegate) {
                     let data = query.data();
                     if (functions.requirement)(game, scope, data) {
-                        info!("Running Query {:?} for {:?}", query, delegate);
+                        info!(?query, ?scope, "perform_query");
                         result = (functions.transformation)(game, scope, data, result);
                     }
                 }

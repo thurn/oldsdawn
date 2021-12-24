@@ -25,12 +25,14 @@ use data::card_state::CardPosition;
 use data::delegates::{self, CastCardEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
-use tracing::info_span;
+use tracing::{info, instrument};
 
 use crate::{dispatch, mutations, queries};
 
 /// The basic game action to draw a card.
+#[instrument(skip(game))]
 pub fn draw_card(game: &mut GameState, side: Side) -> Result<()> {
+    info!(?side, "draw_card");
     ensure!(queries::in_main_phase(game, side), "Not in main phase for {:?}", side);
     let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
     mutations::spend_action_points(game, side, 1);
@@ -57,13 +59,14 @@ impl PlayCardTarget {
 }
 
 /// The basic game action to play a card
+#[instrument(skip(game))]
 pub fn play_card(
     game: &mut GameState,
     side: Side,
     card_id: CardId,
     target: PlayCardTarget,
 ) -> Result<()> {
-    info_span!("play_card");
+    info!(?side, ?card_id, ?target, "play_card");
     ensure!(queries::can_play(game, side, card_id), "Cannot play card {:?}", card_id);
     let card = game.card(card_id);
     let definition = crate::get(card.name);

@@ -22,6 +22,7 @@ use data::updates::UpdateTracker;
 use display::rendering;
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
+use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
     card_target, CardId, CardTarget, CommandList, GameCommand, GameId, GameRequest, PlayerSide,
@@ -30,7 +31,7 @@ use protos::spelldawn::{
 use rules::actions;
 use rules::actions::PlayCardTarget;
 use tonic::{Request, Response, Status};
-use tracing::{info, info_span};
+use tracing::{info, warn, warn_span};
 
 use crate::database;
 
@@ -55,10 +56,8 @@ impl Spelldawn for GameService {
 /// Processes an incoming client request and returns a vector of [GameCommand]
 /// objects describing required updates to the client UI.
 fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
-    let game_id = &request.game_id;
-    let user_id = request.user_id;
-    let span = info_span!("Request", ?user_id, ?game_id, ?request).entered();
-    info!("Handling request. user_id={:?}, game_id={:?}", user_id, game_id);
+    let game_id = to_server_game_id(&request.game_id);
+    let user_id = primitives::UserId::new(request.user_id);
     let game_action = request
         .action
         .as_ref()
@@ -66,6 +65,10 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         .action
         .as_ref()
         .with_context(|| "GameAction is required")?;
+
+    let span = warn_span!("handle_request", ?user_id, ?game_id, ?game_action).entered();
+    warn!(?user_id, ?game_id, ?game_action, "received_request");
+
     let result = match game_action {
         Action::Connect(_) => handle_connect(user_id, game_id),
         Action::DrawCard(_) => handle_action(user_id, game_id, actions::draw_card),
@@ -79,18 +82,24 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         }),
         _ => Ok(vec![]),
     }?;
-    info!("Handled request successfully");
+    let response = result.iter().map(command_name).collect::<Vec<_>>();
+
+    info!(?response, "sending_response");
 
     Ok(result)
 }
 
-fn handle_connect(user_id: u64, game_id: &Option<GameId>) -> Result<Vec<GameCommand>> {
+fn handle_connect(
+    user_id: primitives::UserId,
+    game_id: Option<primitives::GameId>,
+) -> Result<Vec<GameCommand>> {
     let game = if let Some(game_id) = game_id {
-        database::game(primitives::GameId::new(game_id.value))?
+        database::game(game_id)?
     } else {
         let id = database::generate_id()?;
+        let new_game_id = primitives::GameId::new(id);
         let mut game = GameState::new_game(
-            primitives::GameId::new(id),
+            new_game_id,
             Deck {
                 owner_id: UserId::new(2),
                 identity: CardName::TestOverlordIdentity,
@@ -113,6 +122,7 @@ fn handle_connect(user_id: u64, game_id: &Option<GameId>) -> Result<Vec<GameComm
         game.champion.actions = 3;
 
         database::write_game(&game)?;
+        info!(?new_game_id, "create_new_game");
         game
     };
 
@@ -121,8 +131,8 @@ fn handle_connect(user_id: u64, game_id: &Option<GameId>) -> Result<Vec<GameComm
 }
 
 fn handle_action(
-    user_id: u64,
-    game_id: &Option<GameId>,
+    user_id: primitives::UserId,
+    game_id: Option<primitives::GameId>,
     function: impl Fn(&mut GameState, Side) -> Result<()>,
 ) -> Result<Vec<GameCommand>> {
     let mut game = find_game(game_id)?;
@@ -135,18 +145,18 @@ fn handle_action(
 
 /// Look up the state for a game which is expected to exist and assigns an
 /// [UpdateTracker] to it for the duration of this request.
-fn find_game(game_id: &Option<GameId>) -> Result<GameState> {
-    let id = game_id.as_ref().with_context(|| "GameId not provided!")?.value;
-    let mut game = database::game(primitives::GameId::new(id))?;
+fn find_game(game_id: Option<primitives::GameId>) -> Result<GameState> {
+    let id = game_id.as_ref().with_context(|| "GameId not provided!")?;
+    let mut game = database::game(*id)?;
     game.updates = UpdateTracker { update_list: Some(vec![]) };
     Ok(game)
 }
 
 /// Returns the [Side] the indicated user is representing in ths game
-fn user_side(user_id: u64, game: &GameState) -> Result<Side> {
-    if user_id == game.champion.id.value {
+fn user_side(user_id: primitives::UserId, game: &GameState) -> Result<Side> {
+    if user_id == game.champion.id {
         Ok(Side::Champion)
-    } else if user_id == game.overlord.id.value {
+    } else if user_id == game.overlord.id {
         Ok(Side::Overlord)
     } else {
         bail!("User {:?} is not a participant in game {:?}", user_id, game.id)
@@ -168,6 +178,34 @@ fn to_server_card_id(card_id: &Option<CardId>) -> Result<primitives::CardId> {
     }
 }
 
+fn command_name(command: &GameCommand) -> &'static str {
+    if let Some(c) = &command.command {
+        match c {
+            Command::DebugLog(_) => "DebugLog",
+            Command::RunInParallel(_) => "RunInParallel",
+            Command::Delay(_) => "Delay",
+            Command::RenderInterface(_) => "RenderInterface",
+            Command::UpdateGameView(_) => "UpdateGameView",
+            Command::InitiateRaid(_) => "InitiateRaid",
+            Command::EndRaid(_) => "EndRaid",
+            Command::LevelUpRoom(_) => "LevelUpRoom",
+            Command::CreateOrUpdateCard(_) => "CreateOrUpdateCard",
+            Command::DestroyCard(_) => "DestroyCard",
+            Command::MoveGameObjects(_) => "MoveGameObjects",
+            Command::MoveObjectsAtPosition(_) => "MoveObjectsAtPosition",
+            Command::PlaySound(_) => "PlaySound",
+            Command::SetMusic(_) => "SetMusic",
+            Command::FireProjectile(_) => "FireProjectile",
+            Command::PlayEffect(_) => "PlayEffect",
+            Command::DisplayGameMessage(_) => "DisplayGameMessage",
+            Command::SetGameObjectsEnabled(_) => "SetGameObjectsEnabled",
+            Command::DisplayRewards(_) => "DisplayRewards",
+        }
+    } else {
+        "None"
+    }
+}
+
 fn card_target(target: &Option<CardTarget>) -> PlayCardTarget {
     target.as_ref().map_or(PlayCardTarget::None, |t| {
         t.card_target.as_ref().map_or(PlayCardTarget::None, |t2| match t2 {
@@ -177,6 +215,10 @@ fn card_target(target: &Option<CardTarget>) -> PlayCardTarget {
             }
         })
     })
+}
+
+fn to_server_game_id(game_id: &Option<GameId>) -> Option<primitives::GameId> {
+    game_id.as_ref().map(|g| primitives::GameId::new(g.value))
 }
 
 fn to_server_room_id(room_id: Option<RoomId>) -> Option<primitives::RoomId> {

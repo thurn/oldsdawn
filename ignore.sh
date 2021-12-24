@@ -21,6 +21,7 @@ xattr -w com.dropbox.ignored 1 proto/bin
 xattr -w com.dropbox.ignored 1 proto/obj
 xattr -w com.dropbox.ignored 1 target/
 xattr -w com.dropbox.ignored 1 bin/
+xattr -w com.dropbox.ignored 1 db/
 
 rm -r 'Temp (Ignored Item Conflict 1)'
 rm -r 'Temp (Ignored Item Conflict)'

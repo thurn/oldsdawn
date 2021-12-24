@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use std::fmt;
-use std::fmt::{Debug, Formatter};
+use std::fmt::Formatter;
 use std::marker::PhantomData;
 use std::sync::Arc;
 
@@ -30,7 +30,7 @@ use crate::primitives::{
 };
 
 /// Scope for which ability owns a delegate
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone)]
 pub struct Scope {
     /// Ability which owns this delegate.
     ability_id: AbilityId,
@@ -57,6 +57,12 @@ impl Scope {
 
     pub fn card_id(&self) -> CardId {
         self.ability_id.card_id
+    }
+}
+
+impl fmt::Debug for Scope {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self.ability_id)
     }
 }
 
@@ -198,19 +204,19 @@ pub enum Delegate {
     BoostCount(QueryDelegate<CardId, BoostCount>),
 }
 
-impl Debug for Delegate {
+impl fmt::Debug for Delegate {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "Delegate::{:?}", DelegateKind::from(self))
     }
 }
 
-pub trait EventData<T: Debug>: Debug {
+pub trait EventData<T: fmt::Debug>: fmt::Debug {
     fn data(&self) -> T;
 
     fn get(delegate: &Delegate) -> Option<EventDelegate<T>>;
 }
 
-pub trait QueryData<TData: Debug, TResult: Debug>: Debug {
+pub trait QueryData<TData: fmt::Debug, TResult: fmt::Debug>: fmt::Debug {
     fn data(&self) -> TData;
 
     fn get(delegate: &Delegate) -> Option<QueryDelegate<TData, TResult>>;

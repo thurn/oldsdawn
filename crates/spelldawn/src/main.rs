@@ -54,7 +54,7 @@ pub mod server;
 
 use protos::spelldawn::spelldawn_server::SpelldawnServer;
 use tonic::transport::Server;
-use tracing::info;
+use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::fmt;
 use tracing_subscriber::prelude::*;
@@ -72,7 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .allow_origins(vec!["127.0.0.1"])
         .enable(SpelldawnServer::new(GameService {}));
 
-    info!("Server listening on {}", address);
+    warn!("Server listening on {}", address);
     Server::builder().accept_http1(true).add_service(service).serve(address).await?;
     Ok(())
 }

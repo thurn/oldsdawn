@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::fmt;
+
 use serde::{Deserialize, Serialize};
+use syn::token::Use;
 
 use crate::card_name::CardName;
 
@@ -27,7 +30,7 @@ pub type BoostCount = u32;
 pub type LevelValue = u32;
 
 /// Identifies a user across different games
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+#[derive(Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct UserId {
     pub value: u64,
 }
@@ -42,8 +45,14 @@ impl UserId {
     }
 }
 
+impl fmt::Debug for UserId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "@{}", self.value)
+    }
+}
+
 /// Identifies an ongoing game
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+#[derive(Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct GameId {
     pub value: u64,
 }
@@ -58,8 +67,14 @@ impl GameId {
     }
 }
 
+impl fmt::Debug for GameId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "${}", self.value)
+    }
+}
+
 /// The two players in a game: Overlord & Champion
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
 pub enum Side {
     Overlord,
     Champion,
@@ -74,8 +89,21 @@ impl Side {
     }
 }
 
+impl fmt::Debug for Side {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Side::Overlord => "Overlord",
+                Side::Champion => "Champion",
+            }
+        )
+    }
+}
+
 /// Identifies a card in an ongoing game
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
 pub struct CardId {
     pub side: Side,
     pub index: usize,
@@ -87,16 +115,42 @@ impl CardId {
     }
 }
 
+impl fmt::Debug for CardId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "#{}{}",
+            match self.side {
+                Side::Overlord => "O",
+                Side::Champion => "C",
+            },
+            self.index
+        )
+    }
+}
+
 /// Identifies an ability within a card. Abilities are the only game entity
 /// which may contain delegates. Abilities are identified by their position
 /// within the card's 'abilities', or 'activated_abilities' vector.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Ord, PartialOrd, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct AbilityIndex(pub usize);
 
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+impl fmt::Debug for AbilityIndex {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
 pub struct AbilityId {
     pub card_id: CardId,
     pub index: AbilityIndex,
+}
+
+impl fmt::Debug for AbilityId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}[{:?}]", self.card_id, self.index)
+    }
 }
 
 impl AbilityId {
@@ -112,8 +166,14 @@ impl From<AbilityId> for CardId {
 }
 
 /// Uniquely identifies a raid within a given game
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
 pub struct RaidId(pub u32);
+
+impl fmt::Debug for RaidId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "%{}", self.0)
+    }
+}
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct Sprite {
