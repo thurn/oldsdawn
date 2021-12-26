@@ -13,11 +13,12 @@
 // limitations under the License.
 
 use data::card_name::CardName;
+use data::primitives::Side;
 use test_utils::*;
 
 #[test]
 fn arcane_recovery() {
-    let mut game = new_champion_game_with_mana(5);
+    let mut game = new_game(Side::Champion, Args { mana: 5, ..Args::default() });
     play_from_hand(&mut game, CardName::ArcaneRecovery);
     assert_eq!(9, game.user.mana());
 }

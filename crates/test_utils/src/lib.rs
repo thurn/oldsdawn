@@ -63,11 +63,11 @@ use protos::spelldawn::{card_target, CardTarget, PlayCardAction};
 
 use crate::client::TestGame;
 
-/// Creates a new game on the `user_side` player's first turn. By default this creates a normal new
-/// game is very similar to
-/// the state of a normal new game, see [NewGameConfig] for information about the default
-/// configuration options and how to modify them.
-pub fn new_game(user_side: Side, config: NewGameConfig) -> TestGame {
+/// Creates a new game with the user playing as the `user_side` player. By default, this creates a
+/// normal new game with both player's decks populated with blank test cards. The game is advanced
+/// to the user's first turn. See [Args] for information about the default configuration options
+/// and how to modify them.
+pub fn new_game(user_side: Side, args: Args) -> TestGame {
     let (overlord_user, champion_user) = match user_side {
         Side::Overlord => (TestGame::USER_ID, TestGame::OPPONENT_ID),
         Side::Champion => (TestGame::OPPONENT_ID, TestGame::USER_ID),
@@ -89,15 +89,15 @@ pub fn new_game(user_side: Side, config: NewGameConfig) -> TestGame {
     );
 
     state.data.turn = user_side;
-    state.player_mut(user_side).mana = config.mana;
-    state.player_mut(user_side).actions = config.actions;
-    state.player_mut(user_side).score = config.score;
+    state.player_mut(user_side).mana = args.mana;
+    state.player_mut(user_side).actions = args.actions;
+    state.player_mut(user_side).score = args.score;
 
     TestGame::new(state, user_side)
 }
 
 #[derive(Clone, Debug)]
-pub struct NewGameConfig {
+pub struct Args {
     /// Mana available for the `user_side` player. Defaults to 5.
     pub mana: ManaValue,
     /// Actions available for the `user_side` player. Defaults to 3.
@@ -106,7 +106,7 @@ pub struct NewGameConfig {
     pub score: PointsValue,
 }
 
-impl Default for NewGameConfig {
+impl Default for Args {
     fn default() -> Self {
         Self { mana: 5, actions: 3, score: 0 }
     }
