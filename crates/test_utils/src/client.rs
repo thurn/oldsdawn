@@ -15,26 +15,34 @@
 use std::collections::HashMap;
 
 use anyhow::Result;
-use data::card_state::CardState;
+use data::card_name::CardName;
+use data::card_state::{CardData, CardPosition, CardState};
 use data::game::{GameData, GameState, PlayerState};
-use data::primitives::{CardId, GameId, RoomId, Side, UserId};
+use data::primitives::{
+    ActionCount, CardId, CardType, GameId, ManaValue, PointsValue, RoomId, Side, UserId,
+};
+use display::rendering;
+use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    CommandList, CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest, PlayerName,
+    card_target, game_action, CardIdentifier, CardTarget, CommandList, CreateOrUpdateCardCommand,
+    GameAction, GameIdentifier, GameRequest, PlayCardAction, PlayerName, PlayerView,
     UpdateGameViewCommand,
 };
+use rules::mutations;
 use server::database::Database;
 
 #[derive(Debug, Clone)]
-pub struct TestClient {
+pub struct TestGame {
+    pub user_side: Side,
     pub data: ClientGameData,
     pub user: ClientPlayer,
     pub opponent: ClientPlayer,
-    cards: HashMap<CardId, ClientCard>,
+    pub cards: ClientCards,
     game: GameState,
 }
 
-impl TestClient {
+impl TestGame {
     /// The [UserId] for the user who the test is running as
     pub const USER_ID: UserId = UserId { value: 1 };
     /// The [UserId] for the user who is *not* running the test
@@ -51,21 +59,22 @@ impl TestClient {
         };
 
         Self {
+            user_side,
             data: ClientGameData::default(),
-            user: ClientPlayer::default(),
-            opponent: ClientPlayer::default(),
-            cards: game.all_card_ids().map(|id| (id, ClientCard::new(game.card(id)))).collect(),
+            user: ClientPlayer::new(PlayerName::User),
+            opponent: ClientPlayer::new(PlayerName::Opponent),
+            cards: ClientCards::default(),
             game,
         }
     }
 
     /// Execute a simulated client request for this game, updating the client state as appropriate
     /// based on the responses. Returns a vector of the received commands.
-    pub fn perform_action(&mut self, action: GameAction) -> Vec<Command> {
+    pub fn perform_action(&mut self, action: Action) -> Vec<Command> {
         let commands = server::handle_request(
             self,
             &GameRequest {
-                action: Some(action),
+                action: Some(GameAction { action: Some(action) }),
                 game_id: Some(GameIdentifier { value: Self::GAME_ID.value }),
                 user_id: Self::USER_ID.value,
             },
@@ -77,20 +86,51 @@ impl TestClient {
         .collect::<Vec<_>>();
 
         for command in &commands {
-            self.data.update(command);
-            self.user.update(command);
-            self.opponent.update(command);
-
-            for card in self.cards.values_mut() {
-                card.update(command);
-            }
+            self.data.update(command.clone());
+            self.user.update(command.clone());
+            self.opponent.update(command.clone());
+            self.cards.update(command.clone());
         }
 
         commands
     }
+
+    /// Adds a named card to the user's hand.
+    ///
+    /// This function operates by locating a test card in the user's deck and overwriting its state
+    /// to a default [CardState] pointing to the provided [CardName] instead. This card is then
+    /// moved to the user's hand via [mutations::move_card], which *will* invoke game events & game
+    /// updates for a card being moved as normal. Returns the client [CardIdentifier] for the drawn
+    /// card.
+    pub fn draw_named_card(&mut self, card_name: CardName) -> CardIdentifier {
+        let test_card = match self.user_side {
+            Side::Overlord => CardName::TestOverlordSpell,
+            Side::Champion => CardName::TestChampionSpell,
+        };
+        let deck_position = CardPosition::DeckUnknown(self.user_side);
+        let card_id = self
+            .game
+            .cards_in_position(self.user_side, deck_position)
+            .filter(|c| c.name == test_card)
+            .next()
+            .expect("No test cards remaining in deck")
+            .id;
+        *self.game.card_mut(card_id) = CardState {
+            id: card_id,
+            name: card_name,
+            side: self.user_side,
+            position: deck_position,
+            sorting_key: 0,
+            data: CardData::default(),
+        };
+
+        mutations::move_card(&mut self.game, card_id, CardPosition::Hand(self.user_side));
+
+        rendering::adapt_card_id(card_id)
+    }
 }
 
-impl Database for TestClient {
+impl Database for TestGame {
     fn generate_game_id(&self) -> Result<GameId> {
         Ok(Self::GAME_ID)
     }
@@ -115,7 +155,7 @@ impl ClientGameData {
         self.priority.unwrap()
     }
 
-    fn update(&mut self, command: &Command) {
+    fn update(&mut self, command: Command) {
         match command {
             Command::UpdateGameView(update_game) => {
                 self.priority =
@@ -126,14 +166,59 @@ impl ClientGameData {
     }
 }
 
-#[derive(Debug, Clone, Default)]
-pub struct ClientPlayer {}
-
-impl ClientPlayer {
-    fn update(&mut self, command: &Command) {}
+#[derive(Debug, Clone)]
+pub struct ClientPlayer {
+    name: PlayerName,
+    mana: Option<ManaValue>,
+    actions: Option<ActionCount>,
+    score: Option<PointsValue>,
 }
 
-#[derive(Debug, Clone)]
+impl ClientPlayer {
+    fn new(name: PlayerName) -> Self {
+        Self { name, mana: None, actions: None, score: None }
+    }
+
+    pub fn mana(&self) -> ManaValue {
+        self.mana.unwrap()
+    }
+
+    pub fn actions(&self) -> ActionCount {
+        self.actions.unwrap()
+    }
+
+    pub fn score(&self) -> PointsValue {
+        self.score.unwrap()
+    }
+
+    fn update(&mut self, command: Command) {
+        match command {
+            Command::UpdateGameView(update) => {
+                self.update_with_player(if self.name == PlayerName::User {
+                    update.game.unwrap().user.unwrap()
+                } else {
+                    update.game.unwrap().opponent.unwrap()
+                });
+            }
+            _ => {}
+        }
+    }
+
+    fn update_with_player(&mut self, player: PlayerView) {
+        self.mana = Some(player.mana.unwrap().amount);
+        self.actions = Some(player.action_tracker.unwrap().available_action_count);
+        self.score = Some(player.score.unwrap().score)
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct ClientCards {}
+
+impl ClientCards {
+    fn update(&mut self, command: Command) {}
+}
+
+#[derive(Debug, Clone, Default)]
 pub struct ClientCard {}
 
 impl ClientCard {

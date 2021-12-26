@@ -73,6 +73,8 @@ pub mod weapons;
 static DEFINITIONS: &[fn() -> CardDefinition] = &[
     test_overlord_identity,
     test_champion_identity,
+    test_overlord_spell,
+    test_champion_spell,
     champion_spells::arcane_recovery,
     weapons::greataxe,
     projects::gold_mine,
@@ -113,6 +115,34 @@ fn test_champion_identity() -> CardDefinition {
         cost: Cost { mana: None, actions: 0 },
         image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/2"),
         card_type: CardType::Identity,
+        side: Side::Champion,
+        school: School::Nature,
+        rarity: Rarity::None,
+        abilities: vec![],
+        config: CardConfig::default(),
+    }
+}
+
+fn test_overlord_spell() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestOverlordSpell,
+        cost: Cost { mana: None, actions: 0 },
+        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/3"),
+        card_type: CardType::Spell,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::None,
+        abilities: vec![],
+        config: CardConfig::default(),
+    }
+}
+
+fn test_champion_spell() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestChampionSpell,
+        cost: Cost { mana: None, actions: 0 },
+        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/2"),
+        card_type: CardType::Spell,
         side: Side::Champion,
         school: School::Nature,
         rarity: Rarity::None,

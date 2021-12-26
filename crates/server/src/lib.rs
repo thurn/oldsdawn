@@ -192,8 +192,8 @@ fn find_game(database: &impl Database, game_id: Option<primitives::GameId>) -> R
     Ok(game)
 }
 
-/// Returns the [Side] the indicated user is representing in ths game
-fn user_side(user_id: primitives::UserId, game: &GameState) -> Result<Side> {
+/// Returns the [Side] the indicated user is representing in this game
+pub fn user_side(user_id: UserId, game: &GameState) -> Result<Side> {
     if user_id == game.champion.id {
         Ok(Side::Champion)
     } else if user_id == game.overlord.id {

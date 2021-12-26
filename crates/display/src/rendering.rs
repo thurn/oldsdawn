@@ -375,7 +375,7 @@ pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
     }
 }
 
-fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
+pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
     match room_id {
         RoomId::Vault => RoomIdentifier::Vault,
         RoomId::Sanctum => RoomIdentifier::Sanctum,

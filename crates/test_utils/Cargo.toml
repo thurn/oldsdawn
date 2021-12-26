@@ -11,6 +11,7 @@ test = false
 
 [dependencies]
 anyhow = "1.0.51"
+maplit = "1.0.2"
 
 data = { path = "../data", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }

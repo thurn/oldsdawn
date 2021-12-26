@@ -105,7 +105,7 @@ pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount
 }
 
 /// Takes *up to* `amount` stored mana from a card and gives it to the player
-/// who owns this card. Panics if there is no stored mana available.233z
+/// who owns this card. Panics if there is no stored mana available.
 #[instrument(skip(game))]
 pub fn take_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue) {
     info!(?card_id, ?amount, "take_stored_mana");

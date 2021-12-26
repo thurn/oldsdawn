@@ -52,49 +52,85 @@
 pub mod client;
 
 use data::card_name::CardName;
-use data::game::GameState;
-use data::primitives::{ActionCount, ManaValue, PointsValue, RoomId, Side};
+use data::deck::Deck;
+use data::game::{GameState, NewGameOptions};
+use data::primitives::{ActionCount, CardType, ManaValue, PointsValue, RoomId, Side};
+use display::rendering;
+use maplit::hashmap;
+use protos::spelldawn::game_action::Action;
+use protos::spelldawn::game_command::Command;
+use protos::spelldawn::{card_target, CardTarget, PlayCardAction};
 
-/// Creates a [new_game], setting the turn to [Side::Champion] and the available mana to `mana`.
-pub fn new_champion_game_with_mana(mana: ManaValue) -> GameState {
-    new_game(Side::Champion, NewGameConfig { mana, ..NewGameConfig::default() })
-}
+use crate::client::TestGame;
 
-/// Creates a [new_game], setting the turn to [Side::Overlord] and the available mana to `mana`.
-pub fn new_overlord_game_with_mana(mana: ManaValue) -> GameState {
-    new_game(Side::Overlord, NewGameConfig { mana, ..NewGameConfig::default() })
-}
+/// Creates a new game on the `user_side` player's first turn. By default this creates a normal new
+/// game is very similar to
+/// the state of a normal new game, see [NewGameConfig] for information about the default
+/// configuration options and how to modify them.
+pub fn new_game(user_side: Side, config: NewGameConfig) -> TestGame {
+    let (overlord_user, champion_user) = match user_side {
+        Side::Overlord => (TestGame::USER_ID, TestGame::OPPONENT_ID),
+        Side::Champion => (TestGame::OPPONENT_ID, TestGame::USER_ID),
+    };
 
-/// Creates a new game on the `turn` player's first turn. By default this is very similar to the
-/// state of a normal new game, see [NewGameConfig] for information about the default configuration
-/// options and how to modify them.
-pub fn new_game(turn: Side, config: NewGameConfig) -> GameState {
-    todo!()
+    let mut state = GameState::new_game(
+        TestGame::GAME_ID,
+        Deck {
+            owner_id: overlord_user,
+            identity: CardName::TestOverlordIdentity,
+            cards: hashmap! {CardName::TestOverlordSpell => 45},
+        },
+        Deck {
+            owner_id: champion_user,
+            identity: CardName::TestChampionIdentity,
+            cards: hashmap! {CardName::TestChampionSpell => 45},
+        },
+        NewGameOptions::default(),
+    );
+
+    state.data.turn = user_side;
+    state.player_mut(user_side).mana = config.mana;
+    state.player_mut(user_side).actions = config.actions;
+    state.player_mut(user_side).score = config.score;
+
+    TestGame::new(state, user_side)
 }
 
 #[derive(Clone, Debug)]
 pub struct NewGameConfig {
-    /// Mana available for the `turn` player. Defaults to 5.
+    /// Mana available for the `user_side` player. Defaults to 5.
     pub mana: ManaValue,
-    /// Actions available for the `turn` player. Defaults to 3.
+    /// Actions available for the `user_side` player. Defaults to 3.
     pub actions: ActionCount,
-    /// Score for the `turn` player. Defaults to 0.
-    pub points: PointsValue,
+    /// Score for the `user_side` player. Defaults to 0.
+    pub score: PointsValue,
 }
 
 impl Default for NewGameConfig {
     fn default() -> Self {
-        Self { mana: 5, actions: 3, points: 0 }
+        Self { mana: 5, actions: 3, score: 0 }
     }
 }
 
-/// Draws and plays a card from hand by name. This is similar to the normal 'play card' action
-/// during a game except that it replaces a test card in the player's deck with the indicated card
-/// name and then draws that card before playing it.
+/// Draws and then plays a named card.
 ///
-/// All normal restrictions on card playing apply, e.g. it must currently be the card owner's main
-/// phase and they must have sufficient mana & action points available to play it. The card will be
-/// played into [RoomId::RoomA] if a room target is required for this card type.
-pub fn play_from_hand(game: &mut GameState, card: CardName) {
-    todo!()
+/// This function first draws a copy of the requested card from the user's deck via
+/// [TestGame::draw_named_card]. The card is then played via the standard [PlayCardAction]. If the
+/// card is a minion, project, scheme, or upgrade card, it is played into the [TestGame::ROOM_ID]
+/// room. A list of the [Command]s produced by playing the card is returned.
+pub fn play_from_hand(game: &mut TestGame, card_name: CardName) -> Vec<Command> {
+    let card_id = game.draw_named_card(card_name);
+
+    let target = match rules::get(card_name).card_type {
+        CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
+            Some(CardTarget {
+                card_target: Some(card_target::CardTarget::RoomId(
+                    rendering::adapt_room_id(TestGame::ROOM_ID).into(),
+                )),
+            })
+        }
+        _ => None,
+    };
+
+    game.perform_action(Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }))
 }

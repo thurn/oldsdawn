@@ -25,7 +25,7 @@ pub struct Deck {
     pub owner_id: UserId,
     /// Identity card for this deck
     pub identity: CardName,
-    /// How many cards with each name are present in this deck?
+    /// How many (non-identity) cards with each name are present in this deck?
     pub cards: HashMap<CardName, u32>,
 }
 

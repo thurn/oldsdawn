@@ -1045,6 +1045,7 @@ dependencies = [
  "anyhow",
  "data",
  "display",
+ "maplit",
  "protos",
  "rules",
  "server",

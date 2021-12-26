@@ -211,6 +211,15 @@ impl GameState {
             .map(|c| c.id)
     }
 
+    /// Cards owned by a given player in a given position
+    pub fn cards_in_position(
+        &self,
+        side: Side,
+        position: CardPosition,
+    ) -> impl Iterator<Item = &CardState> {
+        self.cards(side).iter().filter(move |c| c.position == position)
+    }
+
     /// Cards in a player's hand
     pub fn hand(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position.in_hand())
