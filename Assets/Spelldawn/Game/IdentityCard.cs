@@ -33,7 +33,7 @@ namespace Spelldawn.Game
 
     public IdentityAction? DragAction { get; set; }
 
-    RoomId? _selectedRoom;
+    RoomIdentifier? _selectedRoom;
 
     public bool RaidSymbolShown
     {

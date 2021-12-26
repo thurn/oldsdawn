@@ -20,7 +20,7 @@ use data::game::{GameData, GameState, PlayerState};
 use data::primitives::{CardId, GameId, RoomId, Side, UserId};
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    CommandList, CreateOrUpdateCardCommand, GameAction, GameRequest, PlayerName,
+    CommandList, CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest, PlayerName,
     UpdateGameViewCommand,
 };
 use server::database::Database;
@@ -66,7 +66,7 @@ impl TestClient {
             self,
             &GameRequest {
                 action: Some(action),
-                game_id: Some(protos::spelldawn::GameId { value: Self::GAME_ID.value }),
+                game_id: Some(GameIdentifier { value: Self::GAME_ID.value }),
                 user_id: Self::USER_ID.value,
             },
         )

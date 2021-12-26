@@ -15,21 +15,21 @@
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::GameState;
-use data::primitives;
-use data::primitives::{CardType, Side, Sprite};
+use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
 use data::updates::GameUpdate;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    game_object_id, ActionTrackerView, ArenaView, CanPlayAlgorithm, CardCost,
-    CardCreationAnimation, CardIcon, CardIcons, CardId, CardTarget, CardTargeting, CardTitle,
-    CardView, CommandList, CreateOrUpdateCardCommand, GameCommand, GameId, GameObjectId, GameView,
-    IdentityAction, ItemLocation, ManaView, MoveGameObjectsCommand, ObjectPosition,
-    ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
-    ObjectPositionIdentityContainer, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
-    PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomId,
-    RoomLocation, ScoreView, SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
+    game_object_identifier, ActionTrackerView, ArenaView, CanPlayAlgorithm, CardCreationAnimation,
+    CardIcon, CardIcons, CardIdentifier, CardTarget, CardTargeting, CardTitle, CardView,
+    CardViewCost, ClientItemLocation, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand,
+    GameCommand, GameIdentifier, GameObjectIdentifier, GameView, IdentityAction, ManaView,
+    MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile,
+    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionIdentityContainer,
+    ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
+    PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier, ScoreView,
+    SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
 };
 use rules::actions::PlayCardTarget;
 use rules::queries;
@@ -97,7 +97,7 @@ enum GameUpdateType {
 fn game_view(game: &GameState, user_side: Side, update_type: GameUpdateType) -> Command {
     Command::UpdateGameView(UpdateGameViewCommand {
         game: Some(GameView {
-            game_id: Some(GameId { value: game.id.value }),
+            game_id: Some(GameIdentifier { value: game.id.value }),
             user: Some(player_view(game, user_side, update_type)),
             opponent: Some(player_view(game, user_side.opponent(), update_type)),
             arena: if update_type == GameUpdateType::State {
@@ -277,15 +277,15 @@ fn adapt_position(
         CardPosition::Room(room_id, location) => Some(Position::Room(ObjectPositionRoom {
             room_id: adapt_room_id(room_id).into(),
             room_location: match location {
-                primitives::RoomLocation::Defender => RoomLocation::Front,
-                primitives::RoomLocation::InRoom => RoomLocation::Back,
+                RoomLocation::Defender => ClientRoomLocation::Front,
+                RoomLocation::InRoom => ClientRoomLocation::Back,
             }
             .into(),
         })),
         CardPosition::ArenaItem(location) => Some(Position::Item(ObjectPositionItem {
             item_location: match location {
-                primitives::ItemLocation::Weapons => ItemLocation::Left,
-                primitives::ItemLocation::Artifacts => ItemLocation::Right,
+                ItemLocation::Weapons => ClientItemLocation::Left,
+                ItemLocation::Artifacts => ClientItemLocation::Right,
             }
             .into(),
         })),
@@ -325,12 +325,12 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
         sorting_key: u32::MAX,
         position: Some(match definition.card_type {
             CardType::Spell | CardType::Identity => Position::Staging(ObjectPositionStaging {}),
-            CardType::Weapon => {
-                Position::Item(ObjectPositionItem { item_location: ItemLocation::Left.into() })
-            }
-            CardType::Artifact => {
-                Position::Item(ObjectPositionItem { item_location: ItemLocation::Right.into() })
-            }
+            CardType::Weapon => Position::Item(ObjectPositionItem {
+                item_location: ClientItemLocation::Left.into(),
+            }),
+            CardType::Artifact => Position::Item(ObjectPositionItem {
+                item_location: ClientItemLocation::Right.into(),
+            }),
             CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
                 Position::Room(ObjectPositionRoom::default())
             }
@@ -338,8 +338,8 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     }
 }
 
-fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardCost {
-    CardCost {
+fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardViewCost {
+    CardViewCost {
         mana_cost: queries::mana_cost(game, card.id).unwrap_or(0),
         action_cost: queries::action_cost(game, card.id),
         can_play: queries::can_play(game, user_side, card.id),
@@ -360,12 +360,12 @@ fn command(command: Command) -> GameCommand {
     GameCommand { command: Some(command) }
 }
 
-fn adapt_game_object_id(id: primitives::CardId) -> GameObjectId {
-    GameObjectId { id: Some(game_object_id::Id::CardId(adapt_card_id(id))) }
+fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {
+    GameObjectIdentifier { id: Some(game_object_identifier::Id::CardId(adapt_card_id(id))) }
 }
 
-pub fn adapt_card_id(card_id: primitives::CardId) -> CardId {
-    CardId {
+pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
+    CardIdentifier {
         side: match card_id.side {
             Side::Overlord => PlayerSide::Overlord,
             Side::Champion => PlayerSide::Champion,
@@ -375,16 +375,16 @@ pub fn adapt_card_id(card_id: primitives::CardId) -> CardId {
     }
 }
 
-fn adapt_room_id(room_id: primitives::RoomId) -> RoomId {
+fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
     match room_id {
-        primitives::RoomId::Vault => RoomId::Vault,
-        primitives::RoomId::Sanctum => RoomId::Sanctum,
-        primitives::RoomId::Crypts => RoomId::Crypts,
-        primitives::RoomId::RoomA => RoomId::RoomA,
-        primitives::RoomId::RoomB => RoomId::RoomB,
-        primitives::RoomId::RoomC => RoomId::RoomC,
-        primitives::RoomId::RoomD => RoomId::RoomD,
-        primitives::RoomId::RoomE => RoomId::RoomE,
+        RoomId::Vault => RoomIdentifier::Vault,
+        RoomId::Sanctum => RoomIdentifier::Sanctum,
+        RoomId::Crypts => RoomIdentifier::Crypts,
+        RoomId::RoomA => RoomIdentifier::RoomA,
+        RoomId::RoomB => RoomIdentifier::RoomB,
+        RoomId::RoomC => RoomIdentifier::RoomC,
+        RoomId::RoomD => RoomIdentifier::RoomD,
+        RoomId::RoomE => RoomIdentifier::RoomE,
     }
 }
 

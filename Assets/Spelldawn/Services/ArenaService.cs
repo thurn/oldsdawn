@@ -50,16 +50,16 @@ namespace Spelldawn.Services
       yield break;
     }
 
-    public Room FindRoom(RoomId roomId)
+    public Room FindRoom(RoomIdentifier roomId)
     {
       var result = _rooms.Find(r => r.RoomId == roomId);
       return Errors.CheckNotNull(result);
     }
 
-    public ObjectDisplay ObjectDisplayForLocation(ItemLocation location) => location switch
+    public ObjectDisplay ObjectDisplayForLocation(ClientItemLocation location) => location switch
     {
-      ItemLocation.Left => _leftItems,
-      ItemLocation.Right => _rightItems,
+      ClientItemLocation.Left => _leftItems,
+      ClientItemLocation.Right => _rightItems,
       _ => throw new ArgumentOutOfRangeException(nameof(location), location, null)
     };
 
@@ -67,9 +67,9 @@ namespace Spelldawn.Services
     {
       switch (position.ItemLocation)
       {
-        case ItemLocation.Left:
+        case ClientItemLocation.Left:
           return _leftItems.AddObject(card, animate);
-        case ItemLocation.Right:
+        case ClientItemLocation.Right:
           return _rightItems.AddObject(card, animate);
         default:
           Debug.LogError($"Unknown item location: {position.ItemLocation}");
@@ -77,7 +77,7 @@ namespace Spelldawn.Services
       }
     }
 
-    public RoomId? ShowRoomSelectorForMousePosition()
+    public RoomIdentifier? ShowRoomSelectorForMousePosition()
     {
       if (_curentRoomSelector)
       {
@@ -86,7 +86,7 @@ namespace Spelldawn.Services
 
       var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
       var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
-      RoomId? result = null;
+      RoomIdentifier? result = null;
 
       for (var i = 0; i < hits; ++i)
       {

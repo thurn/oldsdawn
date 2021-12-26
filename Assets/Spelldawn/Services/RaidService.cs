@@ -27,7 +27,7 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] ObjectDisplay _participants = null!;
-    RoomId? _currentRoom;
+    RoomIdentifier? _currentRoom;
 
     public ObjectDisplay RaidParticipants => _participants;
 
@@ -46,14 +46,14 @@ namespace Spelldawn.Services
         var room = _registry.ArenaService.FindRoom(command.RoomId);
         switch (command.RoomId)
         {
-          case RoomId.Sanctum:
+          case RoomIdentifier.Sanctum:
             yield return _participants.AddObject(
               _registry.IdentityCardForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;
-          case RoomId.Vault:
+          case RoomIdentifier.Vault:
             yield return _participants.AddObject(_registry.DeckForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;
-          case RoomId.Crypts:
+          case RoomIdentifier.Crypts:
             yield return _participants.AddObject(
               _registry.DiscardPileForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
             break;

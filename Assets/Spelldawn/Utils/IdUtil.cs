@@ -20,39 +20,39 @@ namespace Spelldawn.Utils
 {
   public static class IdUtil
   {
-    public static readonly GameObjectId UserCardId = new()
+    public static readonly GameObjectIdentifier UserCardId = new()
     {
       Identity = PlayerName.User
     };
 
-    public static readonly GameObjectId OpponentCardId = new()
+    public static readonly GameObjectIdentifier OpponentCardId = new()
     {
       Identity = PlayerName.Opponent
     };
 
-    public static GameObjectId IdentityCardId(PlayerName playerName) =>
+    public static GameObjectIdentifier IdentityCardId(PlayerName playerName) =>
       playerName == PlayerName.User ? UserCardId : OpponentCardId;
 
     // ReSharper disable once UnusedMember.Local
-    public static GameObjectId DeckObjectId(PlayerName playerName) => new()
+    public static GameObjectIdentifier DeckObjectId(PlayerName playerName) => new()
     {
       Deck = playerName
     };
 
     // ReSharper disable once UnusedMember.Local
-    public static GameObjectId HandObjectId(PlayerName playerName) => new()
+    public static GameObjectIdentifier HandObjectId(PlayerName playerName) => new()
     {
       Hand = playerName
     };
 
-    public static GameObjectId DiscardPileObjectId(PlayerName playerName) => new()
+    public static GameObjectIdentifier DiscardPileObjectId(PlayerName playerName) => new()
     {
       DiscardPile = playerName
     };
 
-    public static GameObjectId CardObjectId(CardView card) => CardObjectId(card.CardId);
+    public static GameObjectIdentifier CardObjectId(CardView card) => CardObjectId(card.CardId);
 
-    public static GameObjectId CardObjectId(CardId cardId) => new()
+    public static GameObjectIdentifier CardObjectId(CardIdentifier cardId) => new()
     {
       CardId = cardId
     };

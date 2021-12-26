@@ -30,7 +30,7 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
 
-    public Displayable Find(GameObjectId id) => CheckExists(id);
+    public Displayable Find(GameObjectIdentifier id) => CheckExists(id);
 
     public IEnumerator HandleFireProjectileCommand(FireProjectileCommand command)
     {
@@ -136,19 +136,19 @@ namespace Spelldawn.Services
       return ObjectDisplayForPosition(targetPosition).AddObjects(displayable, animate, index, animateRemove);
     }
 
-    Displayable CheckExists(GameObjectId gameObjectId)
+    Displayable CheckExists(GameObjectIdentifier gameObjectId)
     {
       switch (gameObjectId.IdCase)
       {
-        case GameObjectId.IdOneofCase.CardId:
+        case GameObjectIdentifier.IdOneofCase.CardId:
           return _registry.CardService.FindCard(gameObjectId.CardId);
-        case GameObjectId.IdOneofCase.Identity:
+        case GameObjectIdentifier.IdOneofCase.Identity:
           return _registry.IdentityCardForPlayer(gameObjectId.Identity);
-        case GameObjectId.IdOneofCase.Deck:
+        case GameObjectIdentifier.IdOneofCase.Deck:
           return _registry.DeckForPlayer(gameObjectId.Deck);
-        case GameObjectId.IdOneofCase.Hand:
+        case GameObjectIdentifier.IdOneofCase.Hand:
           return _registry.HandForPlayer(gameObjectId.Hand);
-        case GameObjectId.IdOneofCase.DiscardPile:
+        case GameObjectIdentifier.IdOneofCase.DiscardPile:
           return _registry.DiscardPileForPlayer(gameObjectId.DiscardPile);
         default:
           throw new ArgumentOutOfRangeException();

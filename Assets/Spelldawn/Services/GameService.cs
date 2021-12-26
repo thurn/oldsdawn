@@ -26,9 +26,9 @@ namespace Spelldawn.Services
     // ReSharper disable once NotAccessedField.Local
     [SerializeField] string? _debugGameId;
 
-    GameId? _currentGameId;
+    GameIdentifier? _currentGameId;
 
-    public GameId? CurrentGameId
+    public GameIdentifier? CurrentGameId
     {
       get => _currentGameId;
       set

@@ -1,12 +1,12 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FlexColor {
-    /// * Red color component, specified in the range 0.0 to 1.0 inclusive.
+    ///* Red color component, specified in the range 0.0 to 1.0 inclusive.
     #[prost(float, tag = "1")]
     pub red: f32,
-    /// * Green color component, specified in the range 0.0 to 1.0 inclusive.
+    ///* Green color component, specified in the range 0.0 to 1.0 inclusive.
     #[prost(float, tag = "2")]
     pub green: f32,
-    /// * Blue color component, specified in the range 0.0 to 1.0 inclusive.
+    ///* Blue color component, specified in the range 0.0 to 1.0 inclusive.
     #[prost(float, tag = "3")]
     pub blue: f32,
     ///*
@@ -328,28 +328,28 @@ pub struct Node {
 // ============================================================================
 
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GameId {
+pub struct GameIdentifier {
     #[prost(uint64, tag = "1")]
     pub value: u64,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CardId {
+pub struct CardIdentifier {
     #[prost(enumeration = "PlayerSide", tag = "1")]
     pub side: i32,
     #[prost(uint32, tag = "2")]
     pub index: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GameObjectId {
-    #[prost(oneof = "game_object_id::Id", tags = "1, 2, 3, 4, 5")]
-    pub id: ::core::option::Option<game_object_id::Id>,
+pub struct GameObjectIdentifier {
+    #[prost(oneof = "game_object_identifier::Id", tags = "1, 2, 3, 4, 5")]
+    pub id: ::core::option::Option<game_object_identifier::Id>,
 }
-/// Nested message and enum types in `GameObjectId`.
-pub mod game_object_id {
+/// Nested message and enum types in `GameObjectIdentifier`.
+pub mod game_object_identifier {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Id {
         #[prost(message, tag = "1")]
-        CardId(super::CardId),
+        CardId(super::CardIdentifier),
         #[prost(enumeration = "super::PlayerName", tag = "2")]
         Identity(i32),
         #[prost(enumeration = "super::PlayerName", tag = "3")]
@@ -366,10 +366,10 @@ pub mod game_object_id {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardIcon {
-    /// * Background for the icon.
+    ///* Background for the icon.
     #[prost(message, optional, tag = "1")]
     pub background: ::core::option::Option<SpriteAddress>,
-    /// * Text to display on the icon.
+    ///* Text to display on the icon.
     #[prost(string, tag = "2")]
     pub text: ::prost::alloc::string::String,
     ///*
@@ -401,7 +401,7 @@ pub struct RulesText {
     #[prost(string, tag = "1")]
     pub text: ::prost::alloc::string::String,
 }
-/// * This card should prompt for a room to be played into.
+///* This card should prompt for a room to be played into.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PickRoom {}
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -418,8 +418,8 @@ pub mod card_targeting {
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CardCost {
-    /// * Mana cost for the card, 0 is used to represent 'no cost'.
+pub struct CardViewCost {
+    ///* Mana cost for the card, 0 is used to represent 'no cost'.
     #[prost(uint32, tag = "1")]
     pub mana_cost: u32,
     #[prost(uint32, tag = "2")]
@@ -435,14 +435,14 @@ pub struct CardCost {
 pub struct ObjectPositionOffscreen {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionRoom {
-    #[prost(enumeration = "RoomId", tag = "1")]
+    #[prost(enumeration = "RoomIdentifier", tag = "1")]
     pub room_id: i32,
-    #[prost(enumeration = "RoomLocation", tag = "2")]
+    #[prost(enumeration = "ClientRoomLocation", tag = "2")]
     pub room_location: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionItem {
-    #[prost(enumeration = "ItemLocation", tag = "1")]
+    #[prost(enumeration = "ClientItemLocation", tag = "1")]
     pub item_location: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -572,9 +572,9 @@ pub struct RevealedCardView {
     /// is used.
     #[prost(message, optional, tag = "9")]
     pub on_release_position: ::core::option::Option<ObjectPosition>,
-    /// * Information needed to determine whether a card can be played.
+    ///* Information needed to determine whether a card can be played.
     #[prost(message, optional, tag = "10")]
-    pub cost: ::core::option::Option<CardCost>,
+    pub cost: ::core::option::Option<CardViewCost>,
     ///*
     /// Additional interface element rendered to the side of the card during an
     /// info zoom.
@@ -584,12 +584,12 @@ pub struct RevealedCardView {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardView {
     #[prost(message, optional, tag = "1")]
-    pub card_id: ::core::option::Option<CardId>,
+    pub card_id: ::core::option::Option<CardIdentifier>,
     #[prost(message, optional, tag = "2")]
     pub card_icons: ::core::option::Option<CardIcons>,
     #[prost(message, optional, tag = "3")]
     pub arena_frame: ::core::option::Option<SpriteAddress>,
-    /// * Used to e.g. determine which card back to display for this card.
+    ///* Used to e.g. determine which card back to display for this card.
     #[prost(enumeration = "PlayerName", tag = "4")]
     pub owning_player: i32,
     #[prost(message, optional, tag = "5")]
@@ -613,7 +613,7 @@ pub struct PlayerInfo {
     pub portrait: ::core::option::Option<SpriteAddress>,
     #[prost(message, optional, tag = "3")]
     pub portrait_frame: ::core::option::Option<SpriteAddress>,
-    /// * Card back asset to use for this player's cards.
+    ///* Card back asset to use for this player's cards.
     #[prost(message, optional, tag = "4")]
     pub card_back: ::core::option::Option<SpriteAddress>,
 }
@@ -629,7 +629,7 @@ pub struct ScoreView {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RoomView {
-    #[prost(enumeration = "RoomId", tag = "1")]
+    #[prost(enumeration = "RoomIdentifier", tag = "1")]
     pub room_id: i32,
     #[prost(message, repeated, tag = "2")]
     pub back_cards: ::prost::alloc::vec::Vec<CardView>,
@@ -639,8 +639,8 @@ pub struct RoomView {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ArenaView {
     ///*
-    /// If true, render rooms at the bottom of the screen, if false, render
-    /// items at the bottom.
+    /// If true, render rooms at the bottom of the screen, if false, render items
+    /// at the bottom.
     #[prost(message, optional, tag = "1")]
     pub rooms_at_bottom: ::core::option::Option<bool>,
     ///*
@@ -672,14 +672,14 @@ pub struct PlayerView {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameView {
     #[prost(message, optional, tag = "1")]
-    pub game_id: ::core::option::Option<GameId>,
+    pub game_id: ::core::option::Option<GameIdentifier>,
     #[prost(message, optional, tag = "2")]
     pub user: ::core::option::Option<PlayerView>,
     #[prost(message, optional, tag = "3")]
     pub opponent: ::core::option::Option<PlayerView>,
     #[prost(message, optional, tag = "4")]
     pub arena: ::core::option::Option<ArenaView>,
-    /// * The player who is currently able to act.
+    ///* The player who is currently able to act.
     #[prost(enumeration = "PlayerName", tag = "5")]
     pub current_priority: i32,
 }
@@ -695,10 +695,10 @@ pub struct GameView {
 pub struct ConnectAction {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
-    /// * Opaque payload to send to the server.
+    ///* Opaque payload to send to the server.
     #[prost(message, optional, tag = "1")]
     pub payload: ::core::option::Option<::prost_types::Any>,
-    /// * Immediate optimistic mutations to game state for this action.
+    ///* Immediate optimistic mutations to game state for this action.
     #[prost(message, optional, tag = "2")]
     pub update: ::core::option::Option<CommandList>,
 }
@@ -720,7 +720,7 @@ pub struct DrawCardAction {}
 /// Optimistic: Counter is added immediately
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LevelUpRoomAction {
-    #[prost(enumeration = "RoomId", tag = "1")]
+    #[prost(enumeration = "RoomIdentifier", tag = "1")]
     pub room_id: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -732,7 +732,7 @@ pub struct CardTarget {
 pub mod card_target {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum CardTarget {
-        #[prost(enumeration = "super::RoomId", tag = "1")]
+        #[prost(enumeration = "super::RoomIdentifier", tag = "1")]
         RoomId(i32),
     }
 }
@@ -751,13 +751,13 @@ pub mod card_target {
 ///     the options optimistically, instead they animate to the reveal card area
 ///   - Item cards which don't require a choice to be made or target simply
 ///     animate into the play area optimistically
-///   - Spell cards animate to the reveal card area and wait for their effects
-///     to be applied
+///   - Spell cards animate to the reveal card area and wait for their effects to
+///     be applied
 ///   - Minion and Project cards animate to their selected room optimistically
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayCardAction {
     #[prost(message, optional, tag = "1")]
-    pub card_id: ::core::option::Option<CardId>,
+    pub card_id: ::core::option::Option<CardIdentifier>,
     #[prost(message, optional, tag = "2")]
     pub target: ::core::option::Option<CardTarget>,
 }
@@ -767,7 +767,7 @@ pub struct PlayCardAction {
 /// Optimistic: Raid start animation plays
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InitiateRaidAction {
-    #[prost(enumeration = "RoomId", tag = "1")]
+    #[prost(enumeration = "RoomIdentifier", tag = "1")]
     pub room_id: i32,
 }
 ///*
@@ -805,9 +805,9 @@ pub mod game_action {
 pub struct GameRequest {
     #[prost(message, optional, tag = "1")]
     pub action: ::core::option::Option<GameAction>,
-    /// * Current game_id, if a game is currently ongoing.
+    ///* Current game_id, if a game is currently ongoing.
     #[prost(message, optional, tag = "2")]
-    pub game_id: ::core::option::Option<GameId>,
+    pub game_id: ::core::option::Option<GameIdentifier>,
     ///*
     /// Identifies the user making this request. At some point I'm going to
     /// figure out how to set up authentication, but currently we operate on
@@ -832,7 +832,7 @@ pub struct RunInParallelCommand {
     #[prost(message, repeated, tag = "1")]
     pub commands: ::prost::alloc::vec::Vec<CommandList>,
 }
-/// * Wait before executing the next command in sequence.
+///* Wait before executing the next command in sequence.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DelayCommand {
     #[prost(message, optional, tag = "1")]
@@ -848,11 +848,11 @@ pub struct InterfacePositionMainControls {
     #[prost(message, optional, tag = "1")]
     pub node: ::core::option::Option<Node>,
 }
-/// * Render an interface element attached to a specific card.
+///* Render an interface element attached to a specific card.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardAnchorNode {
     #[prost(message, optional, tag = "1")]
-    pub card_id: ::core::option::Option<CardId>,
+    pub card_id: ::core::option::Option<CardIdentifier>,
     #[prost(message, optional, tag = "2")]
     pub node: ::core::option::Option<Node>,
     #[prost(enumeration = "CardNodeAnchorPosition", tag = "3")]
@@ -883,10 +883,7 @@ pub mod render_interface_command {
         CardAnchors(super::InterfacePositionCardAnchors),
     }
 }
-///*
-/// Many of the below commands are specific cases of RenderGame. They are
-/// differentiated in order to simplify the diffing logic the client needs
-/// to perform to detect and animate changes.
+///* Updates the current GameView state.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateGameViewCommand {
     #[prost(message, optional, tag = "1")]
@@ -896,7 +893,7 @@ pub struct UpdateGameViewCommand {
 pub struct InitiateRaidCommand {
     #[prost(enumeration = "PlayerName", tag = "1")]
     pub initiator: i32,
-    #[prost(enumeration = "RoomId", tag = "2")]
+    #[prost(enumeration = "RoomIdentifier", tag = "2")]
     pub room_id: i32,
 }
 ///*
@@ -914,7 +911,7 @@ pub struct EndRaidCommand {
 pub struct LevelUpRoomCommand {
     #[prost(enumeration = "PlayerName", tag = "1")]
     pub initiator: i32,
-    #[prost(enumeration = "RoomId", tag = "2")]
+    #[prost(enumeration = "RoomIdentifier", tag = "2")]
     pub room_id: i32,
 }
 ///*
@@ -950,7 +947,7 @@ pub struct CreateOrUpdateCardCommand {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DestroyCardCommand {
     #[prost(message, optional, tag = "1")]
-    pub card_id: ::core::option::Option<CardId>,
+    pub card_id: ::core::option::Option<CardIdentifier>,
 }
 ///*
 /// Moves a list of GameObjects to a new position. Objects already in the target
@@ -958,7 +955,7 @@ pub struct DestroyCardCommand {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MoveGameObjectsCommand {
     #[prost(message, repeated, tag = "1")]
-    pub ids: ::prost::alloc::vec::Vec<GameObjectId>,
+    pub ids: ::prost::alloc::vec::Vec<GameObjectIdentifier>,
     ///*
     /// Position at which to insert. If multiple IDs are specified, they will
     /// be sequentially added at this position
@@ -994,20 +991,20 @@ pub struct SetMusicCommand {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FireProjectileCommand {
     #[prost(message, optional, tag = "1")]
-    pub source_id: ::core::option::Option<GameObjectId>,
+    pub source_id: ::core::option::Option<GameObjectIdentifier>,
     #[prost(message, optional, tag = "2")]
-    pub target_id: ::core::option::Option<GameObjectId>,
-    /// * Projectile to fire from the 'source_id' card to 'target_id'
+    pub target_id: ::core::option::Option<GameObjectIdentifier>,
+    ///* Projectile to fire from the 'source_id' card to 'target_id'
     #[prost(message, optional, tag = "3")]
     pub projectile: ::core::option::Option<ProjectileAddress>,
-    /// * How long the projectile should take to hit its target.
+    ///* How long the projectile should take to hit its target.
     #[prost(message, optional, tag = "4")]
     pub travel_duration: ::core::option::Option<TimeValue>,
     #[prost(message, optional, tag = "5")]
     pub fire_sound: ::core::option::Option<AudioClipAddress>,
     #[prost(message, optional, tag = "6")]
     pub impact_sound: ::core::option::Option<AudioClipAddress>,
-    /// * Additional effect to display on the target on hit.
+    ///* Additional effect to display on the target on hit.
     #[prost(message, optional, tag = "7")]
     pub additional_hit: ::core::option::Option<EffectAddress>,
     ///*
@@ -1039,7 +1036,7 @@ pub mod play_effect_position {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum EffectPosition {
         #[prost(message, tag = "1")]
-        GameObject(super::GameObjectId),
+        GameObject(super::GameObjectIdentifier),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1050,7 +1047,7 @@ pub struct PlayEffectCommand {
     pub position: ::core::option::Option<PlayEffectPosition>,
     #[prost(message, optional, tag = "3")]
     pub scale: ::core::option::Option<f32>,
-    /// * How long to wait before continuing.
+    ///* How long to wait before continuing.
     #[prost(message, optional, tag = "4")]
     pub duration: ::core::option::Option<TimeValue>,
     #[prost(message, optional, tag = "5")]
@@ -1061,7 +1058,7 @@ pub struct DisplayGameMessageCommand {
     #[prost(enumeration = "GameMessageType", tag = "1")]
     pub message_type: i32,
 }
-/// * Used to hide and show all game UI elements.
+///* Used to hide and show all game UI elements.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SetGameObjectsEnabledCommand {
     #[prost(bool, tag = "1")]
@@ -1290,7 +1287,7 @@ pub enum WhiteSpace {
 #[repr(i32)]
 pub enum DimensionUnit {
     Unspecified = 0,
-    /// * Density-independent pixels, which unity also calls "pixels".
+    ///* Density-independent pixels, which unity also calls "pixels".
     Dip = 1,
     Percentage = 2,
     Vmin = 3,
@@ -1311,7 +1308,7 @@ pub enum PlayerName {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum RoomId {
+pub enum RoomIdentifier {
     Unspecified = 0,
     Vault = 1,
     Sanctum = 2,
@@ -1357,21 +1354,21 @@ pub enum CanPlayAlgorithm {
 #[repr(i32)]
 pub enum SpendCostAlgorithm {
     Unspecified = 0,
-    /// * Deduct the mana & action cost immediately when this card is played.
+    ///* Deduct the mana & action cost immediately when this card is played.
     Optimistic = 1,
-    /// * Do not modify mana & action values when this card is played.
+    ///* Do not modify mana & action values when this card is played.
     NoUpdate = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum RoomLocation {
+pub enum ClientRoomLocation {
     Unspecified = 0,
     Back = 1,
     Front = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum ItemLocation {
+pub enum ClientItemLocation {
     Unspecified = 0,
     Left = 1,
     Right = 2,
@@ -1395,7 +1392,7 @@ pub enum CardNodeAnchorPosition {
 #[repr(i32)]
 pub enum CardCreationAnimation {
     Unspecified = 0,
-    /// * Animates the card moving from the deck to the staging area.
+    ///* Animates the card moving from the deck to the staging area.
     DrawCard = 1,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -1445,7 +1442,6 @@ pub mod spelldawn_server {
                 send_compression_encodings: Default::default(),
             }
         }
-
         pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
@@ -1459,14 +1455,12 @@ pub mod spelldawn_server {
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
+        type Response = http::Response<tonic::body::BoxBody>;
         type Error = Never;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        type Response = http::Response<tonic::body::BoxBody>;
-
         fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
-
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
@@ -1474,9 +1468,8 @@ pub mod spelldawn_server {
                     #[allow(non_camel_case_types)]
                     struct PerformActionSvc<T: Spelldawn>(pub Arc<T>);
                     impl<T: Spelldawn> tonic::server::UnaryService<super::GameRequest> for PerformActionSvc<T> {
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         type Response = super::CommandList;
-
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GameRequest>,

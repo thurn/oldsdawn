@@ -72,8 +72,8 @@ namespace Spelldawn.Game
     RevealedCardView? _revealedCardView;
     public RevealedCardView? RevealedCardView => _revealedCardView;
 
-    RoomId? _targetRoom;
-    public RoomId? TargetRoom => _targetRoom;
+    RoomIdentifier? _targetRoom;
+    public RoomIdentifier? TargetRoom => _targetRoom;
 
     [Serializable]
     public sealed class Icon

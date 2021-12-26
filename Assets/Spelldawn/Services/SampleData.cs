@@ -34,8 +34,8 @@ namespace Spelldawn.Services
     [SerializeField] StartBehavior _startBehavior;
     uint _lastReturnedCard;
     uint _lastOpponentCardId = 65536;
-    readonly List<CardId> _opponentHandCards = new();
-    readonly List<CardId> _opponentPlayedCards = new();
+    readonly List<CardIdentifier> _opponentHandCards = new();
+    readonly List<CardIdentifier> _opponentPlayedCards = new();
 
     public enum StartBehavior
     {
@@ -181,9 +181,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     }
 
-    public static GameObjectId CardObjectId(uint cardId) => IdUtil.CardObjectId(CardId(cardId));
+    public static GameObjectIdentifier CardObjectId(uint cardId) => IdUtil.CardObjectId(CardId(cardId));
 
-    public static CardId CardId(uint cardId) => new()
+    public static CardIdentifier CardId(uint cardId) => new()
     {
       Side = PlayerSide.Champion,
       Index = cardId
@@ -396,7 +396,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             Ids =
             {
-              new GameObjectId
+              new GameObjectIdentifier
               {
                 CardId = card.CardId
               }
@@ -452,7 +452,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Ids =
           {
-            new GameObjectId
+            new GameObjectIdentifier
             {
               CardId = cardId
             }
@@ -469,7 +469,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       _opponentHandCards.RemoveAt(0);
       _opponentPlayedCards.Add(cardId);
 
-      return _registry.CommandService.HandleCommands(MoveToRoom(cardId.Index, RoomId.RoomB));
+      return _registry.CommandService.HandleCommands(MoveToRoom(cardId.Index, RoomIdentifier.RoomB));
     }
 
     IEnumerator RevealOpponentCard()
@@ -479,7 +479,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         MoveToStaging(cardId.Index),
         UpdateCard(OpponentCard("Scheme Card", cardId.Index, 19, revealedInArena: false)),
         Delay(1000),
-        MoveToRoom(cardId.Index, RoomId.RoomB)
+        MoveToRoom(cardId.Index, RoomIdentifier.RoomB)
       );
     }
 
@@ -547,7 +547,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Room = new ObjectPositionRoom
         {
-          RoomLocation = RoomLocation.Front
+          RoomLocation = ClientRoomLocation.Front
         }
       };
 
@@ -555,7 +555,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Item = new ObjectPositionItem
         {
-          ItemLocation = ItemLocation.Left
+          ItemLocation = ClientItemLocation.Left
         }
       };
 
@@ -637,7 +637,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           OnReleasePosition = IsItem(cardId) ? itemPos : roomPos,
           Cost = manaCost == null
             ? null
-            : new CardCost
+            : new CardViewCost
             {
               CanPlay = false,
               SpendCostAlgorithm = SpendCostAlgorithm.Optimistic,
@@ -708,9 +708,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           {
             Node = action.RoomId switch
             {
-              RoomId.Sanctum => SanctumRaidControls(),
-              RoomId.Vault => VaultRaidControls(),
-              RoomId.Crypts => CryptsRaidControls(),
+              RoomIdentifier.Sanctum => SanctumRaidControls(),
+              RoomIdentifier.Vault => VaultRaidControls(),
+              RoomIdentifier.Crypts => CryptsRaidControls(),
               _ => null
             }
           }
@@ -757,9 +757,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         FlexGrow = 1,
         AlignItems = FlexAlign.Center,
         Wrap = FlexWrap.WrapReverse,
-      }, Button("Continue", action: AccessHandAction(RoomId.Sanctum)));
+      }, Button("Continue", action: AccessHandAction(RoomIdentifier.Sanctum)));
 
-    StandardAction AccessHandAction(RoomId fromRoom) => new()
+    StandardAction AccessHandAction(RoomIdentifier fromRoom) => new()
     {
       Update = new CommandList
       {
@@ -772,7 +772,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Commands =
         {
-          MoveToRoom(1, RoomId.Sanctum),
+          MoveToRoom(1, RoomIdentifier.Sanctum),
           FireProjectile(IdUtil.IdentityCardId(PlayerName.User), IdUtil.IdentityCardId(PlayerName.Opponent), 4),
           ClearMainControls(),
           RunInParallel(
@@ -806,7 +806,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         AlignItems = FlexAlign.Center,
         Wrap = FlexWrap.WrapReverse,
       },
-      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(RoomId.Vault), smallText: true, orange: true),
+      Button("The Maker's Eye\n5\uf06d", action: CardStrikeAction(RoomIdentifier.Vault), smallText: true, orange: true),
       Button("Gordian Blade\n3\uf06d", action: null, smallText: true, orange: true),
       Button("Continue"));
 
@@ -842,7 +842,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         TextAlign = TextAlign.MiddleCenter
       }));
 
-    StandardAction CardStrikeAction(RoomId fromRoom) =>
+    StandardAction CardStrikeAction(RoomIdentifier fromRoom) =>
       new()
       {
         Payload = Any.Pack(AccessDeck()),
@@ -925,7 +925,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    GameCommand RenderCardButton(CardId id, string label, StandardAction onClick)
+    GameCommand RenderCardButton(CardIdentifier id, string label, StandardAction onClick)
     {
       return new GameCommand
       {
@@ -984,7 +984,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     GameCommand MoveToRaidIndex(uint cardId, uint index) => MoveToRaidIndex(CardObjectId(cardId), index);
 
-    GameCommand MoveToRaidIndex(GameObjectId id, uint index) => new()
+    GameCommand MoveToRaidIndex(GameObjectIdentifier id, uint index) => new()
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
@@ -997,7 +997,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    GameCommand MoveToBrowser(GameObjectId id) => new()
+    GameCommand MoveToBrowser(GameObjectIdentifier id) => new()
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
@@ -1208,7 +1208,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    GameCommand MoveToRoom(uint cardId, RoomId roomId) => new()
+    GameCommand MoveToRoom(uint cardId, RoomIdentifier roomId) => new()
     {
       MoveGameObjects = new MoveGameObjectsCommand
       {
@@ -1218,7 +1218,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Room = new ObjectPositionRoom
           {
             RoomId = roomId,
-            RoomLocation = RoomLocation.Front
+            RoomLocation = ClientRoomLocation.Front
           }
         }
       }
@@ -1242,7 +1242,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         Ids =
         {
-          new GameObjectId
+          new GameObjectIdentifier
           {
             Deck = owner
           }
@@ -1267,12 +1267,12 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     };
 
     GameCommand FireProjectile(
-      GameObjectId sourceId,
-      GameObjectId targetId,
+      GameObjectIdentifier sourceId,
+      GameObjectIdentifier targetId,
       uint projectileNumber,
       bool additionalHit = false,
       bool hideOnHit = false,
-      RoomId? jumpToRoomOnHit = null) => new()
+      RoomIdentifier? jumpToRoomOnHit = null) => new()
     {
       FireProjectile = new FireProjectileCommand
       {
@@ -1298,7 +1298,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             Room = new ObjectPositionRoom
             {
               RoomId = r,
-              RoomLocation = RoomLocation.Front
+              RoomLocation = ClientRoomLocation.Front
             }
           }
           : null

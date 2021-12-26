@@ -399,7 +399,7 @@ message Node {
 // Game Primitives
 // ============================================================================
 
-message GameId {
+message GameIdentifier {
     uint64 value = 1;
 }
 
@@ -415,14 +415,14 @@ enum PlayerName {
     PLAYER_NAME_OPPONENT = 2;
 }
 
-message CardId {
+message CardIdentifier {
     PlayerSide side = 1;
     uint32 index = 2;
 }
 
-message GameObjectId {
+message GameObjectIdentifier {
     oneof id {
-        CardId card_id = 1;
+        CardIdentifier card_id = 1;
         PlayerName identity = 2;
         PlayerName deck = 3;
         PlayerName hand = 4;
@@ -430,16 +430,16 @@ message GameObjectId {
     }
 }
 
-enum RoomId {
-    ROOM_ID_UNSPECIFIED = 0;
-    ROOM_ID_VAULT = 1;
-    ROOM_ID_SANCTUM = 2;
-    ROOM_ID_CRYPTS = 3;
-    ROOM_ID_ROOM_A = 4;
-    ROOM_ID_ROOM_B = 5;
-    ROOM_ID_ROOM_C = 6;
-    ROOM_ID_ROOM_D = 7;
-    ROOM_ID_ROOM_E = 8;
+enum RoomIdentifier {
+    ROOM_IDENTIFIER_UNSPECIFIED = 0;
+    ROOM_IDENTIFIER_VAULT = 1;
+    ROOM_IDENTIFIER_SANCTUM = 2;
+    ROOM_IDENTIFIER_CRYPTS = 3;
+    ROOM_IDENTIFIER_ROOM_A = 4;
+    ROOM_IDENTIFIER_ROOM_B = 5;
+    ROOM_IDENTIFIER_ROOM_C = 6;
+    ROOM_IDENTIFIER_ROOM_D = 7;
+    ROOM_IDENTIFIER_ROOM_E = 8;
 }
 
 
@@ -533,7 +533,7 @@ enum SpendCostAlgorithm {
     SPEND_COST_ALGORITHM_NO_UPDATE = 2;
 }
 
-message CardCost {
+message CardViewCost {
     /** Mana cost for the card, 0 is used to represent 'no cost'. */
     uint32 mana_cost = 1;
 
@@ -549,25 +549,25 @@ message CardCost {
 message ObjectPositionOffscreen {
 }
 
-enum RoomLocation {
-    ROOM_LOCATION_UNSPECIFIED = 0;
-    ROOM_LOCATION_BACK = 1;
-    ROOM_LOCATION_FRONT = 2;
+enum ClientRoomLocation {
+    CLIENT_ROOM_LOCATION_UNSPECIFIED = 0;
+    CLIENT_ROOM_LOCATION_BACK = 1;
+    CLIENT_ROOM_LOCATION_FRONT = 2;
 }
 
 message ObjectPositionRoom {
-    RoomId room_id = 1;
-    RoomLocation room_location = 2;
+    RoomIdentifier room_id = 1;
+    ClientRoomLocation room_location = 2;
 }
 
-enum ItemLocation {
-    ITEM_LOCATION_UNSPECIFIED = 0;
-    ITEM_LOCATION_LEFT = 1;
-    ITEM_LOCATION_RIGHT = 2;
+enum ClientItemLocation {
+    CLIENT_ITEM_LOCATION_UNSPECIFIED = 0;
+    CLIENT_ITEM_LOCATION_LEFT = 1;
+    CLIENT_ITEM_LOCATION_RIGHT = 2;
 }
 
 message ObjectPositionItem {
-    ItemLocation item_location = 1;
+    ClientItemLocation item_location = 1;
 }
 
 message ObjectPositionStaging {
@@ -672,7 +672,7 @@ message RevealedCardView {
     ObjectPosition on_release_position = 9;
 
     /** Information needed to determine whether a card can be played. */
-    CardCost cost = 10;
+    CardViewCost cost = 10;
 
     /**
      * Additional interface element rendered to the side of the card during an
@@ -682,7 +682,7 @@ message RevealedCardView {
 }
 
 message CardView {
-    CardId card_id = 1;
+    CardIdentifier card_id = 1;
 
     CardIcons card_icons = 2;
 
@@ -719,7 +719,7 @@ message ScoreView {
 }
 
 message RoomView {
-    RoomId room_id = 1;
+    RoomIdentifier room_id = 1;
     repeated CardView back_cards = 2;
     repeated CardView front_cards = 3;
 }
@@ -759,7 +759,7 @@ message PlayerView {
 }
 
 message GameView {
-    GameId game_id = 1;
+    GameIdentifier game_id = 1;
     PlayerView user = 2;
     PlayerView opponent = 3;
     ArenaView arena = 4;
@@ -810,12 +810,12 @@ message DrawCardAction {
 * Optimistic: Counter is added immediately
 */
 message LevelUpRoomAction {
-    RoomId room_id = 1;
+    RoomIdentifier room_id = 1;
 }
 
 message CardTarget {
     oneof card_target {
-        RoomId room_id = 1;
+        RoomIdentifier room_id = 1;
     }
 }
 
@@ -839,7 +839,7 @@ message CardTarget {
 *   - Minion and Project cards animate to their selected room optimistically
 */
 message PlayCardAction {
-    CardId card_id = 1;
+    CardIdentifier card_id = 1;
     CardTarget target = 2;
 }
 
@@ -849,7 +849,7 @@ message PlayCardAction {
 * Optimistic: Raid start animation plays
 */
 message InitiateRaidAction {
-    RoomId room_id = 1;
+    RoomIdentifier room_id = 1;
 }
 
 /**
@@ -875,7 +875,7 @@ message GameRequest {
     GameAction action = 1;
 
     /** Current game_id, if a game is currently ongoing. */
-    GameId game_id = 2;
+    GameIdentifier game_id = 2;
 
     /**
      * Identifies the user making this request. At some point I'm going to
@@ -926,7 +926,7 @@ enum CardNodeAnchorPosition {
 
 /** Render an interface element attached to a specific card. */
 message CardAnchorNode {
-    CardId card_id = 1;
+    CardIdentifier card_id = 1;
     Node node = 2;
     CardNodeAnchorPosition anchor_position = 3;
 }
@@ -954,7 +954,7 @@ message UpdateGameViewCommand {
 
 message InitiateRaidCommand {
     PlayerName initiator = 1;
-    RoomId room_id = 2;
+    RoomIdentifier room_id = 2;
 }
 
 /**
@@ -971,7 +971,7 @@ message EndRaidCommand {
  */
 message LevelUpRoomCommand {
     PlayerName initiator = 1;
-    RoomId room_id = 2;
+    RoomIdentifier room_id = 2;
 }
 
 enum CardCreationAnimation {
@@ -1016,7 +1016,7 @@ message CreateOrUpdateCardCommand {
  * Requests to destroy a card game object.
  */
 message DestroyCardCommand {
-    CardId card_id = 1;
+    CardIdentifier card_id = 1;
 }
 
 /**
@@ -1024,7 +1024,7 @@ message DestroyCardCommand {
  * position are skipped.
  */
 message MoveGameObjectsCommand {
-    repeated GameObjectId ids = 1;
+    repeated GameObjectIdentifier ids = 1;
 
     /**
      * Position at which to insert. If multiple IDs are specified, they will
@@ -1066,8 +1066,8 @@ message SetMusicCommand {
  * Fire a projectile from one game object at another.
  */
 message FireProjectileCommand {
-    GameObjectId source_id = 1;
-    GameObjectId target_id = 2;
+    GameObjectIdentifier source_id = 1;
+    GameObjectIdentifier target_id = 2;
 
     /** Projectile to fire from the 'source_id' card to 'target_id' */
     ProjectileAddress projectile = 3;
@@ -1107,7 +1107,7 @@ message FireProjectileCommand {
 
 message PlayEffectPosition {
     oneof effect_position {
-        GameObjectId game_object = 1;
+        GameObjectIdentifier game_object = 1;
     }
 }
 

@@ -35,7 +35,7 @@ namespace Spelldawn.Services
     SpriteAddress _userCardBack = null!;
     SpriteAddress _opponentCardBack = null!;
 
-    readonly Dictionary<CardId, Card> _cards = new();
+    readonly Dictionary<CardIdentifier, Card> _cards = new();
 
     public bool CurrentlyDragging { get; set; }
 
@@ -57,7 +57,7 @@ namespace Spelldawn.Services
     public SpriteAddress GetCardBack(PlayerName playerName) =>
       Errors.CheckNotDefault(playerName) == PlayerName.User ? _userCardBack : _opponentCardBack;
 
-    public Card FindCard(CardId cardId)
+    public Card FindCard(CardIdentifier cardId)
     {
       Errors.CheckState(_cards.ContainsKey(cardId), $"Card Id {cardId} not found");
       return _cards[cardId];

@@ -53,7 +53,7 @@ use anyhow::{anyhow, bail, Context, Result};
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameState, NewGameOptions};
-use data::primitives;
+use data::primitives::{self, CardId, GameId, RoomId};
 use data::primitives::{Side, UserId};
 use data::updates::UpdateTracker;
 use display::rendering;
@@ -62,8 +62,8 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
-    card_target, CardId, CardTarget, CommandList, GameCommand, GameId, GameRequest, PlayerSide,
-    RoomId,
+    card_target, CardIdentifier, CardTarget, CommandList, GameCommand, GameIdentifier, GameRequest,
+    PlayerSide, RoomIdentifier,
 };
 use rules::actions;
 use rules::actions::PlayCardTarget;
@@ -203,7 +203,7 @@ fn user_side(user_id: primitives::UserId, game: &GameState) -> Result<Side> {
     }
 }
 
-fn to_server_card_id(card_id: &Option<CardId>) -> Result<primitives::CardId> {
+fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
     if let Some(id) = card_id {
         Ok(primitives::CardId {
             side: match id.side() {
@@ -250,27 +250,27 @@ fn card_target(target: &Option<CardTarget>) -> PlayCardTarget {
     target.as_ref().map_or(PlayCardTarget::None, |t| {
         t.card_target.as_ref().map_or(PlayCardTarget::None, |t2| match t2 {
             card_target::CardTarget::RoomId(room_id) => {
-                to_server_room_id(RoomId::from_i32(*room_id))
+                to_server_room_id(RoomIdentifier::from_i32(*room_id))
                     .map_or(PlayCardTarget::None, PlayCardTarget::Room)
             }
         })
     })
 }
 
-fn to_server_game_id(game_id: &Option<GameId>) -> Option<primitives::GameId> {
+fn to_server_game_id(game_id: &Option<GameIdentifier>) -> Option<GameId> {
     game_id.as_ref().map(|g| primitives::GameId::new(g.value))
 }
 
-fn to_server_room_id(room_id: Option<RoomId>) -> Option<primitives::RoomId> {
+fn to_server_room_id(room_id: Option<RoomIdentifier>) -> Option<RoomId> {
     match room_id {
-        None | Some(RoomId::Unspecified) => None,
-        Some(RoomId::Vault) => Some(primitives::RoomId::Vault),
-        Some(RoomId::Sanctum) => Some(primitives::RoomId::Sanctum),
-        Some(RoomId::Crypts) => Some(primitives::RoomId::Crypts),
-        Some(RoomId::RoomA) => Some(primitives::RoomId::RoomA),
-        Some(RoomId::RoomB) => Some(primitives::RoomId::RoomB),
-        Some(RoomId::RoomC) => Some(primitives::RoomId::RoomC),
-        Some(RoomId::RoomD) => Some(primitives::RoomId::RoomD),
-        Some(RoomId::RoomE) => Some(primitives::RoomId::RoomE),
+        None | Some(RoomIdentifier::Unspecified) => None,
+        Some(RoomIdentifier::Vault) => Some(RoomId::Vault),
+        Some(RoomIdentifier::Sanctum) => Some(RoomId::Sanctum),
+        Some(RoomIdentifier::Crypts) => Some(RoomId::Crypts),
+        Some(RoomIdentifier::RoomA) => Some(RoomId::RoomA),
+        Some(RoomIdentifier::RoomB) => Some(RoomId::RoomB),
+        Some(RoomIdentifier::RoomC) => Some(RoomId::RoomC),
+        Some(RoomIdentifier::RoomD) => Some(RoomId::RoomD),
+        Some(RoomIdentifier::RoomE) => Some(RoomId::RoomE),
     }
 }

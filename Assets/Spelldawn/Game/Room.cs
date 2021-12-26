@@ -33,8 +33,8 @@ namespace Spelldawn.Game
 
     public ObjectDisplay FrontCards => _defenders;
 
-    [SerializeField] RoomId _roomId;
-    public RoomId RoomId => _roomId;
+    [SerializeField] RoomIdentifier _roomId;
+    public RoomIdentifier RoomId => _roomId;
 
     [SerializeField] SpriteRenderer _spriteRenderer = null!;
     public SpriteRenderer SpriteRenderer => _spriteRenderer;
@@ -44,16 +44,16 @@ namespace Spelldawn.Game
       _spriteRenderer = ComponentUtils.GetComponent<SpriteRenderer>(this);
     }
 
-    public ObjectDisplay ObjectDisplayForLocation(RoomLocation location) => location switch
+    public ObjectDisplay ObjectDisplayForLocation(ClientRoomLocation location) => location switch
     {
-      RoomLocation.Back => _inRoom,
-      RoomLocation.Front => _defenders,
+      ClientRoomLocation.Back => _inRoom,
+      ClientRoomLocation.Front => _defenders,
       _ => throw new ArgumentOutOfRangeException(nameof(location), location, null)
     };
 
-    public IEnumerator AddCard(Displayable card, RoomLocation location, uint? index, bool animate) => location switch
+    public IEnumerator AddCard(Displayable card, ClientRoomLocation location, uint? index, bool animate) => location switch
     {
-      RoomLocation.Back => _inRoom.AddObject(card, animate, index),
+      ClientRoomLocation.Back => _inRoom.AddObject(card, animate, index),
       _ => _defenders.AddObject(card, animate, index)
     };
   }
