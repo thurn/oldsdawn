@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![feature(let_else)]
-
 extern crate proc_macro;
 
 use proc_macro2::{Ident, Span, TokenStream};
@@ -54,14 +52,16 @@ struct ParsedVariant {
 }
 
 fn parse(ast: &DeriveInput) -> syn::Result<Vec<ParsedVariant>> {
-    let Data::Enum(data) = &ast.data else {
-        return Err(error("This macro only supports enums"));
+    let data = match &ast.data {
+        Data::Enum(d) => d,
+        _ => return Err(error("Expected enum")),
     };
 
     let mut result = vec![];
     for variant in &data.variants {
-        let Fields::Unnamed(fields) = &variant.fields else {
-            return Err(error("Only unnamed variants are supported"));
+        let fields = match &variant.fields {
+            Fields::Unnamed(f) => f,
+            _ => return Err(error("Expected unnamed field")),
         };
 
         let docs = variant
@@ -70,20 +70,17 @@ fn parse(ast: &DeriveInput) -> syn::Result<Vec<ParsedVariant>> {
             .filter(|attribute| attribute.path.is_ident("doc"))
             .cloned()
             .collect();
-        let Some(field) = &fields.unnamed.iter().nth(0) else {
-            return Err(error("Enum field not found"));
+        let field = fields.unnamed.iter().next().ok_or_else(|| error("Expected a field"))?;
+        let path = match &field.ty {
+            Type::Path(p) => p,
+            _ => return Err(error("Expected path")),
         };
 
-        let Type::Path(p) = &field.ty else {
-            return Err(error("Expected a path type"));
-        };
-
-        let Some(segment) = &p.path.segments.iter().nth(0) else {
-            return Err(error("Expected an enum type parameter"));
-        };
-
-        let PathArguments::AngleBracketed(args) = &segment.arguments else {
-            return Err(error("Expected generic arguments"));
+        let segment =
+            &path.path.segments.iter().next().ok_or_else(|| error("Expected a path segment"))?;
+        let args = match &segment.arguments {
+            PathArguments::AngleBracketed(a) => a,
+            _ => return Err(error("Expected PathArguments::AngleBracketed")),
         };
 
         let delegate_type = if segment.ident == "QueryDelegate" {
@@ -153,14 +150,12 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
 }
 
 fn generic_argument(input: &AngleBracketedGenericArguments, index: usize) -> syn::Result<&Path> {
-    let Some(arg) = input.args.iter().nth(index) else {
-        return Err(error("Expected generic parameter not found"))
+    let arg =
+        input.args.iter().nth(index).ok_or_else(|| error("Missing expected generic parameter"))?;
+    let path = match arg {
+        GenericArgument::Type(Type::Path(p)) => p,
+        _ => return Err(error("Expected GenericArgument::Type")),
     };
-
-    let GenericArgument::Type(Type::Path(path)) = arg else {
-        return Err(error("Expected a type parameter"))
-    };
-
     Ok(&path.path)
 }
 

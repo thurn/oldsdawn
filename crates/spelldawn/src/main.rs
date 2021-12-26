@@ -49,18 +49,14 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
-pub mod database;
-pub mod server;
-
 use protos::spelldawn::spelldawn_server::SpelldawnServer;
+use server::GameService;
 use tonic::transport::Server;
 use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::fmt;
 use tracing_subscriber::prelude::*;
 use tracing_subscriber::util::SubscriberInitExt;
-
-use crate::server::GameService;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

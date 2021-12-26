@@ -7,10 +7,12 @@ edition = "2021"
 
 [lib]
 doctest = false
+test = false
 
 [[bin]]
 name = "gen_protos"
 path = "src/gen_protos.rs"
+test = false
 
 [dependencies]
 prost = "0.9.0"

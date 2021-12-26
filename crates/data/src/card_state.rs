@@ -26,17 +26,17 @@ use crate::primitives::{
     Side,
 };
 
-/// Determines display order when multiple cards are in the same position.
-/// Typically, this is taken from an opaque, sequentially increasing counter
-/// representing what time the card first moved to this position.
+/// Determines display order when multiple cards are in the same position. Typically, this is taken
+/// from an opaque, sequentially increasing counter representing what time the card first moved to
+/// this position.
 pub type SortingKey = u32;
 
 /// Identifies the location of a card during an active game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
 #[strum_discriminants(name(CardPositionKind))]
 pub enum CardPosition {
-    /// An unspecified random position within a user's deck. The default
-    /// position of all cards when a new game is started.
+    /// An unspecified random position within a user's deck. The default position of all cards when
+    /// a new game is started.
     DeckUnknown(Side),
     /// A card which is known to at least one player to be on the top of a deck
     DeckTop(Side),

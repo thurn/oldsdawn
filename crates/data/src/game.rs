@@ -83,13 +83,12 @@ pub struct GameState {
     pub id: GameId,
     /// General game state
     pub data: GameData,
-    /// Used to track changes to game state in order to update the client. Code
-    /// which mutates the game state is responsible for appending a
-    /// description of the change to `updates` via [UpdateTracker::push].
+    /// Used to track changes to game state in order to update the client. Code which mutates the
+    /// game state is responsible for appending a description of the change to `updates` via
+    /// [UpdateTracker::push].
     ///
-    /// A new `updates` buffer should be set for each network request to track
-    /// changes in response to that request. Consequently, its value is not
-    /// serialized.
+    /// A new `updates` buffer should be set for each network request to track changes in response
+    /// to that request. Consequently, its value is not serialized.
     #[serde(skip)]
     pub updates: UpdateTracker,
     /// Cards for the overlord player. In general, code should use one of the
@@ -133,10 +132,9 @@ impl GameState {
 
     /// Returns the identity card for the provided Side.
     ///
-    /// It is an error for there to be zero or multiple cards in the `Identity`
-    /// card position. If this does occur, this method will panic (in the
-    /// case of zero cards) or return an arbitrary identity card (in the
-    /// case of multiples).
+    /// It is an error for there to be zero or multiple cards in the `Identity` card position. If
+    /// this does occur, this method will panic (in the case of zero cards) or return an arbitrary
+    /// identity card (in the case of multiples).
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
             .iter()

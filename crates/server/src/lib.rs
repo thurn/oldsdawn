@@ -12,6 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![deny(warnings)]
+#![deny(clippy::all)]
+#![deny(clippy::cast_lossless)]
+#![deny(clippy::cloned_instead_of_copied)]
+#![deny(clippy::copy_iterator)]
+#![deny(clippy::default_trait_access)]
+#![deny(clippy::if_then_some_else_none)]
+#![deny(clippy::inconsistent_struct_constructor)]
+#![deny(clippy::inefficient_to_string)]
+#![deny(clippy::integer_division)]
+#![deny(clippy::let_underscore_drop)]
+#![deny(clippy::let_underscore_must_use)]
+#![deny(clippy::manual_ok_or)]
+#![deny(clippy::map_flatten)]
+#![deny(clippy::map_unwrap_or)]
+#![deny(clippy::match_same_arms)]
+#![deny(clippy::multiple_inherent_impl)]
+#![deny(clippy::needless_continue)]
+#![deny(clippy::needless_for_each)]
+#![deny(clippy::option_if_let_else)]
+#![deny(clippy::redundant_closure_for_method_calls)]
+#![deny(clippy::ref_option_ref)]
+#![deny(clippy::string_to_string)]
+#![deny(clippy::trait_duplication_in_bounds)]
+#![deny(clippy::unnecessary_self_imports)]
+#![deny(clippy::unnested_or_patterns)]
+#![deny(clippy::unused_self)]
+#![deny(clippy::unwrap_in_result)]
+#![deny(clippy::unwrap_used)]
+#![deny(clippy::use_self)]
+#![deny(clippy::used_underscore_binding)]
+#![deny(clippy::useless_let_if_seq)]
+#![deny(clippy::wildcard_imports)]
+#![allow(dead_code)]
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+
 use anyhow::{anyhow, bail, Context, Result};
 use data::card_name::CardName;
 use data::deck::Deck;
@@ -33,7 +70,9 @@ use rules::actions::PlayCardTarget;
 use tonic::{Request, Response, Status};
 use tracing::{info, warn, warn_span};
 
-use crate::database;
+use crate::database::{Database, SledDatabase};
+
+pub mod database;
 
 pub struct GameService {}
 
@@ -43,11 +82,12 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        match handle_request(request.get_ref()) {
-            Ok(commands) => Ok(Response::new(CommandList { commands })),
+        let mut database = SledDatabase;
+        match handle_request(&mut database, request.get_ref()) {
+            Ok(commands) => Ok(Response::new(commands)),
             Err(error) => {
                 eprintln!("Server Error: {:#}", error);
-                Err(Status::internal("Server Error"))
+                Err(Status::internal(format!("Server Error: {:#}", error)))
             }
         }
     }
@@ -55,7 +95,7 @@ impl Spelldawn for GameService {
 
 /// Processes an incoming client request and returns a vector of [GameCommand]
 /// objects describing required updates to the client UI.
-fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
+pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<CommandList> {
     let game_id = to_server_game_id(&request.game_id);
     let user_id = primitives::UserId::new(request.user_id);
     let game_action = request
@@ -66,13 +106,13 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         .as_ref()
         .with_context(|| "GameAction is required")?;
 
-    let span = warn_span!("handle_request", ?user_id, ?game_id, ?game_action).entered();
+    let _span = warn_span!("handle_request", ?user_id, ?game_id, ?game_action).entered();
     warn!(?user_id, ?game_id, ?game_action, "received_request");
 
-    let result = match game_action {
-        Action::Connect(_) => handle_connect(user_id, game_id),
-        Action::DrawCard(_) => handle_action(user_id, game_id, actions::draw_card),
-        Action::PlayCard(action) => handle_action(user_id, game_id, |game, side| {
+    let commands = match game_action {
+        Action::Connect(_) => handle_connect(database, user_id, game_id),
+        Action::DrawCard(_) => handle_action(database, user_id, game_id, actions::draw_card),
+        Action::PlayCard(action) => handle_action(database, user_id, game_id, |game, side| {
             actions::play_card(
                 game,
                 side,
@@ -82,22 +122,21 @@ fn handle_request(request: &GameRequest) -> Result<Vec<GameCommand>> {
         }),
         _ => Ok(vec![]),
     }?;
-    let response = result.iter().map(command_name).collect::<Vec<_>>();
 
+    let response = commands.iter().map(command_name).collect::<Vec<_>>();
     info!(?response, "sending_response");
-
-    Ok(result)
+    Ok(CommandList { commands })
 }
 
 fn handle_connect(
+    database: &mut impl Database,
     user_id: primitives::UserId,
     game_id: Option<primitives::GameId>,
 ) -> Result<Vec<GameCommand>> {
     let game = if let Some(game_id) = game_id {
-        database::game(game_id)?
+        database.game(game_id)?
     } else {
-        let id = database::generate_id()?;
-        let new_game_id = primitives::GameId::new(id);
+        let new_game_id = database.generate_game_id()?;
         let mut game = GameState::new_game(
             new_game_id,
             Deck {
@@ -121,7 +160,7 @@ fn handle_connect(
         game.overlord.actions = 0;
         game.champion.actions = 3;
 
-        database::write_game(&game)?;
+        database.write_game(&game)?;
         info!(?new_game_id, "create_new_game");
         game
     };
@@ -131,23 +170,24 @@ fn handle_connect(
 }
 
 fn handle_action(
+    database: &mut impl Database,
     user_id: primitives::UserId,
     game_id: Option<primitives::GameId>,
     function: impl Fn(&mut GameState, Side) -> Result<()>,
 ) -> Result<Vec<GameCommand>> {
-    let mut game = find_game(game_id)?;
+    let mut game = find_game(database, game_id)?;
     let side = user_side(user_id, &game)?;
     function(&mut game, side)?;
     let result = rendering::render_updates(&game, side);
-    database::write_game(&game)?;
+    database.write_game(&game)?;
     Ok(result)
 }
 
 /// Look up the state for a game which is expected to exist and assigns an
 /// [UpdateTracker] to it for the duration of this request.
-fn find_game(game_id: Option<primitives::GameId>) -> Result<GameState> {
+fn find_game(database: &impl Database, game_id: Option<primitives::GameId>) -> Result<GameState> {
     let id = game_id.as_ref().with_context(|| "GameId not provided!")?;
-    let mut game = database::game(*id)?;
+    let mut game = database.game(*id)?;
     game.updates = UpdateTracker { update_list: Some(vec![]) };
     Ok(game)
 }

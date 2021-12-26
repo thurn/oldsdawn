@@ -173,7 +173,7 @@ message FlexColor {
     /** Blue color component, specified in the range 0.0 to 1.0 inclusive. */
     float blue = 3;
 
-    /** 
+    /**
      * Alpha color component, specified in the range 0.0 (transparent) to 1.0
      * (opaque) inclusive.
      */
@@ -453,7 +453,7 @@ message CardIcon {
     SpriteAddress background = 1;
     /** Text to display on the icon. */
     string text = 2;
-    /** 
+    /**
      * Scale for the background image to render at. A value of 0.0 will be
      * treated as 1.0
      */
@@ -593,7 +593,7 @@ message ObjectPositionDiscardPileContainer {
     PlayerName owner = 1;
 }
 
-/** 
+/**
  * Large display of cards *while* the score animation is playing. After the
  * score animation finishes, scored cards move to 'Identity' position.
  */
@@ -624,7 +624,7 @@ message ObjectPosition {
     * case of ties, any ordering is acceptable.
     */
     uint32 sorting_key = 1;
-    
+
     oneof position {
         ObjectPositionOffscreen offscreen = 2;
         ObjectPositionRoom room = 3;
@@ -674,7 +674,7 @@ message RevealedCardView {
     /** Information needed to determine whether a card can be played. */
     CardCost cost = 10;
 
-    /** 
+    /**
      * Additional interface element rendered to the side of the card during an
      * info zoom.
      */
@@ -772,10 +772,10 @@ message GameView {
 // Actions
 // ============================================================================
 
-/** 
+/**
  * Initiate a play session. If a game_id is provided in the GameRequest,
  * connects to an ongoing game. Otherwise, creates a new game. This command
- * must be sent from an empty game scene. 
+ * must be sent from an empty game scene.
  */
 message ConnectAction {
 }
@@ -873,11 +873,11 @@ message GameAction {
 
 message GameRequest {
     GameAction action = 1;
-    
+
     /** Current game_id, if a game is currently ongoing. */
     GameId game_id = 2;
-    
-    /** 
+
+    /**
      * Identifies the user making this request. At some point I'm going to
      * figure out how to set up authentication, but currently we operate on
      * the honor system :)
@@ -947,11 +947,7 @@ message RenderInterfaceCommand {
     }
 }
 
-/**
-* Many of the below commands are specific cases of RenderGame. They are
-* differentiated in order to simplify the diffing logic the client needs
-* to perform to detect and animate changes.
-*/
+/** Updates the current GameView state. */
 message UpdateGameViewCommand {
     GameView game = 1;
 }
@@ -997,13 +993,13 @@ enum CardCreationAnimation {
 message CreateOrUpdateCardCommand {
     CardView card = 1;
 
-    /** 
+    /**
      * Optionally, a position in which to create this card. Ignored if the
      * card already exists. Ignored during optimistic card draw.
      */
     ObjectPosition create_position = 2;
 
-    /** 
+    /**
      * Optionally, an animation to play after creating the card. Ignored if
      * the card already exists. Ignored during optimistic card draw.
      */
@@ -1033,13 +1029,13 @@ message MoveGameObjectsCommand {
     /**
      * Position at which to insert. If multiple IDs are specified, they will
      * be sequentially added at this position
-     */    
+     */
     ObjectPosition position = 2;
-    
+
     bool disable_animation = 3;
 }
 
-/** 
+/**
  * Request to move all GameObjects located at a specific object position to
  * another object position.
  */

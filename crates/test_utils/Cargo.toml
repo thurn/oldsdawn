@@ -1,0 +1,19 @@
+[package]
+name = "test_utils"
+version = "0.0.0"
+description = "Utilities to facilitate testing"
+license = "Apache-2.0"
+edition = "2021"
+
+[lib]
+doctest = false
+test = false
+
+[dependencies]
+anyhow = "1.0.51"
+
+data = { path = "../data", version = "0.0.0" }
+protos = { path = "../protos", version = "0.0.0" }
+rules = { path = "../rules", version = "0.0.0" }
+display = { path = "../display", version = "0.0.0" }
+server = { path = "../server", version = "0.0.0" }

@@ -44,9 +44,9 @@ pub struct TargetedInteraction {
 /// into a client update
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum GameUpdate {
-    /// Indicates a general game state change, such as modifying a player's mana
-    /// or the current turn number. Does not request a full state sync, so
-    /// e.g. player card backs and portrait images are not modified.
+    /// Indicates a general game state change, such as modifying a player's mana or the current
+    /// turn number. Does not request a full state sync, so e.g. player card backs and portrait
+    /// images are not modified.
     UpdateGameState,
     /// Indicates a general card state change, such as a modification to its
     /// attack value.
@@ -82,10 +82,9 @@ pub enum GameUpdate {
     GameOver(Side),
 }
 
-/// Tracks game mutations for a given network request. If a vector is present
-/// here, then code which mutates the GameState is also responsible for
-/// appending a [GameUpdate] which describes the mutation. If no vector is
-/// present it means update tracking is currently disabled (e.g. because
+/// Tracks game mutations for a given network request. If a vector is present here, then code which
+/// mutates the GameState is also responsible for appending a [GameUpdate] which describes the
+/// mutation. If no vector is present it means update tracking is currently disabled (e.g. because
 /// we are running in simulation mode).
 #[derive(Debug, Clone, Default)]
 pub struct UpdateTracker {
@@ -95,9 +94,8 @@ pub struct UpdateTracker {
 impl UpdateTracker {
     /// Appends a [GameUpdate] to the update list.
     ///
-    /// Duplicate Updates: If the provided update is exactly identical to the
-    /// most recent update, it is skipped. This is intended to reduce
-    /// redundancy.
+    /// Duplicate Updates: If the provided update is exactly identical to the most recent update,
+    /// it is skipped. This is intended to reduce redundancy.
     pub fn push(&mut self, update: GameUpdate) {
         if let Some(vec) = &mut self.update_list {
             if vec.iter().last() != Some(&update) {

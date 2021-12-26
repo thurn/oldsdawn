@@ -224,6 +224,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dissimilar"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "31ad93652f40969dead8d4bf897a41e9462095152eb21c56e5830537e41179dd"
+
+[[package]]
 name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -248,6 +254,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "expect-test"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ffc5e8bf4af3ae147a7797c5d0566d9f038e49179213e29f44ddb031aea96c7"
+dependencies = [
+ "dissimilar",
+ "once_cell",
 ]
 
 [[package]]
@@ -877,6 +893,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "server"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bincode",
+ "data",
+ "display",
+ "maplit",
+ "once_cell",
+ "prost",
+ "prost-types",
+ "protos",
+ "rules",
+ "sled",
+ "tokio",
+ "tokio-stream",
+ "tonic",
+ "tonic-web",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "sharded-slab"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -931,13 +970,16 @@ dependencies = [
  "bincode",
  "data",
  "display",
+ "expect-test",
  "maplit",
  "once_cell",
  "prost",
  "prost-types",
  "protos",
  "rules",
+ "server",
  "sled",
+ "test_utils",
  "tokio",
  "tokio-stream",
  "tonic",
@@ -994,6 +1036,18 @@ dependencies = [
  "redox_syscall",
  "remove_dir_all",
  "winapi",
+]
+
+[[package]]
+name = "test_utils"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "data",
+ "display",
+ "protos",
+ "rules",
+ "server",
 ]
 
 [[package]]

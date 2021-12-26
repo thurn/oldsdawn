@@ -1,16 +1,12 @@
 [package]
-name = "spelldawn"
+name = "server"
 version = "0.0.0"
-homepage = "https://github.com/thurn/spelldawn"
-description = "An asymmetric trading card game"
+description = "Top-level server response handling"
 license = "Apache-2.0"
-default-run = "spelldawn"
 edition = "2021"
-rust-version = "1.57"
 
-[[bin]]
-name = "spelldawn"
-path = "src/main.rs"
+[lib]
+doctest = false
 test = false
 
 [dependencies]
@@ -29,12 +25,6 @@ tracing = { version = "0.1.29" }
 tracing-subscriber = "0.3.3"
 
 data = { path = "../data", version = "0.0.0" }
-display = { path = "../display", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }
-server = { path = "../server", version = "0.0.0" }
-
-[dev-dependencies]
-expect-test = "1.2.1"
-
-test_utils = { path = "../test_utils", version = "0.0.0" }
+display = { path = "../display", version = "0.0.0" }
