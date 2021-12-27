@@ -22,16 +22,15 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     game_object_identifier, ActionTrackerView, ArenaView, CanPlayAlgorithm, CardCreationAnimation,
-    CardIcon, CardIcons, CardIdentifier, CardTarget, CardTargeting, CardTitle, CardView,
-    CardViewCost, ClientItemLocation, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand,
+    CardIcon, CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView,
+    CardViewCost, ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand,
     DelayCommand, GameCommand, GameIdentifier, GameObjectIdentifier, GameView, IdentityAction,
     ManaView, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
-    ObjectPositionIdentityContainer, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
     PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier,
     ScoreView, SpendCostAlgorithm, SpriteAddress, TimeValue, UpdateGameViewCommand,
 };
-use rules::actions::PlayCardTarget;
+
 use rules::queries;
 
 use crate::assets::{jewel, CardIconType};
@@ -365,7 +364,7 @@ fn adapt_position(
                 owner: to_player_name(side, user_side).into(),
             }))
         }
-        CardPosition::DeckUnknown(side) => None,
+        CardPosition::DeckUnknown(_side) => None,
     };
 
     result.map(|p| ObjectPosition { sorting_key: card.sorting_key, position: Some(p) })

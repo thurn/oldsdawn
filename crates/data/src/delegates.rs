@@ -14,19 +14,18 @@
 
 use std::fmt;
 use std::fmt::Formatter;
-use std::marker::PhantomData;
-use std::sync::Arc;
+
+
 
 use macros::DelegateEnum;
 use strum_macros::EnumDiscriminants;
-use tracing::{info_span, Span};
 
-use crate::card_definition::{CardStats, Cost};
-use crate::card_state::{CardData, CardPosition};
+
+
+use crate::card_state::{CardPosition};
 use crate::game::{GameState, RaidState};
 use crate::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
-    RaidId, ShieldValue, Side, TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue, ShieldValue, Side, TurnNumber,
 };
 
 /// Scope for which ability owns a delegate
@@ -119,7 +118,7 @@ impl Flag {
     /// described above
     pub fn with_override(self, value: bool) -> Self {
         match self {
-            Self::Default(current) => Self::Override(value),
+            Self::Default(_current) => Self::Override(value),
             Self::Override(current) => Self::Override(current && value),
         }
     }

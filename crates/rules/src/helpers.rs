@@ -72,19 +72,19 @@ pub fn in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
 
 /// A RequirementFn which restricts delegates to only listen to events for their
 /// own card.
-pub fn this_card(game: &GameState, scope: Scope, card_id: impl Into<CardId>) -> bool {
+pub fn this_card(_game: &GameState, scope: Scope, card_id: impl Into<CardId>) -> bool {
     scope.card_id() == card_id.into()
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their
 /// own ability.
-pub fn this_ability(game: &GameState, scope: Scope, ability_id: impl Into<AbilityId>) -> bool {
+pub fn this_ability(_game: &GameState, scope: Scope, ability_id: impl Into<AbilityId>) -> bool {
     scope.ability_id() == ability_id.into()
 }
 
 /// A RequirementFn which restricts delegates to only listen to [BoostData]
 /// events matching their card.
-pub fn this_boost(game: &GameState, scope: Scope, boost_data: BoostData) -> bool {
+pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> bool {
     scope.card_id() == boost_data.card_id
 }
 

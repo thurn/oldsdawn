@@ -15,9 +15,9 @@
 //! Core game mutations. In general, functions in this module are the only ones
 //! expected to append updates to [GameState::updates].
 
-use data::card_state::{CardData, CardPosition, CardPositionKind};
+use data::card_state::{CardPosition, CardPositionKind};
 use data::delegates::{
-    self, CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, RevealCardEvent,
+    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, RevealCardEvent,
     Scope, StoredManaTakenEvent,
 };
 use data::game::GameState;

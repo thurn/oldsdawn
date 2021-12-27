@@ -12,22 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::collections::HashMap;
+
 
 use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardData, CardPosition, CardState};
-use data::game::{GameData, GameState, PlayerState};
+use data::game::{GameState};
 use data::primitives::{
-    ActionCount, CardId, CardType, GameId, ManaValue, PointsValue, RoomId, Side, UserId,
+    ActionCount, GameId, ManaValue, PointsValue, RoomId, Side, UserId,
 };
 use display::rendering;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    card_target, game_action, CardIdentifier, CardTarget, CommandList, CreateOrUpdateCardCommand,
-    GameAction, GameIdentifier, GameRequest, PlayCardAction, PlayerName, PlayerView,
-    UpdateGameViewCommand,
+    CardIdentifier,
+    GameAction, GameIdentifier, GameRequest, PlayerName, PlayerView,
 };
 use rules::mutations;
 use server::database::Database;
@@ -53,7 +52,7 @@ impl TestGame {
     pub const ROOM_ID: RoomId = RoomId::RoomA;
 
     pub fn new(game: GameState, user_side: Side) -> Self {
-        let (user, opponent) = match user_side {
+        let (_user, _opponent) = match user_side {
             Side::Overlord => (&game.overlord, &game.champion),
             Side::Champion => (&game.champion, &game.overlord),
         };
@@ -136,7 +135,7 @@ impl Database for TestGame {
         Ok(Self::GAME_ID)
     }
 
-    fn game(&self, id: GameId) -> Result<GameState> {
+    fn game(&self, _id: GameId) -> Result<GameState> {
         Ok(self.game.clone())
     }
 
@@ -216,16 +215,16 @@ impl ClientPlayer {
 pub struct ClientCards {}
 
 impl ClientCards {
-    fn update(&mut self, command: Command) {}
+    fn update(&mut self, _command: Command) {}
 }
 
 #[derive(Debug, Clone, Default)]
 pub struct ClientCard {}
 
 impl ClientCard {
-    pub fn new(card: &CardState) -> Self {
+    pub fn new(_card: &CardState) -> Self {
         Self {}
     }
 
-    fn update(&mut self, command: &Command) {}
+    fn update(&mut self, _command: &Command) {}
 }

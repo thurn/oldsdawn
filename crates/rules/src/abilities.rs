@@ -24,7 +24,7 @@ use crate::{mutations, queries};
 
 /// Applies this card's `attack_boost` stat a number of times equal to its
 /// [CardState::boost_count]
-fn add_boost(game: &GameState, scope: Scope, card_id: CardId, current: AttackValue) -> AttackValue {
+fn add_boost(game: &GameState, _scope: Scope, card_id: CardId, current: AttackValue) -> AttackValue {
     let boost_count = queries::boost_count(game, card_id);
     let bonus = queries::stats(game, card_id).attack_boost.expect("Expected boost").bonus;
     current + (boost_count * bonus)
@@ -54,7 +54,7 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
         text: AbilityText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),
         ability_type: AbilityType::Standard,
         delegates: vec![
-            Delegate::PlayCard(EventDelegate::new(this_card, |g, s, card_id| {
+            Delegate::PlayCard(EventDelegate::new(this_card, |g, _s, card_id| {
                 g.card_mut(card_id).data.stored_mana = N;
             })),
             Delegate::StoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {

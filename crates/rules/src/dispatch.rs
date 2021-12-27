@@ -14,11 +14,11 @@
 
 use std::fmt::Debug;
 
-use data::card_name::CardName;
-use data::delegates::{Delegate, EventData, Flag, MutationFn, QueryData, RequirementFn, Scope};
+
+use data::delegates::{EventData, QueryData, Scope};
 use data::game::GameState;
-use data::primitives::{AbilityId, AbilityIndex, BoostCount, CardId, ManaValue};
-use tracing::{event, info, instrument, Level};
+use data::primitives::{AbilityId};
+use tracing::{info, instrument};
 
 #[instrument(skip(game))]
 pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, event: E) {

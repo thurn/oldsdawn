@@ -15,7 +15,7 @@
 use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates::{
-    self, ActionCostQuery, AttackValueQuery, BoostCountQuery, CanPlayCardQuery, Flag,
+    ActionCostQuery, AttackValueQuery, BoostCountQuery, CanPlayCardQuery, Flag,
     HealthValueQuery, ManaCostQuery, ShieldValueQuery,
 };
 use data::game::GameState;

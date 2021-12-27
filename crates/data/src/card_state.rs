@@ -17,10 +17,10 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use strum_macros::EnumDiscriminants;
 
-use crate::card_definition::CardDefinition;
+
 use crate::card_name::CardName;
-use crate::deck::Deck;
-use crate::game::GameState;
+
+
 use crate::primitives::{
     AbilityIndex, BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RoomId, RoomLocation,
     Side,

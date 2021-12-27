@@ -20,9 +20,9 @@
 //! game functions typically assume the game is in a valid state and will panic
 //! if that is not true.
 
-use anyhow::{anyhow, bail, ensure, Context, Result};
+use anyhow::{anyhow, ensure, Context, Result};
 use data::card_state::{CardPosition, CardPositionKind};
-use data::delegates::{self, CastCardEvent, PayCardCostsEvent};
+use data::delegates::{CastCardEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 use tracing::{info, instrument};
