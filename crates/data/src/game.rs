@@ -103,7 +103,7 @@ pub struct GameState {
     pub champion: PlayerState,
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::move_card], do not mutate this directly.
-    pub next_sorting_key: SortingKey,
+    next_sorting_key: SortingKey,
 }
 
 impl GameState {
@@ -191,6 +191,13 @@ impl GameState {
             Side::Overlord => &mut self.overlord,
             Side::Champion => &mut self.champion,
         }
+    }
+
+    /// Returns a monotonically-increasing sorting key for object positions in this game.
+    pub fn next_sorting_key(&mut self) -> u32 {
+        let result = self.next_sorting_key;
+        self.next_sorting_key += 1;
+        result
     }
 
     /// Moves a card to a new [CardPosition].

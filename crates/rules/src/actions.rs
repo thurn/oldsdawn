@@ -21,7 +21,7 @@
 //! if that is not true.
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
-use data::card_state::CardPosition;
+use data::card_state::{CardPosition, CardPositionKind};
 use data::delegates::{self, CastCardEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
@@ -89,6 +89,12 @@ pub fn play_card(
         }
         CardType::Identity => CardPosition::Identity(side),
     };
+
+    if matches!(new_position.kind(), CardPositionKind::ArenaItem | CardPositionKind::DiscardPile) {
+        mutations::set_revealed(game, card_id, true);
+    }
+
     mutations::move_card(game, card_id, new_position);
+
     Ok(())
 }

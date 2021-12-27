@@ -39,8 +39,6 @@
 #![deny(clippy::unnecessary_self_imports)]
 #![deny(clippy::unnested_or_patterns)]
 #![deny(clippy::unused_self)]
-#![deny(clippy::unwrap_in_result)]
-#![deny(clippy::unwrap_used)]
 #![deny(clippy::use_self)]
 #![deny(clippy::used_underscore_binding)]
 #![deny(clippy::useless_let_if_seq)]

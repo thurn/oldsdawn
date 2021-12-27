@@ -40,8 +40,7 @@ impl Database for SledDatabase {
     }
 
     fn game(&self, id: GameId) -> Result<GameState> {
-        let content = self
-            .games()?
+        let content = games()?
             .get(id.key())
             .with_context(|| format!("Error reading  game: {:?}", id))?
             .with_context(|| format!("Game not found: {:?}", id))?;
@@ -52,15 +51,13 @@ impl Database for SledDatabase {
     fn write_game(&mut self, game: &GameState) -> Result<()> {
         let serialized = bincode::serialize(game)
             .with_context(|| format!("Error serializing game {:?}", game.id))?;
-        self.games()?
+        games()?
             .insert(game.id.key(), serialized)
             .map(|_| ()) // Ignore previously-set value
             .with_context(|| format!("Error writing game {:?}", game.id))
     }
 }
 
-impl SledDatabase {
-    fn games(&self) -> Result<Tree> {
-        DATABASE.open_tree("games").with_context(|| "Error opening the 'games table")
-    }
+fn games() -> Result<Tree> {
+    DATABASE.open_tree("games").with_context(|| "Error opening the 'games table")
 }

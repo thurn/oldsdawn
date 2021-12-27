@@ -24,12 +24,12 @@ use protos::spelldawn::{
     game_object_identifier, ActionTrackerView, ArenaView, CanPlayAlgorithm, CardCreationAnimation,
     CardIcon, CardIcons, CardIdentifier, CardTarget, CardTargeting, CardTitle, CardView,
     CardViewCost, ClientItemLocation, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand,
-    GameCommand, GameIdentifier, GameObjectIdentifier, GameView, IdentityAction, ManaView,
-    MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile,
-    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionIdentityContainer,
-    ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
-    PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier, ScoreView,
-    SpendCostAlgorithm, SpriteAddress, UpdateGameViewCommand,
+    DelayCommand, GameCommand, GameIdentifier, GameObjectIdentifier, GameView, IdentityAction,
+    ManaView, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
+    ObjectPositionIdentityContainer, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
+    PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier,
+    ScoreView, SpendCostAlgorithm, SpriteAddress, TimeValue, UpdateGameViewCommand,
 };
 use rules::actions::PlayCardTarget;
 use rules::queries;
@@ -45,8 +45,13 @@ pub fn full_sync(game: &GameState, user_side: Side) -> Vec<GameCommand> {
     result.extend(
         game.all_cards()
             .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
-            .filter_map(|c| {
-                create_or_update_card(game, c, user_side, CardCreationAnimation::Unspecified)
+            .map(|c| {
+                create_or_update_card(
+                    game,
+                    c,
+                    user_side,
+                    CardCreationStrategy::SnapToCurrentPosition,
+                )
             })
             .map(|c| GameCommand { command: Some(c) }),
     );
@@ -70,17 +75,17 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<GameCommand> {
 pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Vec<Command> {
     match update {
         GameUpdate::UpdateGameState => vec![game_view(game, user_side, GameUpdateType::State)],
-        GameUpdate::UpdateCard(card_id) => create_or_update_card(
+        GameUpdate::UpdateCard(card_id) => vec![create_or_update_card(
             game,
             game.card(card_id),
             user_side,
-            CardCreationAnimation::Unspecified,
-        )
-        .map_or_else(Vec::new, |c| vec![c]),
+            CardCreationStrategy::SnapToCurrentPosition,
+        )],
         GameUpdate::DrawCard(card_id) => draw_card(game, game.card(card_id), user_side),
         GameUpdate::MoveCard(card_id) => {
             filtered(vec![move_card(game, game.card(card_id), user_side)])
         }
+        GameUpdate::RevealCard(card_id) => reveal_card(game, game.card(card_id), user_side),
         _ => todo!(),
     }
 }
@@ -118,7 +123,21 @@ fn game_view(game: &GameState, user_side: Side, update_type: GameUpdateType) -> 
 
 fn draw_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command> {
     filtered(vec![
-        create_or_update_card(game, card, user_side, CardCreationAnimation::DrawCard),
+        Some(create_or_update_card(
+            game,
+            card,
+            user_side,
+            if card.side == user_side {
+                CardCreationStrategy::DrawUserCard
+            } else {
+                CardCreationStrategy::CreateAtPosition(ObjectPosition {
+                    sorting_key: u32::MAX,
+                    position: Some(Position::Deck(ObjectPositionDeck {
+                        owner: PlayerName::Opponent.into(),
+                    })),
+                })
+            },
+        )),
         move_card(game, card, user_side),
     ])
 }
@@ -136,34 +155,77 @@ fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Comm
     })
 }
 
-/// Creates a create/update card command. Returns None if this card isn't in a
-/// valid game position, e.g if it is in [CardPosition::DeckUnknown].
+#[derive(Debug, PartialEq, Clone)]
+enum CardCreationStrategy {
+    /// Animate the card moving from the user's deck to the staging area.
+    DrawUserCard,
+    /// Jump the newly-created card to its current game position. If the current position is
+    /// invalid (e.g. in the user's deck), no initial position will be specified for the card.
+    SnapToCurrentPosition,
+    /// Create the card at a specific game object position.
+    CreateAtPosition(ObjectPosition),
+}
+
+/// Creates a create/update card command.
 fn create_or_update_card(
     game: &GameState,
     card: &CardState,
     user_side: Side,
-    create_animation: CardCreationAnimation,
-) -> Option<Command> {
+    creation_strategy: CardCreationStrategy,
+) -> Command {
     let definition = rules::get(card.name);
-    let revealed = definition.side == user_side || card.data.revealed;
-    adapt_position(card, game.card(card.id).position, user_side).map(|position| {
-        Command::CreateOrUpdateCard(CreateOrUpdateCardCommand {
-            card: Some(CardView {
-                card_id: Some(adapt_card_id(card.id)),
-                card_icons: Some(card_icons(game, card, definition, revealed)),
-                arena_frame: Some(assets::arena_frame(
-                    definition.side,
-                    definition.card_type,
-                    definition.config.faction,
-                )),
-                owning_player: to_player_name(definition.side, user_side).into(),
-                revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
-            }),
-            create_position: Some(position),
-            create_animation: create_animation.into(),
-            disable_flip_animation: false,
-        })
+    let revealed = card.is_revealed_to(user_side);
+    let create_animation = if creation_strategy == CardCreationStrategy::DrawUserCard {
+        CardCreationAnimation::DrawCard.into()
+    } else {
+        CardCreationAnimation::Unspecified.into()
+    };
+    let position = match creation_strategy {
+        CardCreationStrategy::DrawUserCard => None,
+        CardCreationStrategy::SnapToCurrentPosition => {
+            adapt_position(card, game.card(card.id).position, user_side)
+        }
+        CardCreationStrategy::CreateAtPosition(p) => Some(p),
+    };
+
+    Command::CreateOrUpdateCard(CreateOrUpdateCardCommand {
+        card: Some(CardView {
+            card_id: Some(adapt_card_id(card.id)),
+            card_icons: Some(card_icons(game, card, definition, revealed)),
+            arena_frame: Some(assets::arena_frame(
+                definition.side,
+                definition.card_type,
+                definition.config.faction,
+            )),
+            owning_player: to_player_name(definition.side, user_side).into(),
+            revealed_card: revealed.then(|| new_revealed_card(game, card, definition, user_side)),
+        }),
+        create_position: position,
+        create_animation,
+        disable_flip_animation: false,
     })
+}
+
+fn reveal_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command> {
+    let mut result = vec![create_or_update_card(
+        game,
+        card,
+        user_side,
+        CardCreationStrategy::SnapToCurrentPosition,
+    )];
+
+    if user_side != card.side {
+        result.push(Command::MoveGameObjects(MoveGameObjectsCommand {
+            ids: vec![adapt_game_object_id(card.id)],
+            position: Some(ObjectPosition {
+                sorting_key: 0,
+                position: Some(Position::Staging(ObjectPositionStaging {})),
+            }),
+            disable_animation: false,
+        }));
+        result.push(delay(1500));
+    }
+    result
 }
 
 fn player_view(game: &GameState, side: Side, update_type: GameUpdateType) -> PlayerView {
@@ -244,7 +306,7 @@ fn card_icons(
     }
 }
 
-fn revealed_card(
+fn new_revealed_card(
     game: &GameState,
     card: &CardState,
     definition: &CardDefinition,
@@ -336,6 +398,10 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
             }
         }),
     }
+}
+
+fn delay(milliseconds: u32) -> Command {
+    Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
 }
 
 fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardViewCost {

@@ -17,8 +17,8 @@
 
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    self, CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, Scope,
-    StoredManaTakenEvent,
+    self, CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, RevealCardEvent,
+    Scope, StoredManaTakenEvent,
 };
 use data::game::GameState;
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
@@ -44,9 +44,11 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
     game.updates.push(GameUpdate::UpdateCard(scope.card_id()));
 }
 
-/// Move a card to a new position. Detects cases like drawing cards, playing
-/// cards, and shuffling cards back into the deck and fires events
-/// appropriately.
+/// Move a card to a new position. Detects cases like drawing cards, playing cards, and shuffling
+/// cards back into the deck and fires events appropriately
+///
+/// This function does *not* handle changing the 'revealed' status of the card, the caller is
+/// responsible for updating that when the card moves to a public game zone.
 #[instrument(skip(game))]
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
     info!(?card_id, ?new_position, "move_card");
@@ -73,6 +75,22 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 
     if !pushed_update {
         game.updates.push(GameUpdate::MoveCard(card_id));
+    }
+}
+
+/// Updates the 'revealed' state of a card, appending [GameUpdate::UpdateCard] if the new state
+/// differs from the current state.
+#[instrument(skip(game))]
+pub fn set_revealed(game: &mut GameState, card_id: CardId, revealed: bool) {
+    let current = game.card(card_id).data.revealed;
+
+    if current != revealed {
+        game.card_mut(card_id).data.revealed = revealed;
+        game.updates.push(GameUpdate::RevealCard(card_id));
+    }
+
+    if !current && revealed {
+        dispatch::invoke_event(game, RevealCardEvent(card_id));
     }
 }
 

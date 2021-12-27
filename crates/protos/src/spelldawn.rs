@@ -1126,6 +1126,15 @@ pub struct CommandList {
     #[prost(message, repeated, tag = "1")]
     pub commands: ::prost::alloc::vec::Vec<GameCommand>,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConnectRequest {
+    ///* Target game to connect to, if any
+    #[prost(message, optional, tag = "1")]
+    pub game_id: ::core::option::Option<GameIdentifier>,
+    ///* User making this request.
+    #[prost(uint64, tag = "2")]
+    pub user_id: u64,
+}
 // ============================================================================
 // Masonry
 // ============================================================================
@@ -1419,7 +1428,16 @@ pub mod spelldawn_server {
     #[doc = "Generated trait containing gRPC methods that should be implemented for use with SpelldawnServer."]
     #[async_trait]
     pub trait Spelldawn: Send + Sync + 'static {
-        #[doc = " Our SayHello rpc accepts HelloRequests and returns HelloReplies"]
+        #[doc = "Server streaming response type for the Connect method."]
+        type ConnectStream: futures_core::Stream<Item = Result<super::CommandList, tonic::Status>>
+            + Send
+            + 'static;
+        #[doc = "* Initiate a new server connection. "]
+        async fn connect(
+            &self,
+            request: tonic::Request<super::ConnectRequest>,
+        ) -> Result<tonic::Response<Self::ConnectStream>, tonic::Status>;
+        #[doc = "* Perform a game action. "]
         async fn perform_action(
             &self,
             request: tonic::Request<super::GameRequest>,
@@ -1464,6 +1482,39 @@ pub mod spelldawn_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
+                "/spelldawn.Spelldawn/Connect" => {
+                    #[allow(non_camel_case_types)]
+                    struct ConnectSvc<T: Spelldawn>(pub Arc<T>);
+                    impl<T: Spelldawn> tonic::server::ServerStreamingService<super::ConnectRequest> for ConnectSvc<T> {
+                        type Response = super::CommandList;
+                        type ResponseStream = T::ConnectStream;
+                        type Future =
+                            BoxFuture<tonic::Response<Self::ResponseStream>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ConnectRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).connect(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = ConnectSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
+                        let res = grpc.server_streaming(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 "/spelldawn.Spelldawn/PerformAction" => {
                     #[allow(non_camel_case_types)]
                     struct PerformActionSvc<T: Spelldawn>(pub Arc<T>);

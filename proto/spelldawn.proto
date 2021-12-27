@@ -994,8 +994,9 @@ message CreateOrUpdateCardCommand {
     CardView card = 1;
 
     /**
-     * Optionally, a position in which to create this card. Ignored if the
-     * card already exists. Ignored during optimistic card draw.
+     * Optionally, a position in which to create this card. Ignored if the card
+     * already exists, if a 'create_animation' is specified, or during optimistic
+     * card draw.
      */
     ObjectPosition create_position = 2;
 
@@ -1173,7 +1174,18 @@ message CommandList {
     repeated GameCommand commands = 1;
 }
 
+message ConnectRequest {
+    /** Target game to connect to, if any */
+    GameIdentifier game_id = 1;
+
+    /** User making this request. */
+    uint64 user_id = 2;
+}
+
 service Spelldawn {
-    // Our SayHello rpc accepts HelloRequests and returns HelloReplies
+    /** Initiate a new server connection. */
+    rpc Connect(ConnectRequest) returns (stream CommandList);
+
+    /** Perform a game action. */
     rpc PerformAction(GameRequest) returns (CommandList);
 }

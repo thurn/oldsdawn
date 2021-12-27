@@ -50,6 +50,7 @@
 #![allow(unused_variables)]
 
 use anyhow::{anyhow, bail, Context, Result};
+use dashmap::DashMap;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameState, NewGameOptions};
@@ -58,15 +59,20 @@ use data::primitives::{Side, UserId};
 use data::updates::UpdateTracker;
 use display::rendering;
 use maplit::hashmap;
+use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
-    card_target, CardIdentifier, CardTarget, CommandList, GameCommand, GameIdentifier, GameRequest,
-    PlayerSide, RoomIdentifier,
+    card_target, CardIdentifier, CardTarget, CommandList, ConnectRequest, GameCommand,
+    GameIdentifier, GameRequest, GameView, PlayerSide, RoomIdentifier, UpdateGameViewCommand,
 };
 use rules::actions;
 use rules::actions::PlayCardTarget;
+use tokio::sync::mpsc::Sender;
+use tokio::sync::{mpsc, Mutex};
+use tokio_stream::wrappers::ReceiverStream;
+use tonic::codegen::http::response;
 use tonic::{Request, Response, Status};
 use tracing::{info, warn, warn_span};
 
@@ -74,17 +80,66 @@ use crate::database::{Database, SledDatabase};
 
 pub mod database;
 
+static CHANNELS: Lazy<DashMap<UserId, Sender<Result<CommandList, Status>>>> =
+    Lazy::new(DashMap::new);
+
 pub struct GameService {}
 
 #[tonic::async_trait]
 impl Spelldawn for GameService {
+    type ConnectStream = ReceiverStream<Result<CommandList, Status>>;
+
+    async fn connect(
+        &self,
+        request: Request<ConnectRequest>,
+    ) -> Result<Response<Self::ConnectStream>, Status> {
+        let message = request.get_ref();
+        let game_id = to_server_game_id(&message.game_id);
+        let user_id = primitives::UserId::new(message.user_id);
+        warn!(?user_id, ?game_id, "received_connection");
+
+        let (tx, rx) = mpsc::channel(4);
+        CHANNELS.insert(user_id, tx);
+
+        // tokio::spawn(async move {
+        //     println!("Send!");
+        //     tx.send(Ok(CommandList {
+        //         commands: vec![GameCommand {
+        //             command: Some(Command::UpdateGameView(UpdateGameViewCommand {
+        //                 game: Some(GameView {
+        //                     game_id: Some(GameIdentifier { value: 2 }),
+        //                     user: None,
+        //                     opponent: None,
+        //                     arena: None,
+        //                     current_priority: 1,
+        //                 }),
+        //             })),
+        //         }],
+        //     }))
+        //     .await
+        //     .unwrap();
+        //     println!("Done Sending!");
+        // });
+
+        Ok(Response::new(ReceiverStream::new(rx)))
+    }
+
     async fn perform_action(
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
         let mut database = SledDatabase;
         match handle_request(&mut database, request.get_ref()) {
-            Ok(commands) => Ok(Response::new(commands)),
+            Ok(response) => {
+                for (user_id, commands) in response.channel_responses {
+                    if let Some(channel) = CHANNELS.get(&user_id) {
+                        if let Err(e) = channel.send(Ok(commands)).await {
+                            return Err(Status::internal(format!("Channel Error: {:#}", e)));
+                        }
+                    }
+                }
+                Ok(Response::new(response.command_list))
+            }
             Err(error) => {
                 eprintln!("Server Error: {:#}", error);
                 Err(Status::internal(format!("Server Error: {:#}", error)))
@@ -93,11 +148,21 @@ impl Spelldawn for GameService {
     }
 }
 
-/// Processes an incoming client request and returns a vector of [GameCommand]
-/// objects describing required updates to the client UI.
-pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<CommandList> {
+/// A response to a given [GameRequest] which should be sent to a specific user. Returned from
+/// [handle_request] to support providing updates to different players in a game.
+#[derive(Debug, Clone, Default)]
+pub struct GameResponse {
+    /// Response to send to the user who made the initial game request.
+    pub command_list: CommandList,
+    /// Responses to send to other users, e.g. to update opponent state.
+    pub channel_responses: Vec<(UserId, CommandList)>,
+}
+
+/// Processes an incoming client request and returns a vector of [UserResponse] objects describing
+/// required updates to send to connected users.
+pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
     let game_id = to_server_game_id(&request.game_id);
-    let user_id = primitives::UserId::new(request.user_id);
+    let user_id = UserId::new(request.user_id);
     let game_action = request
         .action
         .as_ref()
@@ -109,7 +174,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     let _span = warn_span!("handle_request", ?user_id, ?game_id, ?game_action).entered();
     warn!(?user_id, ?game_id, ?game_action, "received_request");
 
-    let commands = match game_action {
+    let response = match game_action {
         Action::Connect(_) => handle_connect(database, user_id, game_id),
         Action::DrawCard(_) => handle_action(database, user_id, game_id, actions::draw_card),
         Action::PlayCard(action) => handle_action(database, user_id, game_id, |game, side| {
@@ -120,19 +185,20 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
                 card_target(&action.target),
             )
         }),
-        _ => Ok(vec![]),
+        _ => Ok(GameResponse::default()),
     }?;
 
-    let response = commands.iter().map(command_name).collect::<Vec<_>>();
-    info!(?response, "sending_response");
-    Ok(CommandList { commands })
+    let commands = response.command_list.commands.iter().map(command_name).collect::<Vec<_>>();
+    info!(?user_id, ?commands, "sending_response");
+
+    Ok(response)
 }
 
 fn handle_connect(
     database: &mut impl Database,
     user_id: primitives::UserId,
     game_id: Option<primitives::GameId>,
-) -> Result<Vec<GameCommand>> {
+) -> Result<GameResponse> {
     let game = if let Some(game_id) = game_id {
         database.game(game_id)?
     } else {
@@ -166,26 +232,36 @@ fn handle_connect(
     };
 
     let side = user_side(user_id, &game)?;
-    Ok(rendering::full_sync(&game, side))
+    Ok(GameResponse {
+        command_list: CommandList { commands: rendering::full_sync(&game, side) },
+        channel_responses: vec![],
+    })
 }
 
 fn handle_action(
     database: &mut impl Database,
-    user_id: primitives::UserId,
-    game_id: Option<primitives::GameId>,
+    user_id: UserId,
+    game_id: Option<GameId>,
     function: impl Fn(&mut GameState, Side) -> Result<()>,
-) -> Result<Vec<GameCommand>> {
+) -> Result<GameResponse> {
     let mut game = find_game(database, game_id)?;
     let side = user_side(user_id, &game)?;
     function(&mut game, side)?;
-    let result = rendering::render_updates(&game, side);
+
+    let user_result = rendering::render_updates(&game, side);
+    let opponent_id = game.player(side.opponent()).id;
+    let opponent_result = rendering::render_updates(&game, side.opponent());
+
     database.write_game(&game)?;
-    Ok(result)
+    Ok(GameResponse {
+        command_list: CommandList { commands: user_result },
+        channel_responses: vec![(opponent_id, CommandList { commands: opponent_result })],
+    })
 }
 
 /// Look up the state for a game which is expected to exist and assigns an
 /// [UpdateTracker] to it for the duration of this request.
-fn find_game(database: &impl Database, game_id: Option<primitives::GameId>) -> Result<GameState> {
+fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameState> {
     let id = game_id.as_ref().with_context(|| "GameId not provided!")?;
     let mut game = database.game(*id)?;
     game.updates = UpdateTracker { update_list: Some(vec![]) };
@@ -219,31 +295,27 @@ fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
 }
 
 fn command_name(command: &GameCommand) -> &'static str {
-    if let Some(c) = &command.command {
-        match c {
-            Command::DebugLog(_) => "DebugLog",
-            Command::RunInParallel(_) => "RunInParallel",
-            Command::Delay(_) => "Delay",
-            Command::RenderInterface(_) => "RenderInterface",
-            Command::UpdateGameView(_) => "UpdateGameView",
-            Command::InitiateRaid(_) => "InitiateRaid",
-            Command::EndRaid(_) => "EndRaid",
-            Command::LevelUpRoom(_) => "LevelUpRoom",
-            Command::CreateOrUpdateCard(_) => "CreateOrUpdateCard",
-            Command::DestroyCard(_) => "DestroyCard",
-            Command::MoveGameObjects(_) => "MoveGameObjects",
-            Command::MoveObjectsAtPosition(_) => "MoveObjectsAtPosition",
-            Command::PlaySound(_) => "PlaySound",
-            Command::SetMusic(_) => "SetMusic",
-            Command::FireProjectile(_) => "FireProjectile",
-            Command::PlayEffect(_) => "PlayEffect",
-            Command::DisplayGameMessage(_) => "DisplayGameMessage",
-            Command::SetGameObjectsEnabled(_) => "SetGameObjectsEnabled",
-            Command::DisplayRewards(_) => "DisplayRewards",
-        }
-    } else {
-        "None"
-    }
+    command.command.as_ref().map_or("None", |c| match c {
+        Command::DebugLog(_) => "DebugLog",
+        Command::RunInParallel(_) => "RunInParallel",
+        Command::Delay(_) => "Delay",
+        Command::RenderInterface(_) => "RenderInterface",
+        Command::UpdateGameView(_) => "UpdateGameView",
+        Command::InitiateRaid(_) => "InitiateRaid",
+        Command::EndRaid(_) => "EndRaid",
+        Command::LevelUpRoom(_) => "LevelUpRoom",
+        Command::CreateOrUpdateCard(_) => "CreateOrUpdateCard",
+        Command::DestroyCard(_) => "DestroyCard",
+        Command::MoveGameObjects(_) => "MoveGameObjects",
+        Command::MoveObjectsAtPosition(_) => "MoveObjectsAtPosition",
+        Command::PlaySound(_) => "PlaySound",
+        Command::SetMusic(_) => "SetMusic",
+        Command::FireProjectile(_) => "FireProjectile",
+        Command::PlayEffect(_) => "PlayEffect",
+        Command::DisplayGameMessage(_) => "DisplayGameMessage",
+        Command::SetGameObjectsEnabled(_) => "SetGameObjectsEnabled",
+        Command::DisplayRewards(_) => "DisplayRewards",
+    })
 }
 
 fn card_target(target: &Option<CardTarget>) -> PlayCardTarget {

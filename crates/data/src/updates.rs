@@ -48,8 +48,7 @@ pub enum GameUpdate {
     /// turn number. Does not request a full state sync, so e.g. player card backs and portrait
     /// images are not modified.
     UpdateGameState,
-    /// Indicates a general card state change, such as a modification to its
-    /// attack value.
+    /// Indicates a general card state change, such as a modification to its attack value.
     UpdateCard(CardId),
     /// Indicates that a player's opening hand has been drawn and may be kept or
     /// mulliganed
@@ -66,6 +65,9 @@ pub enum GameUpdate {
     DestroyCard(CardId),
     /// A card has been moved to a new game location
     MoveCard(CardId),
+    /// A card has become revealed. Should be added before a `MoveCard` to move the card to its
+    /// final destination.
+    RevealCard(CardId),
     /// A room has been leveled up
     LevelUpRoom(RoomId),
     /// A raid has started on the indicated room

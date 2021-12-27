@@ -130,4 +130,15 @@ impl CardState {
             data: CardData { revealed: is_identity, ..CardData::default() },
         }
     }
+
+    /// Returns true if this card is currently revealed to the indicated user
+    pub fn is_revealed_to(&self, side: Side) -> bool {
+        if self.position.kind() == CardPositionKind::DeckUnknown {
+            false
+        } else if self.id.side == side {
+            true
+        } else {
+            self.data.revealed
+        }
+    }
 }

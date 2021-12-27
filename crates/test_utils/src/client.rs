@@ -80,6 +80,7 @@ impl TestGame {
             },
         )
         .expect("Server request failed")
+        .command_list
         .commands
         .into_iter()
         .map(|c| c.command.expect("Empty command received"))

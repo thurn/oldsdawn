@@ -61,9 +61,19 @@ namespace Spelldawn.Protos {
     }
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Spelldawn.Protos.GameRequest> __Marshaller_spelldawn_GameRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.GameRequest.Parser));
+    static readonly grpc::Marshaller<global::Spelldawn.Protos.ConnectRequest> __Marshaller_spelldawn_ConnectRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.ConnectRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Spelldawn.Protos.CommandList> __Marshaller_spelldawn_CommandList = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.CommandList.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Spelldawn.Protos.GameRequest> __Marshaller_spelldawn_GameRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Spelldawn.Protos.GameRequest.Parser));
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Spelldawn.Protos.ConnectRequest, global::Spelldawn.Protos.CommandList> __Method_Connect = new grpc::Method<global::Spelldawn.Protos.ConnectRequest, global::Spelldawn.Protos.CommandList>(
+        grpc::MethodType.ServerStreaming,
+        __ServiceName,
+        "Connect",
+        __Marshaller_spelldawn_ConnectRequest,
+        __Marshaller_spelldawn_CommandList);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Spelldawn.Protos.GameRequest, global::Spelldawn.Protos.CommandList> __Method_PerformAction = new grpc::Method<global::Spelldawn.Protos.GameRequest, global::Spelldawn.Protos.CommandList>(
@@ -84,7 +94,20 @@ namespace Spelldawn.Protos {
     public abstract partial class SpelldawnBase
     {
       /// <summary>
-      /// Our SayHello rpc accepts HelloRequests and returns HelloReplies
+      ///* Initiate a new server connection. 
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="responseStream">Used for sending responses back to the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>A task indicating completion of the handler.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task Connect(global::Spelldawn.Protos.ConnectRequest request, grpc::IServerStreamWriter<global::Spelldawn.Protos.CommandList> responseStream, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      ///* Perform a game action. 
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -125,7 +148,31 @@ namespace Spelldawn.Protos {
       }
 
       /// <summary>
-      /// Our SayHello rpc accepts HelloRequests and returns HelloReplies
+      ///* Initiate a new server connection. 
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncServerStreamingCall<global::Spelldawn.Protos.CommandList> Connect(global::Spelldawn.Protos.ConnectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return Connect(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      ///* Initiate a new server connection. 
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncServerStreamingCall<global::Spelldawn.Protos.CommandList> Connect(global::Spelldawn.Protos.ConnectRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncServerStreamingCall(__Method_Connect, null, options, request);
+      }
+      /// <summary>
+      ///* Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -138,7 +185,7 @@ namespace Spelldawn.Protos {
         return PerformAction(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Our SayHello rpc accepts HelloRequests and returns HelloReplies
+      ///* Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -149,7 +196,7 @@ namespace Spelldawn.Protos {
         return CallInvoker.BlockingUnaryCall(__Method_PerformAction, null, options, request);
       }
       /// <summary>
-      /// Our SayHello rpc accepts HelloRequests and returns HelloReplies
+      ///* Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -162,7 +209,7 @@ namespace Spelldawn.Protos {
         return PerformActionAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Our SayHello rpc accepts HelloRequests and returns HelloReplies
+      ///* Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -186,6 +233,7 @@ namespace Spelldawn.Protos {
     public static grpc::ServerServiceDefinition BindService(SpelldawnBase serviceImpl)
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
+          .AddMethod(__Method_Connect, serviceImpl.Connect)
           .AddMethod(__Method_PerformAction, serviceImpl.PerformAction).Build();
     }
 
@@ -196,6 +244,7 @@ namespace Spelldawn.Protos {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     public static void BindService(grpc::ServiceBinderBase serviceBinder, SpelldawnBase serviceImpl)
     {
+      serviceBinder.AddMethod(__Method_Connect, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::Spelldawn.Protos.ConnectRequest, global::Spelldawn.Protos.CommandList>(serviceImpl.Connect));
       serviceBinder.AddMethod(__Method_PerformAction, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Spelldawn.Protos.GameRequest, global::Spelldawn.Protos.CommandList>(serviceImpl.PerformAction));
     }
 

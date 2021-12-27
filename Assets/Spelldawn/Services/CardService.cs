@@ -82,9 +82,9 @@ namespace Spelldawn.Services
 
       if (_cards.ContainsKey(cardId))
       {
-        yield return FindCard(command.Card!.CardId)
+        yield return FindCard(cardId)
           .Render(_registry, command.Card, animate: !command.DisableFlipAnimation)
-          .WaitForCompletion();
+          ?.WaitForCompletion();
       }
       else
       {

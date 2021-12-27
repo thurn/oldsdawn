@@ -51,6 +51,11 @@ namespace Spelldawn.Services
       set => _currentPriority = value;
     }
 
+    public void Connect()
+    {
+      ConnectToServer();
+    }
+
     public void HandleAction(GameAction action)
     {
       if (!CanExecuteAction(action.ActionCase))
@@ -182,6 +187,21 @@ namespace Spelldawn.Services
       return fired;
     }
 
+    async void ConnectToServer()
+    {
+      using var call = _client.Connect(new ConnectRequest
+      {
+        GameId = _registry.GameService.CurrentGameId,
+        UserId = _registry.GameService.UserId
+      });
+
+      while (await call.ResponseStream.MoveNext())
+      {
+        var commands = call.ResponseStream.Current;
+        StartCoroutine(_registry.CommandService.HandleCommands(commands));
+      }
+    }
+
     IEnumerator HandleActionAsync(GameAction action)
     {
       yield return ApplyOptimisticResponse(action);
@@ -199,7 +219,7 @@ namespace Spelldawn.Services
         {
           Action = action,
           GameId = _registry.GameService.CurrentGameId,
-          UserId = 1
+          UserId = _registry.GameService.UserId
         };
 
         var task = _client.PerformActionAsync(request).GetAwaiter();
