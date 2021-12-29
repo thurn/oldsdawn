@@ -4,6 +4,7 @@ fix: fix-format fix-lints
 
 clean:
     cargo clean
+    find . -name "*.profraw" -delete
     mkdir target
     xattr -w com.dropbox.ignored 1 target
 
@@ -67,6 +68,7 @@ fix-lints:
 # Checks documentation lints, haven't figured out how to do this with a single command
 check-docs:
     #!/usr/bin/env sh
+    set -euxo pipefail
     for file in `ls crates | grep -v 'spelldawn'`; do
         echo "Checking $file";
         cargo rustdoc --lib -p $file -- \
@@ -87,3 +89,27 @@ time-passes: clean
 
 timings: clean
     cargo +nightly build -p spelldawn --bin spelldawn -Z timings --release
+
+gen-gcda: clean
+    #!/usr/bin/env sh
+    set -euxo pipefail
+    RUSTC_BOOTSTRAP=1 # Causes the compiler to behave like nightly
+    LLVM_PROFILE_FILE='spelldawn-%p-%m.profraw'
+    RUSTFLAGS='-Zinstrument-coverage'
+    cargo build
+    cargo test
+    CARGO_INCREMENTAL=0
+    RUSTFLAGS='-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
+    RUSTDOCFLAGS="-Cpanic=abort"
+    cargo build
+    cargo test
+
+# Displays test coverage information in a web browser
+coverage: gen-gcda
+    grcov . -s . \
+        --binary-path ./target/debug/ \
+        -t html \
+        --branch \
+        --ignore-not-existing \
+        -o ./target/debug/coverage
+    open target/debug/coverage/index.html
