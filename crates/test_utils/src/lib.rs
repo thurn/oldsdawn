@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Tools to facilitate testing
+
 pub mod client;
 
 use data::card_name::CardName;
@@ -26,10 +28,11 @@ use protos::spelldawn::{card_target, CardTarget, PlayCardAction};
 
 use crate::client::TestGame;
 
-/// Creates a new game with the user playing as the `user_side` player. By default, this creates a
-/// normal new game with both player's decks populated with blank test cards. The game is advanced
-/// to the user's first turn. See [Args] for information about the default configuration options
-/// and how to modify them.
+/// Creates a new game with the user playing as the `user_side` player. By
+/// default, this creates a normal new game with both player's decks populated
+/// with blank test cards. The game is advanced to the user's first turn. See
+/// [Args] for information about the default configuration options and how to
+/// modify them.
 pub fn new_game(user_side: Side, args: Args) -> TestGame {
     let (overlord_user, champion_user) = match user_side {
         Side::Overlord => (TestGame::USER_ID, TestGame::OPPONENT_ID),
@@ -77,10 +80,11 @@ impl Default for Args {
 
 /// Draws and then plays a named card.
 ///
-/// This function first draws a copy of the requested card from the user's deck via
-/// [TestGame::draw_named_card]. The card is then played via the standard [PlayCardAction]. If the
-/// card is a minion, project, scheme, or upgrade card, it is played into the [TestGame::ROOM_ID]
-/// room. A list of the [Command]s produced by playing the card is returned.
+/// This function first draws a copy of the requested card from the user's deck
+/// via [TestGame::draw_named_card]. The card is then played via the standard
+/// [PlayCardAction]. If the card is a minion, project, scheme, or upgrade card,
+/// it is played into the [TestGame::ROOM_ID] room. A list of the [Command]s
+/// produced by playing the card is returned.
 pub fn play_from_hand(game: &mut TestGame, card_name: CardName) -> Vec<Command> {
     let card_id = game.draw_named_card(card_name);
 

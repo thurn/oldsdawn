@@ -12,21 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardData, CardPosition, CardState};
-use data::game::{GameState};
-use data::primitives::{
-    ActionCount, GameId, ManaValue, PointsValue, RoomId, Side, UserId,
-};
+use data::game::GameState;
+use data::primitives::{ActionCount, GameId, ManaValue, PointsValue, RoomId, Side, UserId};
 use display::rendering;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    CardIdentifier,
-    GameAction, GameIdentifier, GameRequest, PlayerName, PlayerView,
+    CardIdentifier, GameAction, GameIdentifier, GameRequest, PlayerName, PlayerView,
 };
 use rules::mutations;
 use server::database::Database;
@@ -42,14 +37,14 @@ pub struct TestGame {
 }
 
 impl TestGame {
-    /// The [UserId] for the user who the test is running as
-    pub const USER_ID: UserId = UserId { value: 1 };
-    /// The [UserId] for the user who is *not* running the test
-    pub const OPPONENT_ID: UserId = UserId { value: 2 };
     /// The standard [GameId] used for this game
     pub const GAME_ID: GameId = GameId { value: 1 };
+    /// The [UserId] for the user who is *not* running the test
+    pub const OPPONENT_ID: UserId = UserId { value: 2 };
     /// [RoomId] used by default for targeting
     pub const ROOM_ID: RoomId = RoomId::RoomA;
+    /// The [UserId] for the user who the test is running as
+    pub const USER_ID: UserId = UserId { value: 1 };
 
     pub fn new(game: GameState, user_side: Side) -> Self {
         let (_user, _opponent) = match user_side {
@@ -67,8 +62,9 @@ impl TestGame {
         }
     }
 
-    /// Execute a simulated client request for this game, updating the client state as appropriate
-    /// based on the responses. Returns a vector of the received commands.
+    /// Execute a simulated client request for this game, updating the client
+    /// state as appropriate based on the responses. Returns a vector of the
+    /// received commands.
     pub fn perform_action(&mut self, action: Action) -> Vec<Command> {
         let commands = server::handle_request(
             self,
@@ -89,7 +85,6 @@ impl TestGame {
             self.data.update(command.clone());
             self.user.update(command.clone());
             self.opponent.update(command.clone());
-            self.cards.update(command.clone());
         }
 
         commands
@@ -97,11 +92,12 @@ impl TestGame {
 
     /// Adds a named card to the user's hand.
     ///
-    /// This function operates by locating a test card in the user's deck and overwriting its state
-    /// to a default [CardState] pointing to the provided [CardName] instead. This card is then
-    /// moved to the user's hand via [mutations::move_card], which *will* invoke game events & game
-    /// updates for a card being moved as normal. Returns the client [CardIdentifier] for the drawn
-    /// card.
+    /// This function operates by locating a test card in the user's deck and
+    /// overwriting its state to a default [CardState] pointing to the
+    /// provided [CardName] instead. This card is then moved to the user's
+    /// hand via [mutations::move_card], which *will* invoke game events & game
+    /// updates for a card being moved as normal. Returns the client
+    /// [CardIdentifier] for the drawn card.
     pub fn draw_named_card(&mut self, card_name: CardName) -> CardIdentifier {
         let test_card = match self.user_side {
             Side::Overlord => CardName::TestOverlordSpell,
@@ -111,8 +107,7 @@ impl TestGame {
         let card_id = self
             .game
             .cards_in_position(self.user_side, deck_position)
-            .filter(|c| c.name == test_card)
-            .next()
+            .find(|c| c.name == test_card)
             .expect("No test cards remaining in deck")
             .id;
         *self.game.card_mut(card_id) = CardState {
@@ -156,12 +151,9 @@ impl ClientGameData {
     }
 
     fn update(&mut self, command: Command) {
-        match command {
-            Command::UpdateGameView(update_game) => {
-                self.priority =
-                    PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority)
-            }
-            _ => {}
+        if let Command::UpdateGameView(update_game) = command {
+            self.priority =
+                PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority)
         }
     }
 }
@@ -192,15 +184,12 @@ impl ClientPlayer {
     }
 
     fn update(&mut self, command: Command) {
-        match command {
-            Command::UpdateGameView(update) => {
-                self.update_with_player(if self.name == PlayerName::User {
-                    update.game.unwrap().user.unwrap()
-                } else {
-                    update.game.unwrap().opponent.unwrap()
-                });
-            }
-            _ => {}
+        if let Command::UpdateGameView(update) = command {
+            self.update_with_player(if self.name == PlayerName::User {
+                update.game.unwrap().user.unwrap()
+            } else {
+                update.game.unwrap().opponent.unwrap()
+            });
         }
     }
 
@@ -214,9 +203,7 @@ impl ClientPlayer {
 #[derive(Debug, Clone, Default)]
 pub struct ClientCards {}
 
-impl ClientCards {
-    fn update(&mut self, _command: Command) {}
-}
+impl ClientCards {}
 
 #[derive(Debug, Clone, Default)]
 pub struct ClientCard {}
@@ -225,6 +212,4 @@ impl ClientCard {
     pub fn new(_card: &CardState) -> Self {
         Self {}
     }
-
-    fn update(&mut self, _command: &Command) {}
 }

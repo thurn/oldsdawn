@@ -1,7 +1,10 @@
+cargo-features = ["named-profiles"]
+
 [workspace]
 members = ["crates/*"]
 
 [profile.dev]
+split-debuginfo = "unpacked"
 
 [profile.fast]
 # Disabling debug info speeds up builds a bunch, use this if you don't

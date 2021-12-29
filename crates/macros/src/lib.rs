@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Macros used throughout the project
+
 extern crate proc_macro;
 
 use proc_macro2::{Ident, Span, TokenStream};

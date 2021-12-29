@@ -12,26 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
-
-
-
-
-
 use rand::seq::IteratorRandom;
-
 use serde::{Deserialize, Serialize};
-
-
 
 use crate::card_state::{CardPosition, CardPositionKind, CardState, SortingKey};
 use crate::deck::Deck;
 use crate::primitives::{
-    ActionCount, CardId, GameId, ManaValue, PointsValue, RaidId, Side,
-    TurnNumber, UserId,
+    ActionCount, CardId, GameId, ManaValue, PointsValue, RaidId, Side, TurnNumber, UserId,
 };
-use crate::updates::{UpdateTracker};
+use crate::updates::UpdateTracker;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerState {
@@ -42,8 +31,8 @@ pub struct PlayerState {
 }
 
 impl PlayerState {
-    pub fn new_game(id: UserId, actions: ActionCount) -> PlayerState {
-        PlayerState { id, mana: 5, actions, score: 0 }
+    pub fn new_game(id: UserId, actions: ActionCount) -> Self {
+        Self { id, mana: 5, actions, score: 0 }
     }
 }
 
@@ -83,12 +72,13 @@ pub struct GameState {
     pub id: GameId,
     /// General game state
     pub data: GameData,
-    /// Used to track changes to game state in order to update the client. Code which mutates the
-    /// game state is responsible for appending a description of the change to `updates` via
-    /// [UpdateTracker::push].
+    /// Used to track changes to game state in order to update the client. Code
+    /// which mutates the game state is responsible for appending a
+    /// description of the change to `updates` via [UpdateTracker::push].
     ///
-    /// A new `updates` buffer should be set for each network request to track changes in response
-    /// to that request. Consequently, its value is not serialized.
+    /// A new `updates` buffer should be set for each network request to track
+    /// changes in response to that request. Consequently, its value is not
+    /// serialized.
     #[serde(skip)]
     pub updates: UpdateTracker,
     /// Cards for the overlord player. In general, code should use one of the
@@ -132,9 +122,10 @@ impl GameState {
 
     /// Returns the identity card for the provided Side.
     ///
-    /// It is an error for there to be zero or multiple cards in the `Identity` card position. If
-    /// this does occur, this method will panic (in the case of zero cards) or return an arbitrary
-    /// identity card (in the case of multiples).
+    /// It is an error for there to be zero or multiple cards in the `Identity`
+    /// card position. If this does occur, this method will panic (in the
+    /// case of zero cards) or return an arbitrary identity card (in the
+    /// case of multiples).
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
             .iter()
@@ -193,7 +184,8 @@ impl GameState {
         }
     }
 
-    /// Returns a monotonically-increasing sorting key for object positions in this game.
+    /// Returns a monotonically-increasing sorting key for object positions in
+    /// this game.
     pub fn next_sorting_key(&mut self) -> u32 {
         let result = self.next_sorting_key;
         self.next_sorting_key += 1;

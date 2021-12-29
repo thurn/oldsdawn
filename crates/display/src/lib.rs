@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Converts internal game state representation into a format the client can
+//! understand
+
 pub mod assets;
 pub mod rendering;
 pub mod rules_text;

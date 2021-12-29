@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Top-level server response handling
+
 use anyhow::{anyhow, bail, Context, Result};
 use dashmap::DashMap;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameState, NewGameOptions};
-use data::primitives::{self, CardId, GameId, RoomId};
-use data::primitives::{Side, UserId};
+use data::primitives::{self, CardId, GameId, RoomId, Side, UserId};
 use data::updates::UpdateTracker;
 use display::rendering;
 use maplit::hashmap;
@@ -32,10 +33,9 @@ use protos::spelldawn::{
 };
 use rules::actions;
 use rules::actions::PlayCardTarget;
+use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
-use tokio::sync::{mpsc};
 use tokio_stream::wrappers::ReceiverStream;
-
 use tonic::{Request, Response, Status};
 use tracing::{info, warn, warn_span};
 
@@ -90,8 +90,9 @@ impl Spelldawn for GameService {
     }
 }
 
-/// A response to a given [GameRequest] which should be sent to a specific user. Returned from
-/// [handle_request] to support providing updates to different players in a game.
+/// A response to a given [GameRequest] which should be sent to a specific user.
+/// Returned from [handle_request] to support providing updates to different
+/// players in a game.
 #[derive(Debug, Clone, Default)]
 pub struct GameResponse {
     /// Response to send to the user who made the initial game request.
@@ -100,8 +101,8 @@ pub struct GameResponse {
     pub channel_responses: Vec<(UserId, CommandList)>,
 }
 
-/// Processes an incoming client request and returns a vector of [UserResponse] objects describing
-/// required updates to send to connected users.
+/// Processes an incoming client request and returns a vector of [GameResponse]
+/// objects describing required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
     let game_id = to_server_game_id(&request.game_id);
     let user_id = UserId::new(request.user_id);

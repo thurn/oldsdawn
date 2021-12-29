@@ -14,10 +14,9 @@
 
 use std::fmt::Debug;
 
-
 use data::delegates::{EventData, QueryData, Scope};
 use data::game::GameState;
-use data::primitives::{AbilityId};
+use data::primitives::AbilityId;
 use tracing::{info, instrument};
 
 #[instrument(skip(game))]

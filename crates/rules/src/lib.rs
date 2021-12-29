@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! All game rules, card definitions, and associated helpers
+
 use std::collections::HashMap;
 
 use data::card_definition::{CardConfig, CardDefinition, Cost};

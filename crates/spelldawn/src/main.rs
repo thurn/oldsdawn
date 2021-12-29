@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Spelldawn: An asymmetric trading card game
+
 use protos::spelldawn::spelldawn_server::SpelldawnServer;
 use server::GameService;
 use tonic::transport::Server;

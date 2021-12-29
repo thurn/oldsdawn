@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Data types used to represent game state
+
 pub mod card_definition;
 pub mod card_name;
 pub mod card_state;

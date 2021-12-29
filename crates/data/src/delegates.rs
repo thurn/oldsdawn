@@ -12,23 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(clippy::use_self)] // Required to use EnumKind
+
 use std::fmt;
 use std::fmt::Formatter;
 
-
-
+use enum_kinds::EnumKind;
 use macros::DelegateEnum;
-use strum_macros::EnumDiscriminants;
 
-
-
-use crate::card_state::{CardPosition};
+#[allow(unused)] // Used in rustdocs
+use crate::card_definition::CardStats;
+#[allow(unused)] // Used in rustdocs
+use crate::card_definition::Cost;
+#[allow(unused)] // Used in rustdocs
+use crate::card_state::{CardData, CardPosition};
 use crate::game::{GameState, RaidState};
 use crate::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue, ShieldValue, Side, TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
+    ShieldValue, Side, TurnNumber,
 };
 
-/// Scope for which ability owns a delegate
 #[derive(PartialEq, Eq, Hash, Copy, Clone)]
 pub struct Scope {
     /// Ability which owns this delegate.
@@ -77,7 +80,7 @@ pub struct EventDelegate<T> {
 
 impl<T> EventDelegate<T> {
     pub fn new(requirement: RequirementFn<T>, mutation: MutationFn<T>) -> Self {
-        EventDelegate { requirement, mutation }
+        Self { requirement, mutation }
     }
 }
 
@@ -89,20 +92,22 @@ pub struct QueryDelegate<T, R> {
 
 impl<T, R> QueryDelegate<T, R> {
     pub fn new(requirement: RequirementFn<T>, transformation: TransformationFn<T, R>) -> Self {
-        QueryDelegate { requirement, transformation }
+        Self { requirement, transformation }
     }
 }
 
-/// A Flag is a variant of boolean which typically indicates whether some game action can currently
-/// be taken. Flags have a 'default' state, which is the value of the flag based on standard game
-/// rules, and an 'override' state, which is a value set by specific delegates. An override of
-/// 'false' takes precedence over an override of 'true'.
+/// A Flag is a variant of boolean which typically indicates whether some game
+/// action can currently be taken. Flags have a 'default' state, which is the
+/// value of the flag based on standard game rules, and an 'override' state,
+/// which is a value set by specific delegates. An override of 'false' takes
+/// precedence over an override of 'true'.
 ///
-/// For example, the 'CanPlay' delegate will be invoked with Flag::Default(false) if a card cannot
-/// currently be played according to the standard game rules (sufficient mana available, correct
-/// player's turn, etc). A delegate could transform this via `with_override(true)` to allow the
-/// card to be played. A second delegate could set `with_override(false)` to prevent the card from
-/// being played, and this would take priority.
+/// For example, the 'CanPlay' delegate will be invoked with
+/// Flag::Default(false) if a card cannot currently be played according to the
+/// standard game rules (sufficient mana available, correct player's turn, etc).
+/// A delegate could transform this via `with_override(true)` to allow the
+/// card to be played. A second delegate could set `with_override(false)` to
+/// prevent the card from being played, and this would take priority.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum Flag {
     Default(bool),
@@ -111,7 +116,7 @@ pub enum Flag {
 
 impl Flag {
     pub fn new(value: bool) -> Self {
-        Flag::Default(value)
+        Self::Default(value)
     }
 
     /// Incorporates an override into this flag, following the precedence rules
@@ -138,8 +143,8 @@ pub struct CardMoved {
     pub new_position: CardPosition,
 }
 
-#[derive(EnumDiscriminants, DelegateEnum)]
-#[strum_discriminants(name(DelegateKind))]
+#[derive(EnumKind, DelegateEnum)]
+#[enum_kind(DelegateKind)]
 pub enum Delegate {
     /// The Champion's turn begins
     Dawn(EventDelegate<TurnNumber>),

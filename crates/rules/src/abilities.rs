@@ -24,7 +24,12 @@ use crate::{mutations, queries};
 
 /// Applies this card's `attack_boost` stat a number of times equal to its
 /// [CardState::boost_count]
-fn add_boost(game: &GameState, _scope: Scope, card_id: CardId, current: AttackValue) -> AttackValue {
+fn add_boost(
+    game: &GameState,
+    _scope: Scope,
+    card_id: CardId,
+    current: AttackValue,
+) -> AttackValue {
     let boost_count = queries::boost_count(game, card_id);
     let bonus = queries::stats(game, card_id).attack_boost.expect("Expected boost").bonus;
     current + (boost_count * bonus)

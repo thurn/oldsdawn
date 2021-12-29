@@ -22,15 +22,15 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     game_object_identifier, ActionTrackerView, ArenaView, CanPlayAlgorithm, CardCreationAnimation,
-    CardIcon, CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView,
-    CardViewCost, ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand,
-    DelayCommand, GameCommand, GameIdentifier, GameObjectIdentifier, GameView, IdentityAction,
-    ManaView, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
-    PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier,
-    ScoreView, SpendCostAlgorithm, SpriteAddress, TimeValue, UpdateGameViewCommand,
+    CardIcon, CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView, CardViewCost,
+    ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand, DelayCommand, GameCommand,
+    GameIdentifier, GameObjectIdentifier, GameView, IdentityAction, ManaView,
+    MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile,
+    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRoom,
+    ObjectPositionStaging, PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView,
+    RevealedCardView, RoomIdentifier, ScoreView, SpendCostAlgorithm, SpriteAddress, TimeValue,
+    UpdateGameViewCommand,
 };
-
 use rules::queries;
 
 use crate::assets::{jewel, CardIconType};
@@ -158,8 +158,9 @@ fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Comm
 enum CardCreationStrategy {
     /// Animate the card moving from the user's deck to the staging area.
     DrawUserCard,
-    /// Jump the newly-created card to its current game position. If the current position is
-    /// invalid (e.g. in the user's deck), no initial position will be specified for the card.
+    /// Jump the newly-created card to its current game position. If the current
+    /// position is invalid (e.g. in the user's deck), no initial position
+    /// will be specified for the card.
     SnapToCurrentPosition,
     /// Create the card at a specific game object position.
     CreateAtPosition(ObjectPosition),
@@ -419,10 +420,6 @@ fn to_player_name(side: Side, user_side: Side) -> PlayerName {
     } else {
         PlayerName::Opponent
     }
-}
-
-fn command(command: Command) -> GameCommand {
-    GameCommand { command: Some(command) }
 }
 
 fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {

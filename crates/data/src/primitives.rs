@@ -16,9 +16,6 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-
-
-
 pub type TurnNumber = u32;
 pub type ManaValue = u32;
 pub type ActionCount = u32;
@@ -83,8 +80,8 @@ pub enum Side {
 impl Side {
     pub fn opponent(&self) -> Self {
         match self {
-            Side::Champion => Side::Overlord,
-            Side::Overlord => Side::Champion,
+            Side::Champion => Self::Overlord,
+            Side::Overlord => Self::Champion,
         }
     }
 }

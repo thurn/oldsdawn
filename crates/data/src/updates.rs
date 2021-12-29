@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 use serde::{Deserialize, Serialize};
 
 use crate::primitives::{CardId, PointsValue, RoomId, Side};
@@ -44,11 +42,12 @@ pub struct TargetedInteraction {
 /// into a client update
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum GameUpdate {
-    /// Indicates a general game state change, such as modifying a player's mana or the current
-    /// turn number. Does not request a full state sync, so e.g. player card backs and portrait
-    /// images are not modified.
+    /// Indicates a general game state change, such as modifying a player's mana
+    /// or the current turn number. Does not request a full state sync, so
+    /// e.g. player card backs and portrait images are not modified.
     UpdateGameState,
-    /// Indicates a general card state change, such as a modification to its attack value.
+    /// Indicates a general card state change, such as a modification to its
+    /// attack value.
     UpdateCard(CardId),
     /// Indicates that a player's opening hand has been drawn and may be kept or
     /// mulliganed
@@ -65,8 +64,8 @@ pub enum GameUpdate {
     DestroyCard(CardId),
     /// A card has been moved to a new game location
     MoveCard(CardId),
-    /// A card has become revealed. Should be added before a `MoveCard` to move the card to its
-    /// final destination.
+    /// A card has become revealed. Should be added before a `MoveCard` to move
+    /// the card to its final destination.
     RevealCard(CardId),
     /// A room has been leveled up
     LevelUpRoom(RoomId),
@@ -84,9 +83,10 @@ pub enum GameUpdate {
     GameOver(Side),
 }
 
-/// Tracks game mutations for a given network request. If a vector is present here, then code which
-/// mutates the GameState is also responsible for appending a [GameUpdate] which describes the
-/// mutation. If no vector is present it means update tracking is currently disabled (e.g. because
+/// Tracks game mutations for a given network request. If a vector is present
+/// here, then code which mutates the GameState is also responsible for
+/// appending a [GameUpdate] which describes the mutation. If no vector is
+/// present it means update tracking is currently disabled (e.g. because
 /// we are running in simulation mode).
 #[derive(Debug, Clone, Default)]
 pub struct UpdateTracker {
@@ -96,8 +96,9 @@ pub struct UpdateTracker {
 impl UpdateTracker {
     /// Appends a [GameUpdate] to the update list.
     ///
-    /// Duplicate Updates: If the provided update is exactly identical to the most recent update,
-    /// it is skipped. This is intended to reduce redundancy.
+    /// Duplicate Updates: If the provided update is exactly identical to the
+    /// most recent update, it is skipped. This is intended to reduce
+    /// redundancy.
     pub fn push(&mut self, update: GameUpdate) {
         if let Some(vec) = &mut self.update_list {
             if vec.iter().last() != Some(&update) {

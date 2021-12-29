@@ -46,7 +46,7 @@ pub enum TextToken {
     Number(NumericOperator, u32),
     Mana(ManaValue),
     Keyword(Keyword),
-    Cost(Vec<TextToken>),
+    Cost(Vec<Self>),
 }
 
 pub type TextFn = fn(&GameState, Scope) -> Vec<TextToken>;
@@ -113,7 +113,7 @@ pub enum AbilityType {
     Standard,
 
     /// Encounter abilities can be activated by the Champion during a raid
-    /// encounter, typically in order to increase a Weapon's attack.  
+    /// encounter, typically in order to increase a Weapon's attack.
     Encounter,
 
     /// Activated abilities have an associated cost in order to be used.

@@ -10,14 +10,10 @@ doctest = false
 test = false
 
 [dependencies]
-convert_case = "0.4.0"
-diff-struct = "0.4.0"
-proc-macro2 = "1.0.3"
+convert_case = "0.5.0"
 rand = "0.8.4"
 serde = { version = "1.0.132", features = ["derive"] }
-strum = "0.23"
+enum-kinds = "0.5.1"
 strum_macros = "0.23"
-syn = "1.0.82"
-tracing = { version = "0.1.29", features = ["max_level_debug", "release_max_level_warn"] }
 
 macros = { path = "../macros", version = "0.0.0" }

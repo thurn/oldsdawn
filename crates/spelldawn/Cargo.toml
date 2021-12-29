@@ -2,7 +2,7 @@
 name = "spelldawn"
 version = "0.0.0"
 homepage = "https://github.com/thurn/spelldawn"
-description = "An asymmetric trading card game"
+description = "Spelldawn: An asymmetric trading card game"
 license = "Apache-2.0"
 default-run = "spelldawn"
 edition = "2021"

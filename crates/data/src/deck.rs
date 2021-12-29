@@ -16,7 +16,7 @@ use std::collections::HashMap;
 use std::iter;
 
 use crate::card_name::CardName;
-use crate::primitives::{UserId};
+use crate::primitives::UserId;
 
 /// Represents a player deck outside of an active game
 #[derive(Debug, Clone)]

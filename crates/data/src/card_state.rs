@@ -12,31 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(clippy::use_self)] // Required to use EnumKind
+
 use std::collections::BTreeMap;
 
+use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
-use strum_macros::EnumDiscriminants;
-
 
 use crate::card_name::CardName;
-
-
 use crate::primitives::{
     AbilityIndex, BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RoomId, RoomLocation,
     Side,
 };
 
-/// Determines display order when multiple cards are in the same position. Typically, this is taken
-/// from an opaque, sequentially increasing counter representing what time the card first moved to
-/// this position.
+/// Determines display order when multiple cards are in the same position.
+/// Typically, this is taken from an opaque, sequentially increasing counter
+/// representing what time the card first moved to this position.
 pub type SortingKey = u32;
 
 /// Identifies the location of a card during an active game
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumDiscriminants, Serialize, Deserialize)]
-#[strum_discriminants(name(CardPositionKind))]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind, Serialize, Deserialize)]
+#[enum_kind(CardPositionKind)]
 pub enum CardPosition {
-    /// An unspecified random position within a user's deck. The default position of all cards when
-    /// a new game is started.
+    /// An unspecified random position within a user's deck. The default
+    /// position of all cards when a new game is started.
     DeckUnknown(Side),
     /// A card which is known to at least one player to be on the top of a deck
     DeckTop(Side),
@@ -97,17 +96,19 @@ pub struct CardData {
 }
 
 /// Stores the state of a Card during an ongoing game. The game rules for a
-/// card are not part of its state, see [CardDefinition] for that.
+/// card are not part of its state, see [crate::card_definition::CardDefinition]
+/// for that.
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct CardState {
     /// ID for this card.
     pub id: CardId,
-    /// Card name, can be used to look up this card's [CardDefinition]
+    /// Car d name, can be used to look up this card's definition
     pub name: CardName,
     /// Player who owns this card
     pub side: Side,
-    /// Where this card is located in the game. Use [GameState::move_card]
-    /// instead of modifying this directly.
+    /// Where this card is located in the game. Use
+    /// [crate::game::GameState::move_card] instead of modifying this
+    /// directly.
     pub position: CardPosition,
     /// Opaque value identifying this card's sort order within its position
     pub sorting_key: SortingKey,
