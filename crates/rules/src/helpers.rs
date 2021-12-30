@@ -15,39 +15,20 @@
 //! Helpers for defining card behaviors. This file is intended be be used via
 //! wildcard import in card definition files.
 
-use data::card_definition::{
-    Ability, AbilityText, AbilityType, AttackBoost, CardStats, Cost, Keyword, NumericOperator,
-    SchemePoints, TextToken,
-};
+use data::card_definition::{Ability, AbilityType, AttackBoost, CardStats, Cost, SchemePoints};
 use data::delegates::{Delegate, EventDelegate, MutationFn, Scope};
 use data::game::GameState;
 use data::primitives::{
     AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Sprite, TurnNumber,
 };
-
-/// Provides the rules text for a card
-pub fn text(text: impl Into<String>) -> TextToken {
-    TextToken::Literal(text.into())
-}
-
-pub fn number(number: impl Into<u32>) -> TextToken {
-    TextToken::Number(NumericOperator::None, number.into())
-}
+use data::text::{AbilityText, NumericOperator, TextToken};
 
 pub fn add_number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::Add, number.into())
 }
 
-pub fn mana_symbol(value: ManaValue) -> TextToken {
+pub fn mana(value: ManaValue) -> TextToken {
     TextToken::Mana(value)
-}
-
-pub fn mana_cost_text(value: ManaValue) -> TextToken {
-    TextToken::Cost(vec![mana_symbol(value)])
-}
-
-pub fn keyword(keyword: Keyword) -> TextToken {
-    TextToken::Keyword(keyword)
 }
 
 /// Provides the cost for a card

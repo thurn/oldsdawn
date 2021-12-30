@@ -14,12 +14,14 @@
 
 //! Helpers for defining common card abilities
 
-use data::card_definition::{Ability, AbilityText, AbilityType, Keyword};
+use data::card_definition::{Ability, AbilityType};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use data::game::GameState;
 use data::primitives::{AttackValue, CardId, ManaValue, Side};
+use data::text::{AbilityText, Keyword, TextToken};
 
+use crate::card_text::text;
 use crate::helpers::*;
 use crate::mutations::{move_card, set_raid_ended};
 use crate::{mutations, queries};
@@ -30,7 +32,11 @@ pub fn encounter_boost() -> Ability {
     Ability {
         text: AbilityText::TextFn(|g, s| {
             let boost = queries::stats(g, s.card_id()).attack_boost.expect("attack_boost");
-            vec![mana_cost_text(boost.cost), add_number(boost.bonus), text("Attack")]
+            vec![
+                cost(boost.cost).into(),
+                add_number(boost.bonus),
+                TextToken::Literal("Attack".to_owned()),
+            ]
         }),
         ability_type: AbilityType::Encounter,
         delegates: vec![
@@ -45,7 +51,7 @@ pub fn encounter_boost() -> Ability {
 /// the stored mana is depleted.
 pub fn store_mana<const N: ManaValue>() -> Ability {
     Ability {
-        text: AbilityText::Text(vec![keyword(Keyword::Play), keyword(Keyword::Store(N))]),
+        text: text![Keyword::Play, Keyword::Store(N)],
         ability_type: AbilityType::Standard,
         delegates: vec![
             Delegate::PlayCard(EventDelegate::new(this_card, |g, _s, card_id| {
@@ -72,19 +78,16 @@ pub fn discard_random_card(game: &mut GameState, side: Side) {
 /// combat, causing them to discard `N` random cards and lose the game if they
 /// cannot.
 pub fn strike<const N: u32>() -> Ability {
-    combat(
-        AbilityText::Text(vec![keyword(Keyword::Combat), keyword(Keyword::Strike(N))]),
-        |g, _, _| {
-            for _ in 0..N {
-                discard_random_card(g, Side::Champion);
-            }
-        },
-    )
+    combat(text![Keyword::Combat, Keyword::Strike(N)], |g, _, _| {
+        for _ in 0..N {
+            discard_random_card(g, Side::Champion);
+        }
+    })
 }
 
 /// Minion combat ability which ends the current raid.
 pub fn end_raid() -> Ability {
-    combat(AbilityText::Text(vec![keyword(Keyword::Combat), text("End the raid.")]), |g, _, _| {
+    combat(text![Keyword::Combat, "End the raid."], |g, _, _| {
         set_raid_ended(g);
     })
 }

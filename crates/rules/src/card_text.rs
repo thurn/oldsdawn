@@ -12,14 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Data types used to represent game state
+//! Macro for building [AbilityText]
 
-pub mod card_definition;
-pub mod card_name;
-pub mod card_state;
-pub mod deck;
-pub mod delegates;
-pub mod game;
-pub mod primitives;
-pub mod text;
-pub mod updates;
+#[allow(unused)] // Used in rustdocs
+use data::text::{AbilityText, TextToken};
+
+/// Macro which converts its arguments into an [AbilityText::Text] via
+/// [TextToken::from].
+macro_rules! text {
+    ($($x:expr),*) => {
+        data::text::AbilityText::Text(vec! [$(data::text::TextToken::from($x)),*])
+    };
+    ($($x:expr,)*) => {text![$($x),*]}
+}
+
+pub(crate) use text;

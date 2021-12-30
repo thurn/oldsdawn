@@ -15,65 +15,15 @@
 //! Data structures for defining card rules -- the parts of a card which do not
 //! vary from game to game.
 
-use std::fmt;
-use std::fmt::{Debug, Formatter};
+use std::fmt::Debug;
 
 use crate::card_name::CardName;
-use crate::delegates::{Delegate, Scope};
-use crate::game::GameState;
+use crate::delegates::Delegate;
 use crate::primitives::{
     ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue, LevelValue, ManaValue,
     PointsValue, Rarity, School, ShieldValue, Side, Sprite,
 };
-
-/// Identifies a keyword (bolded word) which appears in rules text
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub enum Keyword {
-    Play,
-    Dawn,
-    Dusk,
-    Score,
-    Combat,
-    Strike(u32),
-    Store(u32),
-}
-
-/// A symbol applied to a number which appears in rules text
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub enum NumericOperator {
-    None,
-    Add,
-}
-
-/// Different types of text which can appear in rules text
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub enum TextToken {
-    Literal(String),
-    Number(NumericOperator, u32),
-    Mana(ManaValue),
-    Keyword(Keyword),
-    Cost(Vec<Self>),
-}
-
-/// A function which produces rules text
-pub type TextFn = fn(&GameState, Scope) -> Vec<TextToken>;
-
-/// Text describing what an ability does. Can be a function (if text is dynamic)
-/// or a vector of [TextToken]s.
-#[derive(Clone)]
-pub enum AbilityText {
-    Text(Vec<TextToken>),
-    TextFn(TextFn),
-}
-
-impl Debug for AbilityText {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            AbilityText::Text(tokens) => write!(f, "{:?}", tokens),
-            AbilityText::TextFn(_) => write!(f, "<TextFn>"),
-        }
-    }
-}
+use crate::text::AbilityText;
 
 /// Cost to play a card or activate an ability
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]

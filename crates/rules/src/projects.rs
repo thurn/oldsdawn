@@ -14,10 +14,12 @@
 
 //! Card definitions for the Project card type
 
-use data::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword};
+use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
+use data::text::Keyword;
 
+use crate::card_text::text;
 use crate::helpers::*;
 use crate::{abilities, mutations};
 
@@ -32,17 +34,9 @@ pub fn gold_mine() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![
             abilities::store_mana::<12>(),
-            at_dusk(
-                AbilityText::Text(vec![
-                    keyword(Keyword::Dusk),
-                    text("Gain"),
-                    mana_symbol(3),
-                    text("from this card"),
-                ]),
-                |g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), 3);
-                },
-            ),
+            at_dusk(text![Keyword::Dusk, "Gain", mana(3), "from this card"], |g, s, _| {
+                mutations::take_stored_mana(g, s.card_id(), 3);
+            }),
         ],
         config: CardConfig::default(),
     }

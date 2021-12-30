@@ -14,11 +14,12 @@
 
 //! Tools for rendering the text on a card
 
-use data::card_definition::{AbilityText, CardDefinition, Keyword, NumericOperator, TextToken};
+use data::card_definition::CardDefinition;
 use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
 use data::primitives::AbilityId;
+use data::text::{AbilityText, Keyword, NumericOperator, TextToken};
 use protos::spelldawn::RulesText;
 
 /// Primary function which turns the current state of a card into its client
@@ -52,6 +53,7 @@ fn ability_text(tokens: &[TextToken]) -> String {
                 number
             ),
             TextToken::Mana(mana) => format!("{}\u{f06d}", mana),
+            TextToken::Actions(mana) => format!("{}\u{f254}", mana),
             TextToken::Keyword(keyword) => match keyword {
                 Keyword::Play => "<b>\u{f0e7}Play:</b>".to_string(),
                 Keyword::Dawn => "<b>\u{f0e7}Dawn:</b>".to_string(),

@@ -23,6 +23,7 @@ use once_cell::sync::Lazy;
 
 pub mod abilities;
 pub mod actions;
+pub mod card_text;
 pub mod champion_spells;
 pub mod dispatch;
 pub mod helpers;

@@ -14,10 +14,11 @@
 
 //! Card definitions for the Spell card type & Champion player
 
-use data::card_definition::{AbilityText, CardConfig, CardDefinition};
+use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 
+use crate::card_text::text;
 use crate::helpers::*;
 use crate::mutations;
 
@@ -30,10 +31,9 @@ pub fn arcane_recovery() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_cast(
-            AbilityText::Text(vec![text("Gain"), mana_symbol(9)]),
-            |g, s, _| mutations::gain_mana(g, s.side(), 9),
-        )],
+        abilities: vec![on_cast(text!("Gain", mana(9)), |g, s, _| {
+            mutations::gain_mana(g, s.side(), 9)
+        })],
         config: CardConfig::default(),
     }
 }

@@ -19,8 +19,8 @@ use std::fmt;
 use serde::{Deserialize, Serialize};
 
 pub type TurnNumber = u32;
-pub type ManaValue = u32;
 pub type ActionCount = u32;
+pub type ManaValue = u32;
 pub type PointsValue = u32;
 pub type HealthValue = u32;
 pub type AttackValue = u32;
