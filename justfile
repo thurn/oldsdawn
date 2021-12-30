@@ -97,19 +97,19 @@ time-passes: clean
 timings: clean
     cargo +nightly build -p spelldawn --bin spelldawn -Z timings --release
 
+# Builds .gcda files used for code coverage
 gen-gcda: clean
     #!/usr/bin/env sh
     set -euxo pipefail
-    RUSTC_BOOTSTRAP=1 # Causes the compiler to behave like nightly
-    LLVM_PROFILE_FILE='spelldawn-%p-%m.profraw'
-    RUSTFLAGS='-Zinstrument-coverage'
-    cargo build
-    cargo test
-    CARGO_INCREMENTAL=0
-    RUSTFLAGS='-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
-    RUSTDOCFLAGS="-Cpanic=abort"
-    cargo build
-    cargo test
+    export LLVM_PROFILE_FILE='spelldawn-%p-%m.profraw'
+    export RUSTFLAGS='-Zinstrument-coverage'
+    cargo +nightly build
+    cargo +nightly test # Generates .profraw files in the current working directory
+    export CARGO_INCREMENTAL=0
+    export RUSTFLAGS='-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
+    export RUSTDOCFLAGS="-Cpanic=abort"
+    cargo +nightly build # Build .gcno files in ./target/debug/deps/
+    cargo +nightly test # Build .gcda files in ./target/debug/deps/
 
 # Displays test coverage information in a web browser
 coverage: gen-gcda
