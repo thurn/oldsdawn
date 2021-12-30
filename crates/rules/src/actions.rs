@@ -20,8 +20,11 @@
 //! game functions typically assume the game is in a valid state and will panic
 //! if that is not true.
 
+//! Defines handling for the top-level game actions a player can take. This is
+//! the primary external interface for the `rules` crate.
+
 use anyhow::{anyhow, ensure, Context, Result};
-use data::card_state::{CardPosition, CardPositionKind};
+use data::card_state::CardPosition;
 use data::delegates::{CastCardEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
@@ -29,7 +32,8 @@ use tracing::{info, instrument};
 
 use crate::{dispatch, mutations, queries};
 
-/// The basic game action to draw a card.
+/// The basic game action to draw a card during your turn by spending one
+/// action.
 #[instrument(skip(game))]
 pub fn draw_card(game: &mut GameState, side: Side) -> Result<()> {
     info!(?side, "draw_card");
@@ -50,6 +54,8 @@ pub enum PlayCardTarget {
 }
 
 impl PlayCardTarget {
+    /// Gets the RoomId targeted by a player, or returns an error if no target
+    /// was provided.
     pub fn room_id(&self) -> Result<RoomId> {
         match self {
             PlayCardTarget::Room(room_id) => Ok(*room_id),
@@ -58,7 +64,10 @@ impl PlayCardTarget {
     }
 }
 
-/// The basic game action to play a card
+/// The basic game action to play a card during your turn. Spends the resource
+/// cost for a card, resolves its effects, and then moves it to the appropriate
+/// new [CardPosition]. Spell, Weapon, and Artifact cards are immediately
+/// revealed when played.
 #[instrument(skip(game))]
 pub fn play_card(
     game: &mut GameState,
@@ -90,7 +99,7 @@ pub fn play_card(
         CardType::Identity => CardPosition::Identity(side),
     };
 
-    if matches!(new_position.kind(), CardPositionKind::ArenaItem | CardPositionKind::DiscardPile) {
+    if matches!(definition.card_type, CardType::Spell | CardType::Weapon | CardType::Artifact) {
         mutations::set_revealed(game, card_id, true);
     }
 

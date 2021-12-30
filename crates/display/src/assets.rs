@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Helper functions for constructing resource URLs used during a game
+
 use data::primitives::{CardType, Faction, Rarity, School, Side};
 use protos::spelldawn::SpriteAddress;
 
+/// Possible types of icons which can appear on a card
 pub enum CardIconType {
     LevelCounter,
     Mana,
@@ -23,6 +26,7 @@ pub enum CardIconType {
     Shield,
 }
 
+/// Address for a given [CardIconType]
 pub fn card_icon(icon_type: CardIconType) -> SpriteAddress {
     SpriteAddress {
         address: match icon_type {
@@ -46,6 +50,7 @@ pub fn card_icon(icon_type: CardIconType) -> SpriteAddress {
     }
 }
 
+/// Address for the frame of a player's identity card image
 pub fn identity_card_frame(side: Side) -> SpriteAddress {
     SpriteAddress { address: identity_card_frame_string(side) }
 }
@@ -58,6 +63,7 @@ fn identity_card_frame_string(side: Side) -> String {
     .to_string()
 }
 
+/// Address for the back of a card of a given [School]
 pub fn card_back(school: School) -> SpriteAddress {
     SpriteAddress {
         address: match school {
@@ -78,6 +84,7 @@ pub fn card_back(school: School) -> SpriteAddress {
     }
 }
 
+/// Address for the frame of a card of a given [School]
 pub fn card_frame(school: School) -> SpriteAddress {
     SpriteAddress {
         address: match school {
@@ -98,6 +105,8 @@ pub fn card_frame(school: School) -> SpriteAddress {
     }
 }
 
+/// Address for an image to display as a background for a card of the given
+/// [Faction].
 pub fn title_background(faction: Option<Faction>) -> SpriteAddress {
     faction.map_or_else(
         || SpriteAddress {
@@ -121,6 +130,7 @@ pub fn title_background(faction: Option<Faction>) -> SpriteAddress {
     )
 }
 
+/// Address for the frame of a card in the arena
 pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) -> SpriteAddress {
     faction.map_or_else(
         || SpriteAddress {
@@ -145,6 +155,7 @@ pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) ->
     )
 }
 
+/// Address for the rarity jewel to display on a card
 pub fn jewel(rarity: Rarity) -> SpriteAddress {
     SpriteAddress {
         address: match rarity {

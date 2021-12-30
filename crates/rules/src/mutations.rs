@@ -13,9 +13,12 @@
 // limitations under the License.
 
 //! Core game mutations. In general, functions in this module are the only ones
-//! expected to append updates to [GameState::updates].
+//! expected to append updates to [GameState::updates]. Functions in this module
+//! panic if their preconditions are not met, the higher-level game UI is
+//! responsible for ensuring this does not happen.
 
-use data::card_state::{CardPosition, CardPositionKind};
+#[allow(unused)] // Used in rustdocs
+use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
     CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, RevealCardEvent, Scope,
     StoredManaTakenEvent,
@@ -26,23 +29,6 @@ use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
 use crate::dispatch;
-
-/// Overwrites the value of [data::card_state::CardData::boost_count] to match
-/// the provided [BoostData]
-#[instrument(skip(game))]
-pub fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
-    info!(?scope, ?data, "write_boost");
-    game.card_mut(data.card_id).data.boost_count = data.count;
-    game.updates.push(GameUpdate::UpdateCard(data.card_id));
-}
-
-/// Set the boost count to zero for the card in `scope`
-#[instrument(skip(game))]
-pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
-    info!(?scope, "clear_boost");
-    game.card_mut(scope).data.boost_count = 0;
-    game.updates.push(GameUpdate::UpdateCard(scope.card_id()));
-}
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events appropriately
@@ -79,18 +65,16 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     }
 }
 
-/// Updates the 'revealed' state of a card, appending [GameUpdate::UpdateCard]
-/// if the new state differs from the current state.
+/// Updates the 'revealed' state of a card. Fires [RevealCardEvent] and pushes
+/// [GameUpdate::RevealCard] if the new state is revealed.
 #[instrument(skip(game))]
 pub fn set_revealed(game: &mut GameState, card_id: CardId, revealed: bool) {
     let current = game.card(card_id).data.revealed;
 
-    if current != revealed {
-        game.card_mut(card_id).data.revealed = revealed;
-        game.updates.push(GameUpdate::RevealCard(card_id));
-    }
+    game.card_mut(card_id).data.revealed = revealed;
 
     if !current && revealed {
+        game.updates.push(GameUpdate::RevealCard(card_id));
         dispatch::invoke_event(game, RevealCardEvent(card_id));
     }
 }
@@ -104,7 +88,7 @@ pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
 }
 
 /// Spends a player's mana. Appends [GameUpdate::UpdateGameState]. Panics if
-/// sufficient action points are not available
+/// sufficient mana is not available
 #[instrument(skip(game))]
 pub fn spend_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     info!(?side, ?amount, "spend_mana");
@@ -123,25 +107,43 @@ pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount
     game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Takes *up to* `amount` stored mana from a card and gives it to the player
-/// who owns this card. Panics if there is no stored mana available.
+/// Takes *up to* `maximum` stored mana from a card and gives it to the player
+/// who owns this card.
 #[instrument(skip(game))]
-pub fn take_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue) {
-    info!(?card_id, ?amount, "take_stored_mana");
+pub fn take_stored_mana(game: &mut GameState, card_id: CardId, maximum: ManaValue) {
+    info!(?card_id, ?maximum, "take_stored_mana");
     let available = game.card(card_id).data.stored_mana;
-    assert!(available > 0, "No stored mana available!");
-    let taken = std::cmp::min(available, amount);
+    let taken = std::cmp::min(available, maximum);
     game.card_mut(card_id).data.stored_mana -= taken;
     dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
     game.updates.push(GameUpdate::UpdateCard(card_id));
     gain_mana(game, card_id.side, taken);
 }
 
-/// Ends the current raid.
+/// Ends the current raid. Panics if no raid is currently active. Appends
+/// [GameUpdate::EndRaid].
 #[instrument(skip(game))]
 pub fn set_raid_ended(game: &mut GameState) {
     info!("set_raid_ended");
     dispatch::invoke_event(game, RaidEndEvent(game.data.raid.expect("Active raid")));
     game.data.raid = None;
     game.updates.push(GameUpdate::EndRaid);
+}
+
+/// Overwrites the value of [CardData::boost_count] to match the provided
+/// [BoostData]. Appends [GameUpdate::UpdateCard].
+#[instrument(skip(game))]
+pub fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
+    info!(?scope, ?data, "write_boost");
+    game.card_mut(data.card_id).data.boost_count = data.count;
+    game.updates.push(GameUpdate::UpdateCard(data.card_id));
+}
+
+/// Set the boost count to zero for the card in `scope`. Appends
+/// [GameUpdate::UpdateCard].
+#[instrument(skip(game))]
+pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
+    info!(?scope, "clear_boost");
+    game.card_mut(scope.card_id()).data.boost_count = 0;
+    game.updates.push(GameUpdate::UpdateCard(scope.card_id()));
 }

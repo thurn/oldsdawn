@@ -145,16 +145,18 @@ pub fn on_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     }
 }
 
-/// Helper to create a [CardStats] with the given `base_attack` and
+/// Helper to create a [CardStats] with the given base [AttackValue] and
 /// [AttackBoost]
 pub fn attack(base_attack: AttackValue, boost: AttackBoost) -> CardStats {
     CardStats { base_attack: Some(base_attack), attack_boost: Some(boost), ..CardStats::default() }
 }
 
+/// Helper to create a [CardStats] with the given [HealthValue]
 pub fn health(health: HealthValue) -> CardStats {
     CardStats { health: Some(health), ..CardStats::default() }
 }
 
+/// Helper to create a [CardStats] with the given [SchemePoints]
 pub fn scheme_points(points: SchemePoints) -> CardStats {
     CardStats { scheme_points: Some(points), ..CardStats::default() }
 }

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Core functions for querying the current state of a game
+
 use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates::{
@@ -36,7 +38,7 @@ pub fn top_of_deck(game: &GameState, side: Side) -> Option<CardId> {
 }
 
 /// Obtain the [CardStats] for a given card
-pub fn stats(game: &GameState, card_id: impl Into<CardId>) -> &CardStats {
+pub fn stats(game: &GameState, card_id: CardId) -> &CardStats {
     &crate::get(game.card(card_id).name).config.stats
 }
 
@@ -48,6 +50,7 @@ pub fn can_play(game: &GameState, side: Side, card_id: CardId) -> bool {
     dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
 }
 
+/// Returns the mana cost for a given card, if any
 pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
     dispatch::perform_query(
         game,
@@ -56,50 +59,49 @@ pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
     )
 }
 
-pub fn action_cost(game: &GameState, card_id: impl Into<CardId> + Copy) -> ActionCount {
+/// Returns the action point cost for a given card
+pub fn action_cost(game: &GameState, card_id: CardId) -> ActionCount {
     dispatch::perform_query(
         game,
-        ActionCostQuery(card_id.into()),
+        ActionCostQuery(card_id),
         crate::get(game.card(card_id).name).cost.actions,
     )
 }
 
-pub fn attack(game: &GameState, card_id: impl Into<CardId> + Copy) -> AttackValue {
+/// Returns the attack power value for a given card, or 0 by default.
+pub fn attack(game: &GameState, card_id: CardId) -> AttackValue {
     dispatch::perform_query(
         game,
-        AttackValueQuery(card_id.into()),
+        AttackValueQuery(card_id),
         stats(game, card_id).base_attack.unwrap_or(0),
     )
 }
 
-pub fn health(game: &GameState, card_id: impl Into<CardId> + Copy) -> HealthValue {
+/// Returns the health value for a given card, or 0 by default.
+pub fn health(game: &GameState, card_id: CardId) -> HealthValue {
     dispatch::perform_query(
         game,
-        HealthValueQuery(card_id.into()),
+        HealthValueQuery(card_id),
         stats(game, card_id).health.unwrap_or(0),
     )
 }
 
-pub fn shield(game: &GameState, card_id: impl Into<CardId> + Copy) -> ShieldValue {
+/// Returns the shield value for a given card, or 0 by default.
+pub fn shield(game: &GameState, card_id: CardId) -> ShieldValue {
     dispatch::perform_query(
         game,
-        ShieldValueQuery(card_id.into()),
+        ShieldValueQuery(card_id),
         stats(game, card_id).shield.unwrap_or(0),
     )
 }
 
-pub fn boost_count(game: &GameState, card_id: impl Into<CardId> + Copy) -> BoostCount {
-    dispatch::perform_query(
-        game,
-        BoostCountQuery(card_id.into()),
-        game.card(card_id).data.boost_count,
-    )
+/// Returns the [BoostCount] for a given card.
+pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
+    dispatch::perform_query(game, BoostCountQuery(card_id), game.card(card_id).data.boost_count)
 }
 
-// Returns true if the provided `side` player is currently in their Main phase,
-// i.e. that it is their turn, that they have action points available, that a
-// raid is not currently ongoing, that we are not currently waiting for an
-// interface prompt response, etc.
+// Returns true if the provided `side` player is currently in their Main phase
+// and can take a primary game action.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {
     game.player(side).actions > 0 && game.data.turn == side && game.data.raid.is_none()
 }

@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Core functions of the Delegate system. See the module-level comment in
+//! `delegates.rs` for more information about this system.
+
 use std::fmt::Debug;
 
 use data::delegates::{EventData, QueryData, Scope};
@@ -19,6 +22,9 @@ use data::game::GameState;
 use data::primitives::AbilityId;
 use tracing::{info, instrument};
 
+/// Called when a game event occurs, invokes each registered
+/// [data::delegates::Delegate] for this event to mutate the [GameState]
+/// appropriately.
 #[instrument(skip(game))]
 pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, event: E) {
     for card_id in game.all_card_ids() {
@@ -38,6 +44,9 @@ pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, even
     }
 }
 
+/// Called when game state information is needed, invokes each reigistered
+/// [data::delegates::Delegate] for this query and allows them to intercept &
+/// transform the final result.
 #[instrument(skip(game))]
 pub fn perform_query<D: Copy + Debug, R: Debug, E: QueryData<D, R>>(
     game: &GameState,

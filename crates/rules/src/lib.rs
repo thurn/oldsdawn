@@ -46,7 +46,8 @@ static DEFINITIONS: &[fn() -> CardDefinition] = &[
     schemes::dungeon_annex,
 ];
 
-pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
+/// Contains [CardDefinition]s for all known cards, keyed by [CardName]
+static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
     let mut map = HashMap::new();
     for card_fn in DEFINITIONS {
         let card = card_fn();
@@ -55,6 +56,7 @@ pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
     map
 });
 
+/// Looks up the definition for a [CardName]. Panics if no such card is defined.
 pub fn get(name: CardName) -> &'static CardDefinition {
     CARDS.get(&name).unwrap_or_else(|| panic!("Card not found: {:?}", name))
 }

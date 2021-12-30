@@ -1,12 +1,12 @@
 code-review: clean build outdated clippy check-format check-docs test udeps
 
-fix: fix-format fix-lints
+fix: fix-lints fmt
 
 clean:
     cargo clean
-    find . -name "*.profraw" -delete
     mkdir target
     xattr -w com.dropbox.ignored 1 target
+    find . -name "*.profraw" -delete
 
 check:
     cargo check --all-targets --all-features
@@ -21,7 +21,7 @@ test:
     cargo test
 
 doc:
-    cargo doc --open
+    cargo doc
 
 clippy:
     cargo clippy --workspace --exclude "protos" -- \
@@ -59,7 +59,7 @@ clippy:
 
 # Reformats code. Requires nightly because several useful options (e.g. imports_granularity) are
 # nightly-only
-fix-format:
+fmt:
     cargo +nightly fmt
 
 check-format:
@@ -67,6 +67,9 @@ check-format:
 
 fix-lints:
     cargo fix --all-features
+
+fix-clippy:
+    cargo clippy --fix
 
 # Checks documentation lints, haven't figured out how to do this with a single command
 check-docs:

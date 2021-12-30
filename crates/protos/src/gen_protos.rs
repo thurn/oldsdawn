@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Proto compilation requires that the $PROTOC and $PROTOC_INCLUDE
-    // environment variables be set. For example if protoc is installed via
-    // Homebrew for OSX, this might mean:
-    //
-    // - PROTOC="/opt/homebrew/bin/protoc"
-    // - PROTOC_INCLUDE="/opt/homebrew/include"
+//! Helper for generating Rust source code from protocol buffer definitions.
+//!
+//! Proto compilation requires that the $PROTOC and $PROTOC_INCLUDE environment
+//! variables be set. For example if protoc is installed via Homebrew for OSX,
+//! this might mean:
+//
+//! - PROTOC="/opt/homebrew/bin/protoc"
+//! - PROTOC_INCLUDE="/opt/homebrew/include"
 
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Building rust protocol buffers");
     tonic_build::configure()
         .build_client(false)

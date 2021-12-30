@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Card definitions for the Minion card type
+
 use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Faction, Rarity, School, Side};

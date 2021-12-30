@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Card definitions for the Scheme card type
+
 use data::card_definition::{AbilityText, CardConfig, CardDefinition, Keyword, SchemePoints};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};

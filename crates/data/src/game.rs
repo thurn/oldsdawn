@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Core data structures for tracking the state of an ongoing game.
+
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
@@ -22,6 +24,8 @@ use crate::primitives::{
 };
 use crate::updates::UpdateTracker;
 
+/// State of a player within a game, containing their score and available
+/// resources
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerState {
     pub id: UserId,
@@ -31,6 +35,7 @@ pub struct PlayerState {
 }
 
 impl PlayerState {
+    /// Create the default player state for a new game
     pub fn new_game(id: UserId, actions: ActionCount) -> Self {
         Self { id, mana: 5, actions, score: 0 }
     }
@@ -39,6 +44,7 @@ impl PlayerState {
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AnimationBuffer {}
 
+/// State of an active raid
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct RaidState {
     /// Unique ID for this raid
@@ -49,6 +55,8 @@ pub struct RaidState {
     pub priority: Side,
 }
 
+/// State of the overall game, including whose turn it is and whether a raid is
+/// active.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct GameData {
     /// Current player whose turn it is
@@ -59,6 +67,7 @@ pub struct GameData {
     pub raid: Option<RaidState>,
 }
 
+/// Options when creating a new game
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct NewGameOptions {
     /// Whether to run in simulation mode and thus disable update tracking
@@ -92,12 +101,12 @@ pub struct GameState {
     /// State for the champion player
     pub champion: PlayerState,
     /// Next sorting key to use for card moves. Automatically updated by
-    /// [Self::move_card], do not mutate this directly.
+    /// [Self::next_sorting_key] and [Self::move_card].
     next_sorting_key: SortingKey,
 }
 
 impl GameState {
-    /// Creates a new game with the provided `id` and decks for both players
+    /// Creates a new game with the provided [GameId] and decks for both players
     pub fn new_game(
         id: GameId,
         overlord_deck: Deck,
@@ -122,10 +131,7 @@ impl GameState {
 
     /// Returns the identity card for the provided Side.
     ///
-    /// It is an error for there to be zero or multiple cards in the `Identity`
-    /// card position. If this does occur, this method will panic (in the
-    /// case of zero cards) or return an arbitrary identity card (in the
-    /// case of multiples).
+    /// Panics if no identity card is present for this player.
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
             .iter()
@@ -140,16 +146,15 @@ impl GameState {
             .chain((0..self.champion_cards.len()).map(|index| CardId::new(Side::Champion, index)))
     }
 
-    /// Look up [CardState] for a card
-    pub fn card(&self, card_id: impl Into<CardId>) -> &CardState {
-        let id = card_id.into();
-        &self.cards(id.side)[id.index]
+    /// Look up [CardState] for a card. Panics if this card is not present in
+    /// the game.
+    pub fn card(&self, card_id: CardId) -> &CardState {
+        &self.cards(card_id.side)[card_id.index]
     }
 
     /// Mutable version of [Self::card]
-    pub fn card_mut(&mut self, card_id: impl Into<CardId>) -> &mut CardState {
-        let id = card_id.into();
-        &mut self.cards_mut(id.side)[id.index]
+    pub fn card_mut(&mut self, card_id: CardId) -> &mut CardState {
+        &mut self.cards_mut(card_id.side)[card_id.index]
     }
 
     /// Cards for a player
@@ -192,13 +197,12 @@ impl GameState {
         result
     }
 
-    /// Moves a card to a new [CardPosition].
-    pub fn move_card(&mut self, card_id: impl Into<CardId>, new_position: CardPosition) {
-        let key = self.next_sorting_key;
+    /// Moves a card to a new [CardPosition], updating its sorting key.
+    pub fn move_card(&mut self, card_id: CardId, new_position: CardPosition) {
+        let key = self.next_sorting_key();
         let mut card = self.card_mut(card_id);
         card.position = new_position;
         card.sorting_key = key;
-        self.next_sorting_key += 1;
     }
 
     /// Return a random card in the provided `position`, or None if there are no

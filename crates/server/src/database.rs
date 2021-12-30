@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Core database implementation, handles querying and storing game state.
+
 use anyhow::{Context, Result};
 use bincode;
 use data::game::GameState;
@@ -32,6 +34,7 @@ pub trait Database {
     fn write_game(&mut self, game: &GameState) -> Result<()>;
 }
 
+/// Database implementation based on the sled database
 pub struct SledDatabase;
 
 impl Database for SledDatabase {

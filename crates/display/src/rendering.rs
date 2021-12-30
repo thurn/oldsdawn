@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Core module responsible for turning game updates into GRPC protobuf
+//! responses.
+
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::GameState;
@@ -33,7 +36,7 @@ use protos::spelldawn::{
 };
 use rules::queries;
 
-use crate::assets::{jewel, CardIconType};
+use crate::assets::CardIconType;
 use crate::{assets, rules_text};
 
 /// Builds a series of [GameCommand]s to fully represent the current state of
@@ -89,6 +92,7 @@ pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Ve
     }
 }
 
+/// Possible behavior when updating the state of a game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 enum GameUpdateType {
     /// Sync all game state, including arena info and player info
@@ -98,6 +102,7 @@ enum GameUpdateType {
     State,
 }
 
+/// Builds a command to update the client's current [GameView]
 fn game_view(game: &GameState, user_side: Side, update_type: GameUpdateType) -> Command {
     Command::UpdateGameView(UpdateGameViewCommand {
         game: Some(GameView {
@@ -120,6 +125,7 @@ fn game_view(game: &GameState, user_side: Side, update_type: GameUpdateType) -> 
     })
 }
 
+/// Builds commands to represent a card being drawn
 fn draw_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command> {
     filtered(vec![
         Some(create_or_update_card(
@@ -154,6 +160,7 @@ fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Comm
     })
 }
 
+/// Possible behavior when creating a card
 #[derive(Debug, PartialEq, Clone)]
 enum CardCreationStrategy {
     /// Animate the card moving from the user's deck to the staging area.
@@ -198,7 +205,7 @@ fn create_or_update_card(
                 definition.config.faction,
             )),
             owning_player: to_player_name(definition.side, user_side).into(),
-            revealed_card: revealed.then(|| new_revealed_card(game, card, definition, user_side)),
+            revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
         }),
         create_position: position,
         create_animation,
@@ -206,6 +213,7 @@ fn create_or_update_card(
     })
 }
 
+/// Commands to reveal the indicated card to a player
 fn reveal_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command> {
     let mut result = vec![create_or_update_card(
         game,
@@ -228,6 +236,7 @@ fn reveal_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Comma
     result
 }
 
+/// Builds a [PlayerView] for a given player
 fn player_view(game: &GameState, side: Side, update_type: GameUpdateType) -> PlayerView {
     let identity = game.identity(side);
     let data = game.player(side);
@@ -248,6 +257,8 @@ fn player_view(game: &GameState, side: Side, update_type: GameUpdateType) -> Pla
     }
 }
 
+/// Returns the [PlayerName] that currently has priority (is next to act) in
+/// this game
 fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
     to_player_name(
         match game.data.raid {
@@ -258,6 +269,7 @@ fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
     )
 }
 
+/// Build icons struct for this card
 fn card_icons(
     game: &GameState,
     card: &CardState,
@@ -306,7 +318,9 @@ fn card_icons(
     }
 }
 
-fn new_revealed_card(
+/// Builds a [RevealedCardView], displaying a card for a user who can currently
+/// see this card
+fn revealed_card(
     game: &GameState,
     card: &CardState,
     definition: &CardDefinition,
@@ -315,10 +329,10 @@ fn new_revealed_card(
     RevealedCardView {
         card_frame: Some(assets::card_frame(definition.school)),
         title_background: Some(assets::title_background(definition.config.faction)),
-        jewel: Some(jewel(definition.rarity)),
+        jewel: Some(assets::jewel(definition.rarity)),
         image: Some(sprite(&definition.image)),
         title: Some(CardTitle { text: definition.name.displayed_name() }),
-        rules_text: Some(rules_text::build(game, card, definition, user_side)),
+        rules_text: Some(rules_text::build(game, card, definition)),
         revealed_in_arena: card.data.revealed,
         targeting: Some(card_targeting(definition)),
         on_release_position: Some(release_position(definition)),
@@ -371,6 +385,7 @@ fn adapt_position(
     result.map(|p| ObjectPosition { sorting_key: card.sorting_key, position: Some(p) })
 }
 
+/// Builds a description of the standard [CardTargeting] behavior of a card
 fn card_targeting(definition: &CardDefinition) -> CardTargeting {
     CardTargeting {
         targeting: match definition.card_type {
@@ -382,6 +397,7 @@ fn card_targeting(definition: &CardDefinition) -> CardTargeting {
     }
 }
 
+/// Constructs the position to which a card should be moved once it is played
 fn release_position(definition: &CardDefinition) -> ObjectPosition {
     ObjectPosition {
         sorting_key: u32::MAX,
@@ -400,10 +416,13 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     }
 }
 
+/// Constructs a delay command
 fn delay(milliseconds: u32) -> Command {
     Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
 }
 
+/// Builds a structure describing a card's cost and whether it can currently be
+/// played
 fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardViewCost {
     CardViewCost {
         mana_cost: queries::mana_cost(game, card.id).unwrap_or(0),
@@ -414,6 +433,8 @@ fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardViewCos
     }
 }
 
+/// Converts a [Side] into a [PlayerName] based on which viewer we are rendering
+/// this update for.
 fn to_player_name(side: Side, user_side: Side) -> PlayerName {
     if side == user_side {
         PlayerName::User
@@ -422,10 +443,12 @@ fn to_player_name(side: Side, user_side: Side) -> PlayerName {
     }
 }
 
+/// Converts a [CardId] into a client [GameObjectIdentifier]
 fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {
     GameObjectIdentifier { id: Some(game_object_identifier::Id::CardId(adapt_card_id(id))) }
 }
 
+/// Turns a server [CardId] into its protobuf equivalent
 pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
     CardIdentifier {
         side: match card_id.side {
@@ -437,6 +460,7 @@ pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
     }
 }
 
+/// Turns a server [RoomId] into its protobuf equivalent
 pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
     match room_id {
         RoomId::Vault => RoomIdentifier::Vault,
@@ -450,6 +474,7 @@ pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
     }
 }
 
+/// Turns a [Sprite] into its protobuf equivalent
 fn sprite(sprite: &Sprite) -> SpriteAddress {
     SpriteAddress { address: sprite.address.clone() }
 }

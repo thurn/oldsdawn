@@ -43,9 +43,13 @@ use crate::database::{Database, SledDatabase};
 
 pub mod database;
 
+/// Stores active channels for each user.
+///
+/// TODO: How do you clean these up if a user disconnects?
 static CHANNELS: Lazy<DashMap<UserId, Sender<Result<CommandList, Status>>>> =
     Lazy::new(DashMap::new);
 
+/// Struct which implements our GRPC service
 pub struct GameService {}
 
 #[tonic::async_trait]
@@ -90,7 +94,8 @@ impl Spelldawn for GameService {
     }
 }
 
-/// A response to a given [GameRequest] which should be sent to a specific user.
+/// A response to a given [GameRequest].
+///
 /// Returned from [handle_request] to support providing updates to different
 /// players in a game.
 #[derive(Debug, Clone, Default)]
@@ -101,8 +106,8 @@ pub struct GameResponse {
     pub channel_responses: Vec<(UserId, CommandList)>,
 }
 
-/// Processes an incoming client request and returns a vector of [GameResponse]
-/// objects describing required updates to send to connected users.
+/// Processes an incoming client request and returns a [GameResponse] describing
+/// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
     let game_id = to_server_game_id(&request.game_id);
     let user_id = UserId::new(request.user_id);

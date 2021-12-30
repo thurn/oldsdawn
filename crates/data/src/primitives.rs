@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Fundamental types and data structures for Spelldawn
+
 use std::fmt;
 
 use serde::{Deserialize, Serialize};
@@ -37,6 +39,7 @@ impl UserId {
         Self { value }
     }
 
+    /// Byte array representation of this ID
     pub fn key(&self) -> [u8; 8] {
         self.value.to_be_bytes()
     }
@@ -44,7 +47,7 @@ impl UserId {
 
 impl fmt::Debug for UserId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "@{}", self.value)
+        write!(f, "{}", self.value)
     }
 }
 
@@ -59,6 +62,7 @@ impl GameId {
         Self { value }
     }
 
+    /// Byte array representation of this ID
     pub fn key(&self) -> [u8; 8] {
         self.value.to_be_bytes()
     }
@@ -66,7 +70,7 @@ impl GameId {
 
 impl fmt::Debug for GameId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "${}", self.value)
+        write!(f, "{}", self.value)
     }
 }
 
@@ -78,6 +82,7 @@ pub enum Side {
 }
 
 impl Side {
+    /// Gets the opponent of the provided player
     pub fn opponent(&self) -> Self {
         match self {
             Side::Champion => Self::Overlord,
@@ -116,7 +121,7 @@ impl fmt::Debug for CardId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "#{}{}",
+            "{}{}",
             match self.side {
                 Side::Overlord => "O",
                 Side::Champion => "C",
@@ -126,9 +131,7 @@ impl fmt::Debug for CardId {
     }
 }
 
-/// Identifies an ability within a card. Abilities are the only game entity
-/// which may contain delegates. Abilities are identified by their position
-/// within the card's 'abilities', or 'activated_abilities' vector.
+/// Identifies an ability position within a card's 'abilities' vector
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct AbilityIndex(pub usize);
 
@@ -138,6 +141,8 @@ impl fmt::Debug for AbilityIndex {
     }
 }
 
+/// Identifies an ability within a card. Abilities are the only game entity
+/// which may contain delegates..
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
 pub struct AbilityId {
     pub card_id: CardId,
@@ -156,12 +161,6 @@ impl AbilityId {
     }
 }
 
-impl From<AbilityId> for CardId {
-    fn from(id: AbilityId) -> Self {
-        id.card_id
-    }
-}
-
 /// Uniquely identifies a raid within a given game
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
 pub struct RaidId(pub u32);
@@ -172,6 +171,7 @@ impl fmt::Debug for RaidId {
     }
 }
 
+/// Contains the URL of an image asset within a game
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct Sprite {
     pub address: String,
@@ -183,6 +183,8 @@ impl Sprite {
     }
 }
 
+/// The schools of magic, which provide restrictions on players during
+/// deckbuilding
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum School {
     Neutral,
@@ -191,10 +193,14 @@ pub enum School {
     Time,
 }
 
+/// The possible Rooms in which the Overlord player may play their cards.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomId {
+    /// The Overlord's deck
     Vault,
+    /// The Overlord's hand
     Sanctum,
+    /// The Overlord's discard pile
     Crypts,
     RoomA,
     RoomB,
@@ -203,20 +209,31 @@ pub enum RoomId {
     RoomE,
 }
 
-pub type DefenderIndex = u32;
+impl RoomId {
+    /// An 'inner room' is one of the three predefined rooms for the Overlord
+    /// player's deck, hand, and discard pile. Inner rooms cannot contain
+    /// Schemes or Projects.
+    pub fn is_inner_room(&self) -> bool {
+        matches!(self, RoomId::Vault | RoomId::Sanctum | RoomId::Crypts)
+    }
+}
 
+/// Used to control where a card is rendered within a room
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomLocation {
     Defender,
     InRoom,
 }
 
+/// Used to control where an item is rendered within the Champion's item display
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum ItemLocation {
     Weapons,
     Artifacts,
 }
 
+/// The three possible factions of weapons and minions. Minions can only be
+/// damaged by weapons from the same faction.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Faction {
     Mortal,
@@ -224,6 +241,8 @@ pub enum Faction {
     Infernal,
 }
 
+/// Rarity of a card, used to determine how likely it is to appear in randomized
+/// rewards.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Rarity {
     Common,
@@ -235,6 +254,7 @@ pub enum Rarity {
     None,
 }
 
+/// Possible types of cards
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum CardType {
     Spell,
@@ -247,6 +267,7 @@ pub enum CardType {
     Identity,
 }
 
+/// Subtypes of cards
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum CardSubtype {
     Silvered,

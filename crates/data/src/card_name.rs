@@ -12,18 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Defines card names
+
 use std::cmp::Ordering;
 
 use convert_case::{Case, Casing};
 use serde::{Deserialize, Serialize};
 use strum_macros::Display;
 
+/// Possible names of cards.
+///
+/// This enum is used to connect the *state* of a card to its game rules.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display, Serialize, Deserialize)]
 pub enum CardName {
-    /// Empty cards with no associated rules text, for use in tests
+    /// Empty card, for tests
     TestChampionIdentity,
+    /// Empty card, for tests
     TestOverlordIdentity,
+    /// Empty card, for tests
     TestChampionSpell,
+    /// Empty card, for tests
     TestOverlordSpell,
 
     ArcaneRecovery,

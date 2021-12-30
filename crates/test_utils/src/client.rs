@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! A fake game client. Records server responses about a game and stores them in
+//! [TestGame].
+
 use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardData, CardPosition, CardState};
@@ -26,6 +29,12 @@ use protos::spelldawn::{
 use rules::mutations;
 use server::database::Database;
 
+/// A fake game client for testing.
+///
+/// This struct keeps track of server responses related to an ongoing game and
+/// converts them into a useful format for writing tests. This enables our
+/// 'black box' testing strategy, where the game is almost exclusively tested
+/// via the public client-facing API.
 #[derive(Debug, Clone)]
 pub struct TestGame {
     pub user_side: Side,
@@ -46,6 +55,12 @@ impl TestGame {
     /// The [UserId] for the user who the test is running as
     pub const USER_ID: UserId = UserId { value: 1 };
 
+    /// Creates a new game, starting in the provided [GameState].
+    ///
+    /// It is usually better to create a blank new game and then update its
+    /// state via the action methods on this struct instead of putting a bunch
+    /// of information into the [GameState] here, because this helps avoid
+    /// coupling tests to the specific implementation details of [GameState].
     pub fn new(game: GameState, user_side: Side) -> Self {
         let (_user, _opponent) = match user_side {
             Side::Overlord => (&game.overlord, &game.champion),
@@ -64,7 +79,7 @@ impl TestGame {
 
     /// Execute a simulated client request for this game, updating the client
     /// state as appropriate based on the responses. Returns a vector of the
-    /// received commands.
+    /// received commands. Panics if the server request fails.
     pub fn perform_action(&mut self, action: Action) -> Vec<Command> {
         let commands = server::handle_request(
             self,
@@ -95,9 +110,11 @@ impl TestGame {
     /// This function operates by locating a test card in the user's deck and
     /// overwriting its state to a default [CardState] pointing to the
     /// provided [CardName] instead. This card is then moved to the user's
-    /// hand via [mutations::move_card], which *will* invoke game events & game
-    /// updates for a card being moved as normal. Returns the client
+    /// hand via [mutations::move_card], which will invoke game events & game
+    /// updates for a card being drawn as normal. Returns the client
     /// [CardIdentifier] for the drawn card.
+    ///
+    /// Panics if no test cards remain in the user's deck.
     pub fn draw_named_card(&mut self, card_name: CardName) -> CardIdentifier {
         let test_card = match self.user_side {
             Side::Overlord => CardName::TestOverlordSpell,
@@ -140,6 +157,7 @@ impl Database for TestGame {
     }
 }
 
+/// Simulated game state in an ongoing [TestGame]
 #[derive(Debug, Clone, Default)]
 pub struct ClientGameData {
     priority: Option<PlayerName>,
@@ -158,6 +176,7 @@ impl ClientGameData {
     }
 }
 
+/// Simulated player state in an ongoing [TestGame]
 #[derive(Debug, Clone)]
 pub struct ClientPlayer {
     name: PlayerName,
@@ -200,11 +219,13 @@ impl ClientPlayer {
     }
 }
 
+/// Simulated card state in an ongoing [TestGame]
 #[derive(Debug, Clone, Default)]
 pub struct ClientCards {}
 
 impl ClientCards {}
 
+/// Simulated state of a specific card
 #[derive(Debug, Clone, Default)]
 pub struct ClientCard {}
 

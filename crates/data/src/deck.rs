@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Defines a deck as it exists outside of an active game
+
 use std::collections::HashMap;
 use std::iter;
 
@@ -30,9 +32,9 @@ pub struct Deck {
 }
 
 impl Deck {
-    /// Returns a vector which repeats each [CardName] in [self.cards] in
-    /// alphabetical order a number of times equal to its deck count. Note:
-    /// The returned vector does *not* contain [self.identity].
+    /// Returns a vector which repeats each [CardName] in [Self::cards] in
+    /// alphabetical order a number of times equal to its deck count. Note: The
+    /// returned vector does *not* contain [Self::identity].
     pub fn card_names(&self) -> Vec<CardName> {
         let mut result = self
             .cards

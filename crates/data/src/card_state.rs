@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Defines the state of cards during an ongoing game.
+
 #![allow(clippy::use_self)] // Required to use EnumKind
 
 use std::collections::BTreeMap;
@@ -50,6 +52,7 @@ pub enum CardPosition {
 }
 
 impl CardPosition {
+    /// Returns the [CardPositionKind] for this card
     pub fn kind(&self) -> CardPositionKind {
         self.into()
     }
@@ -59,6 +62,7 @@ impl CardPosition {
         matches!(self.kind(), CardPositionKind::Room | CardPositionKind::ArenaItem)
     }
 
+    /// Returns true if this card is in a user's hand
     pub fn in_hand(&self) -> bool {
         self.kind() == CardPositionKind::Hand
     }
@@ -68,18 +72,22 @@ impl CardPosition {
         matches!(self.kind(), CardPositionKind::DeckUnknown | CardPositionKind::DeckTop)
     }
 
+    /// Returns true if this card is in a user's discard pile
     pub fn in_discard_pile(&self) -> bool {
         self.kind() == CardPositionKind::DiscardPile
     }
 
+    /// Returns true if this card is in a user's score pile
     pub fn in_score_pile(&self) -> bool {
         self.kind() == CardPositionKind::Scored
     }
 }
 
+/// Stores the state of a specific ability of a card
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AbilityState {}
 
+/// Optional card state, properties which are not universal
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CardData {
     // Has this card been revealed to the opponent?

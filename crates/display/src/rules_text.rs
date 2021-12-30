@@ -12,19 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Tools for rendering the text on a card
+
 use data::card_definition::{AbilityText, CardDefinition, Keyword, NumericOperator, TextToken};
 use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
-use data::primitives::{AbilityId, Side};
+use data::primitives::AbilityId;
 use protos::spelldawn::RulesText;
 
-pub fn build(
-    game: &GameState,
-    card: &CardState,
-    definition: &CardDefinition,
-    _user_side: Side,
-) -> RulesText {
+/// Primary function which turns the current state of a card into its client
+/// [RulesText] representation
+pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) -> RulesText {
     let mut result = vec![];
     for (index, ability) in definition.abilities.iter().enumerate() {
         result.push(match &ability.text {
@@ -38,6 +37,7 @@ pub fn build(
     RulesText { text: result.join("\n") }
 }
 
+/// Primary function for converting a sequence of [TextToken]s into a string
 fn ability_text(tokens: &[TextToken]) -> String {
     let mut result = vec![];
     for token in tokens {
