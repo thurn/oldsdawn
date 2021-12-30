@@ -18,8 +18,9 @@
 pub mod client;
 
 use data::card_name::CardName;
+use data::card_state::CardPositionKind;
 use data::deck::Deck;
-use data::game::{GameState, NewGameOptions};
+use data::game::{GameConfiguration, GameState};
 use data::primitives::{ActionCount, CardType, ManaValue, PointsValue, Side};
 use display::rendering;
 use maplit::hashmap;
@@ -31,10 +32,10 @@ use crate::client::TestGame;
 
 /// Creates a new game with the user playing as the `user_side` player.
 ///
-/// By default, this creates a normal new game with both player's decks
-/// populated with blank test cards. The game is advanced to the user's first
-/// turn. See [Args] for information about the default configuration options and
-/// how to modify them.
+/// By default, this creates a new game with both player's decks populated with
+/// blank test cards and all other game zones empty (no cards are drawn). The
+/// game is advanced to the user's first turn. See [Args] for information about
+/// the default configuration options and how to modify them.
 pub fn new_game(user_side: Side, args: Args) -> TestGame {
     let (overlord_user, champion_user) = match user_side {
         Side::Overlord => (TestGame::USER_ID, TestGame::OPPONENT_ID),
@@ -53,13 +54,23 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
             identity: CardName::TestChampionIdentity,
             cards: hashmap! {CardName::TestChampionSpell => 45},
         },
-        NewGameOptions::default(),
+        GameConfiguration { deterministic: true, ..GameConfiguration::default() },
     );
 
     state.data.turn = user_side;
     state.player_mut(user_side).mana = args.mana;
     state.player_mut(user_side).actions = args.actions;
     state.player_mut(user_side).score = args.score;
+
+    if let Some(next_draw) = args.next_draw {
+        let target_id = state
+            .cards(user_side)
+            .iter()
+            .find(|c| c.position.kind() == CardPositionKind::DeckUnknown)
+            .expect("No cards in deck")
+            .id;
+        client::overwrite_card(&mut state, target_id, next_draw);
+    }
 
     TestGame::new(state, user_side)
 }
@@ -73,12 +84,25 @@ pub struct Args {
     pub actions: ActionCount,
     /// Score for the `user_side` player. Defaults to 0.
     pub score: PointsValue,
+    /// Card to be inserted into the `user_side` player's deck as the next draw.
+    ///
+    /// This card will be drawn when drawing randomly from the deck (as long as
+    /// no known cards are placed on top of it) because the game is created with
+    /// [GameConfiguration::deterministic] set to true.
+    pub next_draw: Option<CardName>,
 }
 
 impl Default for Args {
     fn default() -> Self {
-        Self { mana: 5, actions: 3, score: 0 }
+        Self { mana: 5, actions: 3, score: 0, next_draw: None }
     }
+}
+
+/// Asserts that the display names of the provided vector of [CardName]s are
+/// precisely identical to the provided vector of strings.
+pub fn assert_identical(expected: Vec<CardName>, actual: Vec<String>) {
+    let set = expected.iter().map(CardName::displayed_name).collect::<Vec<_>>();
+    assert_eq!(set, actual);
 }
 
 /// Draws and then plays a named card.

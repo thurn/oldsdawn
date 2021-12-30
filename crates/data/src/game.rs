@@ -55,8 +55,19 @@ pub struct RaidState {
     pub priority: Side,
 }
 
-/// State of the overall game, including whose turn it is and whether a raid is
-/// active.
+/// Describes options for this game & the set of rules it is using.
+#[derive(Debug, Clone, Default, Copy, Serialize, Deserialize)]
+pub struct GameConfiguration {
+    /// If true, all random choices within this game will be made
+    /// deterministically instead of using a random number generator. Useful for
+    /// e.g. unit tests.
+    pub deterministic: bool,
+    /// Whether to run in simulation mode and thus disable update tracking
+    pub simulation: bool,
+}
+
+/// State and configuration of the overall game, including whose turn it is and
+/// whether a raid is active.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct GameData {
     /// Current player whose turn it is
@@ -65,13 +76,8 @@ pub struct GameData {
     pub turn_number: TurnNumber,
     /// Data about an ongoing raid, if any
     pub raid: Option<RaidState>,
-}
-
-/// Options when creating a new game
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct NewGameOptions {
-    /// Whether to run in simulation mode and thus disable update tracking
-    pub simulation: bool,
+    /// Game options
+    pub config: GameConfiguration,
 }
 
 /// Stores the primary state for an ongoing game
@@ -79,7 +85,7 @@ pub struct NewGameOptions {
 pub struct GameState {
     /// Unique identifier for this game
     pub id: GameId,
-    /// General game state
+    /// General game state & configuration
     pub data: GameData,
     /// Used to track changes to game state in order to update the client. Code
     /// which mutates the game state is responsible for appending a
@@ -111,7 +117,7 @@ impl GameState {
         id: GameId,
         overlord_deck: Deck,
         champion_deck: Deck,
-        options: NewGameOptions,
+        config: GameConfiguration,
     ) -> Self {
         Self {
             id,
@@ -119,8 +125,8 @@ impl GameState {
             champion_cards: Self::make_deck(&champion_deck, Side::Champion),
             overlord: PlayerState::new_game(overlord_deck.owner_id, 3 /* actions */),
             champion: PlayerState::new_game(champion_deck.owner_id, 0 /* actions */),
-            data: GameData { turn: Side::Overlord, turn_number: 1, raid: None },
-            updates: if options.simulation {
+            data: GameData { turn: Side::Overlord, turn_number: 1, raid: None, config },
+            updates: if config.simulation {
                 UpdateTracker::default()
             } else {
                 UpdateTracker { update_list: Some(vec![]) }
@@ -208,10 +214,13 @@ impl GameState {
     /// Return a random card in the provided `position`, or None if there are no
     /// cards in that position
     pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
-        self.all_cards()
-            .filter(|c| c.position == position)
-            .choose(&mut rand::thread_rng())
-            .map(|c| c.id)
+        let mut cards = self.all_cards().filter(|c| c.position == position);
+        if self.data.config.deterministic {
+            cards.next()
+        } else {
+            cards.choose(&mut rand::thread_rng())
+        }
+        .map(|c| c.id)
     }
 
     /// Cards owned by a given player in a given position

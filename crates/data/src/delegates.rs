@@ -30,7 +30,8 @@
 //! delegate has a [RequirementFn] which needs to return true when the delegate
 //! should run.
 //!
-//! Delegates are currently invoked in alphabetical order by card name.
+//! Currently, Overlord delegates ares always invoked before Champion delegates,
+//! and they are called in alphabetical order by card name.
 //!
 //! Delegate enum members automatically have an associated struct generated for
 //! them by the [DelegateEnum] macro, which is the name of the enum variant with

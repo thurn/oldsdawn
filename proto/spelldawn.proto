@@ -618,11 +618,11 @@ message ObjectPositionRewardChest {
 }
 
 message ObjectPosition {
-    /**
-    * A key by which to sort this object -- objects with higher sorting keys
-    * should be displayed 'on top' of objects with lower sorting keys. In the
-    * case of ties, any ordering is acceptable.
-    */
+    /*
+     * A key by which to sort this object -- objects with higher sorting keys
+     * should be displayed 'on top of' or 'in front of' objects with lower
+     * sorting keys. In the case of ties, any ordering is acceptable.
+     */
     uint32 sorting_key = 1;
 
     oneof position {

@@ -125,6 +125,9 @@ pub struct CardState {
 }
 
 impl CardState {
+    /// Creates a new card state, placing the card into the `side` player's
+    /// deck. If `is_identity` is true, the card is instead marked as revealed
+    /// and placed into the player's identity zone.
     pub fn new(id: CardId, name: CardName, side: Side, is_identity: bool) -> Self {
         Self {
             id,

@@ -1,4 +1,4 @@
-code-review: clean build outdated clippy check-format check-docs test udeps
+code-review: check-format build clippy test check-docs outdated udeps
 
 fix: fix-lints fmt
 
@@ -76,7 +76,7 @@ check-docs:
     #!/usr/bin/env sh
     set -euxo pipefail
     for file in `ls crates | grep -v 'spelldawn'`; do
-        echo "Checking $file";
+        echo "Checking rustdoc for $file";
         cargo rustdoc --lib -p $file -- \
             -D rustdoc::broken-intra-doc-links \
             -D rustdoc::private-intra-doc-links \

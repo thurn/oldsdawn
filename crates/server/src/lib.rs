@@ -18,7 +18,7 @@ use anyhow::{anyhow, bail, Context, Result};
 use dashmap::DashMap;
 use data::card_name::CardName;
 use data::deck::Deck;
-use data::game::{GameState, NewGameOptions};
+use data::game::{GameConfiguration, GameState};
 use data::primitives::{self, CardId, GameId, RoomId, Side, UserId};
 use data::updates::UpdateTracker;
 use display::rendering;
@@ -167,7 +167,7 @@ fn handle_connect(
                     CardName::ArcaneRecovery => 45,
                 },
             },
-            NewGameOptions::default(),
+            GameConfiguration::default(),
         );
 
         game.data.turn = Side::Champion;
@@ -227,7 +227,8 @@ pub fn user_side(user_id: UserId, game: &GameState) -> Result<Side> {
     }
 }
 
-fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
+/// Converts a client [CardIdentifier] into a server [CardId]
+pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
     if let Some(id) = card_id {
         Ok(primitives::CardId {
             side: match id.side() {

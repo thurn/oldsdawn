@@ -12,5 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod actions;
-mod champion_spells;
+use data::card_name::CardName;
+use data::primitives::Side;
+use protos::spelldawn::game_action::Action;
+use protos::spelldawn::{DrawCardAction, PlayerName};
+use test_utils::*;
+
+#[test]
+fn draw_card() {
+    let mut g = new_game(
+        Side::Overlord,
+        Args { actions: 3, next_draw: Some(CardName::IceDragon), ..Args::default() },
+    );
+    g.perform_action(Action::DrawCard(DrawCardAction {}));
+    assert_identical(vec![CardName::IceDragon], g.hand(PlayerName::User));
+}
