@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Data structures for defining card rules -- the parts of a card which do not
+//! vary from game to game.
+
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 
@@ -23,6 +26,7 @@ use crate::primitives::{
     PointsValue, Rarity, School, ShieldValue, Side, Sprite,
 };
 
+/// Identifies a keyword (bolded word) which appears in rules text
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum Keyword {
     Play,
@@ -34,12 +38,14 @@ pub enum Keyword {
     Store(u32),
 }
 
+/// A symbol applied to a number which appears in rules text
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum NumericOperator {
     None,
     Add,
 }
 
+/// Different types of text which can appear in rules text
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub enum TextToken {
     Literal(String),
@@ -49,9 +55,11 @@ pub enum TextToken {
     Cost(Vec<Self>),
 }
 
+/// A function which produces rules text
 pub type TextFn = fn(&GameState, Scope) -> Vec<TextToken>;
 
-/// Text describing what an ability does
+/// Text describing what an ability does. Can be a function (if text is dynamic)
+/// or a vector of [TextToken]s.
 #[derive(Clone)]
 pub enum AbilityText {
     Text(Vec<TextToken>),
@@ -70,7 +78,9 @@ impl Debug for AbilityText {
 /// Cost to play a card or activate an ability
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct Cost {
+    /// Cost in mana
     pub mana: Option<ManaValue>,
+    /// Cost in action points
     pub actions: ActionCount,
 }
 
@@ -78,15 +88,18 @@ pub struct Cost {
 /// paying a mana cost during a raid encounter. Can be used any number of times.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct AttackBoost {
+    /// Cost to activate an instance of this boost
     pub cost: ManaValue,
+    /// Bonus to attack added for each activation
     pub bonus: AttackValue,
 }
 
-/// An activated ability used by Weapons to increase their attack value by
-/// paying a mana cost during a raid encounter. Can be used any number of times.
+/// Scoring information about a card
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct SchemePoints {
+    /// Required number of level counters to score this card
     pub level_requirement: LevelValue,
+    /// Number of points received for scoring this card
     pub points: PointsValue,
 }
 

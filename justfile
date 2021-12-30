@@ -1,4 +1,4 @@
-code-review: check build outdated clippy check-format check-docs udeps test
+code-review: clean build outdated clippy check-format check-docs test udeps
 
 fix: fix-format fix-lints
 
@@ -19,6 +19,9 @@ run:
 
 test:
     cargo test
+
+doc:
+    cargo doc --open
 
 clippy:
     cargo clippy --workspace --exclude "protos" -- \
@@ -81,7 +84,8 @@ check-docs:
 outdated:
     cargo outdated --exit-code 1
 
-udeps:
+udeps: clean
+    # Currently seems to panic sometimes without running clean first clean
     cargo +nightly udeps
 
 time-passes: clean
