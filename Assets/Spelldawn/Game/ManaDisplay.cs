@@ -52,7 +52,7 @@ namespace Spelldawn.Game
       SetMana(_currentMana - amount);
     }
 
-    public void SetMana(uint currentMana)
+    void SetMana(uint currentMana)
     {
       Errors.CheckNonNegative(currentMana);
 

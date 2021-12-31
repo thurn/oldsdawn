@@ -163,21 +163,13 @@ Ok(
                                                             Room(
                                                                 ObjectPositionRoom {
                                                                     room_id: Unspecified,
-                                                                    room_location: Unspecified,
+                                                                    room_location: Front,
                                                                 },
                                                             ),
                                                         ),
                                                     },
                                                 ),
-                                                cost: Some(
-                                                    CardViewCost {
-                                                        mana_cost: 8,
-                                                        action_cost: 1,
-                                                        can_play: false,
-                                                        can_play_algorithm: Optimistic,
-                                                        spend_cost_algorithm: Optimistic,
-                                                    },
-                                                ),
+                                                can_play: true,
                                                 supplemental_info: None,
                                             },
                                         ),

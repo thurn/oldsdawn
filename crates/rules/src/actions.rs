@@ -75,13 +75,23 @@ pub fn play_card_action(
     target: PlayCardTarget,
 ) -> Result<()> {
     info!(?side, ?card_id, ?target, "play_card_action");
-    ensure!(flags::can_play(game, side, card_id), "Cannot play card {:?}", card_id);
+    ensure!(
+        flags::can_take_play_card_action(game, side, card_id),
+        "Cannot play card {:?}",
+        card_id
+    );
     let card = game.card(card_id);
     let definition = crate::get(card.name);
+    let enters_revealed = flags::enters_play_revealed(game, card_id);
 
-    if let Some(mana_cost) = definition.cost.mana {
-        mutations::spend_mana(game, side, mana_cost);
+    if enters_revealed {
+        mutations::spend_mana(
+            game,
+            side,
+            queries::mana_cost(game, card_id).with_context(|| "Card has no mana cost")?,
+        );
     }
+
     mutations::spend_action_points(game, side, definition.cost.actions);
     dispatch::invoke_event(game, PayCardCostsEvent(card_id));
 
@@ -98,7 +108,7 @@ pub fn play_card_action(
         CardType::Identity => CardPosition::Identity(side),
     };
 
-    if matches!(definition.card_type, CardType::Spell | CardType::Weapon | CardType::Artifact) {
+    if enters_revealed {
         mutations::set_revealed(game, card_id, true);
     }
 

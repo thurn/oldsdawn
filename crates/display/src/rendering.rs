@@ -24,15 +24,14 @@ use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    game_object_identifier, ActionTrackerView, ArenaView, CanPlayAlgorithm, CardCreationAnimation,
-    CardIcon, CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView, CardViewCost,
-    ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand, DelayCommand, GameCommand,
-    GameIdentifier, GameObjectIdentifier, GameView, IdentityAction, ManaView,
-    MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile,
-    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRoom,
-    ObjectPositionStaging, PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView,
-    RevealedCardView, RoomIdentifier, ScoreView, SpendCostAlgorithm, SpriteAddress, TimeValue,
-    UpdateGameViewCommand,
+    game_object_identifier, ActionTrackerView, ArenaView, CardCreationAnimation, CardIcon,
+    CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView, ClientItemLocation,
+    ClientRoomLocation, CreateOrUpdateCardCommand, DelayCommand, GameCommand, GameIdentifier,
+    GameObjectIdentifier, GameView, IdentityAction, ManaView, MoveGameObjectsCommand,
+    ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand,
+    ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
+    PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier,
+    ScoreView, SpriteAddress, TimeValue, UpdateGameViewCommand,
 };
 use rules::{flags, queries};
 
@@ -205,7 +204,7 @@ fn create_or_update_card(
                 definition.config.faction,
             )),
             owning_player: to_player_name(definition.side, user_side).into(),
-            revealed_card: revealed.then(|| revealed_card(game, card, definition, user_side)),
+            revealed_card: revealed.then(|| revealed_card_view(game, card, definition, user_side)),
         }),
         create_position: position,
         create_animation,
@@ -320,7 +319,7 @@ fn card_icons(
 
 /// Builds a [RevealedCardView], displaying a card for a user who can currently
 /// see this card
-fn revealed_card(
+fn revealed_card_view(
     game: &GameState,
     card: &CardState,
     definition: &CardDefinition,
@@ -336,7 +335,7 @@ fn revealed_card(
         revealed_in_arena: card.data.revealed,
         targeting: Some(card_targeting(definition)),
         on_release_position: Some(release_position(definition)),
-        cost: Some(card_cost(game, user_side, card)),
+        can_play: flags::can_take_play_card_action(game, user_side, card.id),
         supplemental_info: None,
     }
 }
@@ -409,8 +408,15 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
             CardType::Artifact => Position::Item(ObjectPositionItem {
                 item_location: ClientItemLocation::Right.into(),
             }),
-            CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
-                Position::Room(ObjectPositionRoom::default())
+            CardType::Minion => Position::Room(ObjectPositionRoom {
+                room_id: RoomIdentifier::Unspecified.into(),
+                room_location: ClientRoomLocation::Front.into(),
+            }),
+            CardType::Project | CardType::Scheme | CardType::Upgrade => {
+                Position::Room(ObjectPositionRoom {
+                    room_id: RoomIdentifier::Unspecified.into(),
+                    room_location: ClientRoomLocation::Back.into(),
+                })
             }
         }),
     }
@@ -419,18 +425,6 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
 /// Constructs a delay command
 fn delay(milliseconds: u32) -> Command {
     Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
-}
-
-/// Builds a structure describing a card's cost and whether it can currently be
-/// played
-fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardViewCost {
-    CardViewCost {
-        mana_cost: queries::mana_cost(game, card.id).unwrap_or(0),
-        action_cost: queries::action_cost(game, card.id),
-        can_play: flags::can_play(game, user_side, card.id),
-        can_play_algorithm: CanPlayAlgorithm::Optimistic.into(),
-        spend_cost_algorithm: SpendCostAlgorithm::Optimistic.into(),
-    }
 }
 
 /// Converts a [Side] into a [PlayerName] based on which viewer we are rendering

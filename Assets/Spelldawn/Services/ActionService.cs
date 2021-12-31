@@ -288,24 +288,16 @@ namespace Spelldawn.Services
       _registry.StaticAssets.PlayWhooshSound();
       var position =
         Errors.CheckNotNull(card.RevealedCardView?.OnReleasePosition, "Card does not have release position");
-      var cost = Errors.CheckNotNull(card.RevealedCardView?.Cost, "Card has no cost");
 
       if (position.PositionCase == ObjectPosition.PositionOneofCase.Room)
       {
-        if (card.TargetRoom is { } targetRoom)
-        {
-          // Move to targeted room if one is available
+        var room = action.Target.RoomId;
+        Errors.CheckArgument(room != RoomIdentifier.Unspecified, "No RoomId target provided!");
+        // Move to targeted room
           var newPosition = new ObjectPosition();
           newPosition.MergeFrom(position);
-          newPosition.Room.RoomId = targetRoom;
+          newPosition.Room.RoomId = room;
           position = newPosition;
-        }
-      }
-
-      if (cost.SpendCostAlgorithm == SpendCostAlgorithm.Optimistic)
-      {
-        _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(cost.ActionCost);
-        _registry.ManaDisplayForPlayer(PlayerName.User).SpendMana(cost.ManaCost);
       }
 
       return _registry.ObjectPositionService.MoveGameObject(card, position);

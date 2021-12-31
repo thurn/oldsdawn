@@ -152,15 +152,7 @@ Ok(
                                                         ),
                                                     },
                                                 ),
-                                                cost: Some(
-                                                    CardViewCost {
-                                                        mana_cost: 5,
-                                                        action_cost: 1,
-                                                        can_play: true,
-                                                        can_play_algorithm: Optimistic,
-                                                        spend_cost_algorithm: Optimistic,
-                                                    },
-                                                ),
+                                                can_play: true,
                                                 supplemental_info: None,
                                             },
                                         ),
@@ -368,15 +360,7 @@ Ok(
                                                                 ),
                                                             },
                                                         ),
-                                                        cost: Some(
-                                                            CardViewCost {
-                                                                mana_cost: 5,
-                                                                action_cost: 1,
-                                                                can_play: false,
-                                                                can_play_algorithm: Optimistic,
-                                                                spend_cost_algorithm: Optimistic,
-                                                            },
-                                                        ),
+                                                        can_play: false,
                                                         supplemental_info: None,
                                                     },
                                                 ),

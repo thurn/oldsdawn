@@ -107,6 +107,7 @@ namespace Spelldawn.Services
         card = ComponentUtils.Instantiate(_cardPrefab);
         card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
 
+        Errors.CheckNotNull(command.CreatePosition, "No create position specified");
         StartCoroutine(_registry.ObjectPositionService.ObjectDisplayForPosition(command.CreatePosition)
           .AddObject(card, animate: false));
 

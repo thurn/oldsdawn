@@ -635,16 +635,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           },
           Targeting = IsItem(cardId) ? null : roomTarget,
           OnReleasePosition = IsItem(cardId) ? itemPos : roomPos,
-          Cost = manaCost == null
-            ? null
-            : new CardViewCost
-            {
-              CanPlay = false,
-              SpendCostAlgorithm = SpendCostAlgorithm.Optimistic,
-              CanPlayAlgorithm = CanPlayAlgorithm.Optimistic,
-              ActionCost = 1,
-              ManaCost = manaCost.Value
-            },
+          CanPlay = true,
           RevealedInArena = true,
           SupplementalInfo = SupplementalInfo(cardType switch
           {

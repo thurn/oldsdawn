@@ -72,8 +72,7 @@ namespace Spelldawn.Game
     RevealedCardView? _revealedCardView;
     public RevealedCardView? RevealedCardView => _revealedCardView;
 
-    RoomIdentifier? _targetRoom;
-    public RoomIdentifier? TargetRoom => _targetRoom;
+    RoomIdentifier _targetRoom;
 
     [Serializable]
     public sealed class Icon
@@ -153,21 +152,9 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      if (InHand() &&
-          _registry.ActionService.CanInitiateAction() &&
-          _revealedCardView is { Cost: { } cost })
+      if (InHand() && _registry.ActionService.CanInitiateAction() && _revealedCardView is {} card)
       {
-        var canPlayCard =
-          cost.CanPlay &&
-          cost.ManaCost <= _registry.ManaDisplayForPlayer(PlayerName.User).CurrentMana &&
-          cost.ActionCost <= _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions;
-        _canPlay = cost.CanPlayAlgorithm switch
-        {
-          CanPlayAlgorithm.Optimistic => canPlayCard,
-          CanPlayAlgorithm.AdditionalCost when !canPlayCard => false,
-          CanPlayAlgorithm.AdditionalPlay when canPlayCard => true,
-          _ => _canPlay
-        };
+        _canPlay = card.CanPlay;
       }
       else
       {
@@ -293,7 +280,7 @@ namespace Spelldawn.Game
       if (distance < 3.5f ||
           !_registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard) ||
           (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom &&
-           _targetRoom == null))
+           _targetRoom == RoomIdentifier.Unspecified))
       {
         // Return to hand
         _registry.StaticAssets.PlayCardSound();
@@ -306,11 +293,11 @@ namespace Spelldawn.Game
           CardId = _cardView!.CardId
         };
 
-        if (_targetRoom is { } room)
+        if (_targetRoom != RoomIdentifier.Unspecified)
         {
           action.Target = new CardTarget
           {
-            RoomId = room
+            RoomId = _targetRoom
           };
         }
 
@@ -355,7 +342,6 @@ namespace Spelldawn.Game
       var revealed = card.RevealedCard;
       _revealedCardView = revealed;
       _isRevealed = true;
-      _canPlay = card.RevealedCard?.Cost?.CanPlay == true;
 
       gameObject.name = revealed.Title.Text;
       _cardBack.gameObject.SetActive(value: false);

@@ -171,7 +171,7 @@ fn handle_connect(
         database.game(game_id)?
     } else {
         let new_game_id = if test_mode { GameId::new(0) } else { database.generate_game_id()? };
-        let mut game = GameState::new_game(
+        let game = GameState::new_game(
             new_game_id,
             Deck {
                 owner_id: UserId::new(2),
@@ -189,10 +189,6 @@ fn handle_connect(
             },
             GameConfiguration::default(),
         );
-
-        game.data.turn = Side::Champion;
-        game.overlord.actions = 0;
-        game.champion.actions = 3;
 
         database.write_game(&game)?;
         info!(?new_game_id, "create_new_game");

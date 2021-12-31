@@ -418,20 +418,6 @@ pub mod card_targeting {
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CardViewCost {
-    /// * Mana cost for the card, 0 is used to represent 'no cost'.
-    #[prost(uint32, tag = "1")]
-    pub mana_cost: u32,
-    #[prost(uint32, tag = "2")]
-    pub action_cost: u32,
-    #[prost(bool, tag = "3")]
-    pub can_play: bool,
-    #[prost(enumeration = "CanPlayAlgorithm", tag = "4")]
-    pub can_play_algorithm: i32,
-    #[prost(enumeration = "SpendCostAlgorithm", tag = "5")]
-    pub spend_cost_algorithm: i32,
-}
-#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionOffscreen {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionRoom {
@@ -572,9 +558,9 @@ pub struct RevealedCardView {
     /// is used.
     #[prost(message, optional, tag = "9")]
     pub on_release_position: ::core::option::Option<ObjectPosition>,
-    /// * Information needed to determine whether a card can be played.
-    #[prost(message, optional, tag = "10")]
-    pub cost: ::core::option::Option<CardViewCost>,
+    /// * Can this card currently be played?
+    #[prost(bool, tag = "10")]
+    pub can_play: bool,
     ///*
     /// Additional interface element rendered to the side of the card during an
     /// info zoom.
@@ -1337,38 +1323,6 @@ pub enum TargetingArrow {
     Red = 1,
     Blue = 2,
     Green = 3,
-}
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum CanPlayAlgorithm {
-    Unspecified = 0,
-    ///*
-    /// Always update the 'can_play' state automatically based on available mana
-    /// and actions.
-    Optimistic = 1,
-    ///*
-    /// 'Optimistic False' algorithm for cards with an additional cost. Will
-    /// transition the 'can_play' state to false based on available mana and
-    /// actions, but not to true.
-    AdditionalCost = 2,
-    ///*
-    /// 'Optimistic True' algorithm, for cards which can always be played for
-    /// their normal cost, but have other valid play windows as well. Will
-    /// transition the 'can_play' state to true based on available mana and
-    /// actions, but not to false.
-    AdditionalPlay = 3,
-    ///*
-    /// Do not transition the 'can_play' state automatically
-    NoUpdate = 4,
-}
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum SpendCostAlgorithm {
-    Unspecified = 0,
-    /// * Deduct the mana & action cost immediately when this card is played.
-    Optimistic = 1,
-    /// * Do not modify mana & action values when this card is played.
-    NoUpdate = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

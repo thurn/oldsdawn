@@ -77,7 +77,7 @@ namespace Spelldawn.Services
       }
     }
 
-    public RoomIdentifier? ShowRoomSelectorForMousePosition()
+    public RoomIdentifier ShowRoomSelectorForMousePosition()
     {
       if (_curentRoomSelector)
       {
@@ -86,7 +86,7 @@ namespace Spelldawn.Services
 
       var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
       var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
-      RoomIdentifier? result = null;
+      var result = RoomIdentifier.Unspecified;
 
       for (var i = 0; i < hits; ++i)
       {

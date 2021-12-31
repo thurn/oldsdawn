@@ -12,16 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Functions to query game flags, typically whether some game action can
-//! currently be taken
+//! Functions to query boolean game information, typically whether some game
+//! action can currently be taken
 
 use data::delegates::{
     CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, Flag,
 };
 use data::game::GameState;
-use data::primitives::{CardId, Side};
+use data::primitives::{CardId, CardType, Side};
 
 use crate::{dispatch, queries};
+
+/// Returns whether a given card can currently be played via the basic game
+/// action to play a card.
+pub fn can_take_play_card_action(game: &GameState, side: Side, card_id: CardId) -> bool {
+    let mut can_play = queries::in_main_phase(game, side) && side == card_id.side;
+    if enters_play_revealed(game, card_id) {
+        can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
+                             if cost <= game.player(side).mana);
+    }
+
+    dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
+}
+
+/// Returns true if the indicated card should enter play in the revealed state
+/// and is expected to pay its mana cost immediately.
+pub fn enters_play_revealed(game: &GameState, card_id: CardId) -> bool {
+    matches!(
+        crate::get(game.card(card_id).name).card_type,
+        CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Identity
+    )
+}
 
 /// Returns whether the indicated player can currently take the basic game
 /// action to draw a card.
@@ -35,12 +56,4 @@ pub fn can_take_draw_card_action(game: &GameState, side: Side) -> bool {
 pub fn can_take_gain_mana_action(game: &GameState, side: Side) -> bool {
     let can_gain_mana = queries::in_main_phase(game, side);
     dispatch::perform_query(game, CanTakeGainManaActionQuery(side), Flag::new(can_gain_mana)).into()
-}
-
-/// Returns whether a given card can currently be played
-pub fn can_play(game: &GameState, side: Side, card_id: CardId) -> bool {
-    let can_play = queries::in_main_phase(game, side)
-        && side == card_id.side
-        && matches!(queries::mana_cost(game, card_id), Some(cost) if cost <= game.player(side).mana);
-    dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
 }

@@ -493,59 +493,6 @@ message CardTargeting {
     }
 }
 
-enum CanPlayAlgorithm {
-    CAN_PLAY_ALGORITHM_UNSPECIFIED = 0;
-
-    /**
-    * Always update the 'can_play' state automatically based on available mana
-    * and actions.
-    */
-    CAN_PLAY_ALGORITHM_OPTIMISTIC = 1;
-
-    /**
-    * 'Optimistic False' algorithm for cards with an additional cost. Will
-    * transition the 'can_play' state to false based on available mana and
-    * actions, but not to true.
-    */
-    CAN_PLAY_ALGORITHM_ADDITIONAL_COST = 2;
-
-    /**
-    * 'Optimistic True' algorithm, for cards which can always be played for
-    * their normal cost, but have other valid play windows as well. Will
-    * transition the 'can_play' state to true based on available mana and
-    * actions, but not to false.
-    */
-    CAN_PLAY_ALGORITHM_ADDITIONAL_PLAY = 3;
-
-    /**
-    * Do not transition the 'can_play' state automatically
-    */
-    CAN_PLAY_ALGORITHM_NO_UPDATE = 4;
-}
-
-enum SpendCostAlgorithm {
-    SPEND_COST_ALGORITHM_UNSPECIFIED = 0;
-
-    /** Deduct the mana & action cost immediately when this card is played. */
-    SPEND_COST_ALGORITHM_OPTIMISTIC = 1;
-
-    /** Do not modify mana & action values when this card is played. */
-    SPEND_COST_ALGORITHM_NO_UPDATE = 2;
-}
-
-message CardViewCost {
-    /** Mana cost for the card, 0 is used to represent 'no cost'. */
-    uint32 mana_cost = 1;
-
-    uint32 action_cost = 2;
-
-    bool can_play = 3;
-
-    CanPlayAlgorithm can_play_algorithm = 4;
-
-    SpendCostAlgorithm spend_cost_algorithm = 5;
-}
-
 message ObjectPositionOffscreen {
 }
 
@@ -671,8 +618,8 @@ message RevealedCardView {
     */
     ObjectPosition on_release_position = 9;
 
-    /** Information needed to determine whether a card can be played. */
-    CardViewCost cost = 10;
+    /** Can this card currently be played? */
+    bool can_play = 10;
 
     /**
      * Additional interface element rendered to the side of the card during an
