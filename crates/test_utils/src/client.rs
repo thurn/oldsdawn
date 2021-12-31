@@ -21,18 +21,21 @@ use std::collections::HashMap;
 use anyhow::{Context, Result};
 use data::card_name::CardName;
 use data::card_state::{CardData, CardPosition, CardState};
-use data::game::{GameState, PlayerState};
-use data::primitives::{ActionCount, CardId, GameId, ManaValue, PointsValue, RoomId, Side, UserId};
+use data::game::GameState;
+use data::primitives::{
+    ActionCount, CardId, CardType, GameId, ManaValue, PointsValue, RoomId, Side, UserId,
+};
 use display::rendering;
+use display::rendering::CardCreationStrategy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    game_object_identifier, CardIdentifier, CardView, ClientRoomLocation,
+    card_target, game_object_identifier, CardIdentifier, CardTarget, CardView, ClientRoomLocation,
     CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest, ObjectPosition,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayerName, PlayerView,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
+    PlayerView,
 };
-use rules::mutations;
 use server::database::Database;
 use server::GameResponse;
 
@@ -82,11 +85,7 @@ impl TestGame {
         )?;
 
         for command in &response.command_list.commands {
-            let c = command.command.as_ref().with_context(|| "Command not received")?;
-            self.data.update(c.clone());
-            self.user.update(c.clone());
-            self.opponent.update(c.clone());
-            self.cards.update(c.clone());
+            self.handle_command(command.command.as_ref().with_context(|| "Command not received")?);
         }
 
         Ok(response)
@@ -95,59 +94,64 @@ impl TestGame {
     /// Adds a named card to its owner's hand.
     ///
     /// This function operates by locating a test card in the owner's deck and
-    /// overwriting its state to a default [CardState] pointing to the
-    /// provided [CardName] instead. This card is then moved to the user's
-    /// hand via [mutations::move_card], which will invoke game events & game
-    /// updates for a card being drawn as normal. Returns the client
-    /// [CardIdentifier] for the drawn card.
+    /// overwriting it with the provided `card_name`. This card is then moved to
+    /// the user's hand via [GameState::move_card].
+    ///
+    /// This function will *not* check the legality of drawing a card, invoke
+    /// any game events, or append a game update, but it will correctly
+    /// update the card's sorting key. Returns the client [CardIdentifier]
+    /// for the drawn card.
     ///
     /// Panics if no test cards remain in the user's deck.
-    pub fn draw_named_card(&mut self, card_name: CardName) -> CardIdentifier {
+    pub fn add_to_hand(&mut self, card_name: CardName) -> CardIdentifier {
         let side = side_for_card_name(card_name);
-        let test_card = match side {
-            Side::Overlord => CardName::TestOverlordSpell,
-            Side::Champion => CardName::TestChampionSpell,
-        };
         let card_id = self
             .game
             .cards_in_position(side, CardPosition::DeckUnknown(side))
-            .find(|c| c.name == test_card)
+            .find(|c| c.name.is_test_card())
             .expect("No test cards remaining in deck")
             .id;
         overwrite_card(&mut self.game, card_id, card_name);
+        self.game.move_card(card_id, CardPosition::Hand(side));
 
-        mutations::move_card(&mut self.game, card_id, CardPosition::Hand(side));
-
-        rendering::adapt_card_id(card_id)
-    }
-
-    pub fn set_next_draw(&mut self, card_name: CardName) -> CardIdentifier {
-        let side = side_for_card_name(card_name);
-        assert_eq!(self.game.data.turn, side, "Not currently {:?}'s turn", side);
-        assert!(self.game.data.raid.is_none(), "Cannot draw when raid is active");
-
-        let card_id = self
-            .game
-            .cards_in_position(side, CardPosition::DeckUnknown(side))
-            .next()
-            .expect("No cards remaining in deck")
-            .id;
-
-        assert!(self.game.card(card_id).name.is_test_card(), "Expected test card");
-        assert!(
-            self.game.cards_in_position(side, CardPosition::DeckTop(side)).next().is_none(),
-            "Expected no DeckTop cards"
+        let command = rendering::create_or_update_card(
+            &self.game,
+            self.game.card(card_id),
+            side,
+            CardCreationStrategy::SnapToCurrentPosition,
         );
-
-        overwrite_card(&mut self.game, card_id, card_name);
+        self.handle_command(&command);
         rendering::adapt_card_id(card_id)
     }
 
-    /// Gets the [PlayerState] for the indicated player. Typically you should
-    /// use the action API instead of invoking this directly in order to
-    /// preserve test encapsulation.
-    pub fn player_mut(&mut self, side: Side) -> &mut PlayerState {
-        self.game.player_mut(side)
+    /// Draws and then plays a named card.
+    ///
+    /// This function first adds a copy of the requested card to the user's hand
+    /// via [Self::add_to_hand]. The card is then played via the standard
+    /// [PlayCardAction].
+    ///
+    /// If the card is a minion, project, scheme, or upgrade card, it is played
+    /// into the [crate::ROOM_ID] room. The [GameResponse] produced by
+    /// playing the card is returned.
+    pub fn play_from_hand(&mut self, card_name: CardName) -> GameResponse {
+        let card_id = self.add_to_hand(card_name);
+
+        let target = match rules::get(card_name).card_type {
+            CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
+                Some(CardTarget {
+                    card_target: Some(card_target::CardTarget::RoomId(
+                        rendering::adapt_room_id(crate::ROOM_ID).into(),
+                    )),
+                })
+            }
+            _ => None,
+        };
+
+        self.perform_action(
+            Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
+            crate::USER_ID,
+        )
+        .expect("Server error playing card")
     }
 
     /// Returns a vec containing the titles of all of the cards in the provided
@@ -173,10 +177,17 @@ impl TestGame {
             room_location: location.into(),
         }))
     }
+
+    fn handle_command(&mut self, command: &Command) {
+        self.data.update(command.clone());
+        self.user.update(command.clone());
+        self.opponent.update(command.clone());
+        self.cards.update(command.clone());
+    }
 }
 
 /// Overwrites the card with ID `card_id` in `game` to be a new card with the
-/// provided `card_name` and the same card position.
+/// provided `card_name`.
 pub fn overwrite_card(game: &mut GameState, card_id: CardId, card_name: CardName) {
     *game.card_mut(card_id) = CardState {
         id: card_id,

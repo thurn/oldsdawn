@@ -1,4 +1,4 @@
-code-review: check-format build clippy test check-docs outdated udeps
+code-review: check-format build clippy test check-docs outdated
 
 fix: fix-lints fmt
 
@@ -17,9 +17,7 @@ build:
 run:
     RUST_BACKTRACE=1 && cargo +nightly run
 
-test: clean
-    # This currently depends on 'clean' because testing is unreliable on apple
-    # silicon (tests randomly crash with SIGKILL)
+test:
     cargo test
 
 doc:
@@ -93,7 +91,7 @@ outdated:
     cargo outdated --exit-code 1
 
 udeps: clean
-    # Currently seems to panic sometimes without running clean first clean
+    # Currently seems to panic if you don't clean first
     cargo +nightly udeps
 
 time-passes: clean

@@ -161,7 +161,7 @@ fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Comm
 
 /// Possible behavior when creating a card
 #[derive(Debug, PartialEq, Clone)]
-enum CardCreationStrategy {
+pub enum CardCreationStrategy {
     /// Animate the card moving from the user's deck to the staging area.
     DrawUserCard,
     /// Jump the newly-created card to its current game position. If the current
@@ -172,8 +172,8 @@ enum CardCreationStrategy {
     CreateAtPosition(ObjectPosition),
 }
 
-/// Creates a create/update card command.
-fn create_or_update_card(
+/// Creates a create/update card command. Visible for use in tests.
+pub fn create_or_update_card(
     game: &GameState,
     card: &CardState,
     user_side: Side,

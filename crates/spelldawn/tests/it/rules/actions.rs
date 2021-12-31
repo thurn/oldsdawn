@@ -60,7 +60,7 @@ fn cannot_draw_during_raid() {
 #[test]
 fn play_card() {
     let mut g = new_game(Side::Champion, Args { actions: 3, mana: 5, ..Args::default() });
-    let card_id = draw_named_card(&mut g, CardName::ArcaneRecovery);
+    let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         USER_ID,
@@ -75,7 +75,7 @@ fn play_card() {
 #[test]
 fn play_hidden_card() {
     let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 0, ..Args::default() });
-    let card_id = draw_named_card(&mut g, CardName::DungeonAnnex);
+    let card_id = g.add_to_hand(CardName::DungeonAnnex);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction {
             card_id: Some(card_id),
@@ -97,7 +97,7 @@ fn play_hidden_card() {
 #[test]
 fn cannot_play_card_on_opponent_turn() {
     let mut g = new_game(Side::Overlord, Args::default());
-    let card_id = g.draw_named_card(CardName::ArcaneRecovery);
+    let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     assert_error(g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         USER_ID,
@@ -107,7 +107,7 @@ fn cannot_play_card_on_opponent_turn() {
 #[test]
 fn cannot_play_card_when_out_of_action_points() {
     let mut g = new_game(Side::Champion, Args { actions: 0, ..Args::default() });
-    let card_id = g.draw_named_card(CardName::ArcaneRecovery);
+    let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     assert_error(g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         USER_ID,
@@ -120,7 +120,7 @@ fn cannot_play_card_during_raid() {
         Side::Champion,
         Args { raid: Some(TestRaid { priority: Side::Overlord }), ..Args::default() },
     );
-    let card_id = g.draw_named_card(CardName::ArcaneRecovery);
+    let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     assert_error(g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         USER_ID,

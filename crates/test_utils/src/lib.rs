@@ -23,14 +23,8 @@ use data::card_name::CardName;
 use data::card_state::CardPositionKind;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState, RaidState};
-use data::primitives::{
-    ActionCount, CardType, GameId, ManaValue, PointsValue, RaidId, RoomId, Side, UserId,
-};
-use display::rendering;
+use data::primitives::{ActionCount, GameId, ManaValue, PointsValue, RaidId, RoomId, Side, UserId};
 use maplit::hashmap;
-use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{card_target, CardIdentifier, CardTarget, DrawCardAction, PlayCardAction};
-use server::GameResponse;
 
 use crate::client::TestGame;
 
@@ -143,43 +137,4 @@ pub fn assert_ok<T: Debug, E: Debug>(result: &Result<T, E>) {
 /// Asserts that a [Result] is an error
 pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
     assert!(result.is_err(), "Expected an error, got {:?}", result)
-}
-
-pub fn draw_named_card(game: &mut TestGame, card_name: CardName) -> CardIdentifier {
-    let side = client::side_for_card_name(card_name);
-    let card_id = game.set_next_draw(card_name);
-    game.player_mut(side).actions += 1;
-    let user_id = game.player_mut(side).id;
-    game.perform_action(Action::DrawCard(DrawCardAction {}), user_id).expect("Error drawing card");
-    card_id
-}
-
-/// Draws and then plays a named card.
-///
-/// This function first draws a copy of the requested card from the user's deck
-/// via [TestGame::draw_named_card]. The card is then played via the standard
-/// [PlayCardAction].
-///
-/// If the card is a minion, project, scheme, or upgrade card, it is played into
-/// the [ROOM_ID] room. The [GameResponse] produced by playing
-/// the card is returned.
-pub fn play_from_hand(game: &mut TestGame, card_name: CardName) -> GameResponse {
-    let card_id = game.draw_named_card(card_name);
-
-    let target = match rules::get(card_name).card_type {
-        CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
-            Some(CardTarget {
-                card_target: Some(card_target::CardTarget::RoomId(
-                    rendering::adapt_room_id(ROOM_ID).into(),
-                )),
-            })
-        }
-        _ => None,
-    };
-
-    game.perform_action(
-        Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
-        USER_ID,
-    )
-    .expect("Server error playing card")
 }

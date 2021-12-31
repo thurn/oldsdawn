@@ -618,7 +618,7 @@ message RevealedCardView {
     */
     ObjectPosition on_release_position = 9;
 
-    /** Can this card currently be played? */
+    /** Can this card currently be played when it is in hand? */
     bool can_play = 10;
 
     /**
