@@ -37,7 +37,7 @@ use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
-use tracing::{info, warn, warn_span};
+use tracing::{error, info, warn, warn_span};
 
 use crate::database::{Database, SledDatabase};
 
@@ -66,6 +66,21 @@ impl Spelldawn for GameService {
         warn!(?user_id, ?game_id, "received_connection");
 
         let (tx, rx) = mpsc::channel(4);
+
+        let mut database = SledDatabase;
+        match handle_connect(&mut database, user_id, game_id, message.test_mode) {
+            Ok(commands) => {
+                if let Err(error) = tx.send(Ok(commands)).await {
+                    error!(?user_id, ?game_id, ?error, "Send Error!");
+                    return Err(Status::internal(format!("Send Error: {:#}", error)));
+                }
+            }
+            Err(error) => {
+                error!(?user_id, ?game_id, ?error, "Connection Error!");
+                return Err(Status::internal(format!("Connection Error: {:#}", error)));
+            }
+        }
+
         CHANNELS.insert(user_id, tx);
         Ok(Response::new(ReceiverStream::new(rx)))
     }
@@ -80,6 +95,7 @@ impl Spelldawn for GameService {
                 for (user_id, commands) in response.channel_responses {
                     if let Some(channel) = CHANNELS.get(&user_id) {
                         if let Err(e) = channel.send(Ok(commands)).await {
+                            error!(?user_id, ?e, "Channel Error!");
                             return Err(Status::internal(format!("Channel Error: {:#}", e)));
                         }
                     }
@@ -87,7 +103,7 @@ impl Spelldawn for GameService {
                 Ok(Response::new(response.command_list))
             }
             Err(error) => {
-                eprintln!("Server Error: {:#}", error);
+                error!(?error, "Server Error!");
                 Err(Status::internal(format!("Server Error: {:#}", error)))
             }
         }
@@ -123,16 +139,16 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     warn!(?user_id, ?game_id, ?game_action, "received_request");
 
     let response = match game_action {
-        Action::Connect(_) => handle_connect(database, user_id, game_id),
-        Action::DrawCard(_) => handle_action(database, user_id, game_id, actions::draw_card),
+        Action::DrawCard(_) => handle_action(database, user_id, game_id, actions::draw_card_action),
         Action::PlayCard(action) => handle_action(database, user_id, game_id, |game, side| {
-            actions::play_card(
+            actions::play_card_action(
                 game,
                 side,
                 to_server_card_id(&action.card_id)?,
                 card_target(&action.target),
             )
         }),
+        Action::GainMana(_) => handle_action(database, user_id, game_id, actions::gain_mana_action),
         _ => Ok(GameResponse::default()),
     }?;
 
@@ -142,15 +158,19 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     Ok(response)
 }
 
+/// Sets up the game state for a game connection request, either connecting to
+/// the `game_id` game or creating a new game if `game_id` is not provided. If
+/// `test_mode` is true, the new game's ID will be set to 0.
 fn handle_connect(
     database: &mut impl Database,
     user_id: primitives::UserId,
     game_id: Option<primitives::GameId>,
-) -> Result<GameResponse> {
+    test_mode: bool,
+) -> Result<CommandList> {
     let game = if let Some(game_id) = game_id {
         database.game(game_id)?
     } else {
-        let new_game_id = database.generate_game_id()?;
+        let new_game_id = if test_mode { GameId::new(0) } else { database.generate_game_id()? };
         let mut game = GameState::new_game(
             new_game_id,
             Deck {
@@ -180,10 +200,7 @@ fn handle_connect(
     };
 
     let side = user_side(user_id, &game)?;
-    Ok(GameResponse {
-        command_list: CommandList { commands: rendering::full_sync(&game, side) },
-        channel_responses: vec![],
-    })
+    Ok(CommandList { commands: rendering::full_sync(&game, side) })
 }
 
 fn handle_action(

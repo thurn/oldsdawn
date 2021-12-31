@@ -26,6 +26,7 @@ pub mod actions;
 pub mod card_text;
 pub mod champion_spells;
 pub mod dispatch;
+pub mod flags;
 pub mod helpers;
 pub mod minions;
 pub mod mutations;

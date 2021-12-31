@@ -44,7 +44,7 @@ pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, even
     }
 }
 
-/// Called when game state information is needed, invokes each reigistered
+/// Called when game state information is needed. Invokes each registered
 /// [data::delegates::Delegate] for this query and allows them to intercept &
 /// transform the final result.
 #[instrument(skip(game))]

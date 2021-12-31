@@ -104,7 +104,6 @@ namespace Spelldawn.Services
     public bool CanExecuteAction(GameAction.ActionOneofCase actionType) => actionType switch
     {
       GameAction.ActionOneofCase.StandardAction => CanAct(allowInOverlay: true, actionPointRequired: false),
-      GameAction.ActionOneofCase.Connect => true,
       GameAction.ActionOneofCase.GainMana => CanAct(),
       GameAction.ActionOneofCase.DrawCard => CanAct(),
       GameAction.ActionOneofCase.PlayCard => CanAct(),
@@ -192,7 +191,8 @@ namespace Spelldawn.Services
       using var call = _client.Connect(new ConnectRequest
       {
         GameId = _registry.GameService.CurrentGameId,
-        UserId = _registry.GameService.UserId
+        UserId = _registry.GameService.UserId,
+        TestMode = true
       });
 
       while (await call.ResponseStream.MoveNext())

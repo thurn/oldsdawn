@@ -34,7 +34,7 @@ use protos::spelldawn::{
     RevealedCardView, RoomIdentifier, ScoreView, SpendCostAlgorithm, SpriteAddress, TimeValue,
     UpdateGameViewCommand,
 };
-use rules::queries;
+use rules::{flags, queries};
 
 use crate::assets::CardIconType;
 use crate::{assets, rules_text};
@@ -427,7 +427,7 @@ fn card_cost(game: &GameState, user_side: Side, card: &CardState) -> CardViewCos
     CardViewCost {
         mana_cost: queries::mana_cost(game, card.id).unwrap_or(0),
         action_cost: queries::action_cost(game, card.id),
-        can_play: queries::can_play(game, user_side, card.id),
+        can_play: flags::can_play(game, user_side, card.id),
         can_play_algorithm: CanPlayAlgorithm::Optimistic.into(),
         spend_cost_algorithm: SpendCostAlgorithm::Optimistic.into(),
     }

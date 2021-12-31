@@ -772,14 +772,6 @@ message GameView {
 // Actions
 // ============================================================================
 
-/**
- * Initiate a play session. If a game_id is provided in the GameRequest,
- * connects to an ongoing game. Otherwise, creates a new game. This command
- * must be sent from an empty game scene.
- */
-message ConnectAction {
-}
-
 message StandardAction {
     /** Opaque payload to send to the server. */
     google.protobuf.Any payload = 1;
@@ -862,12 +854,11 @@ message InitiateRaidAction {
 message GameAction {
     oneof action {
         StandardAction standard_action = 1;
-        ConnectAction connect = 2;
-        GainManaAction gain_mana = 3;
-        DrawCardAction draw_card = 4;
-        PlayCardAction play_card = 5;
-        LevelUpRoomAction level_up_room = 6;
-        InitiateRaidAction initiate_raid = 7;
+        GainManaAction gain_mana = 2;
+        DrawCardAction draw_card = 3;
+        PlayCardAction play_card = 4;
+        LevelUpRoomAction level_up_room = 5;
+        InitiateRaidAction initiate_raid = 6;
     }
 }
 
@@ -893,7 +884,7 @@ message DebugLogCommand {
     string message = 1;
 }
 
-/**
+/*
  * Run a series of command lists simultaneously. Warning: applying multiple
  * commands to the same game object will have unpredictable results.
  */
@@ -901,7 +892,7 @@ message RunInParallelCommand {
     repeated CommandList commands = 1;
 }
 
-/** Wait before executing the next command in sequence. */
+/* Wait before executing the next command in sequence. */
 message DelayCommand {
     TimeValue duration = 1;
 }
@@ -924,7 +915,7 @@ enum CardNodeAnchorPosition {
     CARD_NODE_ANCHOR_POSITION_RIGHT = 3;
 }
 
-/** Render an interface element attached to a specific card. */
+/* Render an interface element attached to a specific card. */
 message CardAnchorNode {
     CardIdentifier card_id = 1;
     Node node = 2;
@@ -935,7 +926,7 @@ message InterfacePositionCardAnchors {
     repeated CardAnchorNode anchor_nodes = 1;
 }
 
-/**
+/*
 * Updates the content of the user interface to display the provided node,
 * replacing all existing UI elements.
 */
@@ -947,7 +938,7 @@ message RenderInterfaceCommand {
     }
 }
 
-/** Updates the current GameView state. */
+/* Updates the current GameView state. */
 message UpdateGameViewCommand {
     GameView game = 1;
 }
@@ -957,7 +948,7 @@ message InitiateRaidCommand {
     RoomIdentifier room_id = 2;
 }
 
-/**
+/*
  * Removes the raid UI overlay. This command does not cause game objects within
  * the raid to change position, 'MoveGameObjectCommand' should be used for that
  * instead.
@@ -966,7 +957,7 @@ message EndRaidCommand {
     PlayerName initiator = 1;
 }
 
-/**
+/*
  * Animates 'initiator' moving to a room and plays a standard effect.
  */
 message LevelUpRoomCommand {
@@ -977,11 +968,11 @@ message LevelUpRoomCommand {
 enum CardCreationAnimation {
     CARD_CREATION_ANIMATION_UNSPECIFIED = 0;
 
-    /** Animates the card moving from the deck to the staging area. */
+    /* Animates the card moving from the deck to the staging area. */
     CARD_CREATION_ANIMATION_DRAW_CARD = 1;
 }
 
-/**
+/*
  * Creates a new card, or updates an existing card if one is already present
  * with the provided CardId.
  *
@@ -993,41 +984,41 @@ enum CardCreationAnimation {
 message CreateOrUpdateCardCommand {
     CardView card = 1;
 
-    /**
+    /*
      * Optionally, a position in which to create this card. Ignored if the card
      * already exists, if a 'create_animation' is specified, or during optimistic
      * card draw.
      */
     ObjectPosition create_position = 2;
 
-    /**
+    /*
      * Optionally, an animation to play after creating the card. Ignored if
      * the card already exists. Ignored during optimistic card draw.
      */
     CardCreationAnimation create_animation = 3;
 
-    /**
+    /*
     * Disables the flip animation for this card, allowing it immediately
     * transition to a revealed state.
     */
     bool disable_flip_animation = 4;
 }
 
-/**
+/*
  * Requests to destroy a card game object.
  */
 message DestroyCardCommand {
     CardIdentifier card_id = 1;
 }
 
-/**
+/*
  * Moves a list of GameObjects to a new position. Objects already in the target
  * position are skipped.
  */
 message MoveGameObjectsCommand {
     repeated GameObjectIdentifier ids = 1;
 
-    /**
+    /*
      * Position at which to insert. If multiple IDs are specified, they will
      * be sequentially added at this position
      */
@@ -1036,7 +1027,7 @@ message MoveGameObjectsCommand {
     bool disable_animation = 3;
 }
 
-/**
+/*
  * Request to move all GameObjects located at a specific object position to
  * another object position.
  */
@@ -1063,44 +1054,44 @@ message SetMusicCommand {
     MusicState music_state = 1;
 }
 
-/**
+/*
  * Fire a projectile from one game object at another.
  */
 message FireProjectileCommand {
     GameObjectIdentifier source_id = 1;
     GameObjectIdentifier target_id = 2;
 
-    /** Projectile to fire from the 'source_id' card to 'target_id' */
+    /* Projectile to fire from the 'source_id' card to 'target_id' */
     ProjectileAddress projectile = 3;
 
-    /** How long the projectile should take to hit its target. */
+    /* How long the projectile should take to hit its target. */
     TimeValue travel_duration = 4;
 
     AudioClipAddress fire_sound = 5;
 
     AudioClipAddress impact_sound = 6;
 
-    /** Additional effect to display on the target on hit. */
+    /* Additional effect to display on the target on hit. */
     EffectAddress additional_hit = 7;
 
-    /**
+    /*
      * Delay before showing the additional hit. If provided, the original
      * projectile Hit effect will be hidden before showing the new hit effect.
      */
     TimeValue additional_hit_delay = 8;
 
-    /**
+    /*
      * During to wait for the project's impact effect before continuing
      */
     TimeValue wait_duration = 9;
 
-    /**
+    /*
      * If true, the target will be hidden after being hit during the
      * 'wait_duration' and before jumping to 'jump_to_position'.
      */
     bool hide_on_hit = 10;
 
-    /**
+    /*
      * Position for the target to jump to after being hit.
      */
     ObjectPosition jump_to_position = 11;
@@ -1119,7 +1110,7 @@ message PlayEffectCommand {
 
     google.protobuf.FloatValue scale = 3;
 
-    /** How long to wait before continuing. */
+    /* How long to wait before continuing. */
     TimeValue duration = 4;
 
     AudioClipAddress sound = 5;
@@ -1137,7 +1128,7 @@ message DisplayGameMessageCommand {
     GameMessageType message_type = 1;
 }
 
-/** Used to hide and show all game UI elements. */
+/* Used to hide and show all game UI elements. */
 message SetGameObjectsEnabledCommand {
     bool game_objects_enabled = 1;
 }
@@ -1174,18 +1165,29 @@ message CommandList {
     repeated GameCommand commands = 1;
 }
 
+/*
+ * Initiate a play session. If a game_id is provided, connects to an ongoing
+ * game. Otherwise, creates a new game. This must be sent from an empty game
+ * scene.
+ */
 message ConnectRequest {
-    /** Target game to connect to, if any */
+    /* Target game to connect to, if any */
     GameIdentifier game_id = 1;
 
-    /** User making this request. */
+    /* User making this request. */
     uint64 user_id = 2;
+
+    /*
+     * If test_mode is true, the generated GameId for a new game will always
+     * be 0.
+     */
+    bool test_mode = 3;
 }
 
 service Spelldawn {
-    /** Initiate a new server connection. */
+    /* Initiate a new server connection. */
     rpc Connect(ConnectRequest) returns (stream CommandList);
 
-    /** Perform a game action. */
+    /* Perform a game action. */
     rpc PerformAction(GameRequest) returns (CommandList);
 }

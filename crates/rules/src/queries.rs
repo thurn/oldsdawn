@@ -17,8 +17,8 @@
 use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates::{
-    ActionCostQuery, AttackValueQuery, BoostCountQuery, CanPlayCardQuery,
-    CanTakeDrawCardActionQuery, Flag, HealthValueQuery, ManaCostQuery, ShieldValueQuery,
+    ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery, ManaCostQuery,
+    ShieldValueQuery,
 };
 use data::game::GameState;
 use data::primitives::{
@@ -40,21 +40,6 @@ pub fn top_of_deck(game: &GameState, side: Side) -> Option<CardId> {
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: CardId) -> &CardStats {
     &crate::get(game.card(card_id).name).config.stats
-}
-
-/// Returns whether the indicated player can currently take the basic game
-/// action to draw a card.
-pub fn can_take_draw_card_action(game: &GameState, side: Side) -> bool {
-    let can_draw = in_main_phase(game, side) && game.deck(side).next().is_some();
-    dispatch::perform_query(game, CanTakeDrawCardActionQuery(side), Flag::new(can_draw)).into()
-}
-
-/// Returns whether a given card can currently be played
-pub fn can_play(game: &GameState, side: Side, card_id: CardId) -> bool {
-    let can_play = in_main_phase(game, side)
-        && side == card_id.side
-        && matches!(mana_cost(game, card_id), Some(cost) if cost <= game.player(side).mana);
-    dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
 }
 
 /// Returns the mana cost for a given card, if any
@@ -107,8 +92,8 @@ pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
     dispatch::perform_query(game, BoostCountQuery(card_id), game.card(card_id).data.boost_count)
 }
 
-// Returns true if the provided `side` player is currently in their Main phase
-// and can take a primary game action.
+/// Returns true if the provided `side` player is currently in their Main phase
+/// and can take a primary game action.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {
     game.player(side).actions > 0 && game.data.turn == side && game.data.raid.is_none()
 }

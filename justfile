@@ -15,9 +15,11 @@ build:
     cargo build --all-targets --all-features
 
 run:
-    cargo run
+    RUST_BACKTRACE=1 && cargo +nightly run
 
-test:
+test: clean
+    # This currently depends on 'clean' because testing is unreliable on apple
+    # silicon (tests randomly crash with SIGKILL)
     cargo test
 
 doc:

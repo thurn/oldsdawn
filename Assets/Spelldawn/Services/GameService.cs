@@ -23,7 +23,7 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] ulong _userId = 1;
-    [SerializeField] ulong _currentGameId;
+    [SerializeField] string? _currentGameId;
 
     public ulong UserId
     {
@@ -31,25 +31,22 @@ namespace Spelldawn.Services
       set => _userId = value;
     }
 
-    public GameIdentifier? CurrentGameId
-    {
-      get => _currentGameId == 0
-        ? null
-        : new GameIdentifier
-        {
-          Value = _currentGameId
-        };
-      set => _currentGameId = value?.Value ?? 0;
-    }
+    public GameIdentifier? CurrentGameId { get; set; }
 
     void Start()
     {
       _registry.ActionService.Connect();
+    }
 
-      _registry.ActionService.HandleAction(new GameAction
+    void OnValidate()
+    {
+      if (ulong.TryParse(_currentGameId, out var result))
       {
-        Connect = new ConnectAction()
-      });
+        CurrentGameId = new GameIdentifier
+        {
+          Value = result
+        };
+      }
     }
   }
 }

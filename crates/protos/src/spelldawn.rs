@@ -495,10 +495,10 @@ pub struct ObjectPositionIdentityContainer {
 pub struct ObjectPositionRewardChest {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPosition {
-    ///*
+    ///
     /// A key by which to sort this object -- objects with higher sorting keys
-    /// should be displayed 'on top' of objects with lower sorting keys. In the
-    /// case of ties, any ordering is acceptable.
+    /// should be displayed 'on top of' or 'in front of' objects with lower
+    /// sorting keys. In the case of ties, any ordering is acceptable.
     #[prost(uint32, tag = "1")]
     pub sorting_key: u32,
     #[prost(
@@ -687,12 +687,6 @@ pub struct GameView {
 // Actions
 // ============================================================================
 
-///*
-/// Initiate a play session. If a game_id is provided in the GameRequest,
-/// connects to an ongoing game. Otherwise, creates a new game. This command
-/// must be sent from an empty game scene.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ConnectAction {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
     /// * Opaque payload to send to the server.
@@ -778,7 +772,7 @@ pub struct InitiateRaidAction {
 /// same time -- interaction should be disabled while an action is pending.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameAction {
-    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7")]
+    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6")]
     pub action: ::core::option::Option<game_action::Action>,
 }
 /// Nested message and enum types in `GameAction`.
@@ -788,16 +782,14 @@ pub mod game_action {
         #[prost(message, tag = "1")]
         StandardAction(super::StandardAction),
         #[prost(message, tag = "2")]
-        Connect(super::ConnectAction),
-        #[prost(message, tag = "3")]
         GainMana(super::GainManaAction),
-        #[prost(message, tag = "4")]
+        #[prost(message, tag = "3")]
         DrawCard(super::DrawCardAction),
-        #[prost(message, tag = "5")]
+        #[prost(message, tag = "4")]
         PlayCard(super::PlayCardAction),
-        #[prost(message, tag = "6")]
+        #[prost(message, tag = "5")]
         LevelUpRoom(super::LevelUpRoomAction),
-        #[prost(message, tag = "7")]
+        #[prost(message, tag = "6")]
         InitiateRaid(super::InitiateRaidAction),
     }
 }
@@ -824,7 +816,7 @@ pub struct DebugLogCommand {
     #[prost(string, tag = "1")]
     pub message: ::prost::alloc::string::String,
 }
-///*
+///
 /// Run a series of command lists simultaneously. Warning: applying multiple
 /// commands to the same game object will have unpredictable results.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -832,7 +824,7 @@ pub struct RunInParallelCommand {
     #[prost(message, repeated, tag = "1")]
     pub commands: ::prost::alloc::vec::Vec<CommandList>,
 }
-/// * Wait before executing the next command in sequence.
+/// Wait before executing the next command in sequence.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DelayCommand {
     #[prost(message, optional, tag = "1")]
@@ -848,7 +840,7 @@ pub struct InterfacePositionMainControls {
     #[prost(message, optional, tag = "1")]
     pub node: ::core::option::Option<Node>,
 }
-/// * Render an interface element attached to a specific card.
+/// Render an interface element attached to a specific card.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardAnchorNode {
     #[prost(message, optional, tag = "1")]
@@ -863,7 +855,7 @@ pub struct InterfacePositionCardAnchors {
     #[prost(message, repeated, tag = "1")]
     pub anchor_nodes: ::prost::alloc::vec::Vec<CardAnchorNode>,
 }
-///*
+///
 /// Updates the content of the user interface to display the provided node,
 /// replacing all existing UI elements.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -883,7 +875,7 @@ pub mod render_interface_command {
         CardAnchors(super::InterfacePositionCardAnchors),
     }
 }
-/// * Updates the current GameView state.
+/// Updates the current GameView state.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateGameViewCommand {
     #[prost(message, optional, tag = "1")]
@@ -896,7 +888,7 @@ pub struct InitiateRaidCommand {
     #[prost(enumeration = "RoomIdentifier", tag = "2")]
     pub room_id: i32,
 }
-///*
+///
 /// Removes the raid UI overlay. This command does not cause game objects within
 /// the raid to change position, 'MoveGameObjectCommand' should be used for that
 /// instead.
@@ -905,7 +897,7 @@ pub struct EndRaidCommand {
     #[prost(enumeration = "PlayerName", tag = "1")]
     pub initiator: i32,
 }
-///*
+///
 /// Animates 'initiator' moving to a room and plays a standard effect.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LevelUpRoomCommand {
@@ -914,7 +906,7 @@ pub struct LevelUpRoomCommand {
     #[prost(enumeration = "RoomIdentifier", tag = "2")]
     pub room_id: i32,
 }
-///*
+///
 /// Creates a new card, or updates an existing card if one is already present
 /// with the provided CardId.
 ///
@@ -926,37 +918,38 @@ pub struct LevelUpRoomCommand {
 pub struct CreateOrUpdateCardCommand {
     #[prost(message, optional, tag = "1")]
     pub card: ::core::option::Option<CardView>,
-    ///*
-    /// Optionally, a position in which to create this card. Ignored if the
-    /// card already exists. Ignored during optimistic card draw.
+    ///
+    /// Optionally, a position in which to create this card. Ignored if the card
+    /// already exists, if a 'create_animation' is specified, or during
+    /// optimistic card draw.
     #[prost(message, optional, tag = "2")]
     pub create_position: ::core::option::Option<ObjectPosition>,
-    ///*
+    ///
     /// Optionally, an animation to play after creating the card. Ignored if
     /// the card already exists. Ignored during optimistic card draw.
     #[prost(enumeration = "CardCreationAnimation", tag = "3")]
     pub create_animation: i32,
-    ///*
+    ///
     /// Disables the flip animation for this card, allowing it immediately
     /// transition to a revealed state.
     #[prost(bool, tag = "4")]
     pub disable_flip_animation: bool,
 }
-///*
+///
 /// Requests to destroy a card game object.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DestroyCardCommand {
     #[prost(message, optional, tag = "1")]
     pub card_id: ::core::option::Option<CardIdentifier>,
 }
-///*
+///
 /// Moves a list of GameObjects to a new position. Objects already in the target
 /// position are skipped.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MoveGameObjectsCommand {
     #[prost(message, repeated, tag = "1")]
     pub ids: ::prost::alloc::vec::Vec<GameObjectIdentifier>,
-    ///*
+    ///
     /// Position at which to insert. If multiple IDs are specified, they will
     /// be sequentially added at this position
     #[prost(message, optional, tag = "2")]
@@ -964,7 +957,7 @@ pub struct MoveGameObjectsCommand {
     #[prost(bool, tag = "3")]
     pub disable_animation: bool,
 }
-///*
+///
 /// Request to move all GameObjects located at a specific object position to
 /// another object position.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -986,7 +979,7 @@ pub struct SetMusicCommand {
     #[prost(enumeration = "MusicState", tag = "1")]
     pub music_state: i32,
 }
-///*
+///
 /// Fire a projectile from one game object at another.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FireProjectileCommand {
@@ -994,34 +987,34 @@ pub struct FireProjectileCommand {
     pub source_id: ::core::option::Option<GameObjectIdentifier>,
     #[prost(message, optional, tag = "2")]
     pub target_id: ::core::option::Option<GameObjectIdentifier>,
-    /// * Projectile to fire from the 'source_id' card to 'target_id'
+    /// Projectile to fire from the 'source_id' card to 'target_id'
     #[prost(message, optional, tag = "3")]
     pub projectile: ::core::option::Option<ProjectileAddress>,
-    /// * How long the projectile should take to hit its target.
+    /// How long the projectile should take to hit its target.
     #[prost(message, optional, tag = "4")]
     pub travel_duration: ::core::option::Option<TimeValue>,
     #[prost(message, optional, tag = "5")]
     pub fire_sound: ::core::option::Option<AudioClipAddress>,
     #[prost(message, optional, tag = "6")]
     pub impact_sound: ::core::option::Option<AudioClipAddress>,
-    /// * Additional effect to display on the target on hit.
+    /// Additional effect to display on the target on hit.
     #[prost(message, optional, tag = "7")]
     pub additional_hit: ::core::option::Option<EffectAddress>,
-    ///*
+    ///
     /// Delay before showing the additional hit. If provided, the original
     /// projectile Hit effect will be hidden before showing the new hit effect.
     #[prost(message, optional, tag = "8")]
     pub additional_hit_delay: ::core::option::Option<TimeValue>,
-    ///*
+    ///
     /// During to wait for the project's impact effect before continuing
     #[prost(message, optional, tag = "9")]
     pub wait_duration: ::core::option::Option<TimeValue>,
-    ///*
+    ///
     /// If true, the target will be hidden after being hit during the
     /// 'wait_duration' and before jumping to 'jump_to_position'.
     #[prost(bool, tag = "10")]
     pub hide_on_hit: bool,
-    ///*
+    ///
     /// Position for the target to jump to after being hit.
     #[prost(message, optional, tag = "11")]
     pub jump_to_position: ::core::option::Option<ObjectPosition>,
@@ -1047,7 +1040,7 @@ pub struct PlayEffectCommand {
     pub position: ::core::option::Option<PlayEffectPosition>,
     #[prost(message, optional, tag = "3")]
     pub scale: ::core::option::Option<f32>,
-    /// * How long to wait before continuing.
+    /// How long to wait before continuing.
     #[prost(message, optional, tag = "4")]
     pub duration: ::core::option::Option<TimeValue>,
     #[prost(message, optional, tag = "5")]
@@ -1058,7 +1051,7 @@ pub struct DisplayGameMessageCommand {
     #[prost(enumeration = "GameMessageType", tag = "1")]
     pub message_type: i32,
 }
-/// * Used to hide and show all game UI elements.
+/// Used to hide and show all game UI elements.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SetGameObjectsEnabledCommand {
     #[prost(bool, tag = "1")]
@@ -1126,14 +1119,23 @@ pub struct CommandList {
     #[prost(message, repeated, tag = "1")]
     pub commands: ::prost::alloc::vec::Vec<GameCommand>,
 }
+///
+/// Initiate a play session. If a game_id is provided, connects to an ongoing
+/// game. Otherwise, creates a new game. This must be sent from an empty game
+/// scene.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ConnectRequest {
-    /// * Target game to connect to, if any
+    /// Target game to connect to, if any
     #[prost(message, optional, tag = "1")]
     pub game_id: ::core::option::Option<GameIdentifier>,
-    /// * User making this request.
+    /// User making this request.
     #[prost(uint64, tag = "2")]
     pub user_id: u64,
+    ///
+    /// If test_mode is true, the generated GameId for a new game will always
+    /// be 0.
+    #[prost(bool, tag = "3")]
+    pub test_mode: bool,
 }
 // ============================================================================
 // Masonry
@@ -1401,7 +1403,7 @@ pub enum CardNodeAnchorPosition {
 #[repr(i32)]
 pub enum CardCreationAnimation {
     Unspecified = 0,
-    /// * Animates the card moving from the deck to the staging area.
+    /// Animates the card moving from the deck to the staging area.
     DrawCard = 1,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -1432,12 +1434,12 @@ pub mod spelldawn_server {
         type ConnectStream: futures_core::Stream<Item = Result<super::CommandList, tonic::Status>>
             + Send
             + 'static;
-        #[doc = "* Initiate a new server connection. "]
+        #[doc = " Initiate a new server connection. "]
         async fn connect(
             &self,
             request: tonic::Request<super::ConnectRequest>,
         ) -> Result<tonic::Response<Self::ConnectStream>, tonic::Status>;
-        #[doc = "* Perform a game action. "]
+        #[doc = " Perform a game action. "]
         async fn perform_action(
             &self,
             request: tonic::Request<super::GameRequest>,

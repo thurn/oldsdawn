@@ -30,14 +30,13 @@ use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 use tracing::{info, instrument};
 
-use crate::{dispatch, mutations, queries};
+use crate::{dispatch, flags, mutations, queries};
 
 /// The basic game action to draw a card during your turn by spending one
-/// action.
-#[instrument(skip(game))]
-pub fn draw_card(game: &mut GameState, side: Side) -> Result<()> {
-    info!(?side, "draw_card");
-    ensure!(queries::can_take_draw_card_action(game, side), "Cannot draw card for {:?}", side);
+/// action. [instrument(skip(game))]
+pub fn draw_card_action(game: &mut GameState, side: Side) -> Result<()> {
+    info!(?side, "draw_card_action");
+    ensure!(flags::can_take_draw_card_action(game, side), "Cannot draw card for {:?}", side);
     let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
     mutations::spend_action_points(game, side, 1);
     mutations::move_card(game, card, CardPosition::Hand(side));
@@ -69,14 +68,14 @@ impl PlayCardTarget {
 /// new [CardPosition]. Spell, Weapon, and Artifact cards are immediately
 /// revealed when played.
 #[instrument(skip(game))]
-pub fn play_card(
+pub fn play_card_action(
     game: &mut GameState,
     side: Side,
     card_id: CardId,
     target: PlayCardTarget,
 ) -> Result<()> {
-    info!(?side, ?card_id, ?target, "play_card");
-    ensure!(queries::can_play(game, side, card_id), "Cannot play card {:?}", card_id);
+    info!(?side, ?card_id, ?target, "play_card_action");
+    ensure!(flags::can_play(game, side, card_id), "Cannot play card {:?}", card_id);
     let card = game.card(card_id);
     let definition = crate::get(card.name);
 
@@ -105,5 +104,16 @@ pub fn play_card(
 
     mutations::move_card(game, card_id, new_position);
 
+    Ok(())
+}
+
+/// The basic game action to gain 1 mana during your turn by spending one
+/// action.
+#[instrument(skip(game))]
+pub fn gain_mana_action(game: &mut GameState, side: Side) -> Result<()> {
+    info!(?side, "gain_mana_action");
+    ensure!(flags::can_take_gain_mana_action(game, side), "Cannot gain mana for {:?}", side);
+    mutations::spend_action_points(game, side, 1);
+    mutations::gain_mana(game, side, 1);
     Ok(())
 }

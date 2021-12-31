@@ -16,7 +16,7 @@ use data::card_name::CardName;
 use data::primitives::Side;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{DrawCardAction, PlayCardAction, PlayerName};
+use protos::spelldawn::{DrawCardAction, GainManaAction, PlayCardAction, PlayerName};
 use test_utils::*;
 
 #[test]
@@ -99,4 +99,35 @@ fn cannot_play_card_during_raid() {
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         USER_ID,
     ));
+}
+
+#[test]
+fn gain_mana() {
+    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
+    let response = g.perform_action(Action::GainMana(GainManaAction {}), USER_ID);
+    assert_eq!(2, g.user.actions());
+    assert_eq!(6, g.user.mana());
+    assert_ok(&response);
+    assert_debug_snapshot!(response);
+}
+
+#[test]
+fn cannot_gain_mana_on_opponent_turn() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    assert_error(g.perform_action(Action::GainMana(GainManaAction {}), OPPONENT_ID));
+}
+
+#[test]
+fn cannot_gain_mana_when_out_of_action_points() {
+    let mut g = new_game(Side::Overlord, Args { actions: 0, ..Args::default() });
+    assert_error(g.perform_action(Action::GainMana(GainManaAction {}), USER_ID));
+}
+
+#[test]
+fn cannot_gain_mana_during_raid() {
+    let mut g = new_game(
+        Side::Overlord,
+        Args { raid: Some(TestRaid { priority: Side::Overlord }), ..Args::default() },
+    );
+    assert_error(g.perform_action(Action::GainMana(GainManaAction {}), USER_ID));
 }

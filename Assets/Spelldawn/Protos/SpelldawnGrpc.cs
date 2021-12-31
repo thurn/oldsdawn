@@ -94,7 +94,7 @@ namespace Spelldawn.Protos {
     public abstract partial class SpelldawnBase
     {
       /// <summary>
-      ///* Initiate a new server connection. 
+      /// Initiate a new server connection. 
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="responseStream">Used for sending responses back to the client.</param>
@@ -107,7 +107,7 @@ namespace Spelldawn.Protos {
       }
 
       /// <summary>
-      ///* Perform a game action. 
+      /// Perform a game action. 
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -148,7 +148,7 @@ namespace Spelldawn.Protos {
       }
 
       /// <summary>
-      ///* Initiate a new server connection. 
+      /// Initiate a new server connection. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -161,7 +161,7 @@ namespace Spelldawn.Protos {
         return Connect(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///* Initiate a new server connection. 
+      /// Initiate a new server connection. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -172,7 +172,7 @@ namespace Spelldawn.Protos {
         return CallInvoker.AsyncServerStreamingCall(__Method_Connect, null, options, request);
       }
       /// <summary>
-      ///* Perform a game action. 
+      /// Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -185,7 +185,7 @@ namespace Spelldawn.Protos {
         return PerformAction(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///* Perform a game action. 
+      /// Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -196,7 +196,7 @@ namespace Spelldawn.Protos {
         return CallInvoker.BlockingUnaryCall(__Method_PerformAction, null, options, request);
       }
       /// <summary>
-      ///* Perform a game action. 
+      /// Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -209,7 +209,7 @@ namespace Spelldawn.Protos {
         return PerformActionAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///* Perform a game action. 
+      /// Perform a game action. 
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>

@@ -258,8 +258,11 @@ pub enum Delegate {
     StoredManaTaken(EventDelegate<CardId>),
 
     /// Query whether the indicated player can currently take the basic game
-    /// action to spend an action point and draw a card.
+    /// action to spend an action point to draw a card.
     CanTakeDrawCardAction(QueryDelegate<Side, Flag>),
+    /// Query whether the indicated player can currently take the basic game
+    /// action to spend an action point to gain one mana
+    CanTakeGainManaAction(QueryDelegate<Side, Flag>),
     /// Query whether a given card can currently be played.
     CanPlayCard(QueryDelegate<CardId, Flag>),
 
