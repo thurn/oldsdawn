@@ -1,0 +1,209 @@
+---
+source: crates/spelldawn/tests/it/rules/actions.rs
+assertion_line: 94
+expression: response
+
+---
+Ok(
+    GameResponse {
+        command_list: CommandList {
+            commands: [
+                GameCommand {
+                    command: Some(
+                        UpdateGameView(
+                            UpdateGameViewCommand {
+                                game: Some(
+                                    GameView {
+                                        game_id: Some(
+                                            GameIdentifier {
+                                                value: 1,
+                                            },
+                                        ),
+                                        user: Some(
+                                            PlayerView {
+                                                player_info: None,
+                                                score: Some(
+                                                    ScoreView {
+                                                        score: 0,
+                                                    },
+                                                ),
+                                                mana: Some(
+                                                    ManaView {
+                                                        amount: 0,
+                                                    },
+                                                ),
+                                                action_tracker: Some(
+                                                    ActionTrackerView {
+                                                        available_action_count: 2,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        opponent: Some(
+                                            PlayerView {
+                                                player_info: None,
+                                                score: Some(
+                                                    ScoreView {
+                                                        score: 0,
+                                                    },
+                                                ),
+                                                mana: Some(
+                                                    ManaView {
+                                                        amount: 5,
+                                                    },
+                                                ),
+                                                action_tracker: Some(
+                                                    ActionTrackerView {
+                                                        available_action_count: 0,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        arena: None,
+                                        current_priority: User,
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 1,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 2,
+                                        position: Some(
+                                            Room(
+                                                ObjectPositionRoom {
+                                                    room_id: RoomA,
+                                                    room_location: Back,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+            ],
+        },
+        channel_responses: [
+            (
+                2,
+                CommandList {
+                    commands: [
+                        GameCommand {
+                            command: Some(
+                                UpdateGameView(
+                                    UpdateGameViewCommand {
+                                        game: Some(
+                                            GameView {
+                                                game_id: Some(
+                                                    GameIdentifier {
+                                                        value: 1,
+                                                    },
+                                                ),
+                                                user: Some(
+                                                    PlayerView {
+                                                        player_info: None,
+                                                        score: Some(
+                                                            ScoreView {
+                                                                score: 0,
+                                                            },
+                                                        ),
+                                                        mana: Some(
+                                                            ManaView {
+                                                                amount: 5,
+                                                            },
+                                                        ),
+                                                        action_tracker: Some(
+                                                            ActionTrackerView {
+                                                                available_action_count: 0,
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                opponent: Some(
+                                                    PlayerView {
+                                                        player_info: None,
+                                                        score: Some(
+                                                            ScoreView {
+                                                                score: 0,
+                                                            },
+                                                        ),
+                                                        mana: Some(
+                                                            ManaView {
+                                                                amount: 0,
+                                                            },
+                                                        ),
+                                                        action_tracker: Some(
+                                                            ActionTrackerView {
+                                                                available_action_count: 2,
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                arena: None,
+                                                current_priority: Opponent,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 1,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 2,
+                                                position: Some(
+                                                    Room(
+                                                        ObjectPositionRoom {
+                                                            room_id: RoomA,
+                                                            room_location: Back,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                    ],
+                },
+            ),
+        ],
+    },
+)

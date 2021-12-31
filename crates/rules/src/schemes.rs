@@ -28,7 +28,7 @@ pub fn dungeon_annex() -> CardDefinition {
         name: CardName::DungeonAnnex,
         cost: cost(8),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
-        card_type: CardType::Minion,
+        card_type: CardType::Scheme,
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,

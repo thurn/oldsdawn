@@ -21,16 +21,16 @@ use std::collections::HashMap;
 use anyhow::{Context, Result};
 use data::card_name::CardName;
 use data::card_state::{CardData, CardPosition, CardState};
-use data::game::GameState;
-use data::primitives::{ActionCount, CardId, GameId, ManaValue, PointsValue, Side, UserId};
+use data::game::{GameState, PlayerState};
+use data::primitives::{ActionCount, CardId, GameId, ManaValue, PointsValue, RoomId, Side, UserId};
 use display::rendering;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    game_object_identifier, CardIdentifier, CardView, CreateOrUpdateCardCommand, GameAction,
-    GameIdentifier, GameRequest, ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand,
-    PlayerName, PlayerView,
+    game_object_identifier, CardIdentifier, CardView, ClientRoomLocation,
+    CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest, ObjectPosition,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayerName, PlayerView,
 };
 use rules::mutations;
 use server::database::Database;
@@ -108,10 +108,9 @@ impl TestGame {
             Side::Overlord => CardName::TestOverlordSpell,
             Side::Champion => CardName::TestChampionSpell,
         };
-        let deck_position = CardPosition::DeckUnknown(side);
         let card_id = self
             .game
-            .cards_in_position(side, deck_position)
+            .cards_in_position(side, CardPosition::DeckUnknown(side))
             .find(|c| c.name == test_card)
             .expect("No test cards remaining in deck")
             .id;
@@ -120,6 +119,35 @@ impl TestGame {
         mutations::move_card(&mut self.game, card_id, CardPosition::Hand(side));
 
         rendering::adapt_card_id(card_id)
+    }
+
+    pub fn set_next_draw(&mut self, card_name: CardName) -> CardIdentifier {
+        let side = side_for_card_name(card_name);
+        assert_eq!(self.game.data.turn, side, "Not currently {:?}'s turn", side);
+        assert!(self.game.data.raid.is_none(), "Cannot draw when raid is active");
+
+        let card_id = self
+            .game
+            .cards_in_position(side, CardPosition::DeckUnknown(side))
+            .next()
+            .expect("No cards remaining in deck")
+            .id;
+
+        assert!(self.game.card(card_id).name.is_test_card(), "Expected test card");
+        assert!(
+            self.game.cards_in_position(side, CardPosition::DeckTop(side)).next().is_none(),
+            "Expected no DeckTop cards"
+        );
+
+        overwrite_card(&mut self.game, card_id, card_name);
+        rendering::adapt_card_id(card_id)
+    }
+
+    /// Gets the [PlayerState] for the indicated player. Typically you should
+    /// use the action API instead of invoking this directly in order to
+    /// preserve test encapsulation.
+    pub fn player_mut(&mut self, side: Side) -> &mut PlayerState {
+        self.game.player_mut(side)
     }
 
     /// Returns a vec containing the titles of all of the cards in the provided
@@ -133,6 +161,16 @@ impl TestGame {
     pub fn discard_pile(&self, player: PlayerName) -> Vec<String> {
         self.cards.names_in_position(Position::DiscardPile(ObjectPositionDiscardPile {
             owner: player.into(),
+        }))
+    }
+
+    /// Returns a vector containing the card titles in the provided `location`
+    /// of a given room, Titles are structured in the same manner described
+    /// in [Self::hand].
+    pub fn room_cards(&self, room_id: RoomId, location: ClientRoomLocation) -> Vec<String> {
+        self.cards.names_in_position(Position::Room(ObjectPositionRoom {
+            room_id: rendering::adapt_room_id(room_id).into(),
+            room_location: location.into(),
         }))
     }
 }
@@ -272,8 +310,12 @@ impl ClientCards {
                 for id in move_objects.ids {
                     if let game_object_identifier::Id::CardId(identifier) = id.id.expect("ID") {
                         let card_id = server::to_server_card_id(&Some(identifier)).expect("CardId");
-                        let mut card =
-                            self.cards.get_mut(&card_id).expect("Attempted to move unknown card");
+                        assert!(
+                            self.cards.contains_key(&card_id),
+                            "Expected a CreateOrUpdate command before a Move command for card {:?}",
+                            card_id
+                        );
+                        let mut card = self.cards.get_mut(&card_id).unwrap();
                         card.position = Some(position.clone());
                     }
                 }

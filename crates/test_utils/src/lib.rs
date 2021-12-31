@@ -29,7 +29,7 @@ use data::primitives::{
 use display::rendering;
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{card_target, CardTarget, PlayCardAction};
+use protos::spelldawn::{card_target, CardIdentifier, CardTarget, DrawCardAction, PlayCardAction};
 use server::GameResponse;
 
 use crate::client::TestGame;
@@ -143,6 +143,15 @@ pub fn assert_ok<T: Debug, E: Debug>(result: &Result<T, E>) {
 /// Asserts that a [Result] is an error
 pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
     assert!(result.is_err(), "Expected an error, got {:?}", result)
+}
+
+pub fn draw_named_card(game: &mut TestGame, card_name: CardName) -> CardIdentifier {
+    let side = client::side_for_card_name(card_name);
+    let card_id = game.set_next_draw(card_name);
+    game.player_mut(side).actions += 1;
+    let user_id = game.player_mut(side).id;
+    game.perform_action(Action::DrawCard(DrawCardAction {}), user_id).expect("Error drawing card");
+    card_id
 }
 
 /// Draws and then plays a named card.

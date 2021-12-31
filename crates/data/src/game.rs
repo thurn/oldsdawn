@@ -163,7 +163,7 @@ impl GameState {
         &mut self.cards_mut(card_id.side)[card_id.index]
     }
 
-    /// Cards for a player
+    /// Cards for a player, in alphabetical order
     pub fn cards(&self, side: Side) -> &Vec<CardState> {
         match side {
             Side::Overlord => &self.overlord_cards,
@@ -223,7 +223,7 @@ impl GameState {
         .map(|c| c.id)
     }
 
-    /// Cards owned by a given player in a given position
+    /// Cards owned by a given player in a given position, in alphabetical order
     pub fn cards_in_position(
         &self,
         side: Side,
@@ -232,7 +232,7 @@ impl GameState {
         self.cards(side).iter().filter(move |c| c.position == position)
     }
 
-    /// Cards in a player's hand
+    /// Cards in a player's hand, in alphabetical order
     pub fn hand(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position.in_hand())
     }
@@ -242,7 +242,7 @@ impl GameState {
         self.cards_mut(side).iter_mut().filter(|c| c.position.in_hand())
     }
 
-    /// Cards in a player's discard pile
+    /// Cards in a player's discard pile, in alphabetical order
     pub fn discard_pile(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position.in_discard_pile())
     }
@@ -252,6 +252,7 @@ impl GameState {
         self.cards_mut(side).iter_mut().filter(|c| c.position.in_discard_pile())
     }
 
+    /// Cards in a player's deck pile, in alphabetical order    
     pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position.in_deck())
     }
@@ -272,7 +273,8 @@ impl GameState {
         result
     }
 
-    /// All cards in this game
+    /// All cards in this game. Overlord cards in alphabetical order followed by
+    /// Champion cards in alphabetical order.
     pub fn all_cards(&self) -> impl Iterator<Item = &CardState> {
         self.overlord_cards.iter().chain(self.champion_cards.iter())
     }

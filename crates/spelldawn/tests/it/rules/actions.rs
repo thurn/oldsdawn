@@ -14,9 +14,13 @@
 
 use data::card_name::CardName;
 use data::primitives::Side;
+use display::rendering;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{DrawCardAction, GainManaAction, PlayCardAction, PlayerName};
+use protos::spelldawn::{
+    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, PlayCardAction,
+    PlayerName,
+};
 use test_utils::*;
 
 #[test]
@@ -56,7 +60,7 @@ fn cannot_draw_during_raid() {
 #[test]
 fn play_card() {
     let mut g = new_game(Side::Champion, Args { actions: 3, mana: 5, ..Args::default() });
-    let card_id = g.draw_named_card(CardName::ArcaneRecovery);
+    let card_id = draw_named_card(&mut g, CardName::ArcaneRecovery);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         USER_ID,
@@ -64,6 +68,28 @@ fn play_card() {
     assert_eq!(2, g.user.actions());
     assert_eq!(9, g.user.mana());
     assert_identical(vec![CardName::ArcaneRecovery], g.discard_pile(PlayerName::User));
+    assert_ok(&response);
+    assert_debug_snapshot!(response);
+}
+
+#[test]
+fn play_hidden_card() {
+    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 0, ..Args::default() });
+    let card_id = draw_named_card(&mut g, CardName::DungeonAnnex);
+    let response = g.perform_action(
+        Action::PlayCard(PlayCardAction {
+            card_id: Some(card_id),
+            target: Some(CardTarget {
+                card_target: Some(card_target::CardTarget::RoomId(
+                    rendering::adapt_room_id(ROOM_ID).into(),
+                )),
+            }),
+        }),
+        USER_ID,
+    );
+    assert_eq!(2, g.user.actions());
+    assert_eq!(0, g.user.mana());
+    assert_identical(vec![CardName::DungeonAnnex], g.room_cards(ROOM_ID, ClientRoomLocation::Back));
     assert_ok(&response);
     assert_debug_snapshot!(response);
 }
