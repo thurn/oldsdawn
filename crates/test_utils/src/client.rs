@@ -18,11 +18,11 @@
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use data::card_name::CardName;
 use data::card_state::{CardData, CardPosition, CardState};
 use data::game::GameState;
-use data::primitives::{ActionCount, CardId, GameId, ManaValue, PointsValue, RoomId, Side, UserId};
+use data::primitives::{ActionCount, CardId, GameId, ManaValue, PointsValue, Side, UserId};
 use display::rendering;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -34,6 +34,7 @@ use protos::spelldawn::{
 };
 use rules::mutations;
 use server::database::Database;
+use server::GameResponse;
 
 /// A fake game client for testing.
 ///
@@ -43,7 +44,6 @@ use server::database::Database;
 /// via the public client-facing API.
 #[derive(Debug, Clone)]
 pub struct TestGame {
-    pub user_side: Side,
     pub data: ClientGameData,
     pub user: ClientPlayer,
     pub opponent: ClientPlayer,
@@ -52,26 +52,14 @@ pub struct TestGame {
 }
 
 impl TestGame {
-    /// The standard [GameId] used for this game
-    pub const GAME_ID: GameId = GameId { value: 1 };
-    /// The title returned for hidden cards
-    pub const HIDDEN_CARD: &'static str = "Hidden Card";
-    /// The [UserId] for the user who is *not* running the test
-    pub const OPPONENT_ID: UserId = UserId { value: 2 };
-    /// [RoomId] used by default for targeting
-    pub const ROOM_ID: RoomId = RoomId::RoomA;
-    /// The [UserId] for the user who the test is running as
-    pub const USER_ID: UserId = UserId { value: 1 };
-
     /// Creates a new game, starting in the provided [GameState].
     ///
     /// It is usually better to create a blank new game and then update its
     /// state via the action methods on this struct instead of putting a bunch
     /// of information into the [GameState] here, because this helps avoid
     /// coupling tests to the specific implementation details of [GameState].
-    pub fn new(game: GameState, user_side: Side) -> Self {
+    pub fn new(game: GameState) -> Self {
         Self {
-            user_side,
             data: ClientGameData::default(),
             user: ClientPlayer::new(PlayerName::User),
             opponent: ClientPlayer::new(PlayerName::Opponent),
@@ -81,37 +69,32 @@ impl TestGame {
     }
 
     /// Execute a simulated client request for this game, updating the client
-    /// state as appropriate based on the responses. Returns a vector of the
-    /// received commands. Panics if the server request fails.
-    pub fn perform_action(&mut self, action: Action) -> Vec<Command> {
-        let commands = server::handle_request(
+    /// state as appropriate based on the responses. Returns the [GameResponse]
+    /// for this action or an error if the server request failed.
+    pub fn perform_action(&mut self, action: Action, user_id: UserId) -> Result<GameResponse> {
+        let response = server::handle_request(
             self,
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),
-                game_id: Some(GameIdentifier { value: Self::GAME_ID.value }),
-                user_id: Self::USER_ID.value,
+                game_id: Some(GameIdentifier { value: crate::GAME_ID.value }),
+                user_id: user_id.value,
             },
-        )
-        .expect("Server request failed")
-        .command_list
-        .commands
-        .into_iter()
-        .map(|c| c.command.expect("Empty command received"))
-        .collect::<Vec<_>>();
+        )?;
 
-        for command in &commands {
-            self.data.update(command.clone());
-            self.user.update(command.clone());
-            self.opponent.update(command.clone());
-            self.cards.update(command.clone());
+        for command in &response.command_list.commands {
+            let c = command.command.as_ref().with_context(|| "Command not received")?;
+            self.data.update(c.clone());
+            self.user.update(c.clone());
+            self.opponent.update(c.clone());
+            self.cards.update(c.clone());
         }
 
-        commands
+        Ok(response)
     }
 
-    /// Adds a named card to the user's hand.
+    /// Adds a named card to its owner's hand.
     ///
-    /// This function operates by locating a test card in the user's deck and
+    /// This function operates by locating a test card in the owner's deck and
     /// overwriting its state to a default [CardState] pointing to the
     /// provided [CardName] instead. This card is then moved to the user's
     /// hand via [mutations::move_card], which will invoke game events & game
@@ -120,35 +103,34 @@ impl TestGame {
     ///
     /// Panics if no test cards remain in the user's deck.
     pub fn draw_named_card(&mut self, card_name: CardName) -> CardIdentifier {
-        let test_card = match self.user_side {
+        let side = side_for_card_name(card_name);
+        let test_card = match side {
             Side::Overlord => CardName::TestOverlordSpell,
             Side::Champion => CardName::TestChampionSpell,
         };
-        let deck_position = CardPosition::DeckUnknown(self.user_side);
+        let deck_position = CardPosition::DeckUnknown(side);
         let card_id = self
             .game
-            .cards_in_position(self.user_side, deck_position)
+            .cards_in_position(side, deck_position)
             .find(|c| c.name == test_card)
             .expect("No test cards remaining in deck")
             .id;
         overwrite_card(&mut self.game, card_id, card_name);
 
-        mutations::move_card(&mut self.game, card_id, CardPosition::Hand(self.user_side));
+        mutations::move_card(&mut self.game, card_id, CardPosition::Hand(side));
 
         rendering::adapt_card_id(card_id)
     }
 
     /// Returns a vec containing the titles of all of the cards in the provided
-    /// player's hand, with the structure described in
-    /// [ClientCards::names_in_position].
+    /// player's hand, or [crate::HIDDEN_CARD] if the card's title is
+    /// unknown. Titles will be ordered by their sorting key.
     pub fn hand(&self, player: PlayerName) -> Vec<String> {
         self.cards.names_in_position(Position::Hand(ObjectPositionHand { owner: player.into() }))
     }
 
-    /// Returns a vec containing the titles of all of the cards in the provided
-    /// player's discard pile, with the structure described in
-    /// [ClientCards::names_in_position].
-    pub fn discard(&self, player: PlayerName) -> Vec<String> {
+    /// Returns a player's discard pile in the same manner as [Self::hand]
+    pub fn discard_pile(&self, player: PlayerName) -> Vec<String> {
         self.cards.names_in_position(Position::DiscardPile(ObjectPositionDiscardPile {
             owner: player.into(),
         }))
@@ -168,9 +150,13 @@ pub fn overwrite_card(game: &mut GameState, card_id: CardId, card_name: CardName
     };
 }
 
+pub fn side_for_card_name(name: CardName) -> Side {
+    rules::get(name).side
+}
+
 impl Database for TestGame {
     fn generate_game_id(&self) -> Result<GameId> {
-        Ok(Self::GAME_ID)
+        Ok(crate::GAME_ID)
     }
 
     fn game(&self, _id: GameId) -> Result<GameState> {
@@ -259,13 +245,13 @@ impl ClientCards {
     }
 
     /// Returns a list of the titles of cards in the provided `position`, or the
-    /// string [TestGame::HIDDEN_CARD] if no title is available. Cards are
+    /// string [crate::HIDDEN_CARD] if no title is available. Cards are
     /// sorted in position order based on their `sorting_key` with ties being
     /// broken arbitrarily.
     pub fn names_in_position(&self, position: Position) -> Vec<String> {
         let mut result = self
             .in_position(position)
-            .map(|c| c.title_option().unwrap_or_else(|| TestGame::HIDDEN_CARD.to_string()))
+            .map(|c| c.title_option().unwrap_or_else(|| crate::HIDDEN_CARD.to_string()))
             .collect::<Vec<_>>();
         result.sort();
         result

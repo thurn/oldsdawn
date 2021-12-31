@@ -37,7 +37,7 @@ use crate::{dispatch, mutations, queries};
 #[instrument(skip(game))]
 pub fn draw_card(game: &mut GameState, side: Side) -> Result<()> {
     info!(?side, "draw_card");
-    ensure!(queries::in_main_phase(game, side), "Not in main phase for {:?}", side);
+    ensure!(queries::can_take_draw_card_action(game, side), "Cannot draw card for {:?}", side);
     let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
     mutations::spend_action_points(game, side, 1);
     mutations::move_card(game, card, CardPosition::Hand(side));

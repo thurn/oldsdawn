@@ -252,6 +252,10 @@ impl GameState {
         self.cards_mut(side).iter_mut().filter(|c| c.position.in_discard_pile())
     }
 
+    pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
+        self.cards(side).iter().filter(|c| c.position.in_deck())
+    }
+
     /// Create card states for a deck
     fn make_deck(deck: &Deck, side: Side) -> Vec<CardState> {
         let mut result = vec![CardState::new(

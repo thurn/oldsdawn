@@ -71,6 +71,9 @@ fix-lints:
 fix-clippy:
     cargo clippy --fix
 
+snapshots:
+    cargo insta review
+
 # Checks documentation lints, haven't figured out how to do this with a single command
 check-docs:
     #!/usr/bin/env sh

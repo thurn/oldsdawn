@@ -1,0 +1,378 @@
+---
+source: crates/spelldawn/tests/it/rules/actions.rs
+assertion_line: 32
+expression: response
+
+---
+Ok(
+    GameResponse {
+        command_list: CommandList {
+            commands: [
+                GameCommand {
+                    command: Some(
+                        UpdateGameView(
+                            UpdateGameViewCommand {
+                                game: Some(
+                                    GameView {
+                                        game_id: Some(
+                                            GameIdentifier {
+                                                value: 1,
+                                            },
+                                        ),
+                                        user: Some(
+                                            PlayerView {
+                                                player_info: None,
+                                                score: Some(
+                                                    ScoreView {
+                                                        score: 0,
+                                                    },
+                                                ),
+                                                mana: Some(
+                                                    ManaView {
+                                                        amount: 5,
+                                                    },
+                                                ),
+                                                action_tracker: Some(
+                                                    ActionTrackerView {
+                                                        available_action_count: 2,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        opponent: Some(
+                                            PlayerView {
+                                                player_info: None,
+                                                score: Some(
+                                                    ScoreView {
+                                                        score: 0,
+                                                    },
+                                                ),
+                                                mana: Some(
+                                                    ManaView {
+                                                        amount: 5,
+                                                    },
+                                                ),
+                                                action_tracker: Some(
+                                                    ActionTrackerView {
+                                                        available_action_count: 0,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        arena: None,
+                                        current_priority: User,
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        CreateOrUpdateCard(
+                            CreateOrUpdateCardCommand {
+                                card: Some(
+                                    CardView {
+                                        card_id: Some(
+                                            CardIdentifier {
+                                                side: Overlord,
+                                                index: 1,
+                                            },
+                                        ),
+                                        card_icons: Some(
+                                            CardIcons {
+                                                top_left_icon: Some(
+                                                    CardIcon {
+                                                        background: Some(
+                                                            SpriteAddress {
+                                                                address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01",
+                                                            },
+                                                        ),
+                                                        text: "8",
+                                                        background_scale: 1.0,
+                                                    },
+                                                ),
+                                                top_right_icon: None,
+                                                bottom_right_icon: Some(
+                                                    CardIcon {
+                                                        background: Some(
+                                                            SpriteAddress {
+                                                                address: "LittleSweetDaemon/TCG_Card_Elemental_Design/Heart_Icons/Heart_Icons_Color_5",
+                                                            },
+                                                        ),
+                                                        text: "5",
+                                                        background_scale: 1.0,
+                                                    },
+                                                ),
+                                                bottom_left_icon: None,
+                                                arena_icon: None,
+                                            },
+                                        ),
+                                        arena_frame: Some(
+                                            SpriteAddress {
+                                                address: "SpriteWay/Icons/Clean Frames/9054",
+                                            },
+                                        ),
+                                        owning_player: User,
+                                        revealed_card: Some(
+                                            RevealedCardView {
+                                                card_frame: Some(
+                                                    SpriteAddress {
+                                                        address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1",
+                                                    },
+                                                ),
+                                                title_background: Some(
+                                                    SpriteAddress {
+                                                        address: "LittleSweetDaemon/TCG_Card_Design/Animal_Card/Animal_Card_Face_Tape",
+                                                    },
+                                                ),
+                                                jewel: Some(
+                                                    SpriteAddress {
+                                                        address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01",
+                                                    },
+                                                ),
+                                                image: Some(
+                                                    SpriteAddress {
+                                                        address: "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44",
+                                                    },
+                                                ),
+                                                title: Some(
+                                                    CardTitle {
+                                                        text: "Ice Dragon",
+                                                    },
+                                                ),
+                                                rules_text: Some(
+                                                    RulesText {
+                                                        text: "<b>\u{f0e7}Combat:</b> <b>Strike 2:</b>\n<b>\u{f0e7}Combat:</b> End the raid.",
+                                                    },
+                                                ),
+                                                revealed_in_arena: false,
+                                                targeting: Some(
+                                                    CardTargeting {
+                                                        targeting: Some(
+                                                            PickRoom(
+                                                                PickRoom,
+                                                            ),
+                                                        ),
+                                                    },
+                                                ),
+                                                on_release_position: Some(
+                                                    ObjectPosition {
+                                                        sorting_key: 4294967295,
+                                                        position: Some(
+                                                            Room(
+                                                                ObjectPositionRoom {
+                                                                    room_id: Unspecified,
+                                                                    room_location: Unspecified,
+                                                                },
+                                                            ),
+                                                        ),
+                                                    },
+                                                ),
+                                                cost: Some(
+                                                    CardViewCost {
+                                                        mana_cost: 8,
+                                                        action_cost: 1,
+                                                        can_play: false,
+                                                        can_play_algorithm: Optimistic,
+                                                        spend_cost_algorithm: Optimistic,
+                                                    },
+                                                ),
+                                                supplemental_info: None,
+                                            },
+                                        ),
+                                    },
+                                ),
+                                create_position: None,
+                                create_animation: DrawCard,
+                                disable_flip_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 1,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 1,
+                                        position: Some(
+                                            Hand(
+                                                ObjectPositionHand {
+                                                    owner: User,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+            ],
+        },
+        channel_responses: [
+            (
+                2,
+                CommandList {
+                    commands: [
+                        GameCommand {
+                            command: Some(
+                                UpdateGameView(
+                                    UpdateGameViewCommand {
+                                        game: Some(
+                                            GameView {
+                                                game_id: Some(
+                                                    GameIdentifier {
+                                                        value: 1,
+                                                    },
+                                                ),
+                                                user: Some(
+                                                    PlayerView {
+                                                        player_info: None,
+                                                        score: Some(
+                                                            ScoreView {
+                                                                score: 0,
+                                                            },
+                                                        ),
+                                                        mana: Some(
+                                                            ManaView {
+                                                                amount: 5,
+                                                            },
+                                                        ),
+                                                        action_tracker: Some(
+                                                            ActionTrackerView {
+                                                                available_action_count: 0,
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                opponent: Some(
+                                                    PlayerView {
+                                                        player_info: None,
+                                                        score: Some(
+                                                            ScoreView {
+                                                                score: 0,
+                                                            },
+                                                        ),
+                                                        mana: Some(
+                                                            ManaView {
+                                                                amount: 5,
+                                                            },
+                                                        ),
+                                                        action_tracker: Some(
+                                                            ActionTrackerView {
+                                                                available_action_count: 2,
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                arena: None,
+                                                current_priority: Opponent,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                CreateOrUpdateCard(
+                                    CreateOrUpdateCardCommand {
+                                        card: Some(
+                                            CardView {
+                                                card_id: Some(
+                                                    CardIdentifier {
+                                                        side: Overlord,
+                                                        index: 1,
+                                                    },
+                                                ),
+                                                card_icons: Some(
+                                                    CardIcons {
+                                                        top_left_icon: None,
+                                                        top_right_icon: None,
+                                                        bottom_right_icon: None,
+                                                        bottom_left_icon: None,
+                                                        arena_icon: None,
+                                                    },
+                                                ),
+                                                arena_frame: Some(
+                                                    SpriteAddress {
+                                                        address: "SpriteWay/Icons/Clean Frames/9054",
+                                                    },
+                                                ),
+                                                owning_player: Opponent,
+                                                revealed_card: None,
+                                            },
+                                        ),
+                                        create_position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 4294967295,
+                                                position: Some(
+                                                    Deck(
+                                                        ObjectPositionDeck {
+                                                            owner: Opponent,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        create_animation: Unspecified,
+                                        disable_flip_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 1,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 1,
+                                                position: Some(
+                                                    Hand(
+                                                        ObjectPositionHand {
+                                                            owner: Opponent,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                    ],
+                },
+            ),
+        ],
+    },
+)

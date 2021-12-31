@@ -17,8 +17,8 @@
 use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates::{
-    ActionCostQuery, AttackValueQuery, BoostCountQuery, CanPlayCardQuery, Flag, HealthValueQuery,
-    ManaCostQuery, ShieldValueQuery,
+    ActionCostQuery, AttackValueQuery, BoostCountQuery, CanPlayCardQuery,
+    CanTakeDrawCardActionQuery, Flag, HealthValueQuery, ManaCostQuery, ShieldValueQuery,
 };
 use data::game::GameState;
 use data::primitives::{
@@ -40,6 +40,13 @@ pub fn top_of_deck(game: &GameState, side: Side) -> Option<CardId> {
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: CardId) -> &CardStats {
     &crate::get(game.card(card_id).name).config.stats
+}
+
+/// Returns whether the indicated player can currently take the basic game
+/// action to draw a card.
+pub fn can_take_draw_card_action(game: &GameState, side: Side) -> bool {
+    let can_draw = in_main_phase(game, side) && game.deck(side).next().is_some();
+    dispatch::perform_query(game, CanTakeDrawCardActionQuery(side), Flag::new(can_draw)).into()
 }
 
 /// Returns whether a given card can currently be played
