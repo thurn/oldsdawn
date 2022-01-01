@@ -20,5 +20,6 @@ use test_utils::*;
 fn arcane_recovery() {
     let mut g = new_game(Side::Champion, Args { mana: 5, ..Args::default() });
     g.play_from_hand(CardName::ArcaneRecovery);
-    assert_eq!(9, g.user.mana());
+    assert_eq!(9, g.user().mana());
+    assert_eq!(9, g.opponent.other_player.mana())
 }

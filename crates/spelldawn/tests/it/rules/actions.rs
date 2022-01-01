@@ -30,8 +30,10 @@ fn draw_card() {
         Args { actions: 3, next_draw: Some(CardName::IceDragon), ..Args::default() },
     );
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), USER_ID);
-    assert_identical(vec![CardName::IceDragon], g.hand(PlayerName::User));
-    assert_eq!(2, g.user.actions());
+    assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
+    assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.hand(PlayerName::Opponent));
+    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.opponent.other_player.actions());
     assert_ok(&response);
     assert_debug_snapshot!(response);
 }
@@ -65,9 +67,15 @@ fn play_card() {
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         USER_ID,
     );
-    assert_eq!(2, g.user.actions());
-    assert_eq!(9, g.user.mana());
-    assert_identical(vec![CardName::ArcaneRecovery], g.discard_pile(PlayerName::User));
+    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.opponent.other_player.actions());
+    assert_eq!(9, g.user().mana());
+    assert_eq!(9, g.opponent.other_player.mana());
+    assert_identical(vec![CardName::ArcaneRecovery], g.user.cards.discard_pile(PlayerName::User));
+    assert_identical(
+        vec![CardName::ArcaneRecovery],
+        g.opponent.cards.discard_pile(PlayerName::Opponent),
+    );
     assert_ok(&response);
     assert_debug_snapshot!(response);
 }
@@ -87,9 +95,15 @@ fn play_hidden_card() {
         }),
         USER_ID,
     );
-    assert_eq!(2, g.user.actions());
-    assert_eq!(0, g.user.mana());
-    assert_identical(vec![CardName::DungeonAnnex], g.room_cards(ROOM_ID, ClientRoomLocation::Back));
+    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.opponent.other_player.actions());
+    assert_eq!(0, g.user().mana());
+    assert_eq!(0, g.opponent.other_player.mana());
+    assert_identical(
+        vec![CardName::DungeonAnnex],
+        g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Back),
+    );
+    assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.room_cards(ROOM_ID, ClientRoomLocation::Back));
     assert_ok(&response);
     assert_debug_snapshot!(response);
 }
@@ -131,8 +145,10 @@ fn cannot_play_card_during_raid() {
 fn gain_mana() {
     let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
     let response = g.perform_action(Action::GainMana(GainManaAction {}), USER_ID);
-    assert_eq!(2, g.user.actions());
-    assert_eq!(6, g.user.mana());
+    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.opponent.other_player.actions());
+    assert_eq!(6, g.user().mana());
+    assert_eq!(6, g.opponent.other_player.mana());
     assert_ok(&response);
     assert_debug_snapshot!(response);
 }

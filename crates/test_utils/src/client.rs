@@ -39,18 +39,24 @@ use protos::spelldawn::{
 use server::database::Database;
 use server::GameResponse;
 
-/// A fake game client for testing.
+/// A fake game for use in testing.
 ///
 /// This struct keeps track of server responses related to an ongoing game and
 /// converts them into a useful format for writing tests. This enables our
 /// 'black box' testing strategy, where the game is almost exclusively tested
 /// via the public client-facing API.
+///
+/// There are actually two perspectives on an ongoing game: each player has
+/// their own view of the state of the game, which differs due to hidden
+/// information. This struct has two different [TestClient]s which get updated
+/// based on server responses, representing what the two players are seeing.
 #[derive(Debug, Clone)]
 pub struct TestGame {
-    pub data: ClientGameData,
-    pub user: ClientPlayer,
-    pub opponent: ClientPlayer,
-    pub cards: ClientCards,
+    /// This is the perspective of the player identified by [crate::USER_ID].
+    pub user: TestClient,
+    /// This is the perspective of the player identified by
+    /// [crate::OPPONENT_ID].
+    pub opponent: TestClient,
     game: GameState,
 }
 
@@ -63,17 +69,32 @@ impl TestGame {
     /// coupling tests to the specific implementation details of [GameState].
     pub fn new(game: GameState) -> Self {
         Self {
-            data: ClientGameData::default(),
-            user: ClientPlayer::new(PlayerName::User),
-            opponent: ClientPlayer::new(PlayerName::Opponent),
-            cards: ClientCards::default(),
+            user: TestClient {
+                data: ClientGameData::default(),
+                this_player: ClientPlayer::new(PlayerName::User),
+                other_player: ClientPlayer::new(PlayerName::Opponent),
+                cards: ClientCards::default(),
+            },
+            opponent: TestClient {
+                data: ClientGameData::default(),
+                this_player: ClientPlayer::new(PlayerName::User),
+                other_player: ClientPlayer::new(PlayerName::Opponent),
+                cards: ClientCards::default(),
+            },
             game,
         }
     }
 
-    /// Execute a simulated client request for this game, updating the client
-    /// state as appropriate based on the responses. Returns the [GameResponse]
-    /// for this action or an error if the server request failed.
+    /// Returns the user player state for the user client, (i.e. the user's
+    /// state from *their own* perspective).
+    pub fn user(&self) -> &ClientPlayer {
+        &self.user.this_player
+    }
+
+    /// Execute a simulated client request for this game as a specific user,
+    /// updating the client state as appropriate based on the responses.
+    /// Returns the [GameResponse] for this action or an error if the server
+    /// request failed.
     pub fn perform_action(&mut self, action: Action, user_id: UserId) -> Result<GameResponse> {
         let response = server::handle_request(
             self,
@@ -84,8 +105,23 @@ impl TestGame {
             },
         )?;
 
+        let (local, remote) = match user_id {
+            crate::USER_ID => (&mut self.user, &mut self.opponent),
+            crate::OPPONENT_ID => (&mut self.opponent, &mut self.user),
+            _ => panic!("Unknown user id: {:?}", user_id),
+        };
+
         for command in &response.command_list.commands {
-            self.handle_command(command.command.as_ref().with_context(|| "Command not received")?);
+            local.handle_command(command.command.as_ref().with_context(|| "Command not received")?);
+        }
+
+        for (channel_user_id, list) in &response.channel_responses {
+            assert_eq!(*channel_user_id, crate::opponent_of(user_id));
+            for command in &list.commands {
+                remote.handle_command(
+                    command.command.as_ref().with_context(|| "Command not received")?,
+                );
+            }
         }
 
         Ok(response)
@@ -94,15 +130,16 @@ impl TestGame {
     /// Adds a named card to its owner's hand.
     ///
     /// This function operates by locating a test card in the owner's deck and
-    /// overwriting it with the provided `card_name`. This card is then moved to
-    /// the user's hand via [GameState::move_card].
+    /// overwriting it with the provided `card_name`. This card is then
+    /// moved to the user's hand via [GameState::move_card].
+    /// CreateOrUpdateCard commands are sent to the attached test clients.
     ///
     /// This function will *not* check the legality of drawing a card, invoke
-    /// any game events, or append a game update, but it will correctly
-    /// update the card's sorting key. Returns the client [CardIdentifier]
-    /// for the drawn card.
+    /// any game events, or append a game update. It will correctly update
+    /// the card's sorting key, however.
     ///
-    /// Panics if no test cards remain in the user's deck.
+    /// Returns the client [CardIdentifier] for the drawn card. Panics if no
+    /// test cards remain in the user's deck.
     pub fn add_to_hand(&mut self, card_name: CardName) -> CardIdentifier {
         let side = side_for_card_name(card_name);
         let card_id = self
@@ -114,17 +151,23 @@ impl TestGame {
         overwrite_card(&mut self.game, card_id, card_name);
         self.game.move_card(card_id, CardPosition::Hand(side));
 
-        let command = rendering::create_or_update_card(
+        self.user.handle_command(&rendering::create_or_update_card(
             &self.game,
             self.game.card(card_id),
             side,
             CardCreationStrategy::SnapToCurrentPosition,
-        );
-        self.handle_command(&command);
+        ));
+        self.opponent.handle_command(&rendering::create_or_update_card(
+            &self.game,
+            self.game.card(card_id),
+            side.opponent(),
+            CardCreationStrategy::SnapToCurrentPosition,
+        ));
+
         rendering::adapt_card_id(card_id)
     }
 
-    /// Draws and then plays a named card.
+    /// Creates and then plays a named card.
     ///
     /// This function first adds a copy of the requested card to the user's hand
     /// via [Self::add_to_hand]. The card is then played via the standard
@@ -133,6 +176,8 @@ impl TestGame {
     /// If the card is a minion, project, scheme, or upgrade card, it is played
     /// into the [crate::ROOM_ID] room. The [GameResponse] produced by
     /// playing the card is returned.
+    ///
+    /// Panics if the server returns an error for playing this card.
     pub fn play_from_hand(&mut self, card_name: CardName) -> GameResponse {
         let card_id = self.add_to_hand(card_name);
 
@@ -152,37 +197,6 @@ impl TestGame {
             crate::USER_ID,
         )
         .expect("Server error playing card")
-    }
-
-    /// Returns a vec containing the titles of all of the cards in the provided
-    /// player's hand, or [crate::HIDDEN_CARD] if the card's title is
-    /// unknown. Titles will be ordered by their sorting key.
-    pub fn hand(&self, player: PlayerName) -> Vec<String> {
-        self.cards.names_in_position(Position::Hand(ObjectPositionHand { owner: player.into() }))
-    }
-
-    /// Returns a player's discard pile in the same manner as [Self::hand]
-    pub fn discard_pile(&self, player: PlayerName) -> Vec<String> {
-        self.cards.names_in_position(Position::DiscardPile(ObjectPositionDiscardPile {
-            owner: player.into(),
-        }))
-    }
-
-    /// Returns a vector containing the card titles in the provided `location`
-    /// of a given room, Titles are structured in the same manner described
-    /// in [Self::hand].
-    pub fn room_cards(&self, room_id: RoomId, location: ClientRoomLocation) -> Vec<String> {
-        self.cards.names_in_position(Position::Room(ObjectPositionRoom {
-            room_id: rendering::adapt_room_id(room_id).into(),
-            room_location: location.into(),
-        }))
-    }
-
-    fn handle_command(&mut self, command: &Command) {
-        self.data.update(command.clone());
-        self.user.update(command.clone());
-        self.opponent.update(command.clone());
-        self.cards.update(command.clone());
     }
 }
 
@@ -215,6 +229,26 @@ impl Database for TestGame {
     fn write_game(&mut self, game: &GameState) -> Result<()> {
         self.game = game.clone();
         Ok(())
+    }
+}
+
+/// Represents a user client connected to a test game
+#[derive(Debug, Clone)]
+pub struct TestClient {
+    pub data: ClientGameData,
+    /// A player's view of *their own* state.
+    pub this_player: ClientPlayer,
+    /// A player's view of *their opponent's* state.
+    pub other_player: ClientPlayer,
+    pub cards: ClientCards,
+}
+
+impl TestClient {
+    fn handle_command(&mut self, command: &Command) {
+        self.data.update(command.clone());
+        self.this_player.update(command.clone());
+        self.other_player.update(command.clone());
+        self.cards.update(command.clone());
     }
 }
 
@@ -287,6 +321,31 @@ pub struct ClientCards {
 }
 
 impl ClientCards {
+    /// Returns a vec containing the titles of all of the cards in the provided
+    /// player's hand from the perspective of the this client, or
+    /// [crate::HIDDEN_CARD] if the card's title is unknown. Titles will be
+    /// ordered by their sorting key.
+    pub fn hand(&self, player: PlayerName) -> Vec<String> {
+        self.names_in_position(Position::Hand(ObjectPositionHand { owner: player.into() }))
+    }
+
+    /// Returns a player's discard pile in the same manner as [Self::hand]
+    pub fn discard_pile(&self, player: PlayerName) -> Vec<String> {
+        self.names_in_position(Position::DiscardPile(ObjectPositionDiscardPile {
+            owner: player.into(),
+        }))
+    }
+
+    /// Returns a vector containing the card titles in the provided `location`
+    /// of a given room, Titles are structured in the same manner described
+    /// in [Self::hand].
+    pub fn room_cards(&self, room_id: RoomId, location: ClientRoomLocation) -> Vec<String> {
+        self.names_in_position(Position::Room(ObjectPositionRoom {
+            room_id: rendering::adapt_room_id(room_id).into(),
+            room_location: location.into(),
+        }))
+    }
+
     /// Returns an iterator over the cards in a given [Position] in an arbitrary
     /// order.
     pub fn in_position(&self, position: Position) -> impl Iterator<Item = &ClientCard> {

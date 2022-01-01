@@ -138,3 +138,12 @@ pub fn assert_ok<T: Debug, E: Debug>(result: &Result<T, E>) {
 pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
     assert!(result.is_err(), "Expected an error, got {:?}", result)
 }
+
+/// Returns the opposing test [UserId] for this `user_id`
+pub fn opponent_of(user_id: UserId) -> UserId {
+    match user_id {
+        USER_ID => OPPONENT_ID,
+        OPPONENT_ID => USER_ID,
+        _ => panic!("Unknown UserId: {:?}", user_id),
+    }
+}
