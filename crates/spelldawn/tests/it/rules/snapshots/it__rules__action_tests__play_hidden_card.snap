@@ -1,6 +1,6 @@
 ---
-source: crates/spelldawn/tests/it/rules/actions.rs
-assertion_line: 94
+source: crates/spelldawn/tests/it/rules/action_tests.rs
+assertion_line: 148
 expression: response
 
 ---
@@ -16,22 +16,14 @@ Ok(
                                     GameView {
                                         game_id: Some(
                                             GameIdentifier {
-                                                value: 1,
+                                                value: 10,
                                             },
                                         ),
                                         user: Some(
                                             PlayerView {
                                                 player_info: None,
-                                                score: Some(
-                                                    ScoreView {
-                                                        score: 0,
-                                                    },
-                                                ),
-                                                mana: Some(
-                                                    ManaView {
-                                                        amount: 0,
-                                                    },
-                                                ),
+                                                score: None,
+                                                mana: None,
                                                 action_tracker: Some(
                                                     ActionTrackerView {
                                                         available_action_count: 2,
@@ -39,30 +31,62 @@ Ok(
                                                 ),
                                             },
                                         ),
-                                        opponent: Some(
-                                            PlayerView {
-                                                player_info: None,
-                                                score: Some(
-                                                    ScoreView {
-                                                        score: 0,
-                                                    },
-                                                ),
-                                                mana: Some(
-                                                    ManaView {
-                                                        amount: 5,
-                                                    },
-                                                ),
-                                                action_tracker: Some(
-                                                    ActionTrackerView {
-                                                        available_action_count: 0,
-                                                    },
-                                                ),
-                                            },
-                                        ),
+                                        opponent: None,
                                         arena: None,
                                         current_priority: User,
                                     },
                                 ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        CreateOrUpdateCard(
+                            CreateOrUpdateCardCommand {
+                                card: Some(
+                                    CardView {
+                                        card_id: Some(
+                                            CardIdentifier {
+                                                side: Overlord,
+                                                index: 1,
+                                            },
+                                        ),
+                                        card_icons: None,
+                                        arena_frame: None,
+                                        owning_player: User,
+                                        revealed_card: Some(
+                                            RevealedCardView {
+                                                card_frame: None,
+                                                title_background: None,
+                                                jewel: None,
+                                                image: None,
+                                                title: None,
+                                                rules_text: None,
+                                                revealed_in_arena: false,
+                                                targeting: None,
+                                                on_release_position: None,
+                                                can_play: false,
+                                                supplemental_info: None,
+                                            },
+                                        ),
+                                    },
+                                ),
+                                create_position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 2,
+                                        position: Some(
+                                            Room(
+                                                ObjectPositionRoom {
+                                                    room_id: RoomA,
+                                                    room_location: Back,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                create_animation: Unspecified,
+                                disable_flip_animation: false,
                             },
                         ),
                     ),
@@ -103,9 +127,9 @@ Ok(
                 },
             ],
         },
-        channel_responses: [
+        channel_response: Some(
             (
-                2,
+                11,
                 CommandList {
                     commands: [
                         GameCommand {
@@ -116,42 +140,15 @@ Ok(
                                             GameView {
                                                 game_id: Some(
                                                     GameIdentifier {
-                                                        value: 1,
+                                                        value: 10,
                                                     },
                                                 ),
-                                                user: Some(
-                                                    PlayerView {
-                                                        player_info: None,
-                                                        score: Some(
-                                                            ScoreView {
-                                                                score: 0,
-                                                            },
-                                                        ),
-                                                        mana: Some(
-                                                            ManaView {
-                                                                amount: 5,
-                                                            },
-                                                        ),
-                                                        action_tracker: Some(
-                                                            ActionTrackerView {
-                                                                available_action_count: 0,
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
+                                                user: None,
                                                 opponent: Some(
                                                     PlayerView {
                                                         player_info: None,
-                                                        score: Some(
-                                                            ScoreView {
-                                                                score: 0,
-                                                            },
-                                                        ),
-                                                        mana: Some(
-                                                            ManaView {
-                                                                amount: 0,
-                                                            },
-                                                        ),
+                                                        score: None,
+                                                        mana: None,
                                                         action_tracker: Some(
                                                             ActionTrackerView {
                                                                 available_action_count: 2,
@@ -204,6 +201,6 @@ Ok(
                     ],
                 },
             ),
-        ],
+        ),
     },
 )

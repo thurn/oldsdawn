@@ -44,13 +44,6 @@ pub struct TargetedInteraction {
 /// into a client update
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum GameUpdate {
-    /// Indicates a general game state change, such as modifying a player's mana
-    /// or the current turn number. Does not request a full state sync, so
-    /// e.g. player card backs and portrait images are not modified.
-    UpdateGameState,
-    /// Indicates a general card state change, such as a modification to its
-    /// attack value.
-    UpdateCard(CardId),
     /// Indicates that a player's opening hand has been drawn and may be kept or
     /// mulliganed
     ShowOpeningHand(Side),
@@ -87,6 +80,12 @@ pub enum GameUpdate {
     GameOver(Side),
 }
 
+impl GameUpdate {
+    pub fn is_early_update(&self) -> bool {
+        matches!(self, GameUpdate::DrawCard(_))
+    }
+}
+
 /// Tracks game mutations for a given network request. If a vector is present
 /// here, then code which mutates the GameState is also responsible for
 /// appending a [GameUpdate] which describes the mutation. If no vector is
@@ -94,20 +93,22 @@ pub enum GameUpdate {
 /// running in simulation mode).
 #[derive(Debug, Clone, Default)]
 pub struct UpdateTracker {
-    pub update_list: Option<Vec<GameUpdate>>,
+    update_list: Option<Vec<GameUpdate>>,
 }
 
 impl UpdateTracker {
+    pub fn new(enabled: bool) -> Self {
+        Self { update_list: enabled.then(Vec::new) }
+    }
+
+    pub fn list(&self) -> Option<&Vec<GameUpdate>> {
+        self.update_list.as_ref()
+    }
+
     /// Appends a [GameUpdate] to the update list.
-    ///
-    /// Duplicate Updates: If the provided update is exactly identical to the
-    /// most recent update, it is skipped. This is intended to reduce
-    /// redundancy around things like [GameUpdate::UpdateGameState].
     pub fn push(&mut self, update: GameUpdate) {
         if let Some(vec) = &mut self.update_list {
-            if vec.iter().last() != Some(&update) {
-                vec.push(update)
-            }
+            vec.push(update)
         }
     }
 }

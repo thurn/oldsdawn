@@ -19,7 +19,7 @@ option csharp_namespace = "Spelldawn.Protos";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
-
+import "google/protobuf/empty.proto";
 
 // ============================================================================
 // Masonry
@@ -452,7 +452,7 @@ message CardIcon {
     /** Background for the icon. */
     SpriteAddress background = 1;
     /** Text to display on the icon. */
-    string text = 2;
+    google.protobuf.StringValue text = 2;
     /**
      * Scale for the background image to render at. A value of 0.0 will be
      * treated as 1.0
@@ -650,7 +650,7 @@ message DiscardPileView {
 }
 
 message PlayerInfo {
-    string name = 1;
+    google.protobuf.StringValue name = 1;
     SpriteAddress portrait = 2;
     SpriteAddress portrait_frame = 3;
     /** Card back asset to use for this player's cards. */
@@ -671,10 +671,11 @@ message RoomView {
     repeated CardView front_cards = 3;
 }
 
-enum IdentityAction {
-    IDENTITY_ACTION_UNSPECIFIED = 0;
-    IDENTITY_ACTION_INITIATE_RAID = 1;
-    IDENTITY_ACTION_LEVEL_UP_ROOM = 2;
+message IdentityAction {
+    oneof identity_action {
+        google.protobuf.Empty initiate_raid = 1;
+        google.protobuf.Empty level_up_room = 2;
+    }
 }
 
 message ArenaView {

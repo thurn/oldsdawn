@@ -88,6 +88,7 @@ check-docs:
     done
 
 outdated:
+    # Check for outdated dependencies, consider running 'cargo update' if this fails
     cargo outdated --exit-code 1
 
 udeps: clean

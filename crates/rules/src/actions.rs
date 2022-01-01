@@ -144,7 +144,6 @@ fn end_action(game: &mut GameState, side: Side) -> Result<()> {
             dispatch::invoke_event(game, DawnEvent(game.data.turn_number));
         }
         game.player_mut(new_turn).actions = queries::start_of_turn_action_count(game, new_turn);
-        game.updates.push(GameUpdate::UpdateGameState);
         game.updates.push(GameUpdate::StartTurn(new_turn));
     }
     Ok(())

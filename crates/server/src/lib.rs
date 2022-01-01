@@ -21,7 +21,6 @@ use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
 use data::primitives::{CardId, GameId, RoomId, Side, UserId};
 use data::updates::UpdateTracker;
-use display::rendering;
 use maplit::hashmap;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
@@ -92,11 +91,12 @@ impl Spelldawn for GameService {
         let mut database = SledDatabase;
         match handle_request(&mut database, request.get_ref()) {
             Ok(response) => {
-                for (user_id, commands) in response.channel_responses {
+                if let Some((user_id, commands)) = response.channel_response {
                     if let Some(channel) = CHANNELS.get(&user_id) {
-                        if let Err(e) = channel.send(Ok(commands)).await {
-                            error!(?user_id, ?e, "Channel Error!");
-                            return Err(Status::internal(format!("Channel Error: {:#}", e)));
+                        if channel.send(Ok(commands)).await.is_err() {
+                            // This returns SendError if the client is disconnected, which isn't a
+                            // huge problem. Hopefully they will reconnect again in the future.
+                            info!(?user_id, "client_is_disconnected");
                         }
                     }
                 }
@@ -118,8 +118,8 @@ impl Spelldawn for GameService {
 pub struct GameResponse {
     /// Response to send to the user who made the initial game request.
     pub command_list: CommandList,
-    /// Responses to send to other users, e.g. to update opponent state.
-    pub channel_responses: Vec<(UserId, CommandList)>,
+    /// Response to send to another user, e.g. to update opponent state.
+    pub channel_response: Option<(UserId, CommandList)>,
 }
 
 /// Processes an incoming client request and returns a [GameResponse] describing
@@ -198,7 +198,7 @@ pub fn handle_connect(
     };
 
     let side = user_side(user_id, &game)?;
-    Ok(CommandList { commands: rendering::full_sync(&game, side) })
+    Ok(display::connect(&game, side))
 }
 
 fn handle_action(
@@ -211,14 +211,14 @@ fn handle_action(
     let side = user_side(user_id, &game)?;
     function(&mut game, side)?;
 
-    let user_result = rendering::render_updates(&game, side);
+    let user_result = display::render_updates(&game, side);
     let opponent_id = game.player(side.opponent()).id;
-    let opponent_result = rendering::render_updates(&game, side.opponent());
+    let opponent_result = display::render_updates(&game, side.opponent());
 
     database.write_game(&game)?;
     Ok(GameResponse {
-        command_list: CommandList { commands: user_result },
-        channel_responses: vec![(opponent_id, CommandList { commands: opponent_result })],
+        command_list: user_result,
+        channel_response: Some((opponent_id, opponent_result)),
     })
 }
 
@@ -227,7 +227,7 @@ fn handle_action(
 fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameState> {
     let id = game_id.as_ref().with_context(|| "GameId not provided!")?;
     let mut game = database.game(*id)?;
-    game.updates = UpdateTracker { update_list: Some(vec![]) };
+    game.updates = UpdateTracker::new(!game.data.config.simulation);
     Ok(game)
 }
 

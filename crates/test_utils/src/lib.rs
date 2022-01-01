@@ -18,6 +18,7 @@
 pub mod client;
 
 use std::fmt::Debug;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use anyhow::Result;
 use data::card_name::CardName;
@@ -27,20 +28,17 @@ use data::game::{GameConfiguration, GameState, RaidState};
 use data::primitives::{ActionCount, GameId, ManaValue, PointsValue, RaidId, RoomId, Side, UserId};
 use maplit::hashmap;
 use protos::spelldawn::game_command::Command;
+use protos::spelldawn::RoomIdentifier;
 use server::GameResponse;
 
 use crate::client::TestGame;
-
-/// The standard [GameId] used for this game
-pub const GAME_ID: GameId = GameId { value: 1 };
+pub static NEXT_ID: AtomicU64 = AtomicU64::new(1_000_000);
 /// The title returned for hidden cards
 pub const HIDDEN_CARD: &str = "Hidden Card";
-/// The [UserId] for the user who is *not* running the test
-pub const OPPONENT_ID: UserId = UserId { value: 2 };
 /// [RoomId] used by default for targeting
 pub const ROOM_ID: RoomId = RoomId::RoomA;
-/// The [UserId] for the user who the test is running as
-pub const USER_ID: UserId = UserId { value: 1 };
+/// Client equivalent of [ROOM_ID].
+pub const CLIENT_ROOM_ID: RoomIdentifier = RoomIdentifier::RoomA;
 /// Default Raid ID to use during testing
 pub const RAID_ID: RaidId = RaidId(1);
 
@@ -51,13 +49,14 @@ pub const RAID_ID: RaidId = RaidId(1);
 /// game is advanced to the user's first turn. See [Args] for information about
 /// the default configuration options and how to modify them.
 pub fn new_game(user_side: Side, args: Args) -> TestGame {
+    let (game_id, user_id, opponent_id) = generate_ids(args.id_basis);
     let (overlord_user, champion_user) = match user_side {
-        Side::Overlord => (USER_ID, OPPONENT_ID),
-        Side::Champion => (OPPONENT_ID, USER_ID),
+        Side::Overlord => (user_id, opponent_id),
+        Side::Champion => (opponent_id, user_id),
     };
 
     let mut state = GameState::new_game(
-        GAME_ID,
+        game_id,
         Deck {
             owner_id: overlord_user,
             identity: CardName::TestOverlordIdentity,
@@ -91,12 +90,26 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
             Some(RaidState { raid_id: RAID_ID, encounter_number: 0, priority: raid.priority })
     }
 
-    TestGame::new(state)
+    let mut game = TestGame::new(state, user_id, opponent_id);
+    if args.connect {
+        game.connect(user_id, Some(game_id)).expect("Connection failed");
+        game.connect(opponent_id, Some(game_id)).expect("Connection failed");
+    }
+    game
+}
+
+fn generate_ids(basis: Option<u64>) -> (GameId, UserId, UserId) {
+    let next_id = basis.unwrap_or_else(|| NEXT_ID.fetch_add(2, Ordering::SeqCst));
+    (GameId::new(next_id), UserId::new(next_id), UserId::new(next_id + 1))
 }
 
 /// Arguments to [new_game]
 #[derive(Clone, Debug)]
 pub struct Args {
+    /// Value to use for generated GameID and UserIds, in order to ensure
+    /// deterministic snapshots. Game ID and User ID will use this number,
+    /// Opponent ID will use this number + 1. Must be less than 1,000,000.
+    pub id_basis: Option<u64>,
     /// Mana available for the `user_side` player. Defaults to 5.
     pub mana: ManaValue,
     /// Actions available for the `user_side` player. Defaults to 3.
@@ -111,11 +124,22 @@ pub struct Args {
     pub next_draw: Option<CardName>,
     /// Set up an active raid within the created game
     pub raid: Option<TestRaid>,
+    /// If false, will not attempt to automatically connect to this game.
+    /// Defaults to true.
+    pub connect: bool,
 }
 
 impl Default for Args {
     fn default() -> Self {
-        Self { mana: 5, actions: 3, score: 0, next_draw: None, raid: None }
+        Self {
+            id_basis: None,
+            mana: 5,
+            actions: 3,
+            score: 0,
+            next_draw: None,
+            raid: None,
+            connect: true,
+        }
     }
 }
 
@@ -142,15 +166,6 @@ pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
     assert!(result.is_err(), "Expected an error, got {:?}", result)
 }
 
-/// Returns the opposing test [UserId] for this `user_id`
-pub fn opponent_of(user_id: UserId) -> UserId {
-    match user_id {
-        USER_ID => OPPONENT_ID,
-        OPPONENT_ID => USER_ID,
-        _ => panic!("Unknown UserId: {:?}", user_id),
-    }
-}
-
 /// Asserts that both clients in this [GameResponse] have a command which
 /// matches this `predicate`.
 pub fn assert_has_command(
@@ -165,10 +180,6 @@ pub fn assert_has_command(
         .iter()
         .find(|c| predicate(c.command.as_ref().unwrap()))
         .expect(message);
-    value
-        .channel_responses
-        .iter()
-        .flat_map(|(_, list)| &list.commands)
-        .find(|c| predicate(c.command.as_ref().unwrap()))
-        .expect(message);
+    let (_, list) = value.channel_response.expect("Expected channel response");
+    list.commands.iter().find(|c| predicate(c.command.as_ref().unwrap())).expect(message);
 }

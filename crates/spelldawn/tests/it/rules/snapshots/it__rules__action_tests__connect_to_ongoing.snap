@@ -1,7 +1,7 @@
 ---
-source: crates/spelldawn/tests/it/rules/actions.rs
-assertion_line: 31
-expression: response
+source: crates/spelldawn/tests/it/rules/action_tests.rs
+assertion_line: 53
+expression: r3
 
 ---
 Ok(
@@ -15,53 +15,16 @@ Ok(
                                 GameView {
                                     game_id: Some(
                                         GameIdentifier {
-                                            value: 1,
+                                            value: 4,
                                         },
                                     ),
                                     user: Some(
                                         PlayerView {
                                             player_info: Some(
                                                 PlayerInfo {
-                                                    name: "Test Overlord Identity",
-                                                    portrait: Some(
-                                                        SpriteAddress {
-                                                            address: "Enixion/Fantasy Art Pack 2/Resized/3",
-                                                        },
+                                                    name: Some(
+                                                        "Test Champion Identity",
                                                     ),
-                                                    portrait_frame: Some(
-                                                        SpriteAddress {
-                                                            address: "SpriteWay/Icons/Fantasy Player Frames/50002",
-                                                        },
-                                                    ),
-                                                    card_back: Some(
-                                                        SpriteAddress {
-                                                            address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1",
-                                                        },
-                                                    ),
-                                                },
-                                            ),
-                                            score: Some(
-                                                ScoreView {
-                                                    score: 0,
-                                                },
-                                            ),
-                                            mana: Some(
-                                                ManaView {
-                                                    amount: 5,
-                                                },
-                                            ),
-                                            action_tracker: Some(
-                                                ActionTrackerView {
-                                                    available_action_count: 3,
-                                                },
-                                            ),
-                                        },
-                                    ),
-                                    opponent: Some(
-                                        PlayerView {
-                                            player_info: Some(
-                                                PlayerInfo {
-                                                    name: "Test Champion Identity",
                                                     portrait: Some(
                                                         SpriteAddress {
                                                             address: "Enixion/Fantasy Art Pack 2/Resized/2",
@@ -96,15 +59,64 @@ Ok(
                                             ),
                                         },
                                     ),
+                                    opponent: Some(
+                                        PlayerView {
+                                            player_info: Some(
+                                                PlayerInfo {
+                                                    name: Some(
+                                                        "Test Overlord Identity",
+                                                    ),
+                                                    portrait: Some(
+                                                        SpriteAddress {
+                                                            address: "Enixion/Fantasy Art Pack 2/Resized/3",
+                                                        },
+                                                    ),
+                                                    portrait_frame: Some(
+                                                        SpriteAddress {
+                                                            address: "SpriteWay/Icons/Fantasy Player Frames/50002",
+                                                        },
+                                                    ),
+                                                    card_back: Some(
+                                                        SpriteAddress {
+                                                            address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1",
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            score: Some(
+                                                ScoreView {
+                                                    score: 0,
+                                                },
+                                            ),
+                                            mana: Some(
+                                                ManaView {
+                                                    amount: 5,
+                                                },
+                                            ),
+                                            action_tracker: Some(
+                                                ActionTrackerView {
+                                                    available_action_count: 2,
+                                                },
+                                            ),
+                                        },
+                                    ),
                                     arena: Some(
                                         ArenaView {
                                             rooms_at_bottom: Some(
-                                                true,
+                                                false,
                                             ),
-                                            identity_action: LevelUpRoom,
+                                            identity_action: Some(
+                                                IdentityAction {
+                                                    identity_action: Some(
+                                                        InitiateRaid(
+                                                            (),
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
                                         },
                                     ),
-                                    current_priority: User,
+                                    current_priority: Opponent,
                                 },
                             ),
                         },
@@ -137,7 +149,7 @@ Ok(
                                             address: "SpriteWay/Icons/Fantasy Player Frames/50002",
                                         },
                                     ),
-                                    owning_player: User,
+                                    owning_player: Opponent,
                                     revealed_card: Some(
                                         RevealedCardView {
                                             card_frame: Some(
@@ -198,7 +210,55 @@ Ok(
                                     position: Some(
                                         Identity(
                                             ObjectPositionIdentity {
-                                                owner: User,
+                                                owner: Opponent,
+                                            },
+                                        ),
+                                    ),
+                                },
+                            ),
+                            create_animation: Unspecified,
+                            disable_flip_animation: false,
+                        },
+                    ),
+                ),
+            },
+            GameCommand {
+                command: Some(
+                    CreateOrUpdateCard(
+                        CreateOrUpdateCardCommand {
+                            card: Some(
+                                CardView {
+                                    card_id: Some(
+                                        CardIdentifier {
+                                            side: Overlord,
+                                            index: 1,
+                                        },
+                                    ),
+                                    card_icons: Some(
+                                        CardIcons {
+                                            top_left_icon: None,
+                                            top_right_icon: None,
+                                            bottom_right_icon: None,
+                                            bottom_left_icon: None,
+                                            arena_icon: None,
+                                        },
+                                    ),
+                                    arena_frame: Some(
+                                        SpriteAddress {
+                                            address: "SpriteWay/Icons/Clean Frames/9054",
+                                        },
+                                    ),
+                                    owning_player: Opponent,
+                                    revealed_card: None,
+                                },
+                            ),
+                            create_position: Some(
+                                ObjectPosition {
+                                    sorting_key: 1,
+                                    position: Some(
+                                        Hand(
+                                            ObjectPositionHand {
+                                                owner: Opponent,
                                             },
                                         ),
                                     ),
@@ -236,7 +296,7 @@ Ok(
                                             address: "SpriteWay/Icons/Fantasy Player Frames/50003",
                                         },
                                     ),
-                                    owning_player: Opponent,
+                                    owning_player: User,
                                     revealed_card: Some(
                                         RevealedCardView {
                                             card_frame: Some(
@@ -297,7 +357,7 @@ Ok(
                                     position: Some(
                                         Identity(
                                             ObjectPositionIdentity {
-                                                owner: Opponent,
+                                                owner: User,
                                             },
                                         ),
                                     ),

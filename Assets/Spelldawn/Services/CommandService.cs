@@ -230,7 +230,7 @@ namespace Spelldawn.Services
 
     IEnumerator HandleRenderArena(ArenaView arenaView)
     {
-      _registry.IdentityCardForPlayer(PlayerName.User).DragAction = arenaView.IdentityAction;
+      _registry.IdentityCardForPlayer(PlayerName.User).DragAction = arenaView.IdentityAction.IdentityActionCase;
       return _registry.ArenaService.RenderArenaView(arenaView);
     }
   }

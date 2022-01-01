@@ -126,11 +126,7 @@ impl GameState {
             overlord: PlayerState::new_game(overlord_deck.owner_id, 3 /* actions */),
             champion: PlayerState::new_game(champion_deck.owner_id, 0 /* actions */),
             data: GameData { turn: Side::Overlord, turn_number: 1, raid: None, config },
-            updates: if config.simulation {
-                UpdateTracker::default()
-            } else {
-                UpdateTracker { update_list: Some(vec![]) }
-            },
+            updates: UpdateTracker::new(!config.simulation),
             next_sorting_key: 1,
         }
     }
@@ -143,13 +139,6 @@ impl GameState {
             .iter()
             .find(|c| c.position.kind() == CardPositionKind::Identity)
             .expect("Identity Card")
-    }
-
-    /// All Card IDs present in this game
-    pub fn all_card_ids(&self) -> impl Iterator<Item = CardId> {
-        (0..self.overlord_cards.len())
-            .map(|index| CardId::new(Side::Overlord, index))
-            .chain((0..self.champion_cards.len()).map(|index| CardId::new(Side::Champion, index)))
     }
 
     /// Look up [CardState] for a card. Panics if this card is not present in
@@ -273,8 +262,17 @@ impl GameState {
         result
     }
 
-    /// All cards in this game. Overlord cards in alphabetical order followed by
-    /// Champion cards in alphabetical order.
+    /// All Card IDs present in this game
+    pub fn all_card_ids(&self) -> impl Iterator<Item = CardId> {
+        (0..self.overlord_cards.len())
+            .map(|index| CardId::new(Side::Overlord, index))
+            .chain((0..self.champion_cards.len()).map(|index| CardId::new(Side::Champion, index)))
+    }
+
+    /// All cards in this game.
+    ///
+    /// Overlord cards in alphabetical order followed by Champion cards in
+    /// alphabetical order.
     pub fn all_cards(&self) -> impl Iterator<Item = &CardState> {
         self.overlord_cards.iter().chain(self.champion_cards.iter())
     }

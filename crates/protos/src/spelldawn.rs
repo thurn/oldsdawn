@@ -370,8 +370,8 @@ pub struct CardIcon {
     #[prost(message, optional, tag = "1")]
     pub background: ::core::option::Option<SpriteAddress>,
     /// * Text to display on the icon.
-    #[prost(string, tag = "2")]
-    pub text: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "2")]
+    pub text: ::core::option::Option<::prost::alloc::string::String>,
     ///*
     /// Scale for the background image to render at. A value of 0.0 will be
     /// treated as 1.0
@@ -558,7 +558,7 @@ pub struct RevealedCardView {
     /// is used.
     #[prost(message, optional, tag = "9")]
     pub on_release_position: ::core::option::Option<ObjectPosition>,
-    /// * Can this card currently be played?
+    /// * Can this card currently be played when it is in hand?
     #[prost(bool, tag = "10")]
     pub can_play: bool,
     ///*
@@ -593,8 +593,8 @@ pub struct DiscardPileView {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayerInfo {
-    #[prost(string, tag = "1")]
-    pub name: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "1")]
+    pub name: ::core::option::Option<::prost::alloc::string::String>,
     #[prost(message, optional, tag = "2")]
     pub portrait: ::core::option::Option<SpriteAddress>,
     #[prost(message, optional, tag = "3")]
@@ -623,6 +623,21 @@ pub struct RoomView {
     pub front_cards: ::prost::alloc::vec::Vec<CardView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct IdentityAction {
+    #[prost(oneof = "identity_action::IdentityAction", tags = "1, 2")]
+    pub identity_action: ::core::option::Option<identity_action::IdentityAction>,
+}
+/// Nested message and enum types in `IdentityAction`.
+pub mod identity_action {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum IdentityAction {
+        #[prost(message, tag = "1")]
+        InitiateRaid(()),
+        #[prost(message, tag = "2")]
+        LevelUpRoom(()),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ArenaView {
     ///*
     /// If true, render rooms at the bottom of the screen, if false, render
@@ -631,8 +646,8 @@ pub struct ArenaView {
     pub rooms_at_bottom: ::core::option::Option<bool>,
     ///*
     /// Controls the drag action taken for the player's identity card.
-    #[prost(enumeration = "IdentityAction", tag = "2")]
-    pub identity_action: i32,
+    #[prost(message, optional, tag = "2")]
+    pub identity_action: ::core::option::Option<IdentityAction>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ActionTrackerView {
@@ -1337,13 +1352,6 @@ pub enum ClientItemLocation {
     Unspecified = 0,
     Left = 1,
     Right = 2,
-}
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum IdentityAction {
-    Unspecified = 0,
-    InitiateRaid = 1,
-    LevelUpRoom = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

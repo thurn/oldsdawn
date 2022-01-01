@@ -65,7 +65,7 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     }
 }
 
-/// Updates the 'revealed' state of a card. Fires [RevealCardEvent] and pushes
+/// Updates the 'revealed' state of a card. Fires [RevealCardEvent] and appends
 /// [GameUpdate::RevealCard] if the new state is revealed.
 #[instrument(skip(game))]
 pub fn set_revealed(game: &mut GameState, card_id: CardId, revealed: bool) {
@@ -79,32 +79,29 @@ pub fn set_revealed(game: &mut GameState, card_id: CardId, revealed: bool) {
     }
 }
 
-/// Give mana to the indicated player. Appends [GameUpdate::UpdateGameState].
+/// Give mana to the indicated player.
 #[instrument(skip(game))]
 pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     info!(?side, ?amount, "gain_mana");
     game.player_mut(side).mana += amount;
-    game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Spends a player's mana. Appends [GameUpdate::UpdateGameState]. Panics if
-/// sufficient mana is not available
-#[instrument(skip(game))]
+/// Spends a player's mana. Panics if sufficient mana is not available
+/// [instrument(skip(game))]
 pub fn spend_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     info!(?side, ?amount, "spend_mana");
     assert!(game.player(side).mana >= amount, "Insufficient mana available");
     game.player_mut(side).mana -= amount;
-    game.updates.push(GameUpdate::UpdateGameState);
 }
 
-/// Spends a player's action points. Appends [GameUpdate::UpdateGameState].
+/// Spends a player's action points.
+///
 /// Panics if sufficient action points are not available.
 #[instrument(skip(game))]
 pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount) {
     info!(?side, ?amount, "spend_action_points");
     assert!(game.player(side).actions >= amount, "Insufficient action points available");
     game.player_mut(side).actions -= amount;
-    game.updates.push(GameUpdate::UpdateGameState);
 }
 
 /// Takes *up to* `maximum` stored mana from a card and gives it to the player
@@ -116,7 +113,6 @@ pub fn take_stored_mana(game: &mut GameState, card_id: CardId, maximum: ManaValu
     let taken = std::cmp::min(available, maximum);
     game.card_mut(card_id).data.stored_mana -= taken;
     dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
-    game.updates.push(GameUpdate::UpdateCard(card_id));
     gain_mana(game, card_id.side, taken);
 }
 
@@ -131,19 +127,16 @@ pub fn set_raid_ended(game: &mut GameState) {
 }
 
 /// Overwrites the value of [CardData::boost_count] to match the provided
-/// [BoostData]. Appends [GameUpdate::UpdateCard].
+/// [BoostData].
 #[instrument(skip(game))]
 pub fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
     info!(?scope, ?data, "write_boost");
     game.card_mut(data.card_id).data.boost_count = data.count;
-    game.updates.push(GameUpdate::UpdateCard(data.card_id));
 }
 
-/// Set the boost count to zero for the card in `scope`. Appends
-/// [GameUpdate::UpdateCard].
+/// Set the boost count to zero for the card in `scope`.
 #[instrument(skip(game))]
 pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
     info!(?scope, "clear_boost");
     game.card_mut(scope.card_id()).data.boost_count = 0;
-    game.updates.push(GameUpdate::UpdateCard(scope.card_id()));
 }

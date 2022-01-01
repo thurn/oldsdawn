@@ -31,7 +31,7 @@ namespace Spelldawn.Game
     [SerializeField] GameObject _raidSymbol = null!;
     [SerializeField] PlayerName _owner;
 
-    public IdentityAction? DragAction { get; set; }
+    public IdentityAction.IdentityActionOneofCase? DragAction { get; set; }
 
     RoomIdentifier? _selectedRoom;
 
@@ -80,10 +80,10 @@ namespace Spelldawn.Game
         _registry.StaticAssets.PlayCardSound();
         switch (DragAction)
         {
-          case IdentityAction.InitiateRaid:
+          case IdentityAction.IdentityActionOneofCase.InitiateRaid:
             _registry.ArrowService.ShowArrow(ArrowService.Type.Red, transform, this);
             break;
-          case IdentityAction.LevelUpRoom:
+          case IdentityAction.IdentityActionOneofCase.LevelUpRoom:
             _registry.ArrowService.ShowArrow(ArrowService.Type.Green, transform, this);
             break;
         }
@@ -115,7 +115,7 @@ namespace Spelldawn.Game
       {
         switch (DragAction)
         {
-          case IdentityAction.InitiateRaid:
+          case IdentityAction.IdentityActionOneofCase.InitiateRaid:
             _registry.ActionService.HandleAction(new GameAction
             {
               InitiateRaid = new InitiateRaidAction
@@ -124,7 +124,7 @@ namespace Spelldawn.Game
               }
             });
             break;
-          case IdentityAction.LevelUpRoom:
+          case IdentityAction.IdentityActionOneofCase.LevelUpRoom:
             _registry.ActionService.HandleAction(new GameAction
             {
               LevelUpRoom = new LevelUpRoomAction

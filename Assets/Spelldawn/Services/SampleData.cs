@@ -496,7 +496,10 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
         Arena = new ArenaView
         {
-          IdentityAction = IdentityAction.InitiateRaid
+          IdentityAction = new IdentityAction
+          {
+            InitiateRaid = new Empty()
+          }
         },
         CurrentPriority = PlayerName.User
       };

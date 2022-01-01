@@ -15,6 +15,7 @@
 //! Functions to query boolean game information, typically whether some game
 //! action can currently be taken
 
+use data::card_state::CardPosition;
 use data::delegates::{
     CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, Flag,
 };
@@ -26,7 +27,9 @@ use crate::{dispatch, queries};
 /// Returns whether a given card can currently be played via the basic game
 /// action to play a card.
 pub fn can_take_play_card_action(game: &GameState, side: Side, card_id: CardId) -> bool {
-    let mut can_play = queries::in_main_phase(game, side) && side == card_id.side;
+    let mut can_play = queries::in_main_phase(game, side)
+        && side == card_id.side
+        && game.card(card_id).position == CardPosition::Hand(side);
     if enters_play_revealed(game, card_id) {
         can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
                              if cost <= game.player(side).mana);

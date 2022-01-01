@@ -12,26 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Core module responsible for turning game updates into GRPC protobuf
-//! responses.
+use std::collections::HashMap;
 
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
-use data::updates::GameUpdate;
 use protos::spelldawn::card_targeting::Targeting;
-use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    game_object_identifier, ActionTrackerView, ArenaView, CardCreationAnimation, CardIcon,
-    CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView, ClientItemLocation,
-    ClientRoomLocation, CreateOrUpdateCardCommand, DelayCommand, DisplayGameMessageCommand,
-    GameCommand, GameIdentifier, GameMessageType, GameObjectIdentifier, GameView, IdentityAction,
-    ManaView, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem,
-    ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo, PlayerName, PlayerSide,
-    PlayerView, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress, TimeValue,
+    identity_action, ActionTrackerView, ArenaView, CardCreationAnimation, CardIcon, CardIcons,
+    CardIdentifier, CardTargeting, CardTitle, CardView, ClientItemLocation, ClientRoomLocation,
+    CreateOrUpdateCardCommand, GameIdentifier, GameView, IdentityAction, ManaView, ObjectPosition,
+    ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
+    ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
+    PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress,
     UpdateGameViewCommand,
 };
 use rules::{flags, queries};
@@ -39,219 +34,66 @@ use rules::{flags, queries};
 use crate::assets::CardIconType;
 use crate::{assets, rules_text};
 
-/// Builds a series of [GameCommand]s to fully represent the current state of
-/// this game in the client, for use e.g. in response to a reconnect request.
-pub fn full_sync(game: &GameState, user_side: Side) -> Vec<GameCommand> {
-    let mut result =
-        vec![GameCommand { command: Some(game_view(game, user_side, GameUpdateType::Full)) }];
-    result.extend(
-        game.all_cards()
+pub struct FullSync {
+    pub game: UpdateGameViewCommand,
+    pub cards: HashMap<CardId, CreateOrUpdateCardCommand>,
+}
+
+pub fn run(game: &GameState, user_side: Side) -> FullSync {
+    FullSync {
+        game: update_game_view(game, user_side),
+        cards: game
+            .all_cards()
             .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
             .map(|c| {
-                create_or_update_card(
-                    game,
-                    c,
-                    user_side,
-                    CardCreationStrategy::SnapToCurrentPosition,
+                (
+                    c.id,
+                    create_or_update_card(
+                        game,
+                        c,
+                        user_side,
+                        CardCreationStrategy::SnapToCurrentPosition,
+                    ),
                 )
             })
-            .map(|c| GameCommand { command: Some(c) }),
-    );
-    result
-}
-
-/// Builds a series of [GameCommand]s to represent the updates present in
-/// [GameState::updates].
-pub fn render_updates(game: &GameState, user_side: Side) -> Vec<GameCommand> {
-    game.updates.update_list.as_ref().map_or_else(Vec::new, |updates| {
-        updates
-            .iter()
-            .flat_map(|update| adapt_update(game, user_side, *update))
-            .map(|c| GameCommand { command: Some(c) })
-            .collect()
-    })
-}
-
-/// Converts a [GameUpdate] into a [Command] list describing the required client
-/// changes.
-pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Vec<Command> {
-    match update {
-        GameUpdate::UpdateGameState => vec![game_view(game, user_side, GameUpdateType::State)],
-        GameUpdate::UpdateCard(card_id) => vec![create_or_update_card(
-            game,
-            game.card(card_id),
-            user_side,
-            CardCreationStrategy::SnapToCurrentPosition,
-        )],
-        GameUpdate::DrawCard(card_id) => draw_card(game, game.card(card_id), user_side),
-        GameUpdate::MoveCard(card_id) => {
-            filtered(vec![move_card(game, game.card(card_id), user_side)])
-        }
-        GameUpdate::RevealCard(card_id) => reveal_card(game, game.card(card_id), user_side),
-        GameUpdate::StartTurn(side) => start_turn(side),
-        _ => todo!(),
+            .collect(),
     }
-}
-
-/// Possible behavior when updating the state of a game
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-enum GameUpdateType {
-    /// Sync all game state, including arena info and player info
-    Full,
-    /// Sync only normally mutable game state, such as player mana and current
-    /// priority
-    State,
 }
 
 /// Builds a command to update the client's current [GameView]
-fn game_view(game: &GameState, user_side: Side, update_type: GameUpdateType) -> Command {
-    Command::UpdateGameView(UpdateGameViewCommand {
+fn update_game_view(game: &GameState, user_side: Side) -> UpdateGameViewCommand {
+    UpdateGameViewCommand {
         game: Some(GameView {
             game_id: Some(GameIdentifier { value: game.id.value }),
-            user: Some(player_view(game, user_side, update_type)),
-            opponent: Some(player_view(game, user_side.opponent(), update_type)),
-            arena: if update_type == GameUpdateType::State {
-                None
-            } else {
-                Some(ArenaView {
-                    rooms_at_bottom: Some(user_side == Side::Overlord),
-                    identity_action: match user_side {
-                        Side::Overlord => IdentityAction::LevelUpRoom.into(),
-                        Side::Champion => IdentityAction::InitiateRaid.into(),
+            user: Some(player_view(game, user_side)),
+            opponent: Some(player_view(game, user_side.opponent())),
+            arena: Some(ArenaView {
+                rooms_at_bottom: Some(user_side == Side::Overlord),
+                identity_action: Some(match user_side {
+                    Side::Overlord => IdentityAction {
+                        identity_action: Some(identity_action::IdentityAction::LevelUpRoom(())),
                     },
-                })
-            },
+                    Side::Champion => IdentityAction {
+                        identity_action: Some(identity_action::IdentityAction::InitiateRaid(())),
+                    },
+                }),
+            }),
             current_priority: current_priority(game, user_side).into(),
         }),
-    })
-}
-
-/// Builds commands to represent a card being drawn
-fn draw_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command> {
-    filtered(vec![
-        Some(create_or_update_card(
-            game,
-            card,
-            user_side,
-            if card.side == user_side {
-                CardCreationStrategy::DrawUserCard
-            } else {
-                CardCreationStrategy::CreateAtPosition(ObjectPosition {
-                    sorting_key: u32::MAX,
-                    position: Some(Position::Deck(ObjectPositionDeck {
-                        owner: PlayerName::Opponent.into(),
-                    })),
-                })
-            },
-        )),
-        move_card(game, card, user_side),
-    ])
-}
-
-/// Creates a move card command to move a card to its current location. Returns
-/// None if the destination would not be a valid game position, e.g. if it is
-/// [CardPosition::DeckUnknown].
-fn move_card(game: &GameState, card: &CardState, user_side: Side) -> Option<Command> {
-    adapt_position(card, game.card(card.id).position, user_side).map(|position| {
-        Command::MoveGameObjects(MoveGameObjectsCommand {
-            ids: vec![adapt_game_object_id(card.id)],
-            position: Some(position),
-            disable_animation: false,
-        })
-    })
-}
-
-/// Possible behavior when creating a card
-#[derive(Debug, PartialEq, Clone)]
-pub enum CardCreationStrategy {
-    /// Animate the card moving from the user's deck to the staging area.
-    DrawUserCard,
-    /// Jump the newly-created card to its current game position. If the current
-    /// position is invalid (e.g. in the user's deck), no initial position
-    /// will be specified for the card.
-    SnapToCurrentPosition,
-    /// Create the card at a specific game object position.
-    CreateAtPosition(ObjectPosition),
-}
-
-/// Creates a create/update card command. Visible for use in tests.
-pub fn create_or_update_card(
-    game: &GameState,
-    card: &CardState,
-    user_side: Side,
-    creation_strategy: CardCreationStrategy,
-) -> Command {
-    let definition = rules::get(card.name);
-    let revealed = card.is_revealed_to(user_side);
-    let create_animation = if creation_strategy == CardCreationStrategy::DrawUserCard {
-        CardCreationAnimation::DrawCard.into()
-    } else {
-        CardCreationAnimation::Unspecified.into()
-    };
-    let position = match creation_strategy {
-        CardCreationStrategy::DrawUserCard => None,
-        CardCreationStrategy::SnapToCurrentPosition => {
-            adapt_position(card, game.card(card.id).position, user_side)
-        }
-        CardCreationStrategy::CreateAtPosition(p) => Some(p),
-    };
-
-    Command::CreateOrUpdateCard(CreateOrUpdateCardCommand {
-        card: Some(CardView {
-            card_id: Some(adapt_card_id(card.id)),
-            card_icons: Some(card_icons(game, card, definition, revealed)),
-            arena_frame: Some(assets::arena_frame(
-                definition.side,
-                definition.card_type,
-                definition.config.faction,
-            )),
-            owning_player: to_player_name(definition.side, user_side).into(),
-            revealed_card: revealed.then(|| revealed_card_view(game, card, definition, user_side)),
-        }),
-        create_position: position,
-        create_animation,
-        disable_flip_animation: false,
-    })
-}
-
-/// Commands to reveal the indicated card to a player
-fn reveal_card(game: &GameState, card: &CardState, user_side: Side) -> Vec<Command> {
-    let mut result = vec![create_or_update_card(
-        game,
-        card,
-        user_side,
-        CardCreationStrategy::SnapToCurrentPosition,
-    )];
-
-    if user_side != card.side {
-        result.push(Command::MoveGameObjects(MoveGameObjectsCommand {
-            ids: vec![adapt_game_object_id(card.id)],
-            position: Some(ObjectPosition {
-                sorting_key: 0,
-                position: Some(Position::Staging(ObjectPositionStaging {})),
-            }),
-            disable_animation: false,
-        }));
-        result.push(delay(1500));
     }
-    result
 }
 
 /// Builds a [PlayerView] for a given player
-fn player_view(game: &GameState, side: Side, update_type: GameUpdateType) -> PlayerView {
+fn player_view(game: &GameState, side: Side) -> PlayerView {
     let identity = game.identity(side);
     let data = game.player(side);
     PlayerView {
-        player_info: if update_type == GameUpdateType::State {
-            None
-        } else {
-            Some(PlayerInfo {
-                name: identity.name.displayed_name(),
-                portrait: Some(sprite(&rules::get(identity.name).image)),
-                portrait_frame: Some(assets::identity_card_frame(side)),
-                card_back: Some(assets::card_back(rules::get(identity.name).school)),
-            })
-        },
+        player_info: Some(PlayerInfo {
+            name: Some(identity.name.displayed_name()),
+            portrait: Some(sprite(&rules::get(identity.name).image)),
+            portrait_frame: Some(assets::identity_card_frame(side)),
+            card_back: Some(assets::card_back(rules::get(identity.name).school)),
+        }),
         score: Some(ScoreView { score: data.score }),
         mana: Some(ManaView { amount: data.mana }),
         action_tracker: Some(ActionTrackerView { available_action_count: data.actions }),
@@ -270,6 +112,59 @@ fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
     )
 }
 
+/// Possible behavior when creating a card
+#[derive(Debug, PartialEq, Clone)]
+pub enum CardCreationStrategy {
+    /// Animate the card moving from the user's deck to the staging area.
+    DrawUserCard,
+    /// Jump the newly-created card to its current game position. If the current
+    /// position is invalid (e.g. in the user's deck), no initial position
+    /// will be specified for the card.
+    SnapToCurrentPosition,
+    /// Create the card at a specific game object position.
+    CreateAtPosition(ObjectPosition),
+}
+
+/// Creates a command to create or update a card.
+pub fn create_or_update_card(
+    game: &GameState,
+    card: &CardState,
+    user_side: Side,
+    creation_strategy: CardCreationStrategy,
+) -> CreateOrUpdateCardCommand {
+    let definition = rules::get(card.name);
+    let revealed = card.is_revealed_to(user_side);
+    let create_animation = if creation_strategy == CardCreationStrategy::DrawUserCard {
+        CardCreationAnimation::DrawCard.into()
+    } else {
+        CardCreationAnimation::Unspecified.into()
+    };
+    let position = match creation_strategy {
+        CardCreationStrategy::DrawUserCard => None,
+        CardCreationStrategy::SnapToCurrentPosition => {
+            adapt_position(card, card.position, user_side)
+        }
+        CardCreationStrategy::CreateAtPosition(p) => Some(p),
+    };
+
+    CreateOrUpdateCardCommand {
+        card: Some(CardView {
+            card_id: Some(adapt_card_id(card.id)),
+            card_icons: Some(card_icons(game, card, definition, revealed)),
+            arena_frame: Some(assets::arena_frame(
+                definition.side,
+                definition.card_type,
+                definition.config.faction,
+            )),
+            owning_player: to_player_name(definition.side, user_side).into(),
+            revealed_card: revealed.then(|| revealed_card_view(game, card, definition, user_side)),
+        }),
+        create_position: position,
+        create_animation,
+        disable_flip_animation: false,
+    }
+}
+
 /// Build icons struct for this card
 fn card_icons(
     game: &GameState,
@@ -281,12 +176,12 @@ fn card_icons(
         CardIcons {
             top_left_icon: queries::mana_cost(game, card.id).map(|mana| CardIcon {
                 background: Some(assets::card_icon(CardIconType::Mana)),
-                text: mana.to_string(),
+                text: Some(mana.to_string()),
                 background_scale: 1.0,
             }),
             bottom_left_icon: definition.config.stats.shield.map(|_| CardIcon {
                 background: Some(assets::card_icon(CardIconType::Shield)),
-                text: queries::shield(game, card.id).to_string(),
+                text: Some(queries::shield(game, card.id).to_string()),
                 background_scale: 1.0,
             }),
             bottom_right_icon: definition
@@ -295,13 +190,13 @@ fn card_icons(
                 .base_attack
                 .map(|_| CardIcon {
                     background: Some(assets::card_icon(CardIconType::Shield)),
-                    text: queries::attack(game, card.id).to_string(),
+                    text: Some(queries::attack(game, card.id).to_string()),
                     background_scale: 1.0,
                 })
                 .or_else(|| {
                     definition.config.stats.health.map(|_| CardIcon {
                         background: Some(assets::card_icon(CardIconType::Health)),
-                        text: queries::health(game, card.id).to_string(),
+                        text: Some(queries::health(game, card.id).to_string()),
                         background_scale: 1.0,
                     })
                 }),
@@ -311,7 +206,7 @@ fn card_icons(
         CardIcons {
             arena_icon: (card.data.card_level > 0).then(|| CardIcon {
                 background: Some(assets::card_icon(CardIconType::LevelCounter)),
-                text: card.data.card_level.to_string(),
+                text: Some(card.data.card_level.to_string()),
                 background_scale: 1.0,
             }),
             ..CardIcons::default()
@@ -345,7 +240,7 @@ fn revealed_card_view(
 /// Converts a card position into a rendered [ObjectPosition]. Returns None if
 /// this [CardPosition] has no equivalent object position, e.g. if the card is
 /// currently shuffled into the deck.
-fn adapt_position(
+pub fn adapt_position(
     card: &CardState,
     position: CardPosition,
     user_side: Side,
@@ -424,21 +319,6 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     }
 }
 
-/// Constructs a delay command
-fn delay(milliseconds: u32) -> Command {
-    Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
-}
-
-/// Starts the `side` player's turn
-fn start_turn(side: Side) -> Vec<Command> {
-    vec![Command::DisplayGameMessage(DisplayGameMessageCommand {
-        message_type: match side {
-            Side::Overlord => GameMessageType::Dusk.into(),
-            Side::Champion => GameMessageType::Dawn.into(),
-        },
-    })]
-}
-
 /// Converts a [Side] into a [PlayerName] based on which viewer we are rendering
 /// this update for.
 fn to_player_name(side: Side, user_side: Side) -> PlayerName {
@@ -449,9 +329,9 @@ fn to_player_name(side: Side, user_side: Side) -> PlayerName {
     }
 }
 
-/// Converts a [CardId] into a client [GameObjectIdentifier]
-fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {
-    GameObjectIdentifier { id: Some(game_object_identifier::Id::CardId(adapt_card_id(id))) }
+/// Turns a [Sprite] into its protobuf equivalent
+fn sprite(sprite: &Sprite) -> SpriteAddress {
+    SpriteAddress { address: sprite.address.clone() }
 }
 
 /// Turns a server [CardId] into its protobuf equivalent
@@ -478,14 +358,4 @@ pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
         RoomId::RoomD => RoomIdentifier::RoomD,
         RoomId::RoomE => RoomIdentifier::RoomE,
     }
-}
-
-/// Turns a [Sprite] into its protobuf equivalent
-fn sprite(sprite: &Sprite) -> SpriteAddress {
-    SpriteAddress { address: sprite.address.clone() }
-}
-
-/// Removes None values from a vector
-fn filtered(vector: Vec<Option<Command>>) -> Vec<Command> {
-    vector.into_iter().flatten().collect()
 }

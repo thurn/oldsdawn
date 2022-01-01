@@ -1,6 +1,6 @@
 ---
-source: crates/spelldawn/tests/it/rules/actions.rs
-assertion_line: 111
+source: crates/spelldawn/tests/it/rules/action_tests.rs
+assertion_line: 196
 expression: response
 
 ---
@@ -16,17 +16,13 @@ Ok(
                                     GameView {
                                         game_id: Some(
                                             GameIdentifier {
-                                                value: 1,
+                                                value: 12,
                                             },
                                         ),
                                         user: Some(
                                             PlayerView {
                                                 player_info: None,
-                                                score: Some(
-                                                    ScoreView {
-                                                        score: 0,
-                                                    },
-                                                ),
+                                                score: None,
                                                 mana: Some(
                                                     ManaView {
                                                         amount: 6,
@@ -39,26 +35,7 @@ Ok(
                                                 ),
                                             },
                                         ),
-                                        opponent: Some(
-                                            PlayerView {
-                                                player_info: None,
-                                                score: Some(
-                                                    ScoreView {
-                                                        score: 0,
-                                                    },
-                                                ),
-                                                mana: Some(
-                                                    ManaView {
-                                                        amount: 5,
-                                                    },
-                                                ),
-                                                action_tracker: Some(
-                                                    ActionTrackerView {
-                                                        available_action_count: 0,
-                                                    },
-                                                ),
-                                            },
-                                        ),
+                                        opponent: None,
                                         arena: None,
                                         current_priority: User,
                                     },
@@ -69,9 +46,9 @@ Ok(
                 },
             ],
         },
-        channel_responses: [
+        channel_response: Some(
             (
-                2,
+                13,
                 CommandList {
                     commands: [
                         GameCommand {
@@ -82,37 +59,14 @@ Ok(
                                             GameView {
                                                 game_id: Some(
                                                     GameIdentifier {
-                                                        value: 1,
+                                                        value: 12,
                                                     },
                                                 ),
-                                                user: Some(
-                                                    PlayerView {
-                                                        player_info: None,
-                                                        score: Some(
-                                                            ScoreView {
-                                                                score: 0,
-                                                            },
-                                                        ),
-                                                        mana: Some(
-                                                            ManaView {
-                                                                amount: 5,
-                                                            },
-                                                        ),
-                                                        action_tracker: Some(
-                                                            ActionTrackerView {
-                                                                available_action_count: 0,
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
+                                                user: None,
                                                 opponent: Some(
                                                     PlayerView {
                                                         player_info: None,
-                                                        score: Some(
-                                                            ScoreView {
-                                                                score: 0,
-                                                            },
-                                                        ),
+                                                        score: None,
                                                         mana: Some(
                                                             ManaView {
                                                                 amount: 6,
@@ -136,6 +90,6 @@ Ok(
                     ],
                 },
             ),
-        ],
+        ),
     },
 )

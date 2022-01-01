@@ -1,6 +1,6 @@
 ---
-source: crates/spelldawn/tests/it/rules/actions.rs
-assertion_line: 68
+source: crates/spelldawn/tests/it/rules/action_tests.rs
+assertion_line: 119
 expression: response
 
 ---
@@ -16,17 +16,13 @@ Ok(
                                     GameView {
                                         game_id: Some(
                                             GameIdentifier {
-                                                value: 1,
+                                                value: 8,
                                             },
                                         ),
                                         user: Some(
                                             PlayerView {
                                                 player_info: None,
-                                                score: Some(
-                                                    ScoreView {
-                                                        score: 0,
-                                                    },
-                                                ),
+                                                score: None,
                                                 mana: Some(
                                                     ManaView {
                                                         amount: 9,
@@ -39,26 +35,7 @@ Ok(
                                                 ),
                                             },
                                         ),
-                                        opponent: Some(
-                                            PlayerView {
-                                                player_info: None,
-                                                score: Some(
-                                                    ScoreView {
-                                                        score: 0,
-                                                    },
-                                                ),
-                                                mana: Some(
-                                                    ManaView {
-                                                        amount: 5,
-                                                    },
-                                                ),
-                                                action_tracker: Some(
-                                                    ActionTrackerView {
-                                                        available_action_count: 3,
-                                                    },
-                                                ),
-                                            },
-                                        ),
+                                        opponent: None,
                                         arena: None,
                                         current_priority: User,
                                     },
@@ -79,80 +56,21 @@ Ok(
                                                 index: 1,
                                             },
                                         ),
-                                        card_icons: Some(
-                                            CardIcons {
-                                                top_left_icon: Some(
-                                                    CardIcon {
-                                                        background: Some(
-                                                            SpriteAddress {
-                                                                address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01",
-                                                            },
-                                                        ),
-                                                        text: "5",
-                                                        background_scale: 1.0,
-                                                    },
-                                                ),
-                                                top_right_icon: None,
-                                                bottom_right_icon: None,
-                                                bottom_left_icon: None,
-                                                arena_icon: None,
-                                            },
-                                        ),
-                                        arena_frame: Some(
-                                            SpriteAddress {
-                                                address: "SpriteWay/Icons/Clean Frames/9020",
-                                            },
-                                        ),
+                                        card_icons: None,
+                                        arena_frame: None,
                                         owning_player: User,
                                         revealed_card: Some(
                                             RevealedCardView {
-                                                card_frame: Some(
-                                                    SpriteAddress {
-                                                        address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1",
-                                                    },
-                                                ),
-                                                title_background: Some(
-                                                    SpriteAddress {
-                                                        address: "LittleSweetDaemon/TCG_Card_Design/Warrior_Card/Warrior_Card Face_Tape",
-                                                    },
-                                                ),
-                                                jewel: Some(
-                                                    SpriteAddress {
-                                                        address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01",
-                                                    },
-                                                ),
-                                                image: Some(
-                                                    SpriteAddress {
-                                                        address: "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_24",
-                                                    },
-                                                ),
-                                                title: Some(
-                                                    CardTitle {
-                                                        text: "Arcane Recovery",
-                                                    },
-                                                ),
-                                                rules_text: Some(
-                                                    RulesText {
-                                                        text: "Gain 9\u{f06d}",
-                                                    },
-                                                ),
+                                                card_frame: None,
+                                                title_background: None,
+                                                jewel: None,
+                                                image: None,
+                                                title: None,
+                                                rules_text: None,
                                                 revealed_in_arena: true,
-                                                targeting: Some(
-                                                    CardTargeting {
-                                                        targeting: None,
-                                                    },
-                                                ),
-                                                on_release_position: Some(
-                                                    ObjectPosition {
-                                                        sorting_key: 4294967295,
-                                                        position: Some(
-                                                            Staging(
-                                                                ObjectPositionStaging,
-                                                            ),
-                                                        ),
-                                                    },
-                                                ),
-                                                can_play: true,
+                                                targeting: None,
+                                                on_release_position: None,
+                                                can_play: false,
                                                 supplemental_info: None,
                                             },
                                         ),
@@ -211,9 +129,9 @@ Ok(
                 },
             ],
         },
-        channel_responses: [
+        channel_response: Some(
             (
-                2,
+                9,
                 CommandList {
                     commands: [
                         GameCommand {
@@ -224,37 +142,14 @@ Ok(
                                             GameView {
                                                 game_id: Some(
                                                     GameIdentifier {
-                                                        value: 1,
+                                                        value: 8,
                                                     },
                                                 ),
-                                                user: Some(
-                                                    PlayerView {
-                                                        player_info: None,
-                                                        score: Some(
-                                                            ScoreView {
-                                                                score: 0,
-                                                            },
-                                                        ),
-                                                        mana: Some(
-                                                            ManaView {
-                                                                amount: 5,
-                                                            },
-                                                        ),
-                                                        action_tracker: Some(
-                                                            ActionTrackerView {
-                                                                available_action_count: 3,
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
+                                                user: None,
                                                 opponent: Some(
                                                     PlayerView {
                                                         player_info: None,
-                                                        score: Some(
-                                                            ScoreView {
-                                                                score: 0,
-                                                            },
-                                                        ),
+                                                        score: None,
                                                         mana: Some(
                                                             ManaView {
                                                                 amount: 9,
@@ -296,7 +191,9 @@ Ok(
                                                                         address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01",
                                                                     },
                                                                 ),
-                                                                text: "5",
+                                                                text: Some(
+                                                                    "5",
+                                                                ),
                                                                 background_scale: 1.0,
                                                             },
                                                         ),
@@ -306,11 +203,7 @@ Ok(
                                                         arena_icon: None,
                                                     },
                                                 ),
-                                                arena_frame: Some(
-                                                    SpriteAddress {
-                                                        address: "SpriteWay/Icons/Clean Frames/9020",
-                                                    },
-                                                ),
+                                                arena_frame: None,
                                                 owning_player: Opponent,
                                                 revealed_card: Some(
                                                     RevealedCardView {
@@ -464,6 +357,6 @@ Ok(
                     ],
                 },
             ),
-        ],
+        ),
     },
 )

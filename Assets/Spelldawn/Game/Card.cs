@@ -389,7 +389,7 @@ namespace Spelldawn.Game
         {
           icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);
         }
-        
+
         icon.Background.transform.localScale =
           (cardIcon.BackgroundScale == 0f ? 1f : cardIcon.BackgroundScale) * Vector3.one;
 
