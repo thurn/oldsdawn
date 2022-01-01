@@ -24,6 +24,30 @@ use protos::spelldawn::{
 use test_utils::*;
 
 #[test]
+fn connect() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    let response = g.connect(USER_ID, Some(GAME_ID));
+    assert_ok(&response);
+    assert_debug_snapshot!(response);
+}
+
+#[test]
+fn connect_to_ongoing() {
+    let mut g = new_game(
+        Side::Overlord,
+        Args { actions: 3, next_draw: Some(CardName::IceDragon), ..Args::default() },
+    );
+    let r1 = g.connect(USER_ID, Some(GAME_ID));
+    assert_ok(&r1);
+    let r2 = g.perform_action(Action::DrawCard(DrawCardAction {}), USER_ID);
+    assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
+    assert_ok(&r2);
+    let r3 = g.connect(OPPONENT_ID, Some(GAME_ID));
+    assert_ok(&r3);
+    assert_debug_snapshot!(r3);
+}
+
+#[test]
 fn draw_card() {
     let mut g = new_game(
         Side::Overlord,

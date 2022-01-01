@@ -32,9 +32,9 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, game_object_identifier, CardIdentifier, CardTarget, CardView, ClientRoomLocation,
-    CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest, ObjectPosition,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
-    PlayerView,
+    CommandList, CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest,
+    ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom,
+    PlayCardAction, PlayerName, PlayerView,
 };
 use server::database::Database;
 use server::GameResponse;
@@ -89,6 +89,26 @@ impl TestGame {
     /// state from *their own* perspective).
     pub fn user(&self) -> &ClientPlayer {
         &self.user.this_player
+    }
+
+    /// Simulates a client connecting to the server, either creating a new game
+    /// or connecting to an existing game. Returns the commands which would
+    /// be sent to the client when connected. If a new game is created, its
+    /// ID will be 0.
+    pub fn connect(&mut self, user_id: UserId, game_id: Option<GameId>) -> Result<CommandList> {
+        let result = server::handle_connect(self, user_id, game_id, true /* test mode */)?;
+        let to_update = match user_id {
+            crate::USER_ID => &mut self.user,
+            crate::OPPONENT_ID => &mut self.opponent,
+            _ => panic!("Unknown user id: {:?}", user_id),
+        };
+
+        for command in result.commands.iter() {
+            let c = command.command.as_ref().with_context(|| "Command not received")?;
+            to_update.handle_command(c);
+        }
+
+        Ok(result)
     }
 
     /// Execute a simulated client request for this game as a specific user,

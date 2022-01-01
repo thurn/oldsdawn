@@ -19,7 +19,7 @@ use dashmap::DashMap;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
-use data::primitives::{self, CardId, GameId, RoomId, Side, UserId};
+use data::primitives::{CardId, GameId, RoomId, Side, UserId};
 use data::updates::UpdateTracker;
 use display::rendering;
 use maplit::hashmap;
@@ -62,7 +62,7 @@ impl Spelldawn for GameService {
     ) -> Result<Response<Self::ConnectStream>, Status> {
         let message = request.get_ref();
         let game_id = to_server_game_id(&message.game_id);
-        let user_id = primitives::UserId::new(message.user_id);
+        let user_id = UserId::new(message.user_id);
         warn!(?user_id, ?game_id, "received_connection");
 
         let (tx, rx) = mpsc::channel(4);
@@ -161,10 +161,10 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
 /// Sets up the game state for a game connection request, either connecting to
 /// the `game_id` game or creating a new game if `game_id` is not provided. If
 /// `test_mode` is true, the new game's ID will be set to 0.
-fn handle_connect(
+pub fn handle_connect(
     database: &mut impl Database,
-    user_id: primitives::UserId,
-    game_id: Option<primitives::GameId>,
+    user_id: UserId,
+    game_id: Option<GameId>,
     test_mode: bool,
 ) -> Result<CommandList> {
     let game = if let Some(game_id) = game_id {
@@ -243,7 +243,7 @@ pub fn user_side(user_id: UserId, game: &GameState) -> Result<Side> {
 /// Converts a client [CardIdentifier] into a server [CardId]
 pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
     if let Some(id) = card_id {
-        Ok(primitives::CardId {
+        Ok(CardId {
             side: match id.side() {
                 PlayerSide::Overlord => Side::Overlord,
                 PlayerSide::Champion => Side::Champion,
@@ -292,7 +292,7 @@ fn card_target(target: &Option<CardTarget>) -> PlayCardTarget {
 }
 
 fn to_server_game_id(game_id: &Option<GameIdentifier>) -> Option<GameId> {
-    game_id.as_ref().map(|g| primitives::GameId::new(g.value))
+    game_id.as_ref().map(|g| GameId::new(g.value))
 }
 
 fn to_server_room_id(room_id: Option<RoomIdentifier>) -> Option<RoomId> {
