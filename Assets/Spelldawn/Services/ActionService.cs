@@ -91,9 +91,9 @@ namespace Spelldawn.Services
     }
 
     /// <summary>
-    /// Can the user *start* performing an action such as dragging a card out of their hand, dragging a raid arrow, or
-    /// long-pressing for information. This is allowed more leniently than actually *performing* an action as defined
-    /// by <see cref="CanExecuteAction"/> below.
+    /// Can the user *start* performing an action such as dragging a card out of their hand or dragging a raid arrow.
+    /// This is allowed more leniently than actually *performing* an action as defined by
+    /// <see cref="CanExecuteAction"/> below.
     /// </summary>
     public bool CanInitiateAction() => !_registry.CardService.CurrentlyDragging &&
                                        !_registry.BackgroundOverlay.Enabled;
@@ -294,10 +294,10 @@ namespace Spelldawn.Services
         var room = action.Target.RoomId;
         Errors.CheckArgument(room != RoomIdentifier.Unspecified, "No RoomId target provided!");
         // Move to targeted room
-          var newPosition = new ObjectPosition();
-          newPosition.MergeFrom(position);
-          newPosition.Room.RoomId = room;
-          position = newPosition;
+        var newPosition = new ObjectPosition();
+        newPosition.MergeFrom(position);
+        newPosition.Room.RoomId = room;
+        position = newPosition;
       }
 
       return _registry.ObjectPositionService.MoveGameObject(card, position);

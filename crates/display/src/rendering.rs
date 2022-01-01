@@ -26,12 +26,13 @@ use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     game_object_identifier, ActionTrackerView, ArenaView, CardCreationAnimation, CardIcon,
     CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView, ClientItemLocation,
-    ClientRoomLocation, CreateOrUpdateCardCommand, DelayCommand, GameCommand, GameIdentifier,
-    GameObjectIdentifier, GameView, IdentityAction, ManaView, MoveGameObjectsCommand,
-    ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand,
-    ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging,
-    PickRoom, PlayerInfo, PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier,
-    ScoreView, SpriteAddress, TimeValue, UpdateGameViewCommand,
+    ClientRoomLocation, CreateOrUpdateCardCommand, DelayCommand, DisplayGameMessageCommand,
+    GameCommand, GameIdentifier, GameMessageType, GameObjectIdentifier, GameView, IdentityAction,
+    ManaView, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem,
+    ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo, PlayerName, PlayerSide,
+    PlayerView, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress, TimeValue,
+    UpdateGameViewCommand,
 };
 use rules::{flags, queries};
 
@@ -87,6 +88,7 @@ pub fn adapt_update(game: &GameState, user_side: Side, update: GameUpdate) -> Ve
             filtered(vec![move_card(game, game.card(card_id), user_side)])
         }
         GameUpdate::RevealCard(card_id) => reveal_card(game, game.card(card_id), user_side),
+        GameUpdate::StartTurn(side) => start_turn(side),
         _ => todo!(),
     }
 }
@@ -425,6 +427,16 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
 /// Constructs a delay command
 fn delay(milliseconds: u32) -> Command {
     Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
+}
+
+/// Starts the `side` player's turn
+fn start_turn(side: Side) -> Vec<Command> {
+    vec![Command::DisplayGameMessage(DisplayGameMessageCommand {
+        message_type: match side {
+            Side::Overlord => GameMessageType::Dusk.into(),
+            Side::Champion => GameMessageType::Dawn.into(),
+        },
+    })]
 }
 
 /// Converts a [Side] into a [PlayerName] based on which viewer we are rendering

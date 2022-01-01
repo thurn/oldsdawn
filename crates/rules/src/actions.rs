@@ -25,9 +25,10 @@
 
 use anyhow::{anyhow, ensure, Context, Result};
 use data::card_state::CardPosition;
-use data::delegates::{CastCardEvent, PayCardCostsEvent};
+use data::delegates::{CastCardEvent, DawnEvent, DuskEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
+use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
 use crate::{dispatch, flags, mutations, queries};
@@ -40,7 +41,7 @@ pub fn draw_card_action(game: &mut GameState, side: Side) -> Result<()> {
     let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
     mutations::spend_action_points(game, side, 1);
     mutations::move_card(game, card, CardPosition::Hand(side));
-    Ok(())
+    end_action(game, side)
 }
 
 /// Possible targets for the 'play card' action. Note that many types of targets
@@ -114,7 +115,7 @@ pub fn play_card_action(
 
     mutations::move_card(game, card_id, new_position);
 
-    Ok(())
+    end_action(game, side)
 }
 
 /// The basic game action to gain 1 mana during your turn by spending one
@@ -125,5 +126,26 @@ pub fn gain_mana_action(game: &mut GameState, side: Side) -> Result<()> {
     ensure!(flags::can_take_gain_mana_action(game, side), "Cannot gain mana for {:?}", side);
     mutations::spend_action_points(game, side, 1);
     mutations::gain_mana(game, side, 1);
+    end_action(game, side)
+}
+
+/// Invoked after taking a primary game action, handles functionality such as
+/// checking whether to advance to the next turn.
+fn end_action(game: &mut GameState, side: Side) -> Result<()> {
+    ensure!(game.data.turn == side, "Not currently {:?}'s turn", side);
+    if game.player(side).actions == 0 {
+        let new_turn = side.opponent();
+        info!(?new_turn, "start_player_turn");
+        game.data.turn = new_turn;
+        if side == Side::Champion {
+            game.data.turn_number += 1;
+            dispatch::invoke_event(game, DuskEvent(game.data.turn_number));
+        } else {
+            dispatch::invoke_event(game, DawnEvent(game.data.turn_number));
+        }
+        game.player_mut(new_turn).actions = queries::start_of_turn_action_count(game, new_turn);
+        game.updates.push(GameUpdate::UpdateGameState);
+        game.updates.push(GameUpdate::StartTurn(new_turn));
+    }
     Ok(())
 }

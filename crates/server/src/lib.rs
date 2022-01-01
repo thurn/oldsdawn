@@ -177,17 +177,19 @@ pub fn handle_connect(
                 owner_id: UserId::new(2),
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
-                    CardName::DungeonAnnex => 45,
+                    CardName::DungeonAnnex => 1,
+                    CardName::IceDragon => 44,
                 },
             },
             Deck {
                 owner_id: UserId::new(1),
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
-                    CardName::ArcaneRecovery => 45,
+                    CardName::Greataxe => 1,
+                    CardName::ArcaneRecovery => 44,
                 },
             },
-            GameConfiguration::default(),
+            GameConfiguration { deterministic: true, ..GameConfiguration::default() },
         );
 
         database.write_game(&game)?;

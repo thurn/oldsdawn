@@ -19,12 +19,15 @@ pub mod client;
 
 use std::fmt::Debug;
 
+use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::CardPositionKind;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState, RaidState};
 use data::primitives::{ActionCount, GameId, ManaValue, PointsValue, RaidId, RoomId, Side, UserId};
 use maplit::hashmap;
+use protos::spelldawn::game_command::Command;
+use server::GameResponse;
 
 use crate::client::TestGame;
 
@@ -146,4 +149,26 @@ pub fn opponent_of(user_id: UserId) -> UserId {
         OPPONENT_ID => USER_ID,
         _ => panic!("Unknown UserId: {:?}", user_id),
     }
+}
+
+/// Asserts that both clients in this [GameResponse] have a command which
+/// matches this `predicate`.
+pub fn assert_has_command(
+    response: Result<GameResponse>,
+    message: &str,
+    predicate: impl Fn(&Command) -> bool,
+) {
+    let value = response.unwrap();
+    value
+        .command_list
+        .commands
+        .iter()
+        .find(|c| predicate(c.command.as_ref().unwrap()))
+        .expect(message);
+    value
+        .channel_responses
+        .iter()
+        .flat_map(|(_, list)| &list.commands)
+        .find(|c| predicate(c.command.as_ref().unwrap()))
+        .expect(message);
 }

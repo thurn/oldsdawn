@@ -282,6 +282,8 @@ pub enum Delegate {
     /// Get the current boost count of a card. Invoked with the value of
     /// [CardData::boost_count].
     BoostCount(QueryDelegate<CardId, BoostCount>),
+    /// Get the number of actions a player gets at the start of their turn.
+    StartOfTurnActions(QueryDelegate<Side, ActionCount>),
 }
 
 impl fmt::Debug for Delegate {

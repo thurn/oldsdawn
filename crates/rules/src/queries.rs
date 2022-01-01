@@ -18,7 +18,7 @@ use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates::{
     ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery, ManaCostQuery,
-    ShieldValueQuery,
+    ShieldValueQuery, StartOfTurnActionsQuery,
 };
 use data::game::GameState;
 use data::primitives::{
@@ -96,4 +96,10 @@ pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
 /// and can take a primary game action.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {
     game.player(side).actions > 0 && game.data.turn == side && game.data.raid.is_none()
+}
+
+/// Look up the number of action points a player receives at the start of their
+/// turn
+pub fn start_of_turn_action_count(game: &GameState, side: Side) -> ActionCount {
+    dispatch::perform_query(game, StartOfTurnActionsQuery(side), 3)
 }

@@ -17,9 +17,10 @@ use data::primitives::Side;
 use display::rendering;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
+use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, PlayCardAction,
-    PlayerName,
+    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, GameMessageType,
+    PlayCardAction, PlayerName,
 };
 use test_utils::*;
 
@@ -196,4 +197,26 @@ fn cannot_gain_mana_during_raid() {
         Args { raid: Some(TestRaid { priority: Side::Overlord }), ..Args::default() },
     );
     assert_error(g.perform_action(Action::GainMana(GainManaAction {}), USER_ID));
+}
+
+#[test]
+fn switch_turn() {
+    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
+    g.perform_action(Action::GainMana(GainManaAction {}), USER_ID).unwrap();
+    g.perform_action(Action::GainMana(GainManaAction {}), USER_ID).unwrap();
+    let response = g.perform_action(Action::GainMana(GainManaAction {}), USER_ID);
+    assert_eq!(8, g.user().mana());
+    assert_eq!(8, g.opponent.other_player.mana());
+    assert_eq!(0, g.user().actions());
+    assert_eq!(0, g.opponent.other_player.actions());
+    assert_eq!(3, g.user.other_player.actions());
+    assert_eq!(3, g.opponent.this_player.actions());
+    assert_eq!(g.user.data.priority(), PlayerName::Opponent);
+    assert_eq!(g.opponent.data.priority(), PlayerName::User);
+    assert_has_command(response, "Expected dawn message", |command| {
+        matches!(
+            command,
+            Command::DisplayGameMessage(m) if m.message_type == GameMessageType::Dawn as i32
+        )
+    })
 }

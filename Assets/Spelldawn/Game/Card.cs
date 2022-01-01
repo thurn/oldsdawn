@@ -385,10 +385,18 @@ namespace Spelldawn.Game
       if (cardIcon != null && show)
       {
         icon.Background.transform.parent.gameObject.SetActive(true);
-        icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);
+        if (cardIcon.Background != null)
+        {
+          icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);
+        }
+        
         icon.Background.transform.localScale =
           (cardIcon.BackgroundScale == 0f ? 1f : cardIcon.BackgroundScale) * Vector3.one;
-        icon.Text.text = cardIcon.Text;
+
+        if (cardIcon.Text != null)
+        {
+          icon.Text.text = cardIcon.Text;
+        }
       }
       else
       {
