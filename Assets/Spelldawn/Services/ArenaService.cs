@@ -35,6 +35,8 @@ namespace Spelldawn.Services
     [SerializeField] TimedEffect _levelUpRoomPrefab = null!;
     [SerializeField] Room? _curentRoomSelector;
 
+    public Room? CurrentRoomSelector => _curentRoomSelector;
+
     public ObjectDisplay LeftItems => _leftItems;
     public ObjectDisplay RightIems => _rightItems;
 
@@ -77,16 +79,12 @@ namespace Spelldawn.Services
       }
     }
 
-    public RoomIdentifier ShowRoomSelectorForMousePosition()
+    public void ShowRoomSelectorForMousePosition()
     {
-      if (_curentRoomSelector)
-      {
-        _curentRoomSelector!.SpriteRenderer.enabled = false;
-      }
+      HideRoomSelector();
 
       var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
       var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
-      var result = RoomIdentifier.Unspecified;
 
       for (var i = 0; i < hits; ++i)
       {
@@ -94,7 +92,6 @@ namespace Spelldawn.Services
         var selector = hit.collider.GetComponent<Room>();
         if (selector)
         {
-          result = selector.RoomId;
           selector.SpriteRenderer.enabled = true;
           _curentRoomSelector = selector;
           break;
@@ -102,7 +99,6 @@ namespace Spelldawn.Services
       }
 
       Array.Clear(_raycastHitsTempBuffer, 0, _raycastHitsTempBuffer.Length);
-      return result;
     }
 
     public void HideRoomSelector()
@@ -110,6 +106,7 @@ namespace Spelldawn.Services
       if (_curentRoomSelector)
       {
         _curentRoomSelector!.SpriteRenderer.enabled = false;
+        _curentRoomSelector = null;
       }
     }
 

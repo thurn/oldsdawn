@@ -286,8 +286,7 @@ namespace Spelldawn.Services
     {
       var card = _registry.CardService.FindCard(action.CardId);
       _registry.StaticAssets.PlayWhooshSound();
-      var position =
-        Errors.CheckNotNull(card.RevealedCardView?.OnReleasePosition, "Card does not have release position");
+      var position = Errors.CheckNotNull(card.ReleasePosition, "Card does not have release position");
 
       if (position.PositionCase == ObjectPosition.PositionOneofCase.Room)
       {

@@ -56,7 +56,6 @@ namespace Spelldawn.Game
     [SerializeField] Icon _bottomLeftIcon = null!;
     [SerializeField] Icon _arenaIcon = null!;
     [SerializeField] bool _isRevealed;
-    [SerializeField] bool _canPlay;
     [SerializeField] float _dragStartScreenZ;
     [SerializeField] Vector3 _dragStartPosition;
     [SerializeField] Vector3 _dragOffset;
@@ -64,15 +63,13 @@ namespace Spelldawn.Game
     [SerializeField] ObjectDisplay? _previousParent;
     [SerializeField] uint _previousParentIndex;
 
+    CardIdentifier? _cardId;
+    bool? _serverCanPlay;
+    bool? _serverRevealedInArena;
+    bool? _isRoomTargeted;
+    ObjectPosition? _releasePosition;
+    Node? _supplementalInfo;
     Registry _registry = null!;
-
-    CardView? _cardView;
-    public CardView? CardView => _cardView;
-
-    RevealedCardView? _revealedCardView;
-    public RevealedCardView? RevealedCardView => _revealedCardView;
-
-    RoomIdentifier _targetRoom;
 
     [Serializable]
     public sealed class Icon
@@ -91,6 +88,8 @@ namespace Spelldawn.Game
 
     public override float DefaultScale => CardScale;
 
+    public ObjectPosition? ReleasePosition => _releasePosition;
+
     public Transform TopLeftAnchor => _topLeftAnchor;
 
     public Transform TopRightAnchor => _topRightAnchor;
@@ -99,30 +98,30 @@ namespace Spelldawn.Game
 
     public Transform BottomRightAnchor => _bottomRightAnchor;
 
+    public Node? SupplementalInfo => _supplementalInfo;
+
     public Sequence? Render(
       Registry registry,
       CardView cardView,
       GameContext? gameContext = null,
       bool animate = true)
     {
+      _registry = registry;
+      _cardId = cardView.CardId;
+
       if (gameContext is { } gc)
       {
         SetGameContext(gc);
       }
 
-      _registry = registry;
       if (cardView.OwningPlayer != PlayerName.Unspecified)
       {
         _cardBack.sprite = _registry.AssetService.GetSprite(_registry.CardService.GetCardBack(cardView.OwningPlayer));
       }
 
       _outline.sortingOrder = -1;
-      _cardView = cardView;
 
-      if (cardView.ArenaFrame != null)
-      {
-        _arenaFrame.sprite = registry.AssetService.GetSprite(cardView.ArenaFrame);
-      }
+      _registry.AssetService.AssignSprite(_arenaFrame, cardView.ArenaFrame);
 
       if (cardView.RevealedCard != null)
       {
@@ -152,20 +151,27 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      if (InHand() && _registry.ActionService.CanInitiateAction() && _revealedCardView is {} card)
-      {
-        _canPlay = card.CanPlay;
-      }
-      else
-      {
-        _canPlay = false;
-      }
+      _outline.gameObject.SetActive(CanPlay());
+    }
 
-      _outline.gameObject.SetActive(_canPlay);
+    bool CanPlay() => _serverCanPlay == true && InHand() && _registry.ActionService.CanInitiateAction() && _isRevealed;
+
+    public Card Clone()
+    {
+      var result = ComponentUtils.GetComponent<Card>(Instantiate(gameObject));
+      result._cardId = _cardId;
+      result._serverCanPlay = _serverCanPlay;
+      result._serverRevealedInArena = _serverRevealedInArena;
+      result._isRoomTargeted = _isRoomTargeted;
+      result._releasePosition = _releasePosition;
+      result._supplementalInfo = _supplementalInfo;
+      result._registry = _registry;
+      return result;
     }
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
+      Errors.CheckNotNull(_registry);
       if (newContext.IsArenaContext())
       {
         _arenaCardBack.SetActive(!_isRevealed);
@@ -178,7 +184,6 @@ namespace Spelldawn.Game
         _arenaFrame.gameObject.SetActive(true);
         _cardShadow.SetActive(false);
         _arenaShadow.SetActive(true);
-        _topLeftIcon.Background.gameObject.SetActive(false);
         // In Arena mode, we want the image content to be centered within the card, so we shift
         // it around.
         _arenaCard.position = transform.position;
@@ -198,21 +203,15 @@ namespace Spelldawn.Game
         _arenaCard.localPosition = ArenaCardOffset;
       }
 
-      UpdateIcons(GameContext.IsArenaContext());
+      UpdateIcons(null, GameContext.IsArenaContext());
       UpdateRevealedToOpponent(GameContext.IsArenaContext());
-
-      if (_revealedCardView != null)
-      {
-        // TODO: For some reason this is needed to fix the text curve, figure out why
-        SetTitle(_revealedCardView.Title.Text);
-      }
     }
 
     public override bool MouseDown()
     {
       var result = false;
 
-      if (_registry.ActionService.CanInfoZoom(GameContext) && _revealedCardView != null)
+      if (_registry.ActionService.CanInfoZoom(GameContext) && _isRevealed)
       {
         _registry.StaticAssets.PlayCardSound();
         _registry.CardService.DisplayInfoZoom(
@@ -221,7 +220,7 @@ namespace Spelldawn.Game
         result = true;
       }
 
-      if (InHand() && _canPlay)
+      if (InHand() && CanPlay())
       {
         _registry.CardService.CurrentlyDragging = true;
         SetGameContext(GameContext.Dragging);
@@ -255,11 +254,15 @@ namespace Spelldawn.Game
       if (distanceDragged > 0.5f)
       {
         _registry.CardService.ClearInfoZoom();
-      }
 
-      if (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom)
+        if (_isRoomTargeted == true)
+        {
+          _registry.ArenaService.ShowRoomSelectorForMousePosition();
+        }
+      }
+      else
       {
-        _targetRoom = _registry.ArenaService.ShowRoomSelectorForMousePosition();
+        _registry.ArenaService.HideRoomSelector();
       }
     }
 
@@ -274,43 +277,57 @@ namespace Spelldawn.Game
       }
 
       _registry.CardService.CurrentlyDragging = false;
-      _registry.ArenaService.HideRoomSelector();
 
-      var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
-      if (distance < 3.5f ||
-          !_registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard) ||
-          (_revealedCardView?.Targeting?.TargetingCase == CardTargeting.TargetingOneofCase.PickRoom &&
-           _targetRoom == RoomIdentifier.Unspecified))
+      if (ShouldReturnToHandOnRelease())
       {
-        // Return to hand
         _registry.StaticAssets.PlayCardSound();
         StartCoroutine(_previousParent!.AddObject(this, animate: true, index: _previousParentIndex));
+        _registry.ArenaService.HideRoomSelector();
+        return;
       }
-      else
+
+      var action = new PlayCardAction
       {
-        var action = new PlayCardAction
+        CardId = Errors.CheckNotNull(_cardId)
+      };
+
+      if (_isRoomTargeted == true)
+      {
+        action.Target = new CardTarget
         {
-          CardId = _cardView!.CardId
+          RoomId = Errors.CheckNotDefault(Errors.CheckNotNull(_registry.ArenaService.CurrentRoomSelector).RoomId)
         };
-
-        if (_targetRoom != RoomIdentifier.Unspecified)
-        {
-          action.Target = new CardTarget
-          {
-            RoomId = _targetRoom
-          };
-        }
-
-        _registry.ActionService.HandleAction(new GameAction
-        {
-          PlayCard = action
-        });
       }
+
+      _registry.ArenaService.HideRoomSelector();
+
+      _registry.ActionService.HandleAction(new GameAction
+      {
+        PlayCard = action
+      });
     }
 
     static Vector3 WorldMousePosition(Registry registry, float dragStartScreenZ) =>
       registry.MainCamera.ScreenToWorldPoint(
         new Vector3(Input.mousePosition.x, Input.mousePosition.y, dragStartScreenZ));
+
+    bool ShouldReturnToHandOnRelease()
+    {
+      if (!_registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard))
+      {
+        return true;
+      }
+
+      if (_isRoomTargeted == true)
+      {
+        return !_registry.ArenaService.CurrentRoomSelector;
+      }
+      else
+      {
+        var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
+        return distance < 3.5f;
+      }
+    }
 
     static Sequence? Flip(Component faceUp, Component faceDown, Action onFlipped, bool animate)
     {
@@ -340,35 +357,60 @@ namespace Spelldawn.Game
     void RenderRevealedCard(CardView card)
     {
       var revealed = card.RevealedCard;
-      _revealedCardView = revealed;
       _isRevealed = true;
 
-      gameObject.name = revealed.Title.Text;
+      if (revealed.Title?.Text != null)
+      {
+        gameObject.name = revealed.Title.Text;
+      }
+
+      _serverCanPlay = revealed.CanPlay;
+      _serverRevealedInArena = revealed.RevealedInArena;
+
+      if (revealed.Targeting?.TargetingCase is { } targeting)
+      {
+        _isRoomTargeted = targeting == CardTargeting.TargetingOneofCase.PickRoom;
+      }
+
+      if (revealed.OnReleasePosition is { } position)
+      {
+        _releasePosition = position;
+      }
+
+      if (revealed.SupplementalInfo is { } info)
+      {
+        _supplementalInfo = info;
+      }
+
       _cardBack.gameObject.SetActive(value: false);
       _cardFront.gameObject.SetActive(value: true);
-      _image.sprite = _registry.AssetService.GetSprite(revealed.Image);
+      _registry.AssetService.AssignSprite(_image, revealed.Image);
       _image.gameObject.SetActive(true);
-      _frame.sprite = _registry.AssetService.GetSprite(revealed.CardFrame);
-      _titleBackground.sprite = _registry.AssetService.GetSprite(revealed.TitleBackground);
-      SetTitle(revealed.Title.Text);
-      _rulesText.text = revealed.RulesText.Text;
-      _jewel.sprite = _registry.AssetService.GetSprite(revealed.Jewel);
-      UpdateIcons(GameContext.IsArenaContext());
+      _registry.AssetService.AssignSprite(_frame, revealed.CardFrame);
+      _registry.AssetService.AssignSprite(_titleBackground, revealed.TitleBackground);
+      SetTitle(revealed.Title?.Text);
+      if (revealed.RulesText?.Text != null)
+      {
+        _rulesText.text = revealed.RulesText.Text;
+      }
+
+      _registry.AssetService.AssignSprite(_jewel, revealed.Jewel);
+      UpdateIcons(card.CardIcons, GameContext.IsArenaContext());
       UpdateRevealedToOpponent(GameContext.IsArenaContext());
     }
 
-    void UpdateIcons(bool inArena)
+    void UpdateIcons(CardIcons? cardIcons, bool inArena)
     {
-      SetCardIcon(_topLeftIcon, _cardView?.CardIcons?.TopLeftIcon, !inArena);
-      SetCardIcon(_topRightIcon, _cardView?.CardIcons?.TopRightIcon, !inArena);
-      SetCardIcon(_bottomRightIcon, _cardView?.CardIcons?.BottomRightIcon, !inArena);
-      SetCardIcon(_bottomLeftIcon, _cardView?.CardIcons?.BottomLeftIcon, !inArena);
-      SetCardIcon(_arenaIcon, _cardView?.CardIcons?.ArenaIcon, inArena);
+      SetCardIcon(_topLeftIcon, cardIcons?.TopLeftIcon, !inArena);
+      SetCardIcon(_topRightIcon, cardIcons?.TopRightIcon, !inArena);
+      SetCardIcon(_bottomRightIcon, cardIcons?.BottomRightIcon, !inArena);
+      SetCardIcon(_bottomLeftIcon, cardIcons?.BottomLeftIcon, !inArena);
+      SetCardIcon(_arenaIcon, cardIcons?.ArenaIcon, inArena);
     }
 
     void UpdateRevealedToOpponent(bool inArena)
     {
-      if (inArena && _revealedCardView?.RevealedInArena == false)
+      if (inArena && _serverRevealedInArena != true)
       {
         _image.color = Color.gray;
         _arenaFrame.color = Color.gray;
@@ -382,30 +424,25 @@ namespace Spelldawn.Game
 
     void SetCardIcon(Icon icon, CardIcon? cardIcon, bool show)
     {
-      if (cardIcon != null && show)
+      _registry.AssetService.AssignSprite(icon.Background, cardIcon?.Background);
+      var scale = cardIcon?.BackgroundScale ?? 1f;
+      icon.Background.transform.localScale = (scale == 0f ? 1f : scale) * Vector3.one;
+      if (cardIcon?.Text != null)
       {
-        icon.Background.transform.parent.gameObject.SetActive(true);
-        if (cardIcon.Background != null)
-        {
-          icon.Background.sprite = _registry.AssetService.GetSprite(cardIcon.Background);
-        }
-
-        icon.Background.transform.localScale =
-          (cardIcon.BackgroundScale == 0f ? 1f : cardIcon.BackgroundScale) * Vector3.one;
-
-        if (cardIcon.Text != null)
-        {
-          icon.Text.text = cardIcon.Text;
-        }
+        icon.Text.text = cardIcon.Text;
       }
-      else
-      {
-        icon.Background.transform.parent.gameObject.SetActive(false);
-      }
+
+      var iconContainer = icon.Background.transform.parent;
+      iconContainer.gameObject.SetActive(show);
     }
 
-    void SetTitle(string title)
+    void SetTitle(string? title)
     {
+      if (title == null)
+      {
+        return;
+      }
+
       _title.text = title;
       var length = title.Length;
 

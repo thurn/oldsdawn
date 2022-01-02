@@ -9393,6 +9393,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoomD
       objectReference: {fileID: 0}
+    - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
+      propertyPath: _roomId
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
 --- !u!4 &329075347 stripped
@@ -15562,7 +15566,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5875982806262253910, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: m_Name
-      value: RoomTreasury
+      value: RoomVault
       objectReference: {fileID: 0}
     - target: {fileID: 7175482041013916864, guid: 2957de4c508df47ecadbf26b568c3355, type: 3}
       propertyPath: _roomId

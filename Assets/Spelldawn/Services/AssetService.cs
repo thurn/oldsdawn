@@ -30,30 +30,44 @@ namespace Spelldawn.Services
 
     public Sprite GetSprite(SpriteAddress address)
     {
-      Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
+      Errors.CheckNotNull(address, "Address is null");
+      Errors.CheckArgument(_assets.ContainsKey(address.Address),
+        $"Asset not found: {address}");
       return (Sprite)_assets[address.Address];
+    }
+
+    public void AssignSprite(SpriteRenderer spriteRenderer, SpriteAddress? address)
+    {
+      if (address != null)
+      {
+        spriteRenderer.sprite = GetSprite(address);
+      }
     }
 
     public Font GetFont(FontAddress address)
     {
+      Errors.CheckNotNull(address, "Address is null");
       Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
       return (Font)_assets[address.Address];
     }
 
     public Projectile GetProjectile(ProjectileAddress address)
     {
+      Errors.CheckNotNull(address, "Address is null");
       Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
       return ComponentUtils.GetComponent<Projectile>((GameObject)_assets[address.Address]);
     }
 
     public TimedEffect GetEffect(EffectAddress address)
     {
+      Errors.CheckNotNull(address, "Address is null");
       Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
       return ComponentUtils.GetComponent<TimedEffect>((GameObject)_assets[address.Address]);
     }
 
     public AudioClip GetAudioClip(AudioClipAddress address)
     {
+      Errors.CheckNotNull(address, "Address is null");
       return (AudioClip)_assets[address.Address];
     }
 

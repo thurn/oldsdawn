@@ -33,8 +33,6 @@ namespace Spelldawn.Game
 
     public IdentityAction.IdentityActionOneofCase? DragAction { get; set; }
 
-    RoomIdentifier? _selectedRoom;
-
     public bool RaidSymbolShown
     {
       set => _raidSymbol.SetActive(value);
@@ -52,16 +50,8 @@ namespace Spelldawn.Game
 
     public IEnumerator RenderPlayerInfo(PlayerInfo playerInfo)
     {
-      if (playerInfo.Portrait != null)
-      {
-        _image.sprite = _registry.AssetService.GetSprite(playerInfo.Portrait);
-      }
-
-      if (playerInfo.PortraitFrame != null)
-      {
-        _frame.sprite = _registry.AssetService.GetSprite(playerInfo.PortraitFrame);
-      }
-
+      _registry.AssetService.AssignSprite(_image, playerInfo.Portrait);
+      _registry.AssetService.AssignSprite(_frame, playerInfo.PortraitFrame);
       yield break;
     }
 
@@ -105,13 +95,12 @@ namespace Spelldawn.Game
 
     public void OnArrowMoved(Vector3 position)
     {
-      _selectedRoom = _registry.ArenaService.ShowRoomSelectorForMousePosition();
+      _registry.ArenaService.ShowRoomSelectorForMousePosition();
     }
 
     public void OnArrowReleased(Vector3 position)
     {
-      _registry.ArenaService.HideRoomSelector();
-      if (_selectedRoom is { } selectedRoom)
+      if (_registry.ArenaService.CurrentRoomSelector is { } selectedRoom)
       {
         switch (DragAction)
         {
@@ -120,7 +109,7 @@ namespace Spelldawn.Game
             {
               InitiateRaid = new InitiateRaidAction
               {
-                RoomId = selectedRoom
+                RoomId = selectedRoom.RoomId
               }
             });
             break;
@@ -129,7 +118,7 @@ namespace Spelldawn.Game
             {
               LevelUpRoom = new LevelUpRoomAction
               {
-                RoomId = selectedRoom
+                RoomId = selectedRoom.RoomId
               }
             });
             break;
@@ -139,6 +128,8 @@ namespace Spelldawn.Game
       {
         _registry.StaticAssets.PlayCardSound();
       }
+
+      _registry.ArenaService.HideRoomSelector();
     }
 
     protected override void OnSetGameContext(GameContext _, GameContext gameContext, int? index = null)

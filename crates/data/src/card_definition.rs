@@ -26,12 +26,18 @@ use crate::primitives::{
 use crate::text::AbilityText;
 
 /// Cost to play a card or activate an ability
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct Cost {
     /// Cost in mana
     pub mana: Option<ManaValue>,
     /// Cost in action points
     pub actions: ActionCount,
+}
+
+impl Default for Cost {
+    fn default() -> Self {
+        Self { mana: None, actions: 1 }
+    }
 }
 
 /// An activated ability used by Weapons to increase their attack value by

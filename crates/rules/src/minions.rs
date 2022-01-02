@@ -24,7 +24,7 @@ use crate::helpers::*;
 pub fn ice_dragon() -> CardDefinition {
     CardDefinition {
         name: CardName::IceDragon,
-        cost: cost(8),
+        cost: cost(3),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
         card_type: CardType::Minion,
         side: Side::Overlord,

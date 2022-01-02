@@ -153,21 +153,19 @@ namespace Spelldawn.Services
     {
       ClearInfoZoom();
 
-      var cardView = Errors.CheckNotNull(card.CardView);
-      var revealed = Errors.CheckNotNull(cardView.RevealedCard);
-      var zoomed = ComponentUtils.Instantiate(_cardPrefab);
+      var zoomed = card.Clone();
       zoomed.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
-      zoomed.Render(_registry, card.CardView!, GameContext.InfoZoom, animate: false);
+      zoomed.SetGameContext(GameContext.InfoZoom);
       zoomed.gameObject.name = $"{card.name} InfoZoom";
       var container = worldMousePosition.x > 0 ? _infoZoomRight : _infoZoomLeft;
 
       yield return container.AddObject(zoomed, animate: false);
 
-      if (revealed.SupplementalInfo != null)
+      if (zoomed.SupplementalInfo != null)
       {
         _registry.DocumentService.RenderSupplementalCardInfo(
           zoomed,
-          revealed.SupplementalInfo,
+          zoomed.SupplementalInfo,
           worldMousePosition.x > 0 ? CardNodeAnchorPosition.Left : CardNodeAnchorPosition.Right);
       }
     }
