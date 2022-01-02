@@ -27,7 +27,6 @@ use data::deck::Deck;
 use data::game::{GameConfiguration, GameState, RaidState};
 use data::primitives::{ActionCount, GameId, ManaValue, PointsValue, RaidId, RoomId, Side, UserId};
 use maplit::hashmap;
-use protos::spelldawn::game_command::Command;
 use protos::spelldawn::RoomIdentifier;
 use server::GameResponse;
 
@@ -166,20 +165,29 @@ pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
     assert!(result.is_err(), "Expected an error, got {:?}", result)
 }
 
-/// Asserts that both clients in this [GameResponse] have a command which
-/// matches this `predicate`.
-pub fn assert_has_command(
-    response: Result<GameResponse>,
-    message: &str,
-    predicate: impl Fn(&Command) -> bool,
+/// Helper function to invoke [assert_commands_match_lists] with the same
+/// command names for both players.
+pub fn assert_commands_match(response: &Result<GameResponse>, names: Vec<&str>) {
+    assert_commands_match_lists(response, names.clone(), names.clone());
+}
+
+/// Asserts that each player receives the named commands
+pub fn assert_commands_match_lists(
+    response: &Result<GameResponse>,
+    local_names: Vec<&str>,
+    remote_names: Vec<&str>,
 ) {
-    let value = response.unwrap();
-    value
-        .command_list
+    let value = response.as_ref().expect("Server error");
+    let local = value.command_list.commands.iter().map(server::command_name).collect::<Vec<_>>();
+    assert_eq!(local_names, local, "Local commands do not match expected");
+    let remote = value
+        .channel_response
+        .clone()
+        .expect("Channel Response")
+        .1
         .commands
         .iter()
-        .find(|c| predicate(c.command.as_ref().unwrap()))
-        .expect(message);
-    let (_, list) = value.channel_response.expect("Expected channel response");
-    list.commands.iter().find(|c| predicate(c.command.as_ref().unwrap())).expect(message);
+        .map(server::command_name)
+        .collect::<Vec<_>>();
+    assert_eq!(remote_names, remote, "Remote commands do not match expected");
 }

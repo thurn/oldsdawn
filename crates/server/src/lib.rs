@@ -258,7 +258,8 @@ pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
     }
 }
 
-fn command_name(command: &GameCommand) -> &'static str {
+/// Get a display name for a command. Used for debugging.
+pub fn command_name(command: &GameCommand) -> &'static str {
     command.command.as_ref().map_or("None", |c| match c {
         Command::DebugLog(_) => "DebugLog",
         Command::RunInParallel(_) => "RunInParallel",

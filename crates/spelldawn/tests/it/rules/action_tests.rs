@@ -16,10 +16,9 @@ use data::card_name::CardName;
 use data::primitives::Side;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, GameMessageType,
-    PlayCardAction, PlayerName,
+    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, PlayCardAction,
+    PlayerName,
 };
 use test_utils::*;
 
@@ -69,8 +68,15 @@ fn draw_card() {
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.hand(PlayerName::Opponent));
     assert_eq!(2, g.user().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_ok(&response);
-    // todo assert has command names list
+    assert_commands_match(
+        &response,
+        vec![
+            "CreateOrUpdateCard", // Create card on top of deck
+            "MoveGameObjects",    // Move card to hand
+            "UpdateGameView",     // Spend mana & actions
+            "CreateOrUpdateCard", // Full sync of card state
+        ],
+    );
     assert_debug_snapshot!(response);
 }
 
@@ -115,7 +121,16 @@ fn play_card() {
         vec![CardName::ArcaneRecovery],
         g.opponent.cards.discard_pile(PlayerName::Opponent),
     );
-    assert_ok(&response);
+    assert_commands_match_lists(
+        &response,
+        vec![
+            "UpdateGameView",     // Spend mana & actions
+            "CreateOrUpdateCard", // Update canPlay
+            "MoveGameObjects",    // Move to discard
+        ],
+        // Update card and move it to staging for a short delay, then move it to discard
+        vec!["UpdateGameView", "CreateOrUpdateCard", "MoveGameObjects", "Delay", "MoveGameObjects"],
+    );
     assert_debug_snapshot!(response);
 }
 
@@ -144,7 +159,13 @@ fn play_hidden_card() {
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Back),
     );
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.room_cards(ROOM_ID, ClientRoomLocation::Back));
-    assert_ok(&response);
+    assert_commands_match_lists(
+        &response,
+        // Update state and move to room
+        vec!["UpdateGameView", "CreateOrUpdateCard", "MoveGameObjects"],
+        // No card update required, state does not change
+        vec!["UpdateGameView", "MoveGameObjects"],
+    );
     assert_debug_snapshot!(response);
 }
 
@@ -192,7 +213,7 @@ fn gain_mana() {
     assert_eq!(2, g.opponent.other_player.actions());
     assert_eq!(6, g.user().mana());
     assert_eq!(6, g.opponent.other_player.mana());
-    assert_ok(&response);
+    assert_commands_match(&response, vec!["UpdateGameView"]);
     assert_debug_snapshot!(response);
 }
 
@@ -231,10 +252,5 @@ fn switch_turn() {
     assert_eq!(3, g.opponent.this_player.actions());
     assert_eq!(g.user.data.priority(), PlayerName::Opponent);
     assert_eq!(g.opponent.data.priority(), PlayerName::User);
-    assert_has_command(response, "Expected dawn message", |command| {
-        matches!(
-            command,
-            Command::DisplayGameMessage(m) if m.message_type == GameMessageType::Dawn as i32
-        )
-    })
+    assert_commands_match(&response, vec!["UpdateGameView", "DisplayGameMessage"]);
 }

@@ -175,23 +175,6 @@ impl TestGame {
         self.connect(self.user.id, Some(self.game.id)).expect("User connection error");
         self.connect(self.opponent.id, Some(self.game.id)).expect("Opponent connection error");
 
-        // full_sync::self.user.handle_command(&Command::CreateOrUpdateCard(
-        //     full_sync::create_or_update_card(
-        //         &self.game,
-        //         self.game.card(card_id),
-        //         side,
-        //         CardCreationStrategy::SnapToCurrentPosition,
-        //     ),
-        // ));
-        // self.opponent.handle_command(&Command::CreateOrUpdateCard(
-        //     full_sync::create_or_update_card(
-        //         &self.game,
-        //         self.game.card(card_id),
-        //         side.opponent(),
-        //         CardCreationStrategy::SnapToCurrentPosition,
-        //     ),
-        // ));
-
         full_sync::adapt_card_id(card_id)
     }
 

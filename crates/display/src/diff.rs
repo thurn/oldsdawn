@@ -33,6 +33,7 @@ pub fn execute(
             .map(Command::UpdateGameView),
     });
     commands.extend(
+        // Iterate over `all_cards` again to ensure response order is deterministic
         game.all_cards().filter(|c| c.position.kind() != CardPositionKind::DeckUnknown).filter_map(
             |card| {
                 diff_create_or_update_card(
