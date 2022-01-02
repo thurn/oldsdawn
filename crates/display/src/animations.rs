@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Functions for turning [GameUpdate]s into sequences of [GameCommand]s
+
 use data::card_state::CardState;
 use data::game::GameState;
 use data::primitives::{CardId, Side};
@@ -27,6 +29,9 @@ use protos::spelldawn::{
 use crate::full_sync;
 use crate::full_sync::CardCreationStrategy;
 
+/// Takes a [GameUpdate] and converts it into an animation, a series of
+/// corresponding [GameCommand]s. Commands are appended to the provided
+/// `commands` list.
 pub fn render(
     commands: &mut Vec<GameCommand>,
     update: GameUpdate,
@@ -37,10 +42,7 @@ pub fn render(
         GameUpdate::StartTurn(side) => {
             start_turn(commands, side);
         }
-        GameUpdate::DrawCard(card_id) => {
-            draw_card(commands, game, game.card(card_id), user_side);
-        }
-        GameUpdate::MoveCard(card_id) => {
+        GameUpdate::DrawCard(card_id) | GameUpdate::MoveCard(card_id) => {
             move_card(commands, game, game.card(card_id), user_side);
         }
         GameUpdate::RevealCard(card_id) => {
@@ -50,28 +52,19 @@ pub fn render(
     }
 }
 
-/// Builds commands to represent a card being drawn
-fn draw_card(commands: &mut Vec<GameCommand>, game: &GameState, card: &CardState, user_side: Side) {
-    push(
-        commands,
-        Command::CreateOrUpdateCard(full_sync::create_or_update_card(
-            game,
-            card,
-            user_side,
-            if card.side == user_side {
-                CardCreationStrategy::DrawUserCard
-            } else {
-                CardCreationStrategy::CreateAtPosition(ObjectPosition {
-                    sorting_key: u32::MAX,
-                    position: Some(Position::Deck(ObjectPositionDeck {
-                        owner: PlayerName::Opponent.into(),
-                    })),
-                })
-            },
-        )),
-    );
-
-    move_card(commands, game, card, user_side);
+/// Builds a [CardCreationStrategy] for representing the provided `card_id`
+/// being drawn.
+pub fn card_draw_creation_strategy(user_side: Side, card_id: CardId) -> CardCreationStrategy {
+    if card_id.side == user_side {
+        CardCreationStrategy::DrawUserCard
+    } else {
+        CardCreationStrategy::CreateAtPosition(ObjectPosition {
+            sorting_key: u32::MAX,
+            position: Some(Position::Deck(ObjectPositionDeck {
+                owner: PlayerName::Opponent.into(),
+            })),
+        })
+    }
 }
 
 /// Appends a move card command to move a card to its current location. Skips

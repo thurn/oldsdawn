@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Functions for representing the current game state to the user.
+
 use std::collections::HashMap;
 
 use data::card_definition::CardDefinition;
@@ -34,28 +36,31 @@ use rules::{flags, queries};
 use crate::assets::CardIconType;
 use crate::{assets, rules_text};
 
+/// State synchronization response, containing commands for the updated state of
+/// each game object in an ongoing game.
 pub struct FullSync {
     pub game: UpdateGameViewCommand,
     pub cards: HashMap<CardId, CreateOrUpdateCardCommand>,
 }
 
-pub fn run(game: &GameState, user_side: Side) -> FullSync {
+/// Builds a complete representation of the provided game as viewed by the
+/// `user_side` player. The game state itself is included, as well as a
+/// [CreateOrUpdateCardCommand] for each card in the game.
+///
+/// If [CardCreationStrategy] values are provided in the `card_creation` map,
+/// these override the default card creation behavior of placing cards in their
+/// current game position.
+pub fn run(
+    game: &GameState,
+    user_side: Side,
+    card_creation: HashMap<CardId, CardCreationStrategy>,
+) -> FullSync {
     FullSync {
         game: update_game_view(game, user_side),
         cards: game
             .all_cards()
             .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
-            .map(|c| {
-                (
-                    c.id,
-                    create_or_update_card(
-                        game,
-                        c,
-                        user_side,
-                        CardCreationStrategy::SnapToCurrentPosition,
-                    ),
-                )
-            })
+            .map(|c| (c.id, create_or_update_card(game, c, user_side, &card_creation)))
             .collect(),
     }
 }
@@ -112,7 +117,8 @@ fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
     )
 }
 
-/// Possible behavior when creating a card
+/// Possible behavior when creating a card -- used to enable different 'appear'
+/// animations for the new card.
 #[derive(Debug, PartialEq, Clone)]
 pub enum CardCreationStrategy {
     /// Animate the card moving from the user's deck to the staging area.
@@ -126,15 +132,17 @@ pub enum CardCreationStrategy {
 }
 
 /// Creates a command to create or update a card.
-pub fn create_or_update_card(
+fn create_or_update_card(
     game: &GameState,
     card: &CardState,
     user_side: Side,
-    creation_strategy: CardCreationStrategy,
+    card_creation: &HashMap<CardId, CardCreationStrategy>,
 ) -> CreateOrUpdateCardCommand {
     let definition = rules::get(card.name);
     let revealed = card.is_revealed_to(user_side);
-    let create_animation = if creation_strategy == CardCreationStrategy::DrawUserCard {
+    let creation_strategy =
+        card_creation.get(&card.id).unwrap_or(&CardCreationStrategy::SnapToCurrentPosition);
+    let create_animation = if *creation_strategy == CardCreationStrategy::DrawUserCard {
         CardCreationAnimation::DrawCard.into()
     } else {
         CardCreationAnimation::Unspecified.into()
@@ -144,7 +152,7 @@ pub fn create_or_update_card(
         CardCreationStrategy::SnapToCurrentPosition => {
             adapt_position(card, card.position, user_side)
         }
-        CardCreationStrategy::CreateAtPosition(p) => Some(p),
+        CardCreationStrategy::CreateAtPosition(p) => Some(p.clone()),
     };
 
     CreateOrUpdateCardCommand {

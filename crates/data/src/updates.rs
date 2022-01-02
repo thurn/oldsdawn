@@ -80,12 +80,6 @@ pub enum GameUpdate {
     GameOver(Side),
 }
 
-impl GameUpdate {
-    pub fn is_early_update(&self) -> bool {
-        matches!(self, GameUpdate::DrawCard(_))
-    }
-}
-
 /// Tracks game mutations for a given network request. If a vector is present
 /// here, then code which mutates the GameState is also responsible for
 /// appending a [GameUpdate] which describes the mutation. If no vector is

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Functions for producing a diff between two game updates
+
 use data::card_state::CardPositionKind;
 use data::game::GameState;
 use protos::spelldawn::game_command::Command;
@@ -22,6 +24,14 @@ use protos::spelldawn::{
 
 use crate::full_sync::FullSync;
 
+/// Performs a diff operation on two provided [FullSync] values, appending the
+/// resulting commands to `commands`.
+///
+/// The diff algorithm examines the [FullSync] values for the game and for each
+/// card in the game. For places where `old` and `new` differ, a command is
+/// produced which contains the updated fields. Commands or fields which have
+/// not changed are not updated, the client is assumed to preserve their state
+/// between requests.
 pub fn execute(
     commands: &mut Vec<GameCommand>,
     game: &GameState,
@@ -169,6 +179,8 @@ fn diff_card_icon(old: Option<&CardIcon>, new: Option<&CardIcon>) -> Option<Card
     })
 }
 
+/// Diffs two values. If the values are equal, returns None, otherwise invokes
+/// the provided `diff` function to produce some result.
 fn run_diff<T: Clone + PartialEq>(
     old: Option<&T>,
     new: Option<&T>,
