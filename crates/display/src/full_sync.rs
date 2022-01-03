@@ -18,23 +18,23 @@ use std::collections::HashMap;
 
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
-use data::game::GameState;
-use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
+use data::game::{GameState, RaidPhase};
+use data::primitives::{CardId, CardType, ItemLocation, RoomLocation, Side, Sprite};
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     identity_action, ActionTrackerView, ArenaView, CardCreationAnimation, CardIcon, CardIcons,
-    CardIdentifier, CardTargeting, CardTitle, CardView, ClientItemLocation, ClientRoomLocation,
+    CardTargeting, CardTitle, CardView, ClientItemLocation, ClientRoomLocation,
     CreateOrUpdateCardCommand, GameIdentifier, GameView, IdentityAction, ManaView, ObjectPosition,
     ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
     ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
-    PlayerName, PlayerSide, PlayerView, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress,
+    PlayerName, PlayerView, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress,
     UpdateGameViewCommand,
 };
 use rules::{flags, queries};
 
 use crate::assets::CardIconType;
-use crate::{assets, rules_text};
+use crate::{adapters, assets, rules_text};
 
 /// State synchronization response, containing commands for the updated state of
 /// each game object in an ongoing game.
@@ -108,9 +108,12 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
 /// Returns the [PlayerName] that currently has priority (is next to act) in
 /// this game
 fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
-    to_player_name(
+    adapters::to_player_name(
         match game.data.raid {
-            Some(raid) => raid.priority,
+            Some(raid) => match raid.phase {
+                RaidPhase::Activation => Side::Overlord,
+                _ => Side::Champion,
+            },
             None => game.data.turn,
         },
         user_side,
@@ -157,14 +160,14 @@ fn create_or_update_card(
 
     CreateOrUpdateCardCommand {
         card: Some(CardView {
-            card_id: Some(adapt_card_id(card.id)),
+            card_id: Some(adapters::adapt_card_id(card.id)),
             card_icons: Some(card_icons(game, card, definition, revealed)),
             arena_frame: Some(assets::arena_frame(
                 definition.side,
                 definition.card_type,
                 definition.config.faction,
             )),
-            owning_player: to_player_name(definition.side, user_side).into(),
+            owning_player: adapters::to_player_name(definition.side, user_side).into(),
             revealed_card: revealed.then(|| revealed_card_view(game, card, definition, user_side)),
         }),
         create_position: position,
@@ -185,27 +188,27 @@ fn card_icons(
             top_left_icon: queries::mana_cost(game, card.id).map(|mana| CardIcon {
                 background: Some(assets::card_icon(CardIconType::Mana)),
                 text: Some(mana.to_string()),
-                background_scale: 1.0,
+                background_scale: assets::background_scale(CardIconType::Mana),
             }),
             bottom_left_icon: definition.config.stats.shield.map(|_| CardIcon {
                 background: Some(assets::card_icon(CardIconType::Shield)),
                 text: Some(queries::shield(game, card.id).to_string()),
-                background_scale: 1.0,
+                background_scale: assets::background_scale(CardIconType::Shield),
             }),
             bottom_right_icon: definition
                 .config
                 .stats
                 .base_attack
                 .map(|_| CardIcon {
-                    background: Some(assets::card_icon(CardIconType::Shield)),
+                    background: Some(assets::card_icon(CardIconType::Attack)),
                     text: Some(queries::attack(game, card.id).to_string()),
-                    background_scale: 1.0,
+                    background_scale: assets::background_scale(CardIconType::Attack),
                 })
                 .or_else(|| {
                     definition.config.stats.health.map(|_| CardIcon {
                         background: Some(assets::card_icon(CardIconType::Health)),
                         text: Some(queries::health(game, card.id).to_string()),
-                        background_scale: 1.0,
+                        background_scale: assets::background_scale(CardIconType::Health),
                     })
                 }),
             ..CardIcons::default()
@@ -215,7 +218,7 @@ fn card_icons(
             arena_icon: (card.data.card_level > 0).then(|| CardIcon {
                 background: Some(assets::card_icon(CardIconType::LevelCounter)),
                 text: Some(card.data.card_level.to_string()),
-                background_scale: 1.0,
+                background_scale: assets::background_scale(CardIconType::LevelCounter),
             }),
             ..CardIcons::default()
         }
@@ -255,10 +258,10 @@ pub fn adapt_position(
 ) -> Option<ObjectPosition> {
     let result = match position {
         CardPosition::Room(room_id, location) => Some(Position::Room(ObjectPositionRoom {
-            room_id: adapt_room_id(room_id).into(),
+            room_id: adapters::adapt_room_id(room_id).into(),
             room_location: match location {
                 RoomLocation::Defender => ClientRoomLocation::Front,
-                RoomLocation::InRoom => ClientRoomLocation::Back,
+                RoomLocation::Occupant => ClientRoomLocation::Back,
             }
             .into(),
         })),
@@ -270,17 +273,17 @@ pub fn adapt_position(
             .into(),
         })),
         CardPosition::Hand(side) => Some(Position::Hand(ObjectPositionHand {
-            owner: to_player_name(side, user_side).into(),
+            owner: adapters::to_player_name(side, user_side).into(),
         })),
         CardPosition::DeckTop(side) => Some(Position::Deck(ObjectPositionDeck {
-            owner: to_player_name(side, user_side).into(),
+            owner: adapters::to_player_name(side, user_side).into(),
         })),
         CardPosition::DiscardPile(side) => Some(Position::DiscardPile(ObjectPositionDiscardPile {
-            owner: to_player_name(side, user_side).into(),
+            owner: adapters::to_player_name(side, user_side).into(),
         })),
         CardPosition::Scored(side) | CardPosition::Identity(side) => {
             Some(Position::Identity(ObjectPositionIdentity {
-                owner: to_player_name(side, user_side).into(),
+                owner: adapters::to_player_name(side, user_side).into(),
             }))
         }
         CardPosition::DeckUnknown(_side) => None,
@@ -327,43 +330,7 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     }
 }
 
-/// Converts a [Side] into a [PlayerName] based on which viewer we are rendering
-/// this update for.
-fn to_player_name(side: Side, user_side: Side) -> PlayerName {
-    if side == user_side {
-        PlayerName::User
-    } else {
-        PlayerName::Opponent
-    }
-}
-
 /// Turns a [Sprite] into its protobuf equivalent
 fn sprite(sprite: &Sprite) -> SpriteAddress {
     SpriteAddress { address: sprite.address.clone() }
-}
-
-/// Turns a server [CardId] into its protobuf equivalent
-pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
-    CardIdentifier {
-        side: match card_id.side {
-            Side::Overlord => PlayerSide::Overlord,
-            Side::Champion => PlayerSide::Champion,
-        }
-        .into(),
-        index: card_id.index as u32,
-    }
-}
-
-/// Turns a server [RoomId] into its protobuf equivalent
-pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
-    match room_id {
-        RoomId::Vault => RoomIdentifier::Vault,
-        RoomId::Sanctum => RoomIdentifier::Sanctum,
-        RoomId::Crypts => RoomIdentifier::Crypts,
-        RoomId::RoomA => RoomIdentifier::RoomA,
-        RoomId::RoomB => RoomIdentifier::RoomB,
-        RoomId::RoomC => RoomIdentifier::RoomC,
-        RoomId::RoomD => RoomIdentifier::RoomD,
-        RoomId::RoomE => RoomIdentifier::RoomE,
-    }
 }

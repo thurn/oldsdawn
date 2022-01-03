@@ -61,7 +61,6 @@ namespace Spelldawn.Game
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] ObjectDisplay? _previousParent;
-    [SerializeField] uint _previousParentIndex;
 
     CardIdentifier? _cardId;
     bool? _serverCanPlay;
@@ -225,7 +224,7 @@ namespace Spelldawn.Game
         _registry.CardService.CurrentlyDragging = true;
         SetGameContext(GameContext.Dragging);
         _previousParent = Parent;
-        _previousParentIndex = _previousParent!.RemoveObject(this);
+        _previousParent!.RemoveObject(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
         _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
@@ -281,7 +280,7 @@ namespace Spelldawn.Game
       if (ShouldReturnToHandOnRelease())
       {
         _registry.StaticAssets.PlayCardSound();
-        StartCoroutine(_previousParent!.AddObject(this, animate: true, index: _previousParentIndex));
+        StartCoroutine(_previousParent!.AddObject(this, animate: true));
         _registry.ArenaService.HideRoomSelector();
         return;
       }

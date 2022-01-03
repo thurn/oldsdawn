@@ -148,6 +148,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             "Enixion/Fantasy Art Pack 2/Resized/2"),
           CreatePosition = new ObjectPosition
           {
+            SortingKey = 1,
             Identity = new ObjectPositionIdentity
             {
               Owner = PlayerName.User
@@ -161,6 +162,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Card = OpponentCard("Opponent Identity", OpponentIdentityCardId, 12),
           CreatePosition = new ObjectPosition
           {
+            SortingKey = 1,
             Identity = new ObjectPositionIdentity
             {
               Owner = PlayerName.Opponent
@@ -210,7 +212,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           CreateOrUpdateCard = new CreateOrUpdateCardCommand
           {
             Card = c,
-            CreatePosition = DeckPosition(PlayerName.User)
+            CreatePosition = DeckPosition(PlayerName.User, c.CardId.Index)
           }
         }).Interleave(cards.Select(c => new GameCommand
         {
@@ -219,6 +221,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             Ids = { IdUtil.CardObjectId(c.CardId) },
             Position = new ObjectPosition
             {
+              SortingKey = c.CardId.Index,
               Browser = new ObjectPositionBrowser()
             }
           }
@@ -263,6 +266,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
                 Ids = { cards.Select(IdUtil.CardObjectId) },
                 Position = new ObjectPosition
                 {
+                  SortingKey = 1,
                   Hand = new ObjectPositionHand
                   {
                     Owner = PlayerName.User
@@ -375,7 +379,9 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     IEnumerator DrawUserCard(bool directToHand = false)
     {
       var card = Card();
-      var position = directToHand ? HandPosition(PlayerName.User) : DeckPosition(PlayerName.User);
+      var position = directToHand
+        ? HandPosition(PlayerName.User, card.CardId.Index)
+        : DeckPosition(PlayerName.User, card.CardId.Index);
 
       yield return _registry.CommandService.HandleCommands(new GameCommand
       {
@@ -401,17 +407,18 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
                 CardId = card.CardId
               }
             },
-            Position = HandPosition(PlayerName.User),
+            Position = HandPosition(PlayerName.User, card.CardId.Index),
             DisableAnimation = directToHand
           }
         });
       }
     }
 
-    static ObjectPosition DeckPosition(PlayerName playerName)
+    static ObjectPosition DeckPosition(PlayerName playerName, uint sortingKey)
     {
       return new ObjectPosition
       {
+        SortingKey = sortingKey,
         Deck = new ObjectPositionDeck
         {
           Owner = playerName
@@ -419,10 +426,11 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       };
     }
 
-    static ObjectPosition HandPosition(PlayerName playerName)
+    static ObjectPosition HandPosition(PlayerName playerName, uint sortingKey)
     {
       return new ObjectPosition
       {
+        SortingKey = sortingKey,
         Hand = new ObjectPositionHand
         {
           Owner = playerName
@@ -444,7 +452,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             OwningPlayer = PlayerName.Opponent,
             ArenaFrame = Sprite("SpriteWay/Icons/Clean Frames/9048")
           },
-          CreatePosition = DeckPosition(PlayerName.Opponent)
+          CreatePosition = DeckPosition(PlayerName.Opponent, cardId.Index)
         }
       }, new GameCommand
       {
@@ -457,7 +465,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
               CardId = cardId
             }
           },
-          Position = HandPosition(PlayerName.Opponent),
+          Position = HandPosition(PlayerName.Opponent, cardId.Index),
           DisableAnimation = disableAnimation
         }
       });
@@ -548,6 +556,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
       var roomPos = new ObjectPosition
       {
+        SortingKey = cardId,
         Room = new ObjectPositionRoom
         {
           RoomLocation = ClientRoomLocation.Front
@@ -556,6 +565,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
       var itemPos = new ObjectPosition
       {
+        SortingKey = cardId,
         Item = new ObjectPositionItem
         {
           ItemLocation = ClientItemLocation.Left
@@ -890,6 +900,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             Card = OpponentCard("Scheme", 55555, 92),
             CreatePosition = new ObjectPosition
             {
+              SortingKey = 55555,
               Deck = new ObjectPositionDeck
               {
                 Owner = PlayerName.Opponent
@@ -905,6 +916,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             Card = OpponentCard("Not A Scheme", 55556, 98),
             CreatePosition = new ObjectPosition
             {
+              SortingKey = 55556,
               Deck = new ObjectPositionDeck
               {
                 Owner = PlayerName.Opponent
@@ -952,6 +964,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           },
           Position = new ObjectPosition
           {
+            SortingKey = 1,
             IdentityContainer = new ObjectPositionIdentityContainer
             {
               Owner = playerName
@@ -968,6 +981,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Ids = { IdUtil.DiscardPileObjectId(playerName) },
           Position = new ObjectPosition
           {
+            SortingKey = 1,
             DiscardPileContainer = new ObjectPositionDiscardPileContainer
             {
               Owner = playerName
@@ -998,6 +1012,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { id },
         Position = new ObjectPosition
         {
+          SortingKey = 1,
           Browser = new ObjectPositionBrowser()
         }
       }
@@ -1114,6 +1129,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { CardObjectId(cardId) },
         Position = new ObjectPosition
         {
+          SortingKey = cardId,
           ScoreAnimation = new ObjectPositionScoreAnimation()
         }
       }
@@ -1126,6 +1142,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { CardObjectId(cardId) },
         Position = new ObjectPosition
         {
+          SortingKey = cardId,
           Identity = new ObjectPositionIdentity
           {
             Owner = PlayerName.User
@@ -1142,6 +1159,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { CardObjectId(cardId) },
         Position = new ObjectPosition
         {
+          SortingKey = cardId,
           Offscreen = new ObjectPositionOffscreen()
         }
       }
@@ -1179,6 +1197,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { CardObjectId(cardId) },
         Position = new ObjectPosition
         {
+          SortingKey = cardId,
           Deck = new ObjectPositionDeck
           {
             Owner = owner
@@ -1194,6 +1213,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { CardObjectId(cardId) },
         Position = new ObjectPosition
         {
+          SortingKey = cardId,
           Hand = new ObjectPositionHand
           {
             Owner = owner
@@ -1209,6 +1229,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { CardObjectId(cardId) },
         Position = new ObjectPosition
         {
+          SortingKey = cardId,
           Room = new ObjectPositionRoom
           {
             RoomId = roomId,
@@ -1225,6 +1246,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Ids = { CardObjectId(cardId) },
         Position = new ObjectPosition
         {
+          SortingKey = cardId,
           Staging = new ObjectPositionStaging()
         }
       }
@@ -1243,6 +1265,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         },
         Position = new ObjectPosition
         {
+          SortingKey = 1,
           DeckContainer = new ObjectPositionDeckContainer
           {
             Owner = owner
@@ -1289,6 +1312,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         JumpToPosition = jumpToRoomOnHit is { } r
           ? new ObjectPosition
           {
+            SortingKey = targetId.CardId?.Index ?? 1,
             Room = new ObjectPositionRoom
             {
               RoomId = r,
@@ -1320,6 +1344,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Ids = { IdUtil.IdentityCardId(PlayerName.User) },
           Position = new ObjectPosition
           {
+            SortingKey = 1,
             IdentityContainer = new ObjectPositionIdentityContainer
             {
               Owner = PlayerName.User

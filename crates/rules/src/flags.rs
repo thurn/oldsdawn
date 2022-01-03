@@ -17,7 +17,8 @@
 
 use data::card_state::CardPosition;
 use data::delegates::{
-    CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, Flag,
+    CanInitiateRaidQuery, CanLevelUpRoomQuery, CanPlayCardQuery, CanTakeDrawCardActionQuery,
+    CanTakeGainManaActionQuery, Flag,
 };
 use data::game::GameState;
 use data::primitives::{CardId, CardType, Side};
@@ -59,4 +60,20 @@ pub fn can_take_draw_card_action(game: &GameState, side: Side) -> bool {
 pub fn can_take_gain_mana_action(game: &GameState, side: Side) -> bool {
     let can_gain_mana = queries::in_main_phase(game, side);
     dispatch::perform_query(game, CanTakeGainManaActionQuery(side), Flag::new(can_gain_mana)).into()
+}
+
+/// Returns whether the indicated player can currently take the basic game
+/// action to initiate a raid.
+pub fn can_initiate_raid(game: &GameState, side: Side) -> bool {
+    let can_initiate =
+        side == Side::Champion && game.data.raid.is_none() && queries::in_main_phase(game, side);
+    dispatch::perform_query(game, CanInitiateRaidQuery(side), Flag::new(can_initiate)).into()
+}
+
+/// Returns whether the indicated player can currently take the basic game
+/// action to level up a room
+pub fn can_level_up_room(game: &GameState, side: Side) -> bool {
+    let can_level_up =
+        side == Side::Overlord && game.player(side).mana > 0 && queries::in_main_phase(game, side);
+    dispatch::perform_query(game, CanLevelUpRoomQuery(side), Flag::new(can_level_up)).into()
 }

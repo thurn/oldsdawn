@@ -29,6 +29,9 @@ namespace Spelldawn.Game
 
     [SerializeField] SortingGroup? _sortingGroup;
 
+    /// <summary>Provided by the server, used to order items within a display.</summary>
+    public uint SortingKey { get; set; }
+
     public ObjectDisplay? Parent
     {
       get => _parent;

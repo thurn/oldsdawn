@@ -23,7 +23,6 @@ use data::text::{AbilityText, Keyword, TextToken};
 
 use crate::card_text::text;
 use crate::helpers::*;
-use crate::mutations::{move_card, set_raid_ended};
 use crate::{mutations, queries};
 
 /// The standard weapon ability; applies an attack boost for the duration of a
@@ -59,7 +58,7 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
             })),
             Delegate::StoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
                 if g.card(card_id).data.stored_mana == 0 {
-                    move_card(g, card_id, CardPosition::DiscardPile(s.side()))
+                    mutations::move_card(g, card_id, CardPosition::DiscardPile(s.side()))
                 }
             })),
         ],
@@ -70,7 +69,7 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
 /// cards present.
 pub fn discard_random_card(game: &mut GameState, side: Side) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
-        move_card(game, card_id, CardPosition::DiscardPile(side));
+        mutations::move_card(game, card_id, CardPosition::DiscardPile(side));
     }
 }
 
@@ -88,7 +87,7 @@ pub fn strike<const N: u32>() -> Ability {
 /// Minion combat ability which ends the current raid.
 pub fn end_raid() -> Ability {
     combat(text![Keyword::Combat, "End the raid."], |g, _, _| {
-        set_raid_ended(g);
+        mutations::end_raid(g);
     })
 }
 

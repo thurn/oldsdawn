@@ -51,10 +51,10 @@ namespace Spelldawn.Game
       _ => throw new ArgumentOutOfRangeException(nameof(location), location, null)
     };
 
-    public IEnumerator AddCard(Displayable card, ClientRoomLocation location, uint? index, bool animate) => location switch
+    public IEnumerator AddCard(Displayable card, ClientRoomLocation location, bool animate) => location switch
     {
-      ClientRoomLocation.Back => _inRoom.AddObject(card, animate, index),
-      _ => _defenders.AddObject(card, animate, index)
+      ClientRoomLocation.Back => _inRoom.AddObject(card, animate),
+      _ => _defenders.AddObject(card, animate)
     };
   }
 }

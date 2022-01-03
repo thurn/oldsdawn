@@ -16,18 +16,18 @@
 
 use data::card_state::CardState;
 use data::game::GameState;
-use data::primitives::{CardId, Side};
+use data::primitives::{CardId, RoomId, Side};
 use data::updates::GameUpdate;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     game_object_identifier, DelayCommand, DisplayGameMessageCommand, GameCommand, GameMessageType,
-    GameObjectIdentifier, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
-    ObjectPositionStaging, PlayerName, TimeValue,
+    GameObjectIdentifier, InitiateRaidCommand, MoveGameObjectsCommand, ObjectPosition,
+    ObjectPositionDeck, ObjectPositionStaging, PlayerName, TimeValue,
 };
 
-use crate::full_sync;
 use crate::full_sync::CardCreationStrategy;
+use crate::{adapters, full_sync};
 
 /// Takes a [GameUpdate] and converts it into an animation, a series of
 /// corresponding [GameCommand]s. Commands are appended to the provided
@@ -47,6 +47,9 @@ pub fn render(
         }
         GameUpdate::RevealCard(card_id) => {
             reveal_card(commands, game.card(card_id), user_side);
+        }
+        GameUpdate::InitiateRaid(room_id) => {
+            initiate_raid(commands, room_id, user_side);
         }
         _ => {}
     }
@@ -119,10 +122,20 @@ fn start_turn(commands: &mut Vec<GameCommand>, side: Side) {
     )
 }
 
+fn initiate_raid(commands: &mut Vec<GameCommand>, target: RoomId, user_side: Side) {
+    push(
+        commands,
+        Command::InitiateRaid(InitiateRaidCommand {
+            initiator: adapters::to_player_name(Side::Champion, user_side).into(),
+            room_id: adapters::adapt_room_id(target).into(),
+        }),
+    );
+}
+
 /// Converts a [CardId] into a client [GameObjectIdentifier]
 fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {
     GameObjectIdentifier {
-        id: Some(game_object_identifier::Id::CardId(full_sync::adapt_card_id(id))),
+        id: Some(game_object_identifier::Id::CardId(adapters::adapt_card_id(id))),
     }
 }
 

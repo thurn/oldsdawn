@@ -23,9 +23,9 @@ use data::card_name::CardName;
 use data::card_state::{CardData, CardPosition, CardState};
 use data::game::GameState;
 use data::primitives::{
-    ActionCount, CardId, CardType, GameId, ManaValue, PointsValue, RoomId, Side, UserId,
+    ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
 };
-use display::full_sync;
+use display::adapters;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
@@ -67,7 +67,7 @@ impl TestGame {
     /// state via the action methods on this struct instead of putting a bunch
     /// of information into the [GameState] here, because this helps avoid
     /// coupling tests to the specific implementation details of [GameState].
-    pub fn new(game: GameState, user_id: UserId, opponent_id: UserId) -> Self {
+    pub fn new(game: GameState, user_id: PlayerId, opponent_id: PlayerId) -> Self {
         Self { user: TestClient::new(user_id), opponent: TestClient::new(opponent_id), game }
     }
 
@@ -75,11 +75,11 @@ impl TestGame {
         self.game.id
     }
 
-    pub fn user_id(&self) -> UserId {
+    pub fn user_id(&self) -> PlayerId {
         self.user.id
     }
 
-    pub fn opponent_id(&self) -> UserId {
+    pub fn opponent_id(&self) -> PlayerId {
         self.opponent.id
     }
 
@@ -93,7 +93,7 @@ impl TestGame {
     /// or connecting to an existing game. Returns the commands which would
     /// be sent to the client when connected. If a new game is created, its
     /// ID will be 0.
-    pub fn connect(&mut self, user_id: UserId, game_id: Option<GameId>) -> Result<CommandList> {
+    pub fn connect(&mut self, user_id: PlayerId, game_id: Option<GameId>) -> Result<CommandList> {
         let result = server::handle_connect(self, user_id, game_id, true /* test mode */)?;
         let to_update = match () {
             _ if user_id == self.user.id => &mut self.user,
@@ -116,7 +116,7 @@ impl TestGame {
     /// updating the client state as appropriate based on the responses.
     /// Returns the [GameResponse] for this action or an error if the server
     /// request failed.
-    pub fn perform_action(&mut self, action: Action, user_id: UserId) -> Result<GameResponse> {
+    pub fn perform_action(&mut self, action: Action, user_id: PlayerId) -> Result<GameResponse> {
         let response = server::handle_request(
             self,
             &GameRequest {
@@ -175,7 +175,7 @@ impl TestGame {
         self.connect(self.user.id, Some(self.game.id)).expect("User connection error");
         self.connect(self.opponent.id, Some(self.game.id)).expect("Opponent connection error");
 
-        full_sync::adapt_card_id(card_id)
+        adapters::adapt_card_id(card_id)
     }
 
     /// Creates and then plays a named card.
@@ -196,7 +196,7 @@ impl TestGame {
             CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
                 Some(CardTarget {
                     card_target: Some(card_target::CardTarget::RoomId(
-                        full_sync::adapt_room_id(crate::ROOM_ID).into(),
+                        adapters::adapt_room_id(crate::ROOM_ID).into(),
                     )),
                 })
             }
@@ -246,7 +246,7 @@ impl Database for TestGame {
 /// Represents a user client connected to a test game
 #[derive(Debug, Clone)]
 pub struct TestClient {
-    pub id: UserId,
+    pub id: PlayerId,
     pub data: ClientGameData,
     /// A player's view of *their own* state.
     pub this_player: ClientPlayer,
@@ -256,7 +256,7 @@ pub struct TestClient {
 }
 
 impl TestClient {
-    fn new(id: UserId) -> Self {
+    fn new(id: PlayerId) -> Self {
         Self {
             id,
             data: ClientGameData::default(),
@@ -364,7 +364,7 @@ impl ClientCards {
     /// in [Self::hand].
     pub fn room_cards(&self, room_id: RoomId, location: ClientRoomLocation) -> Vec<String> {
         self.names_in_position(Position::Room(ObjectPositionRoom {
-            room_id: full_sync::adapt_room_id(room_id).into(),
+            room_id: adapters::adapt_room_id(room_id).into(),
             room_location: location.into(),
         }))
     }

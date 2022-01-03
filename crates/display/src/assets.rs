@@ -26,6 +26,16 @@ pub enum CardIconType {
     Shield,
 }
 
+/// Returns the background scale multiplier to use for a [CardIconType]
+pub fn background_scale(icon_type: CardIconType) -> f32 {
+    match icon_type {
+        CardIconType::Health => 1.5,
+        CardIconType::Attack => 1.75,
+        CardIconType::Shield => 1.1,
+        _ => 1.0,
+    }
+}
+
 /// Address for a given [CardIconType]
 pub fn card_icon(icon_type: CardIconType) -> SpriteAddress {
     SpriteAddress {

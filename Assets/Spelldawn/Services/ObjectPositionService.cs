@@ -98,9 +98,8 @@ namespace Spelldawn.Services
     public IEnumerator HandleMoveGameObjectsCommand(MoveGameObjectsCommand command)
     {
       _registry.StaticAssets.PlayCardSound();
-      return MoveGameObjects(command.Ids.Select(Find),
+      return MoveGameObjects(command.Ids.Select(Find).ToList(),
         command.Position,
-        command.Position.SortingKey,
         !command.DisableAnimation);
     }
 
@@ -110,7 +109,6 @@ namespace Spelldawn.Services
       return MoveGameObjects(
         ObjectDisplayForPosition(command.SourcePosition).AllObjects,
         command.TargetPosition,
-        index: command.TargetPosition.SortingKey,
         animate: !command.DisableAnimation);
     }
 
@@ -120,20 +118,24 @@ namespace Spelldawn.Services
       bool animate = true,
       bool animateRemove = true) =>
       MoveGameObjects(
-        CollectionUtils.Once(displayable),
+        new List<Displayable> { displayable },
         targetPosition,
-        targetPosition.SortingKey,
         animate,
         animateRemove);
 
     public IEnumerator MoveGameObjects(
-      IEnumerable<Displayable> displayable,
+      List<Displayable> list,
       ObjectPosition targetPosition,
-      uint? index = null,
       bool animate = true,
       bool animateRemove = true)
     {
-      return ObjectDisplayForPosition(targetPosition).AddObjects(displayable, animate, index, animateRemove);
+      uint sortingKey = targetPosition.SortingKey;
+      foreach (var displayable in list)
+      {
+        displayable.SortingKey = sortingKey;
+        sortingKey++;
+      }
+      return ObjectDisplayForPosition(targetPosition).AddObjects(list, animate, animateRemove);
     }
 
     Displayable CheckExists(GameObjectIdentifier gameObjectId)

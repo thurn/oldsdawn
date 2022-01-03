@@ -43644,11 +43644,11 @@ GameObject:
   - component: {fileID: 1445473049}
   - component: {fileID: 1445473048}
   - component: {fileID: 1445473055}
-  - component: {fileID: 1445473053}
   - component: {fileID: 1445473050}
+  - component: {fileID: 1445473045}
+  - component: {fileID: 1445473053}
   - component: {fileID: 1445473047}
   - component: {fileID: 1445473046}
-  - component: {fileID: 1445473045}
   - component: {fileID: 1445473044}
   - component: {fileID: 1445473052}
   - component: {fileID: 1445473043}
@@ -43700,7 +43700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f756b6a03824a098e8b2aac0f4b1e0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fakeActionResponse: 0
+  _fakeActionResponse: 1
   _registry: {fileID: 1445473048}
   _currentPriority: 0
   _currentlyHandlingAction: 0
@@ -43814,7 +43814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _startBehavior: 0
+  _startBehavior: 1
 --- !u!114 &1445473051
 MonoBehaviour:
   m_ObjectHideFlags: 0

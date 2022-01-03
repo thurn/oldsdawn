@@ -16,15 +16,19 @@
 //! expected to append updates to [GameState::updates]. Functions in this module
 //! panic if their preconditions are not met, the higher-level game UI is
 //! responsible for ensuring this does not happen.
+//!
+//! Generally, mutation functions are expected to invoke a delegate event
+//! *after* performing their mutation to inform other systems that game state
+//! has changed.
 
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, RevealCardEvent, Scope,
-    StoredManaTakenEvent,
+    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidBeginEvent, RaidEndEvent,
+    RevealCardEvent, Scope, StoredManaTakenEvent,
 };
-use data::game::GameState;
-use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
+use data::game::{GameState, RaidData, RaidPhase};
+use data::primitives::{ActionCount, BoostData, CardId, ManaValue, RaidId, RoomId, Side};
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
@@ -112,18 +116,8 @@ pub fn take_stored_mana(game: &mut GameState, card_id: CardId, maximum: ManaValu
     let available = game.card(card_id).data.stored_mana;
     let taken = std::cmp::min(available, maximum);
     game.card_mut(card_id).data.stored_mana -= taken;
-    dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
     gain_mana(game, card_id.side, taken);
-}
-
-/// Ends the current raid. Panics if no raid is currently active. Appends
-/// [GameUpdate::EndRaid].
-#[instrument(skip(game))]
-pub fn set_raid_ended(game: &mut GameState) {
-    info!("set_raid_ended");
-    dispatch::invoke_event(game, RaidEndEvent(game.data.raid.expect("Active raid")));
-    game.data.raid = None;
-    game.updates.push(GameUpdate::EndRaid);
+    dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
 }
 
 /// Overwrites the value of [CardData::boost_count] to match the provided
@@ -139,4 +133,35 @@ pub fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
 pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
     info!(?scope, "clear_boost");
     game.card_mut(scope.card_id()).data.boost_count = 0;
+}
+
+/// Initiates a new raid. Panics if a raid is already active. Appends
+/// [GameUpdate::InitiateRaid].
+#[instrument(skip(game))]
+pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
+    info!(?room_id, "initiate_raid");
+    assert!(game.data.raid.is_none(), "Raid is already active");
+    let raid = RaidData {
+        target: room_id,
+        raid_id: RaidId(game.data.next_raid_id),
+        phase: if game.defenders(room_id).next().is_some() {
+            RaidPhase::Activation
+        } else {
+            RaidPhase::Access
+        },
+    };
+    game.data.next_raid_id += 1;
+    game.data.raid = Some(raid);
+    dispatch::invoke_event(game, RaidBeginEvent(raid));
+    game.updates.push(GameUpdate::InitiateRaid(room_id));
+}
+
+/// Ends the current raid. Panics if no raid is currently active. Appends
+/// [GameUpdate::EndRaid].
+#[instrument(skip(game))]
+pub fn end_raid(game: &mut GameState) {
+    info!("end_raid");
+    game.data.raid = None;
+    dispatch::invoke_event(game, RaidEndEvent(game.data.raid.expect("Active raid")));
+    game.updates.push(GameUpdate::EndRaid);
 }

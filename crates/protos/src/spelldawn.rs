@@ -1,15 +1,15 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FlexColor {
-    /// * Red color component, specified in the range 0.0 to 1.0 inclusive.
+    /// Red color component, specified in the range 0.0 to 1.0 inclusive.
     #[prost(float, tag = "1")]
     pub red: f32,
-    /// * Green color component, specified in the range 0.0 to 1.0 inclusive.
+    /// Green color component, specified in the range 0.0 to 1.0 inclusive.
     #[prost(float, tag = "2")]
     pub green: f32,
-    /// * Blue color component, specified in the range 0.0 to 1.0 inclusive.
+    /// Blue color component, specified in the range 0.0 to 1.0 inclusive.
     #[prost(float, tag = "3")]
     pub blue: f32,
-    ///*
+    ///
     /// Alpha color component, specified in the range 0.0 (transparent) to 1.0
     /// (opaque) inclusive.
     #[prost(float, tag = "4")]
@@ -261,13 +261,13 @@ pub struct FlexStyle {
     pub width: ::core::option::Option<Dimension>,
     #[prost(message, optional, tag = "54")]
     pub word_spacing: ::core::option::Option<Dimension>,
-    ///*
+    ///
     /// Overwrites both 'width' and 'height' by multiplying the dimensions of
     /// the provided 'background_image' (in units of raw pixels) by this
     /// constant.
     #[prost(message, optional, tag = "55")]
     pub background_image_scale_multiplier: ::core::option::Option<f32>,
-    ///*
+    ///
     /// Calculates the aspect ratio of the provided 'background_image' and uses
     /// it to set dimensions. If 'width' is set, the 'height' will be set based
     /// on the aspect ratio and vice versa. Does not support percentage values.
@@ -301,12 +301,12 @@ pub mod node_type {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Node {
-    ///*
+    ///
     /// Used to identify this node in the hierarchy, should be unique among
     /// siblings. If not provided, index will be used instead.
     #[prost(string, tag = "1")]
     pub id: ::prost::alloc::string::String,
-    ///*
+    ///
     /// Used to identify this node in debugging tools
     #[prost(string, tag = "2")]
     pub name: ::prost::alloc::string::String,
@@ -366,13 +366,13 @@ pub mod game_object_identifier {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardIcon {
-    /// * Background for the icon.
+    /// Background for the icon.
     #[prost(message, optional, tag = "1")]
     pub background: ::core::option::Option<SpriteAddress>,
-    /// * Text to display on the icon.
+    /// Text to display on the icon.
     #[prost(message, optional, tag = "2")]
     pub text: ::core::option::Option<::prost::alloc::string::String>,
-    ///*
+    ///
     /// Scale for the background image to render at. A value of 0.0 will be
     /// treated as 1.0
     #[prost(float, tag = "3")]
@@ -401,7 +401,7 @@ pub struct RulesText {
     #[prost(string, tag = "1")]
     pub text: ::prost::alloc::string::String,
 }
-/// * This card should prompt for a room to be played into.
+/// This card should prompt for a room to be played into.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PickRoom {}
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -458,7 +458,7 @@ pub struct ObjectPositionDiscardPileContainer {
     #[prost(enumeration = "PlayerName", tag = "1")]
     pub owner: i32,
 }
-///*
+///
 /// Large display of cards *while* the score animation is playing. After the
 /// score animation finishes, scored cards move to 'Identity' position.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -541,27 +541,27 @@ pub struct RevealedCardView {
     pub title: ::core::option::Option<CardTitle>,
     #[prost(message, optional, tag = "6")]
     pub rules_text: ::core::option::Option<RulesText>,
-    ///*
+    ///
     /// True if this card should be displayed as visible to the opponent when in
     /// the arena.
     #[prost(bool, tag = "7")]
     pub revealed_in_arena: bool,
-    ///*
+    ///
     /// Custom targeting behavior for a card. If unspecified, no targeting UI
     /// is shown.
     #[prost(message, optional, tag = "8")]
     pub targeting: ::core::option::Option<CardTargeting>,
-    ///*
+    ///
     /// Where to move a played card. Information from 'targeting' will be
     /// incorporated to fill this in, e.g. if a room is targeted and
     /// ObjectPositionRoom is selected here with no RoomId, the targeted room
     /// is used.
     #[prost(message, optional, tag = "9")]
     pub on_release_position: ::core::option::Option<ObjectPosition>,
-    /// * Can this card currently be played when it is in hand?
+    /// Can this card currently be played when it is in hand?
     #[prost(bool, tag = "10")]
     pub can_play: bool,
-    ///*
+    ///
     /// Additional interface element rendered to the side of the card during an
     /// info zoom.
     #[prost(message, optional, tag = "11")]
@@ -575,7 +575,7 @@ pub struct CardView {
     pub card_icons: ::core::option::Option<CardIcons>,
     #[prost(message, optional, tag = "3")]
     pub arena_frame: ::core::option::Option<SpriteAddress>,
-    /// * Used to e.g. determine which card back to display for this card.
+    /// Used to e.g. determine which card back to display for this card.
     #[prost(enumeration = "PlayerName", tag = "4")]
     pub owning_player: i32,
     #[prost(message, optional, tag = "5")]
@@ -599,7 +599,7 @@ pub struct PlayerInfo {
     pub portrait: ::core::option::Option<SpriteAddress>,
     #[prost(message, optional, tag = "3")]
     pub portrait_frame: ::core::option::Option<SpriteAddress>,
-    /// * Card back asset to use for this player's cards.
+    /// Card back asset to use for this player's cards.
     #[prost(message, optional, tag = "4")]
     pub card_back: ::core::option::Option<SpriteAddress>,
 }
@@ -639,12 +639,12 @@ pub mod identity_action {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ArenaView {
-    ///*
+    ///
     /// If true, render rooms at the bottom of the screen, if false, render
     /// items at the bottom.
     #[prost(message, optional, tag = "1")]
     pub rooms_at_bottom: ::core::option::Option<bool>,
-    ///*
+    ///
     /// Controls the drag action taken for the player's identity card.
     #[prost(message, optional, tag = "2")]
     pub identity_action: ::core::option::Option<IdentityAction>,
@@ -680,7 +680,7 @@ pub struct GameView {
     pub opponent: ::core::option::Option<PlayerView>,
     #[prost(message, optional, tag = "4")]
     pub arena: ::core::option::Option<ArenaView>,
-    /// * The player who is currently able to act.
+    /// The player who is currently able to act.
     #[prost(enumeration = "PlayerName", tag = "5")]
     pub current_priority: i32,
 }
@@ -690,26 +690,26 @@ pub struct GameView {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
-    /// * Opaque payload to send to the server.
+    /// Opaque payload to send to the server.
     #[prost(message, optional, tag = "1")]
     pub payload: ::core::option::Option<::prost_types::Any>,
-    /// * Immediate optimistic mutations to game state for this action.
+    /// Immediate optimistic mutations to game state for this action.
     #[prost(message, optional, tag = "2")]
     pub update: ::core::option::Option<CommandList>,
 }
-///*
+///
 /// Spend an action to gain 1 mana.
 ///
 /// Optimistic: Mana is added immediately.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GainManaAction {}
-///*
+///
 /// Spend an action to draw a card.
 ///
 /// Optimistic: Face-down card animates to reveal area.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DrawCardAction {}
-///*
+///
 /// Spend an action to level up a room.
 ///
 /// Optimistic: Counter is added immediately
@@ -731,7 +731,7 @@ pub mod card_target {
         RoomId(i32),
     }
 }
-///*
+///
 /// Spend an action to play a card from hand.
 ///
 /// Optimistic:
@@ -756,7 +756,7 @@ pub struct PlayCardAction {
     #[prost(message, optional, tag = "2")]
     pub target: ::core::option::Option<CardTarget>,
 }
-///*
+///
 /// Spend an action to initiate a raid on one of the overlord's rooms
 ///
 /// Optimistic: Raid start animation plays
@@ -765,7 +765,7 @@ pub struct InitiateRaidAction {
     #[prost(enumeration = "RoomIdentifier", tag = "1")]
     pub room_id: i32,
 }
-///*
+///
 /// Possible game actions taken by the user.
 ///
 /// Actions have an associated 'optimistic' behavior to display while waiting
@@ -798,10 +798,10 @@ pub mod game_action {
 pub struct GameRequest {
     #[prost(message, optional, tag = "1")]
     pub action: ::core::option::Option<GameAction>,
-    /// * Current game_id, if a game is currently ongoing.
+    /// Current game_id, if a game is currently ongoing.
     #[prost(message, optional, tag = "2")]
     pub game_id: ::core::option::Option<GameIdentifier>,
-    ///*
+    ///
     /// Identifies the user making this request. At some point I'm going to
     /// figure out how to set up authentication, but currently we operate on
     /// the honor system :)
@@ -1299,7 +1299,7 @@ pub enum WhiteSpace {
 #[repr(i32)]
 pub enum DimensionUnit {
     Unspecified = 0,
-    /// * Density-independent pixels, which unity also calls "pixels".
+    /// Density-independent pixels, which unity also calls "pixels".
     Dip = 1,
     Percentage = 2,
     Vmin = 3,

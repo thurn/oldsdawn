@@ -28,13 +28,13 @@ pub type ShieldValue = u32;
 pub type BoostCount = u32;
 pub type LevelValue = u32;
 
-/// Identifies a user across different games
+/// Identifies a player across different games
 #[derive(Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
-pub struct UserId {
+pub struct PlayerId {
     pub value: u64,
 }
 
-impl UserId {
+impl PlayerId {
     pub fn new(value: u64) -> Self {
         Self { value }
     }
@@ -45,7 +45,7 @@ impl UserId {
     }
 }
 
-impl fmt::Debug for UserId {
+impl fmt::Debug for PlayerId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value)
     }
@@ -222,7 +222,7 @@ impl RoomId {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomLocation {
     Defender,
-    InRoom,
+    Occupant,
 }
 
 /// Used to control where an item is rendered within the Champion's item display

@@ -690,7 +690,7 @@ namespace Spelldawn.Protos {
   public enum DimensionUnit {
     [pbr::OriginalName("DIMENSION_UNIT_UNSPECIFIED")] Unspecified = 0,
     /// <summary>
-    ///* Density-independent pixels, which unity also calls "pixels". 
+    /// Density-independent pixels, which unity also calls "pixels". 
     /// </summary>
     [pbr::OriginalName("DIMENSION_UNIT_DIP")] Dip = 1,
     [pbr::OriginalName("DIMENSION_UNIT_PERCENTAGE")] Percentage = 2,
@@ -818,7 +818,7 @@ namespace Spelldawn.Protos {
     public const int RedFieldNumber = 1;
     private float red_;
     /// <summary>
-    ///* Red color component, specified in the range 0.0 to 1.0 inclusive. 
+    /// Red color component, specified in the range 0.0 to 1.0 inclusive. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Red {
@@ -832,7 +832,7 @@ namespace Spelldawn.Protos {
     public const int GreenFieldNumber = 2;
     private float green_;
     /// <summary>
-    ///* Green color component, specified in the range 0.0 to 1.0 inclusive. 
+    /// Green color component, specified in the range 0.0 to 1.0 inclusive. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Green {
@@ -846,7 +846,7 @@ namespace Spelldawn.Protos {
     public const int BlueFieldNumber = 3;
     private float blue_;
     /// <summary>
-    ///* Blue color component, specified in the range 0.0 to 1.0 inclusive. 
+    /// Blue color component, specified in the range 0.0 to 1.0 inclusive. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Blue {
@@ -860,7 +860,7 @@ namespace Spelldawn.Protos {
     public const int AlphaFieldNumber = 4;
     private float alpha_;
     /// <summary>
-    ///*
+    ///
     /// Alpha color component, specified in the range 0.0 (transparent) to 1.0
     /// (opaque) inclusive.
     /// </summary>
@@ -5840,7 +5840,7 @@ namespace Spelldawn.Protos {
     private static readonly pb::FieldCodec<float?> _single_backgroundImageScaleMultiplier_codec = pb::FieldCodec.ForStructWrapper<float>(442);
     private float? backgroundImageScaleMultiplier_;
     /// <summary>
-    ///*
+    ///
     /// Overwrites both 'width' and 'height' by multiplying the dimensions of
     /// the provided 'background_image' (in units of raw pixels) by this
     /// constant.
@@ -5858,7 +5858,7 @@ namespace Spelldawn.Protos {
     public const int FixedBackgroundImageAspectRatioFieldNumber = 56;
     private bool fixedBackgroundImageAspectRatio_;
     /// <summary>
-    ///*
+    ///
     /// Calculates the aspect ratio of the provided 'background_image' and uses
     /// it to set dimensions. If 'width' is set, the 'height' will be set based
     /// on the aspect ratio and vice versa. Does not support percentage values.
@@ -8318,7 +8318,7 @@ namespace Spelldawn.Protos {
     public const int IdFieldNumber = 1;
     private string id_ = "";
     /// <summary>
-    ///*
+    ///
     /// Used to identify this node in the hierarchy, should be unique among
     /// siblings. If not provided, index will be used instead.
     /// </summary>
@@ -8334,7 +8334,7 @@ namespace Spelldawn.Protos {
     public const int NameFieldNumber = 2;
     private string name_ = "";
     /// <summary>
-    ///*
+    ///
     /// Used to identify this node in debugging tools
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -9537,7 +9537,7 @@ namespace Spelldawn.Protos {
     public const int BackgroundFieldNumber = 1;
     private global::Spelldawn.Protos.SpriteAddress background_;
     /// <summary>
-    ///* Background for the icon. 
+    /// Background for the icon. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.SpriteAddress Background {
@@ -9552,7 +9552,7 @@ namespace Spelldawn.Protos {
     private static readonly pb::FieldCodec<string> _single_text_codec = pb::FieldCodec.ForClassWrapper<string>(18);
     private string text_;
     /// <summary>
-    ///* Text to display on the icon. 
+    /// Text to display on the icon. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string Text {
@@ -9567,7 +9567,7 @@ namespace Spelldawn.Protos {
     public const int BackgroundScaleFieldNumber = 3;
     private float backgroundScale_;
     /// <summary>
-    ///*
+    ///
     /// Scale for the background image to render at. A value of 0.0 will be
     /// treated as 1.0
     /// </summary>
@@ -10471,7 +10471,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///* This card should prompt for a room to be played into. 
+  /// This card should prompt for a room to be played into. 
   /// </summary>
   public sealed partial class PickRoom : pb::IMessage<PickRoom>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -12335,7 +12335,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///*
+  ///
   /// Large display of cards *while* the score animation is playing. After the
   /// score animation finishes, scored cards move to 'Identity' position.
   /// </summary>
@@ -14276,7 +14276,7 @@ namespace Spelldawn.Protos {
     public const int RevealedInArenaFieldNumber = 7;
     private bool revealedInArena_;
     /// <summary>
-    ///*
+    ///
     /// True if this card should be displayed as visible to the opponent when in
     /// the arena.
     /// </summary>
@@ -14292,7 +14292,7 @@ namespace Spelldawn.Protos {
     public const int TargetingFieldNumber = 8;
     private global::Spelldawn.Protos.CardTargeting targeting_;
     /// <summary>
-    ///*
+    ///
     /// Custom targeting behavior for a card. If unspecified, no targeting UI
     /// is shown.
     /// </summary>
@@ -14308,7 +14308,7 @@ namespace Spelldawn.Protos {
     public const int OnReleasePositionFieldNumber = 9;
     private global::Spelldawn.Protos.ObjectPosition onReleasePosition_;
     /// <summary>
-    ///*
+    ///
     /// Where to move a played card. Information from 'targeting' will be
     /// incorporated to fill this in, e.g. if a room is targeted and
     /// ObjectPositionRoom is selected here with no RoomId, the targeted room
@@ -14326,7 +14326,7 @@ namespace Spelldawn.Protos {
     public const int CanPlayFieldNumber = 10;
     private bool canPlay_;
     /// <summary>
-    ///* Can this card currently be played when it is in hand? 
+    /// Can this card currently be played when it is in hand? 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool CanPlay {
@@ -14340,7 +14340,7 @@ namespace Spelldawn.Protos {
     public const int SupplementalInfoFieldNumber = 11;
     private global::Spelldawn.Protos.Node supplementalInfo_;
     /// <summary>
-    ///*
+    ///
     /// Additional interface element rendered to the side of the card during an
     /// info zoom.
     /// </summary>
@@ -14875,7 +14875,7 @@ namespace Spelldawn.Protos {
     public const int OwningPlayerFieldNumber = 4;
     private global::Spelldawn.Protos.PlayerName owningPlayer_ = global::Spelldawn.Protos.PlayerName.Unspecified;
     /// <summary>
-    ///* Used to e.g. determine which card back to display for this card. 
+    /// Used to e.g. determine which card back to display for this card. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.PlayerName OwningPlayer {
@@ -15553,7 +15553,7 @@ namespace Spelldawn.Protos {
     public const int CardBackFieldNumber = 4;
     private global::Spelldawn.Protos.SpriteAddress cardBack_;
     /// <summary>
-    ///* Card back asset to use for this player's cards. 
+    /// Card back asset to use for this player's cards. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.SpriteAddress CardBack {
@@ -16666,7 +16666,7 @@ namespace Spelldawn.Protos {
     private static readonly pb::FieldCodec<bool?> _single_roomsAtBottom_codec = pb::FieldCodec.ForStructWrapper<bool>(10);
     private bool? roomsAtBottom_;
     /// <summary>
-    ///*
+    ///
     /// If true, render rooms at the bottom of the screen, if false, render items
     /// at the bottom.
     /// </summary>
@@ -16683,7 +16683,7 @@ namespace Spelldawn.Protos {
     public const int IdentityActionFieldNumber = 2;
     private global::Spelldawn.Protos.IdentityAction identityAction_;
     /// <summary>
-    ///*
+    ///
     /// Controls the drag action taken for the player's identity card.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -17595,7 +17595,7 @@ namespace Spelldawn.Protos {
     public const int CurrentPriorityFieldNumber = 5;
     private global::Spelldawn.Protos.PlayerName currentPriority_ = global::Spelldawn.Protos.PlayerName.Unspecified;
     /// <summary>
-    ///* The player who is currently able to act. 
+    /// The player who is currently able to act. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.PlayerName CurrentPriority {
@@ -17903,7 +17903,7 @@ namespace Spelldawn.Protos {
     public const int PayloadFieldNumber = 1;
     private global::Google.Protobuf.WellKnownTypes.Any payload_;
     /// <summary>
-    ///* Opaque payload to send to the server. 
+    /// Opaque payload to send to the server. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Google.Protobuf.WellKnownTypes.Any Payload {
@@ -17917,7 +17917,7 @@ namespace Spelldawn.Protos {
     public const int UpdateFieldNumber = 2;
     private global::Spelldawn.Protos.CommandList update_;
     /// <summary>
-    ///* Immediate optimistic mutations to game state for this action. 
+    /// Immediate optimistic mutations to game state for this action. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.CommandList Update {
@@ -18093,7 +18093,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///*
+  ///
   /// Spend an action to gain 1 mana.
   ///
   /// Optimistic: Mana is added immediately.
@@ -18235,7 +18235,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///*
+  ///
   /// Spend an action to draw a card.
   ///
   /// Optimistic: Face-down card animates to reveal area.
@@ -18377,7 +18377,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///*
+  ///
   /// Spend an action to level up a room.
   ///
   /// Optimistic: Counter is added immediately
@@ -18757,7 +18757,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///*
+  ///
   /// Spend an action to play a card from hand.
   ///
   /// Optimistic:
@@ -19003,7 +19003,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///*
+  ///
   /// Spend an action to initiate a raid on one of the overlord's rooms
   ///
   /// Optimistic: Raid start animation plays
@@ -19181,7 +19181,7 @@ namespace Spelldawn.Protos {
   }
 
   /// <summary>
-  ///*
+  ///
   /// Possible game actions taken by the user.
   ///
   /// Actions have an associated 'optimistic' behavior to display while waiting
@@ -19716,7 +19716,7 @@ namespace Spelldawn.Protos {
     public const int GameIdFieldNumber = 2;
     private global::Spelldawn.Protos.GameIdentifier gameId_;
     /// <summary>
-    ///* Current game_id, if a game is currently ongoing. 
+    /// Current game_id, if a game is currently ongoing. 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Spelldawn.Protos.GameIdentifier GameId {
@@ -19730,7 +19730,7 @@ namespace Spelldawn.Protos {
     public const int UserIdFieldNumber = 3;
     private ulong userId_;
     /// <summary>
-    ///*
+    ///
     /// Identifies the user making this request. At some point I'm going to
     /// figure out how to set up authentication, but currently we operate on
     /// the honor system :)

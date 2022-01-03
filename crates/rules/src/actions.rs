@@ -34,14 +34,15 @@ use tracing::{info, instrument};
 use crate::{dispatch, flags, mutations, queries};
 
 /// The basic game action to draw a card during your turn by spending one
-/// action. [instrument(skip(game))]
+/// action.
+#[instrument(skip(game))]
 pub fn draw_card_action(game: &mut GameState, side: Side) -> Result<()> {
     info!(?side, "draw_card_action");
     ensure!(flags::can_take_draw_card_action(game, side), "Cannot draw card for {:?}", side);
     let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
     mutations::spend_action_points(game, side, 1);
     mutations::move_card(game, card, CardPosition::Hand(side));
-    end_action(game, side)
+    check_end_turn(game, side)
 }
 
 /// Possible targets for the 'play card' action. Note that many types of targets
@@ -104,7 +105,7 @@ pub fn play_card_action(
         CardType::Artifact => CardPosition::ArenaItem(ItemLocation::Artifacts),
         CardType::Minion => CardPosition::Room(target.room_id()?, RoomLocation::Defender),
         CardType::Project | CardType::Scheme | CardType::Upgrade => {
-            CardPosition::Room(target.room_id()?, RoomLocation::InRoom)
+            CardPosition::Room(target.room_id()?, RoomLocation::Occupant)
         }
         CardType::Identity => CardPosition::Identity(side),
     };
@@ -115,7 +116,7 @@ pub fn play_card_action(
 
     mutations::move_card(game, card_id, new_position);
 
-    end_action(game, side)
+    check_end_turn(game, side)
 }
 
 /// The basic game action to gain 1 mana during your turn by spending one
@@ -126,12 +127,21 @@ pub fn gain_mana_action(game: &mut GameState, side: Side) -> Result<()> {
     ensure!(flags::can_take_gain_mana_action(game, side), "Cannot gain mana for {:?}", side);
     mutations::spend_action_points(game, side, 1);
     mutations::gain_mana(game, side, 1);
-    end_action(game, side)
+    check_end_turn(game, side)
 }
 
-/// Invoked after taking a primary game action, handles functionality such as
-/// checking whether to advance to the next turn.
-fn end_action(game: &mut GameState, side: Side) -> Result<()> {
+#[instrument(skip(game))]
+pub fn initiate_raid_action(game: &mut GameState, side: Side, target_room: RoomId) -> Result<()> {
+    info!(?side, "gain_mana_action");
+    ensure!(flags::can_initiate_raid(game, side), "Cannot initiate raid for {:?}", side);
+    mutations::spend_action_points(game, side, 1);
+    mutations::initiate_raid(game, target_room);
+    Ok(())
+}
+
+/// Invoked after taking a primary game action to check if the turn should be
+/// switched.
+fn check_end_turn(game: &mut GameState, side: Side) -> Result<()> {
     ensure!(game.data.turn == side, "Not currently {:?}'s turn", side);
     if game.player(side).actions == 0 {
         let new_turn = side.opponent();

@@ -53,7 +53,10 @@ namespace Spelldawn.Services
 
     public void Connect()
     {
-      ConnectToServer();
+      if (!_fakeActionResponse)
+      {
+        ConnectToServer();
+      }
     }
 
     public void HandleAction(GameAction action)

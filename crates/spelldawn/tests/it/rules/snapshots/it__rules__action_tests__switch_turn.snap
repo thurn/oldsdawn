@@ -1,0 +1,135 @@
+---
+source: crates/spelldawn/tests/it/rules/action_tests.rs
+assertion_line: 259
+expression: response
+
+---
+Ok(
+    GameResponse {
+        command_list: CommandList {
+            commands: [
+                GameCommand {
+                    command: Some(
+                        UpdateGameView(
+                            UpdateGameViewCommand {
+                                game: Some(
+                                    GameView {
+                                        game_id: Some(
+                                            GameIdentifier {
+                                                value: 14,
+                                            },
+                                        ),
+                                        user: Some(
+                                            PlayerView {
+                                                player_info: None,
+                                                score: None,
+                                                mana: Some(
+                                                    ManaView {
+                                                        amount: 8,
+                                                    },
+                                                ),
+                                                action_tracker: Some(
+                                                    ActionTrackerView {
+                                                        available_action_count: 0,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        opponent: Some(
+                                            PlayerView {
+                                                player_info: None,
+                                                score: None,
+                                                mana: None,
+                                                action_tracker: Some(
+                                                    ActionTrackerView {
+                                                        available_action_count: 3,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        arena: None,
+                                        current_priority: Opponent,
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        DisplayGameMessage(
+                            DisplayGameMessageCommand {
+                                message_type: Dawn,
+                            },
+                        ),
+                    ),
+                },
+            ],
+        },
+        channel_response: Some(
+            (
+                15,
+                CommandList {
+                    commands: [
+                        GameCommand {
+                            command: Some(
+                                UpdateGameView(
+                                    UpdateGameViewCommand {
+                                        game: Some(
+                                            GameView {
+                                                game_id: Some(
+                                                    GameIdentifier {
+                                                        value: 14,
+                                                    },
+                                                ),
+                                                user: Some(
+                                                    PlayerView {
+                                                        player_info: None,
+                                                        score: None,
+                                                        mana: None,
+                                                        action_tracker: Some(
+                                                            ActionTrackerView {
+                                                                available_action_count: 3,
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                opponent: Some(
+                                                    PlayerView {
+                                                        player_info: None,
+                                                        score: None,
+                                                        mana: Some(
+                                                            ManaView {
+                                                                amount: 8,
+                                                            },
+                                                        ),
+                                                        action_tracker: Some(
+                                                            ActionTrackerView {
+                                                                available_action_count: 0,
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                arena: None,
+                                                current_priority: User,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                DisplayGameMessage(
+                                    DisplayGameMessageCommand {
+                                        message_type: Dawn,
+                                    },
+                                ),
+                            ),
+                        },
+                    ],
+                },
+            ),
+        ),
+    },
+)

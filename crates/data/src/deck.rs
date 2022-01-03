@@ -18,13 +18,13 @@ use std::collections::HashMap;
 use std::iter;
 
 use crate::card_name::CardName;
-use crate::primitives::UserId;
+use crate::primitives::PlayerId;
 
 /// Represents a player deck outside of an active game
 #[derive(Debug, Clone)]
 pub struct Deck {
     /// Identifies the user who owns this deck
-    pub owner_id: UserId,
+    pub owner_id: PlayerId,
     /// Identity card for this deck
     pub identity: CardName,
     /// How many (non-identity) cards with each name are present in this deck?

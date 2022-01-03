@@ -164,16 +164,16 @@ enum WhiteSpace {
 }
 
 message FlexColor {
-    /** Red color component, specified in the range 0.0 to 1.0 inclusive. */
+    /* Red color component, specified in the range 0.0 to 1.0 inclusive. */
     float red = 1;
 
-    /** Green color component, specified in the range 0.0 to 1.0 inclusive. */
+    /* Green color component, specified in the range 0.0 to 1.0 inclusive. */
     float green = 2;
 
-    /** Blue color component, specified in the range 0.0 to 1.0 inclusive. */
+    /* Blue color component, specified in the range 0.0 to 1.0 inclusive. */
     float blue = 3;
 
-    /**
+    /*
      * Alpha color component, specified in the range 0.0 (transparent) to 1.0
      * (opaque) inclusive.
      */
@@ -213,7 +213,7 @@ message FlexVector3 {
 
 enum DimensionUnit {
     DIMENSION_UNIT_UNSPECIFIED = 0;
-    /** Density-independent pixels, which unity also calls "pixels". */
+    /* Density-independent pixels, which unity also calls "pixels". */
     DIMENSION_UNIT_DIP = 1;
     DIMENSION_UNIT_PERCENTAGE = 2;
     DIMENSION_UNIT_VMIN = 3;
@@ -339,14 +339,14 @@ message FlexStyle {
     Dimension width = 53;
     Dimension word_spacing = 54;
 
-    /**
+    /*
     * Overwrites both 'width' and 'height' by multiplying the dimensions of
     * the provided 'background_image' (in units of raw pixels) by this
     * constant.
     */
     google.protobuf.FloatValue background_image_scale_multiplier = 55;
 
-    /**
+    /*
     * Calculates the aspect ratio of the provided 'background_image' and uses
     * it to set dimensions. If 'width' is set, the 'height' will be set based
     * on the aspect ratio and vice versa. Does not support percentage values.
@@ -372,13 +372,13 @@ message NodeType {
 }
 
 message Node {
-    /**
+    /*
     * Used to identify this node in the hierarchy, should be unique among
     * siblings. If not provided, index will be used instead.
     */
     string id = 1;
 
-    /**
+    /*
     * Used to identify this node in debugging tools
     */
     string name = 2;
@@ -449,11 +449,11 @@ enum RoomIdentifier {
 
 
 message CardIcon {
-    /** Background for the icon. */
+    /* Background for the icon. */
     SpriteAddress background = 1;
-    /** Text to display on the icon. */
+    /* Text to display on the icon. */
     google.protobuf.StringValue text = 2;
-    /**
+    /*
      * Scale for the background image to render at. A value of 0.0 will be
      * treated as 1.0
      */
@@ -483,7 +483,7 @@ enum TargetingArrow {
     TARGETING_ARROW_GREEN = 3;
 }
 
-/** This card should prompt for a room to be played into. */
+/* This card should prompt for a room to be played into. */
 message PickRoom {
 }
 
@@ -540,7 +540,7 @@ message ObjectPositionDiscardPileContainer {
     PlayerName owner = 1;
 }
 
-/**
+/*
  * Large display of cards *while* the score animation is playing. After the
  * score animation finishes, scored cards move to 'Identity' position.
  */
@@ -598,19 +598,19 @@ message RevealedCardView {
     CardTitle title = 5;
     RulesText rules_text = 6;
 
-    /**
+    /*
      * True if this card should be displayed as visible to the opponent when in
      * the arena.
      */
     bool revealed_in_arena = 7;
 
-    /**
+    /*
     * Custom targeting behavior for a card. If unspecified, no targeting UI
     * is shown.
     */
     CardTargeting targeting = 8;
 
-    /**
+    /*
     * Where to move a played card. Information from 'targeting' will be
     * incorporated to fill this in, e.g. if a room is targeted and
     * ObjectPositionRoom is selected here with no RoomId, the targeted room
@@ -618,10 +618,10 @@ message RevealedCardView {
     */
     ObjectPosition on_release_position = 9;
 
-    /** Can this card currently be played when it is in hand? */
+    /* Can this card currently be played when it is in hand? */
     bool can_play = 10;
 
-    /**
+    /*
      * Additional interface element rendered to the side of the card during an
      * info zoom.
      */
@@ -635,7 +635,7 @@ message CardView {
 
     SpriteAddress arena_frame = 3;
 
-    /** Used to e.g. determine which card back to display for this card. */
+    /* Used to e.g. determine which card back to display for this card. */
     PlayerName owning_player = 4;
 
     RevealedCardView revealed_card = 5;
@@ -653,7 +653,7 @@ message PlayerInfo {
     google.protobuf.StringValue name = 1;
     SpriteAddress portrait = 2;
     SpriteAddress portrait_frame = 3;
-    /** Card back asset to use for this player's cards. */
+    /* Card back asset to use for this player's cards. */
     SpriteAddress card_back = 4;
 }
 
@@ -679,13 +679,13 @@ message IdentityAction {
 }
 
 message ArenaView {
-    /**
+    /*
     * If true, render rooms at the bottom of the screen, if false, render items
     * at the bottom.
     */
     google.protobuf.BoolValue rooms_at_bottom = 1;
 
-    /**
+    /*
      * Controls the drag action taken for the player's identity card.
      */
     IdentityAction identity_action = 2;
@@ -711,7 +711,7 @@ message GameView {
     PlayerView user = 2;
     PlayerView opponent = 3;
     ArenaView arena = 4;
-    /** The player who is currently able to act. */
+    /* The player who is currently able to act. */
     PlayerName current_priority = 5;
 }
 
@@ -721,14 +721,14 @@ message GameView {
 // ============================================================================
 
 message StandardAction {
-    /** Opaque payload to send to the server. */
+    /* Opaque payload to send to the server. */
     google.protobuf.Any payload = 1;
 
-    /** Immediate optimistic mutations to game state for this action. */
+    /* Immediate optimistic mutations to game state for this action. */
     CommandList update = 2;
 }
 
-/**
+/*
 * Spend an action to gain 1 mana.
 *
 * Optimistic: Mana is added immediately.
@@ -736,7 +736,7 @@ message StandardAction {
 message GainManaAction {
 }
 
-/**
+/*
 * Spend an action to draw a card.
 *
 * Optimistic: Face-down card animates to reveal area.
@@ -744,7 +744,7 @@ message GainManaAction {
 message DrawCardAction {
 }
 
-/**
+/*
 * Spend an action to level up a room.
 *
 * Optimistic: Counter is added immediately
@@ -759,7 +759,7 @@ message CardTarget {
     }
 }
 
-/**
+/*
 * Spend an action to play a card from hand.
 *
 * Optimistic:
@@ -783,7 +783,7 @@ message PlayCardAction {
     CardTarget target = 2;
 }
 
-/**
+/*
 * Spend an action to initiate a raid on one of the overlord's rooms
 *
 * Optimistic: Raid start animation plays
@@ -792,7 +792,7 @@ message InitiateRaidAction {
     RoomIdentifier room_id = 1;
 }
 
-/**
+/*
 * Possible game actions taken by the user.
 *
 * Actions have an associated 'optimistic' behavior to display while waiting
@@ -813,10 +813,10 @@ message GameAction {
 message GameRequest {
     GameAction action = 1;
 
-    /** Current game_id, if a game is currently ongoing. */
+    /* Current game_id, if a game is currently ongoing. */
     GameIdentifier game_id = 2;
 
-    /**
+    /*
      * Identifies the user making this request. At some point I'm going to
      * figure out how to set up authentication, but currently we operate on
      * the honor system :)
@@ -960,15 +960,17 @@ message DestroyCardCommand {
 }
 
 /*
- * Moves a list of GameObjects to a new position. Objects already in the target
- * position are skipped.
+ * Moves a list of GameObjects to a new position.
+ *
+ * Objects already in the target position are skipped.
  */
 message MoveGameObjectsCommand {
     repeated GameObjectIdentifier ids = 1;
 
     /*
-     * Position at which to insert. If multiple IDs are specified, they will
-     * be sequentially added at this position
+     * Position at which to insert. If multiple ids are specified, each
+     * additional object will be given a sorting key which is 1 greater than
+     * the previous object's sorting key.
      */
     ObjectPosition position = 2;
 

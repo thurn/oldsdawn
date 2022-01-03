@@ -20,7 +20,8 @@ use serde::{Deserialize, Serialize};
 use crate::card_state::{CardPosition, CardPositionKind, CardState, SortingKey};
 use crate::deck::Deck;
 use crate::primitives::{
-    ActionCount, CardId, GameId, ManaValue, PointsValue, RaidId, Side, TurnNumber, UserId,
+    ActionCount, CardId, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, RoomLocation,
+    Side, TurnNumber,
 };
 use crate::updates::UpdateTracker;
 
@@ -28,7 +29,7 @@ use crate::updates::UpdateTracker;
 /// resources
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerState {
-    pub id: UserId,
+    pub id: PlayerId,
     pub mana: ManaValue,
     pub actions: ActionCount,
     pub score: PointsValue,
@@ -36,7 +37,7 @@ pub struct PlayerState {
 
 impl PlayerState {
     /// Create the default player state for a new game
-    pub fn new_game(id: UserId, actions: ActionCount) -> Self {
+    pub fn new_game(id: PlayerId, actions: ActionCount) -> Self {
         Self { id, mana: 5, actions, score: 0 }
     }
 }
@@ -44,15 +45,33 @@ impl PlayerState {
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AnimationBuffer {}
 
-/// State of an active raid
+/// Identifies steps within a raid
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct RaidState {
+pub enum RaidPhase {
+    /// The raid has started and the Overlord is deciding whether to activate
+    /// the target room.
+    Activation,
+    /// The defender with the provided ordinal position is currently being
+    /// encountered. The Champion is deciding which weapons, if any, to employ.
+    Encounter(usize),
+    /// The Champion has defeated the defender with the provided ordinal
+    /// position and is deciding whether to continue to the next defender or
+    /// retreat.
+    Continue(usize),
+    /// The Champion has bypassed all of the defenders for this room and is now
+    /// accessing its contents
+    Access,
+}
+
+/// Data about an active raid
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct RaidData {
     /// Unique ID for this raid
     pub raid_id: RaidId,
-    /// Encounter position within this raid
-    pub encounter_number: u32,
-    /// Player who is next to act within this raid
-    pub priority: Side,
+    /// Room being targeted by this raid
+    pub target: RoomId,
+    /// Current phase within this raid
+    pub phase: RaidPhase,
 }
 
 /// Describes options for this game & the set of rules it is using.
@@ -75,7 +94,9 @@ pub struct GameData {
     /// Turn number for that player
     pub turn_number: TurnNumber,
     /// Data about an ongoing raid, if any
-    pub raid: Option<RaidState>,
+    pub raid: Option<RaidData>,
+    /// Counter to create unique IDs for raids within this game
+    pub next_raid_id: u32,
     /// Game options
     pub config: GameConfiguration,
 }
@@ -125,7 +146,13 @@ impl GameState {
             champion_cards: Self::make_deck(&champion_deck, Side::Champion),
             overlord: PlayerState::new_game(overlord_deck.owner_id, 3 /* actions */),
             champion: PlayerState::new_game(champion_deck.owner_id, 0 /* actions */),
-            data: GameData { turn: Side::Overlord, turn_number: 1, raid: None, config },
+            data: GameData {
+                turn: Side::Overlord,
+                turn_number: 1,
+                raid: None,
+                next_raid_id: 1,
+                config,
+            },
             updates: UpdateTracker::new(!config.simulation),
             next_sorting_key: 1,
         }
@@ -246,20 +273,14 @@ impl GameState {
         self.cards(side).iter().filter(|c| c.position.in_deck())
     }
 
-    /// Create card states for a deck
-    fn make_deck(deck: &Deck, side: Side) -> Vec<CardState> {
-        let mut result = vec![CardState::new(
-            CardId::new(side, 0),
-            deck.identity,
-            side,
-            true, /* is_identity */
-        )];
+    /// Cards defending a given room
+    pub fn defenders(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
+        self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Defender))
+    }
 
-        result.extend(deck.card_names().iter().enumerate().map(move |(index, name)| {
-            CardState::new(CardId::new(side, index + 1), *name, side, false /* is_identity */)
-        }));
-
-        result
+    /// Cards in a given room
+    pub fn occupants(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
+        self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
     }
 
     /// All Card IDs present in this game
@@ -275,5 +296,21 @@ impl GameState {
     /// alphabetical order.
     pub fn all_cards(&self) -> impl Iterator<Item = &CardState> {
         self.overlord_cards.iter().chain(self.champion_cards.iter())
+    }
+
+    /// Create card states for a deck
+    fn make_deck(deck: &Deck, side: Side) -> Vec<CardState> {
+        let mut result = vec![CardState::new(
+            CardId::new(side, 0),
+            deck.identity,
+            side,
+            true, /* is_identity */
+        )];
+
+        result.extend(deck.card_names().iter().enumerate().map(move |(index, name)| {
+            CardState::new(CardId::new(side, index + 1), *name, side, false /* is_identity */)
+        }));
+
+        result
     }
 }

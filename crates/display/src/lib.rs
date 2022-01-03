@@ -19,13 +19,14 @@ use std::collections::HashMap;
 
 use dashmap::DashMap;
 use data::game::GameState;
-use data::primitives::{Side, UserId};
+use data::primitives::{PlayerId, Side};
 use data::updates::GameUpdate;
 use once_cell::sync::Lazy;
 use protos::spelldawn::CommandList;
 
 use crate::full_sync::FullSync;
 
+pub mod adapters;
 pub mod animations;
 pub mod assets;
 pub mod diff;
@@ -33,7 +34,7 @@ pub mod full_sync;
 pub mod rules_text;
 
 /// Map from user IDs to the most recent game response we sent to that user.
-static RESPONSES: Lazy<DashMap<UserId, FullSync>> = Lazy::new(DashMap::new);
+static RESPONSES: Lazy<DashMap<PlayerId, FullSync>> = Lazy::new(DashMap::new);
 
 /// Builds a command list for game connection requests. Executes a full sync of
 /// the state of the provided `game`, returning a command to update the state of

@@ -72,7 +72,7 @@ use crate::card_definition::CardStats;
 use crate::card_definition::Cost;
 #[allow(unused)] // Used in rustdocs
 use crate::card_state::{CardData, CardPosition};
-use crate::game::{GameState, RaidState};
+use crate::game::{GameState, RaidData};
 use crate::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
     ShieldValue, Side, TurnNumber,
@@ -238,9 +238,9 @@ pub enum Delegate {
     /// A card is scored by the Champion
     StealScheme(EventDelegate<CardId>),
     /// A Raid is initiated
-    RaidBegin(EventDelegate<RaidState>),
+    RaidBegin(EventDelegate<RaidData>),
     /// A minion is encountered during a raid
-    EncounterBegin(EventDelegate<RaidState>),
+    EncounterBegin(EventDelegate<RaidData>),
     /// A weapon boost is activated for a given card
     ActivateBoost(EventDelegate<BoostData>),
     /// A minion is defeated during an encounter by dealing damage to it equal
@@ -251,9 +251,9 @@ pub enum Delegate {
     MinionCombatAbility(EventDelegate<CardId>),
     /// A minion finishes being encountered during a raid. Invokes regardless of
     /// whether the encounter was successful.
-    EncounterEnd(EventDelegate<RaidState>),
+    EncounterEnd(EventDelegate<RaidData>),
     /// A Raid is completed, either successfully or unsuccessfully.
-    RaidEnd(EventDelegate<RaidState>),
+    RaidEnd(EventDelegate<RaidData>),
     /// Stored mana is taken from a card
     StoredManaTaken(EventDelegate<CardId>),
 
@@ -265,6 +265,12 @@ pub enum Delegate {
     CanTakeGainManaAction(QueryDelegate<Side, Flag>),
     /// Query whether a given card can currently be played.
     CanPlayCard(QueryDelegate<CardId, Flag>),
+    /// Can the indicated player currently take the basic game action to
+    /// initiate a raid?
+    CanInitiateRaid(QueryDelegate<Side, Flag>),
+    /// Can the indicated player currently take the basic game action to level
+    /// up a room?
+    CanLevelUpRoom(QueryDelegate<Side, Flag>),
 
     /// Query the current mana cost of a card. Invoked with [Cost::mana].
     ManaCost(QueryDelegate<CardId, Option<ManaValue>>),

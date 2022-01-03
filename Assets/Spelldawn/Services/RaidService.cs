@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Collections;
-using System.Collections.Generic;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
@@ -44,25 +43,45 @@ namespace Spelldawn.Services
         _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
 
         var room = _registry.ArenaService.FindRoom(command.RoomId);
+
+        var raidPosition = new ObjectPosition
+        {
+          SortingKey = 0,
+          Raid = new ObjectPositionRaid()
+        };
+
         switch (command.RoomId)
         {
           case RoomIdentifier.Sanctum:
-            yield return _participants.AddObject(
-              _registry.IdentityCardForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
+            yield return _registry.ObjectPositionService.MoveGameObject(
+              _registry.IdentityCardForPlayer(DataUtils.OpposingPlayer(command.Initiator)),
+              raidPosition);
             break;
           case RoomIdentifier.Vault:
-            yield return _participants.AddObject(_registry.DeckForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
+            yield return _registry.ObjectPositionService.MoveGameObject(
+              _registry.DeckForPlayer(DataUtils.OpposingPlayer(command.Initiator)),
+              raidPosition);
             break;
           case RoomIdentifier.Crypts:
-            yield return _participants.AddObject(
-              _registry.DiscardPileForPlayer(DataUtils.OpposingPlayer(command.Initiator)));
+            yield return _registry.ObjectPositionService.MoveGameObject(
+              _registry.DiscardPileForPlayer(DataUtils.OpposingPlayer(command.Initiator)),
+              raidPosition);
             break;
         }
 
-        yield return MoveToRaid(room.BackCards.AllObjects);
+
+        yield return _registry.ObjectPositionService.MoveGameObjects(room.BackCards.AllObjects, new ObjectPosition
+        {
+          SortingKey = 1000,
+          Raid = new ObjectPositionRaid()
+        });
 
         _registry.StaticAssets.PlayWhooshSound();
-        yield return MoveToRaid(room.FrontCards.AllObjects);
+        yield return _registry.ObjectPositionService.MoveGameObjects(room.FrontCards.AllObjects, new ObjectPosition
+        {
+          SortingKey = 2000,
+          Raid = new ObjectPositionRaid()
+        });
 
         var identity = _registry.IdentityCardForPlayer(command.Initiator);
         identity.RaidSymbolShown = true;
@@ -70,27 +89,28 @@ namespace Spelldawn.Services
         _registry.StaticAssets.PlayWhooshSound();
         yield return _registry.ObjectPositionService.MoveGameObject(identity, new ObjectPosition
         {
+          SortingKey = 3000,
           Raid = new ObjectPositionRaid()
         });
       }
     }
 
-    IEnumerator MoveToRaid(IEnumerable<Displayable> cards)
-    {
-      var coroutines = new List<Coroutine>();
-      foreach (var card in cards)
-      {
-        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveGameObject(card, new ObjectPosition
-        {
-          Raid = new ObjectPositionRaid()
-        })));
-      }
-
-      foreach (var coroutine in coroutines)
-      {
-        yield return coroutine;
-      }
-    }
+    // IEnumerator MoveToRaid(IEnumerable<Displayable> cards)
+    // {
+    //   var coroutines = new List<Coroutine>();
+    //   foreach (var card in cards)
+    //   {
+    //     coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveGameObject(card, new ObjectPosition
+    //     {
+    //       Raid = new ObjectPositionRaid()
+    //     })));
+    //   }
+    //
+    //   foreach (var coroutine in coroutines)
+    //   {
+    //     yield return coroutine;
+    //   }
+    // }
 
     public IEnumerator HandleEndRaid(EndRaidCommand endRaidCommand)
     {

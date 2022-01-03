@@ -24,8 +24,10 @@ use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::CardPositionKind;
 use data::deck::Deck;
-use data::game::{GameConfiguration, GameState, RaidState};
-use data::primitives::{ActionCount, GameId, ManaValue, PointsValue, RaidId, RoomId, Side, UserId};
+use data::game::{GameConfiguration, GameState, RaidData, RaidPhase};
+use data::primitives::{
+    ActionCount, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
+};
 use maplit::hashmap;
 use protos::spelldawn::RoomIdentifier;
 use server::GameResponse;
@@ -85,8 +87,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
     }
 
     if let Some(raid) = args.raid {
-        state.data.raid =
-            Some(RaidState { raid_id: RAID_ID, encounter_number: 0, priority: raid.priority })
+        state.data.raid = Some(RaidData { raid_id: RAID_ID, target: ROOM_ID, phase: raid.phase })
     }
 
     let mut game = TestGame::new(state, user_id, opponent_id);
@@ -97,9 +98,9 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
     game
 }
 
-fn generate_ids(basis: Option<u64>) -> (GameId, UserId, UserId) {
+fn generate_ids(basis: Option<u64>) -> (GameId, PlayerId, PlayerId) {
     let next_id = basis.unwrap_or_else(|| NEXT_ID.fetch_add(2, Ordering::SeqCst));
-    (GameId::new(next_id), UserId::new(next_id), UserId::new(next_id + 1))
+    (GameId::new(next_id), PlayerId::new(next_id), PlayerId::new(next_id + 1))
 }
 
 /// Arguments to [new_game]
@@ -121,7 +122,8 @@ pub struct Args {
     /// no known cards are placed on top of it) because the game is created with
     /// [GameConfiguration::deterministic] set to true.
     pub next_draw: Option<CardName>,
-    /// Set up an active raid within the created game
+    /// Set up an active raid within the created game using [ROOM_ID] as the
+    /// target and [RAID_ID] as the ID.
     pub raid: Option<TestRaid>,
     /// If false, will not attempt to automatically connect to this game.
     /// Defaults to true.
@@ -145,7 +147,7 @@ impl Default for Args {
 /// Options for an active test raid
 #[derive(Clone, Debug)]
 pub struct TestRaid {
-    pub priority: Side,
+    pub phase: RaidPhase,
 }
 
 /// Asserts that the display names of the provided vector of [CardName]s are

@@ -22,7 +22,7 @@ use strum_macros::Display;
 
 /// Possible names of cards.
 ///
-/// This enum is used to connect the *state* of a card to its game rules.
+/// This enum is used to connect the state of a card to its game rules.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display, Serialize, Deserialize)]
 pub enum CardName {
     /// Empty card, for tests

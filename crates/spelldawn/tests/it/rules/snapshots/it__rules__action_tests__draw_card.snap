@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 79
+assertion_line: 80
 expression: response
 
 ---
@@ -78,7 +78,7 @@ Ok(
                                                         text: Some(
                                                             "5",
                                                         ),
-                                                        background_scale: 1.0,
+                                                        background_scale: 1.5,
                                                     },
                                                 ),
                                                 bottom_left_icon: None,

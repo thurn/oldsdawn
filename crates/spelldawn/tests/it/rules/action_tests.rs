@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use data::card_name::CardName;
+use data::game::RaidPhase;
 use data::primitives::Side;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
@@ -95,7 +96,7 @@ fn cannot_draw_when_out_of_action_points() {
 fn cannot_draw_during_raid() {
     let mut g = new_game(
         Side::Overlord,
-        Args { raid: Some(TestRaid { priority: Side::Overlord }), ..Args::default() },
+        Args { raid: Some(TestRaid { phase: RaidPhase::Activation }), ..Args::default() },
     );
     assert_error(g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id()));
 }
@@ -192,7 +193,7 @@ fn cannot_play_card_when_out_of_action_points() {
 fn cannot_play_card_during_raid() {
     let mut g = new_game(
         Side::Champion,
-        Args { raid: Some(TestRaid { priority: Side::Overlord }), ..Args::default() },
+        Args { raid: Some(TestRaid { phase: RaidPhase::Activation }), ..Args::default() },
     );
     let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     assert_error(g.perform_action(
@@ -232,14 +233,17 @@ fn cannot_gain_mana_when_out_of_action_points() {
 fn cannot_gain_mana_during_raid() {
     let mut g = new_game(
         Side::Overlord,
-        Args { raid: Some(TestRaid { priority: Side::Overlord }), ..Args::default() },
+        Args { raid: Some(TestRaid { phase: RaidPhase::Activation }), ..Args::default() },
     );
     assert_error(g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()));
 }
 
 #[test]
 fn switch_turn() {
-    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
+    let mut g = new_game(
+        Side::Overlord,
+        Args { id_basis: Some(14), actions: 3, mana: 5, ..Args::default() },
+    );
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
@@ -252,4 +256,5 @@ fn switch_turn() {
     assert_eq!(g.user.data.priority(), PlayerName::Opponent);
     assert_eq!(g.opponent.data.priority(), PlayerName::User);
     assert_commands_match(&response, vec!["UpdateGameView", "DisplayGameMessage"]);
+    assert_debug_snapshot!(response);
 }

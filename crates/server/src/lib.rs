@@ -19,7 +19,7 @@ use dashmap::DashMap;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
-use data::primitives::{CardId, GameId, RoomId, Side, UserId};
+use data::primitives::{CardId, GameId, PlayerId, RoomId, Side};
 use data::updates::UpdateTracker;
 use maplit::hashmap;
 use once_cell::sync::Lazy;
@@ -45,7 +45,7 @@ pub mod database;
 /// Stores active channels for each user.
 ///
 /// TODO: How do you clean these up if a user disconnects?
-static CHANNELS: Lazy<DashMap<UserId, Sender<Result<CommandList, Status>>>> =
+static CHANNELS: Lazy<DashMap<PlayerId, Sender<Result<CommandList, Status>>>> =
     Lazy::new(DashMap::new);
 
 /// Struct which implements our GRPC service
@@ -61,7 +61,7 @@ impl Spelldawn for GameService {
     ) -> Result<Response<Self::ConnectStream>, Status> {
         let message = request.get_ref();
         let game_id = to_server_game_id(&message.game_id);
-        let user_id = UserId::new(message.user_id);
+        let user_id = PlayerId::new(message.user_id);
         warn!(?user_id, ?game_id, "received_connection");
 
         let (tx, rx) = mpsc::channel(4);
@@ -119,14 +119,14 @@ pub struct GameResponse {
     /// Response to send to the user who made the initial game request.
     pub command_list: CommandList,
     /// Response to send to another user, e.g. to update opponent state.
-    pub channel_response: Option<(UserId, CommandList)>,
+    pub channel_response: Option<(PlayerId, CommandList)>,
 }
 
 /// Processes an incoming client request and returns a [GameResponse] describing
 /// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
     let game_id = to_server_game_id(&request.game_id);
-    let user_id = UserId::new(request.user_id);
+    let user_id = PlayerId::new(request.user_id);
     let game_action = request
         .action
         .as_ref()
@@ -149,6 +149,14 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
             )
         }),
         Action::GainMana(_) => handle_action(database, user_id, game_id, actions::gain_mana_action),
+        Action::InitiateRaid(action) => handle_action(database, user_id, game_id, |game, side| {
+            actions::initiate_raid_action(
+                game,
+                side,
+                to_server_room_id(RoomIdentifier::from_i32(action.room_id))
+                    .with_context(|| format!("Invalid room ID: {:?}", action.room_id))?,
+            )
+        }),
         _ => Ok(GameResponse::default()),
     }?;
 
@@ -163,7 +171,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
 /// `test_mode` is true, the new game's ID will be set to 0.
 pub fn handle_connect(
     database: &mut impl Database,
-    user_id: UserId,
+    user_id: PlayerId,
     game_id: Option<GameId>,
     test_mode: bool,
 ) -> Result<CommandList> {
@@ -174,7 +182,7 @@ pub fn handle_connect(
         let game = GameState::new_game(
             new_game_id,
             Deck {
-                owner_id: UserId::new(2),
+                owner_id: PlayerId::new(2),
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
                     CardName::DungeonAnnex => 1,
@@ -182,7 +190,7 @@ pub fn handle_connect(
                 },
             },
             Deck {
-                owner_id: UserId::new(1),
+                owner_id: PlayerId::new(1),
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
                     CardName::Greataxe => 1,
@@ -201,9 +209,13 @@ pub fn handle_connect(
     Ok(display::connect(&game, side))
 }
 
+/// Queries the [GameState] for a game from the [Database] and then invokes the
+/// provided `function` to mutate its state. Converts the resulting [GameState]
+/// into a series of client updates for both players in the form of a
+/// [GameResponse] and then writes the new game state back to the database.
 fn handle_action(
     database: &mut impl Database,
-    user_id: UserId,
+    user_id: PlayerId,
     game_id: Option<GameId>,
     function: impl Fn(&mut GameState, Side) -> Result<()>,
 ) -> Result<GameResponse> {
@@ -232,7 +244,7 @@ fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameSt
 }
 
 /// Returns the [Side] the indicated user is representing in this game
-pub fn user_side(user_id: UserId, game: &GameState) -> Result<Side> {
+pub fn user_side(user_id: PlayerId, game: &GameState) -> Result<Side> {
     if user_id == game.champion.id {
         Ok(Side::Champion)
     } else if user_id == game.overlord.id {
