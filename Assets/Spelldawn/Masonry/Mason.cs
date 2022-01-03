@@ -44,17 +44,17 @@ namespace Spelldawn.Masonry
       return ApplyToElement(registry, node, element);
     }
 
-    public static VisualElement CreateElement(Node node) => node.NodeType?.TypeCase switch
+    public static VisualElement CreateElement(Node node) => node.NodeType?.NodeTypeCase switch
     {
-      NodeType.TypeOneofCase.Text => new NodeLabel(),
+      NodeType.NodeTypeOneofCase.Text => new NodeLabel(),
       _ => new NodeVisualElement()
     };
 
     public static VisualElement ApplyToElement(Registry registry, Node node, VisualElement element)
     {
-      switch (node.NodeType?.TypeCase)
+      switch (node.NodeType?.NodeTypeCase)
       {
-        case NodeType.TypeOneofCase.Text:
+        case NodeType.NodeTypeOneofCase.Text:
           ApplyText(node.NodeType.Text, (NodeLabel)element);
           break;
       }
@@ -156,9 +156,9 @@ namespace Spelldawn.Masonry
 
     static Length AdaptDimensionNonNull(Dimension dimension, float multiplier = 1f) => dimension.Unit switch
     {
-      DimensionUnit.Dip => new Length(dimension.Value * multiplier),
+      DimensionUnit.Pixels => new Length(dimension.Value * multiplier),
       DimensionUnit.Percentage => Length.Percent(dimension.Value * multiplier),
-      _ => new Length()
+      _ => throw new ArgumentOutOfRangeException()
     };
 
     static StyleLength AdaptDimension(Dimension? dimension) =>

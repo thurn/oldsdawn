@@ -27,6 +27,7 @@ clippy:
     cargo clippy --workspace --exclude "protos" -- \
         -D warnings \
         -D clippy::all \
+        -A clippy::needless-update \
         -D clippy::cast_lossless \
         -D clippy::cloned_instead_of_copied \
         -D clippy::copy_iterator \
@@ -40,7 +41,6 @@ clippy:
         -D clippy::manual_ok_or \
         -D clippy::map_flatten \
         -D clippy::map_unwrap_or \
-        -D clippy::match_same_arms \
         -D clippy::multiple_inherent_impl \
         -D clippy::needless_continue \
         -D clippy::needless_for_each \

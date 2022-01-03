@@ -213,10 +213,11 @@ message FlexVector3 {
 
 enum DimensionUnit {
     DIMENSION_UNIT_UNSPECIFIED = 0;
-    /* Density-independent pixels, which unity also calls "pixels". */
-    DIMENSION_UNIT_DIP = 1;
+    // Measurement in Pixels.
+    // This is Unity density-independent pixels, not real physical pixels.
+    DIMENSION_UNIT_PIXELS = 1;
+    // Percentage of parent container
     DIMENSION_UNIT_PERCENTAGE = 2;
-    DIMENSION_UNIT_VMIN = 3;
 }
 
 message Dimension {
@@ -366,7 +367,7 @@ message EventHandlers {
 }
 
 message NodeType {
-    oneof type {
+    oneof node_type {
         Text text = 1;
     }
 }

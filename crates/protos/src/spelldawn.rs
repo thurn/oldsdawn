@@ -288,13 +288,13 @@ pub struct EventHandlers {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NodeType {
-    #[prost(oneof = "node_type::Type", tags = "1")]
-    pub r#type: ::core::option::Option<node_type::Type>,
+    #[prost(oneof = "node_type::NodeType", tags = "1")]
+    pub node_type: ::core::option::Option<node_type::NodeType>,
 }
 /// Nested message and enum types in `NodeType`.
 pub mod node_type {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Type {
+    pub enum NodeType {
         #[prost(message, tag = "1")]
         Text(super::Text),
     }
@@ -944,15 +944,17 @@ pub struct DestroyCardCommand {
     pub card_id: ::core::option::Option<CardIdentifier>,
 }
 ///
-/// Moves a list of GameObjects to a new position. Objects already in the target
-/// position are skipped.
+/// Moves a list of GameObjects to a new position.
+///
+/// Objects already in the target position are skipped.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MoveGameObjectsCommand {
     #[prost(message, repeated, tag = "1")]
     pub ids: ::prost::alloc::vec::Vec<GameObjectIdentifier>,
     ///
-    /// Position at which to insert. If multiple IDs are specified, they will
-    /// be sequentially added at this position
+    /// Position at which to insert. If multiple ids are specified, each
+    /// additional object will be given a sorting key which is 1 greater than
+    /// the previous object's sorting key.
     #[prost(message, optional, tag = "2")]
     pub position: ::core::option::Option<ObjectPosition>,
     #[prost(bool, tag = "3")]
@@ -1299,10 +1301,11 @@ pub enum WhiteSpace {
 #[repr(i32)]
 pub enum DimensionUnit {
     Unspecified = 0,
-    /// Density-independent pixels, which unity also calls "pixels".
-    Dip = 1,
+    /// Measurement in Pixels.
+    /// This is Unity density-independent pixels, not real physical pixels.
+    Pixels = 1,
+    /// Percentage of parent container
     Percentage = 2,
-    Vmin = 3,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

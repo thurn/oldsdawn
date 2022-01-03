@@ -47,7 +47,8 @@ namespace Spelldawn.Masonry
       VisualElement? result;
       var createdNewElement = false;
 
-      if (previousElement != null && previousNode != null && previousNode.NodeType?.TypeCase == node.NodeType?.TypeCase)
+      if (previousElement != null && previousNode != null &&
+          previousNode.NodeType?.NodeTypeCase == node.NodeType?.NodeTypeCase)
       {
         // If the previous node was of the same type as this node, mutate its VisualElement to match
         addedChildrenCount = previousNode.Children.Count;

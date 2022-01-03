@@ -29,19 +29,13 @@ namespace Spelldawn.Masonry
 
     public static Dimension Dip(float value) => new()
     {
-      Unit = DimensionUnit.Dip,
+      Unit = DimensionUnit.Pixels,
       Value = value
     };
 
     public static Dimension Percent(float value) => new()
     {
       Unit = DimensionUnit.Percentage,
-      Value = value
-    };
-
-    public static Dimension VMin(float value) => new()
-    {
-      Unit = DimensionUnit.Vmin,
       Value = value
     };
 
@@ -67,19 +61,6 @@ namespace Spelldawn.Masonry
       Right = Dip(right),
       Bottom = Dip(bottom),
       Left = Dip(left)
-    };
-
-    public static DimensionGroup GroupVMin(float all) => GroupVMin(all, all);
-
-    public static DimensionGroup GroupVMin(float topBottom, float leftRight) =>
-      GroupVMin(topBottom, leftRight, topBottom, leftRight);
-
-    public static DimensionGroup GroupVMin(float top, float right, float bottom, float left) => new()
-    {
-      Top = VMin(top),
-      Right = VMin(right),
-      Bottom = VMin(bottom),
-      Left = VMin(left)
     };
 
     public static FlexColor MakeColor(string hexString)
