@@ -15,7 +15,7 @@
 //! Functions for turning [GameUpdate]s into sequences of [GameCommand]s
 
 use data::card_state::CardState;
-use data::game::GameState;
+use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, RoomId, Side};
 use data::updates::GameUpdate;
 use protos::spelldawn::game_command::Command;
@@ -25,6 +25,7 @@ use protos::spelldawn::{
     GameObjectIdentifier, InitiateRaidCommand, MoveGameObjectsCommand, ObjectPosition,
     ObjectPositionDeck, ObjectPositionStaging, PlayerName, TimeValue,
 };
+use ui::prompts;
 
 use crate::full_sync::CardCreationStrategy;
 use crate::{adapters, full_sync};
@@ -49,7 +50,7 @@ pub fn render(
             reveal_card(commands, game.card(card_id), user_side);
         }
         GameUpdate::InitiateRaid(room_id) => {
-            initiate_raid(commands, room_id, user_side);
+            initiate_raid(commands, game, room_id, user_side);
         }
         _ => {}
     }
@@ -122,7 +123,13 @@ fn start_turn(commands: &mut Vec<GameCommand>, side: Side) {
     )
 }
 
-fn initiate_raid(commands: &mut Vec<GameCommand>, target: RoomId, user_side: Side) {
+fn initiate_raid(
+    commands: &mut Vec<GameCommand>,
+    game: &GameState,
+    target: RoomId,
+    user_side: Side,
+) {
+    let raid = game.data.raid.expect("No raid is active");
     push(
         commands,
         Command::InitiateRaid(InitiateRaidCommand {
@@ -130,6 +137,13 @@ fn initiate_raid(commands: &mut Vec<GameCommand>, target: RoomId, user_side: Sid
             room_id: adapters::adapt_room_id(target).into(),
         }),
     );
+
+    if raid.phase == RaidPhase::Activation {
+        match user_side {
+            Side::Overlord => push(commands, prompts::activation_prompt()),
+            Side::Champion => push(commands, prompts::waiting_prompt()),
+        }
+    }
 }
 
 /// Converts a [CardId] into a client [GameObjectIdentifier]

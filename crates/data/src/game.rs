@@ -46,7 +46,7 @@ impl PlayerState {
 pub struct AnimationBuffer {}
 
 /// Identifies steps within a raid
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum RaidPhase {
     /// The raid has started and the Overlord is deciding whether to activate
     /// the target room.

@@ -35,18 +35,16 @@ pub const YELLOW: Option<FlexColor> =
 /// Possible interface colors
 #[derive(Debug, Clone, Copy)]
 pub enum Color {
-    PrimaryButtonLabel,
-    SecondaryButtonLabel,
-    PrimaryText,
+    TitleText,
+    ButtonLabel,
 }
 
 /// Returns the [FlexColor] to use for a given interface color. Prefer using
 /// this function to directly accessing the color constants in this module.
 pub fn color(color: Color) -> Option<FlexColor> {
     match color {
-        Color::PrimaryButtonLabel => WHITE,
-        Color::SecondaryButtonLabel => WHITE,
-        Color::PrimaryText => WHITE,
+        Color::TitleText => WHITE,
+        Color::ButtonLabel => WHITE,
     }
 }
 

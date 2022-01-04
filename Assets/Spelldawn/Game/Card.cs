@@ -424,8 +424,12 @@ namespace Spelldawn.Game
     void SetCardIcon(Icon icon, CardIcon? cardIcon, bool show)
     {
       _registry.AssetService.AssignSprite(icon.Background, cardIcon?.Background);
-      var scale = cardIcon?.BackgroundScale ?? 1f;
-      icon.Background.transform.localScale = (scale == 0f ? 1f : scale) * Vector3.one;
+
+      if (cardIcon?.BackgroundScale is { } scale)
+      {
+        icon.Background.transform.localScale = scale * Vector3.one;
+      }
+
       if (cardIcon?.Text != null)
       {
         icon.Text.text = cardIcon.Text;

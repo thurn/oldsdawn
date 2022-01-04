@@ -454,11 +454,8 @@ message CardIcon {
     SpriteAddress background = 1;
     /* Text to display on the icon. */
     google.protobuf.StringValue text = 2;
-    /*
-     * Scale for the background image to render at. A value of 0.0 will be
-     * treated as 1.0
-     */
-    float background_scale = 3;
+    /* Scale multiplier for the background image. */
+    google.protobuf.FloatValue background_scale = 3;
 }
 
 message CardIcons {

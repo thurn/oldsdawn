@@ -20,13 +20,14 @@ use protos::spelldawn::{
 };
 
 use crate::core::*;
+use crate::macros::children;
 use crate::primitives::*;
 
 /// Possible types of [Text]
 #[derive(Debug, Clone, Copy)]
 pub enum TextVariant {
-    /// Normal UI text
-    Primary,
+    /// Large text providing important context.
+    Title,
     /// Text which appears inside a button, use [Button] instead of using this
     /// directly.
     Button,
@@ -35,21 +36,21 @@ pub enum TextVariant {
 impl TextVariant {
     fn color(self) -> Option<FlexColor> {
         match self {
-            TextVariant::Primary => color(Color::PrimaryButtonLabel),
-            TextVariant::Button => color(Color::SecondaryButtonLabel),
+            TextVariant::Title => color(Color::TitleText),
+            TextVariant::Button => color(Color::ButtonLabel),
         }
     }
 
     fn font_size(self) -> Option<Dimension> {
         match self {
-            TextVariant::Primary => px(28.0),
+            TextVariant::Title => px(60.0),
             TextVariant::Button => px(32.0),
         }
     }
 
     fn font(self) -> Option<FontAddress> {
         match self {
-            TextVariant::Primary => font(Font::Default),
+            TextVariant::Title => font(Font::Default),
             TextVariant::Button => font(Font::Default),
         }
     }
@@ -65,7 +66,7 @@ pub struct Text {
 
 impl Default for Text {
     fn default() -> Self {
-        Self { label: "".to_string(), variant: TextVariant::Primary, style: FlexStyle::default() }
+        Self { label: "".to_string(), variant: TextVariant::Title, style: FlexStyle::default() }
     }
 }
 
@@ -145,7 +146,7 @@ impl From<Button> for Node {
                 image_slice: image_slice(0, 16),
                 ..button.style
             },
-            children![Text {
+            children!(Text {
                 label: button.label,
                 variant: TextVariant::Button,
                 style: FlexStyle {
@@ -154,7 +155,7 @@ impl From<Button> for Node {
                     ..FlexStyle::default()
                 },
                 ..Text::default()
-            }],
+            }),
         );
         node.event_handlers = on_click(button.action);
         node

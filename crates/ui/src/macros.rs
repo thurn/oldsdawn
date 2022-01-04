@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Library for user interface rendering
+//! Macros to assist with UI rendering
 
-pub mod components;
-pub mod core;
-pub mod macros;
-pub mod primitives;
-pub mod prompts;
+/// Macro which converts its arguments into a vector of [Node]s via
+/// [Node::from].
+macro_rules! children {
+    ($($x:expr),*) => {
+        vec! [$(protos::spelldawn::Node::from($x)),*]
+    };
+    ($($x:expr,)*) => {children![$($x),*]}
+}
+
+pub(crate) use children;

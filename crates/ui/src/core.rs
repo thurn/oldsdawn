@@ -23,17 +23,6 @@ use protos::spelldawn::{
     FlexVector3, GameAction, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
 };
 
-/// Macro which converts its arguments into a vector of [Node]s via
-/// [Node::from].
-macro_rules! children {
-    ($($x:expr),*) => {
-        vec! [$(protos::spelldawn::Node::from($x)),*]
-    };
-    ($($x:expr,)*) => {children![$($x),*]}
-}
-
-pub(crate) use children;
-
 /// Helper function to create a node with 'row' flex direction
 pub fn row(name: impl Into<String>, style: FlexStyle, children: Vec<Node>) -> Node {
     make_flexbox(name, style, children, FlexDirection::Row)

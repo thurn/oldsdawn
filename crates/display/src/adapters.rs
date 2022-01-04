@@ -29,6 +29,7 @@ pub fn to_player_name(side: Side, user_side: Side) -> PlayerName {
 
 /// Turns a server [CardId] into its protobuf equivalent
 pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
+    // TODO: Obfuscate this somehow, directly using the index leaks information
     CardIdentifier {
         side: match card_id.side {
             Side::Overlord => PlayerSide::Overlord,

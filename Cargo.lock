@@ -196,6 +196,7 @@ dependencies = [
  "protos",
  "rules",
  "tracing",
+ "ui",
 ]
 
 [[package]]
