@@ -21,5 +21,6 @@ pub mod deck;
 pub mod delegates;
 pub mod game;
 pub mod primitives;
+pub mod prompt;
 pub mod text;
 pub mod updates;

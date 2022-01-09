@@ -11,15 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-use data::card_name::CardName;
-use data::primitives::Side;
-use test_utils::*;
-
-#[test]
-fn arcane_recovery() {
-    let mut g = new_game(Side::Champion, Args { mana: 5, ..Args::default() });
-    g.play_from_hand(CardName::ArcaneRecovery);
-    assert_eq!(9, g.user().mana());
-    assert_eq!(9, g.opponent.other_player.mana())
-}

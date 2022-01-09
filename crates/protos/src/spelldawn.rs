@@ -372,8 +372,7 @@ pub struct CardIcon {
     /// Text to display on the icon.
     #[prost(message, optional, tag = "2")]
     pub text: ::core::option::Option<::prost::alloc::string::String>,
-    ///
-    /// Scale for the background image to render at. Default is 1.0.
+    /// Scale multiplier for the background image.
     #[prost(message, optional, tag = "3")]
     pub background_scale: ::core::option::Option<f32>,
 }
@@ -639,8 +638,8 @@ pub mod identity_action {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ArenaView {
     ///
-    /// If true, render rooms at the bottom of the screen, if false, render items
-    /// at the bottom.
+    /// If true, render rooms at the bottom of the screen, if false, render
+    /// items at the bottom.
     #[prost(message, optional, tag = "1")]
     pub rooms_at_bottom: ::core::option::Option<bool>,
     ///
@@ -689,12 +688,15 @@ pub struct GameView {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
-    /// Opaque payload to send to the server.
-    #[prost(message, optional, tag = "1")]
-    pub payload: ::core::option::Option<::prost_types::Any>,
+    /// * Opaque payload to send to the server when invoked.
+    #[prost(bytes = "vec", tag = "1")]
+    pub payload: ::prost::alloc::vec::Vec<u8>,
     /// Immediate optimistic mutations to game state for this action.
     #[prost(message, optional, tag = "2")]
     pub update: ::core::option::Option<CommandList>,
+    /// Temporary payload for use in testing.
+    #[prost(message, optional, tag = "3")]
+    pub debug_payload: ::core::option::Option<::prost_types::Any>,
 }
 ///
 /// Spend an action to gain 1 mana.
@@ -745,8 +747,8 @@ pub mod card_target {
 ///     the options optimistically, instead they animate to the reveal card area
 ///   - Item cards which don't require a choice to be made or target simply
 ///     animate into the play area optimistically
-///   - Spell cards animate to the reveal card area and wait for their effects to
-///     be applied
+///   - Spell cards animate to the reveal card area and wait for their effects
+///     to be applied
 ///   - Minion and Project cards animate to their selected room optimistically
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayCardAction {
@@ -920,8 +922,8 @@ pub struct CreateOrUpdateCardCommand {
     pub card: ::core::option::Option<CardView>,
     ///
     /// Optionally, a position in which to create this card. Ignored if the card
-    /// already exists, if a 'create_animation' is specified, or during optimistic
-    /// card draw.
+    /// already exists, if a 'create_animation' is specified, or during
+    /// optimistic card draw.
     #[prost(message, optional, tag = "2")]
     pub create_position: ::core::option::Option<ObjectPosition>,
     ///
@@ -1426,6 +1428,7 @@ pub mod spelldawn_server {
                 send_compression_encodings: Default::default(),
             }
         }
+
         pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
@@ -1439,12 +1442,14 @@ pub mod spelldawn_server {
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
-        type Response = http::Response<tonic::body::BoxBody>;
         type Error = Never;
         type Future = BoxFuture<Self::Response, Self::Error>;
+        type Response = http::Response<tonic::body::BoxBody>;
+
         fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
+
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
@@ -1452,10 +1457,11 @@ pub mod spelldawn_server {
                     #[allow(non_camel_case_types)]
                     struct ConnectSvc<T: Spelldawn>(pub Arc<T>);
                     impl<T: Spelldawn> tonic::server::ServerStreamingService<super::ConnectRequest> for ConnectSvc<T> {
-                        type Response = super::CommandList;
-                        type ResponseStream = T::ConnectStream;
                         type Future =
                             BoxFuture<tonic::Response<Self::ResponseStream>, tonic::Status>;
+                        type Response = super::CommandList;
+                        type ResponseStream = T::ConnectStream;
+
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ConnectRequest>,
@@ -1485,8 +1491,9 @@ pub mod spelldawn_server {
                     #[allow(non_camel_case_types)]
                     struct PerformActionSvc<T: Spelldawn>(pub Arc<T>);
                     impl<T: Spelldawn> tonic::server::UnaryService<super::GameRequest> for PerformActionSvc<T> {
-                        type Response = super::CommandList;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Response = super::CommandList;
+
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GameRequest>,

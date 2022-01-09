@@ -20,29 +20,33 @@
 //! game functions typically assume the game is in a valid state and will panic
 //! if that is not true.
 
-//! Defines handling for the top-level game actions a player can take. This is
-//! the primary external interface for the `rules` crate.
+//! Defines handling for the basic top-level game actions a player can take.
 
 use anyhow::{anyhow, ensure, Context, Result};
 use data::card_state::CardPosition;
 use data::delegates::{CastCardEvent, DawnEvent, DuskEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
+use data::prompt::PromptResponse;
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
-use crate::{dispatch, flags, mutations, queries};
+use crate::{dispatch, flags, mutations, queries, raid};
 
 /// The basic game action to draw a card during your turn by spending one
 /// action.
 #[instrument(skip(game))]
-pub fn draw_card_action(game: &mut GameState, side: Side) -> Result<()> {
-    info!(?side, "draw_card_action");
-    ensure!(flags::can_take_draw_card_action(game, side), "Cannot draw card for {:?}", side);
-    let card = queries::top_of_deck(game, side).with_context(|| "Deck is empty!")?;
-    mutations::spend_action_points(game, side, 1);
-    mutations::move_card(game, card, CardPosition::Hand(side));
-    check_end_turn(game, side)
+pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
+    info!(?user_side, "draw_card_action");
+    ensure!(
+        flags::can_take_draw_card_action(game, user_side),
+        "Cannot draw card for {:?}",
+        user_side
+    );
+    let card = queries::top_of_deck(game, user_side).with_context(|| "Deck is empty!")?;
+    mutations::spend_action_points(game, user_side, 1);
+    mutations::move_card(game, card, CardPosition::Hand(user_side));
+    check_end_turn(game, user_side)
 }
 
 /// Possible targets for the 'play card' action. Note that many types of targets
@@ -72,13 +76,13 @@ impl PlayCardTarget {
 #[instrument(skip(game))]
 pub fn play_card_action(
     game: &mut GameState,
-    side: Side,
+    user_side: Side,
     card_id: CardId,
     target: PlayCardTarget,
 ) -> Result<()> {
-    info!(?side, ?card_id, ?target, "play_card_action");
+    info!(?user_side, ?card_id, ?target, "play_card_action");
     ensure!(
-        flags::can_take_play_card_action(game, side, card_id),
+        flags::can_take_play_card_action(game, user_side, card_id),
         "Cannot play card {:?}",
         card_id
     );
@@ -89,25 +93,25 @@ pub fn play_card_action(
     if enters_revealed {
         mutations::spend_mana(
             game,
-            side,
+            user_side,
             queries::mana_cost(game, card_id).with_context(|| "Card has no mana cost")?,
         );
     }
 
-    mutations::spend_action_points(game, side, definition.cost.actions);
+    mutations::spend_action_points(game, user_side, definition.cost.actions);
     dispatch::invoke_event(game, PayCardCostsEvent(card_id));
 
     dispatch::invoke_event(game, CastCardEvent(card_id));
 
     let new_position = match definition.card_type {
-        CardType::Spell => CardPosition::DiscardPile(side),
+        CardType::Spell | CardType::Sorcery => CardPosition::DiscardPile(user_side),
         CardType::Weapon => CardPosition::ArenaItem(ItemLocation::Weapons),
         CardType::Artifact => CardPosition::ArenaItem(ItemLocation::Artifacts),
         CardType::Minion => CardPosition::Room(target.room_id()?, RoomLocation::Defender),
         CardType::Project | CardType::Scheme | CardType::Upgrade => {
             CardPosition::Room(target.room_id()?, RoomLocation::Occupant)
         }
-        CardType::Identity => CardPosition::Identity(side),
+        CardType::Identity => CardPosition::Identity(user_side),
     };
 
     if enters_revealed {
@@ -116,38 +120,62 @@ pub fn play_card_action(
 
     mutations::move_card(game, card_id, new_position);
 
-    check_end_turn(game, side)
+    check_end_turn(game, user_side)
 }
 
 /// The basic game action to gain 1 mana during your turn by spending one
 /// action.
 #[instrument(skip(game))]
-pub fn gain_mana_action(game: &mut GameState, side: Side) -> Result<()> {
-    info!(?side, "gain_mana_action");
-    ensure!(flags::can_take_gain_mana_action(game, side), "Cannot gain mana for {:?}", side);
-    mutations::spend_action_points(game, side, 1);
-    mutations::gain_mana(game, side, 1);
-    check_end_turn(game, side)
+pub fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
+    info!(?user_side, "gain_mana_action");
+    ensure!(
+        flags::can_take_gain_mana_action(game, user_side),
+        "Cannot gain mana for {:?}",
+        user_side
+    );
+    mutations::spend_action_points(game, user_side, 1);
+    mutations::gain_mana(game, user_side, 1);
+    check_end_turn(game, user_side)
 }
 
-#[instrument(skip(game))]
-pub fn initiate_raid_action(game: &mut GameState, side: Side, target_room: RoomId) -> Result<()> {
-    info!(?side, "gain_mana_action");
-    ensure!(flags::can_initiate_raid(game, side), "Cannot initiate raid for {:?}", side);
-    mutations::spend_action_points(game, side, 1);
-    mutations::initiate_raid(game, target_room);
-    Ok(())
+/// Handles a [PromptResponse] in response to a prompt for the `user_side`
+/// player. Clears active prompts.
+pub fn handle_prompt_response(
+    game: &mut GameState,
+    user_side: Side,
+    action: PromptResponse,
+) -> Result<()> {
+    ensure!(
+        matches!(
+            &game.player(user_side).prompt,
+            Some(prompt) if prompt.responses.iter().any(|p| p.kind() == action.kind())
+        ),
+        "Unexpected action {:?} received",
+        action
+    );
+    mutations::clear_prompts(game);
+
+    match action {
+        PromptResponse::RaidActivateRoom(data) => raid::activate_room_action(game, user_side, data),
+        PromptResponse::RaidEncounter(data) => raid::encounter_action(game, user_side, data),
+        PromptResponse::RaidAdvance(data) => raid::advance_action(game, user_side, data),
+        PromptResponse::RaidDestroyCard(card_id) => {
+            raid::destroy_card_action(game, user_side, card_id)
+        }
+        PromptResponse::RaidScoreCard(card_id) => raid::score_card_action(game, user_side, card_id),
+        PromptResponse::RaidEnd => raid::raid_end_action(game, user_side),
+    }
 }
 
 /// Invoked after taking a primary game action to check if the turn should be
 /// switched.
-fn check_end_turn(game: &mut GameState, side: Side) -> Result<()> {
-    ensure!(game.data.turn == side, "Not currently {:?}'s turn", side);
-    if game.player(side).actions == 0 {
-        let new_turn = side.opponent();
+fn check_end_turn(game: &mut GameState, user_side: Side) -> Result<()> {
+    ensure!(game.data.turn == user_side, "Not currently {:?}'s turn", user_side);
+    if game.player(user_side).actions == 0 {
+        let new_turn = user_side.opponent();
         info!(?new_turn, "start_player_turn");
         game.data.turn = new_turn;
-        if side == Side::Champion {
+        if user_side == Side::Champion {
             game.data.turn_number += 1;
             dispatch::invoke_event(game, DuskEvent(game.data.turn_number));
         } else {

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Core game mutations. In general, functions in this module are the only ones
-//! expected to append updates to [GameState::updates]. Functions in this module
-//! panic if their preconditions are not met, the higher-level game UI is
-//! responsible for ensuring this does not happen.
+//! Core game mutations. In general, functions in this module append updates to
+//! [GameState::updates]. Functions in this module panic if their preconditions
+//! are not met, the higher-level game UI is responsible for ensuring this does
+//! not happen.
 //!
-//! Generally, mutation functions are expected to invoke a delegate event
-//! *after* performing their mutation to inform other systems that game state
-//! has changed.
+//! Generally, mutation functions are expected to invoke a
+//! delegate event *after* performing their mutation to inform other systems
+//! that game state has changed.
 
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
@@ -29,6 +29,7 @@ use data::delegates::{
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, RaidId, RoomId, Side};
+use data::prompt::{Prompt, PromptKind, PromptResponse, RaidActivateRoom};
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
@@ -135,21 +136,47 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
     game.card_mut(scope.card_id()).data.boost_count = 0;
 }
 
-/// Initiates a new raid. Panics if a raid is already active. Appends
-/// [GameUpdate::InitiateRaid].
+/// Sets the current prompt for the `side` player to the provided
+/// [PromptResponse]. Appends [GameUpdate::UserPrompt]. Panics if no prompt is
+/// set for this player.
+pub fn set_prompt(game: &mut GameState, side: Side, prompt: Prompt) {
+    assert!(game.player(side).prompt.is_none(), "Player {:?} already has an active prompt", side);
+    game.player_mut(side).prompt = Some(prompt);
+    game.updates.push(GameUpdate::UserPrompt(side))
+}
+
+/// Clears shown prompts for both players. Appends [GameUpdate::ClearPrompts].
+pub fn clear_prompts(game: &mut GameState) {
+    game.overlord.prompt = None;
+    game.champion.prompt = None;
+    game.updates.push(GameUpdate::ClearPrompts);
+}
+
+/// Initiates a new raid on the given `room_id`. Panics if a raid is already
+/// active. Appends [GameUpdate::InitiateRaid].
 #[instrument(skip(game))]
 pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
     info!(?room_id, "initiate_raid");
     assert!(game.data.raid.is_none(), "Raid is already active");
-    let raid = RaidData {
-        target: room_id,
-        raid_id: RaidId(game.data.next_raid_id),
-        phase: if game.defenders(room_id).next().is_some() {
-            RaidPhase::Activation
-        } else {
-            RaidPhase::Access
-        },
+    let phase = if game.defenders(room_id).next().is_some() {
+        set_prompt(
+            game,
+            Side::Overlord,
+            Prompt {
+                kind: PromptKind::RaidActivateRoom,
+                responses: vec![
+                    PromptResponse::RaidActivateRoom(RaidActivateRoom::Activate),
+                    PromptResponse::RaidActivateRoom(RaidActivateRoom::Pass),
+                ],
+            },
+        );
+        RaidPhase::Activation
+    } else {
+        RaidPhase::Access
     };
+
+    let raid =
+        RaidData { target: room_id, raid_id: RaidId(game.data.next_raid_id), phase, active: false };
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
     dispatch::invoke_event(game, RaidBeginEvent(raid));

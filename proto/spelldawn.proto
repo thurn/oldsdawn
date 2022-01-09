@@ -719,11 +719,14 @@ message GameView {
 // ============================================================================
 
 message StandardAction {
-    /* Opaque payload to send to the server. */
-    google.protobuf.Any payload = 1;
+    /** Opaque payload to send to the server when invoked. */
+    bytes payload = 1;
 
     /* Immediate optimistic mutations to game state for this action. */
     CommandList update = 2;
+
+    /* Temporary payload for use in testing. */
+    google.protobuf.Any debug_payload = 3;
 }
 
 /*

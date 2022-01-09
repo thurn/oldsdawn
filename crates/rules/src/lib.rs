@@ -24,7 +24,6 @@ use once_cell::sync::Lazy;
 pub mod abilities;
 pub mod actions;
 pub mod card_text;
-pub mod champion_spells;
 pub mod dispatch;
 pub mod flags;
 pub mod helpers;
@@ -32,7 +31,9 @@ pub mod minions;
 pub mod mutations;
 pub mod projects;
 pub mod queries;
+pub mod raid;
 pub mod schemes;
+pub mod spells;
 pub mod weapons;
 
 // TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
@@ -41,7 +42,7 @@ static DEFINITIONS: &[fn() -> CardDefinition] = &[
     test_champion_identity,
     test_overlord_spell,
     test_champion_spell,
-    champion_spells::arcane_recovery,
+    spells::arcane_recovery,
     weapons::greataxe,
     projects::gold_mine,
     minions::ice_dragon,

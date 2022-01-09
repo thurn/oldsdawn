@@ -93,9 +93,13 @@ pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
 }
 
 /// Returns true if the provided `side` player is currently in their Main phase
-/// and can take a primary game action.
+/// with no pending prompt responses, and thus can take a primary game action.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {
-    game.player(side).actions > 0 && game.data.turn == side && game.data.raid.is_none()
+    game.player(side).actions > 0
+        && game.data.turn == side
+        && game.data.raid.is_none()
+        && game.overlord.prompt.is_none()
+        && game.champion.prompt.is_none()
 }
 
 /// Look up the number of action points a player receives at the start of their

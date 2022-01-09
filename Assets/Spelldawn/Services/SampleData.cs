@@ -250,7 +250,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     StandardAction KeepHandAction(IEnumerable<CardView> cards) =>
       new()
       {
-        Payload = Any.Pack(new CommandList
+        DebugPayload = Any.Pack(new CommandList
         {
           Commands = { Delay(1000) }
         }),
@@ -362,7 +362,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.StandardAction:
-          return action.StandardAction.Payload is { } p
+          return action.StandardAction.DebugPayload is { } p
             ? _registry.CommandService.HandleCommands(p.Unpack<CommandList>())
             : CollectionUtils.Yield();
         case GameAction.ActionOneofCase.DrawCard:
@@ -740,7 +740,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           FireProjectile(IdUtil.IdentityCardId(PlayerName.User), IdUtil.DiscardPileObjectId(PlayerName.Opponent), 4)
         }
       },
-      Payload = Any.Pack(new CommandList
+      DebugPayload = Any.Pack(new CommandList
       {
         Commands =
         {
@@ -772,7 +772,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           FireProjectile(CardObjectId(1), IdUtil.IdentityCardId(PlayerName.User), 3)
         }
       },
-      Payload = Any.Pack(new CommandList
+      DebugPayload = Any.Pack(new CommandList
       {
         Commands =
         {
@@ -849,7 +849,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     StandardAction CardStrikeAction(RoomIdentifier fromRoom) =>
       new()
       {
-        Payload = Any.Pack(AccessDeck()),
+        DebugPayload = Any.Pack(AccessDeck()),
         Update = new CommandList
         {
           Commands =
@@ -1020,7 +1020,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
 
     StandardAction ScoreAction(uint cardId, GameCommand cleanUp) => new()
     {
-      Payload = Any.Pack(new CommandList
+      DebugPayload = Any.Pack(new CommandList
       {
         Commands =
         {

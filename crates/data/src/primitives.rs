@@ -260,6 +260,7 @@ pub enum CardType {
     Spell,
     Weapon,
     Artifact,
+    Sorcery,
     Minion,
     Project,
     Scheme,

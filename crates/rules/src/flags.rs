@@ -22,6 +22,7 @@ use data::delegates::{
 };
 use data::game::GameState;
 use data::primitives::{CardId, CardType, Side};
+use data::prompt::{RaidActivateRoom, RaidAdvance, RaidEncounter};
 
 use crate::{dispatch, queries};
 
@@ -76,4 +77,36 @@ pub fn can_level_up_room(game: &GameState, side: Side) -> bool {
     let can_level_up =
         side == Side::Overlord && game.player(side).mana > 0 && queries::in_main_phase(game, side);
     dispatch::perform_query(game, CanLevelUpRoomQuery(side), Flag::new(can_level_up)).into()
+}
+
+pub fn can_take_raid_activate_room_action(
+    _game: &GameState,
+    _side: Side,
+    _data: RaidActivateRoom,
+) -> bool {
+    true
+}
+
+pub fn can_take_raid_encounter_action(
+    _game: &GameState,
+    _side: Side,
+    _data: RaidEncounter,
+) -> bool {
+    true
+}
+
+pub fn can_take_raid_advance_action(_game: &GameState, _side: Side, _data: RaidAdvance) -> bool {
+    true
+}
+
+pub fn can_take_raid_destroy_card_action(_game: &GameState, _side: Side, _card_id: CardId) -> bool {
+    true
+}
+
+pub fn can_take_raid_score_card_action(_game: &GameState, _side: Side, _card_id: CardId) -> bool {
+    true
+}
+
+pub fn can_take_raid_end_action(_game: &GameState, _side: Side) -> bool {
+    true
 }

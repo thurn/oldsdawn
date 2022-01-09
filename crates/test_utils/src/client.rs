@@ -30,8 +30,9 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    card_target, game_object_identifier, CardIdentifier, CardTarget, CardView, ClientRoomLocation,
-    CommandList, CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest,
+    card_target, game_object_identifier, node_type, render_interface_command, CardAnchorNode,
+    CardIdentifier, CardTarget, CardView, ClientRoomLocation, CommandList,
+    CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest, Node, NodeType,
     ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom,
     PlayCardAction, PlayerName, PlayerView, RevealedCardView,
 };
@@ -85,7 +86,7 @@ impl TestGame {
 
     /// Returns the user player state for the user client, (i.e. the user's
     /// state from *their own* perspective).
-    pub fn user(&self) -> &ClientPlayer {
+    pub fn player(&self) -> &ClientPlayer {
         &self.user.this_player
     }
 
@@ -178,11 +179,12 @@ impl TestGame {
         adapters::adapt_card_id(card_id)
     }
 
-    /// Creates and then plays a named card.
+    /// Creates and then plays a named card as the user who owns this card.
     ///
     /// This function first adds a copy of the requested card to the user's hand
     /// via [Self::add_to_hand]. The card is then played via the standard
-    /// [PlayCardAction].
+    /// [PlayCardAction]. Action points and mana must be available and are spent
+    /// as normal.
     ///
     /// If the card is a minion, project, scheme, or upgrade card, it is played
     /// into the [crate::ROOM_ID] room. The [GameResponse] produced by
@@ -205,7 +207,7 @@ impl TestGame {
 
         self.perform_action(
             Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
-            self.user.id,
+            self.game.player(side_for_card_name(card_name)).id,
         )
         .expect("Server error playing card")
     }
@@ -252,6 +254,7 @@ pub struct TestClient {
     pub this_player: ClientPlayer,
     /// A player's view of *their opponent's* state.
     pub other_player: ClientPlayer,
+    pub interface: ClientInterface,
     pub cards: ClientCards,
 }
 
@@ -262,6 +265,7 @@ impl TestClient {
             data: ClientGameData::default(),
             this_player: ClientPlayer::new(PlayerName::User),
             other_player: ClientPlayer::new(PlayerName::Opponent),
+            interface: ClientInterface::default(),
             cards: ClientCards::default(),
         }
     }
@@ -270,6 +274,7 @@ impl TestClient {
         self.data.update(command.clone());
         self.this_player.update(command.clone());
         self.other_player.update(command.clone());
+        self.interface.update(command.clone());
         self.cards.update(command.clone());
     }
 }
@@ -337,6 +342,69 @@ impl ClientPlayer {
         }
     }
 }
+
+/// Simulated user interface state
+#[derive(Debug, Clone, Default)]
+pub struct ClientInterface {
+    full_screen: Option<Node>,
+    main_controls: Option<Node>,
+    card_anchors: Option<Vec<CardAnchorNode>>,
+}
+
+impl ClientInterface {
+    pub fn full_screen(&self) -> &Node {
+        self.full_screen.as_ref().expect("FullScreen Node")
+    }
+
+    pub fn main_controls(&self) -> &Node {
+        self.main_controls.as_ref().expect("MainControls Node")
+    }
+
+    pub fn card_anchors(&self) -> &Vec<CardAnchorNode> {
+        self.card_anchors.as_ref().expect("CardAnchors Nodes")
+    }
+
+    fn update(&mut self, command: Command) {
+        if let Command::RenderInterface(render) = command {
+            match render.position.expect("RenderInterfacePosition") {
+                render_interface_command::Position::FullScreen(full_screen) => {
+                    self.full_screen = full_screen.node
+                }
+                render_interface_command::Position::MainControls(main_controls) => {
+                    self.main_controls = main_controls.node
+                }
+                render_interface_command::Position::CardAnchors(card_anchors) => {
+                    self.card_anchors = Some(card_anchors.anchor_nodes)
+                }
+            }
+        }
+    }
+}
+
+pub trait HasText {
+    /// Returns true if there are any text nodes contained within this tree
+    /// which contain the provided string.    
+    fn has_text(&self, text: &'static str) -> bool;
+}
+
+impl HasText for Node {
+    fn has_text(&self, text: &'static str) -> bool {
+        if let Some(NodeType { node_type: Some(node_type::NodeType::Text(s)) }) = &self.node_type {
+            if s.label.contains(text) {
+                return true;
+            }
+        }
+
+        for child in &self.children {
+            if child.has_text(text) {
+                return true;
+            }
+        }
+
+        false
+    }
+}
+
 /// Simulated card state in an ongoing [TestGame]
 #[derive(Debug, Clone, Default)]
 pub struct ClientCards {

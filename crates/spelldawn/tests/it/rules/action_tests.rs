@@ -67,7 +67,7 @@ fn draw_card() {
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.hand(PlayerName::Opponent));
-    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.player().actions());
     assert_eq!(2, g.opponent.other_player.actions());
     assert_commands_match(
         &response,
@@ -96,7 +96,10 @@ fn cannot_draw_when_out_of_action_points() {
 fn cannot_draw_during_raid() {
     let mut g = new_game(
         Side::Overlord,
-        Args { raid: Some(TestRaid { phase: RaidPhase::Activation }), ..Args::default() },
+        Args {
+            raid: Some(TestRaid { phase: RaidPhase::Activation, active: false }),
+            ..Args::default()
+        },
     );
     assert_error(g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id()));
 }
@@ -112,9 +115,9 @@ fn play_card() {
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         g.user_id(),
     );
-    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.player().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_eq!(9, g.user().mana());
+    assert_eq!(9, g.player().mana());
     assert_eq!(9, g.opponent.other_player.mana());
     assert_identical(vec![CardName::ArcaneRecovery], g.user.cards.discard_pile(PlayerName::User));
     assert_identical(
@@ -150,9 +153,9 @@ fn play_hidden_card() {
         }),
         g.user_id(),
     );
-    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.player().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_eq!(0, g.user().mana());
+    assert_eq!(0, g.player().mana());
     assert_eq!(0, g.opponent.other_player.mana());
     assert_identical(
         vec![CardName::DungeonAnnex],
@@ -193,7 +196,10 @@ fn cannot_play_card_when_out_of_action_points() {
 fn cannot_play_card_during_raid() {
     let mut g = new_game(
         Side::Champion,
-        Args { raid: Some(TestRaid { phase: RaidPhase::Activation }), ..Args::default() },
+        Args {
+            raid: Some(TestRaid { phase: RaidPhase::Activation, active: false }),
+            ..Args::default()
+        },
     );
     let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     assert_error(g.perform_action(
@@ -209,9 +215,9 @@ fn gain_mana() {
         Args { id_basis: Some(12), actions: 3, mana: 5, ..Args::default() },
     );
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
-    assert_eq!(2, g.user().actions());
+    assert_eq!(2, g.player().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_eq!(6, g.user().mana());
+    assert_eq!(6, g.player().mana());
     assert_eq!(6, g.opponent.other_player.mana());
     assert_commands_match(&response, vec!["UpdateGameView"]);
     assert_debug_snapshot!(response);
@@ -233,7 +239,10 @@ fn cannot_gain_mana_when_out_of_action_points() {
 fn cannot_gain_mana_during_raid() {
     let mut g = new_game(
         Side::Overlord,
-        Args { raid: Some(TestRaid { phase: RaidPhase::Activation }), ..Args::default() },
+        Args {
+            raid: Some(TestRaid { phase: RaidPhase::Activation, active: false }),
+            ..Args::default()
+        },
     );
     assert_error(g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()));
 }
@@ -247,9 +256,9 @@ fn switch_turn() {
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
-    assert_eq!(8, g.user().mana());
+    assert_eq!(8, g.player().mana());
     assert_eq!(8, g.opponent.other_player.mana());
-    assert_eq!(0, g.user().actions());
+    assert_eq!(0, g.player().actions());
     assert_eq!(0, g.opponent.other_player.actions());
     assert_eq!(3, g.user.other_player.actions());
     assert_eq!(3, g.opponent.this_player.actions());

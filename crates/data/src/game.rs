@@ -23,27 +23,28 @@ use crate::primitives::{
     ActionCount, CardId, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, RoomLocation,
     Side, TurnNumber,
 };
+use crate::prompt::Prompt;
 use crate::updates::UpdateTracker;
 
 /// State of a player within a game, containing their score and available
 /// resources
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerState {
     pub id: PlayerId,
     pub mana: ManaValue,
     pub actions: ActionCount,
     pub score: PointsValue,
+    /// A choice this player is currently facing. Automatically cleared when
+    /// a [Prompt] response is received.
+    pub prompt: Option<Prompt>,
 }
 
 impl PlayerState {
     /// Create the default player state for a new game
     pub fn new_game(id: PlayerId, actions: ActionCount) -> Self {
-        Self { id, mana: 5, actions, score: 0 }
+        Self { id, mana: 5, actions, score: 0, prompt: None }
     }
 }
-
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
-pub struct AnimationBuffer {}
 
 /// Identifies steps within a raid
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
@@ -72,6 +73,10 @@ pub struct RaidData {
     pub target: RoomId,
     /// Current phase within this raid
     pub phase: RaidPhase,
+    /// True if the Overlord activated this room in response to the raid.
+    ///
+    /// Initially false if the activation decision has not been made yet.
+    pub active: bool,
 }
 
 /// Describes options for this game & the set of rules it is using.
@@ -268,7 +273,7 @@ impl GameState {
         self.cards_mut(side).iter_mut().filter(|c| c.position.in_discard_pile())
     }
 
-    /// Cards in a player's deck pile, in alphabetical order    
+    /// Cards in a player's deck pile, in alphabetical order
     pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position.in_deck())
     }

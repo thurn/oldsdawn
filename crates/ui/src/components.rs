@@ -15,13 +15,81 @@
 //! Core reusable UI elements
 
 use protos::spelldawn::{
-    node_type, Dimension, FlexAlign, FlexColor, FlexJustify, FlexStyle, FontAddress, Node,
-    NodeType, SpriteAddress, StandardAction, TextAlign,
+    node_type, Dimension, EventHandlers, FlexAlign, FlexColor, FlexJustify, FlexStyle, FontAddress,
+    Node, NodeType, SpriteAddress, StandardAction, TextAlign,
 };
 
 use crate::core::*;
 use crate::macros::children;
 use crate::primitives::*;
+
+/// Row flexbox component, renders its children horizontally in sequence
+#[derive(Debug, Clone, Default)]
+pub struct Row {
+    pub name: String,
+    pub style: FlexStyle,
+    pub children: Vec<Option<Node>>,
+    pub events: Option<EventHandlers>,
+    pub hover_style: Option<FlexStyle>,
+    pub pressed_style: Option<FlexStyle>,
+}
+
+impl Component for Row {
+    fn render(self) -> Node {
+        make_node(
+            self.name,
+            self.style,
+            self.children,
+            self.events,
+            self.hover_style,
+            self.pressed_style,
+        )
+    }
+}
+
+/// Column flexbox component, renders its children vertically in sequence
+#[derive(Debug, Clone, Default)]
+pub struct Column {
+    pub name: String,
+    pub style: FlexStyle,
+    pub children: Vec<Option<Node>>,
+    pub events: Option<EventHandlers>,
+    pub hover_style: Option<FlexStyle>,
+    pub pressed_style: Option<FlexStyle>,
+}
+
+impl Component for Column {
+    fn render(self) -> Node {
+        make_node(
+            self.name,
+            self.style,
+            self.children,
+            self.events,
+            self.hover_style,
+            self.pressed_style,
+        )
+    }
+}
+
+fn make_node(
+    name: String,
+    style: FlexStyle,
+    children: Vec<Option<Node>>,
+    events: Option<EventHandlers>,
+    hover_style: Option<FlexStyle>,
+    pressed_style: Option<FlexStyle>,
+) -> Node {
+    Node {
+        id: "".to_string(),
+        name,
+        node_type: None,
+        style: Some(style),
+        children: children.into_iter().flatten().collect(),
+        event_handlers: events,
+        hover_style,
+        pressed_style,
+    }
+}
 
 /// Possible types of [Text]
 #[derive(Debug, Clone, Copy)]
@@ -70,22 +138,22 @@ impl Default for Text {
     }
 }
 
-impl From<Text> for Node {
-    fn from(text: Text) -> Self {
-        Self {
+impl Component for Text {
+    fn render(self) -> Node {
+        Node {
             node_type: Some(NodeType {
                 node_type: Some(node_type::NodeType::Text(protos::spelldawn::Text {
-                    label: text.label,
+                    label: self.label,
                 })),
             }),
             style: Some(FlexStyle {
                 padding: all_px(0.0),
-                color: text.variant.color(),
-                font_size: text.variant.font_size(),
-                font: text.variant.font(),
-                ..text.style
+                color: self.variant.color(),
+                font_size: self.variant.font_size(),
+                font: self.variant.font(),
+                ..self.style
             }),
-            ..Self::default()
+            ..Node::default()
         }
     }
 }
@@ -132,22 +200,22 @@ impl Default for Button {
     }
 }
 
-impl From<Button> for Node {
-    fn from(button: Button) -> Self {
-        let mut node = row(
-            format!("Button {}", button.label),
-            FlexStyle {
+impl Component for Button {
+    fn render(self) -> Node {
+        node(Row {
+            name: format!("Button {}", self.label),
+            style: FlexStyle {
                 height: px(88.0),
                 min_width: px(132.0),
                 justify_content: FlexJustify::Center.into(),
                 align_items: FlexAlign::Center.into(),
                 flex_shrink: Some(0.0),
-                background_image: button.variant.background_image(),
+                background_image: self.variant.background_image(),
                 image_slice: image_slice(0, 16),
-                ..button.style
+                ..self.style
             },
-            children!(Text {
-                label: button.label,
+            children: children!(Text {
+                label: self.label,
                 variant: TextVariant::Button,
                 style: FlexStyle {
                     margin: left_right_px(16.0),
@@ -156,8 +224,8 @@ impl From<Button> for Node {
                 },
                 ..Text::default()
             }),
-        );
-        node.event_handlers = on_click(button.action);
-        node
+            events: Some(EventHandlers::default()),
+            ..Row::default()
+        })
     }
 }

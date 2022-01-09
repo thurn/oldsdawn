@@ -15,7 +15,7 @@
 //! Functions for turning [GameUpdate]s into sequences of [GameCommand]s
 
 use data::card_state::CardState;
-use data::game::{GameState, RaidPhase};
+use data::game::GameState;
 use data::primitives::{CardId, RoomId, Side};
 use data::updates::GameUpdate;
 use protos::spelldawn::game_command::Command;
@@ -25,7 +25,7 @@ use protos::spelldawn::{
     GameObjectIdentifier, InitiateRaidCommand, MoveGameObjectsCommand, ObjectPosition,
     ObjectPositionDeck, ObjectPositionStaging, PlayerName, TimeValue,
 };
-use ui::prompts;
+use ui::prompts::{ActionPrompt, WaitingPrompt};
 
 use crate::full_sync::CardCreationStrategy;
 use crate::{adapters, full_sync};
@@ -50,8 +50,10 @@ pub fn render(
             reveal_card(commands, game.card(card_id), user_side);
         }
         GameUpdate::InitiateRaid(room_id) => {
-            initiate_raid(commands, game, room_id, user_side);
+            initiate_raid(commands, room_id, user_side);
         }
+        GameUpdate::UserPrompt(side) => user_prompt(commands, game, side, user_side),
+        GameUpdate::ClearPrompts => push(commands, ui::clear_main_controls()),
         _ => {}
     }
 }
@@ -123,13 +125,7 @@ fn start_turn(commands: &mut Vec<GameCommand>, side: Side) {
     )
 }
 
-fn initiate_raid(
-    commands: &mut Vec<GameCommand>,
-    game: &GameState,
-    target: RoomId,
-    user_side: Side,
-) {
-    let raid = game.data.raid.expect("No raid is active");
+fn initiate_raid(commands: &mut Vec<GameCommand>, target: RoomId, user_side: Side) {
     push(
         commands,
         Command::InitiateRaid(InitiateRaidCommand {
@@ -137,12 +133,22 @@ fn initiate_raid(
             room_id: adapters::adapt_room_id(target).into(),
         }),
     );
+}
 
-    if raid.phase == RaidPhase::Activation {
-        match user_side {
-            Side::Overlord => push(commands, prompts::activation_prompt()),
-            Side::Champion => push(commands, prompts::waiting_prompt()),
-        }
+fn user_prompt(commands: &mut Vec<GameCommand>, game: &GameState, side: Side, user_side: Side) {
+    if side == user_side {
+        push(
+            commands,
+            ui::main_controls(ActionPrompt {
+                prompt: game
+                    .player(side)
+                    .prompt
+                    .clone()
+                    .unwrap_or_else(|| panic!("Expected prompt for user {:?}", side)),
+            }),
+        )
+    } else {
+        push(commands, ui::main_controls(WaitingPrompt {}));
     }
 }
 

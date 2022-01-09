@@ -17,20 +17,37 @@
 //! despite the fact that they are infallible, since all of the higher-level
 //! APIs exclusively consume [Option] types.
 
+use data::prompt::PromptResponse;
 use protos::spelldawn::{
-    game_action, BorderColor, BorderRadius, BorderWidth, Dimension, DimensionGroup, DimensionUnit,
-    EventHandlers, FlexColor, FlexDirection, FlexRotate, FlexScale, FlexStyle, FlexTranslate,
-    FlexVector3, GameAction, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
+    game_action, BorderColor, BorderRadius, BorderWidth, CommandList, Dimension, DimensionGroup,
+    DimensionUnit, EventHandlers, FlexColor, FlexRotate, FlexScale, FlexTranslate, FlexVector3,
+    GameAction, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
 };
 
-/// Helper function to create a node with 'row' flex direction
-pub fn row(name: impl Into<String>, style: FlexStyle, children: Vec<Node>) -> Node {
-    make_flexbox(name, style, children, FlexDirection::Row)
+pub trait Component {
+    fn render(self) -> Node;
 }
 
-/// Helper function to create a node with 'column' flex direction
-pub fn column(name: impl Into<String>, style: FlexStyle, children: Vec<Node>) -> Node {
-    make_flexbox(name, style, children, FlexDirection::Column)
+pub fn child(component: impl Component) -> Option<Node> {
+    Some(component.render())
+}
+
+pub fn node(component: impl Component) -> Node {
+    component.render()
+}
+
+/// Turns a [PromptResponse] into a [GameAction] to be invoked in the future.
+///
+/// An `optimistic` value can also optionally be provided to give commands to
+/// run immediately, before a server response is received.
+pub fn action(action: PromptResponse, optimistic: Option<CommandList>) -> GameAction {
+    GameAction {
+        action: Some(game_action::Action::StandardAction(StandardAction {
+            payload: bincode::serialize(&action).expect("Serialization failed"),
+            update: optimistic,
+            debug_payload: None,
+        })),
+    }
 }
 
 /// A dimension in units of density-independent pixels
@@ -136,18 +153,4 @@ pub fn on_click(action: StandardAction) -> Option<EventHandlers> {
     Some(EventHandlers {
         on_click: Some(GameAction { action: Some(game_action::Action::StandardAction(action)) }),
     })
-}
-
-fn make_flexbox(
-    name: impl Into<String>,
-    style: FlexStyle,
-    children: Vec<Node>,
-    direction: FlexDirection,
-) -> Node {
-    Node {
-        name: name.into(),
-        style: Some(FlexStyle { flex_direction: direction.into(), ..style }),
-        children,
-        ..Node::default()
-    }
 }

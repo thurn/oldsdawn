@@ -296,7 +296,11 @@ pub fn adapt_position(
 fn card_targeting(definition: &CardDefinition) -> CardTargeting {
     CardTargeting {
         targeting: match definition.card_type {
-            CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Identity => None,
+            CardType::Sorcery
+            | CardType::Spell
+            | CardType::Weapon
+            | CardType::Artifact
+            | CardType::Identity => None,
             CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
                 Some(Targeting::PickRoom(PickRoom {}))
             }
@@ -309,7 +313,9 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     ObjectPosition {
         sorting_key: u32::MAX,
         position: Some(match definition.card_type {
-            CardType::Spell | CardType::Identity => Position::Staging(ObjectPositionStaging {}),
+            CardType::Sorcery | CardType::Spell | CardType::Identity => {
+                Position::Staging(ObjectPositionStaging {})
+            }
             CardType::Weapon => Position::Item(ObjectPositionItem {
                 item_location: ClientItemLocation::Left.into(),
             }),

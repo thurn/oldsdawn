@@ -16,6 +16,7 @@
 //! tests.
 
 pub mod client;
+pub mod test_games;
 
 use std::fmt::Debug;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -71,10 +72,13 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         GameConfiguration { deterministic: true, ..GameConfiguration::default() },
     );
 
-    state.data.turn = user_side;
+    state.data.turn = args.turn.unwrap_or(user_side);
     state.player_mut(user_side).mana = args.mana;
     state.player_mut(user_side).actions = args.actions;
     state.player_mut(user_side).score = args.score;
+    state.player_mut(user_side.opponent()).mana = args.opponent_mana;
+    state.player_mut(user_side.opponent()).actions = args.opponent_actions;
+    state.player_mut(user_side.opponent()).score = args.opponent_score;
 
     if let Some(next_draw) = args.next_draw {
         let target_id = state
@@ -87,7 +91,8 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
     }
 
     if let Some(raid) = args.raid {
-        state.data.raid = Some(RaidData { raid_id: RAID_ID, target: ROOM_ID, phase: raid.phase })
+        state.data.raid =
+            Some(RaidData { raid_id: RAID_ID, target: ROOM_ID, phase: raid.phase, active: false })
     }
 
     let mut game = TestGame::new(state, user_id, opponent_id);
@@ -106,16 +111,24 @@ fn generate_ids(basis: Option<u64>) -> (GameId, PlayerId, PlayerId) {
 /// Arguments to [new_game]
 #[derive(Clone, Debug)]
 pub struct Args {
+    /// Player whose turn it should be. Defaults to the `user_side` player.
+    pub turn: Option<Side>,
     /// Value to use for generated GameID and UserIds, in order to ensure
     /// deterministic snapshots. Game ID and User ID will use this number,
     /// Opponent ID will use this number + 1. Must be less than 1,000,000.
     pub id_basis: Option<u64>,
     /// Mana available for the `user_side` player. Defaults to 5.
     pub mana: ManaValue,
+    /// Mana for the opponent of the `user_side` player. Defaults to 5.
+    pub opponent_mana: ManaValue,
     /// Actions available for the `user_side` player. Defaults to 3.
     pub actions: ActionCount,
+    /// Actions for the opponent of the `user_side` player. Defaults to 0.
+    pub opponent_actions: ActionCount,
     /// Score for the `user_side` player. Defaults to 0.
     pub score: PointsValue,
+    /// Score for the opponent of the `user_side` player. Defaults to 0.
+    pub opponent_score: PointsValue,
     /// Card to be inserted into the `user_side` player's deck as the next draw.
     ///
     /// This card will be drawn when drawing randomly from the deck (as long as
@@ -133,10 +146,14 @@ pub struct Args {
 impl Default for Args {
     fn default() -> Self {
         Self {
+            turn: None,
             id_basis: None,
             mana: 5,
+            opponent_mana: 5,
             actions: 3,
+            opponent_actions: 0,
             score: 0,
+            opponent_score: 0,
             next_draw: None,
             raid: None,
             connect: true,
@@ -144,10 +161,11 @@ impl Default for Args {
     }
 }
 
-/// Options for an active test raid
+/// Options for a test raid
 #[derive(Clone, Debug)]
 pub struct TestRaid {
     pub phase: RaidPhase,
+    pub active: bool,
 }
 
 /// Asserts that the display names of the provided vector of [CardName]s are

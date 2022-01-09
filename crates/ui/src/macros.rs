@@ -14,13 +14,43 @@
 
 //! Macros to assist with UI rendering
 
-/// Macro which converts its arguments into a vector of [Node]s via
-/// [Node::from].
+pub trait Rendered {
+    fn to_node(self) -> Option<Node>;
+}
+
+impl<T: Component> Rendered for T {
+    fn to_node(self) -> Option<Node> {
+        Some(self.render())
+    }
+}
+
+impl<T: Component> Rendered for Option<T> {
+    fn to_node(self) -> Option<Node> {
+        self.map(Component::render)
+    }
+}
+
+impl Rendered for Node {
+    fn to_node(self) -> Option<Node> {
+        Some(self)
+    }
+}
+
+impl Rendered for Option<Node> {
+    fn to_node(self) -> Option<Node> {
+        self
+    }
+}
+
+/// Macro which converts its arguments into a vector of `Option<Node>`.
 macro_rules! children {
     ($($x:expr),*) => {
-        vec! [$(protos::spelldawn::Node::from($x)),*]
+        vec! [$(crate::macros::Rendered::to_node($x)),*]
     };
-    ($($x:expr,)*) => {children![$($x),*]}
+    ($($x:expr,)*) => {children!($($x),*)}
 }
 
 pub(crate) use children;
+use protos::spelldawn::Node;
+
+use crate::core::Component;

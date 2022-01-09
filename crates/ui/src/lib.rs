@@ -14,8 +14,34 @@
 
 //! Library for user interface rendering
 
+use protos::spelldawn::game_command::Command;
+use protos::spelldawn::{
+    render_interface_command, InterfacePositionMainControls, RenderInterfaceCommand,
+};
+
+use crate::core::Component;
+
 pub mod components;
 pub mod core;
 pub mod macros;
 pub mod primitives;
 pub mod prompts;
+
+/// Renders a given [Component] as the main interface controls, appearing
+/// immediately above the user's hand
+pub fn main_controls(component: impl Component) -> Command {
+    Command::RenderInterface(RenderInterfaceCommand {
+        position: Some(render_interface_command::Position::MainControls(
+            InterfacePositionMainControls { node: Some(component.render()) },
+        )),
+    })
+}
+
+/// Command to clear all content in the main interface controls
+pub fn clear_main_controls() -> Command {
+    Command::RenderInterface(RenderInterfaceCommand {
+        position: Some(render_interface_command::Position::MainControls(
+            InterfacePositionMainControls { node: None },
+        )),
+    })
+}

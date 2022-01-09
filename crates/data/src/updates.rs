@@ -64,6 +64,10 @@ pub enum GameUpdate {
     /// zones, this update should be added before `MoveCard` to move the card to
     /// its final destination.
     RevealCard(CardId),
+    /// A prompt should be displayed to the indicated user.
+    UserPrompt(Side),
+    /// Prompts should be cleared for both players.
+    ClearPrompts,
     /// A room has been leveled up
     LevelUpRoom(RoomId),
     /// A raid has started on the indicated room

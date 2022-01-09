@@ -114,14 +114,14 @@ pub struct CardState {
     pub name: CardName,
     /// Player who owns this card
     pub side: Side,
+    /// Optional state for this card
+    pub data: CardData,
     /// Where this card is located in the game. Use
     /// [crate::game::GameState::move_card] instead of modifying this
     /// directly.
     pub position: CardPosition,
     /// Opaque value identifying this card's sort order within its position
     pub sorting_key: SortingKey,
-    /// Optional state for this card
-    pub data: CardData,
 }
 
 impl CardState {
