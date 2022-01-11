@@ -41,6 +41,9 @@ namespace Spelldawn.Game
 
     void Start()
     {
+      Errors.CheckNotNull(_inRoom, $"Missing inRoom for {name}");
+      Errors.CheckNotNull(_defenders, $"Missing defenders for {name}");
+      Errors.CheckState(_roomId != RoomIdentifier.Unspecified, $"RoomId missing for {name}");
       _spriteRenderer = ComponentUtils.GetComponent<SpriteRenderer>(this);
     }
 

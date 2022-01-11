@@ -12,20 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use data::prompt::{Prompt, PromptKind, PromptResponse, RaidActivateRoom};
+use data::game::GameState;
+use data::prompt::{ActivateRoomAction, EncounterAction, Prompt, PromptKind, PromptResponse};
 use protos::spelldawn::{FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node};
+use rules::queries;
 
-use crate::components::{Button, ButtonVariant, Row, Text, TextVariant};
+use crate::components::{Button, ButtonLines, ButtonVariant, Row, Text, TextVariant};
 use crate::core::*;
 use crate::macros::children;
 
 /// Component to render a given [Prompt]
 #[derive(Debug, Clone)]
-pub struct ActionPrompt {
+pub struct ActionPrompt<'a> {
+    pub game: &'a GameState,
     pub prompt: Prompt,
 }
 
-impl Component for ActionPrompt {
+impl<'a> Component for ActionPrompt<'a> {
     fn render(self) -> Node {
         let mut children = vec![];
 
@@ -34,7 +37,7 @@ impl Component for ActionPrompt {
         }
 
         for response in &self.prompt.responses {
-            children.push(child(ResponseButton { response: *response }))
+            children.push(child(response_button(self.game, *response)))
         }
 
         node(PromptContainer { name: "Prompt", children })
@@ -88,53 +91,83 @@ impl Component for PromptContainer {
 
 fn prompt_context(kind: PromptKind) -> Option<String> {
     match kind {
-        PromptKind::RaidActivateRoom => Some("Raid:".to_string()),
+        PromptKind::ActivateRoomAction => Some("Raid:".to_string()),
         _ => None,
     }
+}
+
+fn response_button(game: &GameState, response: PromptResponse) -> ResponseButton {
+    let button = match response {
+        PromptResponse::ActivateRoomAction(activate) => activate_button(activate),
+        PromptResponse::EncounterAction(encounter_action) => {
+            encounter_action_button(game, encounter_action)
+        }
+        _ => todo!("Not yet implemented"),
+    };
+    ResponseButton { action: Some(response), ..button }
 }
 
 /// Component for rendering a single prompt response button
 #[derive(Debug, Clone)]
 struct ResponseButton {
-    pub response: PromptResponse,
+    pub label: String,
+    pub primary: bool,
+    pub two_lines: bool,
+    pub action: Option<PromptResponse>,
+}
+
+impl Default for ResponseButton {
+    fn default() -> Self {
+        Self { label: "".to_string(), primary: true, two_lines: false, action: None }
+    }
 }
 
 impl Component for ResponseButton {
     fn render(self) -> Node {
-        let config = self.config();
         node(Button {
-            label: config.label,
-            variant: if config.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
+            label: self.label,
+            variant: if self.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
+            action: action(self.action, None),
+            lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },
             style: FlexStyle { margin: left_right_px(16.0), ..FlexStyle::default() },
             ..Button::default()
         })
     }
 }
 
-#[derive(Debug, Clone)]
-struct ResponseButtonConfig {
-    pub label: String,
-    pub primary: bool,
-}
-
-impl ResponseButtonConfig {
-    pub fn new(label: &'static str, primary: bool) -> Self {
-        Self { label: label.to_string(), primary }
+fn activate_button(activate: ActivateRoomAction) -> ResponseButton {
+    match activate {
+        ActivateRoomAction::Activate => {
+            ResponseButton { label: "Activate".to_string(), ..ResponseButton::default() }
+        }
+        ActivateRoomAction::Pass => ResponseButton {
+            label: "Pass".to_string(),
+            primary: false,
+            ..ResponseButton::default()
+        },
     }
 }
 
-impl ResponseButton {
-    fn config(self) -> ResponseButtonConfig {
-        match self.response {
-            PromptResponse::RaidActivateRoom(activate) => Self::activate_config(activate),
-            _ => todo!("Not yet implemented"),
+fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) -> ResponseButton {
+    match encounter_action {
+        EncounterAction::UseWeaponAbility(source_id, target_id) => {
+            let label = rules::card_definition(game, source_id).name.displayed_name();
+            if let Some(cost) =
+                queries::boost_target_mana_cost(game, source_id, queries::health(game, target_id))
+            {
+                ResponseButton {
+                    label: format!("{}\n{}\u{f06d}", label, cost.to_string()),
+                    two_lines: true,
+                    ..ResponseButton::default()
+                }
+            } else {
+                ResponseButton { label, ..ResponseButton::default() }
+            }
         }
-    }
-
-    fn activate_config(activate: RaidActivateRoom) -> ResponseButtonConfig {
-        match activate {
-            RaidActivateRoom::Activate => ResponseButtonConfig::new("Activate", true),
-            RaidActivateRoom::Pass => ResponseButtonConfig::new("Pass", false),
-        }
+        EncounterAction::Continue => ResponseButton {
+            label: "Continue".to_string(),
+            primary: false,
+            ..ResponseButton::default()
+        },
     }
 }

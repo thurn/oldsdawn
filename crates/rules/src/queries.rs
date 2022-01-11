@@ -92,6 +92,32 @@ pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
     dispatch::perform_query(game, BoostCountQuery(card_id), game.card(card_id).data.boost_count)
 }
 
+/// Returns the amount of mana the owner of `card_id` would need to spend to
+/// raise its [AttackValue] to the provided `target` by activating boosts.
+/// Returns 0 if this card's attack value already meets the target. Returns None
+/// if this card does not have a defined boost ability.
+pub fn boost_target_mana_cost(
+    game: &GameState,
+    card_id: CardId,
+    target: AttackValue,
+) -> Option<ManaValue> {
+    let current = attack(game, card_id);
+    if current >= target {
+        Some(0)
+    } else if let Some(boost) = crate::card_definition(game, card_id).config.stats.attack_boost {
+        assert!(boost.bonus > 0);
+        let increase = target - current;
+        // If the boost does not evenly divide into the target, we need to apply it an
+        // additional time.
+        let add = if (increase % boost.bonus) == 0 { 0 } else { 1 };
+
+        #[allow(clippy::integer_division)] // Deliberate integer truncation
+        Some((add + (increase / boost.bonus)) * boost.cost)
+    } else {
+        None
+    }
+}
+
 /// Returns true if the provided `side` player is currently in their Main phase
 /// with no pending prompt responses, and thus can take a primary game action.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {

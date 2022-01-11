@@ -1,4 +1,4 @@
-code-review: check-format build clippy test check-docs outdated
+code-review: git-status check-format build clippy test check-docs outdated
 
 fix: fix-lints fmt
 
@@ -124,3 +124,8 @@ coverage: gen-gcda
         --ignore-not-existing \
         -o ./target/debug/coverage
     open target/debug/coverage/index.html
+
+# Checks for uncommitted repository changes
+git-status:
+    git diff-index --quiet HEAD --
+    git ls-files --exclude-standard --others

@@ -32,7 +32,7 @@ pub fn greataxe() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
-            stats: attack(3, AttackBoost { cost: 2, bonus: 1 }),
+            stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
             faction: Some(Faction::Infernal),
             ..CardConfig::default()
         },

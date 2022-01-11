@@ -32,9 +32,9 @@ use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, game_object_identifier, node_type, render_interface_command, CardAnchorNode,
     CardIdentifier, CardTarget, CardView, ClientRoomLocation, CommandList,
-    CreateOrUpdateCardCommand, GameAction, GameIdentifier, GameRequest, Node, NodeType,
-    ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom,
-    PlayCardAction, PlayerName, PlayerView, RevealedCardView,
+    CreateOrUpdateCardCommand, EventHandlers, GameAction, GameIdentifier, GameRequest, Node,
+    NodeType, ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom,
+    PlayCardAction, PlayerName, PlayerView, RevealedCardView, RoomIdentifier,
 };
 use server::database::Database;
 use server::GameResponse;
@@ -117,22 +117,17 @@ impl TestGame {
     /// updating the client state as appropriate based on the responses.
     /// Returns the [GameResponse] for this action or an error if the server
     /// request failed.
-    pub fn perform_action(&mut self, action: Action, user_id: PlayerId) -> Result<GameResponse> {
+    pub fn perform_action(&mut self, action: Action, player_id: PlayerId) -> Result<GameResponse> {
         let response = server::handle_request(
             self,
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),
                 game_id: Some(GameIdentifier { value: self.game.id.value }),
-                user_id: user_id.value,
+                user_id: player_id.value,
             },
         )?;
 
-        let (opponent_id, local, remote) = match () {
-            _ if user_id == self.user.id => (self.opponent.id, &mut self.user, &mut self.opponent),
-            _ if user_id == self.opponent.id => (self.user.id, &mut self.opponent, &mut self.user),
-            _ => panic!("Unknown user id: {:?}", user_id),
-        };
-
+        let (opponent_id, local, remote) = self.get_player(player_id);
         for command in &response.command_list.commands {
             local.handle_command(command.command.as_ref().with_context(|| "Command not received")?);
         }
@@ -147,6 +142,12 @@ impl TestGame {
         }
 
         Ok(response)
+    }
+
+    /// Equivalent function to [Self::perform_action] which does not return the
+    /// action result.
+    pub fn perform(&mut self, action: Action, user_id: PlayerId) {
+        self.perform_action(action, user_id).expect("Request failed");
     }
 
     /// Adds a named card to its owner's hand.
@@ -188,10 +189,10 @@ impl TestGame {
     ///
     /// If the card is a minion, project, scheme, or upgrade card, it is played
     /// into the [crate::ROOM_ID] room. The [GameResponse] produced by
-    /// playing the card is returned.
+    /// playing the card is returned, along with its [CardIdentifier].
     ///
     /// Panics if the server returns an error for playing this card.
-    pub fn play_from_hand(&mut self, card_name: CardName) -> GameResponse {
+    pub fn play_from_hand(&mut self, card_name: CardName) -> (GameResponse, CardIdentifier) {
         let card_id = self.add_to_hand(card_name);
 
         let target = match rules::get(card_name).card_type {
@@ -205,11 +206,38 @@ impl TestGame {
             _ => None,
         };
 
-        self.perform_action(
-            Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
-            self.game.player(side_for_card_name(card_name)).id,
-        )
-        .expect("Server error playing card")
+        let response = self
+            .perform_action(
+                Action::PlayCard(PlayCardAction { card_id: Some(card_id.clone()), target }),
+                self.game.player(side_for_card_name(card_name)).id,
+            )
+            .expect("Server error playing card");
+
+        (response, card_id)
+    }
+
+    /// Locate a button containing the provided `text` in the provided player's
+    /// main controls and invoke its registered action.
+    #[allow(clippy::unwrap_in_result)]
+    pub fn click_on(&mut self, player_id: PlayerId, text: &'static str) -> Result<GameResponse> {
+        let (_, player, _) = self.get_player(player_id);
+        let handlers = player.interface.main_controls().find_handlers(text);
+        let action = handlers.expect("Button not found").on_click.expect("OnClick not found");
+        self.perform_action(action.action.expect("Action"), player_id)
+    }
+
+    /// Returns a triple of (opponent_id, local_client, remote_client) for the
+    /// provided player ID
+    fn get_player(&mut self, player_id: PlayerId) -> (PlayerId, &mut TestClient, &mut TestClient) {
+        match () {
+            _ if player_id == self.user.id => {
+                (self.opponent.id, &mut self.user, &mut self.opponent)
+            }
+            _ if player_id == self.opponent.id => {
+                (self.user.id, &mut self.opponent, &mut self.user)
+            }
+            _ => panic!("Unknown user id: {:?}", player_id),
+        }
     }
 }
 
@@ -283,6 +311,8 @@ impl TestClient {
 #[derive(Debug, Clone, Default)]
 pub struct ClientGameData {
     priority: Option<PlayerName>,
+    raid_initiator: Option<PlayerName>,
+    raid_target: Option<RoomIdentifier>,
 }
 
 impl ClientGameData {
@@ -290,10 +320,25 @@ impl ClientGameData {
         self.priority.unwrap()
     }
 
+    pub fn raid_initiator(&self) -> PlayerName {
+        self.raid_initiator.expect("raid_initiator")
+    }
+
+    pub fn raid_target(&self) -> RoomIdentifier {
+        self.raid_target.expect("raid_target")
+    }
+
     fn update(&mut self, command: Command) {
-        if let Command::UpdateGameView(update_game) = command {
-            self.priority =
-                PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority)
+        match command {
+            Command::UpdateGameView(update_game) => {
+                self.priority =
+                    PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority)
+            }
+            Command::InitiateRaid(initiate_raid) => {
+                self.raid_initiator = PlayerName::from_i32(initiate_raid.initiator);
+                self.raid_target = RoomIdentifier::from_i32(initiate_raid.room_id);
+            }
+            _ => {}
         }
     }
 }
@@ -385,6 +430,15 @@ pub trait HasText {
     /// Returns true if there are any text nodes contained within this tree
     /// which contain the provided string.    
     fn has_text(&self, text: &'static str) -> bool;
+
+    /// Populates `path` with the series of nodes leading to the node which
+    /// contains the provided text. Leaves `path` unchanged if no node
+    /// containing this text is found.
+    fn find_text(&self, path: &mut Vec<Node>, text: &'static str);
+
+    /// Finds the path to the provided `text` via [Self::find_text] and then
+    /// searches up the path for a registered [EventHandlers].
+    fn find_handlers(&self, text: &'static str) -> Option<EventHandlers>;
 }
 
 impl HasText for Node {
@@ -403,6 +457,23 @@ impl HasText for Node {
 
         false
     }
+
+    fn find_text(&self, path: &mut Vec<Node>, text: &'static str) {
+        if self.has_text(text) {
+            path.push(self.clone());
+        }
+
+        for child in &self.children {
+            child.find_text(path, text);
+        }
+    }
+
+    fn find_handlers(&self, text: &'static str) -> Option<EventHandlers> {
+        let mut nodes = vec![];
+        self.find_text(&mut nodes, text);
+        nodes.reverse();
+        nodes.iter().find_map(|node| node.event_handlers.clone())
+    }
 }
 
 /// Simulated card state in an ongoing [TestGame]
@@ -412,6 +483,12 @@ pub struct ClientCards {
 }
 
 impl ClientCards {
+    pub fn get(&self, card_id: &CardIdentifier) -> &ClientCard {
+        self.cards
+            .get(&server::to_server_card_id(&Some(card_id.clone())).expect("Invalid CardId"))
+            .expect("Card not found")
+    }
+
     /// Returns a vec containing the titles of all of the cards in the provided
     /// player's hand from the perspective of the this client, or
     /// [crate::HIDDEN_CARD] if the card's title is unknown. Titles will be
@@ -495,6 +572,9 @@ impl ClientCards {
 pub struct ClientCard {
     title: Option<String>,
     position: Option<ObjectPosition>,
+    revealed_to_me: bool,
+    revealed_in_arena: Option<bool>,
+    can_play: Option<bool>,
 }
 
 impl ClientCard {
@@ -515,6 +595,18 @@ impl ClientCard {
         self.title.clone()
     }
 
+    pub fn revealed_to_me(&self) -> bool {
+        self.revealed_to_me
+    }
+
+    pub fn revealed_in_arena(&self) -> bool {
+        self.revealed_in_arena.expect("revealed_in_arena")
+    }
+
+    pub fn can_play(&self) -> bool {
+        self.can_play.expect("can_play")
+    }
+
     fn new(command: &CreateOrUpdateCardCommand) -> Self {
         let mut result = Self { position: command.create_position.clone(), ..Self::default() };
         result.update(command.card.as_ref().expect("No CardView found"));
@@ -528,6 +620,10 @@ impl ClientCard {
     }
 
     fn update_revealed_card(&mut self, revealed: &RevealedCardView) {
+        self.revealed_to_me = true;
+        self.revealed_in_arena = Some(revealed.revealed_in_arena);
+        self.can_play = Some(revealed.can_play);
+
         if let Some(title) = revealed.clone().title.map(|title| title.text) {
             self.title = Some(title);
         }

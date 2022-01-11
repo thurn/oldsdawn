@@ -14,13 +14,18 @@
 
 //! Handling for raid-related user actions.
 
-use anyhow::{ensure, Result};
-use data::game::GameState;
+use std::iter;
+
+use anyhow::{ensure, Context, Result};
+use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, RoomId, Side};
-use data::prompt::{RaidActivateRoom, RaidAdvance, RaidEncounter};
+use data::prompt::{
+    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptKind, PromptResponse,
+};
+use if_chain::if_chain;
 use tracing::{info, instrument};
 
-use crate::{flags, mutations};
+use crate::{flags, mutations, queries};
 
 #[instrument(skip(game))]
 pub fn initiate_raid_action(
@@ -39,19 +44,63 @@ pub fn initiate_raid_action(
 pub fn activate_room_action(
     game: &mut GameState,
     user_side: Side,
-    data: RaidActivateRoom,
+    data: ActivateRoomAction,
 ) -> Result<()> {
     info!(?user_side, ?data, "raid_activate_room_action");
     ensure!(
-        flags::can_take_raid_activate_room_action(game, user_side, data),
+        flags::can_take_raid_activate_room_action(game, user_side),
         "Cannot activate room for {:?}",
         user_side
     );
+
+    let raid = game.data.raid.as_mut().with_context(|| "No active raid")?;
+    raid.active = data == ActivateRoomAction::Activate;
+    raid.phase = RaidPhase::Encounter(0);
+    let target = raid.target;
+    let defenders = game.defender_list(target);
+    let defender_id = defenders.get(0).with_context(|| "No defender")?.id;
+
+    if_chain! {
+        if let Some(cost) = queries::mana_cost(game, defender_id);
+        if cost <= game.player(Side::Overlord).mana;
+        then {
+            mutations::spend_mana(game, Side::Overlord, cost);
+            mutations::set_revealed(game, defender_id, true);
+
+            mutations::set_prompt(
+                game,
+                Side::Champion,
+                Prompt {
+                    kind: PromptKind::EncounterAction,
+                    responses: game
+                        .weapons()
+                        .filter(|weapon| flags::can_defeat_target(game, weapon.id, defender_id))
+                        .map(|weapon| {
+                            PromptResponse::EncounterAction(EncounterAction::UseWeaponAbility(
+                                weapon.id,
+                                defender_id,
+                            ))
+                        })
+                        .chain(iter::once(PromptResponse::EncounterAction(
+                            EncounterAction::Continue,
+                        )))
+                        .collect(),
+                },
+            );
+        } else {
+            // TODO: Advance to next defender/access
+        }
+    }
+
     Ok(())
 }
 
 #[instrument(skip(game))]
-pub fn encounter_action(game: &mut GameState, user_side: Side, data: RaidEncounter) -> Result<()> {
+pub fn encounter_action(
+    game: &mut GameState,
+    user_side: Side,
+    data: EncounterAction,
+) -> Result<()> {
     info!(?user_side, ?data, "raid_encounter_action");
     ensure!(
         flags::can_take_raid_encounter_action(game, user_side, data),
@@ -62,7 +111,7 @@ pub fn encounter_action(game: &mut GameState, user_side: Side, data: RaidEncount
 }
 
 #[instrument(skip(game))]
-pub fn advance_action(game: &mut GameState, user_side: Side, data: RaidAdvance) -> Result<()> {
+pub fn advance_action(game: &mut GameState, user_side: Side, data: AdvanceAction) -> Result<()> {
     info!(?user_side, ?data, "raid_advance_action");
     ensure!(
         flags::can_take_raid_advance_action(game, user_side, data),

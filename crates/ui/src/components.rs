@@ -15,8 +15,8 @@
 //! Core reusable UI elements
 
 use protos::spelldawn::{
-    node_type, Dimension, EventHandlers, FlexAlign, FlexColor, FlexJustify, FlexStyle, FontAddress,
-    Node, NodeType, SpriteAddress, StandardAction, TextAlign,
+    node_type, Dimension, EventHandlers, FlexAlign, FlexColor, FlexDirection, FlexJustify,
+    FlexStyle, GameAction, Node, NodeType, SpriteAddress, TextAlign,
 };
 
 use crate::core::*;
@@ -37,6 +37,7 @@ pub struct Row {
 impl Component for Row {
     fn render(self) -> Node {
         make_node(
+            FlexDirection::Row,
             self.name,
             self.style,
             self.children,
@@ -61,6 +62,7 @@ pub struct Column {
 impl Component for Column {
     fn render(self) -> Node {
         make_node(
+            FlexDirection::Column,
             self.name,
             self.style,
             self.children,
@@ -72,6 +74,7 @@ impl Component for Column {
 }
 
 fn make_node(
+    direction: FlexDirection,
     name: String,
     style: FlexStyle,
     children: Vec<Option<Node>>,
@@ -83,7 +86,7 @@ fn make_node(
         id: "".to_string(),
         name,
         node_type: None,
-        style: Some(style),
+        style: Some(FlexStyle { flex_direction: direction.into(), ..style }),
         children: children.into_iter().flatten().collect(),
         event_handlers: events,
         hover_style,
@@ -99,6 +102,8 @@ pub enum TextVariant {
     /// Text which appears inside a button, use [Button] instead of using this
     /// directly.
     Button,
+    /// Text which appears inside a two line button
+    TwoLineButton,
 }
 
 impl TextVariant {
@@ -106,6 +111,7 @@ impl TextVariant {
         match self {
             TextVariant::Title => color(Color::TitleText),
             TextVariant::Button => color(Color::ButtonLabel),
+            TextVariant::TwoLineButton => color(Color::ButtonLabel),
         }
     }
 
@@ -113,13 +119,7 @@ impl TextVariant {
         match self {
             TextVariant::Title => px(60.0),
             TextVariant::Button => px(32.0),
-        }
-    }
-
-    fn font(self) -> Option<FontAddress> {
-        match self {
-            TextVariant::Title => font(Font::Default),
-            TextVariant::Button => font(Font::Default),
+            TextVariant::TwoLineButton => px(26.0),
         }
     }
 }
@@ -150,7 +150,7 @@ impl Component for Text {
                 padding: all_px(0.0),
                 color: self.variant.color(),
                 font_size: self.variant.font_size(),
-                font: self.variant.font(),
+                font: font(Font::Default),
                 ..self.style
             }),
             ..Node::default()
@@ -180,13 +180,21 @@ impl ButtonVariant {
     }
 }
 
+/// Number of lines of text shown in button
+#[derive(Debug, Clone, Copy)]
+pub enum ButtonLines {
+    OneLine,
+    TwoLines,
+}
+
 /// Renders a button in the UI
 #[derive(Debug, Clone)]
 pub struct Button {
     pub label: String,
     pub variant: ButtonVariant,
-    pub action: StandardAction,
+    pub action: Option<GameAction>,
     pub style: FlexStyle,
+    pub lines: ButtonLines,
 }
 
 impl Default for Button {
@@ -194,8 +202,9 @@ impl Default for Button {
         Self {
             label: "".to_string(),
             variant: ButtonVariant::Primary,
-            action: StandardAction::default(),
+            action: None,
             style: FlexStyle::default(),
+            lines: ButtonLines::OneLine,
         }
     }
 }
@@ -216,7 +225,10 @@ impl Component for Button {
             },
             children: children!(Text {
                 label: self.label,
-                variant: TextVariant::Button,
+                variant: match self.lines {
+                    ButtonLines::OneLine => TextVariant::Button,
+                    ButtonLines::TwoLines => TextVariant::TwoLineButton,
+                },
                 style: FlexStyle {
                     margin: left_right_px(16.0),
                     text_align: TextAlign::MiddleCenter.into(),
@@ -224,7 +236,9 @@ impl Component for Button {
                 },
                 ..Text::default()
             }),
-            events: Some(EventHandlers::default()),
+            events: Some(EventHandlers {
+                on_click: Some(self.action.expect("Missing action for button!")),
+            }),
             ..Row::default()
         })
     }

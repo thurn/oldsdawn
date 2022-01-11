@@ -29,7 +29,7 @@ use data::delegates::{
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, RaidId, RoomId, Side};
-use data::prompt::{Prompt, PromptKind, PromptResponse, RaidActivateRoom};
+use data::prompt::{ActivateRoomAction, Prompt, PromptKind, PromptResponse};
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
@@ -137,8 +137,8 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
 }
 
 /// Sets the current prompt for the `side` player to the provided
-/// [PromptResponse]. Appends [GameUpdate::UserPrompt]. Panics if no prompt is
-/// set for this player.
+/// [PromptResponse]. Appends [GameUpdate::UserPrompt]. Panics if a prompt is
+/// already set for this player.
 pub fn set_prompt(game: &mut GameState, side: Side, prompt: Prompt) {
     assert!(game.player(side).prompt.is_none(), "Player {:?} already has an active prompt", side);
     game.player_mut(side).prompt = Some(prompt);
@@ -158,15 +158,15 @@ pub fn clear_prompts(game: &mut GameState) {
 pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
     info!(?room_id, "initiate_raid");
     assert!(game.data.raid.is_none(), "Raid is already active");
-    let phase = if game.defenders(room_id).next().is_some() {
+    let phase = if game.has_hidden_defenders(room_id) {
         set_prompt(
             game,
             Side::Overlord,
             Prompt {
-                kind: PromptKind::RaidActivateRoom,
+                kind: PromptKind::ActivateRoomAction,
                 responses: vec![
-                    PromptResponse::RaidActivateRoom(RaidActivateRoom::Activate),
-                    PromptResponse::RaidActivateRoom(RaidActivateRoom::Pass),
+                    PromptResponse::ActivateRoomAction(ActivateRoomAction::Activate),
+                    PromptResponse::ActivateRoomAction(ActivateRoomAction::Pass),
                 ],
             },
         );

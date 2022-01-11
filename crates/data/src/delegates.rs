@@ -208,6 +208,21 @@ pub struct CardMoved {
     pub new_position: CardPosition,
 }
 
+/// Event data for encounters between cards
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct CardEncounter {
+    /// Card initiating the interaction
+    pub source: CardId,
+    /// Card being targeted
+    pub target: CardId,
+}
+
+impl CardEncounter {
+    pub fn new(source: CardId, target: CardId) -> Self {
+        Self { source, target }
+    }
+}
+
 /// The core of the delegate pattern, used to identify which event or which
 /// query this delegate wishes to respond to. Each enum variant here
 /// automatically gets an associated struct value generated for it by the
@@ -271,6 +286,12 @@ pub enum Delegate {
     /// Can the indicated player currently take the basic game action to level
     /// up a room?
     CanLevelUpRoom(QueryDelegate<Side, Flag>),
+    /// Can the source card (typically a weapon) take an encounter action
+    /// against the target card (typically a minion) during a raid?
+    CanEncounterTarget(QueryDelegate<CardEncounter, Flag>),
+    /// Can the source card (typically a weapon) apply an encounter
+    /// action to defeat the target target (typically a minion) during a raid?
+    CanDefeatTarget(QueryDelegate<CardEncounter, Flag>),
 
     /// Query the current mana cost of a card. Invoked with [Cost::mana].
     ManaCost(QueryDelegate<CardId, Option<ManaValue>>),

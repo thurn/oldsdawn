@@ -12,7 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use protos::spelldawn::CardIdentifier;
+
 use crate::*;
+
+#[derive(Debug)]
+pub struct SimpleIds {
+    pub scheme_id: CardIdentifier,
+    pub minion_id: CardIdentifier,
+    pub weapon_id: CardIdentifier,
+}
 
 /// Creates an ongoing [TestGame] with the provided `user_side` and `id_basis`
 /// with the following properties:
@@ -21,8 +30,11 @@ use crate::*;
 /// - The Overlord has a scheme and a minion in play in the [crate::ROOM_ID]
 ///   room.
 /// - The Champion has a weapon in play
-/// - Both players have significant mana available
-pub fn simple_game(user_side: Side, id_basis: Option<u64>) -> TestGame {
+/// - Both players have 100 mana available
+///
+/// Returns the game along with a [SimpleIds] struct containing the IDs of the
+/// created cards
+pub fn simple_game(user_side: Side, id_basis: Option<u64>) -> (TestGame, SimpleIds) {
     let mut game = new_game(
         user_side,
         Args {
@@ -35,8 +47,9 @@ pub fn simple_game(user_side: Side, id_basis: Option<u64>) -> TestGame {
             ..Args::default()
         },
     );
-    game.play_from_hand(CardName::DungeonAnnex);
-    game.play_from_hand(CardName::IceDragon);
-    game.play_from_hand(CardName::Greataxe);
-    game
+    let (_, scheme_id) = game.play_from_hand(CardName::DungeonAnnex);
+    let (_, minion_id) = game.play_from_hand(CardName::IceDragon);
+    let (_, weapon_id) = game.play_from_hand(CardName::Greataxe);
+
+    (game, SimpleIds { scheme_id, minion_id, weapon_id })
 }

@@ -16,6 +16,7 @@
 
 #![allow(clippy::use_self)] // Required to use EnumKind
 
+use std::cmp::Ordering;
 use std::collections::BTreeMap;
 
 use enum_kinds::EnumKind;
@@ -152,5 +153,21 @@ impl CardState {
         } else {
             self.data.revealed
         }
+    }
+
+    pub fn is_in_room(&self, room_id: RoomId) -> bool {
+        matches!(self.position, CardPosition::Room(id, _) if id == room_id)
+    }
+}
+
+impl PartialOrd<Self> for CardState {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for CardState {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.sorting_key.cmp(&other.sorting_key)
     }
 }

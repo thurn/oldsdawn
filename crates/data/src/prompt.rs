@@ -21,20 +21,21 @@ use serde::{Deserialize, Serialize};
 
 use crate::primitives::CardId;
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum RaidActivateRoom {
+#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum ActivateRoomAction {
     Activate,
     Pass,
 }
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum RaidEncounter {
-    UseWeaponAbility(CardId),
+#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum EncounterAction {
+    /// (source_id, target_id)
+    UseWeaponAbility(CardId, CardId),
     Continue,
 }
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum RaidAdvance {
+#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum AdvanceAction {
     Continue,
     Retreat,
 }
@@ -46,11 +47,11 @@ pub enum RaidAdvance {
 #[enum_kind(PromptKind, derive(Serialize), derive(Deserialize))]
 pub enum PromptResponse {
     /// Action for the Overlord to activate the room currently being raided
-    RaidActivateRoom(RaidActivateRoom),
+    ActivateRoomAction(ActivateRoomAction),
     /// Champion action in response to a raid encounter
-    RaidEncounter(RaidEncounter),
+    EncounterAction(EncounterAction),
     /// Action to advance to the next encounter of a raid
-    RaidAdvance(RaidAdvance),
+    AdvanceAction(AdvanceAction),
     /// Action to target & destroy an accessed card
     RaidDestroyCard(CardId),
     /// Action to score an accessed card

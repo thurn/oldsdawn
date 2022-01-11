@@ -18,7 +18,8 @@ use std::collections::HashMap;
 
 use data::card_definition::{CardConfig, CardDefinition, Cost};
 use data::card_name::CardName;
-use data::primitives::{CardType, Rarity, School, Side};
+use data::game::GameState;
+use data::primitives::{CardId, CardType, Rarity, School, Side};
 use once_cell::sync::Lazy;
 
 pub mod abilities;
@@ -62,6 +63,10 @@ static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
 /// Looks up the definition for a [CardName]. Panics if no such card is defined.
 pub fn get(name: CardName) -> &'static CardDefinition {
     CARDS.get(&name).unwrap_or_else(|| panic!("Card not found: {:?}", name))
+}
+
+pub fn card_definition(game: &GameState, card_id: CardId) -> &'static CardDefinition {
+    get(game.card(card_id).name)
 }
 
 fn test_overlord_identity() -> CardDefinition {

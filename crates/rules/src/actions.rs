@@ -156,9 +156,11 @@ pub fn handle_prompt_response(
     mutations::clear_prompts(game);
 
     match action {
-        PromptResponse::RaidActivateRoom(data) => raid::activate_room_action(game, user_side, data),
-        PromptResponse::RaidEncounter(data) => raid::encounter_action(game, user_side, data),
-        PromptResponse::RaidAdvance(data) => raid::advance_action(game, user_side, data),
+        PromptResponse::ActivateRoomAction(data) => {
+            raid::activate_room_action(game, user_side, data)
+        }
+        PromptResponse::EncounterAction(data) => raid::encounter_action(game, user_side, data),
+        PromptResponse::AdvanceAction(data) => raid::advance_action(game, user_side, data),
         PromptResponse::RaidDestroyCard(card_id) => {
             raid::destroy_card_action(game, user_side, card_id)
         }

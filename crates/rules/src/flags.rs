@@ -17,12 +17,12 @@
 
 use data::card_state::CardPosition;
 use data::delegates::{
-    CanInitiateRaidQuery, CanLevelUpRoomQuery, CanPlayCardQuery, CanTakeDrawCardActionQuery,
-    CanTakeGainManaActionQuery, Flag,
+    CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpRoomQuery,
+    CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
 };
-use data::game::GameState;
-use data::primitives::{CardId, CardType, Side};
-use data::prompt::{RaidActivateRoom, RaidAdvance, RaidEncounter};
+use data::game::{GameState, RaidData, RaidPhase};
+use data::primitives::{CardId, CardType, Faction, Side};
+use data::prompt::{AdvanceAction, EncounterAction};
 
 use crate::{dispatch, queries};
 
@@ -79,23 +79,67 @@ pub fn can_level_up_room(game: &GameState, side: Side) -> bool {
     dispatch::perform_query(game, CanLevelUpRoomQuery(side), Flag::new(can_level_up)).into()
 }
 
-pub fn can_take_raid_activate_room_action(
-    _game: &GameState,
-    _side: Side,
-    _data: RaidActivateRoom,
-) -> bool {
-    true
+/// Whether a room can currently be activated
+pub fn can_take_raid_activate_room_action(game: &GameState, side: Side) -> bool {
+    side == Side::Overlord
+        && matches!(
+            game.data.raid,
+            Some(RaidData { phase: RaidPhase::Activation, target, .. })
+            if game.has_hidden_defenders(target)
+        )
+}
+
+/// Whether the provided `source` card is able to target the `target` card with
+/// an encounter action. Typically used to determine whether a weapon can target
+/// a minion, e.g. based on faction.
+pub fn can_encounter_target(game: &GameState, source: CardId, target: CardId) -> bool {
+    let can_encounter = matches!(
+        (
+            crate::card_definition(game, source).config.faction,
+            crate::card_definition(game, target).config.faction
+        ),
+        (Some(source_faction), Some(target_faction))
+        if source_faction == Faction::Prismatic || source_faction == target_faction
+    );
+
+    dispatch::perform_query(
+        game,
+        CanEncounterTargetQuery(CardEncounter::new(source, target)),
+        Flag::new(can_encounter),
+    )
+    .into()
+}
+
+/// Can the `source` card defeat the `target` card in an encounter by dealing
+/// enough damage to equal its health (potentially after paying mana & applying
+/// boosts), or via some other game mechanism?
+///
+/// This requires [can_encounter_target] to be true.
+pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bool {
+    let can_defeat = can_encounter_target(game, source, target)
+        && matches!(
+            queries::boost_target_mana_cost(game, source, queries::health(game, target)),
+            Some(cost)
+            if cost <= game.player(source.side).mana
+        );
+
+    dispatch::perform_query(
+        game,
+        CanDefeatTargetQuery(CardEncounter::new(source, target)),
+        Flag::new(can_defeat),
+    )
+    .into()
 }
 
 pub fn can_take_raid_encounter_action(
     _game: &GameState,
     _side: Side,
-    _data: RaidEncounter,
+    _data: EncounterAction,
 ) -> bool {
     true
 }
 
-pub fn can_take_raid_advance_action(_game: &GameState, _side: Side, _data: RaidAdvance) -> bool {
+pub fn can_take_raid_advance_action(_game: &GameState, _side: Side, _data: AdvanceAction) -> bool {
     true
 }
 

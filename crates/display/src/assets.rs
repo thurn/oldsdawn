@@ -125,6 +125,9 @@ pub fn title_background(faction: Option<Faction>) -> SpriteAddress {
         },
         |f| SpriteAddress {
             address: match f {
+                Faction::Prismatic => {
+                    "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape"
+                }
                 Faction::Mortal => {
                     "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape"
                 }
@@ -156,6 +159,7 @@ pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) ->
         },
         |f| SpriteAddress {
             address: match f {
+                Faction::Prismatic => "SpriteWay/Icons/Clean Frames/9048",
                 Faction::Mortal => "SpriteWay/Icons/Clean Frames/9048",
                 Faction::Abyssal => "SpriteWay/Icons/Clean Frames/9055",
                 Faction::Infernal => "SpriteWay/Icons/Clean Frames/9054",

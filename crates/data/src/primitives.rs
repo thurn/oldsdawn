@@ -232,10 +232,11 @@ pub enum ItemLocation {
     Artifacts,
 }
 
-/// The three possible factions of weapons and minions. Minions can only be
-/// damaged by weapons from the same faction.
+/// The Possible factions of weapons and minions. Minions can only be
+/// damaged by weapons from the same faction, or by Prismatic weapons.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Faction {
+    Prismatic,
     Mortal,
     Abyssal,
     Infernal,

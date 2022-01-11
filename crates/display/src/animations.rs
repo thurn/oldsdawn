@@ -39,6 +39,10 @@ pub fn render(
     game: &GameState,
     user_side: Side,
 ) {
+    // TODO: I think UserPrompt should probably be handled via the diff system.
+    // Doing something with Raids also seems useful so you can connect to a game
+    // with an ongoing raid, but you'd need to sync down the current position
+    // and stuff.
     match update {
         GameUpdate::StartTurn(side) => {
             start_turn(commands, side);
@@ -47,7 +51,7 @@ pub fn render(
             move_card(commands, game, game.card(card_id), user_side);
         }
         GameUpdate::RevealCard(card_id) => {
-            reveal_card(commands, game.card(card_id), user_side);
+            reveal_card(commands, game, game.card(card_id), user_side);
         }
         GameUpdate::InitiateRaid(room_id) => {
             initiate_raid(commands, room_id, user_side);
@@ -90,8 +94,15 @@ fn move_card(commands: &mut Vec<GameCommand>, game: &GameState, card: &CardState
 }
 
 /// Commands to reveal the indicated card to all players
-fn reveal_card(commands: &mut Vec<GameCommand>, card: &CardState, user_side: Side) {
-    if user_side != card.side {
+fn reveal_card(
+    commands: &mut Vec<GameCommand>,
+    game: &GameState,
+    card: &CardState,
+    user_side: Side,
+) {
+    if user_side != card.side && game.data.raid.map_or(true, |raid| !card.is_in_room(raid.target)) {
+        // If the hidden card is not part of an active raid, animate it to
+        // the staging area on reveal.
         push(
             commands,
             Command::MoveGameObjects(MoveGameObjectsCommand {
@@ -140,6 +151,7 @@ fn user_prompt(commands: &mut Vec<GameCommand>, game: &GameState, side: Side, us
         push(
             commands,
             ui::main_controls(ActionPrompt {
+                game,
                 prompt: game
                     .player(side)
                     .prompt

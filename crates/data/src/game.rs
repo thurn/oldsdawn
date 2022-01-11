@@ -20,8 +20,8 @@ use serde::{Deserialize, Serialize};
 use crate::card_state::{CardPosition, CardPositionKind, CardState, SortingKey};
 use crate::deck::Deck;
 use crate::primitives::{
-    ActionCount, CardId, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, RoomLocation,
-    Side, TurnNumber,
+    ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId, RoomId,
+    RoomLocation, Side, TurnNumber,
 };
 use crate::prompt::Prompt;
 use crate::updates::UpdateTracker;
@@ -258,34 +258,46 @@ impl GameState {
         self.cards(side).iter().filter(|c| c.position.in_hand())
     }
 
-    /// Mutable version of [Self::hand]
-    pub fn hand_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_mut(side).iter_mut().filter(|c| c.position.in_hand())
-    }
-
     /// Cards in a player's discard pile, in alphabetical order
     pub fn discard_pile(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position.in_discard_pile())
     }
 
-    /// Mutable version of [Self::discard_pile]
-    pub fn discard_pile_mut(&mut self, side: Side) -> impl Iterator<Item = &mut CardState> {
-        self.cards_mut(side).iter_mut().filter(|c| c.position.in_discard_pile())
-    }
-
-    /// Cards in a player's deck pile, in alphabetical order
+    /// Cards in a player's deck, in alphabetical order
     pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position.in_deck())
     }
 
-    /// Cards defending a given room
-    pub fn defenders(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
-        self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Defender))
+    /// Returns true if this room has at least one hidden defender.
+    pub fn has_hidden_defenders(&self, room_id: RoomId) -> bool {
+        self.overlord_cards.iter().any(|c| {
+            c.position == CardPosition::Room(room_id, RoomLocation::Defender) && !c.data.revealed
+        })
     }
 
-    /// Cards in a given room
+    /// Overlord cards defending a given room, in sorting-key order
+    pub fn defender_list(&self, room_id: RoomId) -> Vec<&CardState> {
+        let mut result = self
+            .cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Defender))
+            .collect::<Vec<_>>();
+        result.sort();
+        result
+    }
+
+    /// Overlord cards in a given room, in alphabetical order
     pub fn occupants(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
+    }
+
+    /// Champion cards which have been played as weapons, in alphabetical order
+    pub fn weapons(&self) -> impl Iterator<Item = &CardState> {
+        self.cards_in_position(Side::Champion, CardPosition::ArenaItem(ItemLocation::Weapons))
+    }
+
+    /// Champion cards which have been played as artifacts, in alphabetical
+    /// order
+    pub fn artifacts(&self) -> impl Iterator<Item = &CardState> {
+        self.cards_in_position(Side::Champion, CardPosition::ArenaItem(ItemLocation::Artifacts))
     }
 
     /// All Card IDs present in this game

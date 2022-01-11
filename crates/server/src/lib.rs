@@ -193,7 +193,7 @@ pub fn handle_connect(
         database.game(game_id)?
     } else {
         let new_game_id = if test_mode { GameId::new(0) } else { database.generate_game_id()? };
-        let game = GameState::new_game(
+        let mut game = GameState::new_game(
             new_game_id,
             Deck {
                 owner_id: PlayerId::new(2),
@@ -207,12 +207,15 @@ pub fn handle_connect(
                 owner_id: PlayerId::new(1),
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
-                    CardName::Greataxe => 1,
-                    CardName::ArcaneRecovery => 44,
+                    CardName::Greataxe => 45,
                 },
             },
             GameConfiguration { deterministic: true, ..GameConfiguration::default() },
         );
+
+        if test_mode {
+            game.overlord.actions = 4;
+        }
 
         database.write_game(&game)?;
         info!(?new_game_id, "create_new_game");
