@@ -19,6 +19,7 @@ use data::text::{AbilityText, TextToken};
 
 /// Macro which converts its arguments into an [AbilityText::Text] via
 /// [TextToken::from].
+#[macro_export]
 macro_rules! text {
     ($($x:expr),*) => {
         data::text::AbilityText::Text(vec! [$(data::text::TextToken::from($x)),*])
@@ -26,4 +27,4 @@ macro_rules! text {
     ($($x:expr,)*) => {text![$($x),*]}
 }
 
-pub(crate) use text;
+pub use text;

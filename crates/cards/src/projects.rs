@@ -12,28 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card definitions for the Spell card type & Champion player
+//! Card definitions for the Project card type
 
 use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
+use data::text::Keyword;
+use linkme::distributed_slice;
+use rules::helpers::*;
+use rules::{abilities, mutations, text, DEFINITIONS};
 
-use crate::card_text::text;
-use crate::helpers::*;
-use crate::mutations;
+pub fn initialize() {}
 
-pub fn arcane_recovery() -> CardDefinition {
+#[distributed_slice(DEFINITIONS)]
+pub fn gold_mine() -> CardDefinition {
     CardDefinition {
-        name: CardName::ArcaneRecovery,
-        cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_24"),
-        card_type: CardType::Spell,
-        side: Side::Champion,
+        name: CardName::GoldMine,
+        cost: cost(4),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_43"),
+        card_type: CardType::Project,
+        side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_cast(text!("Gain", mana(9)), |g, s, _| {
-            mutations::gain_mana(g, s.side(), 9)
-        })],
+        abilities: vec![
+            abilities::store_mana::<12>(),
+            at_dusk(text![Keyword::Dusk, "Gain", mana(3), "from this card"], |g, s, _| {
+                mutations::take_stored_mana(g, s.card_id(), 3);
+            }),
+        ],
         config: CardConfig::default(),
     }
 }

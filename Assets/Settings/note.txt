@@ -13,3 +13,6 @@ Bolt is 266 (page 12)
 
 
 Moved in to Donohoe on November 18th, 2017
+
+- work on theme sync
+- tests for colors

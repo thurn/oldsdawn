@@ -17,10 +17,13 @@
 use data::card_definition::{AttackBoost, CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Faction, Rarity, School, Side};
+use linkme::distributed_slice;
+use rules::helpers::*;
+use rules::{abilities, DEFINITIONS};
 
-use crate::abilities;
-use crate::helpers::*;
+pub fn initialize() {}
 
+#[distributed_slice(DEFINITIONS)]
 pub fn greataxe() -> CardDefinition {
     CardDefinition {
         name: CardName::Greataxe,

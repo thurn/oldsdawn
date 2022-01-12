@@ -12,32 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card definitions for the Scheme card type
+//! Card definitions for the Spell card type & Champion player
 
-use data::card_definition::{CardConfig, CardDefinition, Cost, SchemePoints};
+use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
-use data::text::Keyword;
+use linkme::distributed_slice;
+use rules::card_text::text;
+use rules::helpers::*;
+use rules::{mutations, DEFINITIONS};
 
-use crate::card_text::text;
-use crate::helpers::*;
-use crate::mutations;
+pub fn initialize() {}
 
-pub fn dungeon_annex() -> CardDefinition {
+#[distributed_slice(DEFINITIONS)]
+pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
-        name: CardName::DungeonAnnex,
-        cost: Cost::default(),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
-        card_type: CardType::Scheme,
-        side: Side::Overlord,
+        name: CardName::ArcaneRecovery,
+        cost: cost(5),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_24"),
+        card_type: CardType::Spell,
+        side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_score(text![Keyword::Score, "Gain", mana(7)], |g, s, _| {
-            mutations::gain_mana(g, s.side(), 7);
+        abilities: vec![on_cast(text!("Gain", mana(9)), |g, s, _| {
+            mutations::gain_mana(g, s.side(), 9)
         })],
-        config: CardConfig {
-            stats: scheme_points(SchemePoints { level_requirement: 4, points: 2 }),
-            ..CardConfig::default()
-        },
+        config: CardConfig::default(),
     }
 }

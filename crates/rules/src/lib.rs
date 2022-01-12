@@ -16,10 +16,11 @@
 
 use std::collections::HashMap;
 
-use data::card_definition::{CardConfig, CardDefinition, Cost};
+use data::card_definition::CardDefinition;
 use data::card_name::CardName;
 use data::game::GameState;
-use data::primitives::{CardId, CardType, Rarity, School, Side};
+use data::primitives::CardId;
+use linkme::distributed_slice;
 use once_cell::sync::Lazy;
 
 pub mod abilities;
@@ -28,30 +29,15 @@ pub mod card_text;
 pub mod dispatch;
 pub mod flags;
 pub mod helpers;
-pub mod minions;
 pub mod mutations;
-pub mod projects;
 pub mod queries;
 pub mod raid;
-pub mod schemes;
-pub mod spells;
-pub mod weapons;
 
-// TODO: Switch back to the linkme crate once https://github.com/dtolnay/linkme/issues/41 is fixed
-static DEFINITIONS: &[fn() -> CardDefinition] = &[
-    test_overlord_identity,
-    test_champion_identity,
-    test_overlord_spell,
-    test_champion_spell,
-    spells::arcane_recovery,
-    weapons::greataxe,
-    projects::gold_mine,
-    minions::ice_dragon,
-    schemes::dungeon_annex,
-];
+#[distributed_slice]
+pub static DEFINITIONS: [fn() -> CardDefinition] = [..];
 
 /// Contains [CardDefinition]s for all known cards, keyed by [CardName]
-static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
+pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
     let mut map = HashMap::new();
     for card_fn in DEFINITIONS {
         let card = card_fn();
@@ -67,60 +53,4 @@ pub fn get(name: CardName) -> &'static CardDefinition {
 
 pub fn card_definition(game: &GameState, card_id: CardId) -> &'static CardDefinition {
     get(game.card(card_id).name)
-}
-
-fn test_overlord_identity() -> CardDefinition {
-    CardDefinition {
-        name: CardName::TestOverlordIdentity,
-        cost: Cost { mana: None, actions: 0 },
-        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/3"),
-        card_type: CardType::Identity,
-        side: Side::Overlord,
-        school: School::Time,
-        rarity: Rarity::None,
-        abilities: vec![],
-        config: CardConfig::default(),
-    }
-}
-
-fn test_champion_identity() -> CardDefinition {
-    CardDefinition {
-        name: CardName::TestChampionIdentity,
-        cost: Cost { mana: None, actions: 0 },
-        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/2"),
-        card_type: CardType::Identity,
-        side: Side::Champion,
-        school: School::Nature,
-        rarity: Rarity::None,
-        abilities: vec![],
-        config: CardConfig::default(),
-    }
-}
-
-fn test_overlord_spell() -> CardDefinition {
-    CardDefinition {
-        name: CardName::TestOverlordSpell,
-        cost: Cost { mana: None, actions: 0 },
-        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/3"),
-        card_type: CardType::Spell,
-        side: Side::Overlord,
-        school: School::Time,
-        rarity: Rarity::None,
-        abilities: vec![],
-        config: CardConfig::default(),
-    }
-}
-
-fn test_champion_spell() -> CardDefinition {
-    CardDefinition {
-        name: CardName::TestChampionSpell,
-        cost: Cost { mana: None, actions: 0 },
-        image: helpers::sprite("Enixion/Fantasy Art Pack 2/Resized/2"),
-        card_type: CardType::Spell,
-        side: Side::Champion,
-        school: School::Nature,
-        rarity: Rarity::None,
-        abilities: vec![],
-        config: CardConfig::default(),
-    }
 }

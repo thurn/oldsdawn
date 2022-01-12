@@ -12,32 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card definitions for the Project card type
+//! Card definitions for the Minion card type
 
 use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
-use data::primitives::{CardType, Rarity, School, Side};
-use data::text::Keyword;
+use data::primitives::{CardType, Faction, Rarity, School, Side};
+use linkme::distributed_slice;
+use rules::helpers::*;
+use rules::{abilities, DEFINITIONS};
 
-use crate::card_text::text;
-use crate::helpers::*;
-use crate::{abilities, mutations};
+pub fn initialize() {}
 
-pub fn gold_mine() -> CardDefinition {
+#[distributed_slice(DEFINITIONS)]
+pub fn ice_dragon() -> CardDefinition {
     CardDefinition {
-        name: CardName::GoldMine,
-        cost: cost(4),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_43"),
-        card_type: CardType::Project,
+        name: CardName::IceDragon,
+        cost: cost(3),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
+        card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![
-            abilities::store_mana::<12>(),
-            at_dusk(text![Keyword::Dusk, "Gain", mana(3), "from this card"], |g, s, _| {
-                mutations::take_stored_mana(g, s.card_id(), 3);
-            }),
-        ],
-        config: CardConfig::default(),
+        abilities: vec![abilities::strike::<2>(), abilities::end_raid()],
+        config: CardConfig {
+            stats: health(5),
+            faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
     }
 }

@@ -98,6 +98,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4872d67bab6358e59559027aa3b9157c53d9358c51423c17554809a8858e0f8"
 
 [[package]]
+name = "cards"
+version = "0.0.0"
+dependencies = [
+ "data",
+ "linkme",
+ "rules",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -531,6 +540,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7fb9b38af92608140b86b693604b9ffcc5824240a484d1ecd4795bacb2fe88f3"
 
 [[package]]
+name = "linkme"
+version = "0.2.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edd4ad156b9934dc21cad96fd17278a7cb6f30a5657a9d976cd7b71d6d49c02c"
+dependencies = [
+ "linkme-impl",
+]
+
+[[package]]
+name = "linkme-impl"
+version = "0.2.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73fd9dc7072de7168cbdaba9125e8f742cd3a965aa12bde994b4611a174488d8"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "lock_api"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -880,6 +909,7 @@ dependencies = [
  "anyhow",
  "data",
  "if_chain",
+ "linkme",
  "once_cell",
  "rand",
  "tracing",
@@ -1039,6 +1069,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "bincode",
+ "cards",
  "data",
  "display",
  "insta",
@@ -1114,6 +1145,7 @@ name = "test_utils"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "cards",
  "data",
  "display",
  "maplit",
