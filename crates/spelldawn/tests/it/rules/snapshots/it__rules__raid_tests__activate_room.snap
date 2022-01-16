@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 72
+assertion_line: 86
 expression: response
 
 ---
@@ -479,17 +479,17 @@ Ok(
                                                         ),
                                                         image: Some(
                                                             SpriteAddress {
-                                                                address: "Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44",
+                                                                address: "Enixion/Fantasy Art Pack 2/Resized/3",
                                                             },
                                                         ),
                                                         title: Some(
                                                             CardTitle {
-                                                                text: "Ice Dragon",
+                                                                text: "Test Minion 5 Health",
                                                             },
                                                         ),
                                                         rules_text: Some(
                                                             RulesText {
-                                                                text: "<b>\u{f0e7}Combat:</b> <b>Strike 2:</b>\n<b>\u{f0e7}Combat:</b> End the raid.",
+                                                                text: "<b>\u{f0e7}Combat:</b> End the raid.",
                                                             },
                                                         ),
                                                         revealed_in_arena: true,
@@ -570,7 +570,7 @@ Ok(
                                                             children: [
                                                                 Node {
                                                                     id: "",
-                                                                    name: "Button Greataxe\n1\u{f06d}",
+                                                                    name: "Button Test Weapon 3 Attack 12 Boost\n1\u{f06d}",
                                                                     node_type: None,
                                                                     children: [
                                                                         Node {
@@ -581,7 +581,7 @@ Ok(
                                                                                     node_type: Some(
                                                                                         Text(
                                                                                             Text {
-                                                                                                label: "Greataxe\n1\u{f06d}",
+                                                                                                label: "Test Weapon 3 Attack 12 Boost\n1\u{f06d}",
                                                                                             },
                                                                                         ),
                                                                                     ),

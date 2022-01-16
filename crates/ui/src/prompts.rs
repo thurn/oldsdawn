@@ -156,7 +156,7 @@ fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) 
                 queries::boost_target_mana_cost(game, source_id, queries::health(game, target_id))
             {
                 ResponseButton {
-                    label: format!("{}\n{}\u{f06d}", label, cost.to_string()),
+                    label: if cost > 0 { format!("{}\n{}\u{f06d}", label, cost) } else { label },
                     two_lines: true,
                     ..ResponseButton::default()
                 }

@@ -25,7 +25,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    cards::initialize(true);
+    let found_cards = cards::initialize();
     let fmt_layer = fmt::Layer::default().pretty().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(fmt_layer).init();
 
@@ -34,7 +34,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .allow_origins(vec!["127.0.0.1"])
         .enable(SpelldawnServer::new(GameService {}));
 
-    warn!("Server listening on {}", address);
+    warn!("Discovered {} cards. Server listening on {}.", found_cards, address);
     Server::builder().accept_http1(true).add_service(service).serve(address).await?;
     Ok(())
 }

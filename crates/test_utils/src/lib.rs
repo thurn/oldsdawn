@@ -15,6 +15,8 @@
 //! Tools to facilitate testing. Should be included via wildcard import in all
 //! tests.
 
+#![allow(clippy::unwrap_in_result)]
+
 pub mod client;
 pub mod test_games;
 
@@ -51,7 +53,8 @@ pub const RAID_ID: RaidId = RaidId(1);
 /// game is advanced to the user's first turn. See [Args] for information about
 /// the default configuration options and how to modify them.
 pub fn new_game(user_side: Side, args: Args) -> TestGame {
-    cards::initialize(false);
+    let discovered = cards::initialize();
+    println!("Discovered {} cards", discovered);
     let (game_id, user_id, opponent_id) = generate_ids(args.id_basis);
     let (overlord_user, champion_user) = match user_side {
         Side::Overlord => (user_id, opponent_id),

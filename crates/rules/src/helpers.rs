@@ -31,6 +31,10 @@ pub fn mana(value: ManaValue) -> TextToken {
     TextToken::Mana(value)
 }
 
+pub fn scheme_cost() -> Cost {
+    Cost { mana: None, actions: 1 }
+}
+
 /// Provides the cost for a card
 pub fn cost(mana: ManaValue) -> Cost {
     Cost { mana: Some(mana), actions: 1 }
@@ -124,6 +128,11 @@ pub fn on_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
         ability_type: AbilityType::Standard,
         delegates: vec![Delegate::ScoreScheme(EventDelegate { requirement: this_card, mutation })],
     }
+}
+
+/// Helper to create a [CardStats] with the given base [AttackValue]
+pub fn base_attack(base_attack: AttackValue) -> CardStats {
+    CardStats { base_attack: Some(base_attack), ..CardStats::default() }
 }
 
 /// Helper to create a [CardStats] with the given base [AttackValue] and

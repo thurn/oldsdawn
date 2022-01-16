@@ -14,7 +14,7 @@
 
 //! Card definitions for the Scheme card type
 
-use data::card_definition::{CardConfig, CardDefinition, Cost, SchemePoints};
+use data::card_definition::{CardConfig, CardDefinition, SchemePoints};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
@@ -29,7 +29,7 @@ pub fn initialize() {}
 pub fn dungeon_annex() -> CardDefinition {
     CardDefinition {
         name: CardName::DungeonAnnex,
-        cost: Cost::default(),
+        cost: scheme_cost(),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
         card_type: CardType::Scheme,
         side: Side::Overlord,

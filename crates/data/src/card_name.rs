@@ -25,14 +25,25 @@ use strum_macros::Display;
 /// This enum is used to connect the state of a card to its game rules.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display, Serialize, Deserialize)]
 pub enum CardName {
-    /// Empty card, for tests
+    // Cards for use in tests
     TestChampionIdentity,
-    /// Empty card, for tests
     TestOverlordIdentity,
-    /// Empty card, for tests
     TestChampionSpell,
-    /// Empty card, for tests
     TestOverlordSpell,
+    /// Scheme requiring 3 levels to score 1 point
+    TestScheme31,
+    /// Minion with 5 health, 3 mana cost, and an "end the raid" ability.
+    TestMinion5Health,
+    /// Weapon with 2 attack and no boost.
+    TestWeapon2Attack,
+    /// Weapon with 2 attack and a '1 mana: +2 attack' boost.
+    TestWeapon2Attack12Boost,
+    /// Weapon with 3 attack and a '1 mana: +2 attack' boost.
+    TestWeapon3Attack12Boost,
+    /// Weapon with 4 attack and a '1 mana: +2 attack' boost.
+    TestWeapon4Attack12Boost,
+    /// Weapon with 5 attack and no boost
+    TestWeapon5Attack,
 
     ArcaneRecovery,
     Greataxe,

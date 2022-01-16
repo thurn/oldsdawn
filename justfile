@@ -15,11 +15,15 @@ build:
     cargo build --all-targets --all-features
 
 run:
+    # Use +nightly in order to get backtraces for anyhow errors
     RUST_BACKTRACE=1 && cargo +nightly run
 
 test:
     cargo test
 
+test-backtrace:
+    # Use +nightly in order to get backtraces for anyhow errors
+    RUST_BACKTRACE=1 && cargo +nightly test
 doc:
     cargo doc
 

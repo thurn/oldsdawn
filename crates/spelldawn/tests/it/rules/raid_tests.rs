@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use data::card_name::CardName;
 use data::primitives::Side;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
@@ -21,7 +22,13 @@ use test_utils::{test_games, *};
 
 #[test]
 fn initiate_raid() {
-    let (mut g, _) = test_games::simple_game(Side::Champion, Some(1000));
+    let (mut g, _) = test_games::simple_game(
+        Side::Champion,
+        Some(1000),
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon3Attack12Boost,
+    );
     let response = g.perform_action(
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
@@ -43,7 +50,13 @@ fn initiate_raid() {
 
 #[test]
 fn activate_room() {
-    let (mut g, ids) = test_games::simple_game(Side::Champion, Some(1002));
+    let (mut g, ids) = test_games::simple_game(
+        Side::Champion,
+        Some(1002),
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon3Attack12Boost,
+    );
     g.perform(
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
@@ -57,7 +70,8 @@ fn activate_room() {
     assert_eq!(PlayerName::User, g.user.data.priority());
     assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert!(g.user.interface.main_controls().has_text("Greataxe\n1"));
+    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
+    assert!(g.user.interface.main_controls().has_text("1\u{f06d}"));
     assert!(g.user.interface.main_controls().has_text("Continue"));
 
     assert_commands_match(
@@ -70,4 +84,83 @@ fn activate_room() {
         ],
     );
     assert_debug_snapshot!(response);
+}
+
+#[test]
+fn activate_room_weapon_2() {
+    let (mut g, _) = test_games::simple_game(
+        Side::Champion,
+        None,
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon2Attack,
+    );
+    g.perform(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    g.perform_click_on(g.opponent_id(), "Activate");
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert_eq!(g.user.interface.main_controls().has_text("Test Weapon"), false);
+    assert!(g.user.interface.main_controls().has_text("Continue"));
+}
+
+#[test]
+fn activate_room_weapon_2_12() {
+    let (mut g, _) = test_games::simple_game(
+        Side::Champion,
+        None,
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon2Attack12Boost,
+    );
+    g.perform(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    g.perform_click_on(g.opponent_id(), "Activate");
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
+    assert!(g.user.interface.main_controls().has_text("2\u{f06d}"));
+    assert!(g.user.interface.main_controls().has_text("Continue"));
+}
+
+#[test]
+fn activate_room_weapon_4_12() {
+    let (mut g, _) = test_games::simple_game(
+        Side::Champion,
+        None,
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon4Attack12Boost,
+    );
+    g.perform(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    g.perform_click_on(g.opponent_id(), "Activate");
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
+    assert!(g.user.interface.main_controls().has_text("1\u{f06d}"));
+    assert!(g.user.interface.main_controls().has_text("Continue"));
+}
+
+#[test]
+fn activate_room_weapon_5() {
+    let (mut g, _) = test_games::simple_game(
+        Side::Champion,
+        None,
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon5Attack,
+    );
+    g.perform(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    g.perform_click_on(g.opponent_id(), "Activate");
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
+    assert_eq!(g.user.interface.main_controls().has_text("\u{f06d}"), false);
+    assert!(g.user.interface.main_controls().has_text("Continue"));
 }

@@ -38,10 +38,10 @@ pub fn execute(
     old: Option<&FullSync>,
     new: &FullSync,
 ) {
-    commands.push(GameCommand {
-        command: diff_update_game_view_command(old.map(|old| &old.game), Some(&new.game))
-            .map(Command::UpdateGameView),
-    });
+    if let Some(update) = diff_update_game_view_command(old.map(|old| &old.game), Some(&new.game)) {
+        commands.push(GameCommand { command: Some(Command::UpdateGameView(update)) });
+    }
+
     commands.extend(
         // Iterate over `all_cards` again to ensure response order is deterministic
         game.all_cards().filter(|c| c.position.kind() != CardPositionKind::DeckUnknown).filter_map(

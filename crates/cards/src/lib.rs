@@ -21,11 +21,12 @@ pub mod spells;
 pub mod test_cards;
 pub mod weapons;
 
-/// Initializes cards and then prints out the number of discovered cards if
-/// `print` is true. In order for `linkme` to find the card definitions we
-/// need to call a function on each module, not completely sure if this is
-/// expected behavior or a bug.
-pub fn initialize(print: bool) {
+/// Initializes cards and returns the number of discovered cards.
+///
+/// In order for `linkme` to find the card definitions we need to call a
+/// function on each module, not completely sure if this is expected behavior or
+/// a bug.
+pub fn initialize() -> usize {
     minions::initialize();
     projects::initialize();
     schemes::initialize();
@@ -33,7 +34,5 @@ pub fn initialize(print: bool) {
     test_cards::initialize();
     weapons::initialize();
 
-    if print {
-        println!("Loaded {:?} card definitions", rules::CARDS.len());
-    }
+    rules::CARDS.len()
 }

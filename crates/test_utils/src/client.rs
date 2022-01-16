@@ -129,15 +129,13 @@ impl TestGame {
 
         let (opponent_id, local, remote) = self.get_player(player_id);
         for command in &response.command_list.commands {
-            local.handle_command(command.command.as_ref().with_context(|| "Command not received")?);
+            local.handle_command(command.command.as_ref().expect("Empty command"));
         }
 
         if let Some((channel_user_id, list)) = &response.channel_response {
             assert_eq!(*channel_user_id, opponent_id);
             for command in &list.commands {
-                remote.handle_command(
-                    command.command.as_ref().with_context(|| "Command not received")?,
-                );
+                remote.handle_command(command.command.as_ref().expect("Empty command"));
             }
         }
 
@@ -218,12 +216,17 @@ impl TestGame {
 
     /// Locate a button containing the provided `text` in the provided player's
     /// main controls and invoke its registered action.
-    #[allow(clippy::unwrap_in_result)]
     pub fn click_on(&mut self, player_id: PlayerId, text: &'static str) -> Result<GameResponse> {
         let (_, player, _) = self.get_player(player_id);
         let handlers = player.interface.main_controls().find_handlers(text);
         let action = handlers.expect("Button not found").on_click.expect("OnClick not found");
         self.perform_action(action.action.expect("Action"), player_id)
+    }
+
+    pub fn perform_click_on(&mut self, player_id: PlayerId, text: &'static str) {
+        if self.click_on(player_id, text).is_err() {
+            panic!("Error clicking on button, {text}")
+        }
     }
 
     /// Returns a triple of (opponent_id, local_client, remote_client) for the

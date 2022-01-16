@@ -34,7 +34,13 @@ pub struct SimpleIds {
 ///
 /// Returns the game along with a [SimpleIds] struct containing the IDs of the
 /// created cards
-pub fn simple_game(user_side: Side, id_basis: Option<u64>) -> (TestGame, SimpleIds) {
+pub fn simple_game(
+    user_side: Side,
+    id_basis: Option<u64>,
+    scheme: CardName,
+    minion: CardName,
+    weapon: CardName,
+) -> (TestGame, SimpleIds) {
     let mut game = new_game(
         user_side,
         Args {
@@ -47,9 +53,9 @@ pub fn simple_game(user_side: Side, id_basis: Option<u64>) -> (TestGame, SimpleI
             ..Args::default()
         },
     );
-    let (_, scheme_id) = game.play_from_hand(CardName::DungeonAnnex);
-    let (_, minion_id) = game.play_from_hand(CardName::IceDragon);
-    let (_, weapon_id) = game.play_from_hand(CardName::Greataxe);
+    let (_, scheme_id) = game.play_from_hand(scheme);
+    let (_, minion_id) = game.play_from_hand(minion);
+    let (_, weapon_id) = game.play_from_hand(weapon);
 
     (game, SimpleIds { scheme_id, minion_id, weapon_id })
 }
