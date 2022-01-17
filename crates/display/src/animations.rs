@@ -12,7 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Functions for turning [GameUpdate]s into sequences of [GameCommand]s
+//! Functions for turning [GameUpdate]s into animations via a sequence of
+//! [GameCommand]s.
+//!
+//! Animations must be non-essential to the interface state since any changes
+//! they make are transient on the client and will be lost if the client
+//! reconnects. Non-decorative changes to the client state should be handled by
+//! the [full_sync] module.
 
 use data::card_state::CardState;
 use data::game::GameState;
@@ -25,7 +31,6 @@ use protos::spelldawn::{
     GameObjectIdentifier, InitiateRaidCommand, MoveGameObjectsCommand, ObjectPosition,
     ObjectPositionDeck, ObjectPositionStaging, PlayerName, TimeValue,
 };
-use ui::prompts::{ActionPrompt, WaitingPrompt};
 
 use crate::full_sync::CardCreationStrategy;
 use crate::{adapters, full_sync};
@@ -56,8 +61,6 @@ pub fn render(
         GameUpdate::InitiateRaid(room_id) => {
             initiate_raid(commands, room_id, user_side);
         }
-        GameUpdate::UserPrompt(side) => user_prompt(commands, game, side, user_side),
-        GameUpdate::ClearPrompts => push(commands, ui::clear_main_controls()),
         _ => {}
     }
 }
@@ -144,24 +147,6 @@ fn initiate_raid(commands: &mut Vec<GameCommand>, target: RoomId, user_side: Sid
             room_id: adapters::adapt_room_id(target).into(),
         }),
     );
-}
-
-fn user_prompt(commands: &mut Vec<GameCommand>, game: &GameState, side: Side, user_side: Side) {
-    if side == user_side {
-        push(
-            commands,
-            ui::main_controls(ActionPrompt {
-                game,
-                prompt: game
-                    .player(side)
-                    .prompt
-                    .clone()
-                    .unwrap_or_else(|| panic!("Expected prompt for user {:?}", side)),
-            }),
-        )
-    } else {
-        push(commands, ui::main_controls(WaitingPrompt {}));
-    }
 }
 
 /// Converts a [CardId] into a client [GameObjectIdentifier]

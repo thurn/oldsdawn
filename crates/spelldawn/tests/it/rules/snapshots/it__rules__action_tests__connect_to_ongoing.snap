@@ -369,6 +369,17 @@ Ok(
                     ),
                 ),
             },
+            GameCommand {
+                command: Some(
+                    RenderInterface(
+                        RenderInterfaceCommand {
+                            full_screen: None,
+                            main_controls: None,
+                            card_anchors: None,
+                        },
+                    ),
+                ),
+            },
         ],
     },
 )

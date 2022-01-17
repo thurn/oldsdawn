@@ -79,7 +79,6 @@ fn activate_room() {
         vec![
             "UpdateGameView",
             "CreateOrUpdateCard", // Reveal Card
-            "RenderInterface",    // Clear Prompts
             "RenderInterface",    // Render Prompts
         ],
     );

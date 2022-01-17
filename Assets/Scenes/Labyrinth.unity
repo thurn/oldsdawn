@@ -43925,7 +43925,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _userId: 1
-  _currentGameId: 
+  _currentGameId: 0
 --- !u!1 &1451530778
 GameObject:
   m_ObjectHideFlags: 0

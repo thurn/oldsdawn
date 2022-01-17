@@ -858,24 +858,16 @@ pub struct InterfacePositionCardAnchors {
     pub anchor_nodes: ::prost::alloc::vec::Vec<CardAnchorNode>,
 }
 ///
-/// Updates the content of the user interface to display the provided node,
+/// Updates the content of the user interface to display the provided nodes,
 /// replacing all existing UI elements.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RenderInterfaceCommand {
-    #[prost(oneof = "render_interface_command::Position", tags = "1, 2, 3")]
-    pub position: ::core::option::Option<render_interface_command::Position>,
-}
-/// Nested message and enum types in `RenderInterfaceCommand`.
-pub mod render_interface_command {
-    #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Position {
-        #[prost(message, tag = "1")]
-        FullScreen(super::InterfacePositionFullScreen),
-        #[prost(message, tag = "2")]
-        MainControls(super::InterfacePositionMainControls),
-        #[prost(message, tag = "3")]
-        CardAnchors(super::InterfacePositionCardAnchors),
-    }
+    #[prost(message, optional, tag = "1")]
+    pub full_screen: ::core::option::Option<InterfacePositionFullScreen>,
+    #[prost(message, optional, tag = "2")]
+    pub main_controls: ::core::option::Option<InterfacePositionMainControls>,
+    #[prost(message, optional, tag = "3")]
+    pub card_anchors: ::core::option::Option<InterfacePositionCardAnchors>,
 }
 /// Updates the current GameView state.
 #[derive(Clone, PartialEq, ::prost::Message)]

@@ -31,6 +31,7 @@ pub mod animations;
 pub mod assets;
 pub mod diff;
 pub mod full_sync;
+pub mod interface;
 pub mod rules_text;
 
 /// Map from user IDs to the most recent game response we sent to that user.

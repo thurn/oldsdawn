@@ -137,19 +137,16 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
 }
 
 /// Sets the current prompt for the `side` player to the provided
-/// [PromptResponse]. Appends [GameUpdate::UserPrompt]. Panics if a prompt is
-/// already set for this player.
+/// [PromptResponse]. Panics if a prompt is already set for this player.
 pub fn set_prompt(game: &mut GameState, side: Side, prompt: Prompt) {
     assert!(game.player(side).prompt.is_none(), "Player {:?} already has an active prompt", side);
     game.player_mut(side).prompt = Some(prompt);
-    game.updates.push(GameUpdate::UserPrompt(side))
 }
 
-/// Clears shown prompts for both players. Appends [GameUpdate::ClearPrompts].
+/// Clears shown prompts for both players.
 pub fn clear_prompts(game: &mut GameState) {
     game.overlord.prompt = None;
     game.champion.prompt = None;
-    game.updates.push(GameUpdate::ClearPrompts);
 }
 
 /// Initiates a new raid on the given `room_id`. Panics if a raid is already

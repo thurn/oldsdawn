@@ -31,22 +31,28 @@ namespace Spelldawn.Services
       set => _userId = value;
     }
 
-    public GameIdentifier? CurrentGameId { get; set; }
+    public GameIdentifier? CurrentGameId
+    {
+      get
+      {
+        if (ulong.TryParse(_currentGameId, out var result))
+        {
+          return new GameIdentifier
+          {
+            Value = result
+          };
+        }
+        else
+        {
+          return null;
+        }
+      }
+      set => _currentGameId = value?.Value.ToString();
+    }
 
     void Start()
     {
       _registry.ActionService.Connect();
-    }
-
-    void OnValidate()
-    {
-      if (ulong.TryParse(_currentGameId, out var result))
-      {
-        CurrentGameId = new GameIdentifier
-        {
-          Value = result
-        };
-      }
     }
   }
 }

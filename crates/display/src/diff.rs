@@ -54,6 +54,11 @@ pub fn execute(
             },
         ),
     );
+
+    if old.map(|old| &old.interface) != Some(&new.interface) {
+        commands
+            .push(GameCommand { command: Some(Command::RenderInterface(new.interface.clone())) })
+    }
 }
 
 fn diff_update_game_view_command(

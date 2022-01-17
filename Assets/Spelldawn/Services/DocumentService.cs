@@ -62,24 +62,24 @@ namespace Spelldawn.Services
 
     public void HandleRenderInterface(RenderInterfaceCommand command)
     {
-      switch (command.PositionCase)
+      _fullScreen.Clear();
+      _raidControls.Clear();
+      _cardControls.Clear();
+
+      if (command.FullScreen != null)
       {
-        case RenderInterfaceCommand.PositionOneofCase.FullScreen:
-          _fullScreen.Clear();
-          _fullScreen.Add(Mason.Render(_registry, FullScreen(command.FullScreen.Node)));
-          break;
-        case RenderInterfaceCommand.PositionOneofCase.MainControls:
-          _raidControls.Clear();
-          _raidControls.Add(Mason.Render(_registry, MainControls(command.MainControls.Node)));
-          break;
-        case RenderInterfaceCommand.PositionOneofCase.CardAnchors:
-          _cardControls.Clear();
-          _cardControls.Add(Mason.Render(_registry,
-            Row("CardAnchors", new FlexStyle(), command.CardAnchors.AnchorNodes.Select(RenderCardAnchorNode))));
-          break;
-        default:
-          Debug.LogError($"Unknown interface position: {command.PositionCase}");
-          goto case RenderInterfaceCommand.PositionOneofCase.FullScreen;
+        _fullScreen.Add(Mason.Render(_registry, FullScreen(command.FullScreen.Node)));
+      }
+
+      if (command.MainControls != null)
+      {
+        _raidControls.Add(Mason.Render(_registry, MainControls(command.MainControls.Node)));
+      }
+
+      if (command.CardAnchors != null)
+      {
+        _cardControls.Add(Mason.Render(_registry,
+          Row("CardAnchors", new FlexStyle(), command.CardAnchors.AnchorNodes.Select(RenderCardAnchorNode))));
       }
     }
 

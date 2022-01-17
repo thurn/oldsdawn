@@ -28,19 +28,20 @@ use protos::spelldawn::{
     CreateOrUpdateCardCommand, GameIdentifier, GameView, IdentityAction, ManaView, ObjectPosition,
     ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
     ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
-    PlayerName, PlayerView, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress,
-    UpdateGameViewCommand,
+    PlayerName, PlayerView, RenderInterfaceCommand, RevealedCardView, RoomIdentifier, ScoreView,
+    SpriteAddress, UpdateGameViewCommand,
 };
 use rules::{flags, queries};
 
 use crate::assets::CardIconType;
-use crate::{adapters, assets, rules_text};
+use crate::{adapters, assets, interface, rules_text};
 
 /// State synchronization response, containing commands for the updated state of
 /// each game object in an ongoing game.
 pub struct FullSync {
     pub game: UpdateGameViewCommand,
     pub cards: HashMap<CardId, CreateOrUpdateCardCommand>,
+    pub interface: RenderInterfaceCommand,
 }
 
 /// Builds a complete representation of the provided game as viewed by the
@@ -62,6 +63,7 @@ pub fn run(
             .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
             .map(|c| (c.id, create_or_update_card(game, c, user_side, &card_creation)))
             .collect(),
+        interface: interface::render(game, user_side),
     }
 }
 

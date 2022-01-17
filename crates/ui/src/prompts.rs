@@ -25,7 +25,7 @@ use crate::macros::children;
 #[derive(Debug, Clone)]
 pub struct ActionPrompt<'a> {
     pub game: &'a GameState,
-    pub prompt: Prompt,
+    pub prompt: &'a Prompt,
 }
 
 impl<'a> Component for ActionPrompt<'a> {

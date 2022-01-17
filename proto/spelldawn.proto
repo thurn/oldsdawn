@@ -876,15 +876,13 @@ message InterfacePositionCardAnchors {
 }
 
 /*
-* Updates the content of the user interface to display the provided node,
+* Updates the content of the user interface to display the provided nodes,
 * replacing all existing UI elements.
 */
 message RenderInterfaceCommand {
-    oneof position {
-        InterfacePositionFullScreen full_screen = 1;
-        InterfacePositionMainControls main_controls = 2;
-        InterfacePositionCardAnchors card_anchors = 3;
-    }
+    InterfacePositionFullScreen full_screen = 1;
+    InterfacePositionMainControls main_controls = 2;
+    InterfacePositionCardAnchors card_anchors = 3;
 }
 
 /* Updates the current GameView state. */

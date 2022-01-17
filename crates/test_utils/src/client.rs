@@ -30,11 +30,11 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    card_target, game_object_identifier, node_type, render_interface_command, CardAnchorNode,
-    CardIdentifier, CardTarget, CardView, ClientRoomLocation, CommandList,
-    CreateOrUpdateCardCommand, EventHandlers, GameAction, GameIdentifier, GameRequest, Node,
-    NodeType, ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom,
-    PlayCardAction, PlayerName, PlayerView, RevealedCardView, RoomIdentifier,
+    card_target, game_object_identifier, node_type, CardAnchorNode, CardIdentifier, CardTarget,
+    CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
+    GameAction, GameIdentifier, GameRequest, Node, NodeType, ObjectPosition,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
+    PlayerView, RevealedCardView, RoomIdentifier,
 };
 use server::database::Database;
 use server::GameResponse;
@@ -414,16 +414,20 @@ impl ClientInterface {
 
     fn update(&mut self, command: Command) {
         if let Command::RenderInterface(render) = command {
-            match render.position.expect("RenderInterfacePosition") {
-                render_interface_command::Position::FullScreen(full_screen) => {
-                    self.full_screen = full_screen.node
-                }
-                render_interface_command::Position::MainControls(main_controls) => {
-                    self.main_controls = main_controls.node
-                }
-                render_interface_command::Position::CardAnchors(card_anchors) => {
-                    self.card_anchors = Some(card_anchors.anchor_nodes)
-                }
+            self.full_screen = None;
+            self.main_controls = None;
+            self.card_anchors = None;
+
+            if let Some(full_screen) = render.full_screen {
+                self.full_screen = full_screen.node
+            }
+
+            if let Some(main_controls) = render.main_controls {
+                self.main_controls = main_controls.node
+            }
+
+            if let Some(card_anchors) = render.card_anchors {
+                self.card_anchors = Some(card_anchors.anchor_nodes)
             }
         }
     }

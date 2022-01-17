@@ -134,165 +134,160 @@ namespace Spelldawn.Services
 
     void LoadRenderInterfaceAssets(IDictionary<string, ResourceRequest> requests, RenderInterfaceCommand command)
     {
-      switch (command.PositionCase)
+      LoadNodeAssets(requests, command.FullScreen?.Node);
+      LoadNodeAssets(requests, command.MainControls?.Node);
+
+      if (command.CardAnchors?.AnchorNodes != null)
       {
-        case RenderInterfaceCommand.PositionOneofCase.FullScreen:
-          LoadNodeAssets(requests, command.FullScreen.Node);
-          break;
-        case RenderInterfaceCommand.PositionOneofCase.MainControls:
-          LoadNodeAssets(requests, command.MainControls.Node);
-          break;
-        case RenderInterfaceCommand.PositionOneofCase.CardAnchors:
-          foreach (var controlNode in command.CardAnchors.AnchorNodes)
-          {
-            LoadNodeAssets(requests, controlNode.Node);
-          }
-
-          break;
-      }
-    }
-
-    void LoadNodeAssets(IDictionary<string, ResourceRequest> requests, Node? node)
-    {
-      if (node != null)
-      {
-        LoadStyleAssets(requests, node.Style);
-        LoadStyleAssets(requests, node.HoverStyle);
-        LoadStyleAssets(requests, node.PressedStyle);
-
-        foreach (var child in node.Children)
+        foreach (var controlNode in command.CardAnchors.AnchorNodes)
         {
-          LoadNodeAssets(requests, child);
+          LoadNodeAssets(requests, controlNode.Node);
         }
       }
     }
 
-    void LoadStyleAssets(IDictionary<string, ResourceRequest> requests, FlexStyle? style)
+  void LoadNodeAssets(IDictionary<string, ResourceRequest> requests, Node? node)
+  {
+    if (node != null)
     {
-      if (style != null)
-      {
-        LoadSprite(requests, style.BackgroundImage);
-        LoadFont(requests, style.Font);
-      }
-    }
+      LoadStyleAssets(requests, node.Style);
+      LoadStyleAssets(requests, node.HoverStyle);
+      LoadStyleAssets(requests, node.PressedStyle);
 
-    void LoadGameAssets(IDictionary<string, ResourceRequest> requests, GameView? game)
-    {
-      if (game != null)
+      foreach (var child in node.Children)
       {
-        LoadPlayerAssets(requests, game.User);
-        LoadPlayerAssets(requests, game.Opponent);
-      }
-    }
-
-    void LoadPlayerAssets(IDictionary<string, ResourceRequest> requests, PlayerView? playerView)
-    {
-      if (playerView != null)
-      {
-        LoadPlayerInfoAssets(requests, playerView.PlayerInfo);
-      }
-    }
-
-    void LoadCardListAssets(IDictionary<string, ResourceRequest> requests, IEnumerable<CardView>? cards)
-    {
-      if (cards != null)
-      {
-        foreach (var card in cards)
-        {
-          LoadCardAssets(requests, card);
-        }
-      }
-    }
-
-    void LoadCardAssets(IDictionary<string, ResourceRequest> requests, CardView? card)
-    {
-      if (card != null)
-      {
-        LoadCardIconsAssets(requests, card.CardIcons);
-        LoadSprite(requests, card.ArenaFrame);
-        LoadRevealedCardAssets(requests, card.RevealedCard);
-      }
-    }
-
-    void LoadRevealedCardAssets(IDictionary<string, ResourceRequest> requests, RevealedCardView? card)
-    {
-      if (card != null)
-      {
-        LoadSprite(requests, card.CardFrame);
-        LoadSprite(requests, card.TitleBackground);
-        LoadSprite(requests, card.Jewel);
-        LoadSprite(requests, card.Image);
-        LoadNodeAssets(requests, card.SupplementalInfo);
-      }
-    }
-
-    void LoadCardIconsAssets(IDictionary<string, ResourceRequest> requests, CardIcons? cardIcons)
-    {
-      if (cardIcons != null)
-      {
-        LoadCardIconAssets(requests, cardIcons.TopLeftIcon);
-        LoadCardIconAssets(requests, cardIcons.TopRightIcon);
-        LoadCardIconAssets(requests, cardIcons.BottomRightIcon);
-        LoadCardIconAssets(requests, cardIcons.BottomLeftIcon);
-        LoadCardIconAssets(requests, cardIcons.ArenaIcon);
-      }
-    }
-
-    void LoadCardIconAssets(IDictionary<string, ResourceRequest> requests, CardIcon? cardIcon)
-    {
-      if (cardIcon != null)
-      {
-        LoadSprite(requests, cardIcon.Background);
-      }
-    }
-
-    void LoadPlayerInfoAssets(IDictionary<string, ResourceRequest> requests, PlayerInfo? playerInfo)
-    {
-      if (playerInfo != null)
-      {
-        LoadSprite(requests, playerInfo.CardBack);
-        LoadSprite(requests, playerInfo.Portrait);
-      }
-    }
-
-    void LoadSprite(IDictionary<string, ResourceRequest> requests, SpriteAddress? address)
-    {
-      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
-      {
-        requests[address.Address] = Resources.LoadAsync<Sprite>(address.Address);
-      }
-    }
-
-    void LoadFont(IDictionary<string, ResourceRequest> requests, FontAddress? address)
-    {
-      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
-      {
-        requests[address.Address] = Resources.LoadAsync<Font>(address.Address);
-      }
-    }
-
-    void LoadProjectile(IDictionary<string, ResourceRequest> requests, ProjectileAddress? address)
-    {
-      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
-      {
-        requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
-      }
-    }
-
-    void LoadEffect(IDictionary<string, ResourceRequest> requests, EffectAddress? address)
-    {
-      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
-      {
-        requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
-      }
-    }
-
-    void LoadAudioClip(IDictionary<string, ResourceRequest> requests, AudioClipAddress? address)
-    {
-      if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
-      {
-        requests[address.Address] = Resources.LoadAsync<AudioClip>(address.Address);
+        LoadNodeAssets(requests, child);
       }
     }
   }
+
+  void LoadStyleAssets(IDictionary<string, ResourceRequest> requests, FlexStyle? style)
+  {
+    if (style != null)
+    {
+      LoadSprite(requests, style.BackgroundImage);
+      LoadFont(requests, style.Font);
+    }
+  }
+
+  void LoadGameAssets(IDictionary<string, ResourceRequest> requests, GameView? game)
+  {
+    if (game != null)
+    {
+      LoadPlayerAssets(requests, game.User);
+      LoadPlayerAssets(requests, game.Opponent);
+    }
+  }
+
+  void LoadPlayerAssets(IDictionary<string, ResourceRequest> requests, PlayerView? playerView)
+  {
+    if (playerView != null)
+    {
+      LoadPlayerInfoAssets(requests, playerView.PlayerInfo);
+    }
+  }
+
+  void LoadCardListAssets(IDictionary<string, ResourceRequest> requests, IEnumerable<CardView>? cards)
+  {
+    if (cards != null)
+    {
+      foreach (var card in cards)
+      {
+        LoadCardAssets(requests, card);
+      }
+    }
+  }
+
+  void LoadCardAssets(IDictionary<string, ResourceRequest> requests, CardView? card)
+  {
+    if (card != null)
+    {
+      LoadCardIconsAssets(requests, card.CardIcons);
+      LoadSprite(requests, card.ArenaFrame);
+      LoadRevealedCardAssets(requests, card.RevealedCard);
+    }
+  }
+
+  void LoadRevealedCardAssets(IDictionary<string, ResourceRequest> requests, RevealedCardView? card)
+  {
+    if (card != null)
+    {
+      LoadSprite(requests, card.CardFrame);
+      LoadSprite(requests, card.TitleBackground);
+      LoadSprite(requests, card.Jewel);
+      LoadSprite(requests, card.Image);
+      LoadNodeAssets(requests, card.SupplementalInfo);
+    }
+  }
+
+  void LoadCardIconsAssets(IDictionary<string, ResourceRequest> requests, CardIcons? cardIcons)
+  {
+    if (cardIcons != null)
+    {
+      LoadCardIconAssets(requests, cardIcons.TopLeftIcon);
+      LoadCardIconAssets(requests, cardIcons.TopRightIcon);
+      LoadCardIconAssets(requests, cardIcons.BottomRightIcon);
+      LoadCardIconAssets(requests, cardIcons.BottomLeftIcon);
+      LoadCardIconAssets(requests, cardIcons.ArenaIcon);
+    }
+  }
+
+  void LoadCardIconAssets(IDictionary<string, ResourceRequest> requests, CardIcon? cardIcon)
+  {
+    if (cardIcon != null)
+    {
+      LoadSprite(requests, cardIcon.Background);
+    }
+  }
+
+  void LoadPlayerInfoAssets(IDictionary<string, ResourceRequest> requests, PlayerInfo? playerInfo)
+  {
+    if (playerInfo != null)
+    {
+      LoadSprite(requests, playerInfo.CardBack);
+      LoadSprite(requests, playerInfo.Portrait);
+    }
+  }
+
+  void LoadSprite(IDictionary<string, ResourceRequest> requests, SpriteAddress? address)
+  {
+    if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+    {
+      requests[address.Address] = Resources.LoadAsync<Sprite>(address.Address);
+    }
+  }
+
+  void LoadFont(IDictionary<string, ResourceRequest> requests, FontAddress? address)
+  {
+    if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+    {
+      requests[address.Address] = Resources.LoadAsync<Font>(address.Address);
+    }
+  }
+
+  void LoadProjectile(IDictionary<string, ResourceRequest> requests, ProjectileAddress? address)
+  {
+    if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+    {
+      requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
+    }
+  }
+
+  void LoadEffect(IDictionary<string, ResourceRequest> requests, EffectAddress? address)
+  {
+    if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+    {
+      requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
+    }
+  }
+
+  void LoadAudioClip(IDictionary<string, ResourceRequest> requests, AudioClipAddress? address)
+  {
+    if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
+    {
+      requests[address.Address] = Resources.LoadAsync<AudioClip>(address.Address);
+    }
+  }
+}
+
 }
