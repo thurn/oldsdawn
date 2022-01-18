@@ -25,6 +25,7 @@ use once_cell::sync::Lazy;
 use protos::spelldawn::CommandList;
 
 use crate::full_sync::FullSync;
+use crate::response_builder::ResponseBuilder;
 
 pub mod adapters;
 pub mod animations;
@@ -32,6 +33,7 @@ pub mod assets;
 pub mod diff;
 pub mod full_sync;
 pub mod interface;
+pub mod response_builder;
 pub mod rules_text;
 
 /// Map from user IDs to the most recent game response we sent to that user.
@@ -44,10 +46,10 @@ static RESPONSES: Lazy<DashMap<PlayerId, FullSync>> = Lazy::new(DashMap::new);
 pub fn connect(game: &GameState, user_side: Side) -> CommandList {
     let user_id = game.player(user_side).id;
     let sync = full_sync::run(game, user_side, HashMap::new());
-    let mut commands = vec![];
-    diff::execute(&mut commands, game, None, &sync);
+    let mut builder = ResponseBuilder::new(user_side, false /* animate */);
+    diff::execute(&mut builder, game, None, &sync);
     RESPONSES.insert(user_id, sync);
-    CommandList { commands }
+    builder.build()
 }
 
 /// The central interface-rendering function. Builds a command list for
@@ -68,7 +70,7 @@ pub fn connect(game: &GameState, user_side: Side) -> CommandList {
 pub fn render_updates(game: &GameState, user_side: Side) -> CommandList {
     let updates = game.updates.list().expect("Update tracking is not enabled");
     let user_id = game.player(user_side).id;
-    let mut commands = vec![];
+    let mut builder = ResponseBuilder::new(user_side, true /* animate */);
 
     // Some animations need to modify the game sync behavior -- for example, for
     // the 'draw card' animation, we cause the card to initially appear on top
@@ -87,15 +89,13 @@ pub fn render_updates(game: &GameState, user_side: Side) -> CommandList {
         .get(&user_id)
         .unwrap_or_else(|| panic!("Previous response not found for {:?}", user_id))
         .value();
-    diff::execute(&mut commands, game, Some(previous_response), &sync);
-    // diff::execute(&mut commands, RESPONSES.get(&user_id).map(|r| r.value()),
-    // &sync);
+    diff::execute(&mut builder, game, Some(previous_response), &sync);
 
     RESPONSES.insert(user_id, sync);
 
     for update in updates {
-        animations::render(&mut commands, *update, game, user_side);
+        animations::render(&mut builder, *update, game);
     }
 
-    CommandList { commands }
+    builder.build()
 }

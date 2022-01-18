@@ -46,7 +46,7 @@ impl PlayerState {
     }
 }
 
-/// Identifies steps within a raid
+/// Identifies steps within a raid.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum RaidPhase {
     /// The raid has started and the Overlord is deciding whether to activate
@@ -54,10 +54,14 @@ pub enum RaidPhase {
     Activation,
     /// The defender with the provided ordinal position is currently being
     /// encountered. The Champion is deciding which weapons, if any, to employ.
+    ///
+    /// Note that defenders are encountered in decreasing position order.
     Encounter(usize),
-    /// The Champion has defeated the defender with the provided ordinal
-    /// position and is deciding whether to continue to the next defender or
-    /// retreat.
+    /// The Champion has defeated the previous defender and is deciding whether
+    /// to continue to encounter the next defender, which has the provided
+    /// ordinal position, or retreat.
+    ///
+    /// Note that defenders are encountered in decreasing position order.
     Continue(usize),
     /// The Champion has bypassed all of the defenders for this room and is now
     /// accessing its contents
@@ -275,11 +279,15 @@ impl GameState {
         })
     }
 
-    /// Overlord cards defending a given room, in sorting-key order
+    /// Returns Overlord card defending a given room in alphabetical order
+    pub fn defenders_alphabetical(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
+        self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Defender))
+    }
+
+    /// Overlord cards defending a given room, in sorting-key order (higher
+    /// array indices are closer to the front of the room).
     pub fn defender_list(&self, room_id: RoomId) -> Vec<&CardState> {
-        let mut result = self
-            .cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Defender))
-            .collect::<Vec<_>>();
+        let mut result = self.defenders_alphabetical(room_id).collect::<Vec<_>>();
         result.sort();
         result
     }
@@ -300,7 +308,10 @@ impl GameState {
         self.cards_in_position(Side::Champion, CardPosition::ArenaItem(ItemLocation::Artifacts))
     }
 
-    /// All Card IDs present in this game
+    /// All Card IDs present in this game.
+    ///
+    /// Overlord cards in alphabetical order followed by Champion cards in
+    /// alphabetical order.
     pub fn all_card_ids(&self) -> impl Iterator<Item = CardId> {
         (0..self.overlord_cards.len())
             .map(|index| CardId::new(Side::Overlord, index))

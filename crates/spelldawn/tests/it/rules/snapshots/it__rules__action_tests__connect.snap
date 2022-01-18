@@ -20,6 +20,7 @@ Ok(
                                     ),
                                     user: Some(
                                         PlayerView {
+                                            side: Overlord,
                                             player_info: Some(
                                                 PlayerInfo {
                                                     name: Some(
@@ -61,6 +62,7 @@ Ok(
                                     ),
                                     opponent: Some(
                                         PlayerView {
+                                            side: Champion,
                                             player_info: Some(
                                                 PlayerInfo {
                                                     name: Some(
@@ -100,23 +102,8 @@ Ok(
                                             ),
                                         },
                                     ),
-                                    arena: Some(
-                                        ArenaView {
-                                            rooms_at_bottom: Some(
-                                                true,
-                                            ),
-                                            identity_action: Some(
-                                                IdentityAction {
-                                                    identity_action: Some(
-                                                        LevelUpRoom(
-                                                            (),
-                                                        ),
-                                                    ),
-                                                },
-                                            ),
-                                        },
-                                    ),
                                     current_priority: User,
+                                    raid_active: false,
                                 },
                             ),
                         },

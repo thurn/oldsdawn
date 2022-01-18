@@ -21,6 +21,7 @@ Ok(
                                         ),
                                         user: Some(
                                             PlayerView {
+                                                side: Champion,
                                                 player_info: None,
                                                 score: None,
                                                 mana: Some(
@@ -36,8 +37,8 @@ Ok(
                                             },
                                         ),
                                         opponent: None,
-                                        arena: None,
                                         current_priority: User,
+                                        raid_active: false,
                                     },
                                 ),
                             },
@@ -148,6 +149,7 @@ Ok(
                                                 user: None,
                                                 opponent: Some(
                                                     PlayerView {
+                                                        side: Champion,
                                                         player_info: None,
                                                         score: None,
                                                         mana: Some(
@@ -162,8 +164,8 @@ Ok(
                                                         ),
                                                     },
                                                 ),
-                                                arena: None,
                                                 current_priority: Opponent,
+                                                raid_active: false,
                                             },
                                         ),
                                     },

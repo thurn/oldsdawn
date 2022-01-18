@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections;
 using Spelldawn.Game;
 using Spelldawn.Protos;
-using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -26,99 +24,34 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] ObjectDisplay _participants = null!;
+    [SerializeField] bool _raidActive;
     RoomIdentifier? _currentRoom;
 
     public ObjectDisplay RaidParticipants => _participants;
 
-    public bool RaidActive => _currentRoom != null;
-
-    public IEnumerator HandleInitiateRaid(InitiateRaidCommand command)
+    public bool RaidActive
     {
-      if (_currentRoom != command.RoomId)
+      get => _raidActive;
+      set
       {
-        _registry.StaticAssets.PlayWhooshSound();
-        _registry.MusicService.SetMusicState(MusicState.Raid);
-        _currentRoom = command.RoomId;
-        _registry.BackgroundOverlay.Enable(GameContext.ArenaRaidParticipant, translucent: true);
-        _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
-
-        var room = _registry.ArenaService.FindRoom(command.RoomId);
-
-        var raidPosition = new ObjectPosition
+        switch (value)
         {
-          SortingKey = 0,
-          Raid = new ObjectPositionRaid()
-        };
-
-        switch (command.RoomId)
-        {
-          case RoomIdentifier.Sanctum:
-            yield return _registry.ObjectPositionService.MoveGameObject(
-              _registry.IdentityCardForPlayer(DataUtils.OpposingPlayer(command.Initiator)),
-              raidPosition);
+          case true when !_raidActive:
+            _registry.MusicService.SetMusicState(MusicState.Raid);
+            _registry.BackgroundOverlay.Enable(GameContext.ArenaRaidParticipant, translucent: true);
+            _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
             break;
-          case RoomIdentifier.Vault:
-            yield return _registry.ObjectPositionService.MoveGameObject(
-              _registry.DeckForPlayer(DataUtils.OpposingPlayer(command.Initiator)),
-              raidPosition);
-            break;
-          case RoomIdentifier.Crypts:
-            yield return _registry.ObjectPositionService.MoveGameObject(
-              _registry.DiscardPileForPlayer(DataUtils.OpposingPlayer(command.Initiator)),
-              raidPosition);
+          case false when _raidActive:
+            _registry.MusicService.SetMusicState(MusicState.Gameplay);
+            _registry.BackgroundOverlay.Disable();
+            _registry.ArenaService.LeftItems.SetGameContext(GameContext.Arena);
             break;
         }
 
-
-        yield return _registry.ObjectPositionService.MoveGameObjects(room.BackCards.AllObjects, new ObjectPosition
-        {
-          SortingKey = 1000,
-          Raid = new ObjectPositionRaid()
-        });
-
-        _registry.StaticAssets.PlayWhooshSound();
-        yield return _registry.ObjectPositionService.MoveGameObjects(room.FrontCards.AllObjects, new ObjectPosition
-        {
-          SortingKey = 2000,
-          Raid = new ObjectPositionRaid()
-        });
-
-        var identity = _registry.IdentityCardForPlayer(command.Initiator);
-        identity.RaidSymbolShown = true;
-
-        _registry.StaticAssets.PlayWhooshSound();
-        yield return _registry.ObjectPositionService.MoveGameObject(identity, new ObjectPosition
-        {
-          SortingKey = 3000,
-          Raid = new ObjectPositionRaid()
-        });
+        _registry.IdentityCardForPlayer(PlayerName.User).OnRaidStateChanged(value);
+        _registry.IdentityCardForPlayer(PlayerName.Opponent).OnRaidStateChanged(value);
+        _raidActive = value;
       }
-    }
-
-    // IEnumerator MoveToRaid(IEnumerable<Displayable> cards)
-    // {
-    //   var coroutines = new List<Coroutine>();
-    //   foreach (var card in cards)
-    //   {
-    //     coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveGameObject(card, new ObjectPosition
-    //     {
-    //       Raid = new ObjectPositionRaid()
-    //     })));
-    //   }
-    //
-    //   foreach (var coroutine in coroutines)
-    //   {
-    //     yield return coroutine;
-    //   }
-    // }
-
-    public IEnumerator HandleEndRaid(EndRaidCommand endRaidCommand)
-    {
-      _registry.MusicService.SetMusicState(MusicState.Gameplay);
-      _registry.IdentityCardForPlayer(endRaidCommand.Initiator).RaidSymbolShown = false;
-      _registry.BackgroundOverlay.Disable();
-      _currentRoom = null;
-      yield break;
     }
   }
 }

@@ -97,7 +97,11 @@ namespace Spelldawn.Services
 
     public IEnumerator HandleMoveGameObjectsCommand(MoveGameObjectsCommand command)
     {
-      _registry.StaticAssets.PlayCardSound();
+      if (!command.DisableAnimation)
+      {
+        _registry.StaticAssets.PlayCardSound();
+      }
+
       return MoveGameObjects(command.Ids.Select(Find).ToList(),
         command.Position,
         !command.DisableAnimation);
@@ -105,7 +109,11 @@ namespace Spelldawn.Services
 
     public IEnumerator HandleMoveGameObjectsAtPosition(MoveGameObjectsAtPositionCommand command)
     {
-      _registry.StaticAssets.PlayCardSound();
+      if (!command.DisableAnimation)
+      {
+        _registry.StaticAssets.PlayCardSound();
+      }
+
       return MoveGameObjects(
         ObjectDisplayForPosition(command.SourcePosition).AllObjects,
         command.TargetPosition,
@@ -148,8 +156,6 @@ namespace Spelldawn.Services
           return _registry.IdentityCardForPlayer(gameObjectId.Identity);
         case GameObjectIdentifier.IdOneofCase.Deck:
           return _registry.DeckForPlayer(gameObjectId.Deck);
-        case GameObjectIdentifier.IdOneofCase.Hand:
-          return _registry.HandForPlayer(gameObjectId.Hand);
         case GameObjectIdentifier.IdOneofCase.DiscardPile:
           return _registry.DiscardPileForPlayer(gameObjectId.DiscardPile);
         default:

@@ -262,10 +262,11 @@ namespace Spelldawn.Services
           _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(1);
           yield return _registry.CommandService.HandleCommands(new GameCommand
           {
-            InitiateRaid = new InitiateRaidCommand
+            VisitRoom = new VisitRoomCommand
             {
               RoomId = action.InitiateRaid.RoomId,
-              Initiator = PlayerName.User
+              Initiator = PlayerName.User,
+              VisitType = RoomVisitType.InitiateRaid
             }
           });
           break;
@@ -273,10 +274,11 @@ namespace Spelldawn.Services
           _registry.ActionDisplayForPlayer(PlayerName.User).SpendActions(1);
           yield return _registry.CommandService.HandleCommands(new GameCommand
           {
-            LevelUpRoom = new LevelUpRoomCommand
+            VisitRoom = new VisitRoomCommand
             {
               RoomId = action.LevelUpRoom.RoomId,
-              Initiator = PlayerName.User
+              Initiator = PlayerName.User,
+              VisitType = RoomVisitType.LevelUpRoom
             }
           });
           break;

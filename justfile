@@ -75,6 +75,40 @@ fix-lints:
 fix-clippy:
     cargo clippy --fix
 
+clippy-fix:
+    cargo clippy --fix --workspace --exclude "protos" -- \
+        -D warnings \
+        -D clippy::all \
+        -A clippy::needless-update \
+        -D clippy::cast_lossless \
+        -D clippy::cloned_instead_of_copied \
+        -D clippy::copy_iterator \
+        -D clippy::default_trait_access \
+        -D clippy::if_then_some_else_none \
+        -D clippy::inconsistent_struct_constructor \
+        -D clippy::inefficient_to_string \
+        -D clippy::integer_division \
+        -D clippy::let_underscore_drop \
+        -D clippy::let_underscore_must_use \
+        -D clippy::manual_ok_or \
+        -D clippy::map_flatten \
+        -D clippy::map_unwrap_or \
+        -D clippy::multiple_inherent_impl \
+        -D clippy::needless_continue \
+        -D clippy::needless_for_each \
+        -D clippy::option_if_let_else \
+        -D clippy::redundant_closure_for_method_calls \
+        -D clippy::ref_option_ref \
+        -D clippy::string_to_string \
+        -D clippy::trait_duplication_in_bounds \
+        -D clippy::unnecessary_self_imports \
+        -D clippy::unnested_or_patterns \
+        -D clippy::unused_self \
+        -D clippy::unwrap_in_result \
+        -D clippy::used_underscore_binding \
+        -D clippy::useless_let_if_seq \
+        -D clippy::use_self
+
 snapshots:
     cargo insta review
 

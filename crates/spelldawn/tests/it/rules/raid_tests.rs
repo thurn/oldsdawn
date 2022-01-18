@@ -36,12 +36,28 @@ fn initiate_raid() {
     assert_eq!(1, g.player().actions());
     assert_eq!(PlayerName::Opponent, g.user.data.priority());
     assert_eq!(PlayerName::User, g.opponent.data.priority());
-    assert_eq!(PlayerName::User, g.user.data.raid_initiator());
-    assert_eq!(PlayerName::Opponent, g.opponent.data.raid_initiator());
-    assert_eq!(CLIENT_ROOM_ID, g.user.data.raid_target());
-    assert_eq!(CLIENT_ROOM_ID, g.opponent.data.raid_target());
+    assert!(g.user.data.raid_active());
+    assert!(g.opponent.data.raid_active());
 
-    assert_commands_match(&response, vec!["UpdateGameView", "RenderInterface", "InitiateRaid"]);
+    assert_commands_match_lists(
+        &response,
+        vec![
+            "UpdateGameView",
+            "RenderInterface",
+            "MoveGameObjects",
+            "MoveGameObjects",
+            "MoveGameObjects",
+        ],
+        vec![
+            "VisitRoom",
+            "Delay",
+            "UpdateGameView",
+            "RenderInterface",
+            "MoveGameObjects",
+            "MoveGameObjects",
+            "MoveGameObjects",
+        ],
+    );
     assert!(g.user.interface.main_controls().has_text("Waiting"));
     assert!(g.opponent.interface.main_controls().has_text("Activate"));
     assert!(g.opponent.interface.main_controls().has_text("Pass"));
@@ -62,7 +78,7 @@ fn activate_room() {
         g.user_id(),
     );
     assert_eq!(g.opponent.this_player.mana(), 100);
-    assert_eq!(g.user.cards.get(&ids.minion_id).revealed_to_me(), false);
+    assert!(!g.user.cards.get(&ids.minion_id).revealed_to_me());
     let response = g.click_on(g.opponent_id(), "Activate");
     assert_eq!(g.opponent.this_player.mana(), 97); // Minion costs 3 to summon
     assert!(g.user.cards.get(&ids.minion_id).revealed_to_me());
@@ -100,7 +116,7 @@ fn activate_room_weapon_2() {
     );
     g.perform_click_on(g.opponent_id(), "Activate");
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert_eq!(g.user.interface.main_controls().has_text("Test Weapon"), false);
+    assert!(!g.user.interface.main_controls().has_text("Test Weapon"));
     assert!(g.user.interface.main_controls().has_text("Continue"));
 }
 
@@ -160,6 +176,6 @@ fn activate_room_weapon_5() {
     g.perform_click_on(g.opponent_id(), "Activate");
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert!(g.user.interface.main_controls().has_text("Test Weapon"));
-    assert_eq!(g.user.interface.main_controls().has_text("\u{f06d}"), false);
+    assert!(!g.user.interface.main_controls().has_text("\u{f06d}"));
     assert!(g.user.interface.main_controls().has_text("Continue"));
 }

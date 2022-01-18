@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 259
+assertion_line: 268
 expression: response
 
 ---
@@ -21,6 +21,7 @@ Ok(
                                         ),
                                         user: Some(
                                             PlayerView {
+                                                side: Overlord,
                                                 player_info: None,
                                                 score: None,
                                                 mana: Some(
@@ -37,6 +38,7 @@ Ok(
                                         ),
                                         opponent: Some(
                                             PlayerView {
+                                                side: Champion,
                                                 player_info: None,
                                                 score: None,
                                                 mana: None,
@@ -47,8 +49,8 @@ Ok(
                                                 ),
                                             },
                                         ),
-                                        arena: None,
                                         current_priority: Opponent,
+                                        raid_active: false,
                                     },
                                 ),
                             },
@@ -84,6 +86,7 @@ Ok(
                                                 ),
                                                 user: Some(
                                                     PlayerView {
+                                                        side: Champion,
                                                         player_info: None,
                                                         score: None,
                                                         mana: None,
@@ -96,6 +99,7 @@ Ok(
                                                 ),
                                                 opponent: Some(
                                                     PlayerView {
+                                                        side: Overlord,
                                                         player_info: None,
                                                         score: None,
                                                         mana: Some(
@@ -110,8 +114,8 @@ Ok(
                                                         ),
                                                     },
                                                 ),
-                                                arena: None,
                                                 current_priority: User,
+                                                raid_active: false,
                                             },
                                         ),
                                     },

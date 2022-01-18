@@ -3475,6 +3475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _participants: {fileID: 1192066000}
+  _raidActive: 0
 --- !u!1 &142239664
 GameObject:
   m_ObjectHideFlags: 0
@@ -9729,6 +9730,7 @@ MonoBehaviour:
   - {fileID: 1488654002}
   - {fileID: 1936599912}
   _sceneBackground: {fileID: 348475426}
+  _initiateRaidPrefab: {fileID: 4016580843455598104, guid: 03ebfdfd5c822864993fc270171a4d62, type: 3}
   _levelUpRoomPrefab: {fileID: 6473978600369089418, guid: 7aecd72ab12564a45b1aadaccf4b2490, type: 3}
   _curentRoomSelector: {fileID: 0}
 --- !u!1 &352251813
@@ -43925,7 +43927,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _userId: 1
-  _currentGameId: 0
+  _currentGameId: 
 --- !u!1 &1451530778
 GameObject:
   m_ObjectHideFlags: 0

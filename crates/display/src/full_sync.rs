@@ -18,16 +18,17 @@ use std::collections::HashMap;
 
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
-use data::game::{GameState, RaidPhase};
-use data::primitives::{CardId, CardType, ItemLocation, RoomLocation, Side, Sprite};
+use data::game::{GameState, RaidData, RaidPhase};
+use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::object_position::Position;
+#[allow(unused)] // Used in rustdoc
 use protos::spelldawn::{
-    identity_action, ActionTrackerView, ArenaView, CardCreationAnimation, CardIcon, CardIcons,
-    CardTargeting, CardTitle, CardView, ClientItemLocation, ClientRoomLocation,
-    CreateOrUpdateCardCommand, GameIdentifier, GameView, IdentityAction, ManaView, ObjectPosition,
-    ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
-    ObjectPositionItem, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
+    ActionTrackerView, CardCreationAnimation, CardIcon, CardIcons, CardTargeting, CardTitle,
+    CardView, ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand, GameIdentifier,
+    GameObjectIdentifier, GameView, ManaView, ObjectPosition, ObjectPositionDeck,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem,
+    ObjectPositionRaid, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
     PlayerName, PlayerView, RenderInterfaceCommand, RevealedCardView, RoomIdentifier, ScoreView,
     SpriteAddress, UpdateGameViewCommand,
 };
@@ -36,12 +37,27 @@ use rules::{flags, queries};
 use crate::assets::CardIconType;
 use crate::{adapters, assets, interface, rules_text};
 
+/// Re-implementation of [GameObjectIdentifier] since that type cannot be hashed
+#[derive(PartialEq, Eq, Hash, Copy, Clone)]
+pub enum GameObjectId {
+    CardId(CardId),
+    Identity(PlayerName),
+    Deck(PlayerName),
+    DiscardPile(PlayerName),
+}
+
 /// State synchronization response, containing commands for the updated state of
 /// each game object in an ongoing game.
 pub struct FullSync {
+    /// Overall game state
     pub game: UpdateGameViewCommand,
+    /// The state of each card in this game
     pub cards: HashMap<CardId, CreateOrUpdateCardCommand>,
+    /// Content to display in the user interface
     pub interface: RenderInterfaceCommand,
+    /// Positions for Game Objects which are in non-standard positions, e.g.
+    /// because they are currently participating in a raid.
+    pub position_overrides: HashMap<GameObjectId, ObjectPosition>,
 }
 
 /// Builds a complete representation of the provided game as viewed by the
@@ -64,6 +80,7 @@ pub fn run(
             .map(|c| (c.id, create_or_update_card(game, c, user_side, &card_creation)))
             .collect(),
         interface: interface::render(game, user_side),
+        position_overrides: raid_position_overrides(game, user_side),
     }
 }
 
@@ -74,18 +91,8 @@ fn update_game_view(game: &GameState, user_side: Side) -> UpdateGameViewCommand 
             game_id: Some(GameIdentifier { value: game.id.value }),
             user: Some(player_view(game, user_side)),
             opponent: Some(player_view(game, user_side.opponent())),
-            arena: Some(ArenaView {
-                rooms_at_bottom: Some(user_side == Side::Overlord),
-                identity_action: Some(match user_side {
-                    Side::Overlord => IdentityAction {
-                        identity_action: Some(identity_action::IdentityAction::LevelUpRoom(())),
-                    },
-                    Side::Champion => IdentityAction {
-                        identity_action: Some(identity_action::IdentityAction::InitiateRaid(())),
-                    },
-                }),
-            }),
             current_priority: current_priority(game, user_side).into(),
+            raid_active: game.data.raid.is_some(),
         }),
     }
 }
@@ -95,6 +102,7 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
     let identity = game.identity(side);
     let data = game.player(side);
     PlayerView {
+        side: adapters::adapt_side(side).into(),
         player_info: Some(PlayerInfo {
             name: Some(identity.name.displayed_name()),
             portrait: Some(sprite(&rules::get(identity.name).image)),
@@ -154,9 +162,7 @@ fn create_or_update_card(
     };
     let position = match creation_strategy {
         CardCreationStrategy::DrawUserCard => None,
-        CardCreationStrategy::SnapToCurrentPosition => {
-            adapt_position(card, card.position, user_side)
-        }
+        CardCreationStrategy::SnapToCurrentPosition => adapt_position(card, user_side),
         CardCreationStrategy::CreateAtPosition(p) => Some(p.clone()),
     };
 
@@ -250,15 +256,87 @@ fn revealed_card_view(
     }
 }
 
-/// Converts a card position into a rendered [ObjectPosition]. Returns None if
+/// Calculates game object positions for an ongoing raid, if any
+fn raid_position_overrides(
+    game: &GameState,
+    user_side: Side,
+) -> HashMap<GameObjectId, ObjectPosition> {
+    game.data.raid.map_or_else(HashMap::new, |raid| {
+        if raid.phase == RaidPhase::Access {
+            raid_access_position_overrides(game, user_side, raid)
+        } else {
+            ongoing_raid_position_overrides(game, user_side, raid)
+        }
+    })
+}
+
+/// Positions for game objects during a raid which has not yet reached the
+/// access phase
+fn ongoing_raid_position_overrides(
+    game: &GameState,
+    user_side: Side,
+    raid: RaidData,
+) -> HashMap<GameObjectId, ObjectPosition> {
+    let mut result = Vec::new();
+
+    match raid.target {
+        RoomId::Vault => {
+            result.push(GameObjectId::Deck(adapters::to_player_name(Side::Overlord, user_side)));
+        }
+        RoomId::Sanctum => {
+            result
+                .push(GameObjectId::Identity(adapters::to_player_name(Side::Overlord, user_side)));
+        }
+        RoomId::Crypts => {
+            result.push(GameObjectId::DiscardPile(adapters::to_player_name(
+                Side::Overlord,
+                user_side,
+            )));
+        }
+        _ => {}
+    }
+
+    result.extend(game.occupants(raid.target).map(|card| GameObjectId::CardId(card.id)));
+
+    let defenders = game.defender_list(raid.target);
+    let included = match raid.phase {
+        RaidPhase::Encounter(i) => &defenders[..=i],
+        RaidPhase::Continue(i) => &defenders[..=i],
+        _ => &defenders,
+    };
+    result.extend(included.iter().map(|card| GameObjectId::CardId(card.id)));
+
+    result.push(GameObjectId::Identity(adapters::to_player_name(Side::Champion, user_side)));
+
+    result
+        .iter()
+        .enumerate()
+        .map(|(i, id)| {
+            (
+                *id,
+                ObjectPosition {
+                    sorting_key: i as u32,
+                    position: Some(Position::Raid(ObjectPositionRaid {})),
+                },
+            )
+        })
+        .collect()
+}
+
+/// Calculates positions for game objects during the access phase of a raid
+fn raid_access_position_overrides(
+    _game: &GameState,
+    _user_side: Side,
+    _raid: RaidData,
+) -> HashMap<GameObjectId, ObjectPosition> {
+    HashMap::new()
+}
+
+/// Converts a card's position into a rendered [ObjectPosition]. Returns None if
 /// this [CardPosition] has no equivalent object position, e.g. if the card is
 /// currently shuffled into the deck.
-pub fn adapt_position(
-    card: &CardState,
-    position: CardPosition,
-    user_side: Side,
-) -> Option<ObjectPosition> {
-    let result = match position {
+pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPosition> {
+    let result = match card.position {
         CardPosition::Room(room_id, location) => Some(Position::Room(ObjectPositionRoom {
             room_id: adapters::adapt_room_id(room_id).into(),
             room_location: match location {

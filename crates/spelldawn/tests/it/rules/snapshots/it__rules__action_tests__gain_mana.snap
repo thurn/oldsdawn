@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 196
+assertion_line: 223
 expression: response
 
 ---
@@ -21,6 +21,7 @@ Ok(
                                         ),
                                         user: Some(
                                             PlayerView {
+                                                side: Overlord,
                                                 player_info: None,
                                                 score: None,
                                                 mana: Some(
@@ -36,8 +37,8 @@ Ok(
                                             },
                                         ),
                                         opponent: None,
-                                        arena: None,
                                         current_priority: User,
+                                        raid_active: false,
                                     },
                                 ),
                             },
@@ -65,6 +66,7 @@ Ok(
                                                 user: None,
                                                 opponent: Some(
                                                     PlayerView {
+                                                        side: Overlord,
                                                         player_info: None,
                                                         score: None,
                                                         mana: Some(
@@ -79,8 +81,8 @@ Ok(
                                                         ),
                                                     },
                                                 ),
-                                                arena: None,
                                                 current_priority: Opponent,
+                                                raid_active: false,
                                             },
                                         ),
                                     },

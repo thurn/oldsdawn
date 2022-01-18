@@ -14,15 +14,22 @@
 
 //! Functions for producing a diff between two game updates
 
+use std::collections::HashMap;
+
 use data::card_state::CardPositionKind;
 use data::game::GameState;
 use protos::spelldawn::game_command::Command;
+use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    ArenaView, CardIcon, CardIcons, CardView, CreateOrUpdateCardCommand, GameCommand, GameView,
-    PlayerInfo, PlayerView, RevealedCardView, UpdateGameViewCommand,
+    CardIcon, CardIcons, CardView, CreateOrUpdateCardCommand, DestroyCardCommand, GameView,
+    MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeckContainer,
+    ObjectPositionDiscardPileContainer, ObjectPositionIdentityContainer, PlayerInfo, PlayerName,
+    PlayerView, RevealedCardView, UpdateGameViewCommand,
 };
 
-use crate::full_sync::FullSync;
+use crate::full_sync::{FullSync, GameObjectId};
+use crate::response_builder::{CommandPhase, ResponseBuilder};
+use crate::{adapters, full_sync};
 
 /// Performs a diff operation on two provided [FullSync] values, appending the
 /// resulting commands to `commands`.
@@ -33,16 +40,17 @@ use crate::full_sync::FullSync;
 /// not changed are not updated, the client is assumed to preserve their state
 /// between requests.
 pub fn execute(
-    commands: &mut Vec<GameCommand>,
+    commands: &mut ResponseBuilder,
     game: &GameState,
     old: Option<&FullSync>,
     new: &FullSync,
 ) {
     if let Some(update) = diff_update_game_view_command(old.map(|old| &old.game), Some(&new.game)) {
-        commands.push(GameCommand { command: Some(Command::UpdateGameView(update)) });
+        commands.push(CommandPhase::Update, Command::UpdateGameView(update));
     }
 
-    commands.extend(
+    commands.push_all(
+        CommandPhase::Update,
         // Iterate over `all_cards` again to ensure response order is deterministic
         game.all_cards().filter(|c| c.position.kind() != CardPositionKind::DeckUnknown).filter_map(
             |card| {
@@ -50,15 +58,21 @@ pub fn execute(
                     old.and_then(|old| old.cards.get(&card.id)),
                     new.cards.get(&card.id),
                 )
-                .map(|command| GameCommand { command: Some(Command::CreateOrUpdateCard(command)) })
+                .map(Command::CreateOrUpdateCard)
             },
         ),
     );
 
     if old.map(|old| &old.interface) != Some(&new.interface) {
-        commands
-            .push(GameCommand { command: Some(Command::RenderInterface(new.interface.clone())) })
+        commands.push(CommandPhase::Update, Command::RenderInterface(new.interface.clone()));
     }
+
+    diff_card_position_updates(
+        commands,
+        game,
+        old.map(|old| &old.position_overrides),
+        &new.position_overrides,
+    );
 }
 
 fn diff_update_game_view_command(
@@ -75,24 +89,18 @@ fn diff_game_view(old: Option<&GameView>, new: Option<&GameView>) -> Option<Game
         game_id: new.game_id.clone(),
         user: diff_player_view(old.user.as_ref(), new.user.as_ref()),
         opponent: diff_player_view(old.opponent.as_ref(), new.opponent.as_ref()),
-        arena: diff_arena_view(old.arena.as_ref(), new.arena.as_ref()),
         current_priority: new.current_priority,
+        raid_active: new.raid_active,
     })
 }
 
 fn diff_player_view(old: Option<&PlayerView>, new: Option<&PlayerView>) -> Option<PlayerView> {
     run_diff(old, new, |old, new| PlayerView {
+        side: new.side,
         player_info: diff_player_info(old.player_info.as_ref(), new.player_info.as_ref()),
         score: diff_simple(&old.score, &new.score),
         mana: diff_simple(&old.mana, &new.mana),
         action_tracker: diff_simple(&old.action_tracker, &new.action_tracker),
-    })
-}
-
-fn diff_arena_view(old: Option<&ArenaView>, new: Option<&ArenaView>) -> Option<ArenaView> {
-    run_diff(old, new, |old, new| ArenaView {
-        rooms_at_bottom: diff_simple(&old.rooms_at_bottom, &new.rooms_at_bottom),
-        identity_action: diff_simple(&old.identity_action, &new.identity_action),
     })
 }
 
@@ -182,6 +190,101 @@ fn diff_card_icon(old: Option<&CardIcon>, new: Option<&CardIcon>) -> Option<Card
         text: diff_simple(&old.text, &new.text),
         background_scale: new.background_scale,
     })
+}
+
+fn diff_card_position_updates(
+    commands: &mut ResponseBuilder,
+    game: &GameState,
+    old: Option<&HashMap<GameObjectId, ObjectPosition>>,
+    new: &HashMap<GameObjectId, ObjectPosition>,
+) {
+    for id in game.all_card_ids() {
+        push_move_command(commands, game, old, new, GameObjectId::CardId(id));
+    }
+
+    push_move_command(commands, game, old, new, GameObjectId::Identity(PlayerName::User));
+    push_move_command(commands, game, old, new, GameObjectId::Identity(PlayerName::Opponent));
+    push_move_command(commands, game, old, new, GameObjectId::Deck(PlayerName::User));
+    push_move_command(commands, game, old, new, GameObjectId::Deck(PlayerName::Opponent));
+    push_move_command(commands, game, old, new, GameObjectId::DiscardPile(PlayerName::User));
+    push_move_command(commands, game, old, new, GameObjectId::DiscardPile(PlayerName::Opponent));
+}
+
+/// Appends a command to update the position for the provided `id` if it has
+/// changed between the position maps in `old` and `new`.
+fn push_move_command(
+    commands: &mut ResponseBuilder,
+    game: &GameState,
+    old: Option<&HashMap<GameObjectId, ObjectPosition>>,
+    new: &HashMap<GameObjectId, ObjectPosition>,
+    id: GameObjectId,
+) {
+    match old {
+        None if new.contains_key(&id) => move_to_position(commands, game, id, new.get(&id)),
+        Some(old) if old.get(&id) != new.get(&id) => {
+            move_to_position(commands, game, id, new.get(&id))
+        }
+        _ => {}
+    }
+}
+
+/// Appends a command to move `id` to its indicated `position` (if provided) or
+/// else to its default game position.
+fn move_to_position(
+    commands: &mut ResponseBuilder,
+    game: &GameState,
+    id: GameObjectId,
+    position: Option<&ObjectPosition>,
+) {
+    let new_position = if let Some(new) = position {
+        new.clone()
+    } else {
+        match id {
+            GameObjectId::CardId(id) => {
+                if let Some(card_position) =
+                    full_sync::adapt_position(game.card(id), commands.user_side)
+                {
+                    card_position
+                } else {
+                    // Card has no valid position, destroy it
+                    commands.push(
+                        CommandPhase::Move,
+                        Command::DestroyCard(DestroyCardCommand {
+                            card_id: Some(adapters::adapt_card_id(id)),
+                        }),
+                    );
+                    return;
+                }
+            }
+            GameObjectId::Identity(name) => ObjectPosition {
+                sorting_key: 0,
+                position: Some(Position::IdentityContainer(ObjectPositionIdentityContainer {
+                    owner: name.into(),
+                })),
+            },
+            GameObjectId::Deck(name) => ObjectPosition {
+                sorting_key: 0,
+                position: Some(Position::DeckContainer(ObjectPositionDeckContainer {
+                    owner: name.into(),
+                })),
+            },
+            GameObjectId::DiscardPile(name) => ObjectPosition {
+                sorting_key: 0,
+                position: Some(Position::DiscardPileContainer(
+                    ObjectPositionDiscardPileContainer { owner: name.into() },
+                )),
+            },
+        }
+    };
+
+    commands.push(
+        CommandPhase::Move,
+        Command::MoveGameObjects(MoveGameObjectsCommand {
+            ids: vec![adapters::adapt_game_object_id(id)],
+            position: Some(new_position),
+            disable_animation: !commands.animate,
+        }),
+    )
 }
 
 /// Diffs two values. If the values are equal, returns None, otherwise invokes

@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 85
+assertion_line: 101
 expression: response
 
 ---
@@ -21,6 +21,7 @@ Ok(
                                         ),
                                         user: Some(
                                             PlayerView {
+                                                side: Overlord,
                                                 player_info: None,
                                                 score: None,
                                                 mana: Some(
@@ -32,8 +33,8 @@ Ok(
                                             },
                                         ),
                                         opponent: None,
-                                        arena: None,
                                         current_priority: Opponent,
+                                        raid_active: true,
                                     },
                                 ),
                             },
@@ -376,6 +377,7 @@ Ok(
                                                 user: None,
                                                 opponent: Some(
                                                     PlayerView {
+                                                        side: Overlord,
                                                         player_info: None,
                                                         score: None,
                                                         mana: Some(
@@ -386,8 +388,8 @@ Ok(
                                                         action_tracker: None,
                                                     },
                                                 ),
-                                                arena: None,
                                                 current_priority: User,
+                                                raid_active: true,
                                             },
                                         ),
                                     },

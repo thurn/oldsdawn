@@ -19,7 +19,6 @@ option csharp_namespace = "Spelldawn.Protos";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
-import "google/protobuf/empty.proto";
 
 // ============================================================================
 // Masonry
@@ -426,8 +425,7 @@ message GameObjectIdentifier {
         CardIdentifier card_id = 1;
         PlayerName identity = 2;
         PlayerName deck = 3;
-        PlayerName hand = 4;
-        PlayerName discard_pile = 5;
+        PlayerName discard_pile = 4;
     }
 }
 
@@ -669,26 +667,6 @@ message RoomView {
     repeated CardView front_cards = 3;
 }
 
-message IdentityAction {
-    oneof identity_action {
-        google.protobuf.Empty initiate_raid = 1;
-        google.protobuf.Empty level_up_room = 2;
-    }
-}
-
-message ArenaView {
-    /*
-    * If true, render rooms at the bottom of the screen, if false, render items
-    * at the bottom.
-    */
-    google.protobuf.BoolValue rooms_at_bottom = 1;
-
-    /*
-     * Controls the drag action taken for the player's identity card.
-     */
-    IdentityAction identity_action = 2;
-}
-
 message ActionTrackerView {
     uint32 available_action_count = 1;
 }
@@ -698,19 +676,24 @@ message DeckView {
 }
 
 message PlayerView {
-    PlayerInfo player_info = 1;
-    ScoreView score = 2;
-    ManaView mana = 3;
-    ActionTrackerView action_tracker = 4;
+    PlayerSide side = 1;
+    PlayerInfo player_info = 2;
+    ScoreView score = 3;
+    ManaView mana = 4;
+    ActionTrackerView action_tracker = 5;
 }
 
 message GameView {
     GameIdentifier game_id = 1;
     PlayerView user = 2;
     PlayerView opponent = 3;
-    ArenaView arena = 4;
-    /* The player who is currently able to act. */
-    PlayerName current_priority = 5;
+
+    // The player who is currently able to act.
+    PlayerName current_priority = 4;
+
+    // Whether a raid is currently active. If true, the raid overlay will be
+    // displayed, the raid music will be played, etc.
+    bool raid_active = 5;
 }
 
 
@@ -890,26 +873,20 @@ message UpdateGameViewCommand {
     GameView game = 1;
 }
 
-message InitiateRaidCommand {
-    PlayerName initiator = 1;
-    RoomIdentifier room_id = 2;
+enum RoomVisitType {
+    ROOM_VISIT_TYPE_UNSPECIFIED = 0;
+    ROOM_VISIT_TYPE_INITIATE_RAID = 1;
+    ROOM_VISIT_TYPE_LEVEL_UP_ROOM = 2;
 }
 
 /*
- * Removes the raid UI overlay. This command does not cause game objects within
- * the raid to change position, 'MoveGameObjectCommand' should be used for that
- * instead.
+ * Animates 'initiator' moving to a room and plays a standard particle effect
+ * based on the visit type.
  */
-message EndRaidCommand {
-    PlayerName initiator = 1;
-}
-
-/*
- * Animates 'initiator' moving to a room and plays a standard effect.
- */
-message LevelUpRoomCommand {
+message VisitRoomCommand {
     PlayerName initiator = 1;
     RoomIdentifier room_id = 2;
+    RoomVisitType visit_type = 3;
 }
 
 enum CardCreationAnimation {
@@ -1093,9 +1070,7 @@ message GameCommand {
         DelayCommand delay = 3;
         RenderInterfaceCommand render_interface = 4;
         UpdateGameViewCommand update_game_view = 5;
-        InitiateRaidCommand initiate_raid = 6;
-        EndRaidCommand end_raid = 7;
-        LevelUpRoomCommand level_up_room = 8;
+        VisitRoomCommand visit_room = 8;
         CreateOrUpdateCardCommand create_or_update_card = 9;
         DestroyCardCommand destroy_card = 10;
         MoveGameObjectsCommand move_game_objects = 11;

@@ -53,12 +53,21 @@ pub fn activate_room_action(
         user_side
     );
 
+    let defender_count = game
+        .defenders_alphabetical(game.data.raid.with_context(|| "No active raid")?.target)
+        .count();
     let raid = game.data.raid.as_mut().with_context(|| "No active raid")?;
     raid.active = data == ActivateRoomAction::Activate;
-    raid.phase = RaidPhase::Encounter(0);
+
+    if defender_count == 0 {
+        // TODO: Access cards
+        return Ok(());
+    }
+
+    raid.phase = RaidPhase::Encounter(defender_count - 1);
     let target = raid.target;
-    let defenders = game.defender_list(target);
-    let defender_id = defenders.get(0).with_context(|| "No defender")?.id;
+    let defender_id =
+        game.defender_list(target).get(defender_count - 1).with_context(|| "No defender")?.id;
 
     if_chain! {
         if let Some(cost) = queries::mana_cost(game, defender_id);
@@ -88,7 +97,7 @@ pub fn activate_room_action(
                 },
             );
         } else {
-            // TODO: Advance to next defender/access
+            // TODO: Continue
         }
     }
 

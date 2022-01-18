@@ -26,40 +26,33 @@ use data::primitives::{CardId, RoomId, Side};
 use data::updates::GameUpdate;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
+#[allow(unused)] // Used in rustdoc
 use protos::spelldawn::{
     game_object_identifier, DelayCommand, DisplayGameMessageCommand, GameCommand, GameMessageType,
-    GameObjectIdentifier, InitiateRaidCommand, MoveGameObjectsCommand, ObjectPosition,
-    ObjectPositionDeck, ObjectPositionStaging, PlayerName, TimeValue,
+    GameObjectIdentifier, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
+    ObjectPositionStaging, PlayerName, RoomVisitType, TimeValue, VisitRoomCommand,
 };
 
 use crate::full_sync::CardCreationStrategy;
+use crate::response_builder::{CommandPhase, ResponseBuilder};
 use crate::{adapters, full_sync};
 
 /// Takes a [GameUpdate] and converts it into an animation, a series of
 /// corresponding [GameCommand]s. Commands are appended to the provided
 /// `commands` list.
-pub fn render(
-    commands: &mut Vec<GameCommand>,
-    update: GameUpdate,
-    game: &GameState,
-    user_side: Side,
-) {
-    // TODO: I think UserPrompt should probably be handled via the diff system.
-    // Doing something with Raids also seems useful so you can connect to a game
-    // with an ongoing raid, but you'd need to sync down the current position
-    // and stuff.
+pub fn render(commands: &mut ResponseBuilder, update: GameUpdate, game: &GameState) {
     match update {
         GameUpdate::StartTurn(side) => {
             start_turn(commands, side);
         }
         GameUpdate::DrawCard(card_id) | GameUpdate::MoveCard(card_id) => {
-            move_card(commands, game, game.card(card_id), user_side);
+            move_card(commands, game.card(card_id));
         }
         GameUpdate::RevealCard(card_id) => {
-            reveal_card(commands, game, game.card(card_id), user_side);
+            reveal_card(commands, game, game.card(card_id));
         }
         GameUpdate::InitiateRaid(room_id) => {
-            initiate_raid(commands, room_id, user_side);
+            initiate_raid(commands, room_id);
         }
         _ => {}
     }
@@ -83,10 +76,10 @@ pub fn card_draw_creation_strategy(user_side: Side, card_id: CardId) -> CardCrea
 /// Appends a move card command to move a card to its current location. Skips
 /// appending the command if the destination would not be a valid game position,
 /// e.g. if it is [CardPosition::DeckUnknown].
-fn move_card(commands: &mut Vec<GameCommand>, game: &GameState, card: &CardState, user_side: Side) {
-    push_optional(
-        commands,
-        full_sync::adapt_position(card, game.card(card.id).position, user_side).map(|position| {
+fn move_card(commands: &mut ResponseBuilder, card: &CardState) {
+    commands.push_optional(
+        CommandPhase::Animate,
+        full_sync::adapt_position(card, commands.user_side).map(|position| {
             Command::MoveGameObjects(MoveGameObjectsCommand {
                 ids: vec![adapt_game_object_id(card.id)],
                 position: Some(position),
@@ -97,17 +90,14 @@ fn move_card(commands: &mut Vec<GameCommand>, game: &GameState, card: &CardState
 }
 
 /// Commands to reveal the indicated card to all players
-fn reveal_card(
-    commands: &mut Vec<GameCommand>,
-    game: &GameState,
-    card: &CardState,
-    user_side: Side,
-) {
-    if user_side != card.side && game.data.raid.map_or(true, |raid| !card.is_in_room(raid.target)) {
+fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState) {
+    if commands.user_side != card.side
+        && game.data.raid.map_or(true, |raid| !card.is_in_room(raid.target))
+    {
         // If the hidden card is not part of an active raid, animate it to
         // the staging area on reveal.
-        push(
-            commands,
+        commands.push(
+            CommandPhase::Animate,
             Command::MoveGameObjects(MoveGameObjectsCommand {
                 ids: vec![adapt_game_object_id(card.id)],
                 position: Some(ObjectPosition {
@@ -117,7 +107,7 @@ fn reveal_card(
                 disable_animation: false,
             }),
         );
-        push(commands, delay(1500));
+        commands.push(CommandPhase::Animate, delay(1500));
     }
 }
 
@@ -127,9 +117,9 @@ fn delay(milliseconds: u32) -> Command {
 }
 
 /// Starts the `side` player's turn
-fn start_turn(commands: &mut Vec<GameCommand>, side: Side) {
-    push(
-        commands,
+fn start_turn(commands: &mut ResponseBuilder, side: Side) {
+    commands.push(
+        CommandPhase::Animate,
         Command::DisplayGameMessage(DisplayGameMessageCommand {
             message_type: match side {
                 Side::Overlord => GameMessageType::Dusk.into(),
@@ -139,14 +129,18 @@ fn start_turn(commands: &mut Vec<GameCommand>, side: Side) {
     )
 }
 
-fn initiate_raid(commands: &mut Vec<GameCommand>, target: RoomId, user_side: Side) {
-    push(
-        commands,
-        Command::InitiateRaid(InitiateRaidCommand {
-            initiator: adapters::to_player_name(Side::Champion, user_side).into(),
-            room_id: adapters::adapt_room_id(target).into(),
-        }),
-    );
+fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
+    if commands.user_side == Side::Overlord {
+        commands.push(
+            CommandPhase::PreUpdate,
+            Command::VisitRoom(VisitRoomCommand {
+                initiator: adapters::to_player_name(Side::Champion, commands.user_side).into(),
+                room_id: adapters::adapt_room_id(target).into(),
+                visit_type: RoomVisitType::InitiateRaid.into(),
+            }),
+        );
+        commands.push(CommandPhase::PreUpdate, delay(500));
+    }
 }
 
 /// Converts a [CardId] into a client [GameObjectIdentifier]
@@ -154,17 +148,4 @@ fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {
     GameObjectIdentifier {
         id: Some(game_object_identifier::Id::CardId(adapters::adapt_card_id(id))),
     }
-}
-
-/// Adds a command to `commands` if it is not `None`.
-fn push_optional(commands: &mut Vec<GameCommand>, option: Option<Command>) {
-    if let Some(command) = option {
-        push(commands, command);
-    }
-}
-
-/// Helper function to wrap a [Command] in [GameCommand] and add it to
-/// `commands`
-fn push(commands: &mut Vec<GameCommand>, command: Command) {
-    commands.push(GameCommand { command: Some(command) })
 }

@@ -34,7 +34,7 @@ use protos::spelldawn::{
     CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
     GameAction, GameIdentifier, GameRequest, Node, NodeType, ObjectPosition,
     ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
-    PlayerView, RevealedCardView, RoomIdentifier,
+    PlayerView, RevealedCardView,
 };
 use server::database::Database;
 use server::GameResponse;
@@ -314,8 +314,7 @@ impl TestClient {
 #[derive(Debug, Clone, Default)]
 pub struct ClientGameData {
     priority: Option<PlayerName>,
-    raid_initiator: Option<PlayerName>,
-    raid_target: Option<RoomIdentifier>,
+    raid_active: Option<bool>,
 }
 
 impl ClientGameData {
@@ -323,25 +322,15 @@ impl ClientGameData {
         self.priority.unwrap()
     }
 
-    pub fn raid_initiator(&self) -> PlayerName {
-        self.raid_initiator.expect("raid_initiator")
-    }
-
-    pub fn raid_target(&self) -> RoomIdentifier {
-        self.raid_target.expect("raid_target")
+    pub fn raid_active(&self) -> bool {
+        self.raid_active.expect("raid_active")
     }
 
     fn update(&mut self, command: Command) {
-        match command {
-            Command::UpdateGameView(update_game) => {
-                self.priority =
-                    PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority)
-            }
-            Command::InitiateRaid(initiate_raid) => {
-                self.raid_initiator = PlayerName::from_i32(initiate_raid.initiator);
-                self.raid_target = RoomIdentifier::from_i32(initiate_raid.room_id);
-            }
-            _ => {}
+        if let Command::UpdateGameView(update_game) = command {
+            self.priority =
+                PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority);
+            self.raid_active = Some(update_game.game.as_ref().unwrap().raid_active);
         }
     }
 }

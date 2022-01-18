@@ -70,6 +70,9 @@ impl Spelldawn for GameService {
         let mut database = SledDatabase;
         match handle_connect(&mut database, player_id, game_id, message.test_mode) {
             Ok(commands) => {
+                let names = commands.commands.iter().map(command_name).collect::<Vec<_>>();
+                info!(?player_id, ?names, "sending_connection_response");
+
                 if let Err(error) = tx.send(Ok(commands)).await {
                     error!(?player_id, ?game_id, ?error, "Send Error!");
                     return Err(Status::internal(format!("Send Error: {:#}", error)));
@@ -307,9 +310,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::Delay(_) => "Delay",
         Command::RenderInterface(_) => "RenderInterface",
         Command::UpdateGameView(_) => "UpdateGameView",
-        Command::InitiateRaid(_) => "InitiateRaid",
-        Command::EndRaid(_) => "EndRaid",
-        Command::LevelUpRoom(_) => "LevelUpRoom",
+        Command::VisitRoom(_) => "VisitRoom",
         Command::CreateOrUpdateCard(_) => "CreateOrUpdateCard",
         Command::DestroyCard(_) => "DestroyCard",
         Command::MoveGameObjects(_) => "MoveGameObjects",

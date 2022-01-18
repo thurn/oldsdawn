@@ -39,12 +39,6 @@ namespace Spelldawn.Utils
       Deck = playerName
     };
 
-    // ReSharper disable once UnusedMember.Local
-    public static GameObjectIdentifier HandObjectId(PlayerName playerName) => new()
-    {
-      Hand = playerName
-    };
-
     public static GameObjectIdentifier DiscardPileObjectId(PlayerName playerName) => new()
     {
       DiscardPile = playerName

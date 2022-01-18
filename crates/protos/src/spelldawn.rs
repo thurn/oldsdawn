@@ -341,7 +341,7 @@ pub struct CardIdentifier {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameObjectIdentifier {
-    #[prost(oneof = "game_object_identifier::Id", tags = "1, 2, 3, 4, 5")]
+    #[prost(oneof = "game_object_identifier::Id", tags = "1, 2, 3, 4")]
     pub id: ::core::option::Option<game_object_identifier::Id>,
 }
 /// Nested message and enum types in `GameObjectIdentifier`.
@@ -355,8 +355,6 @@ pub mod game_object_identifier {
         #[prost(enumeration = "super::PlayerName", tag = "3")]
         Deck(i32),
         #[prost(enumeration = "super::PlayerName", tag = "4")]
-        Hand(i32),
-        #[prost(enumeration = "super::PlayerName", tag = "5")]
         DiscardPile(i32),
     }
 }
@@ -621,33 +619,6 @@ pub struct RoomView {
     pub front_cards: ::prost::alloc::vec::Vec<CardView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct IdentityAction {
-    #[prost(oneof = "identity_action::IdentityAction", tags = "1, 2")]
-    pub identity_action: ::core::option::Option<identity_action::IdentityAction>,
-}
-/// Nested message and enum types in `IdentityAction`.
-pub mod identity_action {
-    #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum IdentityAction {
-        #[prost(message, tag = "1")]
-        InitiateRaid(()),
-        #[prost(message, tag = "2")]
-        LevelUpRoom(()),
-    }
-}
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ArenaView {
-    ///
-    /// If true, render rooms at the bottom of the screen, if false, render
-    /// items at the bottom.
-    #[prost(message, optional, tag = "1")]
-    pub rooms_at_bottom: ::core::option::Option<bool>,
-    ///
-    /// Controls the drag action taken for the player's identity card.
-    #[prost(message, optional, tag = "2")]
-    pub identity_action: ::core::option::Option<IdentityAction>,
-}
-#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ActionTrackerView {
     #[prost(uint32, tag = "1")]
     pub available_action_count: u32,
@@ -659,13 +630,15 @@ pub struct DeckView {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayerView {
-    #[prost(message, optional, tag = "1")]
-    pub player_info: ::core::option::Option<PlayerInfo>,
+    #[prost(enumeration = "PlayerSide", tag = "1")]
+    pub side: i32,
     #[prost(message, optional, tag = "2")]
-    pub score: ::core::option::Option<ScoreView>,
+    pub player_info: ::core::option::Option<PlayerInfo>,
     #[prost(message, optional, tag = "3")]
-    pub mana: ::core::option::Option<ManaView>,
+    pub score: ::core::option::Option<ScoreView>,
     #[prost(message, optional, tag = "4")]
+    pub mana: ::core::option::Option<ManaView>,
+    #[prost(message, optional, tag = "5")]
     pub action_tracker: ::core::option::Option<ActionTrackerView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -676,11 +649,13 @@ pub struct GameView {
     pub user: ::core::option::Option<PlayerView>,
     #[prost(message, optional, tag = "3")]
     pub opponent: ::core::option::Option<PlayerView>,
-    #[prost(message, optional, tag = "4")]
-    pub arena: ::core::option::Option<ArenaView>,
     /// The player who is currently able to act.
-    #[prost(enumeration = "PlayerName", tag = "5")]
+    #[prost(enumeration = "PlayerName", tag = "4")]
     pub current_priority: i32,
+    /// Whether a raid is currently active. If true, the raid overlay will be
+    /// displayed, the raid music will be played, etc.
+    #[prost(bool, tag = "5")]
+    pub raid_active: bool,
 }
 // ============================================================================
 // Actions
@@ -875,30 +850,17 @@ pub struct UpdateGameViewCommand {
     #[prost(message, optional, tag = "1")]
     pub game: ::core::option::Option<GameView>,
 }
+///
+/// Animates 'initiator' moving to a room and plays a standard particle effect
+/// based on the visit type.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct InitiateRaidCommand {
+pub struct VisitRoomCommand {
     #[prost(enumeration = "PlayerName", tag = "1")]
     pub initiator: i32,
     #[prost(enumeration = "RoomIdentifier", tag = "2")]
     pub room_id: i32,
-}
-///
-/// Removes the raid UI overlay. This command does not cause game objects within
-/// the raid to change position, 'MoveGameObjectCommand' should be used for that
-/// instead.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct EndRaidCommand {
-    #[prost(enumeration = "PlayerName", tag = "1")]
-    pub initiator: i32,
-}
-///
-/// Animates 'initiator' moving to a room and plays a standard effect.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct LevelUpRoomCommand {
-    #[prost(enumeration = "PlayerName", tag = "1")]
-    pub initiator: i32,
-    #[prost(enumeration = "RoomIdentifier", tag = "2")]
-    pub room_id: i32,
+    #[prost(enumeration = "RoomVisitType", tag = "3")]
+    pub visit_type: i32,
 }
 ///
 /// Creates a new card, or updates an existing card if one is already present
@@ -1062,7 +1024,7 @@ pub struct DisplayRewardsCommand {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19"
+        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1080,12 +1042,8 @@ pub mod game_command {
         RenderInterface(super::RenderInterfaceCommand),
         #[prost(message, tag = "5")]
         UpdateGameView(super::UpdateGameViewCommand),
-        #[prost(message, tag = "6")]
-        InitiateRaid(super::InitiateRaidCommand),
-        #[prost(message, tag = "7")]
-        EndRaid(super::EndRaidCommand),
         #[prost(message, tag = "8")]
-        LevelUpRoom(super::LevelUpRoomCommand),
+        VisitRoom(super::VisitRoomCommand),
         #[prost(message, tag = "9")]
         CreateOrUpdateCard(super::CreateOrUpdateCardCommand),
         #[prost(message, tag = "10")]
@@ -1356,6 +1314,13 @@ pub enum CardNodeAnchorPosition {
     Bottom = 1,
     Left = 2,
     Right = 3,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum RoomVisitType {
+    Unspecified = 0,
+    InitiateRaid = 1,
+    LevelUpRoom = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

@@ -85,8 +85,6 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.UpdateGameView:
             LoadGameAssets(requests, command.UpdateGameView.Game);
             break;
-          case GameCommand.CommandOneofCase.InitiateRaid:
-            break;
           case GameCommand.CommandOneofCase.CreateOrUpdateCard:
             LoadCardAssets(requests, command.CreateOrUpdateCard.Card);
             break;

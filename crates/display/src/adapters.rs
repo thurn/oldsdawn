@@ -15,7 +15,12 @@
 //! Helpers for converting between server & client representations
 
 use data::primitives::{CardId, RoomId, Side};
-use protos::spelldawn::{CardIdentifier, PlayerName, PlayerSide, RoomIdentifier};
+use protos::spelldawn::game_object_identifier::Id;
+use protos::spelldawn::{
+    CardIdentifier, GameObjectIdentifier, PlayerName, PlayerSide, RoomIdentifier,
+};
+
+use crate::full_sync::GameObjectId;
 
 /// Converts a [Side] into a [PlayerName] based on which viewer we are rendering
 /// this update for.
@@ -24,6 +29,13 @@ pub fn to_player_name(side: Side, user_side: Side) -> PlayerName {
         PlayerName::User
     } else {
         PlayerName::Opponent
+    }
+}
+
+pub fn adapt_side(side: Side) -> PlayerSide {
+    match side {
+        Side::Overlord => PlayerSide::Overlord,
+        Side::Champion => PlayerSide::Champion,
     }
 }
 
@@ -37,6 +49,18 @@ pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
         }
         .into(),
         index: card_id.index as u32,
+    }
+}
+
+/// Turns a server [GameObjectId] into its protobuf equivalent
+pub fn adapt_game_object_id(game_object_id: GameObjectId) -> GameObjectIdentifier {
+    GameObjectIdentifier {
+        id: Some(match game_object_id {
+            GameObjectId::CardId(card_id) => Id::CardId(adapt_card_id(card_id)),
+            GameObjectId::Identity(name) => Id::Identity(name.into()),
+            GameObjectId::Deck(name) => Id::Deck(name.into()),
+            GameObjectId::DiscardPile(name) => Id::DiscardPile(name.into()),
+        }),
     }
 }
 

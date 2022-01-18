@@ -31,12 +31,7 @@ namespace Spelldawn.Game
     [SerializeField] GameObject _raidSymbol = null!;
     [SerializeField] PlayerName _owner;
 
-    public IdentityAction.IdentityActionOneofCase? DragAction { get; set; }
-
-    public bool RaidSymbolShown
-    {
-      set => _raidSymbol.SetActive(value);
-    }
+    public PlayerSide Side { get; set; }
 
     protected override Registry Registry => _registry;
 
@@ -47,6 +42,14 @@ namespace Spelldawn.Game
     public override float DefaultScale => 2.0f;
 
     public override bool IsContainer() => false;
+
+    public void OnRaidStateChanged(bool raidActive)
+    {
+      if (Side == PlayerSide.Champion)
+      {
+        _raidSymbol.SetActive(raidActive);
+      }
+    }
 
     public IEnumerator RenderPlayerInfo(PlayerInfo playerInfo)
     {
@@ -68,12 +71,12 @@ namespace Spelldawn.Game
       if (_owner == PlayerName.User && _registry.ActionService.CanInitiateAction())
       {
         _registry.StaticAssets.PlayCardSound();
-        switch (DragAction)
+        switch (Side)
         {
-          case IdentityAction.IdentityActionOneofCase.InitiateRaid:
+          case PlayerSide.Champion:
             _registry.ArrowService.ShowArrow(ArrowService.Type.Red, transform, this);
             break;
-          case IdentityAction.IdentityActionOneofCase.LevelUpRoom:
+          case PlayerSide.Overlord:
             _registry.ArrowService.ShowArrow(ArrowService.Type.Green, transform, this);
             break;
         }
@@ -102,9 +105,9 @@ namespace Spelldawn.Game
     {
       if (_registry.ArenaService.CurrentRoomSelector is { } selectedRoom)
       {
-        switch (DragAction)
+        switch (Side)
         {
-          case IdentityAction.IdentityActionOneofCase.InitiateRaid:
+          case PlayerSide.Champion:
             _registry.ActionService.HandleAction(new GameAction
             {
               InitiateRaid = new InitiateRaidAction
@@ -113,7 +116,7 @@ namespace Spelldawn.Game
               }
             });
             break;
-          case IdentityAction.IdentityActionOneofCase.LevelUpRoom:
+          case PlayerSide.Overlord:
             _registry.ActionService.HandleAction(new GameAction
             {
               LevelUpRoom = new LevelUpRoomAction

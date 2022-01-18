@@ -367,8 +367,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             : CollectionUtils.Yield();
         case GameAction.ActionOneofCase.DrawCard:
           return DrawUserCard();
-        case GameAction.ActionOneofCase.InitiateRaid:
-          return InitiateRaid(action.InitiateRaid);
         case GameAction.ActionOneofCase.LevelUpRoom:
           return LevelUpRoom();
         default:
@@ -502,13 +500,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Opponent = Player(
           "Opponent",
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
-        Arena = new ArenaView
-        {
-          IdentityAction = new IdentityAction
-          {
-            InitiateRaid = new Empty()
-          }
-        },
         CurrentPriority = PlayerName.User
       };
 
@@ -695,33 +686,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    IEnumerator InitiateRaid(InitiateRaidAction action)
-    {
-      return _registry.CommandService.HandleCommands(new GameCommand
-      {
-        InitiateRaid = new InitiateRaidCommand
-        {
-          Initiator = PlayerName.User,
-          RoomId = action.RoomId
-        }
-      }, new GameCommand
-      {
-        RenderInterface = new RenderInterfaceCommand
-        {
-          MainControls = new InterfacePositionMainControls
-          {
-            Node = action.RoomId switch
-            {
-              RoomIdentifier.Sanctum => SanctumRaidControls(),
-              RoomIdentifier.Vault => VaultRaidControls(),
-              RoomIdentifier.Crypts => CryptsRaidControls(),
-              _ => null
-            }
-          }
-        }
-      });
-    }
-
     Node CryptsRaidControls() => Row("ControlButtons",
       new FlexStyle
       {
@@ -746,7 +710,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           ClearMainControls(),
           RunInParallel(
-            EndRaid(),
             MoveIdentityToContainer(PlayerName.User),
             MoveDiscardPileToContainer(PlayerName.Opponent)
           )
@@ -1027,7 +990,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           MoveToDeckContainer(PlayerName.Opponent),
           MoveToIdentity(cardId),
           SetUserScore(2),
-          EndRaid()
         }
       }),
       Update = new CommandList
@@ -1179,14 +1141,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
             }
           }
         }
-      }
-    };
-
-    GameCommand EndRaid() => new()
-    {
-      EndRaid = new EndRaidCommand
-      {
-        Initiator = PlayerName.User
       }
     };
 

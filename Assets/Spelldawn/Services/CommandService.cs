@@ -82,14 +82,8 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.UpdateGameView:
             yield return HandleUpdateGameView(command.UpdateGameView.Game);
             break;
-          case GameCommand.CommandOneofCase.InitiateRaid:
-            yield return _registry.RaidService.HandleInitiateRaid(command.InitiateRaid);
-            break;
-          case GameCommand.CommandOneofCase.EndRaid:
-            yield return _registry.RaidService.HandleEndRaid(command.EndRaid);
-            break;
-          case GameCommand.CommandOneofCase.LevelUpRoom:
-            yield return _registry.ArenaService.HandleLevelUpRoom(command.LevelUpRoom);
+          case GameCommand.CommandOneofCase.VisitRoom:
+            yield return _registry.ArenaService.HandleVisitRoom(command.VisitRoom);
             break;
           case GameCommand.CommandOneofCase.CreateOrUpdateCard:
             yield return _registry.CardService.HandleCreateOrUpdateCardCommand(command.CreateOrUpdateCard);
@@ -191,6 +185,11 @@ namespace Spelldawn.Services
 
       if (game.User != null)
       {
+        if (game.User.Side != PlayerSide.Unspecified)
+        {
+          _registry.ArenaService.UpdateViewForSide(game.User.Side);
+        }
+
         yield return HandleRenderPlayer(PlayerName.User, game.User);
       }
 
@@ -199,14 +198,16 @@ namespace Spelldawn.Services
         yield return HandleRenderPlayer(PlayerName.Opponent, game.Opponent);
       }
 
-      if (game.Arena != null)
-      {
-        yield return HandleRenderArena(game.Arena);
-      }
+      _registry.RaidService.RaidActive = game.RaidActive;
     }
 
     IEnumerator HandleRenderPlayer(PlayerName playerName, PlayerView playerView)
     {
+      if (playerView.Side != PlayerSide.Unspecified)
+      {
+        _registry.IdentityCardForPlayer(playerName).Side = playerView.Side;
+      }
+
       if (playerView.PlayerInfo != null)
       {
         yield return _registry.IdentityCardForPlayer(playerName).RenderPlayerInfo(playerView.PlayerInfo);
@@ -226,12 +227,6 @@ namespace Spelldawn.Services
       {
         _registry.ActionDisplayForPlayer(playerName).RenderActionTrackerView(playerView.ActionTracker);
       }
-    }
-
-    IEnumerator HandleRenderArena(ArenaView arenaView)
-    {
-      _registry.IdentityCardForPlayer(PlayerName.User).DragAction = arenaView.IdentityAction.IdentityActionCase;
-      return _registry.ArenaService.RenderArenaView(arenaView);
     }
   }
 }

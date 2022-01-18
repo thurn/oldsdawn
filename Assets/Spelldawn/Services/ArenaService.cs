@@ -32,6 +32,7 @@ namespace Spelldawn.Services
     [SerializeField] LinearObjectDisplay _rightItems = null!;
     [SerializeField] List<Room> _rooms = null!;
     [SerializeField] SceneBackground _sceneBackground = null!;
+    [SerializeField] TimedEffect _initiateRaidPrefab = null!;
     [SerializeField] TimedEffect _levelUpRoomPrefab = null!;
     [SerializeField] Room? _curentRoomSelector;
 
@@ -42,14 +43,9 @@ namespace Spelldawn.Services
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
-    public IEnumerator RenderArenaView(ArenaView arenaView)
+    public void UpdateViewForSide(PlayerSide side)
     {
-      if (arenaView.RoomsAtBottom is { } b)
-      {
-        _sceneBackground.SetRoomsOnBottom(b);
-      }
-
-      yield break;
+      _sceneBackground.SetRoomsOnBottom(side == PlayerSide.Overlord);
     }
 
     public Room FindRoom(RoomIdentifier roomId)
@@ -110,7 +106,7 @@ namespace Spelldawn.Services
       }
     }
 
-    public IEnumerator HandleLevelUpRoom(LevelUpRoomCommand command)
+    public IEnumerator HandleVisitRoom(VisitRoomCommand command)
     {
       var room = FindRoom(command.RoomId).transform;
       yield return TweenUtils.Sequence("RoomVisit")
@@ -118,7 +114,12 @@ namespace Spelldawn.Services
           .DOMove(room.position, 0.3f).SetEase(Ease.OutSine))
         .AppendCallback(() =>
         {
-          var effect = _registry.AssetPoolService.Create(_levelUpRoomPrefab, room.position);
+          var effect = _registry.AssetPoolService.Create(command.VisitType switch
+          {
+            RoomVisitType.InitiateRaid => _initiateRaidPrefab,
+            RoomVisitType.LevelUpRoom => _levelUpRoomPrefab,
+            _ => throw new ArgumentOutOfRangeException(nameof(command.VisitType), command.VisitType, null)
+          }, room.position);
           effect.transform.localScale = 5f * Vector3.one;
         })
         .WaitForCompletion();
