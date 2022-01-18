@@ -25,6 +25,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Building rust protocol buffers");
     tonic_build::configure()
         .build_client(false)
+        .type_attribute("spelldawn.GameObjectIdentifier", "#[derive(Eq, Hash, Copy)]")
+        .type_attribute("spelldawn.CardIdentifier", "#[derive(Eq, Hash, Copy)]")
+        .type_attribute("spelldawn.GameObjectIdentifier.id", "#[derive(Eq, Hash, Copy)]")
         .out_dir("crates/protos/src")
         .compile(&["proto/spelldawn.proto"], &["proto/"])?;
     Ok(())

@@ -1,6 +1,6 @@
 code-review: git-status check-format build clippy test check-docs outdated
 
-fix: fix-lints fmt
+fix: fix-lints fmt fix-clippy
 
 clean:
     cargo clean
@@ -76,7 +76,7 @@ fix-clippy:
     cargo clippy --fix
 
 clippy-fix:
-    cargo clippy --fix --workspace --exclude "protos" -- \
+    cargo clippy --fix -- \
         -D warnings \
         -D clippy::all \
         -A clippy::needless-update \

@@ -14,22 +14,23 @@
 
 //! Top-level server response handling
 
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{bail, Context, Result};
 use dashmap::DashMap;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
-use data::primitives::{CardId, GameId, PlayerId, RoomId, Side};
+use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::prompt::PromptResponse;
 use data::updates::UpdateTracker;
+use display::adapters;
 use maplit::hashmap;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
-    card_target, CardIdentifier, CardTarget, CommandList, ConnectRequest, GameCommand,
-    GameIdentifier, GameRequest, PlayerSide, RoomIdentifier, StandardAction,
+    card_target, CardTarget, CommandList, ConnectRequest, GameCommand, GameIdentifier, GameRequest,
+    RoomIdentifier, StandardAction,
 };
 use rules::actions::PlayCardTarget;
 use rules::{actions, raid};
@@ -151,7 +152,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
                 actions::play_card_action(
                     game,
                     user_side,
-                    to_server_card_id(&action.card_id)?,
+                    adapters::to_server_card_id(&action.card_id)?,
                     card_target(&action.target),
                 )
             })
@@ -283,22 +284,6 @@ pub fn user_side(player_id: PlayerId, game: &GameState) -> Result<Side> {
         Ok(Side::Overlord)
     } else {
         bail!("User {:?} is not a participant in game {:?}", player_id, game.id)
-    }
-}
-
-/// Converts a client [CardIdentifier] into a server [CardId]
-pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
-    if let Some(id) = card_id {
-        Ok(CardId {
-            side: match id.side() {
-                PlayerSide::Overlord => Side::Overlord,
-                PlayerSide::Champion => Side::Champion,
-                _ => bail!("Invalid CardId {:?}", card_id),
-            },
-            index: id.index as usize,
-        })
-    } else {
-        Err(anyhow!("Missing Required CardId"))
     }
 }
 

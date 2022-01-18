@@ -28,11 +28,12 @@ use data::primitives::{
 use display::adapters;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
+use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, game_object_identifier, node_type, CardAnchorNode, CardIdentifier, CardTarget,
     CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
-    GameAction, GameIdentifier, GameRequest, Node, NodeType, ObjectPosition,
+    GameAction, GameIdentifier, GameObjectIdentifier, GameRequest, Node, NodeType, ObjectPosition,
     ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
     PlayerView, RevealedCardView,
 };
@@ -50,7 +51,7 @@ use server::GameResponse;
 /// their own view of the state of the game, which differs due to hidden
 /// information. This struct has two different [TestClient]s which get updated
 /// based on server responses, representing what the two players are seeing.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct TestGame {
     /// This is the perspective of the player identified by the `user_id`
     /// parameter to [Self::new].
@@ -206,7 +207,7 @@ impl TestGame {
 
         let response = self
             .perform_action(
-                Action::PlayCard(PlayCardAction { card_id: Some(card_id.clone()), target }),
+                Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
                 self.game.player(side_for_card_name(card_name)).id,
             )
             .expect("Server error playing card");
@@ -277,7 +278,7 @@ impl Database for TestGame {
 }
 
 /// Represents a user client connected to a test game
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct TestClient {
     pub id: PlayerId,
     pub data: ClientGameData,
@@ -311,10 +312,11 @@ impl TestClient {
 }
 
 /// Simulated game state in an ongoing [TestGame]
-#[derive(Debug, Clone, Default)]
+#[derive(Clone, Default)]
 pub struct ClientGameData {
     priority: Option<PlayerName>,
     raid_active: Option<bool>,
+    object_positions: HashMap<GameObjectIdentifier, (u32, Position)>,
 }
 
 impl ClientGameData {
@@ -326,11 +328,28 @@ impl ClientGameData {
         self.raid_active.expect("raid_active")
     }
 
+    pub fn object_position(&self, id: Id) -> (u32, Position) {
+        self.object_positions
+            .get(&GameObjectIdentifier { id: Some(id) })
+            .unwrap_or_else(|| panic!("No position available for {:?}", id))
+            .clone()
+    }
+
     fn update(&mut self, command: Command) {
-        if let Command::UpdateGameView(update_game) = command {
-            self.priority =
-                PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority);
-            self.raid_active = Some(update_game.game.as_ref().unwrap().raid_active);
+        match command {
+            Command::UpdateGameView(update_game) => {
+                self.priority =
+                    PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority);
+                self.raid_active = Some(update_game.game.as_ref().unwrap().raid_active);
+            }
+            Command::MoveGameObjects(move_objects) => {
+                for id in move_objects.ids {
+                    let p = move_objects.position.as_ref().expect("ObjectPosition").clone();
+                    self.object_positions
+                        .insert(id, (p.sorting_key, p.position.expect("Position")));
+                }
+            }
+            _ => {}
         }
     }
 }
@@ -479,10 +498,8 @@ pub struct ClientCards {
 }
 
 impl ClientCards {
-    pub fn get(&self, card_id: &CardIdentifier) -> &ClientCard {
-        self.cards
-            .get(&server::to_server_card_id(&Some(card_id.clone())).expect("Invalid CardId"))
-            .expect("Card not found")
+    pub fn get(&self, card_id: CardIdentifier) -> &ClientCard {
+        self.cards.get(&adapters::from_card_identifier(card_id)).expect("Card not found")
     }
 
     /// Returns a vec containing the titles of all of the cards in the provided
@@ -533,7 +550,7 @@ impl ClientCards {
         match command {
             Command::CreateOrUpdateCard(create_or_update) => {
                 let card_view = create_or_update.clone().card.expect("CardView");
-                let card_id = server::to_server_card_id(&card_view.card_id).expect("CardId");
+                let card_id = adapters::to_server_card_id(&card_view.card_id).expect("CardId");
                 self.cards
                     .entry(card_id)
                     .and_modify(|c| c.update(&card_view))
@@ -543,7 +560,8 @@ impl ClientCards {
                 let position = move_objects.clone().position.expect("ObjectPosition");
                 for id in move_objects.ids {
                     if let game_object_identifier::Id::CardId(identifier) = id.id.expect("ID") {
-                        let card_id = server::to_server_card_id(&Some(identifier)).expect("CardId");
+                        let card_id =
+                            adapters::to_server_card_id(&Some(identifier)).expect("CardId");
                         assert!(
                             self.cards.contains_key(&card_id),
                             "Expected a CreateOrUpdate command before a Move command for card {:?}",
@@ -555,7 +573,7 @@ impl ClientCards {
                 }
             }
             Command::DestroyCard(destroy_card) => {
-                let card_id = server::to_server_card_id(&destroy_card.card_id).expect("CardId");
+                let card_id = adapters::to_server_card_id(&destroy_card.card_id).expect("CardId");
                 self.cards.remove(&card_id);
             }
             _ => {}

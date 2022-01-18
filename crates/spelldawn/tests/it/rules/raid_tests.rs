@@ -16,13 +16,15 @@ use data::card_name::CardName;
 use data::primitives::Side;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{InitiateRaidAction, PlayerName};
+use protos::spelldawn::game_object_identifier::Id;
+use protos::spelldawn::object_position::Position;
+use protos::spelldawn::{InitiateRaidAction, ObjectPositionRaid, PlayerName};
 use test_utils::client::HasText;
 use test_utils::{test_games, *};
 
 #[test]
 fn initiate_raid() {
-    let (mut g, _) = test_games::simple_game(
+    let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         Some(1000),
         CardName::TestScheme31,
@@ -38,6 +40,31 @@ fn initiate_raid() {
     assert_eq!(PlayerName::User, g.opponent.data.priority());
     assert!(g.user.data.raid_active());
     assert!(g.opponent.data.raid_active());
+
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(ids.scheme_id)),
+        (0, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.opponent.data.object_position(Id::CardId(ids.scheme_id)),
+        (0, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(ids.minion_id)),
+        (1, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.opponent.data.object_position(Id::CardId(ids.minion_id)),
+        (1, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        (2, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.opponent.data.object_position(Id::Identity(PlayerName::Opponent.into())),
+        (2, Position::Raid(ObjectPositionRaid {}))
+    );
 
     assert_commands_match_lists(
         &response,
@@ -78,17 +105,29 @@ fn activate_room() {
         g.user_id(),
     );
     assert_eq!(g.opponent.this_player.mana(), 100);
-    assert!(!g.user.cards.get(&ids.minion_id).revealed_to_me());
+    assert!(!g.user.cards.get(ids.minion_id).revealed_to_me());
     let response = g.click_on(g.opponent_id(), "Activate");
     assert_eq!(g.opponent.this_player.mana(), 97); // Minion costs 3 to summon
-    assert!(g.user.cards.get(&ids.minion_id).revealed_to_me());
-    assert!(g.opponent.cards.get(&ids.minion_id).revealed_to_me());
+    assert!(g.user.cards.get(ids.minion_id).revealed_to_me());
+    assert!(g.opponent.cards.get(ids.minion_id).revealed_to_me());
     assert_eq!(PlayerName::User, g.user.data.priority());
     assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert!(g.user.interface.main_controls().has_text("Test Weapon"));
     assert!(g.user.interface.main_controls().has_text("1\u{f06d}"));
     assert!(g.user.interface.main_controls().has_text("Continue"));
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(ids.scheme_id)),
+        (0, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(ids.minion_id)),
+        (1, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        (2, Position::Raid(ObjectPositionRaid {}))
+    );
 
     assert_commands_match(
         &response,

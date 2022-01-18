@@ -14,13 +14,9 @@
 
 //! Helpers for converting between server & client representations
 
+use anyhow::{anyhow, bail, Result};
 use data::primitives::{CardId, RoomId, Side};
-use protos::spelldawn::game_object_identifier::Id;
-use protos::spelldawn::{
-    CardIdentifier, GameObjectIdentifier, PlayerName, PlayerSide, RoomIdentifier,
-};
-
-use crate::full_sync::GameObjectId;
+use protos::spelldawn::{CardIdentifier, PlayerName, PlayerSide, RoomIdentifier};
 
 /// Converts a [Side] into a [PlayerName] based on which viewer we are rendering
 /// this update for.
@@ -52,18 +48,6 @@ pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
     }
 }
 
-/// Turns a server [GameObjectId] into its protobuf equivalent
-pub fn adapt_game_object_id(game_object_id: GameObjectId) -> GameObjectIdentifier {
-    GameObjectIdentifier {
-        id: Some(match game_object_id {
-            GameObjectId::CardId(card_id) => Id::CardId(adapt_card_id(card_id)),
-            GameObjectId::Identity(name) => Id::Identity(name.into()),
-            GameObjectId::Deck(name) => Id::Deck(name.into()),
-            GameObjectId::DiscardPile(name) => Id::DiscardPile(name.into()),
-        }),
-    }
-}
-
 /// Turns a server [RoomId] into its protobuf equivalent
 pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
     match room_id {
@@ -75,5 +59,26 @@ pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
         RoomId::RoomC => RoomIdentifier::RoomC,
         RoomId::RoomD => RoomIdentifier::RoomD,
         RoomId::RoomE => RoomIdentifier::RoomE,
+    }
+}
+
+/// Equivalent to [to_server_card_id] which panics on failure
+pub fn from_card_identifier(card_id: CardIdentifier) -> CardId {
+    to_server_card_id(&Some(card_id)).expect("Invalid CardIdentifier")
+}
+
+/// Converts a client [CardIdentifier] into a server [CardId]
+pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
+    if let Some(id) = card_id {
+        Ok(CardId {
+            side: match id.side() {
+                PlayerSide::Overlord => Side::Overlord,
+                PlayerSide::Champion => Side::Champion,
+                _ => bail!("Invalid CardId {:?}", card_id),
+            },
+            index: id.index as usize,
+        })
+    } else {
+        Err(anyhow!("Missing Required CardId"))
     }
 }

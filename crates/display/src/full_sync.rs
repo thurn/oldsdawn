@@ -21,30 +21,22 @@ use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
 use protos::spelldawn::card_targeting::Targeting;
+use protos::spelldawn::game_object_identifier;
 use protos::spelldawn::object_position::Position;
 #[allow(unused)] // Used in rustdoc
 use protos::spelldawn::{
     ActionTrackerView, CardCreationAnimation, CardIcon, CardIcons, CardTargeting, CardTitle,
     CardView, ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand, GameIdentifier,
-    GameObjectIdentifier, GameView, ManaView, ObjectPosition, ObjectPositionDeck,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem,
-    ObjectPositionRaid, ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo,
-    PlayerName, PlayerView, RenderInterfaceCommand, RevealedCardView, RoomIdentifier, ScoreView,
-    SpriteAddress, UpdateGameViewCommand,
+    GameView, ManaView, ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile,
+    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRaid,
+    ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo, PlayerName, PlayerView,
+    RenderInterfaceCommand, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress,
+    UpdateGameViewCommand,
 };
 use rules::{flags, queries};
 
 use crate::assets::CardIconType;
 use crate::{adapters, assets, interface, rules_text};
-
-/// Re-implementation of [GameObjectIdentifier] since that type cannot be hashed
-#[derive(PartialEq, Eq, Hash, Copy, Clone)]
-pub enum GameObjectId {
-    CardId(CardId),
-    Identity(PlayerName),
-    Deck(PlayerName),
-    DiscardPile(PlayerName),
-}
 
 /// State synchronization response, containing commands for the updated state of
 /// each game object in an ongoing game.
@@ -57,7 +49,7 @@ pub struct FullSync {
     pub interface: RenderInterfaceCommand,
     /// Positions for Game Objects which are in non-standard positions, e.g.
     /// because they are currently participating in a raid.
-    pub position_overrides: HashMap<GameObjectId, ObjectPosition>,
+    pub position_overrides: HashMap<game_object_identifier::Id, ObjectPosition>,
 }
 
 /// Builds a complete representation of the provided game as viewed by the
@@ -260,7 +252,7 @@ fn revealed_card_view(
 fn raid_position_overrides(
     game: &GameState,
     user_side: Side,
-) -> HashMap<GameObjectId, ObjectPosition> {
+) -> HashMap<game_object_identifier::Id, ObjectPosition> {
     game.data.raid.map_or_else(HashMap::new, |raid| {
         if raid.phase == RaidPhase::Access {
             raid_access_position_overrides(game, user_side, raid)
@@ -276,27 +268,32 @@ fn ongoing_raid_position_overrides(
     game: &GameState,
     user_side: Side,
     raid: RaidData,
-) -> HashMap<GameObjectId, ObjectPosition> {
+) -> HashMap<game_object_identifier::Id, ObjectPosition> {
     let mut result = Vec::new();
 
     match raid.target {
         RoomId::Vault => {
-            result.push(GameObjectId::Deck(adapters::to_player_name(Side::Overlord, user_side)));
+            result.push(game_object_identifier::Id::Deck(
+                adapters::to_player_name(Side::Overlord, user_side).into(),
+            ));
         }
         RoomId::Sanctum => {
-            result
-                .push(GameObjectId::Identity(adapters::to_player_name(Side::Overlord, user_side)));
+            result.push(game_object_identifier::Id::Identity(
+                adapters::to_player_name(Side::Overlord, user_side).into(),
+            ));
         }
         RoomId::Crypts => {
-            result.push(GameObjectId::DiscardPile(adapters::to_player_name(
-                Side::Overlord,
-                user_side,
-            )));
+            result.push(game_object_identifier::Id::DiscardPile(
+                adapters::to_player_name(Side::Overlord, user_side).into(),
+            ));
         }
         _ => {}
     }
 
-    result.extend(game.occupants(raid.target).map(|card| GameObjectId::CardId(card.id)));
+    result.extend(
+        game.occupants(raid.target)
+            .map(|card| game_object_identifier::Id::CardId(adapters::adapt_card_id(card.id))),
+    );
 
     let defenders = game.defender_list(raid.target);
     let included = match raid.phase {
@@ -304,9 +301,15 @@ fn ongoing_raid_position_overrides(
         RaidPhase::Continue(i) => &defenders[..=i],
         _ => &defenders,
     };
-    result.extend(included.iter().map(|card| GameObjectId::CardId(card.id)));
+    result.extend(
+        included
+            .iter()
+            .map(|card| game_object_identifier::Id::CardId(adapters::adapt_card_id(card.id))),
+    );
 
-    result.push(GameObjectId::Identity(adapters::to_player_name(Side::Champion, user_side)));
+    result.push(game_object_identifier::Id::Identity(
+        adapters::to_player_name(Side::Champion, user_side).into(),
+    ));
 
     result
         .iter()
@@ -328,7 +331,7 @@ fn raid_access_position_overrides(
     _game: &GameState,
     _user_side: Side,
     _raid: RaidData,
-) -> HashMap<GameObjectId, ObjectPosition> {
+) -> HashMap<game_object_identifier::Id, ObjectPosition> {
     HashMap::new()
 }
 

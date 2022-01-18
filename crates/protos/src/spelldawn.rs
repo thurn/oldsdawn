@@ -332,21 +332,21 @@ pub struct GameIdentifier {
     #[prost(uint64, tag = "1")]
     pub value: u64,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Eq, Hash, Copy, Clone, PartialEq, ::prost::Message)]
 pub struct CardIdentifier {
     #[prost(enumeration = "PlayerSide", tag = "1")]
     pub side: i32,
     #[prost(uint32, tag = "2")]
     pub index: u32,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Eq, Hash, Copy, Clone, PartialEq, ::prost::Message)]
 pub struct GameObjectIdentifier {
     #[prost(oneof = "game_object_identifier::Id", tags = "1, 2, 3, 4")]
     pub id: ::core::option::Option<game_object_identifier::Id>,
 }
 /// Nested message and enum types in `GameObjectIdentifier`.
 pub mod game_object_identifier {
-    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    #[derive(Eq, Hash, Copy, Clone, PartialEq, ::prost::Oneof)]
     pub enum Id {
         #[prost(message, tag = "1")]
         CardId(super::CardIdentifier),
