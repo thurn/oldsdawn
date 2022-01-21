@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 64
+assertion_line: 91
 expression: response
 
 ---
@@ -45,9 +45,9 @@ Ok(
                     command: Some(
                         RenderInterface(
                             RenderInterfaceCommand {
-                                full_screen: None,
+                                panels: [],
                                 main_controls: Some(
-                                    InterfacePositionMainControls {
+                                    InterfaceMainControls {
                                         node: Some(
                                             Node {
                                                 id: "",
@@ -98,7 +98,7 @@ Ok(
                                                                 font_size: Some(
                                                                     Dimension {
                                                                         unit: Pixels,
-                                                                        value: 60.0,
+                                                                        value: 48.0,
                                                                     },
                                                                 ),
                                                                 height: None,
@@ -181,7 +181,7 @@ Ok(
                                                                 background_image_scale_mode: Unspecified,
                                                                 font: Some(
                                                                     FontAddress {
-                                                                        address: "Fonts/Roboto",
+                                                                        address: "Fonts/BluuNext-Bold",
                                                                     },
                                                                 ),
                                                                 font_style: Unspecified,
@@ -198,6 +198,7 @@ Ok(
                                                                 word_spacing: None,
                                                                 background_image_scale_multiplier: None,
                                                                 fixed_background_image_aspect_ratio: false,
+                                                                picking_mode: Unspecified,
                                                             },
                                                         ),
                                                         hover_style: None,
@@ -292,6 +293,7 @@ Ok(
                                                         word_spacing: None,
                                                         background_image_scale_multiplier: None,
                                                         fixed_background_image_aspect_ratio: false,
+                                                        picking_mode: Unspecified,
                                                     },
                                                 ),
                                                 hover_style: None,
@@ -300,7 +302,7 @@ Ok(
                                         ),
                                     },
                                 ),
-                                card_anchors: None,
+                                card_anchor_nodes: [],
                             },
                         ),
                     ),
@@ -463,9 +465,9 @@ Ok(
                             command: Some(
                                 RenderInterface(
                                     RenderInterfaceCommand {
-                                        full_screen: None,
+                                        panels: [],
                                         main_controls: Some(
-                                            InterfacePositionMainControls {
+                                            InterfaceMainControls {
                                                 node: Some(
                                                     Node {
                                                         id: "",
@@ -516,7 +518,7 @@ Ok(
                                                                         font_size: Some(
                                                                             Dimension {
                                                                                 unit: Pixels,
-                                                                                value: 60.0,
+                                                                                value: 48.0,
                                                                             },
                                                                         ),
                                                                         height: None,
@@ -572,7 +574,7 @@ Ok(
                                                                         background_image_scale_mode: Unspecified,
                                                                         font: Some(
                                                                             FontAddress {
-                                                                                address: "Fonts/Roboto",
+                                                                                address: "Fonts/BluuNext-Bold",
                                                                             },
                                                                         ),
                                                                         font_style: Unspecified,
@@ -589,6 +591,7 @@ Ok(
                                                                         word_spacing: None,
                                                                         background_image_scale_multiplier: None,
                                                                         fixed_background_image_aspect_ratio: false,
+                                                                        picking_mode: Unspecified,
                                                                     },
                                                                 ),
                                                                 hover_style: None,
@@ -743,6 +746,7 @@ Ok(
                                                                                 word_spacing: None,
                                                                                 background_image_scale_multiplier: None,
                                                                                 fixed_background_image_aspect_ratio: false,
+                                                                                picking_mode: Unspecified,
                                                                             },
                                                                         ),
                                                                         hover_style: None,
@@ -883,6 +887,7 @@ Ok(
                                                                         word_spacing: None,
                                                                         background_image_scale_multiplier: None,
                                                                         fixed_background_image_aspect_ratio: false,
+                                                                        picking_mode: Unspecified,
                                                                     },
                                                                 ),
                                                                 hover_style: None,
@@ -1037,6 +1042,7 @@ Ok(
                                                                                 word_spacing: None,
                                                                                 background_image_scale_multiplier: None,
                                                                                 fixed_background_image_aspect_ratio: false,
+                                                                                picking_mode: Unspecified,
                                                                             },
                                                                         ),
                                                                         hover_style: None,
@@ -1177,6 +1183,7 @@ Ok(
                                                                         word_spacing: None,
                                                                         background_image_scale_multiplier: None,
                                                                         fixed_background_image_aspect_ratio: false,
+                                                                        picking_mode: Unspecified,
                                                                     },
                                                                 ),
                                                                 hover_style: None,
@@ -1271,6 +1278,7 @@ Ok(
                                                                 word_spacing: None,
                                                                 background_image_scale_multiplier: None,
                                                                 fixed_background_image_aspect_ratio: false,
+                                                                picking_mode: Unspecified,
                                                             },
                                                         ),
                                                         hover_style: None,
@@ -1279,7 +1287,7 @@ Ok(
                                                 ),
                                             },
                                         ),
-                                        card_anchors: None,
+                                        card_anchor_nodes: [],
                                     },
                                 ),
                             ),

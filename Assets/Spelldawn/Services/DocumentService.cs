@@ -14,11 +14,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Spelldawn.Game;
 using Spelldawn.Masonry;
 using static Spelldawn.Masonry.MasonUtil;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -30,17 +32,22 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] UIDocument _document = null!;
+    readonly List<PanelAddress> _openPanels = new();
+    readonly Dictionary<PanelAddress, Node> _panelCache = new();
 
     VisualElement _fullScreen = null!;
-    VisualElement _raidControls = null!;
+    Node _fullScreenNode = null!;
+    VisualElement _mainControls = null!;
+    Node _mainControlsNode = null!;
     VisualElement _cardControls = null!;
+    Node _cardControlsNode = null!;
 
     void Start()
     {
       _document.rootVisualElement.Clear();
-      AddRoot("Full Screen", out _fullScreen);
-      AddRoot("Raid Controls", out _raidControls);
-      AddRoot("Card Controls", out _cardControls);
+      AddRoot("Full Screen", out _fullScreen, out _fullScreenNode);
+      AddRoot("Raid Controls", out _mainControls, out _mainControlsNode);
+      AddRoot("Card Controls", out _cardControls, out _cardControlsNode);
     }
 
     float ScreenPxToElementDip(float value) => value * _document.panelSettings.referenceDpi / Screen.dpi;
@@ -60,27 +67,56 @@ namespace Spelldawn.Services
     public Vector2 TransformPositionToElementPosition(Transform t, bool anchorRight = false) =>
       ScreenPositionToElementPosition(_registry.MainCamera.WorldToScreenPoint(t.position), anchorRight);
 
+    public void TogglePanel(bool open, PanelAddress address)
+    {
+      if (open)
+      {
+        _openPanels.Add(address);
+      }
+      else
+      {
+        _openPanels.Remove(address);
+      }
+
+      RenderPanels();
+    }
+
+    public bool IsOpen(PanelAddress address) => _openPanels.Contains(address);
+
     public void HandleRenderInterface(RenderInterfaceCommand command)
     {
-      _fullScreen.Clear();
-      _raidControls.Clear();
-      _cardControls.Clear();
-
-      if (command.FullScreen != null)
+      foreach (var panel in command.Panels)
       {
-        _fullScreen.Add(Mason.Render(_registry, FullScreen(command.FullScreen.Node)));
+        _panelCache[panel.Address] = panel.Node;
       }
 
+      RenderPanels();
+
+      _mainControls.Clear();
       if (command.MainControls != null)
       {
-        _raidControls.Add(Mason.Render(_registry, MainControls(command.MainControls.Node)));
+        _mainControls.Add(Mason.Render(_registry, MainControls(command.MainControls.Node)));
       }
 
-      if (command.CardAnchors != null)
+      _cardControls.Clear();
+      if (command.CardAnchorNodes.Count > 0)
       {
         _cardControls.Add(Mason.Render(_registry,
-          Row("CardAnchors", new FlexStyle(), command.CardAnchors.AnchorNodes.Select(RenderCardAnchorNode))));
+          Row("CardAnchors", new FlexStyle(), command.CardAnchorNodes.Select(RenderCardAnchorNode))));
       }
+    }
+
+    void RenderPanels()
+    {
+      var newNode = FullScreen(_openPanels.Select(p => _panelCache.GetValueOrDefault(p)).WhereNotNull());
+      var element = Reconciler.Update(_registry, newNode, _fullScreen, _fullScreenNode);
+
+      if (element != null)
+      {
+        _fullScreen = element;
+      }
+
+      _fullScreenNode = newNode;
     }
 
     public IEnumerator RenderMainControls(Node node)
@@ -89,7 +125,7 @@ namespace Spelldawn.Services
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          MainControls = new InterfacePositionMainControls
+          MainControls = new InterfaceMainControls
           {
             Node = node
           }
@@ -108,26 +144,24 @@ namespace Spelldawn.Services
       _cardControls.Add(Mason.Render(_registry, WrapCardAnchor(card, node, position)));
     }
 
-    void AddRoot(string elementName, out VisualElement element)
+    void AddRoot(string elementName, out VisualElement element, out Node node)
     {
-      element = new VisualElement
+      node = Row(elementName, new FlexStyle
       {
-        name = elementName,
-        style =
-        {
-          position = Position.Absolute,
-          top = 0,
-          right = 0,
-          bottom = 0,
-          left = 0
-        },
-        pickingMode = PickingMode.Ignore
-      };
+        Position = FlexPosition.Absolute,
+        Inset = AllDip(0),
+        PickingMode = FlexPickingMode.Ignore
+      });
+      element = Mason.Render(_registry, node);
       _document.rootVisualElement.Add(element);
     }
 
-    static Node FullScreen(Node? content) =>
-      Row("FullScreen", new FlexStyle());
+    static Node FullScreen(IEnumerable<Node> children) =>
+      Row("FullScreen", new FlexStyle
+      {
+        Position = FlexPosition.Absolute,
+        Inset = AllDip(0),
+      }, children);
 
     static Node MainControls(Node? content) =>
       Row("MainControls", new FlexStyle
@@ -228,7 +262,7 @@ namespace Spelldawn.Services
                 {
                   RenderInterface = new RenderInterfaceCommand
                   {
-                    MainControls = new InterfacePositionMainControls()
+                    MainControls = new InterfaceMainControls()
                   }
                 },
                 update

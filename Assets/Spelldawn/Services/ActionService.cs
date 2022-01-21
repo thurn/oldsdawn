@@ -107,6 +107,7 @@ namespace Spelldawn.Services
     public bool CanExecuteAction(GameAction.ActionOneofCase actionType) => actionType switch
     {
       GameAction.ActionOneofCase.StandardAction => CanAct(allowInOverlay: true, actionPointRequired: false),
+      GameAction.ActionOneofCase.TogglePanel => true,
       GameAction.ActionOneofCase.GainMana => CanAct(),
       GameAction.ActionOneofCase.DrawCard => CanAct(),
       GameAction.ActionOneofCase.PlayCard => CanAct(),
@@ -244,6 +245,10 @@ namespace Spelldawn.Services
             yield return _registry.CommandService.HandleCommands(update);
           }
 
+          break;
+        case GameAction.ActionOneofCase.TogglePanel:
+          _registry.StaticAssets.PlayButtonSound();
+          _registry.DocumentService.TogglePanel(action.TogglePanel.Open, action.TogglePanel.PanelAddress);
           break;
         case GameAction.ActionOneofCase.DrawCard:
           _registry.StaticAssets.PlayDrawCardStartSound();

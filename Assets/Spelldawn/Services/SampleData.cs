@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
@@ -229,7 +230,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           RenderInterface = new RenderInterfaceCommand
           {
-            MainControls = new InterfacePositionMainControls
+            MainControls = new InterfaceMainControls
             {
               Node = MulliganControls(cards)
             }
@@ -834,7 +835,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          MainControls = new InterfacePositionMainControls()
+          MainControls = new InterfaceMainControls()
         }
       };
 
@@ -900,17 +901,14 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          CardAnchors = new InterfacePositionCardAnchors
+          CardAnchorNodes =
           {
-            AnchorNodes =
-            {
               new CardAnchorNode
               {
                 CardId = id,
                 Node = Button(label, action: onClick, smallText: false, orange: true),
                 AnchorPosition = CardNodeAnchorPosition.Bottom
               }
-            }
           }
         }
       };
@@ -998,10 +996,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           new GameCommand
           {
-            RenderInterface = new RenderInterfaceCommand
-            {
-              CardAnchors = new InterfacePositionCardAnchors()
-            }
+            RenderInterface = new RenderInterfaceCommand()
           },
           SetMusic(MusicState.Silent),
           PlaySound("Cafofo/Fantasy Music Pack Vol 1/Events/Positive Event 01"),

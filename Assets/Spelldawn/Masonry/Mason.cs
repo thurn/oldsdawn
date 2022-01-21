@@ -36,12 +36,19 @@ namespace Spelldawn.Masonry
   public static class Mason
   {
     /// <summary>
-    /// Renders the provided Node into a VisualElement.
+    /// Renders the provided Node into a VisualElement, recursively rendering child nodes.
     /// </summary>
     public static VisualElement Render(Registry registry, Node node)
     {
       var element = CreateElement(node);
-      return ApplyToElement(registry, node, element);
+      ApplyToElement(registry, element, node);
+
+      foreach (var child in node.Children)
+      {
+        element.Add(Render(registry, child));
+      }
+
+      return element;
     }
 
     public static VisualElement CreateElement(Node node) => node.NodeType?.NodeTypeCase switch
@@ -50,7 +57,8 @@ namespace Spelldawn.Masonry
       _ => new NodeVisualElement()
     };
 
-    public static VisualElement ApplyToElement(Registry registry, Node node, VisualElement element)
+    /// <summary>Applies the configuration in a Node to an existing VisualElement, without modifying children.</summary>
+    public static void ApplyToElement(Registry registry, VisualElement element, Node node)
     {
       switch (node.NodeType?.NodeTypeCase)
       {
@@ -59,19 +67,14 @@ namespace Spelldawn.Masonry
           break;
       }
 
-      return ApplyNode(registry, node, element);
+      ApplyNode(registry, node, element);
     }
 
-    static VisualElement ApplyNode(Registry registry, Node node, VisualElement element)
+    static void ApplyNode(Registry registry, Node node, VisualElement element)
     {
       element.name = node.Name;
 
-      foreach (var child in node.Children)
-      {
-        element.Add(Render(registry, child));
-      }
-
-      var result = ApplyStyle(registry, element, node.Style);
+      ApplyStyle(registry, element, node.Style);
       var callbacks = ((INodeCallbacks)element);
 
       if (node.HoverStyle != null)
@@ -131,8 +134,6 @@ namespace Spelldawn.Masonry
         // Ignore mouse events on non-interactive elements
         element.pickingMode = PickingMode.Ignore;
       }
-
-      return result;
     }
 
     static void ApplyText(Text text, Label label)
@@ -179,11 +180,11 @@ namespace Spelldawn.Masonry
         ? new StyleList<TResult>(StyleKeyword.Null)
         : new StyleList<TResult>(field.Select(selector).ToList());
 
-    public static VisualElement ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
+    public static void ApplyStyle(Registry registry, VisualElement e, FlexStyle? input)
     {
       if (input == null)
       {
-        return e;
+        return;
       }
 
       e.style.alignContent = AdaptAlign(input.AlignContent);
@@ -417,7 +418,13 @@ namespace Spelldawn.Masonry
         e.style.backgroundImage = new StyleBackground(StyleKeyword.Null);
       }
 
-      return e;
+      e.pickingMode = input.PickingMode switch
+      {
+        FlexPickingMode.Unspecified => PickingMode.Position,
+        FlexPickingMode.Position => PickingMode.Position,
+        FlexPickingMode.Ignore => PickingMode.Ignore,
+        _ => throw new ArgumentOutOfRangeException()
+      };
     }
   }
 }

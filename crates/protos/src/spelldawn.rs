@@ -273,6 +273,8 @@ pub struct FlexStyle {
     /// on the aspect ratio and vice versa. Does not support percentage values.
     #[prost(bool, tag = "56")]
     pub fixed_background_image_aspect_ratio: bool,
+    #[prost(enumeration = "FlexPickingMode", tag = "57")]
+    pub picking_mode: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Flexbox {}
@@ -741,6 +743,22 @@ pub struct InitiateRaidAction {
     #[prost(enumeration = "RoomIdentifier", tag = "1")]
     pub room_id: i32,
 }
+/// Open or close a given interface panel.
+///
+/// Behavior:
+///   - Open: If the panel with this address has already been downloaded, it
+///   is opened immediately. The server returns an updated view of the
+///   panel contents.
+///   - Close: The panel is closed immediately. No server response is
+///   provided.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TogglePanelAction {
+    #[prost(enumeration = "PanelAddress", tag = "1")]
+    pub panel_address: i32,
+    /// Should the panel be opened or closed?
+    #[prost(bool, tag = "2")]
+    pub open: bool,
+}
 ///
 /// Possible game actions taken by the user.
 ///
@@ -749,7 +767,7 @@ pub struct InitiateRaidAction {
 /// same time -- interaction should be disabled while an action is pending.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameAction {
-    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6")]
+    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7")]
     pub action: ::core::option::Option<game_action::Action>,
 }
 /// Nested message and enum types in `GameAction`.
@@ -759,14 +777,16 @@ pub mod game_action {
         #[prost(message, tag = "1")]
         StandardAction(super::StandardAction),
         #[prost(message, tag = "2")]
-        GainMana(super::GainManaAction),
+        TogglePanel(super::TogglePanelAction),
         #[prost(message, tag = "3")]
-        DrawCard(super::DrawCardAction),
+        GainMana(super::GainManaAction),
         #[prost(message, tag = "4")]
-        PlayCard(super::PlayCardAction),
+        DrawCard(super::DrawCardAction),
         #[prost(message, tag = "5")]
-        LevelUpRoom(super::LevelUpRoomAction),
+        PlayCard(super::PlayCardAction),
         #[prost(message, tag = "6")]
+        LevelUpRoom(super::LevelUpRoomAction),
+        #[prost(message, tag = "7")]
         InitiateRaid(super::InitiateRaidAction),
     }
 }
@@ -808,12 +828,14 @@ pub struct DelayCommand {
     pub duration: ::core::option::Option<TimeValue>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct InterfacePositionFullScreen {
-    #[prost(message, optional, tag = "1")]
+pub struct InterfacePanel {
+    #[prost(enumeration = "PanelAddress", tag = "1")]
+    pub address: i32,
+    #[prost(message, optional, tag = "2")]
     pub node: ::core::option::Option<Node>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct InterfacePositionMainControls {
+pub struct InterfaceMainControls {
     #[prost(message, optional, tag = "1")]
     pub node: ::core::option::Option<Node>,
 }
@@ -827,22 +849,22 @@ pub struct CardAnchorNode {
     #[prost(enumeration = "CardNodeAnchorPosition", tag = "3")]
     pub anchor_position: i32,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct InterfacePositionCardAnchors {
-    #[prost(message, repeated, tag = "1")]
-    pub anchor_nodes: ::prost::alloc::vec::Vec<CardAnchorNode>,
-}
-///
-/// Updates the content of the user interface to display the provided nodes,
-/// replacing all existing UI elements.
+/// Updates the content of the user interface.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RenderInterfaceCommand {
-    #[prost(message, optional, tag = "1")]
-    pub full_screen: ::core::option::Option<InterfacePositionFullScreen>,
+    /// List of panels to update.
+    ///
+    /// A 'panel' is an independently addressable block of UI. The contents
+    /// of each known panel are cached and can then be opened immediately
+    /// via TogglePanelAction, without waiting for a server response.
+    #[prost(message, repeated, tag = "1")]
+    pub panels: ::prost::alloc::vec::Vec<InterfacePanel>,
+    /// Controls for game actions such as interface prompts
     #[prost(message, optional, tag = "2")]
-    pub main_controls: ::core::option::Option<InterfacePositionMainControls>,
-    #[prost(message, optional, tag = "3")]
-    pub card_anchors: ::core::option::Option<InterfacePositionCardAnchors>,
+    pub main_controls: ::core::option::Option<InterfaceMainControls>,
+    /// Controls for specific cards
+    #[prost(message, repeated, tag = "3")]
+    pub card_anchor_nodes: ::prost::alloc::vec::Vec<CardAnchorNode>,
 }
 /// Updates the current GameView state.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1260,6 +1282,13 @@ pub enum DimensionUnit {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
+pub enum FlexPickingMode {
+    Unspecified = 0,
+    Position = 1,
+    Ignore = 2,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
 pub enum PlayerSide {
     Unspecified = 0,
     Overlord = 1,
@@ -1306,6 +1335,12 @@ pub enum ClientItemLocation {
     Unspecified = 0,
     Left = 1,
     Right = 2,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PanelAddress {
+    Unspecified = 0,
+    DebugPanel = 1,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

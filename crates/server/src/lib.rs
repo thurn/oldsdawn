@@ -175,6 +175,20 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
                 handle_standard_action(game, user_side, standard_action)
             })
         }
+        Action::TogglePanel(toggle_panel) => Ok(GameResponse {
+            command_list: CommandList {
+                commands: vec![GameCommand {
+                    command: if toggle_panel.open {
+                        Some(Command::RenderInterface(panels::render_panel(
+                            toggle_panel.panel_address(),
+                        )?))
+                    } else {
+                        None
+                    },
+                }],
+            },
+            channel_response: None,
+        }),
         _ => Ok(GameResponse::default()),
     }?;
 

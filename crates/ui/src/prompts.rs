@@ -19,6 +19,7 @@ use rules::queries;
 
 use crate::components::{Button, ButtonLines, ButtonVariant, Row, Text, TextVariant};
 use crate::core::*;
+use crate::icons;
 use crate::macros::children;
 
 /// Component to render a given [Prompt]
@@ -33,7 +34,11 @@ impl<'a> Component for ActionPrompt<'a> {
         let mut children = vec![];
 
         if let Some(label) = prompt_context(self.prompt.kind) {
-            children.push(child(Text { label, variant: TextVariant::Title, ..Text::default() }))
+            children.push(child(Text {
+                label,
+                variant: TextVariant::PanelTitle,
+                ..Text::default()
+            }))
         }
 
         for response in &self.prompt.responses {
@@ -55,8 +60,8 @@ impl Component for WaitingPrompt {
             name: "WaitingPrompt",
             children: children!(Text {
                 label: "Waiting for Opponent...".to_string(),
-                variant: TextVariant::Title,
-                style: FlexStyle { margin: left_right_px(16.0), ..FlexStyle::default() },
+                variant: TextVariant::PanelTitle,
+                style: FlexStyle { margin: px_group_2(0.0, 16.0), ..FlexStyle::default() },
                 ..Text::default()
             }),
             ..PromptContainer::default()
@@ -80,7 +85,7 @@ impl Component for PromptContainer {
                 flex_grow: Some(1.0),
                 align_items: FlexAlign::Center.into(),
                 wrap: FlexWrap::WrapReverse.into(),
-                margin: left_right_px(16.0),
+                margin: px_group_2(0.0, 16.0),
                 ..FlexStyle::default()
             },
             children: self.children,
@@ -129,7 +134,7 @@ impl Component for ResponseButton {
             variant: if self.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
             action: action(self.action, None),
             lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },
-            style: FlexStyle { margin: left_right_px(16.0), ..FlexStyle::default() },
+            style: FlexStyle { margin: px_group_2(0.0, 16.0), ..FlexStyle::default() },
             ..Button::default()
         })
     }
@@ -156,7 +161,11 @@ fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) 
                 queries::boost_target_mana_cost(game, source_id, queries::health(game, target_id))
             {
                 ResponseButton {
-                    label: if cost > 0 { format!("{}\n{}\u{f06d}", label, cost) } else { label },
+                    label: if cost > 0 {
+                        format!("{}\n{}{}", label, cost, icons::MANA)
+                    } else {
+                        label
+                    },
                     two_lines: true,
                     ..ResponseButton::default()
                 }

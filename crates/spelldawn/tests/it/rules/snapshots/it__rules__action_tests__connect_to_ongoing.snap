@@ -360,9 +360,9 @@ Ok(
                 command: Some(
                     RenderInterface(
                         RenderInterfaceCommand {
-                            full_screen: None,
+                            panels: [],
                             main_controls: None,
-                            card_anchors: None,
+                            card_anchor_nodes: [],
                         },
                     ),
                 ),

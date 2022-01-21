@@ -24,6 +24,9 @@ use protos::spelldawn::{
     GameAction, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
 };
 
+pub type Px = f32;
+pub type Percent = f32;
+
 pub trait Component {
     fn render(self) -> Node;
 }
@@ -53,50 +56,66 @@ pub fn action(
     })
 }
 
-/// A dimension in units of density-independent pixels
-pub fn px(value: f32) -> Option<Dimension> {
+/// A dimension in units of density-independent pixels. If you're familiar with
+/// 'points' from iOS or 'dp' from Android, this unit is approximately 2x from
+/// those (i.e. 44dp = 88px).
+pub fn px(value: Px) -> Option<Dimension> {
     Some(Dimension { unit: DimensionUnit::Pixels.into(), value })
 }
 
-/// A dimension which is a percentage of the parent container
-pub fn percent(value: f32) -> Option<Dimension> {
+/// A dimension which is a percentage of the parent container, with 100 meaning
+/// 100%.
+pub fn percent(value: Percent) -> Option<Dimension> {
     Some(Dimension { unit: DimensionUnit::Percentage.into(), value })
 }
 
-pub fn left_top_px(left: f32, top: f32) -> Option<DimensionGroup> {
-    group_px(top, 0.0, 0.0, left)
+pub fn left_top_px(left: Px, top: Px) -> Option<DimensionGroup> {
+    dimension_group(px(top), None, None, px(left))
 }
 
-pub fn all_px(all: f32) -> Option<DimensionGroup> {
-    group_px(all, all, all, all)
+pub fn left_top_percent(left: Percent, top: Percent) -> Option<DimensionGroup> {
+    dimension_group(percent(top), None, None, percent(left))
 }
 
-pub fn left_right_px(left_right: f32) -> Option<DimensionGroup> {
-    group_px(0.0, left_right, 0.0, left_right)
+pub fn right_top_px(right: Px, top: Px) -> Option<DimensionGroup> {
+    dimension_group(px(top), px(right), None, None)
 }
 
-pub fn top_bottom_px(top_bottom: f32) -> Option<DimensionGroup> {
-    group_px(top_bottom, 0.0, top_bottom, 0.0)
+pub fn all_px(all: Px) -> Option<DimensionGroup> {
+    px_group_2(all, all)
 }
 
-pub fn top_px(top: f32) -> Option<DimensionGroup> {
-    group_px(top, 0.0, 0.0, 0.0)
+pub fn px_group_2(top_bottom: Px, right_left: Px) -> Option<DimensionGroup> {
+    px_group_4(top_bottom, right_left, top_bottom, right_left)
 }
 
-pub fn right_px(right: f32) -> Option<DimensionGroup> {
-    group_px(0.0, right, 0.0, 0.0)
+pub fn px_group_4(top: Px, right: Px, bottom: Px, left: Px) -> Option<DimensionGroup> {
+    dimension_group(px(top), px(right), px(bottom), px(left))
 }
 
-pub fn bottom_px(bottom: f32) -> Option<DimensionGroup> {
-    group_px(0.0, 0.0, bottom, 0.0)
+pub fn top_px(top: Px) -> Option<DimensionGroup> {
+    dimension_group(px(top), None, None, None)
 }
 
-pub fn left_px(left: f32) -> Option<DimensionGroup> {
-    group_px(0.0, 0.0, 0.0, left)
+pub fn right_px(right: Px) -> Option<DimensionGroup> {
+    dimension_group(None, px(right), None, None)
 }
 
-pub fn group_px(top: f32, right: f32, bottom: f32, left: f32) -> Option<DimensionGroup> {
-    Some(DimensionGroup { top: px(top), right: px(right), bottom: px(bottom), left: px(left) })
+pub fn bottom_px(bottom: Px) -> Option<DimensionGroup> {
+    dimension_group(None, None, px(bottom), None)
+}
+
+pub fn left_px(left: Px) -> Option<DimensionGroup> {
+    dimension_group(None, None, None, px(left))
+}
+
+pub fn dimension_group(
+    top: Option<Dimension>,
+    right: Option<Dimension>,
+    bottom: Option<Dimension>,
+    left: Option<Dimension>,
+) -> Option<DimensionGroup> {
+    Some(DimensionGroup { top, right, bottom, left })
 }
 
 pub fn border_color(color: Option<FlexColor>) -> Option<BorderColor> {
@@ -112,7 +131,7 @@ pub fn border_width(width: f32) -> Option<BorderWidth> {
     Some(BorderWidth { top: width, right: width, bottom: width, left: width })
 }
 
-pub fn border_radius_px(radius: f32) -> Option<BorderRadius> {
+pub fn border_radius_px(radius: Px) -> Option<BorderRadius> {
     Some(BorderRadius {
         top_left: px(radius),
         top_right: px(radius),
@@ -133,7 +152,7 @@ pub fn rotate(degrees: f32) -> Option<FlexRotate> {
     Some(FlexRotate { degrees })
 }
 
-pub fn translate_px(x: f32, y: f32) -> Option<FlexTranslate> {
+pub fn translate_px(x: Px, y: Px) -> Option<FlexTranslate> {
     Some(FlexTranslate { x: px(x), y: px(y), z: 0.0 })
 }
 

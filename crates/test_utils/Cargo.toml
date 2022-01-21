@@ -15,6 +15,7 @@ maplit = "1.0.2"
 
 cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
+panels = { path = "../panels", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }
 display = { path = "../display", version = "0.0.0" }

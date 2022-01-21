@@ -16,7 +16,7 @@
 
 use protos::spelldawn::{
     node_type, Dimension, EventHandlers, FlexAlign, FlexColor, FlexDirection, FlexJustify,
-    FlexStyle, GameAction, Node, NodeType, SpriteAddress, TextAlign,
+    FlexPosition, FlexStyle, GameAction, Node, NodeType, SpriteAddress, TextAlign,
 };
 
 use crate::core::*;
@@ -97,29 +97,40 @@ fn make_node(
 /// Possible types of [Text]
 #[derive(Debug, Clone, Copy)]
 pub enum TextVariant {
-    /// Large text providing important context.
-    Title,
+    /// Describes the contents of a panel.
+    PanelTitle,
     /// Text which appears inside a button, use [Button] instead of using this
     /// directly.
     Button,
     /// Text which appears inside a two line button
     TwoLineButton,
+    /// Text used to render an IconButton icon
+    ButtonIcon,
 }
 
 impl TextVariant {
     fn color(self) -> Option<FlexColor> {
         match self {
-            TextVariant::Title => color(Color::TitleText),
+            TextVariant::PanelTitle => color(Color::TitleText),
             TextVariant::Button => color(Color::ButtonLabel),
             TextVariant::TwoLineButton => color(Color::ButtonLabel),
+            TextVariant::ButtonIcon => color(Color::ButtonLabel),
         }
     }
 
     fn font_size(self) -> Option<Dimension> {
         match self {
-            TextVariant::Title => px(60.0),
+            TextVariant::PanelTitle => px(48.0),
             TextVariant::Button => px(32.0),
             TextVariant::TwoLineButton => px(26.0),
+            TextVariant::ButtonIcon => px(48.0),
+        }
+    }
+
+    fn font(self) -> Font {
+        match self {
+            TextVariant::PanelTitle => Font::Title,
+            _ => Font::Default,
         }
     }
 }
@@ -134,7 +145,11 @@ pub struct Text {
 
 impl Default for Text {
     fn default() -> Self {
-        Self { label: "".to_string(), variant: TextVariant::Title, style: FlexStyle::default() }
+        Self {
+            label: "".to_string(),
+            variant: TextVariant::PanelTitle,
+            style: FlexStyle::default(),
+        }
     }
 }
 
@@ -150,7 +165,7 @@ impl Component for Text {
                 padding: all_px(0.0),
                 color: self.variant.color(),
                 font_size: self.variant.font_size(),
-                font: font(Font::Default),
+                font: font(self.variant.font()),
                 ..self.style
             }),
             ..Node::default()
@@ -230,14 +245,68 @@ impl Component for Button {
                     ButtonLines::TwoLines => TextVariant::TwoLineButton,
                 },
                 style: FlexStyle {
-                    margin: left_right_px(16.0),
+                    margin: px_group_2(0.0, 16.0),
                     text_align: TextAlign::MiddleCenter.into(),
                     ..FlexStyle::default()
                 },
                 ..Text::default()
             }),
-            events: Some(EventHandlers {
-                on_click: Some(self.action.expect("Missing action for button!")),
+            events: self.action.map(|action| EventHandlers { on_click: Some(action) }),
+            ..Row::default()
+        })
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct IconButton {
+    pub icon: &'static str,
+    pub action: Option<GameAction>,
+    pub style: FlexStyle,
+}
+
+impl Component for IconButton {
+    fn render(self) -> Node {
+        node(Row {
+            name: "IconButton".to_string(),
+            style: FlexStyle {
+                height: px(88.0),
+                width: px(88.0),
+                justify_content: FlexJustify::Center.into(),
+                align_items: FlexAlign::Center.into(),
+                flex_shrink: Some(0.0),
+                ..self.style
+            },
+            events: self.action.map(|action| EventHandlers { on_click: Some(action) }),
+            children: children!(
+                Row {
+                    style: FlexStyle {
+                        position: FlexPosition::Absolute.into(),
+                        inset: all_px(6.0),
+                        height: px(76.0),
+                        width: px(76.0),
+                        background_image: sprite("Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Square/EPIC_silver_fr_s"),
+                        ..FlexStyle::default()
+                    },
+                    ..Row::default()
+                },
+                Row {
+                    style: FlexStyle {
+                        position: FlexPosition::Absolute.into(),
+                        inset: all_px(16.0),
+                        height: px(56.0),
+                        width: px(56.0),
+                        background_image: sprite("Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Square/Button_RED_s"),
+                        ..FlexStyle::default()
+                    },
+                    ..Row::default()
+                },
+                Text {
+                    label: self.icon.to_string(),
+                    variant: TextVariant::ButtonIcon,
+                    style: FlexStyle {
+                        text_align: TextAlign::MiddleCenter.into(),
+                        ..FlexStyle::default()
+                    },
             }),
             ..Row::default()
         })

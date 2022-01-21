@@ -402,40 +402,29 @@ impl ClientPlayer {
 /// Simulated user interface state
 #[derive(Debug, Clone, Default)]
 pub struct ClientInterface {
-    full_screen: Option<Node>,
     main_controls: Option<Node>,
-    card_anchors: Option<Vec<CardAnchorNode>>,
+    card_anchors: Vec<CardAnchorNode>,
 }
 
 impl ClientInterface {
-    pub fn full_screen(&self) -> &Node {
-        self.full_screen.as_ref().expect("FullScreen Node")
-    }
-
     pub fn main_controls(&self) -> &Node {
         self.main_controls.as_ref().expect("MainControls Node")
     }
 
     pub fn card_anchors(&self) -> &Vec<CardAnchorNode> {
-        self.card_anchors.as_ref().expect("CardAnchors Nodes")
+        &self.card_anchors
     }
 
     fn update(&mut self, command: Command) {
         if let Command::RenderInterface(render) = command {
-            self.full_screen = None;
             self.main_controls = None;
-            self.card_anchors = None;
-
-            if let Some(full_screen) = render.full_screen {
-                self.full_screen = full_screen.node
-            }
 
             if let Some(main_controls) = render.main_controls {
                 self.main_controls = main_controls.node
             }
 
-            if let Some(card_anchors) = render.card_anchors {
-                self.card_anchors = Some(card_anchors.anchor_nodes)
+            if !render.card_anchor_nodes.is_empty() {
+                self.card_anchors = render.card_anchor_nodes;
             }
         }
     }

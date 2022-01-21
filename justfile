@@ -36,7 +36,6 @@ clippy:
         -D clippy::cloned_instead_of_copied \
         -D clippy::copy_iterator \
         -D clippy::default_trait_access \
-        -D clippy::if_then_some_else_none \
         -D clippy::inconsistent_struct_constructor \
         -D clippy::inefficient_to_string \
         -D clippy::integer_division \

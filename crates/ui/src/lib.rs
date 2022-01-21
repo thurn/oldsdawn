@@ -14,13 +14,15 @@
 
 //! Library for user interface rendering
 
-use protos::spelldawn::{InterfacePositionMainControls, RenderInterfaceCommand};
+use protos::spelldawn::{InterfaceMainControls, RenderInterfaceCommand};
 
 use crate::core::Component;
 
 pub mod components;
 pub mod core;
+pub mod icons;
 pub mod macros;
+pub mod panel;
 pub mod primitives;
 pub mod prompts;
 
@@ -28,9 +30,9 @@ pub mod prompts;
 /// [RenderInterfaceCommand], appearing immediately above the user's hand
 pub fn main_controls(component: impl Component) -> RenderInterfaceCommand {
     RenderInterfaceCommand {
-        full_screen: None,
-        main_controls: Some(InterfacePositionMainControls { node: Some(component.render()) }),
-        card_anchors: None,
+        panels: vec![],
+        main_controls: Some(InterfaceMainControls { node: Some(component.render()) }),
+        card_anchor_nodes: vec![],
     }
 }
 

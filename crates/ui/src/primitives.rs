@@ -52,12 +52,14 @@ pub fn color(color: Color) -> Option<FlexColor> {
 #[derive(Debug, Clone, Copy)]
 pub enum Font {
     Default,
+    Title,
 }
 
 pub fn font(font: Font) -> Option<FontAddress> {
     Some(FontAddress {
         address: match font {
             Font::Default => "Fonts/Roboto",
+            Font::Title => "Fonts/BluuNext-Bold",
         }
         .to_string(),
     })

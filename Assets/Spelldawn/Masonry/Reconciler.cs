@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
@@ -43,7 +44,7 @@ namespace Spelldawn.Masonry
       VisualElement? previousElement = null,
       Node? previousNode = null)
     {
-      var addedChildrenCount = 0;
+      var previousChildrenCount = 0;
       VisualElement? result;
       var createdNewElement = false;
 
@@ -51,9 +52,9 @@ namespace Spelldawn.Masonry
           previousNode.NodeType?.NodeTypeCase == node.NodeType?.NodeTypeCase)
       {
         // If the previous node was of the same type as this node, mutate its VisualElement to match
-        addedChildrenCount = previousNode.Children.Count;
+        previousChildrenCount = previousNode.Children.Count;
 
-        for (var i = 0; i < addedChildrenCount; ++i)
+        for (var i = 0; i < previousChildrenCount; ++i)
         {
           if (i < node.Children.Count)
           {
@@ -88,13 +89,13 @@ namespace Spelldawn.Masonry
         createdNewElement = true;
       }
 
-      for (var j = addedChildrenCount; j < node.Children.Count; ++j)
+      for (var j = previousChildrenCount; j < node.Children.Count; ++j)
       {
         var child = node.Children[j];
         var updated = Update(registry, child);
         if (updated == null)
         {
-          Debug.LogError($"Expected update for {child} to return a value");
+          throw new InvalidOperationException($"Expected update for {child} to return a value");
         }
         else
         {
@@ -102,7 +103,11 @@ namespace Spelldawn.Masonry
         }
       }
 
-      result = result is { } r ? Mason.ApplyToElement(registry, node, r) : null;
+      if (result != null)
+      {
+        Mason.ApplyToElement(registry, result, node);
+      }
+
       return createdNewElement ? result : null;
     }
   }

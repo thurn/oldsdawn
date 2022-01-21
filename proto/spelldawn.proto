@@ -283,6 +283,16 @@ message ImageSlice {
     uint32 left = 4;
 }
 
+// Controls whether elements respond to interface events.
+enum FlexPickingMode {
+    // Unspecified, currently identical to 'position'.
+    FLEX_PICKING_MODE_UNSPECIFIED = 0;
+    // Picking enabled, events will be recognized.
+    FLEX_PICKING_MODE_POSITION = 1;
+    // Picking disabled, events ignored.
+    FLEX_PICKING_MODE_IGNORE = 2;
+}
+
 message FlexStyle {
     FlexAlign align_content = 1;
     FlexAlign align_items = 2;
@@ -352,6 +362,8 @@ message FlexStyle {
     * on the aspect ratio and vice versa. Does not support percentage values.
     */
     bool fixed_background_image_aspect_ratio = 56;
+
+    FlexPickingMode picking_mode = 57;
 }
 
 message Flexbox {
@@ -776,6 +788,20 @@ message InitiateRaidAction {
     RoomIdentifier room_id = 1;
 }
 
+// Open or close a given interface panel.
+//
+// Behavior:
+//   - Open: If the panel with this address has already been downloaded, it
+//   is opened immediately. The server returns an updated view of the
+//   panel contents.
+//   - Close: The panel is closed immediately. No server response is
+//   provided.
+message TogglePanelAction {
+    PanelAddress panel_address = 1;
+    // Should the panel be opened or closed?
+    bool open = 2;
+}
+
 /*
 * Possible game actions taken by the user.
 *
@@ -786,11 +812,12 @@ message InitiateRaidAction {
 message GameAction {
     oneof action {
         StandardAction standard_action = 1;
-        GainManaAction gain_mana = 2;
-        DrawCardAction draw_card = 3;
-        PlayCardAction play_card = 4;
-        LevelUpRoomAction level_up_room = 5;
-        InitiateRaidAction initiate_raid = 6;
+        TogglePanelAction toggle_panel = 2;
+        GainManaAction gain_mana = 3;
+        DrawCardAction draw_card = 4;
+        PlayCardAction play_card = 5;
+        LevelUpRoomAction level_up_room = 6;
+        InitiateRaidAction initiate_raid = 7;
     }
 }
 
@@ -829,11 +856,17 @@ message DelayCommand {
     TimeValue duration = 1;
 }
 
-message InterfacePositionFullScreen {
-    Node node = 1;
+enum PanelAddress {
+    PANEL_ADDRESS_UNSPECIFIED = 0;
+    PANEL_ADDRESS_DEBUG_PANEL = 1;
 }
 
-message InterfacePositionMainControls {
+message InterfacePanel {
+    PanelAddress address = 1;
+    Node node = 2;
+}
+
+message InterfaceMainControls {
     Node node = 1;
 }
 
@@ -854,18 +887,18 @@ message CardAnchorNode {
     CardNodeAnchorPosition anchor_position = 3;
 }
 
-message InterfacePositionCardAnchors {
-    repeated CardAnchorNode anchor_nodes = 1;
-}
-
-/*
-* Updates the content of the user interface to display the provided nodes,
-* replacing all existing UI elements.
-*/
+// Updates the content of the user interface.
 message RenderInterfaceCommand {
-    InterfacePositionFullScreen full_screen = 1;
-    InterfacePositionMainControls main_controls = 2;
-    InterfacePositionCardAnchors card_anchors = 3;
+    // List of panels to update.
+    //
+    // A 'panel' is an independently addressable block of UI. The contents
+    // of each known panel are cached and can then be opened immediately
+    // via TogglePanelAction, without waiting for a server response.
+    repeated InterfacePanel panels = 1;
+    // Controls for game actions such as interface prompts
+    InterfaceMainControls main_controls = 2;
+    // Controls for specific cards
+    repeated CardAnchorNode card_anchor_nodes = 3;
 }
 
 /* Updates the current GameView state. */
