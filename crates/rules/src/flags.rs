@@ -15,6 +15,7 @@
 //! Functions to query boolean game information, typically whether some game
 //! action can currently be taken
 
+use data::actions::{AdvanceAction, EncounterAction};
 use data::card_state::CardPosition;
 use data::delegates::{
     CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpRoomQuery,
@@ -22,7 +23,6 @@ use data::delegates::{
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{CardId, CardType, Faction, Side};
-use data::prompt::{AdvanceAction, EncounterAction};
 
 use crate::{dispatch, queries};
 

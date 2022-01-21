@@ -17,13 +17,13 @@
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
+use crate::actions::Prompt;
 use crate::card_state::{CardPosition, CardPositionKind, CardState, SortingKey};
 use crate::deck::Deck;
 use crate::primitives::{
     ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId, RoomId,
     RoomLocation, Side, TurnNumber,
 };
-use crate::prompt::Prompt;
 use crate::updates::UpdateTracker;
 
 /// State of a player within a game, containing their score and available

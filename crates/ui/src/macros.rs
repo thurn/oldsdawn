@@ -14,6 +14,10 @@
 
 //! Macros to assist with UI rendering
 
+use protos::spelldawn::Node;
+
+use crate::core::Component;
+
 pub trait Rendered {
     fn to_node(self) -> Option<Node>;
 }
@@ -43,6 +47,7 @@ impl Rendered for Option<Node> {
 }
 
 /// Macro which converts its arguments into a vector of `Option<Node>`.
+#[macro_export]
 macro_rules! children {
     ($($x:expr),*) => {
         vec! [$(crate::macros::Rendered::to_node($x)),*]
@@ -50,7 +55,4 @@ macro_rules! children {
     ($($x:expr,)*) => {children!($($x),*)}
 }
 
-pub(crate) use children;
-use protos::spelldawn::Node;
-
-use crate::core::Component;
+pub use children;

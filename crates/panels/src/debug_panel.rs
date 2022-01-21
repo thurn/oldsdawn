@@ -16,10 +16,12 @@
 //! development. Typically these options should not be available to production
 //! users.
 
-use protos::spelldawn::{Node, PanelAddress};
-use ui::components::Button;
-use ui::core::node;
+use data::actions::{DebugAction, UserAction};
+use protos::spelldawn::{FlexStyle, Node, PanelAddress};
+use ui::components::{Button, Row};
+use ui::core::{child, node};
 use ui::panel::Panel;
+use ui::{core, icons};
 
 /// Renders the debug panel
 pub fn render() -> Node {
@@ -28,8 +30,34 @@ pub fn render() -> Node {
         title: Some("Debug Controls".to_string()),
         width: 1024.0,
         height: 512.0,
-        content: Button { label: "Hello, debug".to_string(), ..Button::default() },
+        content: Row {
+            name: "DebugButtons".to_string(),
+            children: vec![
+                debug_button("Reset", UserAction::DebugAction(DebugAction::ResetGame)),
+                debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
+                debug_button(
+                    format!("+10{}", icons::MANA),
+                    UserAction::DebugAction(DebugAction::AddMana),
+                ),
+                debug_button(
+                    format!("+{}", icons::ACTION),
+                    UserAction::DebugAction(DebugAction::AddActionPoints),
+                ),
+                debug_button("+ Point", UserAction::DebugAction(DebugAction::AddScore)),
+                debug_button("Turn", UserAction::DebugAction(DebugAction::SwitchTurn)),
+            ],
+            ..Row::default()
+        },
         show_close_button: true,
         ..Panel::default()
+    })
+}
+
+fn debug_button(label: impl Into<String>, action: UserAction) -> Option<Node> {
+    child(Button {
+        label: label.into(),
+        action: core::action(Some(action), None),
+        style: FlexStyle { margin: core::all_px(8.0), ..FlexStyle::default() },
+        ..Button::default()
     })
 }

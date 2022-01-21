@@ -45,7 +45,7 @@ pub enum AdvanceAction {
 /// the client.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumKind)]
 #[enum_kind(PromptKind, derive(Serialize), derive(Deserialize))]
-pub enum PromptResponse {
+pub enum PromptAction {
     /// Action for the Overlord to activate the room currently being raided
     ActivateRoomAction(ActivateRoomAction),
     /// Champion action in response to a raid encounter
@@ -60,10 +60,28 @@ pub enum PromptResponse {
     RaidEnd,
 }
 
-impl PromptResponse {
+impl PromptAction {
     pub fn kind(&self) -> PromptKind {
         self.into()
     }
+}
+
+/// Actions that can be taken from the debug panel, should not be exposed in
+/// production.
+#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum DebugAction {
+    ResetGame,
+    FetchStandardPanels,
+    AddMana,
+    AddActionPoints,
+    AddScore,
+    SwitchTurn,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum UserAction {
+    DebugAction(DebugAction),
+    PromptAction(PromptAction),
 }
 
 /// Presents a choice to a user, typically communicated via a series of buttons
@@ -73,5 +91,5 @@ pub struct Prompt {
     /// the user
     pub kind: PromptKind,
     /// Possible responses to this prompt
-    pub responses: Vec<PromptResponse>,
+    pub responses: Vec<PromptAction>,
 }

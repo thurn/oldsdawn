@@ -23,11 +23,11 @@
 //! Defines handling for the basic top-level game actions a player can take.
 
 use anyhow::{anyhow, ensure, Context, Result};
+use data::actions::PromptAction;
 use data::card_state::CardPosition;
 use data::delegates::{CastCardEvent, DawnEvent, DuskEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
-use data::prompt::PromptResponse;
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
@@ -138,12 +138,11 @@ pub fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     check_end_turn(game, user_side)
 }
 
-/// Handles a [PromptResponse] in response to a prompt for the `user_side`
-/// player. Clears active prompts.
-pub fn handle_prompt_response(
+/// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
+pub fn handle_prompt_action(
     game: &mut GameState,
     user_side: Side,
-    action: PromptResponse,
+    action: PromptAction,
 ) -> Result<()> {
     ensure!(
         matches!(
@@ -156,16 +155,14 @@ pub fn handle_prompt_response(
     mutations::clear_prompts(game);
 
     match action {
-        PromptResponse::ActivateRoomAction(data) => {
-            raid::activate_room_action(game, user_side, data)
-        }
-        PromptResponse::EncounterAction(data) => raid::encounter_action(game, user_side, data),
-        PromptResponse::AdvanceAction(data) => raid::advance_action(game, user_side, data),
-        PromptResponse::RaidDestroyCard(card_id) => {
+        PromptAction::ActivateRoomAction(data) => raid::activate_room_action(game, user_side, data),
+        PromptAction::EncounterAction(data) => raid::encounter_action(game, user_side, data),
+        PromptAction::AdvanceAction(data) => raid::advance_action(game, user_side, data),
+        PromptAction::RaidDestroyCard(card_id) => {
             raid::destroy_card_action(game, user_side, card_id)
         }
-        PromptResponse::RaidScoreCard(card_id) => raid::score_card_action(game, user_side, card_id),
-        PromptResponse::RaidEnd => raid::raid_end_action(game, user_side),
+        PromptAction::RaidScoreCard(card_id) => raid::score_card_action(game, user_side, card_id),
+        PromptAction::RaidEnd => raid::raid_end_action(game, user_side),
     }
 }
 

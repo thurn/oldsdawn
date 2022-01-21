@@ -16,11 +16,11 @@
 
 use anyhow::{bail, Context, Result};
 use dashmap::DashMap;
+use data::actions::UserAction;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
 use data::primitives::{GameId, PlayerId, RoomId, Side};
-use data::prompt::PromptResponse;
 use data::updates::UpdateTracker;
 use display::adapters;
 use maplit::hashmap;
@@ -43,6 +43,7 @@ use tracing::{error, info, warn, warn_span};
 use crate::database::{Database, SledDatabase};
 
 pub mod database;
+pub mod debug;
 
 /// Stores active channels for each user.
 ///
@@ -127,6 +128,20 @@ pub struct GameResponse {
     pub channel_response: Option<(PlayerId, CommandList)>,
 }
 
+impl GameResponse {
+    pub fn from_commands(command_list: Vec<Command>) -> Self {
+        Self {
+            command_list: CommandList {
+                commands: command_list
+                    .into_iter()
+                    .map(|c| GameCommand { command: Some(c) })
+                    .collect(),
+            },
+            channel_response: None,
+        }
+    }
+}
+
 /// Processes an incoming client request and returns a [GameResponse] describing
 /// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
@@ -171,24 +186,13 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
             })
         }
         Action::StandardAction(standard_action) => {
-            handle_action(database, player_id, game_id, |game, user_side| {
-                handle_standard_action(game, user_side, standard_action)
-            })
+            handle_standard_action(database, player_id, game_id, standard_action)
         }
-        Action::TogglePanel(toggle_panel) => Ok(GameResponse {
-            command_list: CommandList {
-                commands: vec![GameCommand {
-                    command: if toggle_panel.open {
-                        Some(Command::RenderInterface(panels::render_panel(
-                            toggle_panel.panel_address(),
-                        )?))
-                    } else {
-                        None
-                    },
-                }],
-            },
-            channel_response: None,
-        }),
+        Action::TogglePanel(toggle_panel) => {
+            Ok(GameResponse::from_commands(vec![Command::RenderInterface(panels::render_panel(
+                toggle_panel.panel_address(),
+            )?)]))
+        }
         _ => Ok(GameResponse::default()),
     }?;
 
@@ -260,25 +264,33 @@ fn handle_action(
 
     let user_result = display::render_updates(&game, user_side);
     let opponent_id = game.player(user_side.opponent()).id;
-    let opponent_result = display::render_updates(&game, user_side.opponent());
 
+    let channel_response =
+        Some((opponent_id, display::render_updates(&game, user_side.opponent())));
     database.write_game(&game)?;
-    Ok(GameResponse {
-        command_list: user_result,
-        channel_response: Some((opponent_id, opponent_result)),
-    })
+    Ok(GameResponse { command_list: user_result, channel_response })
 }
 
 /// Parses the serialized payload in a [StandardAction] and dispatches to the
 /// correct handler.
 fn handle_standard_action(
-    game: &mut GameState,
-    user_side: Side,
+    database: &mut impl Database,
+    player_id: PlayerId,
+    game_id: Option<GameId>,
     standard_action: &StandardAction,
-) -> Result<()> {
-    let action: PromptResponse = bincode::deserialize(&standard_action.payload)
+) -> Result<GameResponse> {
+    let action: UserAction = bincode::deserialize(&standard_action.payload)
         .with_context(|| "Failed to deserialize action payload")?;
-    actions::handle_prompt_response(game, user_side, action)
+    match action {
+        UserAction::DebugAction(debug_action) => {
+            debug::handle_debug_action(database, player_id, game_id, debug_action)
+        }
+        UserAction::PromptAction(prompt_action) => {
+            handle_action(database, player_id, game_id, |game, user_side| {
+                actions::handle_prompt_action(game, user_side, prompt_action)
+            })
+        }
+    }
 }
 
 /// Look up the state for a game which is expected to exist and assigns an
@@ -321,6 +333,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::DisplayGameMessage(_) => "DisplayGameMessage",
         Command::SetGameObjectsEnabled(_) => "SetGameObjectsEnabled",
         Command::DisplayRewards(_) => "DisplayRewards",
+        Command::LoadScene(_) => "LoadScene",
     })
 }
 

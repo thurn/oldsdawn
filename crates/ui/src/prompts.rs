@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use data::actions::{
+    ActivateRoomAction, EncounterAction, Prompt, PromptAction, PromptKind, UserAction,
+};
 use data::game::GameState;
-use data::prompt::{ActivateRoomAction, EncounterAction, Prompt, PromptKind, PromptResponse};
 use protos::spelldawn::{FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node};
 use rules::queries;
 
@@ -101,10 +103,10 @@ fn prompt_context(kind: PromptKind) -> Option<String> {
     }
 }
 
-fn response_button(game: &GameState, response: PromptResponse) -> ResponseButton {
+fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
     let button = match response {
-        PromptResponse::ActivateRoomAction(activate) => activate_button(activate),
-        PromptResponse::EncounterAction(encounter_action) => {
+        PromptAction::ActivateRoomAction(activate) => activate_button(activate),
+        PromptAction::EncounterAction(encounter_action) => {
             encounter_action_button(game, encounter_action)
         }
         _ => todo!("Not yet implemented"),
@@ -118,7 +120,7 @@ struct ResponseButton {
     pub label: String,
     pub primary: bool,
     pub two_lines: bool,
-    pub action: Option<PromptResponse>,
+    pub action: Option<PromptAction>,
 }
 
 impl Default for ResponseButton {
@@ -132,7 +134,7 @@ impl Component for ResponseButton {
         node(Button {
             label: self.label,
             variant: if self.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
-            action: action(self.action, None),
+            action: self.action.and_then(|a| action(Some(UserAction::PromptAction(a)), None)),
             lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },
             style: FlexStyle { margin: px_group_2(0.0, 16.0), ..FlexStyle::default() },
             ..Button::default()

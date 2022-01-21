@@ -17,11 +17,11 @@
 use std::iter;
 
 use anyhow::{ensure, Context, Result};
+use data::actions::{
+    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptKind,
+};
 use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, RoomId, Side};
-use data::prompt::{
-    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptKind, PromptResponse,
-};
 use if_chain::if_chain;
 use tracing::{info, instrument};
 
@@ -85,12 +85,12 @@ pub fn activate_room_action(
                         .weapons()
                         .filter(|weapon| flags::can_defeat_target(game, weapon.id, defender_id))
                         .map(|weapon| {
-                            PromptResponse::EncounterAction(EncounterAction::UseWeaponAbility(
+                            PromptAction::EncounterAction(EncounterAction::UseWeaponAbility(
                                 weapon.id,
                                 defender_id,
                             ))
                         })
-                        .chain(iter::once(PromptResponse::EncounterAction(
+                        .chain(iter::once(PromptAction::EncounterAction(
                             EncounterAction::Continue,
                         )))
                         .collect(),

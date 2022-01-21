@@ -19,6 +19,7 @@ using System.Linq;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 #nullable enable
 
@@ -115,6 +116,9 @@ namespace Spelldawn.Services
             break;
           case GameCommand.CommandOneofCase.DisplayRewards:
             yield return _registry.RewardChest.HandleDisplayRewards(command.DisplayRewards);
+            break;
+          case GameCommand.CommandOneofCase.LoadScene:
+            yield return HandleLoadScene(command.LoadScene);
             break;
           case GameCommand.CommandOneofCase.None:
           default:
@@ -227,6 +231,16 @@ namespace Spelldawn.Services
       {
         _registry.ActionDisplayForPlayer(playerName).RenderActionTrackerView(playerView.ActionTracker);
       }
+    }
+
+    IEnumerator HandleLoadScene(LoadSceneCommand command)
+    {
+      yield return SceneManager.LoadSceneAsync(command.SceneName, command.Mode switch
+      {
+        SceneLoadMode.Single => LoadSceneMode.Single,
+        SceneLoadMode.Additive => LoadSceneMode.Additive,
+        _ => LoadSceneMode.Single
+      });
     }
   }
 }

@@ -1042,11 +1042,19 @@ pub struct DisplayRewardsCommand {
     #[prost(message, repeated, tag = "1")]
     pub rewards: ::prost::alloc::vec::Vec<CardView>,
 }
+//// Loads a named Unity scene
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LoadSceneCommand {
+    #[prost(string, tag = "1")]
+    pub scene_name: ::prost::alloc::string::String,
+    #[prost(enumeration = "SceneLoadMode", tag = "2")]
+    pub mode: i32,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19"
+        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1088,6 +1096,8 @@ pub mod game_command {
         SetGameObjectsEnabled(super::SetGameObjectsEnabledCommand),
         #[prost(message, tag = "19")]
         DisplayRewards(super::DisplayRewardsCommand),
+        #[prost(message, tag = "20")]
+        LoadScene(super::LoadSceneCommand),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1280,11 +1290,15 @@ pub enum DimensionUnit {
     /// Percentage of parent container
     Percentage = 2,
 }
+/// Controls whether elements respond to interface events.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum FlexPickingMode {
+    /// Unspecified, currently identical to 'position'.
     Unspecified = 0,
+    /// Picking enabled, events will be recognized.
     Position = 1,
+    /// Picking disabled, events ignored.
     Ignore = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -1380,6 +1394,15 @@ pub enum GameMessageType {
     Dusk = 2,
     Victory = 3,
     Defeat = 4,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SceneLoadMode {
+    Unspecified = 0,
+    /// Close all currently open scenes before loading.
+    Single = 1,
+    /// Adds a scene to the current loaded scenes.
+    Additive = 2,
 }
 #[doc = r" Generated server implementations."]
 pub mod spelldawn_server {

@@ -21,6 +21,7 @@
 //! delegate event *after* performing their mutation to inform other systems
 //! that game state has changed.
 
+use data::actions::{ActivateRoomAction, Prompt, PromptAction, PromptKind};
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
@@ -29,7 +30,6 @@ use data::delegates::{
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, RaidId, RoomId, Side};
-use data::prompt::{ActivateRoomAction, Prompt, PromptKind, PromptResponse};
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
@@ -137,7 +137,7 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
 }
 
 /// Sets the current prompt for the `side` player to the provided
-/// [PromptResponse]. Panics if a prompt is already set for this player.
+/// [Prompt]. Panics if a prompt is already set for this player.
 pub fn set_prompt(game: &mut GameState, side: Side, prompt: Prompt) {
     assert!(game.player(side).prompt.is_none(), "Player {:?} already has an active prompt", side);
     game.player_mut(side).prompt = Some(prompt);
@@ -162,8 +162,8 @@ pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
             Prompt {
                 kind: PromptKind::ActivateRoomAction,
                 responses: vec![
-                    PromptResponse::ActivateRoomAction(ActivateRoomAction::Activate),
-                    PromptResponse::ActivateRoomAction(ActivateRoomAction::Pass),
+                    PromptAction::ActivateRoomAction(ActivateRoomAction::Activate),
+                    PromptAction::ActivateRoomAction(ActivateRoomAction::Pass),
                 ],
             },
         );

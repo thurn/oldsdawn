@@ -1096,6 +1096,20 @@ message DisplayRewardsCommand {
     repeated CardView rewards = 1;
 }
 
+enum SceneLoadMode {
+    SCENE_LOAD_MODE_UNSPECIFIED = 0;
+    // Close all currently open scenes before loading.
+    SCENE_LOAD_MODE_SINGLE = 1;
+    // Adds a scene to the current loaded scenes.
+    SCENE_LOAD_MODE_ADDITIVE = 2;
+}
+
+/// Loads a named Unity scene
+message LoadSceneCommand {
+    string scene_name = 1;
+    SceneLoadMode mode = 2;
+}
+
 message GameCommand {
     oneof command {
         DebugLogCommand debug_log = 1;
@@ -1115,6 +1129,7 @@ message GameCommand {
         DisplayGameMessageCommand display_game_message = 17;
         SetGameObjectsEnabledCommand set_game_objects_enabled = 18;
         DisplayRewardsCommand display_rewards = 19;
+        LoadSceneCommand load_scene = 20;
     }
 }
 

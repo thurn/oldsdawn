@@ -85,11 +85,8 @@ pub fn render_updates(game: &GameState, user_side: Side) -> CommandList {
 
     let sync = full_sync::run(game, user_side, card_creation);
 
-    let previous_response = RESPONSES
-        .get(&user_id)
-        .unwrap_or_else(|| panic!("Previous response not found for {:?}", user_id))
-        .value();
-    diff::execute(&mut builder, game, Some(previous_response), &sync);
+    let previous_response = RESPONSES.get(&user_id).map(|r| r.value());
+    diff::execute(&mut builder, game, previous_response, &sync);
 
     RESPONSES.insert(user_id, sync);
 

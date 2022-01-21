@@ -17,7 +17,7 @@
 //! despite the fact that they are infallible, since all of the higher-level
 //! APIs exclusively consume [Option] types.
 
-use data::prompt::PromptResponse;
+use data::actions::UserAction;
 use protos::spelldawn::{
     game_action, BorderColor, BorderRadius, BorderWidth, CommandList, Dimension, DimensionGroup,
     DimensionUnit, EventHandlers, FlexColor, FlexRotate, FlexScale, FlexTranslate, FlexVector3,
@@ -39,14 +39,11 @@ pub fn node(component: impl Component) -> Node {
     component.render()
 }
 
-/// Turns a [PromptResponse] into a [GameAction] to be invoked in the future.
+/// Turns a [UserAction] into a [GameAction] to be invoked in the future.
 ///
 /// An `optimistic` value can also optionally be provided to give commands to
 /// run immediately, before a server response is received.
-pub fn action(
-    action: Option<PromptResponse>,
-    optimistic: Option<CommandList>,
-) -> Option<GameAction> {
+pub fn action(action: Option<UserAction>, optimistic: Option<CommandList>) -> Option<GameAction> {
     action.map(|action| GameAction {
         action: Some(game_action::Action::StandardAction(StandardAction {
             payload: bincode::serialize(&action).expect("Serialization failed"),
