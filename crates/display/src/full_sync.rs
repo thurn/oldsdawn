@@ -72,7 +72,7 @@ pub fn run(
             .map(|c| (c.id, create_or_update_card(game, c, user_side, &card_creation)))
             .collect(),
         interface: interface::render(game, user_side),
-        position_overrides: raid_position_overrides(game, user_side),
+        position_overrides: position_overrides(game, user_side),
     }
 }
 
@@ -249,7 +249,7 @@ fn revealed_card_view(
 }
 
 /// Calculates game object positions for an ongoing raid, if any
-fn raid_position_overrides(
+fn position_overrides(
     game: &GameState,
     user_side: Side,
 ) -> HashMap<game_object_identifier::Id, ObjectPosition> {
@@ -257,14 +257,13 @@ fn raid_position_overrides(
         if raid.phase == RaidPhase::Access {
             raid_access_position_overrides(game, user_side, raid)
         } else {
-            ongoing_raid_position_overrides(game, user_side, raid)
+            raid_position_overrides(game, user_side, raid)
         }
     })
 }
 
-/// Positions for game objects during a raid which has not yet reached the
-/// access phase
-fn ongoing_raid_position_overrides(
+/// Positions for game objects during a raid.
+fn raid_position_overrides(
     game: &GameState,
     user_side: Side,
     raid: RaidData,
@@ -297,9 +296,10 @@ fn ongoing_raid_position_overrides(
 
     let defenders = game.defender_list(raid.target);
     let included = match raid.phase {
+        RaidPhase::Activation => &defenders,
         RaidPhase::Encounter(i) => &defenders[..=i],
         RaidPhase::Continue(i) => &defenders[..=i],
-        _ => &defenders,
+        RaidPhase::Access => &[],
     };
     result.extend(
         included
@@ -328,11 +328,16 @@ fn ongoing_raid_position_overrides(
 
 /// Calculates positions for game objects during the access phase of a raid
 fn raid_access_position_overrides(
-    _game: &GameState,
-    _user_side: Side,
-    _raid: RaidData,
+    game: &GameState,
+    user_side: Side,
+    raid: RaidData,
 ) -> HashMap<game_object_identifier::Id, ObjectPosition> {
-    HashMap::new()
+    match raid.target {
+        RoomId::Vault => todo!(),
+        RoomId::Sanctum => todo!(),
+        RoomId::Crypts => todo!(),
+        _ => raid_position_overrides(game, user_side, raid),
+    }
 }
 
 /// Converts a card's position into a rendered [ObjectPosition]. Returns None if

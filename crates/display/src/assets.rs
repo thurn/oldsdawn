@@ -15,7 +15,8 @@
 //! Helper functions for constructing resource URLs used during a game
 
 use data::primitives::{CardType, Faction, Rarity, School, Side};
-use protos::spelldawn::SpriteAddress;
+use data::special_effects::{Projectile, TimedEffect};
+use protos::spelldawn::{EffectAddress, ProjectileAddress, SpriteAddress};
 
 /// Possible types of icons which can appear on a card
 pub enum CardIconType {
@@ -185,5 +186,26 @@ pub fn jewel(rarity: Rarity) -> SpriteAddress {
             }
         }
         .to_string(),
+    }
+}
+
+pub fn projectile(projectile: Projectile) -> ProjectileAddress {
+    ProjectileAddress {
+        address: match projectile {
+            Projectile::Hovl(number) => format!(
+                "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile {}",
+                number
+            ),
+        },
+    }
+}
+
+pub fn timed_effect(effect: TimedEffect) -> EffectAddress {
+    EffectAddress {
+        address: match effect {
+            TimedEffect::SwordSlash(number) => {
+                format!("Hovl Studio/Sword slash VFX/Prefabs/Sword Slash {}", number)
+            }
+        },
     }
 }

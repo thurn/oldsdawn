@@ -16,12 +16,13 @@
 
 use std::iter;
 
-use anyhow::{ensure, Context, Result};
+use anyhow::{bail, ensure, Context, Result};
 use data::actions::{
-    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptKind,
+    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
 };
 use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, RoomId, Side};
+use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use if_chain::if_chain;
 use tracing::{info, instrument};
 
@@ -56,16 +57,14 @@ pub fn activate_room_action(
     let defender_count = game
         .defenders_alphabetical(game.data.raid.with_context(|| "No active raid")?.target)
         .count();
-    let raid = game.data.raid.as_mut().with_context(|| "No active raid")?;
-    raid.active = data == ActivateRoomAction::Activate;
+    game.raid_mut()?.active = data == ActivateRoomAction::Activate;
 
     if defender_count == 0 {
-        // TODO: Access cards
-        return Ok(());
+        return initiate_access_phase(game, user_side);
     }
 
-    raid.phase = RaidPhase::Encounter(defender_count - 1);
-    let target = raid.target;
+    game.raid_mut()?.phase = RaidPhase::Encounter(defender_count - 1);
+    let target = game.raid()?.target;
     let defender_id =
         game.defender_list(target).get(defender_count - 1).with_context(|| "No defender")?.id;
 
@@ -80,7 +79,7 @@ pub fn activate_room_action(
                 game,
                 Side::Champion,
                 Prompt {
-                    kind: PromptKind::EncounterAction,
+                    context: None,
                     responses: game
                         .weapons()
                         .filter(|weapon| flags::can_defeat_target(game, weapon.id, defender_id))
@@ -97,7 +96,7 @@ pub fn activate_room_action(
                 },
             );
         } else {
-            // TODO: Continue
+            todo!("Continue")
         }
     }
 
@@ -108,14 +107,54 @@ pub fn activate_room_action(
 pub fn encounter_action(
     game: &mut GameState,
     user_side: Side,
-    data: EncounterAction,
+    action: EncounterAction,
 ) -> Result<()> {
-    info!(?user_side, ?data, "raid_encounter_action");
+    info!(?user_side, ?action, "raid_encounter_action");
     ensure!(
-        flags::can_take_raid_encounter_action(game, user_side, data),
+        flags::can_take_raid_encounter_action(game, user_side, action),
         "Cannot take encounter action for {:?}",
         user_side
     );
+
+    let encounter_number = match game.data.raid.with_context(|| "Expected Raid")?.phase {
+        RaidPhase::Encounter(n) => n,
+        _ => bail!("Expected Encounter phase"),
+    };
+
+    match action {
+        EncounterAction::UseWeaponAbility(source_id, target_id) => {
+            let cost =
+                queries::cost_to_defeat_target(game, source_id, target_id).with_context(|| {
+                    format!("{:?} cannot defeat target: {:?}", source_id, target_id)
+                })?;
+            mutations::spend_mana(game, user_side, cost);
+            game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
+                source: InteractionObjectId::CardId(source_id),
+                target: InteractionObjectId::CardId(target_id),
+            }))
+        }
+        EncounterAction::Continue => {
+            todo!("Fire weapon effects")
+        }
+    }
+
+    if encounter_number == 0 {
+        initiate_access_phase(game, user_side)?;
+    } else {
+        game.raid_mut()?.phase = RaidPhase::Continue(encounter_number - 1);
+        mutations::set_prompt(
+            game,
+            user_side,
+            Prompt {
+                context: Some(PromptContext::RaidAdvance),
+                responses: vec![
+                    PromptAction::AdvanceAction(AdvanceAction::Advance),
+                    PromptAction::AdvanceAction(AdvanceAction::Retreat),
+                ],
+            },
+        );
+    }
+
     Ok(())
 }
 
@@ -160,5 +199,32 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
         "Cannot take raid end action for {:?}",
         user_side
     );
+    Ok(())
+}
+
+/// Invoked once all of the defenders for a room during a raid (if any) have
+/// been passed.
+fn initiate_access_phase(game: &mut GameState, _user_side: Side) -> Result<()> {
+    game.raid_mut()?.phase = RaidPhase::Access;
+    let target = game.raid()?.target;
+
+    match target {
+        RoomId::Vault => {
+            todo!("Access Vault")
+        }
+        RoomId::Sanctum => {
+            todo!("Access Sanctum")
+        }
+        RoomId::Crypts => {
+            todo!("Access Crypts")
+        }
+        _ => {
+            let occupants = game.occupants(target).map(|c| c.id).collect::<Vec<_>>();
+            for occupant_id in occupants {
+                mutations::set_revealed(game, occupant_id, true);
+            }
+        }
+    }
+
     Ok(())
 }

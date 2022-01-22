@@ -147,7 +147,7 @@ pub fn handle_prompt_action(
     ensure!(
         matches!(
             &game.player(user_side).prompt,
-            Some(prompt) if prompt.responses.iter().any(|p| p.kind() == action.kind())
+            Some(prompt) if prompt.responses.iter().any(|p| p == &action)
         ),
         "Unexpected action {:?} received",
         action

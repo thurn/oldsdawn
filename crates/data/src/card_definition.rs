@@ -23,6 +23,7 @@ use crate::primitives::{
     ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue, LevelValue, ManaValue,
     PointsValue, Rarity, School, ShieldValue, Side, Sprite,
 };
+use crate::special_effects::{Projectile, TimedEffect};
 use crate::text::AbilityText;
 
 /// Cost to play a card or activate an ability
@@ -98,6 +99,15 @@ pub struct Ability {
     pub delegates: Vec<Delegate>,
 }
 
+/// Describes custom visual & audio effects for this card
+#[derive(Debug, Default)]
+pub struct SpecialEffects {
+    /// Custom projectile to be fired by this card during targeted interactions
+    pub custom_projectile: Option<Projectile>,
+    /// Additional hit effect after primary projectile impact
+    pub additional_hit: Option<TimedEffect>,
+}
+
 /// Individual card configuration; properties which are not universal for all
 /// cards
 #[derive(Debug, Default)]
@@ -105,6 +115,7 @@ pub struct CardConfig {
     pub stats: CardStats,
     pub faction: Option<Faction>,
     pub subtypes: Vec<CardSubtype>,
+    pub special_effects: SpecialEffects,
 }
 
 /// The fundamental object defining the behavior of a given card in Spelldawn

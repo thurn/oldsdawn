@@ -23,9 +23,12 @@
 use data::card_state::CardState;
 use data::game::GameState;
 use data::primitives::{CardId, RoomId, Side};
-use data::updates::GameUpdate;
+use data::special_effects::Projectile;
+use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use protos::spelldawn::game_command::Command;
+use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
+use protos::spelldawn::FireProjectileCommand;
 #[allow(unused)] // Used in rustdoc
 use protos::spelldawn::{
     game_object_identifier, DelayCommand, DisplayGameMessageCommand, GameCommand, GameMessageType,
@@ -35,12 +38,17 @@ use protos::spelldawn::{
 
 use crate::full_sync::CardCreationStrategy;
 use crate::response_builder::{CommandPhase, ResponseBuilder};
-use crate::{adapters, full_sync};
+use crate::{adapters, assets, full_sync};
 
 /// Takes a [GameUpdate] and converts it into an animation, a series of
 /// corresponding [GameCommand]s. Commands are appended to the provided
 /// `commands` list.
-pub fn render(commands: &mut ResponseBuilder, update: GameUpdate, game: &GameState) {
+pub fn render(
+    commands: &mut ResponseBuilder,
+    update: GameUpdate,
+    game: &GameState,
+    user_side: Side,
+) {
     match update {
         GameUpdate::StartTurn(side) => {
             start_turn(commands, side);
@@ -53,6 +61,9 @@ pub fn render(commands: &mut ResponseBuilder, update: GameUpdate, game: &GameSta
         }
         GameUpdate::InitiateRaid(room_id) => {
             initiate_raid(commands, room_id);
+        }
+        GameUpdate::TargetedInteraction(interaction) => {
+            targeted_interaction(commands, game, user_side, interaction);
         }
         _ => {}
     }
@@ -111,11 +122,6 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
     }
 }
 
-/// Constructs a delay command
-fn delay(milliseconds: u32) -> Command {
-    Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
-}
-
 /// Starts the `side` player's turn
 fn start_turn(commands: &mut ResponseBuilder, side: Side) {
     commands.push(
@@ -143,9 +149,70 @@ fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
     }
 }
 
+fn targeted_interaction(
+    commands: &mut ResponseBuilder,
+    game: &GameState,
+    user_side: Side,
+    interaction: TargetedInteraction,
+) {
+    let mut projectile = FireProjectileCommand {
+        source_id: Some(adapt_interaction_id(interaction.source, user_side)),
+        target_id: Some(adapt_interaction_id(interaction.target, user_side)),
+        projectile: Some(assets::projectile(Projectile::Hovl(3))),
+        travel_duration: Some(duration_ms(300)),
+        wait_duration: Some(duration_ms(300)),
+        ..FireProjectileCommand::default()
+    };
+    apply_projectile(game, &mut projectile, interaction);
+    commands.push(CommandPhase::PreUpdate, Command::FireProjectile(projectile));
+}
+
+/// Applies custom projectile effects for a targeted interaction.
+fn apply_projectile(
+    game: &GameState,
+    command: &mut FireProjectileCommand,
+    interaction: TargetedInteraction,
+) {
+    if let (InteractionObjectId::CardId(card_id), _) = (interaction.source, interaction.target) {
+        let effects = &rules::card_definition(game, card_id).config.special_effects;
+        if let Some(projectile) = effects.custom_projectile {
+            command.projectile = Some(assets::projectile(projectile));
+        }
+        if let Some(additional_hit) = effects.additional_hit {
+            command.additional_hit = Some(assets::timed_effect(additional_hit));
+            command.additional_hit_delay = Some(duration_ms(100));
+        }
+    }
+}
+
+/// Constructs a delay command
+fn delay(milliseconds: u32) -> Command {
+    Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
+}
+
+/// Constructs a [TimeValue].
+fn duration_ms(milliseconds: u32) -> TimeValue {
+    TimeValue { milliseconds }
+}
+
 /// Converts a [CardId] into a client [GameObjectIdentifier]
 fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {
+    GameObjectIdentifier { id: Some(Id::CardId(adapters::adapt_card_id(id))) }
+}
+
+fn adapt_interaction_id(id: InteractionObjectId, user_side: Side) -> GameObjectIdentifier {
     GameObjectIdentifier {
-        id: Some(game_object_identifier::Id::CardId(adapters::adapt_card_id(id))),
+        id: Some(match id {
+            InteractionObjectId::CardId(id) => Id::CardId(adapters::adapt_card_id(id)),
+            InteractionObjectId::Identity(side) => {
+                Id::Identity(adapters::to_player_name(side, user_side).into())
+            }
+            InteractionObjectId::Deck(side) => {
+                Id::Deck(adapters::to_player_name(side, user_side).into())
+            }
+            InteractionObjectId::DiscardPile(side) => {
+                Id::DiscardPile(adapters::to_player_name(side, user_side).into())
+            }
+        }),
     }
 }

@@ -50,21 +50,21 @@ pub fn handle_debug_action(
                 PanelAddress::DebugPanel,
             )?)]))
         }
-        DebugAction::AddMana => {
+        DebugAction::AddMana(amount) => {
             crate::handle_action(database, player_id, game_id, |game, user_side| {
-                game.player_mut(user_side).mana += 10;
+                game.player_mut(user_side).mana += amount;
                 Ok(())
             })
         }
-        DebugAction::AddActionPoints => {
+        DebugAction::AddActionPoints(amount) => {
             crate::handle_action(database, player_id, game_id, |game, user_side| {
-                game.player_mut(user_side).actions += 1;
+                game.player_mut(user_side).actions += amount;
                 Ok(())
             })
         }
-        DebugAction::AddScore => {
+        DebugAction::AddScore(amount) => {
             crate::handle_action(database, player_id, game_id, |game, user_side| {
-                game.player_mut(user_side).score += 1;
+                game.player_mut(user_side).score += amount;
                 Ok(())
             })
         }
@@ -94,14 +94,29 @@ pub fn handle_debug_action(
                 }),
             ]))
         }
+        DebugAction::SaveState(index) => {
+            let mut game = load_game(database, game_id)?;
+            game.id = GameId::new(u64::MAX - index);
+            database.write_game(&game)?;
+            Ok(GameResponse::from_commands(vec![]))
+        }
+        DebugAction::LoadState(index) => {
+            let mut game = database.game(GameId::new(u64::MAX - index))?;
+            game.id = game_id.with_context(|| "Expected GameId")?;
+            database.write_game(&game)?;
+            display::on_disconnect(player_id);
+            Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
+                scene_name: "Labyrinth".to_string(),
+                mode: SceneLoadMode::Single.into(),
+            })]))
+        }
     }
 }
 
 fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<()> {
-    let id = game_id.with_context(|| "GameId is required")?;
-    let game = database.game(id)?;
+    let game = load_game(database, game_id)?;
     database.write_game(&GameState::new_game(
-        id,
+        game.id,
         Deck {
             owner_id: game.overlord.id,
             identity: game.identity(Side::Overlord).name,
@@ -128,7 +143,7 @@ fn flipped_viewpoint(
     player_id: PlayerId,
     game_id: Option<GameId>,
 ) -> Result<PlayerIdentifier> {
-    let game = database.game(game_id.with_context(|| "GameId is required")?)?;
+    let game = load_game(database, game_id)?;
     if player_id == game.overlord.id {
         Ok(adapters::adapt_player_id(game.champion.id))
     } else if player_id == game.champion.id {
@@ -136,4 +151,8 @@ fn flipped_viewpoint(
     } else {
         bail!("ID must be present in game")
     }
+}
+
+fn load_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<GameState> {
+    database.game(game_id.with_context(|| "GameId is required")?)
 }

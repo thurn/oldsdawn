@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Data types used to represent game state
+//! Types which describe custom visual & sound effects used during play
 
-pub mod actions;
-pub mod card_definition;
-pub mod card_name;
-pub mod card_state;
-pub mod deck;
-pub mod delegates;
-pub mod game;
-pub mod primitives;
-pub mod special_effects;
-pub mod text;
-pub mod updates;
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+pub enum Projectile {
+    /// Hovl Studios projectile number
+    Hovl(u32),
+}
+
+/// Effect which plays for a short duration and then vanishes
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+pub enum TimedEffect {
+    /// Sword Slash VFX number
+    SwordSlash(u32),
+}

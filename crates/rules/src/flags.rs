@@ -118,7 +118,7 @@ pub fn can_encounter_target(game: &GameState, source: CardId, target: CardId) ->
 pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bool {
     let can_defeat = can_encounter_target(game, source, target)
         && matches!(
-            queries::boost_target_mana_cost(game, source, queries::health(game, target)),
+            queries::cost_to_defeat_target(game, source, target),
             Some(cost)
             if cost <= game.player(source.side).mana
         );
@@ -132,11 +132,28 @@ pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bo
 }
 
 pub fn can_take_raid_encounter_action(
-    _game: &GameState,
-    _side: Side,
-    _data: EncounterAction,
+    game: &GameState,
+    side: Side,
+    action: EncounterAction,
 ) -> bool {
-    true
+    let raid = match game.data.raid {
+        Some(r) => r,
+        None => return false,
+    };
+    let encounter_position = match raid.phase {
+        RaidPhase::Encounter(p) => p,
+        _ => return false,
+    };
+    let defenders = game.defender_list(raid.target);
+    let can_continue = side == Side::Champion && defenders.len() > encounter_position;
+
+    if let EncounterAction::UseWeaponAbility(source_id, target_id) = action {
+        can_continue
+            && defenders[encounter_position].id == target_id
+            && can_defeat_target(game, source_id, target_id)
+    } else {
+        can_continue
+    }
 }
 
 pub fn can_take_raid_advance_action(_game: &GameState, _side: Side, _data: AdvanceAction) -> bool {

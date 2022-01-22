@@ -96,7 +96,7 @@ pub fn render_updates(game: &GameState, user_side: Side) -> CommandList {
     RESPONSES.insert(user_id, sync);
 
     for update in updates {
-        animations::render(&mut builder, *update, game);
+        animations::render(&mut builder, *update, game, user_side);
     }
 
     builder.build()

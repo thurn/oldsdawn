@@ -24,7 +24,6 @@ pub enum InteractionObjectId {
     CardId(CardId),
     Identity(Side),
     Deck(Side),
-    Hand(Side),
     DiscardPile(Side),
 }
 
@@ -35,9 +34,6 @@ pub struct TargetedInteraction {
     pub source: InteractionObjectId,
     /// Target of the effect
     pub target: InteractionObjectId,
-    /// If true, the target will be removed from the raid display and returned
-    /// to its original game position as a result of this interaction.
-    pub remove_from_raid: bool,
 }
 
 /// Represents an update to the state of the game which should be translated

@@ -93,14 +93,17 @@ pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
 }
 
 /// Returns the amount of mana the owner of `card_id` would need to spend to
-/// raise its [AttackValue] to the provided `target` by activating boosts.
-/// Returns 0 if this card's attack value already meets the target. Returns None
-/// if this card does not have a defined boost ability.
-pub fn boost_target_mana_cost(
+/// raise its [AttackValue] to the provided `target` by activating boosts or
+/// by using other innate abilities.
+///
+/// - Returns 0 if this card can already defeat the target.
+/// - Returns None if it is impossible for this card to defeat the target.
+pub fn cost_to_defeat_target(
     game: &GameState,
     card_id: CardId,
-    target: AttackValue,
+    target_id: CardId,
 ) -> Option<ManaValue> {
+    let target = health(game, target_id);
     let current = attack(game, card_id);
     if current >= target {
         Some(0)

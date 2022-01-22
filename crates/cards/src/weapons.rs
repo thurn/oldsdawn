@@ -14,9 +14,10 @@
 
 //! Card definitions for the Weapon card type
 
-use data::card_definition::{AttackBoost, CardConfig, CardDefinition};
+use data::card_definition::{AttackBoost, CardConfig, CardDefinition, SpecialEffects};
 use data::card_name::CardName;
 use data::primitives::{CardType, Faction, Rarity, School, Side};
+use data::special_effects::{Projectile, TimedEffect};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::{abilities, DEFINITIONS};
@@ -37,6 +38,10 @@ pub fn greataxe() -> CardDefinition {
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
             faction: Some(Faction::Infernal),
+            special_effects: SpecialEffects {
+                custom_projectile: Some(Projectile::Hovl(8)),
+                additional_hit: Some(TimedEffect::SwordSlash(1)),
+            },
             ..CardConfig::default()
         },
     }

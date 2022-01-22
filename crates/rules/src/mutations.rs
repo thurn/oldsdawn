@@ -21,7 +21,7 @@
 //! delegate event *after* performing their mutation to inform other systems
 //! that game state has changed.
 
-use data::actions::{ActivateRoomAction, Prompt, PromptAction, PromptKind};
+use data::actions::{ActivateRoomAction, Prompt, PromptAction, PromptContext};
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
@@ -160,7 +160,7 @@ pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
             game,
             Side::Overlord,
             Prompt {
-                kind: PromptKind::ActivateRoomAction,
+                context: Some(PromptContext::ActivateRoom),
                 responses: vec![
                     PromptAction::ActivateRoomAction(ActivateRoomAction::Activate),
                     PromptAction::ActivateRoomAction(ActivateRoomAction::Pass),

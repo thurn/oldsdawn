@@ -13,7 +13,8 @@
 // limitations under the License.
 
 use data::actions::{
-    ActivateRoomAction, EncounterAction, Prompt, PromptAction, PromptKind, UserAction,
+    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
+    UserAction,
 };
 use data::game::GameState;
 use protos::spelldawn::{FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node};
@@ -35,7 +36,7 @@ impl<'a> Component for ActionPrompt<'a> {
     fn render(self) -> Node {
         let mut children = vec![];
 
-        if let Some(label) = prompt_context(self.prompt.kind) {
+        if let Some(label) = prompt_context(self.prompt.context) {
             children.push(child(Text {
                 label,
                 variant: TextVariant::PanelTitle,
@@ -96,11 +97,11 @@ impl Component for PromptContainer {
     }
 }
 
-fn prompt_context(kind: PromptKind) -> Option<String> {
-    match kind {
-        PromptKind::ActivateRoomAction => Some("Raid:".to_string()),
-        _ => None,
-    }
+fn prompt_context(context: Option<PromptContext>) -> Option<String> {
+    context.map(|context| match context {
+        PromptContext::ActivateRoom => "Raid:".to_string(),
+        PromptContext::RaidAdvance => "Continue?".to_string(),
+    })
 }
 
 fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
@@ -109,6 +110,7 @@ fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
         PromptAction::EncounterAction(encounter_action) => {
             encounter_action_button(game, encounter_action)
         }
+        PromptAction::AdvanceAction(advance_action) => advance_action_button(advance_action),
         _ => todo!("Not yet implemented"),
     };
     ResponseButton { action: Some(response), ..button }
@@ -159,9 +161,7 @@ fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) 
     match encounter_action {
         EncounterAction::UseWeaponAbility(source_id, target_id) => {
             let label = rules::card_definition(game, source_id).name.displayed_name();
-            if let Some(cost) =
-                queries::boost_target_mana_cost(game, source_id, queries::health(game, target_id))
-            {
+            if let Some(cost) = queries::cost_to_defeat_target(game, source_id, target_id) {
                 ResponseButton {
                     label: if cost > 0 {
                         format!("{}\n{}{}", label, cost, icons::MANA)
@@ -176,6 +176,21 @@ fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) 
             }
         }
         EncounterAction::Continue => ResponseButton {
+            label: "Continue".to_string(),
+            primary: false,
+            ..ResponseButton::default()
+        },
+    }
+}
+
+fn advance_action_button(advance_action: AdvanceAction) -> ResponseButton {
+    match advance_action {
+        AdvanceAction::Advance => ResponseButton {
+            label: "Advance".to_string(),
+            primary: true,
+            ..ResponseButton::default()
+        },
+        AdvanceAction::Retreat => ResponseButton {
             label: "Continue".to_string(),
             primary: false,
             ..ResponseButton::default()

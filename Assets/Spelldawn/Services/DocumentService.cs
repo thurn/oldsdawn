@@ -92,13 +92,10 @@ namespace Spelldawn.Services
 
       RenderPanels();
 
-      if (command.MainControls != null)
-      {
-        Reconcile(
-          ref _mainControlsNode,
-          ref _mainControls,
-          MainControls(command.MainControls.Node));
-      }
+      Reconcile(
+        ref _mainControlsNode,
+        ref _mainControls,
+        MainControls(command.MainControls?.Node));
 
       _cardControls.Clear();
       if (command.CardAnchorNodes.Count > 0)

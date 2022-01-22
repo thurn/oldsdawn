@@ -14,19 +14,15 @@
 
 //! User interface actions
 
-#![allow(clippy::use_self)] // Required to use EnumKind
-
-use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
 
-use crate::primitives::CardId;
+use crate::primitives::{ActionCount, CardId, ManaValue, PointsValue};
 
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum ActivateRoomAction {
     Activate,
     Pass,
 }
-
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum EncounterAction {
     /// (source_id, target_id)
@@ -36,15 +32,20 @@ pub enum EncounterAction {
 
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum AdvanceAction {
-    Continue,
+    Advance,
     Retreat,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum PromptContext {
+    ActivateRoom,
+    RaidAdvance,
 }
 
 /// An action which can be taken in the user interface, typically embedded
 /// inside the `GameAction::StandardAction` protobuf message type when sent to
 /// the client.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumKind)]
-#[enum_kind(PromptKind, derive(Serialize), derive(Deserialize))]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum PromptAction {
     /// Action for the Overlord to activate the room currently being raided
     ActivateRoomAction(ActivateRoomAction),
@@ -60,10 +61,14 @@ pub enum PromptAction {
     RaidEnd,
 }
 
-impl PromptAction {
-    pub fn kind(&self) -> PromptKind {
-        self.into()
-    }
+/// Presents a choice to a user, typically communicated via a series of buttons
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Prompt {
+    /// Identifies the context for this prompt, i.e. why it is being shown to
+    /// the user
+    pub context: Option<PromptContext>,
+    /// Possible responses to this prompt
+    pub responses: Vec<PromptAction>,
 }
 
 /// Actions that can be taken from the debug panel, should not be exposed in
@@ -72,25 +77,17 @@ impl PromptAction {
 pub enum DebugAction {
     ResetGame,
     FetchStandardPanels,
-    AddMana,
-    AddActionPoints,
-    AddScore,
+    AddMana(ManaValue),
+    AddActionPoints(ActionCount),
+    AddScore(PointsValue),
     SwitchTurn,
     FlipViewpoint,
+    SaveState(u64),
+    LoadState(u64),
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum UserAction {
     DebugAction(DebugAction),
     PromptAction(PromptAction),
-}
-
-/// Presents a choice to a user, typically communicated via a series of buttons
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Prompt {
-    /// Identifies the context for this prompt, i.e. why it is being shown to
-    /// the user
-    pub kind: PromptKind,
-    /// Possible responses to this prompt
-    pub responses: Vec<PromptAction>,
 }

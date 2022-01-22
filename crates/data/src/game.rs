@@ -14,6 +14,7 @@
 
 //! Core data structures for tracking the state of an ongoing game.
 
+use anyhow::{Context, Result};
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
@@ -324,6 +325,17 @@ impl GameState {
     /// alphabetical order.
     pub fn all_cards(&self) -> impl Iterator<Item = &CardState> {
         self.overlord_cards.iter().chain(self.champion_cards.iter())
+    }
+
+    /// Helper method to return the current [RaidData] or an error when one is
+    /// expected to exist.
+    pub fn raid(&self) -> Result<&RaidData> {
+        self.data.raid.as_ref().with_context(|| "Expected Raid")
+    }
+
+    /// Mutable version of [Self::raid].
+    pub fn raid_mut(&mut self) -> Result<&mut RaidData> {
+        self.data.raid.as_mut().with_context(|| "Expected Raid")
     }
 
     /// Create card states for a deck

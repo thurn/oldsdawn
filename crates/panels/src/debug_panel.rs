@@ -43,15 +43,39 @@ pub fn render() -> Node {
                 debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
                 debug_button(
                     format!("+10{}", icons::MANA),
-                    UserAction::DebugAction(DebugAction::AddMana),
+                    UserAction::DebugAction(DebugAction::AddMana(10)),
                 ),
                 debug_button(
                     format!("+{}", icons::ACTION),
-                    UserAction::DebugAction(DebugAction::AddActionPoints),
+                    UserAction::DebugAction(DebugAction::AddActionPoints(1)),
                 ),
-                debug_button("+ Point", UserAction::DebugAction(DebugAction::AddScore)),
+                debug_button("+ Point", UserAction::DebugAction(DebugAction::AddScore(1))),
                 debug_button("Turn", UserAction::DebugAction(DebugAction::SwitchTurn)),
                 debug_button("Flip View", UserAction::DebugAction(DebugAction::FlipViewpoint)),
+                debug_button(
+                    format!("{} 1", icons::SAVE),
+                    UserAction::DebugAction(DebugAction::SaveState(1)),
+                ),
+                debug_button(
+                    format!("{} 1", icons::RESTORE),
+                    UserAction::DebugAction(DebugAction::LoadState(1)),
+                ),
+                debug_button(
+                    format!("{} 2", icons::SAVE),
+                    UserAction::DebugAction(DebugAction::SaveState(2)),
+                ),
+                debug_button(
+                    format!("{} 2", icons::RESTORE),
+                    UserAction::DebugAction(DebugAction::LoadState(2)),
+                ),
+                debug_button(
+                    format!("{} 3", icons::SAVE),
+                    UserAction::DebugAction(DebugAction::SaveState(3)),
+                ),
+                debug_button(
+                    format!("{} 3", icons::RESTORE),
+                    UserAction::DebugAction(DebugAction::LoadState(3)),
+                ),
             ],
             ..Row::default()
         },
