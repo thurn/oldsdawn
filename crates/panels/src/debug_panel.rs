@@ -17,7 +17,7 @@
 //! users.
 
 use data::actions::{DebugAction, UserAction};
-use protos::spelldawn::{FlexStyle, Node, PanelAddress};
+use protos::spelldawn::{FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node, PanelAddress};
 use ui::components::{Button, Row};
 use ui::core::{child, node};
 use ui::panel::Panel;
@@ -32,6 +32,12 @@ pub fn render() -> Node {
         height: 512.0,
         content: Row {
             name: "DebugButtons".to_string(),
+            style: FlexStyle {
+                wrap: FlexWrap::Wrap.into(),
+                align_items: FlexAlign::Center.into(),
+                justify_content: FlexJustify::Center.into(),
+                ..FlexStyle::default()
+            },
             children: vec![
                 debug_button("Reset", UserAction::DebugAction(DebugAction::ResetGame)),
                 debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
@@ -45,6 +51,7 @@ pub fn render() -> Node {
                 ),
                 debug_button("+ Point", UserAction::DebugAction(DebugAction::AddScore)),
                 debug_button("Turn", UserAction::DebugAction(DebugAction::SwitchTurn)),
+                debug_button("Flip View", UserAction::DebugAction(DebugAction::FlipViewpoint)),
             ],
             ..Row::default()
         },

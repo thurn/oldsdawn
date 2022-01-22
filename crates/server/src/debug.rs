@@ -14,15 +14,18 @@
 
 use std::collections::HashMap;
 
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use data::actions::DebugAction;
 use data::deck::Deck;
 use data::delegates::{DawnEvent, DuskEvent};
 use data::game::GameState;
 use data::primitives::{GameId, PlayerId, Side};
 use data::updates::GameUpdate;
+use display::adapters;
 use protos::spelldawn::game_command::Command;
-use protos::spelldawn::{LoadSceneCommand, PanelAddress, SceneLoadMode};
+use protos::spelldawn::{
+    LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode, SetPlayerIdentifierCommand,
+};
 use rules::{dispatch, queries};
 
 use crate::{Database, GameResponse};
@@ -36,6 +39,7 @@ pub fn handle_debug_action(
     match action {
         DebugAction::ResetGame => {
             reset_game(database, game_id)?;
+            display::on_disconnect(player_id);
             Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
                 scene_name: "Labyrinth".to_string(),
                 mode: SceneLoadMode::Single.into(),
@@ -78,6 +82,18 @@ pub fn handle_debug_action(
             game.updates.push(GameUpdate::StartTurn(new_turn));
             Ok(())
         }),
+        DebugAction::FlipViewpoint => {
+            display::on_disconnect(player_id);
+            Ok(GameResponse::from_commands(vec![
+                Command::SetPlayerId(SetPlayerIdentifierCommand {
+                    id: Some(flipped_viewpoint(database, player_id, game_id)?),
+                }),
+                Command::LoadScene(LoadSceneCommand {
+                    scene_name: "Labyrinth".to_string(),
+                    mode: SceneLoadMode::Single.into(),
+                }),
+            ]))
+        }
     }
 }
 
@@ -105,4 +121,19 @@ fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<(
         game.data.config,
     ))?;
     Ok(())
+}
+
+fn flipped_viewpoint(
+    database: &mut impl Database,
+    player_id: PlayerId,
+    game_id: Option<GameId>,
+) -> Result<PlayerIdentifier> {
+    let game = database.game(game_id.with_context(|| "GameId is required")?)?;
+    if player_id == game.overlord.id {
+        Ok(adapters::adapt_player_id(game.champion.id))
+    } else if player_id == game.champion.id {
+        Ok(adapters::adapt_player_id(game.overlord.id))
+    } else {
+        bail!("ID must be present in game")
+    }
 }

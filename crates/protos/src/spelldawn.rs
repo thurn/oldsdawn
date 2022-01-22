@@ -329,6 +329,11 @@ pub struct Node {
 // Game Primitives
 // ============================================================================
 
+#[derive(Eq, Hash, Copy, Clone, PartialEq, ::prost::Message)]
+pub struct PlayerIdentifier {
+    #[prost(uint64, tag = "1")]
+    pub value: u64,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameIdentifier {
     #[prost(uint64, tag = "1")]
@@ -801,8 +806,8 @@ pub struct GameRequest {
     /// Identifies the user making this request. At some point I'm going to
     /// figure out how to set up authentication, but currently we operate on
     /// the honor system :)
-    #[prost(uint64, tag = "3")]
-    pub user_id: u64,
+    #[prost(message, optional, tag = "3")]
+    pub player_id: ::core::option::Option<PlayerIdentifier>,
 }
 // ============================================================================
 // Commands
@@ -1050,11 +1055,17 @@ pub struct LoadSceneCommand {
     #[prost(enumeration = "SceneLoadMode", tag = "2")]
     pub mode: i32,
 }
+//// Writes the PlayerIdentifier for the client to storage
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SetPlayerIdentifierCommand {
+    #[prost(message, optional, tag = "1")]
+    pub id: ::core::option::Option<PlayerIdentifier>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20"
+        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1098,6 +1109,8 @@ pub mod game_command {
         DisplayRewards(super::DisplayRewardsCommand),
         #[prost(message, tag = "20")]
         LoadScene(super::LoadSceneCommand),
+        #[prost(message, tag = "21")]
+        SetPlayerId(super::SetPlayerIdentifierCommand),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1115,8 +1128,8 @@ pub struct ConnectRequest {
     #[prost(message, optional, tag = "1")]
     pub game_id: ::core::option::Option<GameIdentifier>,
     /// User making this request.
-    #[prost(uint64, tag = "2")]
-    pub user_id: u64,
+    #[prost(message, optional, tag = "2")]
+    pub player_id: ::core::option::Option<PlayerIdentifier>,
     ///
     /// If test_mode is true, the generated GameId for a new game will always
     /// be 0.

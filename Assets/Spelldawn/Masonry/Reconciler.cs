@@ -53,6 +53,10 @@ namespace Spelldawn.Masonry
       {
         // If the previous node was of the same type as this node, mutate its VisualElement to match
         previousChildrenCount = previousNode.Children.Count;
+        if (previousElement.childCount != previousChildrenCount)
+        {
+          throw new InvalidOperationException("Child count mismatch!");
+        }
 
         for (var i = 0; i < previousChildrenCount; ++i)
         {

@@ -411,6 +411,10 @@ message Node {
 // Game Primitives
 // ============================================================================
 
+message PlayerIdentifier {
+    uint64 value = 1;
+}
+
 message GameIdentifier {
     uint64 value = 1;
 }
@@ -832,7 +836,7 @@ message GameRequest {
      * figure out how to set up authentication, but currently we operate on
      * the honor system :)
      */
-    uint64 user_id = 3;
+    PlayerIdentifier player_id = 3;
 }
 
 // ============================================================================
@@ -1110,6 +1114,11 @@ message LoadSceneCommand {
     SceneLoadMode mode = 2;
 }
 
+/// Writes the PlayerIdentifier for the client to storage
+message SetPlayerIdentifierCommand {
+    PlayerIdentifier id = 1;
+}
+
 message GameCommand {
     oneof command {
         DebugLogCommand debug_log = 1;
@@ -1130,6 +1139,7 @@ message GameCommand {
         SetGameObjectsEnabledCommand set_game_objects_enabled = 18;
         DisplayRewardsCommand display_rewards = 19;
         LoadSceneCommand load_scene = 20;
+        SetPlayerIdentifierCommand set_player_id = 21;
     }
 }
 
@@ -1147,7 +1157,7 @@ message ConnectRequest {
     GameIdentifier game_id = 1;
 
     /* User making this request. */
-    uint64 user_id = 2;
+    PlayerIdentifier player_id = 2;
 
     /*
      * If test_mode is true, the generated GameId for a new game will always

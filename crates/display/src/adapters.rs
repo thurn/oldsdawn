@@ -14,9 +14,9 @@
 
 //! Helpers for converting between server & client representations
 
-use anyhow::{anyhow, bail, Result};
-use data::primitives::{CardId, RoomId, Side};
-use protos::spelldawn::{CardIdentifier, PlayerName, PlayerSide, RoomIdentifier};
+use anyhow::{anyhow, bail, Context, Result};
+use data::primitives::{CardId, PlayerId, RoomId, Side};
+use protos::spelldawn::{CardIdentifier, PlayerIdentifier, PlayerName, PlayerSide, RoomIdentifier};
 
 /// Converts a [Side] into a [PlayerName] based on which viewer we are rendering
 /// this update for.
@@ -26,6 +26,10 @@ pub fn to_player_name(side: Side, user_side: Side) -> PlayerName {
     } else {
         PlayerName::Opponent
     }
+}
+
+pub fn adapt_player_id(player_id: PlayerId) -> PlayerIdentifier {
+    PlayerIdentifier { value: player_id.value }
 }
 
 pub fn adapt_side(side: Side) -> PlayerSide {
@@ -81,4 +85,9 @@ pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
     } else {
         Err(anyhow!("Missing Required CardId"))
     }
+}
+
+/// Converts a client [PlayerIdentifier] into a server [PlayerId].
+pub fn to_server_player_id(player_id: &Option<PlayerIdentifier>) -> Result<PlayerId> {
+    Ok(PlayerId::new(player_id.with_context(|| "PlayerId is required")?.value))
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Spelldawn.Protos;
+using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -21,14 +22,31 @@ namespace Spelldawn.Services
 {
   public sealed class GameService : MonoBehaviour
   {
+    const int DefaultUserId = 1;
     [SerializeField] Registry _registry = null!;
-    [SerializeField] ulong _userId = 1;
     [SerializeField] string? _currentGameId;
 
-    public ulong UserId
+    public PlayerIdentifier PlayerId
     {
-      get => _userId;
-      set => _userId = value;
+      get
+      {
+        if (PlayerPrefs.HasKey(Preferences.PlayerId) &&
+            ulong.TryParse(PlayerPrefs.GetString(Preferences.PlayerId), out var playerId))
+        {
+          return new PlayerIdentifier
+          {
+            Value = playerId
+          };
+        }
+        else
+        {
+          return new PlayerIdentifier
+          {
+            Value = DefaultUserId
+          };
+        }
+      }
+      set => PlayerPrefs.SetString(Preferences.PlayerId, value.Value.ToString());
     }
 
     public GameIdentifier? CurrentGameId

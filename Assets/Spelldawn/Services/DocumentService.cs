@@ -45,9 +45,9 @@ namespace Spelldawn.Services
     void Start()
     {
       _document.rootVisualElement.Clear();
-      AddRoot("Full Screen", out _fullScreen, out _fullScreenNode);
-      AddRoot("Raid Controls", out _mainControls, out _mainControlsNode);
+      AddRoot("Main Controls", out _mainControls, out _mainControlsNode);
       AddRoot("Card Controls", out _cardControls, out _cardControlsNode);
+      AddRoot("Full Screen", out _fullScreen, out _fullScreenNode);
     }
 
     float ScreenPxToElementDip(float value) => value * _document.panelSettings.referenceDpi / Screen.dpi;
@@ -92,10 +92,12 @@ namespace Spelldawn.Services
 
       RenderPanels();
 
-      _mainControls.Clear();
       if (command.MainControls != null)
       {
-        _mainControls.Add(Mason.Render(_registry, MainControls(command.MainControls.Node)));
+        Reconcile(
+          ref _mainControlsNode,
+          ref _mainControls,
+          MainControls(command.MainControls.Node));
       }
 
       _cardControls.Clear();
@@ -108,16 +110,24 @@ namespace Spelldawn.Services
 
     void RenderPanels()
     {
-      var newNode = FullScreen(_openPanels.Select(p => _panelCache.GetValueOrDefault(p)).WhereNotNull());
-      var element = Reconciler.Update(_registry, newNode, _fullScreen, _fullScreenNode);
+      Reconcile(
+        ref _fullScreenNode,
+        ref _fullScreen,
+        FullScreen(_openPanels.Select(p => _panelCache.GetValueOrDefault(p)).WhereNotNull()));
+    }
 
-      if (element != null)
+    void Reconcile(ref Node node, ref VisualElement element, Node newNode)
+    {
+      var result = Reconciler.Update(_registry, newNode, element, node);
+
+      if (result != null)
       {
-        _fullScreen = element;
+        element = result;
       }
 
-      _fullScreenNode = newNode;
+      node = newNode;
     }
+
 
     public IEnumerator RenderMainControls(Node node)
     {

@@ -76,6 +76,7 @@ pub enum DebugAction {
     AddActionPoints,
     AddScore,
     SwitchTurn,
+    FlipViewpoint,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]

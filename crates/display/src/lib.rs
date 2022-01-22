@@ -39,6 +39,11 @@ pub mod rules_text;
 /// Map from user IDs to the most recent game response we sent to that user.
 static RESPONSES: Lazy<DashMap<PlayerId, FullSync>> = Lazy::new(DashMap::new);
 
+/// Clears cached responses for the provided [PlayerId].
+pub fn on_disconnect(player_id: PlayerId) {
+    RESPONSES.remove(&player_id);
+}
+
 /// Builds a command list for game connection requests. Executes a full sync of
 /// the state of the provided `game`, returning a command to update the state of
 /// every active game object. Caches the response for use by future incremental

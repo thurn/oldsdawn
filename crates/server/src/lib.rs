@@ -64,7 +64,10 @@ impl Spelldawn for GameService {
     ) -> Result<Response<Self::ConnectStream>, Status> {
         let message = request.get_ref();
         let game_id = to_server_game_id(&message.game_id);
-        let player_id = PlayerId::new(message.user_id);
+        let player_id = match adapters::to_server_player_id(&message.player_id) {
+            Ok(player_id) => player_id,
+            _ => return Err(Status::unauthenticated("PlayerId is required")),
+        };
         warn!(?player_id, ?game_id, "received_connection");
 
         let (tx, rx) = mpsc::channel(4);
@@ -146,7 +149,7 @@ impl GameResponse {
 /// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
     let game_id = to_server_game_id(&request.game_id);
-    let player_id = PlayerId::new(request.user_id);
+    let player_id = adapters::to_server_player_id(&request.player_id)?;
     let game_action = request
         .action
         .as_ref()
@@ -334,6 +337,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::SetGameObjectsEnabled(_) => "SetGameObjectsEnabled",
         Command::DisplayRewards(_) => "DisplayRewards",
         Command::LoadScene(_) => "LoadScene",
+        Command::SetPlayerId(_) => "SetPlayerIdentifier",
     })
 }
 

@@ -124,7 +124,7 @@ impl TestGame {
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),
                 game_id: Some(GameIdentifier { value: self.game.id.value }),
-                user_id: player_id.value,
+                player_id: Some(adapters::adapt_player_id(player_id)),
             },
         )?;
 

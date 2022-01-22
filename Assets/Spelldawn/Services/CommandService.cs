@@ -120,6 +120,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.LoadScene:
             yield return HandleLoadScene(command.LoadScene);
             break;
+          case GameCommand.CommandOneofCase.SetPlayerId:
+            _registry.GameService.PlayerId = command.SetPlayerId.Id;
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;

@@ -195,14 +195,17 @@ namespace Spelldawn.Services
       using var call = _client.Connect(new ConnectRequest
       {
         GameId = _registry.GameService.CurrentGameId,
-        UserId = _registry.GameService.UserId,
+        PlayerId = _registry.GameService.PlayerId,
         TestMode = true
       });
 
       while (await call.ResponseStream.MoveNext())
       {
-        var commands = call.ResponseStream.Current;
-        StartCoroutine(_registry.CommandService.HandleCommands(commands));
+        if (this != null)
+        {
+          var commands = call.ResponseStream.Current;
+          StartCoroutine(_registry.CommandService.HandleCommands(commands));
+        }
       }
     }
 
@@ -223,7 +226,7 @@ namespace Spelldawn.Services
         {
           Action = action,
           GameId = _registry.GameService.CurrentGameId,
-          UserId = _registry.GameService.UserId
+          PlayerId = _registry.GameService.PlayerId
         };
 
         var task = _client.PerformActionAsync(request).GetAwaiter();
