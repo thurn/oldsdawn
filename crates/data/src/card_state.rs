@@ -78,6 +78,14 @@ impl CardPosition {
         self.kind() == CardPositionKind::DiscardPile
     }
 
+    pub fn is_room_occupant(&self, room_id: RoomId) -> bool {
+        matches!(
+            self,
+            CardPosition::Room(room, location)
+            if room_id == *room && *location == RoomLocation::Occupant
+        )
+    }
+
     /// Returns true if this card is in a user's score pile
     pub fn in_score_pile(&self) -> bool {
         self.kind() == CardPositionKind::Scored

@@ -15,8 +15,10 @@
 //! Helper functions for constructing resource URLs used during a game
 
 use data::primitives::{CardType, Faction, Rarity, School, Side};
-use data::special_effects::{Projectile, TimedEffect};
-use protos::spelldawn::{EffectAddress, ProjectileAddress, SpriteAddress};
+use data::special_effects::{
+    FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
+};
+use protos::spelldawn::{AudioClipAddress, EffectAddress, ProjectileAddress, SpriteAddress};
 
 /// Possible types of icons which can appear on a card
 pub enum CardIconType {
@@ -203,9 +205,33 @@ pub fn projectile(projectile: Projectile) -> ProjectileAddress {
 pub fn timed_effect(effect: TimedEffect) -> EffectAddress {
     EffectAddress {
         address: match effect {
-            TimedEffect::SwordSlash(number) => {
+            TimedEffect::HovlMagicHit(number) => {
+                format!("Hovl Studio/Magic hits/Prefabs/Hit {}", number)
+            }
+            TimedEffect::HovlSwordSlash(number) => {
                 format!("Hovl Studio/Sword slash VFX/Prefabs/Sword Slash {}", number)
             }
+        },
+    }
+}
+
+pub fn sound_effect(effect: SoundEffect) -> AudioClipAddress {
+    AudioClipAddress {
+        address: match effect {
+            SoundEffect::FantasyEvents(events) => match events {
+                FantasyEventSounds::Positive1 => {
+                    "Cafofo/Fantasy Music Pack Vol 1/Events/Positive Event 01".to_string()
+                }
+            },
+            SoundEffect::Fireworks(firework) => match firework {
+                FireworksSound::RocketExplodeLarge => {
+                    "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_Large_RR1_mono"
+                        .to_string()
+                }
+                FireworksSound::RocketExplode => {
+                    "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_RR1_mono".to_string()
+                }
+            },
         },
     }
 }

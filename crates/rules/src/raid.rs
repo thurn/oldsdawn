@@ -20,13 +20,15 @@ use anyhow::{bail, ensure, Context, Result};
 use data::actions::{
     ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
 };
+use data::card_state::CardPosition;
+use data::delegates::ChampionScoreCardEvent;
 use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use if_chain::if_chain;
 use tracing::{info, instrument};
 
-use crate::{flags, mutations, queries};
+use crate::{dispatch, flags, mutations, queries};
 
 #[instrument(skip(game))]
 pub fn initiate_raid_action(
@@ -184,10 +186,21 @@ pub fn destroy_card_action(game: &mut GameState, user_side: Side, card_id: CardI
 pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId) -> Result<()> {
     info!(?user_side, ?card_id, "raid_score_card_action");
     ensure!(
-        flags::can_take_raid_score_card_action(game, user_side, card_id),
+        flags::can_score_card(game, user_side, card_id),
         "Cannot take score card action for {:?}",
         user_side
     );
+    let scheme_points = crate::card_definition(game, card_id)
+        .config
+        .stats
+        .scheme_points
+        .with_context(|| format!("Expected SchemePoints for {:?}", card_id))?;
+
+    game.champion.score += scheme_points.points;
+    mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion));
+    set_access_phase_prompts(game)?;
+    dispatch::invoke_event(game, ChampionScoreCardEvent(card_id));
+    game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
     Ok(())
 }
 
@@ -223,22 +236,38 @@ fn initiate_access_phase(game: &mut GameState) -> Result<()> {
             for occupant_id in occupants {
                 mutations::set_revealed(game, occupant_id, true);
             }
-
-            mutations::set_prompt(
-                game,
-                Side::Champion,
-                Prompt {
-                    context: None,
-                    responses: game
-                        .occupants(target)
-                        .filter_map(|c| access_prompt_for_card(game, c.id))
-                        .chain(iter::once(PromptAction::EndRaid))
-                        .collect(),
-                },
-            )
         }
     }
 
+    set_access_phase_prompts(game)?;
+    Ok(())
+}
+
+fn set_access_phase_prompts(game: &mut GameState) -> Result<()> {
+    let target = game.raid()?.target;
+    match target {
+        RoomId::Vault => {
+            todo!("Access Vault")
+        }
+        RoomId::Sanctum => {
+            todo!("Access Sanctum")
+        }
+        RoomId::Crypts => {
+            todo!("Access Crypts")
+        }
+        _ => mutations::set_prompt(
+            game,
+            Side::Champion,
+            Prompt {
+                context: None,
+                responses: game
+                    .occupants(target)
+                    .filter_map(|c| access_prompt_for_card(game, c.id))
+                    .chain(iter::once(PromptAction::EndRaid))
+                    .collect(),
+            },
+        ),
+    }
     Ok(())
 }
 
@@ -247,7 +276,9 @@ fn initiate_access_phase(game: &mut GameState) -> Result<()> {
 fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAction> {
     let definition = crate::card_definition(game, card_id);
     match definition.card_type {
-        CardType::Scheme => Some(PromptAction::RaidScoreCard(card_id)),
+        CardType::Scheme if flags::can_score_card(game, Side::Champion, card_id) => {
+            Some(PromptAction::RaidScoreCard(card_id))
+        }
         CardType::Project | CardType::Upgrade
             if flags::can_destroy_accessed_card(game, card_id) =>
         {

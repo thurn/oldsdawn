@@ -122,11 +122,14 @@ pub fn combat(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
 }
 
 /// An ability when a card is scored
-pub fn on_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
+pub fn on_overlord_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::ScoreScheme(EventDelegate { requirement: this_card, mutation })],
+        delegates: vec![Delegate::OverlordScoreCard(EventDelegate {
+            requirement: this_card,
+            mutation,
+        })],
     }
 }
 

@@ -35,7 +35,7 @@ pub fn dungeon_annex() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_score(text![Keyword::Score, "Gain", mana(7)], |g, s, _| {
+        abilities: vec![on_overlord_score(text![Keyword::Score, "Gain", mana(7)], |g, s, _| {
             mutations::gain_mana(g, s.side(), 7);
         })],
         config: CardConfig {

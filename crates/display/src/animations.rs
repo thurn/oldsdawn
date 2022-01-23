@@ -23,17 +23,23 @@
 use data::card_state::CardState;
 use data::game::GameState;
 use data::primitives::{CardId, RoomId, Side};
-use data::special_effects::Projectile;
+use data::special_effects::{
+    FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
+};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
-use protos::spelldawn::FireProjectileCommand;
+use protos::spelldawn::play_effect_position::EffectPosition;
 #[allow(unused)] // Used in rustdoc
 use protos::spelldawn::{
     game_object_identifier, DelayCommand, DisplayGameMessageCommand, GameCommand, GameMessageType,
     GameObjectIdentifier, MoveGameObjectsCommand, ObjectPosition, ObjectPositionDeck,
     ObjectPositionStaging, PlayerName, RoomVisitType, TimeValue, VisitRoomCommand,
+};
+use protos::spelldawn::{
+    FireProjectileCommand, MusicState, ObjectPositionScoreAnimation, PlayEffectCommand,
+    PlayEffectPosition, PlaySoundCommand, SetMusicCommand,
 };
 
 use crate::full_sync::CardCreationStrategy;
@@ -65,6 +71,7 @@ pub fn render(
         GameUpdate::TargetedInteraction(interaction) => {
             targeted_interaction(commands, game, user_side, interaction);
         }
+        GameUpdate::ChampionScoreCard(card_id, _) => score_champion_card(commands, card_id),
         _ => {}
     }
 }
@@ -92,7 +99,7 @@ fn move_card(commands: &mut ResponseBuilder, card: &CardState) {
         CommandPhase::Animate,
         full_sync::adapt_position(card, commands.user_side).map(|position| {
             Command::MoveGameObjects(MoveGameObjectsCommand {
-                ids: vec![adapt_game_object_id(card.id)],
+                ids: vec![card_id_to_object_id(card.id)],
                 position: Some(position),
                 disable_animation: false,
             })
@@ -110,7 +117,7 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
         commands.push(
             CommandPhase::Animate,
             Command::MoveGameObjects(MoveGameObjectsCommand {
-                ids: vec![adapt_game_object_id(card.id)],
+                ids: vec![card_id_to_object_id(card.id)],
                 position: Some(ObjectPosition {
                     sorting_key: 0,
                     position: Some(Position::Staging(ObjectPositionStaging {})),
@@ -185,9 +192,91 @@ fn apply_projectile(
     }
 }
 
+fn score_champion_card(commands: &mut ResponseBuilder, card_id: CardId) {
+    let object_id = card_id_to_object_id(card_id);
+    commands.push(CommandPhase::PreUpdate, set_music(MusicState::Silent));
+    commands.push(
+        CommandPhase::PreUpdate,
+        play_sound(SoundEffect::FantasyEvents(FantasyEventSounds::Positive1)),
+    );
+    commands.push(
+        CommandPhase::PreUpdate,
+        move_to(
+            object_id,
+            ObjectPosition {
+                sorting_key: 0,
+                position: Some(Position::ScoreAnimation(ObjectPositionScoreAnimation {})),
+            },
+        ),
+    );
+    commands.push(
+        CommandPhase::PreUpdate,
+        play_effect(
+            TimedEffect::HovlMagicHit(4),
+            object_id,
+            PlayEffectOptions {
+                duration: Some(duration_ms(700)),
+                sound: Some(SoundEffect::Fireworks(FireworksSound::RocketExplodeLarge)),
+                ..PlayEffectOptions::default()
+            },
+        ),
+    );
+    commands.push(
+        CommandPhase::PreUpdate,
+        play_effect(
+            TimedEffect::HovlMagicHit(4),
+            object_id,
+            PlayEffectOptions {
+                duration: Some(duration_ms(300)),
+                sound: Some(SoundEffect::Fireworks(FireworksSound::RocketExplode)),
+                ..PlayEffectOptions::default()
+            },
+        ),
+    );
+}
+
 /// Constructs a delay command
 fn delay(milliseconds: u32) -> Command {
     Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
+}
+
+fn set_music(music_state: MusicState) -> Command {
+    Command::SetMusic(SetMusicCommand { music_state: music_state.into() })
+}
+
+fn play_sound(sound: SoundEffect) -> Command {
+    Command::PlaySound(PlaySoundCommand { sound: Some(assets::sound_effect(sound)) })
+}
+
+fn move_to(object: GameObjectIdentifier, position: ObjectPosition) -> Command {
+    Command::MoveGameObjects(MoveGameObjectsCommand {
+        ids: vec![object],
+        position: Some(position),
+        disable_animation: false,
+    })
+}
+
+#[derive(Debug, Default)]
+struct PlayEffectOptions {
+    pub duration: Option<TimeValue>,
+    pub sound: Option<SoundEffect>,
+    pub scale: Option<f32>,
+}
+
+fn play_effect(
+    effect: TimedEffect,
+    object: GameObjectIdentifier,
+    options: PlayEffectOptions,
+) -> Command {
+    Command::PlayEffect(PlayEffectCommand {
+        effect: Some(assets::timed_effect(effect)),
+        position: Some(PlayEffectPosition {
+            effect_position: Some(EffectPosition::GameObject(object)),
+        }),
+        scale: options.scale,
+        duration: Some(options.duration.unwrap_or_else(|| duration_ms(300))),
+        sound: options.sound.map(assets::sound_effect),
+    })
 }
 
 /// Constructs a [TimeValue].
@@ -196,7 +285,7 @@ fn duration_ms(milliseconds: u32) -> TimeValue {
 }
 
 /// Converts a [CardId] into a client [GameObjectIdentifier]
-fn adapt_game_object_id(id: CardId) -> GameObjectIdentifier {
+fn card_id_to_object_id(id: CardId) -> GameObjectIdentifier {
     GameObjectIdentifier { id: Some(Id::CardId(adapters::adapt_card_id(id))) }
 }
 

@@ -40,7 +40,7 @@ pub fn greataxe() -> CardDefinition {
             faction: Some(Faction::Infernal),
             special_effects: SpecialEffects {
                 custom_projectile: Some(Projectile::Hovl(8)),
-                additional_hit: Some(TimedEffect::SwordSlash(1)),
+                additional_hit: Some(TimedEffect::HovlSwordSlash(1)),
             },
             ..CardConfig::default()
         },

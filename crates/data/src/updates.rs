@@ -68,8 +68,10 @@ pub enum GameUpdate {
     TargetedInteraction(TargetedInteraction),
     /// The current raid has gained access to the indicated room
     RaidAccess(RoomId),
-    /// A card has been scored by the indicated player
-    ScoreCard(Side, CardId, PointsValue),
+    /// A card has been scored by the overlord player
+    OverlordScoreCard(CardId, PointsValue),
+    /// A card has been scored by the champion player
+    ChampionScoreCard(CardId, PointsValue),
     /// A raid has ended
     EndRaid,
     /// The game has ended and the indicated player has won

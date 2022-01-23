@@ -23,6 +23,26 @@ pub enum Projectile {
 /// Effect which plays for a short duration and then vanishes
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub enum TimedEffect {
+    /// Magic hit number
+    HovlMagicHit(u32),
     /// Sword Slash VFX number
-    SwordSlash(u32),
+    HovlSwordSlash(u32),
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+pub enum FireworksSound {
+    RocketExplodeLarge,
+    RocketExplode,
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+pub enum FantasyEventSounds {
+    Positive1,
+}
+
+/// Plays a sound
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+pub enum SoundEffect {
+    FantasyEvents(FantasyEventSounds),
+    Fireworks(FireworksSound),
 }

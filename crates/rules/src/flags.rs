@@ -169,8 +169,17 @@ pub fn can_take_raid_destroy_card_action(_game: &GameState, _side: Side, _card_i
     true
 }
 
-pub fn can_take_raid_score_card_action(_game: &GameState, _side: Side, _card_id: CardId) -> bool {
-    true
+/// Can the provided player score the `card_id` card?
+pub fn can_score_card(game: &GameState, side: Side, card_id: CardId) -> bool {
+    let raid = match game.data.raid {
+        Some(r) => r,
+        None => return false,
+    };
+
+    side == Side::Champion
+        && raid.phase == RaidPhase::Access
+        && game.card(card_id).position.is_room_occupant(raid.target)
+        && crate::card_definition(game, card_id).config.stats.scheme_points.is_some()
 }
 
 pub fn can_take_raid_end_action(_game: &GameState, _side: Side) -> bool {

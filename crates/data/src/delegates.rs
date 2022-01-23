@@ -249,9 +249,9 @@ pub enum Delegate {
     /// A card is moved to a new position
     MoveCard(EventDelegate<CardMoved>),
     /// A card is scored by the Overlord
-    ScoreScheme(EventDelegate<CardId>),
+    OverlordScoreCard(EventDelegate<CardId>),
     /// A card is scored by the Champion
-    StealScheme(EventDelegate<CardId>),
+    ChampionScoreCard(EventDelegate<CardId>),
     /// A Raid is initiated
     RaidBegin(EventDelegate<RaidData>),
     /// A minion is encountered during a raid

@@ -13,13 +13,14 @@
 // limitations under the License.
 
 use data::card_name::CardName;
-use data::primitives::{RoomLocation, Side};
+use data::primitives::Side;
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    ClientRoomLocation, InitiateRaidAction, ObjectPositionRaid, ObjectPositionRoom, PlayerName,
+    ClientRoomLocation, InitiateRaidAction, ObjectPositionIdentity, ObjectPositionRaid,
+    ObjectPositionRoom, PlayerName,
 };
 use test_utils::client::HasText;
 use test_utils::{test_games, *};
@@ -279,6 +280,69 @@ fn use_weapon() {
             "CreateOrUpdateCard", // Reveal card
             "MoveGameObjects",    // Move identity
             "MoveGameObjects",    // Move minion
+        ],
+    );
+
+    assert_debug_snapshot!(response);
+}
+
+#[test]
+fn score_scheme_card() {
+    let (mut g, ids) = test_games::simple_game(
+        Side::Champion,
+        Some(1006),
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon3Attack12Boost,
+    );
+    g.perform(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    g.perform_click_on(g.opponent_id(), "Activate");
+    g.perform_click_on(g.user_id(), "Test Weapon");
+    let response = g.click_on(g.user_id(), "Score");
+
+    assert_eq!(g.user.this_player.score(), 1);
+    assert_eq!(g.opponent.other_player.score(), 1);
+    assert_eq!(PlayerName::User, g.user.data.priority());
+    assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.user.interface.main_controls().has_text("End Raid"));
+
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(ids.scheme_id)),
+        Position::Identity(ObjectPositionIdentity { owner: PlayerName::User.into() })
+    );
+    assert_eq!(
+        g.user.data.object_index_position(Id::Identity(PlayerName::User.into())),
+        (0, Position::Raid(ObjectPositionRaid {}))
+    );
+
+    assert_commands_match_lists(
+        &response,
+        vec![
+            "SetMusic",
+            "PlaySound",
+            "MoveGameObjects",
+            "PlayEffect",
+            "PlayEffect",
+            "UpdateGameView",
+            "MoveGameObjects",
+            "MoveGameObjects",
+            "MoveGameObjects",
+            "RenderInterface",
+        ],
+        vec![
+            "SetMusic",
+            "PlaySound",
+            "MoveGameObjects",
+            "PlayEffect",
+            "PlayEffect",
+            "UpdateGameView",
+            "MoveGameObjects",
+            "MoveGameObjects",
+            "MoveGameObjects",
         ],
     );
 
