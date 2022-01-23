@@ -18,10 +18,10 @@ use protos::spelldawn::{
     PanelAddress, TextAlign, TogglePanelAction,
 };
 
-use crate::components::{IconButton, Row, Text, TextVariant};
+use crate::components::{IconButton, Row, Text};
 use crate::core::{Px, *};
 use crate::macros::children;
-use crate::{icons, Component};
+use crate::{colors, font_sizes, fonts, icons, Component};
 
 #[derive(Debug, Clone, Default)]
 pub struct Panel<TContent: Component> {
@@ -113,12 +113,13 @@ impl Component for TitleBar {
                 },
                 children: children![Text {
                     label: self.title,
-                    variant: TextVariant::PanelTitle,
+                    color: colors::PANEL_TITLE,
+                    font_size: font_sizes::PANEL_TITLE,
+                    font: fonts::PANEL_TITLE,
                     style: FlexStyle {
                         text_align: TextAlign::MiddleCenter.into(),
                         ..FlexStyle::default()
                     },
-                    ..Text::default()
                 }],
                 ..Row::default()
             }],

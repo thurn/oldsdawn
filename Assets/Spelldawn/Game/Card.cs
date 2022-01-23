@@ -208,6 +208,7 @@ namespace Spelldawn.Game
 
     public override bool MouseDown()
     {
+      Debug.Log($"{name} MouseDown");
       var result = false;
 
       if (_registry.ActionService.CanInfoZoom(GameContext) && _isRevealed)
@@ -267,6 +268,7 @@ namespace Spelldawn.Game
 
     public override void MouseUp()
     {
+      Debug.Log($"{name} MouseUp");
       _registry.CardService.ClearInfoZoom();
 
       if (!_registry.CardService.CurrentlyDragging)

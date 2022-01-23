@@ -23,9 +23,9 @@ use protos::spelldawn::{
     FlexStyle, FlexWrap, InterfaceMainControls, Node, RenderInterfaceCommand,
 };
 use rules::queries;
-use ui::components::{Button, ButtonLines, ButtonVariant, Row, Text, TextVariant};
+use ui::components::{Button, ButtonLines, ButtonVariant, Row, Text};
 use ui::core::*;
-use ui::icons;
+use ui::{colors, font_sizes, fonts, icons};
 
 use crate::adapters;
 
@@ -36,8 +36,10 @@ pub fn action_prompt(game: &GameState, prompt: &Prompt) -> RenderInterfaceComman
     if let Some(label) = prompt_context(prompt.context) {
         main_controls.push(child(Text {
             label,
-            variant: TextVariant::PanelTitle,
-            ..Text::default()
+            color: colors::PROMPT_CONTEXT,
+            font_size: font_sizes::PROMPT_CONTEXT,
+            font: fonts::PROMPT_CONTEXT,
+            style: FlexStyle::default(),
         }))
     }
 
@@ -99,8 +101,10 @@ impl<'a> Component for ActionPrompt<'a> {
         if let Some(label) = prompt_context(self.prompt.context) {
             children.push(child(Text {
                 label,
-                variant: TextVariant::PanelTitle,
-                ..Text::default()
+                color: colors::PROMPT_CONTEXT,
+                font_size: font_sizes::PROMPT_CONTEXT,
+                font: fonts::PROMPT_CONTEXT,
+                style: FlexStyle::default(),
             }))
         }
 
@@ -123,9 +127,10 @@ impl Component for WaitingPrompt {
             name: "WaitingPrompt",
             children: vec![Text {
                 label: "Waiting for Opponent...".to_string(),
-                variant: TextVariant::PanelTitle,
+                color: colors::PROMPT_CONTEXT,
+                font_size: font_sizes::PROMPT_CONTEXT,
+                font: fonts::PROMPT_CONTEXT,
                 style: FlexStyle { margin: px_pair(0.0, 16.0), ..FlexStyle::default() },
-                ..Text::default()
             }
             .child()],
             ..PromptContainer::default()

@@ -16,7 +16,7 @@
 
 use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
-use data::primitives::{CardType, Faction, Rarity, School, Side};
+use data::primitives::{CardType, ColdDamage, Faction, Rarity, School, Side};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::{abilities, DEFINITIONS};
@@ -33,7 +33,7 @@ pub fn ice_dragon() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![abilities::strike::<2>(), abilities::end_raid()],
+        abilities: vec![abilities::deal_damage::<ColdDamage, 2>(), abilities::end_raid()],
         config: CardConfig {
             stats: health(5),
             faction: Some(Faction::Infernal),

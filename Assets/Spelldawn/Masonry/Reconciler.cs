@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using System.Collections.Generic;
 using Spelldawn.Protos;
 using Spelldawn.Services;
-using UnityEngine;
+using Spelldawn.Utils;
 using UnityEngine.UIElements;
 
 #nullable enable
@@ -44,75 +44,75 @@ namespace Spelldawn.Masonry
       VisualElement? previousElement = null,
       Node? previousNode = null)
     {
-      var previousChildrenCount = 0;
-      VisualElement? result;
-      var createdNewElement = false;
-
       if (previousElement != null && previousNode != null &&
           previousNode.NodeType?.NodeTypeCase == node.NodeType?.NodeTypeCase)
       {
-        // If the previous node was of the same type as this node, mutate its VisualElement to match
-        previousChildrenCount = previousNode.Children.Count;
-        if (previousElement.childCount != previousChildrenCount)
-        {
-          throw new InvalidOperationException("Child count mismatch!");
-        }
-
-        for (var i = 0; i < previousChildrenCount; ++i)
-        {
-          if (i < node.Children.Count)
-          {
-            var child = node.Children[i];
-            // Element exists in new tree, update it
-            var updated = Update(
-              registry,
-              child,
-              previousElement[i],
-              i < previousNode.Children.Count ? previousNode.Children[i] : null);
-
-            if (updated != null)
-            {
-              // New element was created for this position, replace existing element
-              previousElement.Insert(i, updated);
-              previousElement.RemoveAt(i + 1);
-            }
-          }
-          else
-          {
-            // Element does not exist in new tree, delete it
-            previousElement.RemoveAt(i);
-          }
-        }
-
-        result = previousElement;
+        // If node types match, reuse this node
+        return UpdateWhenMatching(registry, node, previousElement, previousNode);
       }
       else
       {
-        // Otherwise, create a new VisualElement matching this node
-        result = Mason.CreateElement(node);
-        createdNewElement = true;
+        return UpdateWhenNew(registry, node);
+      }
+    }
+
+    static VisualElement? UpdateWhenMatching(
+      Registry registry,
+      Node node,
+      VisualElement previousElement,
+      Node previousNode)
+    {
+      var children = CreateChildren(registry, node, previousElement, previousNode);
+      previousElement.Clear();
+      foreach (var child in children)
+      {
+        previousElement.Add(child);
       }
 
-      for (var j = previousChildrenCount; j < node.Children.Count; ++j)
+      Mason.ApplyToElement(registry, previousElement, node);
+      return null;
+    }
+
+    static VisualElement UpdateWhenNew(Registry registry, Node node)
+    {
+      // Otherwise, create a new VisualElement matching this node
+      var result = Mason.CreateElement(node);
+      foreach (var child in CreateChildren(registry, node))
       {
-        var child = node.Children[j];
-        var updated = Update(registry, child);
-        if (updated == null)
+        result.Add(child);
+      }
+
+      Mason.ApplyToElement(registry, result, node);
+      return result;
+    }
+
+    static List<VisualElement> CreateChildren(Registry registry,
+      Node node,
+      VisualElement? previousElement = null,
+      Node? previousNode = null)
+    {
+      var children = new List<VisualElement>();
+      for (var i = 0; i < node.Children.Count; ++i)
+      {
+        var child = node.Children[i];
+        if (previousElement != null && previousNode != null && i < previousNode.Children.Count)
         {
-          throw new InvalidOperationException($"Expected update for {child} to return a value");
+          Errors.CheckState(previousElement.childCount == previousNode.Children.Count, "Child count mismatch");
+          // Element exists in previous tree.
+          var updated = Update(
+            registry,
+            child,
+            previousElement[i],
+            i < previousNode.Children.Count ? previousNode.Children[i] : null);
+          children.Add(updated ?? previousElement[i]);
         }
         else
         {
-          result?.Add(updated);
+          children.Add(UpdateWhenNew(registry, child));
         }
       }
 
-      if (result != null)
-      {
-        Mason.ApplyToElement(registry, result, node);
-      }
-
-      return createdNewElement ? result : null;
+      return children;
     }
   }
 }

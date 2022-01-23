@@ -19,12 +19,15 @@ use protos::spelldawn::{CommandList, GameCommand, InterfaceMainControls, RenderI
 
 use crate::core::Component;
 
+pub mod card_info;
+pub mod colors;
 pub mod components;
 pub mod core;
+pub mod font_sizes;
+pub mod fonts;
 pub mod icons;
 pub mod macros;
 pub mod panel;
-pub mod primitives;
 
 /// Renders a given [Component] as the main interface controls via
 /// [RenderInterfaceCommand], appearing immediately above the user's hand

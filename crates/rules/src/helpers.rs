@@ -23,6 +23,10 @@ use data::primitives::{
 };
 use data::text::{AbilityText, NumericOperator, TextToken};
 
+pub fn number(number: impl Into<u32>) -> TextToken {
+    TextToken::Number(NumericOperator::None, number.into())
+}
+
 pub fn add_number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::Add, number.into())
 }

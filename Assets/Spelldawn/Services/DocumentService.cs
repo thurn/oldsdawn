@@ -49,12 +49,15 @@ namespace Spelldawn.Services
     Node _mainControlsNode = null!;
     VisualElement _cardControls = null!;
     Node _cardControlsNode = null!;
+    VisualElement _supplementalCardInfo = null!;
+    Node _supplementalCardInfoNode = null!;
 
     void Start()
     {
       _document.rootVisualElement.Clear();
       AddRoot("Main Controls", out _mainControls, out _mainControlsNode);
       AddRoot("Card Controls", out _cardControls, out _cardControlsNode);
+      AddRoot("SupplementalCardInfo", out _supplementalCardInfo, out _supplementalCardInfoNode);
       AddRoot("Full Screen", out _fullScreen, out _fullScreenNode);
     }
 
@@ -114,11 +117,7 @@ namespace Spelldawn.Services
         Reconcile(
           ref _cardControlsNode,
           ref _cardControls,
-          Row("CardAnchors", new FlexStyle
-          {
-            Position = FlexPosition.Absolute,
-            Inset = AllDip(0),
-          }, command.MainControls.CardAnchorNodes.Select(RenderCardAnchorNode)));
+          CardAnchors(command.MainControls.CardAnchorNodes));
       }
     }
 
@@ -130,16 +129,16 @@ namespace Spelldawn.Services
         FullScreen(_openPanels.Select(p => _panelCache.GetValueOrDefault(p)).WhereNotNull()));
     }
 
-    void Reconcile(ref Node node, ref VisualElement element, Node newNode)
+    void Reconcile(ref Node previousNode, ref VisualElement previousElement, Node newNode)
     {
-      var result = Reconciler.Update(_registry, newNode, element, node);
+      var result = Reconciler.Update(_registry, newNode, previousElement, previousNode);
 
       if (result != null)
       {
-        element = result;
+        previousElement = result;
       }
 
-      node = newNode;
+      previousNode = newNode;
     }
 
 
@@ -157,14 +156,27 @@ namespace Spelldawn.Services
       });
     }
 
-    public void ClearCardControls()
+    public void ClearSupplementalCardInfo()
     {
-      _cardControls.Clear();
+      Reconcile(
+        ref _supplementalCardInfoNode,
+        ref _supplementalCardInfo,
+        new Node());
     }
 
-    public void RenderSupplementalCardInfo(Card card, Node node, CardNodeAnchorPosition position)
+    public void RenderSupplementalCardInfo(Card card, Node node, bool nodeLeft)
     {
-      throw new NotImplementedException();
+      Reconcile(
+        ref _supplementalCardInfoNode,
+        ref _supplementalCardInfo,
+        AnchorToCard(card, node, new List<CardAnchor>
+        {
+          new()
+          {
+            CardCorner = nodeLeft ? AnchorCorner.TopRight : AnchorCorner.TopLeft,
+            NodeCorner = nodeLeft ? AnchorCorner.TopLeft : AnchorCorner.TopRight
+          }
+        }));
     }
 
     void AddRoot(string elementName, out VisualElement element, out Node node)
@@ -199,14 +211,24 @@ namespace Spelldawn.Services
         }
       }, content);
 
-    Node RenderCardAnchorNode(CardAnchorNode anchorNode)
+    Node CardAnchors(IEnumerable<CardAnchorNode> nodes)
     {
-      var card = _registry.CardService.FindCard(anchorNode.CardId);
-      var node = anchorNode.Node;
+      return Row("CardAnchors", new FlexStyle
+      {
+        Position = FlexPosition.Absolute,
+        Inset = AllDip(0),
+      }, nodes.Select(RenderCardAnchorNode));
+    }
+
+    Node RenderCardAnchorNode(CardAnchorNode anchorNode) =>
+      AnchorToCard(_registry.CardService.FindCard(anchorNode.CardId), anchorNode.Node, anchorNode.Anchors);
+
+    Node AnchorToCard(Card card, Node node, IEnumerable<CardAnchor> anchors)
+    {
       node.Style.Position = FlexPosition.Absolute;
       var inset = new DimensionGroup();
 
-      foreach (var anchor in anchorNode.Anchors)
+      foreach (var anchor in anchors)
       {
         var target = anchor.CardCorner switch
         {

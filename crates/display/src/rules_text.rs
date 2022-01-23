@@ -18,16 +18,18 @@ use data::card_definition::CardDefinition;
 use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
-use data::primitives::AbilityId;
-use data::text::{AbilityText, Keyword, NumericOperator, TextToken};
-use protos::spelldawn::RulesText;
+use data::primitives::{AbilityId, CardSubtype, CardType, DamageType, Faction};
+use data::text::{AbilityText, Keyword, KeywordKind, NumericOperator, TextToken};
+use protos::spelldawn::{Node, RulesText};
+use ui::card_info::SupplementalCardInfo;
+use ui::core::Component;
 
 /// Primary function which turns the current state of a card into its client
 /// [RulesText] representation
 pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) -> RulesText {
-    let mut result = vec![];
+    let mut lines = vec![];
     for (index, ability) in definition.abilities.iter().enumerate() {
-        result.push(match &ability.text {
+        lines.push(match &ability.text {
             AbilityText::Text(text) => ability_text(text),
             AbilityText::TextFn(function) => {
                 let tokens = function(game, Scope::new(AbilityId::new(card.id, index)));
@@ -35,7 +37,29 @@ pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) ->
             }
         });
     }
-    RulesText { text: result.join("\n") }
+    RulesText { text: lines.join("\n") }
+}
+
+/// Builds the supplemental info display for a card, which displays additional
+/// help information and appears on long-press.
+pub fn build_supplemental_info(
+    game: &GameState,
+    card: &CardState,
+    definition: &CardDefinition,
+) -> Node {
+    let mut result = vec![card_type_line(definition)];
+    let mut keywords = vec![];
+    for (index, ability) in definition.abilities.iter().enumerate() {
+        match &ability.text {
+            AbilityText::Text(text) => find_keywords(text, &mut keywords),
+            AbilityText::TextFn(function) => {
+                let tokens = function(game, Scope::new(AbilityId::new(card.id, index)));
+                find_keywords(&tokens, &mut keywords)
+            }
+        };
+    }
+    process_keywords(&mut keywords, &mut result);
+    SupplementalCardInfo { info: result }.render()
 }
 
 /// Primary function for converting a sequence of [TextToken]s into a string
@@ -60,11 +84,95 @@ fn ability_text(tokens: &[TextToken]) -> String {
                 Keyword::Dusk => "<b>\u{f0e7}Dusk:</b>".to_string(),
                 Keyword::Score => "<b>\u{f0e7}Score:</b>".to_string(),
                 Keyword::Combat => "<b>\u{f0e7}Combat:</b>".to_string(),
-                Keyword::Strike(n) => format!("<b>Strike {}:</b>", n),
                 Keyword::Store(n) => format!("<b>Store {}:</b>", n),
+                Keyword::DealDamage(amount, damage_type) => format!(
+                    "Deal {} {} damage.",
+                    amount,
+                    match damage_type {
+                        DamageType::Physical => "physical",
+                        DamageType::Fire => "fire",
+                        DamageType::Lightning => "lightning",
+                        DamageType::Cold => "cold",
+                    }
+                ),
             },
-            TextToken::Cost(cost) => format!("{}:", ability_text(cost)),
+            TextToken::Cost(cost) => ability_text(cost),
         })
     }
+
     result.join(" ")
+}
+
+fn card_type_line(definition: &CardDefinition) -> String {
+    let mut result = String::new();
+    result.push_str(match definition.card_type {
+        CardType::Spell => "Spell",
+        CardType::Weapon => "Weapon",
+        CardType::Artifact => "Artifact",
+        CardType::Sorcery => "Sorcery",
+        CardType::Minion => "Minion",
+        CardType::Project => "Project",
+        CardType::Scheme => "Scheme",
+        CardType::Upgrade => "Upgrade",
+        CardType::Identity => "Identity",
+    });
+
+    if let Some(faction) = definition.config.faction {
+        result.push_str(" • ");
+        result.push_str(match faction {
+            Faction::Prismatic => "Prismatic",
+            Faction::Mortal => "Mortal",
+            Faction::Abyssal => "Abyssal",
+            Faction::Infernal => "Infernal",
+        });
+    }
+
+    for subtype in &definition.config.subtypes {
+        result.push_str(" • ");
+        result.push_str(match subtype {
+            CardSubtype::Silvered => "Silvered",
+        });
+    }
+
+    result
+}
+
+fn find_keywords(tokens: &[TextToken], keywords: &mut Vec<KeywordKind>) {
+    keywords.extend(tokens.iter().filter_map(|t| {
+        if let TextToken::Keyword(k) = t {
+            Some(k.kind())
+        } else {
+            None
+        }
+    }));
+}
+
+fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
+    keywords.sort();
+    keywords.dedup();
+
+    for keyword in keywords {
+        output.push(match keyword {
+            KeywordKind::Play => {
+                "\u{f0e7}<b>Play:</b> Triggers when this card enters the arena.".to_string()
+            }
+            KeywordKind::Dawn => {
+                "\u{f0e7}<b>Dawn:</b> Triggers at the start of the Champion's turn.".to_string()
+            }
+            KeywordKind::Dusk => {
+                "\u{f0e7}<b>Dusk:</b> Triggers at the start of the Overlord's turn.".to_string()
+            }
+            KeywordKind::Score => {
+                "\u{f0e7}<b>Score:</b> Triggers when the Overlord scores this card.".to_string()
+            }
+            KeywordKind::Combat => {
+                "\u{f0e7}<b>Combat:</b> Triggers if this minion is not defeated in combat."
+                    .to_string()
+            }
+            KeywordKind::Store => "<b>Store</b> Put \u{f06d} into this card.".to_string(),
+            KeywordKind::DealDamage => {
+                "<b>Damage</b>: Causes the Champion to discard cards at random.".to_string()
+            }
+        });
+    }
 }

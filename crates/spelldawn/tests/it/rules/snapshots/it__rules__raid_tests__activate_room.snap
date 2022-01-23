@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 140
+assertion_line: 143
 expression: response
 
 ---
@@ -232,7 +232,7 @@ Ok(
                                                                 background_image_scale_mode: Unspecified,
                                                                 font: Some(
                                                                     FontAddress {
-                                                                        address: "Fonts/BluuNext-Bold",
+                                                                        address: "Fonts/Roboto",
                                                                     },
                                                                 ),
                                                                 font_style: Unspecified,
@@ -505,7 +505,665 @@ Ok(
                                                             },
                                                         ),
                                                         can_play: false,
-                                                        supplemental_info: None,
+                                                        supplemental_info: Some(
+                                                            Node {
+                                                                id: "",
+                                                                name: "SupplementalInfo",
+                                                                node_type: None,
+                                                                children: [
+                                                                    Node {
+                                                                        id: "",
+                                                                        name: "InfoNode",
+                                                                        node_type: None,
+                                                                        children: [
+                                                                            Node {
+                                                                                id: "",
+                                                                                name: "",
+                                                                                node_type: Some(
+                                                                                    NodeType {
+                                                                                        node_type: Some(
+                                                                                            Text(
+                                                                                                Text {
+                                                                                                    label: "Minion • Infernal",
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                children: [],
+                                                                                event_handlers: None,
+                                                                                style: Some(
+                                                                                    FlexStyle {
+                                                                                        align_content: Unspecified,
+                                                                                        align_items: Unspecified,
+                                                                                        align_self: Unspecified,
+                                                                                        background_color: None,
+                                                                                        background_image: None,
+                                                                                        border_color: None,
+                                                                                        border_radius: None,
+                                                                                        border_width: None,
+                                                                                        inset: None,
+                                                                                        color: Some(
+                                                                                            FlexColor {
+                                                                                                red: 1.0,
+                                                                                                green: 1.0,
+                                                                                                blue: 1.0,
+                                                                                                alpha: 1.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        display: Unspecified,
+                                                                                        flex_basis: None,
+                                                                                        flex_direction: Unspecified,
+                                                                                        flex_grow: None,
+                                                                                        flex_shrink: None,
+                                                                                        wrap: Unspecified,
+                                                                                        font_size: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 28.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        height: None,
+                                                                                        justify_content: Unspecified,
+                                                                                        letter_spacing: None,
+                                                                                        margin: Some(
+                                                                                            DimensionGroup {
+                                                                                                top: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                right: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                bottom: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                left: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                            },
+                                                                                        ),
+                                                                                        max_height: None,
+                                                                                        max_width: None,
+                                                                                        min_height: None,
+                                                                                        min_width: None,
+                                                                                        opacity: None,
+                                                                                        overflow: Unspecified,
+                                                                                        padding: Some(
+                                                                                            DimensionGroup {
+                                                                                                top: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                right: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                bottom: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                left: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                            },
+                                                                                        ),
+                                                                                        position: Unspecified,
+                                                                                        rotate: None,
+                                                                                        scale: None,
+                                                                                        text_overflow: Unspecified,
+                                                                                        text_shadow: None,
+                                                                                        transform_origin: None,
+                                                                                        transition_delays: [],
+                                                                                        transition_durations: [],
+                                                                                        transition_properties: [],
+                                                                                        transition_easing_modes: [],
+                                                                                        translate: None,
+                                                                                        background_image_tint_color: None,
+                                                                                        background_image_scale_mode: Unspecified,
+                                                                                        font: Some(
+                                                                                            FontAddress {
+                                                                                                address: "Fonts/Roboto",
+                                                                                            },
+                                                                                        ),
+                                                                                        font_style: Unspecified,
+                                                                                        overflow_clip_box: Unspecified,
+                                                                                        paragraph_spacing: None,
+                                                                                        image_slice: None,
+                                                                                        text_align: MiddleLeft,
+                                                                                        text_outline_color: None,
+                                                                                        text_outline_width: None,
+                                                                                        text_overflow_position: Unspecified,
+                                                                                        visibility: Unspecified,
+                                                                                        white_space: Normal,
+                                                                                        width: None,
+                                                                                        word_spacing: None,
+                                                                                        background_image_scale_multiplier: None,
+                                                                                        fixed_background_image_aspect_ratio: false,
+                                                                                        picking_mode: Unspecified,
+                                                                                    },
+                                                                                ),
+                                                                                hover_style: None,
+                                                                                pressed_style: None,
+                                                                            },
+                                                                        ],
+                                                                        event_handlers: None,
+                                                                        style: Some(
+                                                                            FlexStyle {
+                                                                                align_content: Unspecified,
+                                                                                align_items: Center,
+                                                                                align_self: Unspecified,
+                                                                                background_color: Some(
+                                                                                    FlexColor {
+                                                                                        red: 0.0,
+                                                                                        green: 0.0,
+                                                                                        blue: 0.0,
+                                                                                        alpha: 0.75,
+                                                                                    },
+                                                                                ),
+                                                                                background_image: None,
+                                                                                border_color: None,
+                                                                                border_radius: Some(
+                                                                                    BorderRadius {
+                                                                                        top_left: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        top_right: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        bottom_right: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        bottom_left: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                border_width: None,
+                                                                                inset: None,
+                                                                                color: None,
+                                                                                display: Unspecified,
+                                                                                flex_basis: None,
+                                                                                flex_direction: Row,
+                                                                                flex_grow: None,
+                                                                                flex_shrink: None,
+                                                                                wrap: Unspecified,
+                                                                                font_size: None,
+                                                                                height: None,
+                                                                                justify_content: Center,
+                                                                                letter_spacing: None,
+                                                                                margin: Some(
+                                                                                    DimensionGroup {
+                                                                                        top: None,
+                                                                                        right: None,
+                                                                                        bottom: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 4.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        left: None,
+                                                                                    },
+                                                                                ),
+                                                                                max_height: None,
+                                                                                max_width: None,
+                                                                                min_height: None,
+                                                                                min_width: None,
+                                                                                opacity: None,
+                                                                                overflow: Unspecified,
+                                                                                padding: None,
+                                                                                position: Unspecified,
+                                                                                rotate: None,
+                                                                                scale: None,
+                                                                                text_overflow: Unspecified,
+                                                                                text_shadow: None,
+                                                                                transform_origin: None,
+                                                                                transition_delays: [],
+                                                                                transition_durations: [],
+                                                                                transition_properties: [],
+                                                                                transition_easing_modes: [],
+                                                                                translate: None,
+                                                                                background_image_tint_color: None,
+                                                                                background_image_scale_mode: Unspecified,
+                                                                                font: None,
+                                                                                font_style: Unspecified,
+                                                                                overflow_clip_box: Unspecified,
+                                                                                paragraph_spacing: None,
+                                                                                image_slice: None,
+                                                                                text_align: Unspecified,
+                                                                                text_outline_color: None,
+                                                                                text_outline_width: None,
+                                                                                text_overflow_position: Unspecified,
+                                                                                visibility: Unspecified,
+                                                                                white_space: Unspecified,
+                                                                                width: None,
+                                                                                word_spacing: None,
+                                                                                background_image_scale_multiplier: None,
+                                                                                fixed_background_image_aspect_ratio: false,
+                                                                                picking_mode: Unspecified,
+                                                                            },
+                                                                        ),
+                                                                        hover_style: None,
+                                                                        pressed_style: None,
+                                                                    },
+                                                                    Node {
+                                                                        id: "",
+                                                                        name: "InfoNode",
+                                                                        node_type: None,
+                                                                        children: [
+                                                                            Node {
+                                                                                id: "",
+                                                                                name: "",
+                                                                                node_type: Some(
+                                                                                    NodeType {
+                                                                                        node_type: Some(
+                                                                                            Text(
+                                                                                                Text {
+                                                                                                    label: "\u{f0e7}<b>Combat:</b> Triggers if this minion is not defeated in combat.",
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                children: [],
+                                                                                event_handlers: None,
+                                                                                style: Some(
+                                                                                    FlexStyle {
+                                                                                        align_content: Unspecified,
+                                                                                        align_items: Unspecified,
+                                                                                        align_self: Unspecified,
+                                                                                        background_color: None,
+                                                                                        background_image: None,
+                                                                                        border_color: None,
+                                                                                        border_radius: None,
+                                                                                        border_width: None,
+                                                                                        inset: None,
+                                                                                        color: Some(
+                                                                                            FlexColor {
+                                                                                                red: 1.0,
+                                                                                                green: 1.0,
+                                                                                                blue: 1.0,
+                                                                                                alpha: 1.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        display: Unspecified,
+                                                                                        flex_basis: None,
+                                                                                        flex_direction: Unspecified,
+                                                                                        flex_grow: None,
+                                                                                        flex_shrink: None,
+                                                                                        wrap: Unspecified,
+                                                                                        font_size: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 28.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        height: None,
+                                                                                        justify_content: Unspecified,
+                                                                                        letter_spacing: None,
+                                                                                        margin: Some(
+                                                                                            DimensionGroup {
+                                                                                                top: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                right: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                bottom: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                left: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 16.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                            },
+                                                                                        ),
+                                                                                        max_height: None,
+                                                                                        max_width: None,
+                                                                                        min_height: None,
+                                                                                        min_width: None,
+                                                                                        opacity: None,
+                                                                                        overflow: Unspecified,
+                                                                                        padding: Some(
+                                                                                            DimensionGroup {
+                                                                                                top: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                right: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                bottom: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                                left: Some(
+                                                                                                    Dimension {
+                                                                                                        unit: Pixels,
+                                                                                                        value: 0.0,
+                                                                                                    },
+                                                                                                ),
+                                                                                            },
+                                                                                        ),
+                                                                                        position: Unspecified,
+                                                                                        rotate: None,
+                                                                                        scale: None,
+                                                                                        text_overflow: Unspecified,
+                                                                                        text_shadow: None,
+                                                                                        transform_origin: None,
+                                                                                        transition_delays: [],
+                                                                                        transition_durations: [],
+                                                                                        transition_properties: [],
+                                                                                        transition_easing_modes: [],
+                                                                                        translate: None,
+                                                                                        background_image_tint_color: None,
+                                                                                        background_image_scale_mode: Unspecified,
+                                                                                        font: Some(
+                                                                                            FontAddress {
+                                                                                                address: "Fonts/Roboto",
+                                                                                            },
+                                                                                        ),
+                                                                                        font_style: Unspecified,
+                                                                                        overflow_clip_box: Unspecified,
+                                                                                        paragraph_spacing: None,
+                                                                                        image_slice: None,
+                                                                                        text_align: MiddleLeft,
+                                                                                        text_outline_color: None,
+                                                                                        text_outline_width: None,
+                                                                                        text_overflow_position: Unspecified,
+                                                                                        visibility: Unspecified,
+                                                                                        white_space: Normal,
+                                                                                        width: None,
+                                                                                        word_spacing: None,
+                                                                                        background_image_scale_multiplier: None,
+                                                                                        fixed_background_image_aspect_ratio: false,
+                                                                                        picking_mode: Unspecified,
+                                                                                    },
+                                                                                ),
+                                                                                hover_style: None,
+                                                                                pressed_style: None,
+                                                                            },
+                                                                        ],
+                                                                        event_handlers: None,
+                                                                        style: Some(
+                                                                            FlexStyle {
+                                                                                align_content: Unspecified,
+                                                                                align_items: Center,
+                                                                                align_self: Unspecified,
+                                                                                background_color: Some(
+                                                                                    FlexColor {
+                                                                                        red: 0.0,
+                                                                                        green: 0.0,
+                                                                                        blue: 0.0,
+                                                                                        alpha: 0.75,
+                                                                                    },
+                                                                                ),
+                                                                                background_image: None,
+                                                                                border_color: None,
+                                                                                border_radius: Some(
+                                                                                    BorderRadius {
+                                                                                        top_left: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        top_right: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        bottom_right: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        bottom_left: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 12.0,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                border_width: None,
+                                                                                inset: None,
+                                                                                color: None,
+                                                                                display: Unspecified,
+                                                                                flex_basis: None,
+                                                                                flex_direction: Row,
+                                                                                flex_grow: None,
+                                                                                flex_shrink: None,
+                                                                                wrap: Unspecified,
+                                                                                font_size: None,
+                                                                                height: None,
+                                                                                justify_content: Center,
+                                                                                letter_spacing: None,
+                                                                                margin: Some(
+                                                                                    DimensionGroup {
+                                                                                        top: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 4.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        right: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        bottom: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 4.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        left: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                max_height: None,
+                                                                                max_width: None,
+                                                                                min_height: None,
+                                                                                min_width: None,
+                                                                                opacity: None,
+                                                                                overflow: Unspecified,
+                                                                                padding: None,
+                                                                                position: Unspecified,
+                                                                                rotate: None,
+                                                                                scale: None,
+                                                                                text_overflow: Unspecified,
+                                                                                text_shadow: None,
+                                                                                transform_origin: None,
+                                                                                transition_delays: [],
+                                                                                transition_durations: [],
+                                                                                transition_properties: [],
+                                                                                transition_easing_modes: [],
+                                                                                translate: None,
+                                                                                background_image_tint_color: None,
+                                                                                background_image_scale_mode: Unspecified,
+                                                                                font: None,
+                                                                                font_style: Unspecified,
+                                                                                overflow_clip_box: Unspecified,
+                                                                                paragraph_spacing: None,
+                                                                                image_slice: None,
+                                                                                text_align: Unspecified,
+                                                                                text_outline_color: None,
+                                                                                text_outline_width: None,
+                                                                                text_overflow_position: Unspecified,
+                                                                                visibility: Unspecified,
+                                                                                white_space: Unspecified,
+                                                                                width: None,
+                                                                                word_spacing: None,
+                                                                                background_image_scale_multiplier: None,
+                                                                                fixed_background_image_aspect_ratio: false,
+                                                                                picking_mode: Unspecified,
+                                                                            },
+                                                                        ),
+                                                                        hover_style: None,
+                                                                        pressed_style: None,
+                                                                    },
+                                                                ],
+                                                                event_handlers: None,
+                                                                style: Some(
+                                                                    FlexStyle {
+                                                                        align_content: Unspecified,
+                                                                        align_items: FlexStart,
+                                                                        align_self: Unspecified,
+                                                                        background_color: None,
+                                                                        background_image: None,
+                                                                        border_color: None,
+                                                                        border_radius: None,
+                                                                        border_width: None,
+                                                                        inset: None,
+                                                                        color: None,
+                                                                        display: Unspecified,
+                                                                        flex_basis: None,
+                                                                        flex_direction: Column,
+                                                                        flex_grow: None,
+                                                                        flex_shrink: None,
+                                                                        wrap: Unspecified,
+                                                                        font_size: None,
+                                                                        height: None,
+                                                                        justify_content: FlexStart,
+                                                                        letter_spacing: None,
+                                                                        margin: Some(
+                                                                            DimensionGroup {
+                                                                                top: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                right: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 16.0,
+                                                                                    },
+                                                                                ),
+                                                                                bottom: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                left: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 16.0,
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                        max_height: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 600.0,
+                                                                            },
+                                                                        ),
+                                                                        max_width: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 600.0,
+                                                                            },
+                                                                        ),
+                                                                        min_height: None,
+                                                                        min_width: None,
+                                                                        opacity: None,
+                                                                        overflow: Unspecified,
+                                                                        padding: None,
+                                                                        position: Unspecified,
+                                                                        rotate: None,
+                                                                        scale: None,
+                                                                        text_overflow: Unspecified,
+                                                                        text_shadow: None,
+                                                                        transform_origin: None,
+                                                                        transition_delays: [],
+                                                                        transition_durations: [],
+                                                                        transition_properties: [],
+                                                                        transition_easing_modes: [],
+                                                                        translate: None,
+                                                                        background_image_tint_color: None,
+                                                                        background_image_scale_mode: Unspecified,
+                                                                        font: None,
+                                                                        font_style: Unspecified,
+                                                                        overflow_clip_box: Unspecified,
+                                                                        paragraph_spacing: None,
+                                                                        image_slice: None,
+                                                                        text_align: Unspecified,
+                                                                        text_outline_color: None,
+                                                                        text_outline_width: None,
+                                                                        text_overflow_position: Unspecified,
+                                                                        visibility: Unspecified,
+                                                                        white_space: Unspecified,
+                                                                        width: None,
+                                                                        word_spacing: None,
+                                                                        background_image_scale_multiplier: None,
+                                                                        fixed_background_image_aspect_ratio: false,
+                                                                        picking_mode: Unspecified,
+                                                                    },
+                                                                ),
+                                                                hover_style: None,
+                                                                pressed_style: None,
+                                                            },
+                                                        ),
                                                     },
                                                 ),
                                             },
@@ -591,7 +1249,7 @@ Ok(
                                                                                 font_size: Some(
                                                                                     Dimension {
                                                                                         unit: Pixels,
-                                                                                        value: 26.0,
+                                                                                        value: 32.0,
                                                                                     },
                                                                                 ),
                                                                                 height: None,

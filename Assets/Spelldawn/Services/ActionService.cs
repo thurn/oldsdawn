@@ -153,8 +153,9 @@ namespace Spelldawn.Services
           _lastClicked = FireMouseDown();
           break;
         case false when _lastClicked:
-          _lastClicked!.MouseUp();
-          _lastClicked = null;
+          var last = _lastClicked;
+          _lastClicked = null; // Do this first in case MouseUp() throws
+          last!.MouseUp();
           break;
       }
     }

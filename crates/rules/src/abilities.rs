@@ -18,7 +18,7 @@ use data::card_definition::{Ability, AbilityType};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use data::game::GameState;
-use data::primitives::{AttackValue, CardId, ManaValue, Side};
+use data::primitives::{AttackValue, CardId, DamageType, DamageTypeTrait, ManaValue, Side};
 use data::text::{AbilityText, Keyword, TextToken};
 
 use crate::card_text::text;
@@ -67,7 +67,7 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
 
 /// Discard a random card from the hand of the `side` player, if there are any
 /// cards present.
-pub fn discard_random_card(game: &mut GameState, side: Side) {
+pub fn discard_random_card(game: &mut GameState, side: Side, _damage_type: DamageType) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
         mutations::move_card(game, card_id, CardPosition::DiscardPile(side));
     }
@@ -76,10 +76,10 @@ pub fn discard_random_card(game: &mut GameState, side: Side) {
 /// Minion combat ability which deals damage to the Champion player during
 /// combat, causing them to discard `N` random cards and lose the game if they
 /// cannot.
-pub fn strike<const N: u32>() -> Ability {
-    combat(text![Keyword::Combat, Keyword::Strike(N)], |g, _, _| {
+pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
+    combat(text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())], |g, _, _| {
         for _ in 0..N {
-            discard_random_card(g, Side::Champion);
+            discard_random_card(g, Side::Champion, TDamage::damage_type());
         }
     })
 }

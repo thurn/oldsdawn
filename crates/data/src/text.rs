@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(clippy::use_self)] // Required to use EnumKind
+
 use std::fmt;
 use std::fmt::{Debug, Formatter};
+
+use enum_kinds::EnumKind;
 
 use crate::card_definition::Cost;
 use crate::delegates::Scope;
 use crate::game::GameState;
-use crate::primitives::{ActionCount, ManaValue};
+use crate::primitives::{ActionCount, DamageType, ManaValue};
 
 /// Text describing what an ability does. Can be a function (if text is dynamic)
 /// or a vector of [TextToken]s.
@@ -51,16 +55,23 @@ pub enum TextToken {
 /// A function which produces rules text
 pub type TextFn = fn(&GameState, Scope) -> Vec<TextToken>;
 
-/// Identifies a keyword (bolded word) which appears in rules text
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+/// Identifies a keyword or concept which appears in rules text
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind)]
+#[enum_kind(KeywordKind, derive(Ord, PartialOrd))]
 pub enum Keyword {
     Play,
     Dawn,
     Dusk,
     Score,
     Combat,
-    Strike(u32),
     Store(u32),
+    DealDamage(u32, DamageType),
+}
+
+impl Keyword {
+    pub fn kind(&self) -> KeywordKind {
+        self.into()
+    }
 }
 
 /// A symbol applied to a number which appears in rules text

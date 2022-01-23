@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 91
+assertion_line: 94
 expression: response
 
 ---
@@ -271,7 +271,7 @@ Ok(
                                                                 background_image_scale_mode: Unspecified,
                                                                 font: Some(
                                                                     FontAddress {
-                                                                        address: "Fonts/BluuNext-Bold",
+                                                                        address: "Fonts/Roboto",
                                                                     },
                                                                 ),
                                                                 font_style: Unspecified,
@@ -664,7 +664,7 @@ Ok(
                                                                         background_image_scale_mode: Unspecified,
                                                                         font: Some(
                                                                             FontAddress {
-                                                                                address: "Fonts/BluuNext-Bold",
+                                                                                address: "Fonts/Roboto",
                                                                             },
                                                                         ),
                                                                         font_style: Unspecified,

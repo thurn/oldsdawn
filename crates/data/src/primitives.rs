@@ -283,3 +283,44 @@ pub struct BoostData {
     /// How many times was the boost applied?
     pub count: u32,
 }
+
+/// Possible tags for minion damage
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum DamageType {
+    Physical,
+    Fire,
+    Lightning,
+    Cold,
+}
+
+pub trait DamageTypeTrait {
+    fn damage_type() -> DamageType;
+}
+
+pub struct PhysicalDamage {}
+impl DamageTypeTrait for PhysicalDamage {
+    fn damage_type() -> DamageType {
+        DamageType::Physical
+    }
+}
+
+pub struct FireDamage {}
+impl DamageTypeTrait for FireDamage {
+    fn damage_type() -> DamageType {
+        DamageType::Fire
+    }
+}
+
+pub struct LightningDamage {}
+impl DamageTypeTrait for LightningDamage {
+    fn damage_type() -> DamageType {
+        DamageType::Lightning
+    }
+}
+
+pub struct ColdDamage {}
+impl DamageTypeTrait for ColdDamage {
+    fn damage_type() -> DamageType {
+        DamageType::Cold
+    }
+}

@@ -15,13 +15,16 @@
 //! Core reusable UI elements
 
 use protos::spelldawn::{
-    node_type, Dimension, EventHandlers, FlexAlign, FlexColor, FlexDirection, FlexJustify,
-    FlexPosition, FlexStyle, GameAction, Node, NodeType, SpriteAddress, TextAlign,
+    node_type, EventHandlers, FlexAlign, FlexDirection, FlexJustify, FlexPosition, FlexStyle,
+    GameAction, Node, NodeType, SpriteAddress, TextAlign,
 };
 
+use crate::colors::Color;
 use crate::core::*;
+use crate::font_sizes::FontSize;
+use crate::fonts::Font;
 use crate::macros::children;
-use crate::primitives::*;
+use crate::{colors, font_sizes, fonts};
 
 /// Row flexbox component, renders its children horizontally in sequence
 #[derive(Debug, Clone, Default)]
@@ -94,63 +97,14 @@ fn make_node(
     }
 }
 
-/// Possible types of [Text]
-#[derive(Debug, Clone, Copy)]
-pub enum TextVariant {
-    /// Describes the contents of a panel.
-    PanelTitle,
-    /// Text which appears inside a button, use [Button] instead of using this
-    /// directly.
-    Button,
-    /// Text which appears inside a two line button
-    TwoLineButton,
-    /// Text used to render an IconButton icon
-    ButtonIcon,
-}
-
-impl TextVariant {
-    fn color(self) -> Option<FlexColor> {
-        match self {
-            TextVariant::PanelTitle => color(Color::TitleText),
-            TextVariant::Button => color(Color::ButtonLabel),
-            TextVariant::TwoLineButton => color(Color::ButtonLabel),
-            TextVariant::ButtonIcon => color(Color::ButtonLabel),
-        }
-    }
-
-    fn font_size(self) -> Option<Dimension> {
-        match self {
-            TextVariant::PanelTitle => px(48.0),
-            TextVariant::Button => px(32.0),
-            TextVariant::TwoLineButton => px(26.0),
-            TextVariant::ButtonIcon => px(48.0),
-        }
-    }
-
-    fn font(self) -> Font {
-        match self {
-            TextVariant::PanelTitle => Font::Title,
-            _ => Font::Default,
-        }
-    }
-}
-
 /// Renders a piece of text in the UI
 #[derive(Debug, Clone)]
 pub struct Text {
     pub label: String,
-    pub variant: TextVariant,
+    pub color: Color,
+    pub font_size: FontSize,
+    pub font: Font,
     pub style: FlexStyle,
-}
-
-impl Default for Text {
-    fn default() -> Self {
-        Self {
-            label: "".to_string(),
-            variant: TextVariant::PanelTitle,
-            style: FlexStyle::default(),
-        }
-    }
 }
 
 impl Component for Text {
@@ -163,9 +117,9 @@ impl Component for Text {
             }),
             style: Some(FlexStyle {
                 padding: all_px(0.0),
-                color: self.variant.color(),
-                font_size: self.variant.font_size(),
-                font: font(self.variant.font()),
+                color: self.color,
+                font_size: self.font_size.build(),
+                font: self.font.build(),
                 ..self.style
             }),
             ..Node::default()
@@ -240,16 +194,17 @@ impl Component for Button {
             },
             children: children!(Text {
                 label: self.label,
-                variant: match self.lines {
-                    ButtonLines::OneLine => TextVariant::Button,
-                    ButtonLines::TwoLines => TextVariant::TwoLineButton,
+                color: colors::BUTTON_LABEL,
+                font: fonts::BUTTON_LABEL,
+                font_size: match self.lines {
+                    ButtonLines::OneLine => font_sizes::BUTTON,
+                    ButtonLines::TwoLines => font_sizes::TWO_LINE_BUTTON,
                 },
                 style: FlexStyle {
                     margin: px_pair(0.0, 16.0),
                     text_align: TextAlign::MiddleCenter.into(),
                     ..FlexStyle::default()
                 },
-                ..Text::default()
             }),
             events: self.action.map(|action| EventHandlers { on_click: Some(action) }),
             ..Row::default()
@@ -302,7 +257,9 @@ impl Component for IconButton {
                 },
                 Text {
                     label: self.icon.to_string(),
-                    variant: TextVariant::ButtonIcon,
+                    color: colors::BUTTON_LABEL,
+                    font_size: font_sizes::BUTTON_ICON,
+                    font: fonts::BUTTON_LABEL,
                     style: FlexStyle {
                         text_align: TextAlign::MiddleCenter.into(),
                         ..FlexStyle::default()

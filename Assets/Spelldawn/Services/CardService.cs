@@ -166,13 +166,13 @@ namespace Spelldawn.Services
         _registry.DocumentService.RenderSupplementalCardInfo(
           zoomed,
           zoomed.SupplementalInfo,
-          worldMousePosition.x > 0 ? CardNodeAnchorPosition.Left : CardNodeAnchorPosition.Right);
+          worldMousePosition.x < 0);
       }
     }
 
     public void ClearInfoZoom()
     {
-      _registry.DocumentService.ClearCardControls();
+      _registry.DocumentService.ClearSupplementalCardInfo();
       _infoZoomLeft.DestroyAll();
       _infoZoomRight.DestroyAll();
     }
