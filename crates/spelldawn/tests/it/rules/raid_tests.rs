@@ -13,12 +13,14 @@
 // limitations under the License.
 
 use data::card_name::CardName;
-use data::primitives::Side;
+use data::primitives::{RoomLocation, Side};
 use insta::assert_debug_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
-use protos::spelldawn::{InitiateRaidAction, ObjectPositionRaid, PlayerName};
+use protos::spelldawn::{
+    ClientRoomLocation, InitiateRaidAction, ObjectPositionRaid, ObjectPositionRoom, PlayerName,
+};
 use test_utils::client::HasText;
 use test_utils::{test_games, *};
 
@@ -42,27 +44,27 @@ fn initiate_raid() {
     assert!(g.opponent.data.raid_active());
 
     assert_eq!(
-        g.user.data.object_position(Id::CardId(ids.scheme_id)),
+        g.user.data.object_index_position(Id::CardId(ids.scheme_id)),
         (0, Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        g.opponent.data.object_position(Id::CardId(ids.scheme_id)),
+        g.opponent.data.object_index_position(Id::CardId(ids.scheme_id)),
         (0, Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        g.user.data.object_position(Id::CardId(ids.minion_id)),
+        g.user.data.object_index_position(Id::CardId(ids.minion_id)),
         (1, Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        g.opponent.data.object_position(Id::CardId(ids.minion_id)),
+        g.opponent.data.object_index_position(Id::CardId(ids.minion_id)),
         (1, Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        g.user.data.object_index_position(Id::Identity(PlayerName::User.into())),
         (2, Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        g.opponent.data.object_position(Id::Identity(PlayerName::Opponent.into())),
+        g.opponent.data.object_index_position(Id::Identity(PlayerName::Opponent.into())),
         (2, Position::Raid(ObjectPositionRaid {}))
     );
 
@@ -117,15 +119,15 @@ fn activate_room() {
     assert!(g.user.interface.main_controls().has_text("1\u{f06d}"));
     assert!(g.user.interface.main_controls().has_text("Continue"));
     assert_eq!(
-        g.user.data.object_position(Id::CardId(ids.scheme_id)),
+        g.user.data.object_index_position(Id::CardId(ids.scheme_id)),
         (0, Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        g.user.data.object_position(Id::CardId(ids.minion_id)),
+        g.user.data.object_index_position(Id::CardId(ids.minion_id)),
         (1, Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        g.user.data.object_index_position(Id::Identity(PlayerName::User.into())),
         (2, Position::Raid(ObjectPositionRaid {}))
     );
 
@@ -217,4 +219,68 @@ fn activate_room_weapon_5() {
     assert!(g.user.interface.main_controls().has_text("Test Weapon"));
     assert!(!g.user.interface.main_controls().has_text("\u{f06d}"));
     assert!(g.user.interface.main_controls().has_text("Continue"));
+}
+
+#[test]
+fn use_weapon() {
+    let (mut g, ids) = test_games::simple_game(
+        Side::Champion,
+        Some(1004),
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon3Attack12Boost,
+    );
+    g.perform(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    g.perform_click_on(g.opponent_id(), "Activate");
+    assert_eq!(g.user.this_player.mana(), 97); // Minion costs 3 to summon
+    let response = g.click_on(g.user_id(), "Test Weapon");
+    assert_eq!(g.user.this_player.mana(), 96); // Weapon costs 1 to use
+    assert_eq!(g.opponent.other_player.mana(), 96); // Weapon costs 1 to use
+    assert!(g.user.cards.get(ids.scheme_id).revealed_to_me());
+    assert!(g.opponent.cards.get(ids.scheme_id).revealed_to_me());
+    assert_eq!(PlayerName::User, g.user.data.priority());
+    assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.user.interface.card_anchor_nodes().has_text("Score!"));
+    assert!(g.user.interface.main_controls().has_text("End Raid"));
+
+    assert_eq!(
+        g.user.data.object_index_position(Id::CardId(ids.scheme_id)),
+        (0, Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(ids.minion_id)),
+        Position::Room(ObjectPositionRoom {
+            room_id: CLIENT_ROOM_ID.into(),
+            room_location: ClientRoomLocation::Front.into()
+        })
+    );
+    assert_eq!(
+        g.user.data.object_index_position(Id::Identity(PlayerName::User.into())),
+        (1, Position::Raid(ObjectPositionRaid {}))
+    );
+
+    assert_commands_match_lists(
+        &response,
+        vec![
+            "FireProjectile",
+            "UpdateGameView",
+            "CreateOrUpdateCard", // Reveal card
+            "MoveGameObjects",    // Move identity
+            "MoveGameObjects",    // Move minion
+            "RenderInterface",
+        ],
+        vec![
+            "FireProjectile",
+            "UpdateGameView",
+            "CreateOrUpdateCard", // Reveal card
+            "MoveGameObjects",    // Move identity
+            "MoveGameObjects",    // Move minion
+        ],
+    );
+
+    assert_debug_snapshot!(response);
 }

@@ -328,11 +328,15 @@ impl ClientGameData {
         self.raid_active.expect("raid_active")
     }
 
-    pub fn object_position(&self, id: Id) -> (u32, Position) {
+    pub fn object_index_position(&self, id: Id) -> (u32, Position) {
         self.object_positions
             .get(&GameObjectIdentifier { id: Some(id) })
             .unwrap_or_else(|| panic!("No position available for {:?}", id))
             .clone()
+    }
+
+    pub fn object_position(&self, id: Id) -> Position {
+        self.object_index_position(id).1
     }
 
     fn update(&mut self, command: Command) {
@@ -415,6 +419,10 @@ impl ClientInterface {
         &self.card_anchors
     }
 
+    pub fn card_anchor_nodes(&self) -> Vec<&Node> {
+        self.card_anchors().iter().filter_map(|node| node.node.as_ref()).collect()
+    }
+
     fn update(&mut self, command: Command) {
         if let Command::RenderInterface(render) = command {
             self.main_controls = None;
@@ -474,6 +482,34 @@ impl HasText for Node {
         self.find_text(&mut nodes, text);
         nodes.reverse();
         nodes.iter().find_map(|node| node.event_handlers.clone())
+    }
+}
+
+impl HasText for Vec<&Node> {
+    fn has_text(&self, text: &'static str) -> bool {
+        for node in self {
+            if node.has_text(text) {
+                return true;
+            }
+        }
+        false
+    }
+
+    fn find_text(&self, path: &mut Vec<Node>, text: &'static str) {
+        for node in self {
+            if node.has_text(text) {
+                return node.find_text(path, text);
+            }
+        }
+    }
+
+    fn find_handlers(&self, text: &'static str) -> Option<EventHandlers> {
+        for node in self {
+            if let Some(handlers) = node.find_handlers(text) {
+                return Some(handlers);
+            }
+        }
+        None
     }
 }
 

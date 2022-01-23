@@ -1,0 +1,1330 @@
+---
+source: crates/spelldawn/tests/it/rules/raid_tests.rs
+assertion_line: 285
+expression: response
+
+---
+Ok(
+    GameResponse {
+        command_list: CommandList {
+            commands: [
+                GameCommand {
+                    command: Some(
+                        FireProjectile(
+                            FireProjectileCommand {
+                                source_id: Some(
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Champion,
+                                                    index: 1,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                target_id: Some(
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 2,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                projectile: Some(
+                                    ProjectileAddress {
+                                        address: "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 3",
+                                    },
+                                ),
+                                travel_duration: Some(
+                                    TimeValue {
+                                        milliseconds: 300,
+                                    },
+                                ),
+                                fire_sound: None,
+                                impact_sound: None,
+                                additional_hit: None,
+                                additional_hit_delay: None,
+                                wait_duration: Some(
+                                    TimeValue {
+                                        milliseconds: 300,
+                                    },
+                                ),
+                                hide_on_hit: false,
+                                jump_to_position: None,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        UpdateGameView(
+                            UpdateGameViewCommand {
+                                game: Some(
+                                    GameView {
+                                        game_id: Some(
+                                            GameIdentifier {
+                                                value: 1004,
+                                            },
+                                        ),
+                                        user: Some(
+                                            PlayerView {
+                                                side: Champion,
+                                                player_info: None,
+                                                score: None,
+                                                mana: Some(
+                                                    ManaView {
+                                                        amount: 96,
+                                                    },
+                                                ),
+                                                action_tracker: None,
+                                            },
+                                        ),
+                                        opponent: None,
+                                        current_priority: User,
+                                        raid_active: true,
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        CreateOrUpdateCard(
+                            CreateOrUpdateCardCommand {
+                                card: Some(
+                                    CardView {
+                                        card_id: Some(
+                                            CardIdentifier {
+                                                side: Overlord,
+                                                index: 1,
+                                            },
+                                        ),
+                                        card_icons: None,
+                                        arena_frame: None,
+                                        owning_player: Opponent,
+                                        revealed_card: Some(
+                                            RevealedCardView {
+                                                card_frame: Some(
+                                                    SpriteAddress {
+                                                        address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1",
+                                                    },
+                                                ),
+                                                title_background: Some(
+                                                    SpriteAddress {
+                                                        address: "LittleSweetDaemon/TCG_Card_Design/Warrior_Card/Warrior_Card Face_Tape",
+                                                    },
+                                                ),
+                                                jewel: Some(
+                                                    SpriteAddress {
+                                                        address: "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01",
+                                                    },
+                                                ),
+                                                image: Some(
+                                                    SpriteAddress {
+                                                        address: "Enixion/Fantasy Art Pack 2/Resized/3",
+                                                    },
+                                                ),
+                                                title: Some(
+                                                    CardTitle {
+                                                        text: "Test Scheme 31",
+                                                    },
+                                                ),
+                                                rules_text: Some(
+                                                    RulesText {
+                                                        text: "",
+                                                    },
+                                                ),
+                                                revealed_in_arena: true,
+                                                targeting: Some(
+                                                    CardTargeting {
+                                                        targeting: Some(
+                                                            PickRoom(
+                                                                PickRoom,
+                                                            ),
+                                                        ),
+                                                    },
+                                                ),
+                                                on_release_position: Some(
+                                                    ObjectPosition {
+                                                        sorting_key: 4294967295,
+                                                        position: Some(
+                                                            Room(
+                                                                ObjectPositionRoom {
+                                                                    room_id: Unspecified,
+                                                                    room_location: Back,
+                                                                },
+                                                            ),
+                                                        ),
+                                                    },
+                                                ),
+                                                can_play: false,
+                                                supplemental_info: None,
+                                            },
+                                        ),
+                                    },
+                                ),
+                                create_position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 2,
+                                        position: Some(
+                                            Room(
+                                                ObjectPositionRoom {
+                                                    room_id: RoomA,
+                                                    room_location: Back,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                create_animation: Unspecified,
+                                disable_flip_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 2,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 4,
+                                        position: Some(
+                                            Room(
+                                                ObjectPositionRoom {
+                                                    room_id: RoomA,
+                                                    room_location: Front,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            Identity(
+                                                User,
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 1,
+                                        position: Some(
+                                            Raid(
+                                                ObjectPositionRaid,
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        RenderInterface(
+                            RenderInterfaceCommand {
+                                panels: [],
+                                main_controls: Some(
+                                    InterfaceMainControls {
+                                        node: Some(
+                                            Node {
+                                                id: "",
+                                                name: "Prompt",
+                                                node_type: None,
+                                                children: [
+                                                    Node {
+                                                        id: "",
+                                                        name: "Button End Raid",
+                                                        node_type: None,
+                                                        children: [
+                                                            Node {
+                                                                id: "",
+                                                                name: "",
+                                                                node_type: Some(
+                                                                    NodeType {
+                                                                        node_type: Some(
+                                                                            Text(
+                                                                                Text {
+                                                                                    label: "End Raid",
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                                children: [],
+                                                                event_handlers: None,
+                                                                style: Some(
+                                                                    FlexStyle {
+                                                                        align_content: Unspecified,
+                                                                        align_items: Unspecified,
+                                                                        align_self: Unspecified,
+                                                                        background_color: None,
+                                                                        background_image: None,
+                                                                        border_color: None,
+                                                                        border_radius: None,
+                                                                        border_width: None,
+                                                                        inset: None,
+                                                                        color: Some(
+                                                                            FlexColor {
+                                                                                red: 1.0,
+                                                                                green: 1.0,
+                                                                                blue: 1.0,
+                                                                                alpha: 1.0,
+                                                                            },
+                                                                        ),
+                                                                        display: Unspecified,
+                                                                        flex_basis: None,
+                                                                        flex_direction: Unspecified,
+                                                                        flex_grow: None,
+                                                                        flex_shrink: None,
+                                                                        wrap: Unspecified,
+                                                                        font_size: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 32.0,
+                                                                            },
+                                                                        ),
+                                                                        height: None,
+                                                                        justify_content: Unspecified,
+                                                                        letter_spacing: None,
+                                                                        margin: Some(
+                                                                            DimensionGroup {
+                                                                                top: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                right: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 16.0,
+                                                                                    },
+                                                                                ),
+                                                                                bottom: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                left: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 16.0,
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                        max_height: None,
+                                                                        max_width: None,
+                                                                        min_height: None,
+                                                                        min_width: None,
+                                                                        opacity: None,
+                                                                        overflow: Unspecified,
+                                                                        padding: Some(
+                                                                            DimensionGroup {
+                                                                                top: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                right: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                bottom: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                left: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                        position: Unspecified,
+                                                                        rotate: None,
+                                                                        scale: None,
+                                                                        text_overflow: Unspecified,
+                                                                        text_shadow: None,
+                                                                        transform_origin: None,
+                                                                        transition_delays: [],
+                                                                        transition_durations: [],
+                                                                        transition_properties: [],
+                                                                        transition_easing_modes: [],
+                                                                        translate: None,
+                                                                        background_image_tint_color: None,
+                                                                        background_image_scale_mode: Unspecified,
+                                                                        font: Some(
+                                                                            FontAddress {
+                                                                                address: "Fonts/Roboto",
+                                                                            },
+                                                                        ),
+                                                                        font_style: Unspecified,
+                                                                        overflow_clip_box: Unspecified,
+                                                                        paragraph_spacing: None,
+                                                                        image_slice: None,
+                                                                        text_align: MiddleCenter,
+                                                                        text_outline_color: None,
+                                                                        text_outline_width: None,
+                                                                        text_overflow_position: Unspecified,
+                                                                        visibility: Unspecified,
+                                                                        white_space: Unspecified,
+                                                                        width: None,
+                                                                        word_spacing: None,
+                                                                        background_image_scale_multiplier: None,
+                                                                        fixed_background_image_aspect_ratio: false,
+                                                                        picking_mode: Unspecified,
+                                                                    },
+                                                                ),
+                                                                hover_style: None,
+                                                                pressed_style: None,
+                                                            },
+                                                        ],
+                                                        event_handlers: Some(
+                                                            EventHandlers {
+                                                                on_click: Some(
+                                                                    GameAction {
+                                                                        action: Some(
+                                                                            StandardAction(
+                                                                                StandardAction {
+                                                                                    payload: [
+                                                                                        1,
+                                                                                        0,
+                                                                                        0,
+                                                                                        0,
+                                                                                        5,
+                                                                                        0,
+                                                                                        0,
+                                                                                        0,
+                                                                                    ],
+                                                                                    update: Some(
+                                                                                        CommandList {
+                                                                                            commands: [
+                                                                                                GameCommand {
+                                                                                                    command: Some(
+                                                                                                        RenderInterface(
+                                                                                                            RenderInterfaceCommand {
+                                                                                                                panels: [],
+                                                                                                                main_controls: Some(
+                                                                                                                    InterfaceMainControls {
+                                                                                                                        node: None,
+                                                                                                                        card_anchor_nodes: [],
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            },
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    ),
+                                                                                    debug_payload: None,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        ),
+                                                        style: Some(
+                                                            FlexStyle {
+                                                                align_content: Unspecified,
+                                                                align_items: Center,
+                                                                align_self: Unspecified,
+                                                                background_color: None,
+                                                                background_image: Some(
+                                                                    SpriteAddress {
+                                                                        address: "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray",
+                                                                    },
+                                                                ),
+                                                                border_color: None,
+                                                                border_radius: None,
+                                                                border_width: None,
+                                                                inset: None,
+                                                                color: None,
+                                                                display: Unspecified,
+                                                                flex_basis: None,
+                                                                flex_direction: Row,
+                                                                flex_grow: None,
+                                                                flex_shrink: Some(
+                                                                    0.0,
+                                                                ),
+                                                                wrap: Unspecified,
+                                                                font_size: None,
+                                                                height: Some(
+                                                                    Dimension {
+                                                                        unit: Pixels,
+                                                                        value: 88.0,
+                                                                    },
+                                                                ),
+                                                                justify_content: Center,
+                                                                letter_spacing: None,
+                                                                margin: Some(
+                                                                    DimensionGroup {
+                                                                        top: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 0.0,
+                                                                            },
+                                                                        ),
+                                                                        right: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 16.0,
+                                                                            },
+                                                                        ),
+                                                                        bottom: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 200.0,
+                                                                            },
+                                                                        ),
+                                                                        left: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 16.0,
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                                max_height: None,
+                                                                max_width: None,
+                                                                min_height: None,
+                                                                min_width: Some(
+                                                                    Dimension {
+                                                                        unit: Pixels,
+                                                                        value: 132.0,
+                                                                    },
+                                                                ),
+                                                                opacity: None,
+                                                                overflow: Unspecified,
+                                                                padding: None,
+                                                                position: Unspecified,
+                                                                rotate: None,
+                                                                scale: None,
+                                                                text_overflow: Unspecified,
+                                                                text_shadow: None,
+                                                                transform_origin: None,
+                                                                transition_delays: [],
+                                                                transition_durations: [],
+                                                                transition_properties: [],
+                                                                transition_easing_modes: [],
+                                                                translate: None,
+                                                                background_image_tint_color: None,
+                                                                background_image_scale_mode: Unspecified,
+                                                                font: None,
+                                                                font_style: Unspecified,
+                                                                overflow_clip_box: Unspecified,
+                                                                paragraph_spacing: None,
+                                                                image_slice: Some(
+                                                                    ImageSlice {
+                                                                        top: 0,
+                                                                        right: 16,
+                                                                        bottom: 0,
+                                                                        left: 16,
+                                                                    },
+                                                                ),
+                                                                text_align: Unspecified,
+                                                                text_outline_color: None,
+                                                                text_outline_width: None,
+                                                                text_overflow_position: Unspecified,
+                                                                visibility: Unspecified,
+                                                                white_space: Unspecified,
+                                                                width: None,
+                                                                word_spacing: None,
+                                                                background_image_scale_multiplier: None,
+                                                                fixed_background_image_aspect_ratio: false,
+                                                                picking_mode: Unspecified,
+                                                            },
+                                                        ),
+                                                        hover_style: None,
+                                                        pressed_style: None,
+                                                    },
+                                                ],
+                                                event_handlers: None,
+                                                style: Some(
+                                                    FlexStyle {
+                                                        align_content: Unspecified,
+                                                        align_items: Center,
+                                                        align_self: Unspecified,
+                                                        background_color: None,
+                                                        background_image: None,
+                                                        border_color: None,
+                                                        border_radius: None,
+                                                        border_width: None,
+                                                        inset: None,
+                                                        color: None,
+                                                        display: Unspecified,
+                                                        flex_basis: None,
+                                                        flex_direction: Row,
+                                                        flex_grow: Some(
+                                                            1.0,
+                                                        ),
+                                                        flex_shrink: None,
+                                                        wrap: WrapReverse,
+                                                        font_size: None,
+                                                        height: None,
+                                                        justify_content: FlexEnd,
+                                                        letter_spacing: None,
+                                                        margin: Some(
+                                                            DimensionGroup {
+                                                                top: Some(
+                                                                    Dimension {
+                                                                        unit: Pixels,
+                                                                        value: 0.0,
+                                                                    },
+                                                                ),
+                                                                right: Some(
+                                                                    Dimension {
+                                                                        unit: Pixels,
+                                                                        value: 16.0,
+                                                                    },
+                                                                ),
+                                                                bottom: Some(
+                                                                    Dimension {
+                                                                        unit: Pixels,
+                                                                        value: 0.0,
+                                                                    },
+                                                                ),
+                                                                left: Some(
+                                                                    Dimension {
+                                                                        unit: Pixels,
+                                                                        value: 16.0,
+                                                                    },
+                                                                ),
+                                                            },
+                                                        ),
+                                                        max_height: None,
+                                                        max_width: None,
+                                                        min_height: None,
+                                                        min_width: None,
+                                                        opacity: None,
+                                                        overflow: Unspecified,
+                                                        padding: None,
+                                                        position: Unspecified,
+                                                        rotate: None,
+                                                        scale: None,
+                                                        text_overflow: Unspecified,
+                                                        text_shadow: None,
+                                                        transform_origin: None,
+                                                        transition_delays: [],
+                                                        transition_durations: [],
+                                                        transition_properties: [],
+                                                        transition_easing_modes: [],
+                                                        translate: None,
+                                                        background_image_tint_color: None,
+                                                        background_image_scale_mode: Unspecified,
+                                                        font: None,
+                                                        font_style: Unspecified,
+                                                        overflow_clip_box: Unspecified,
+                                                        paragraph_spacing: None,
+                                                        image_slice: None,
+                                                        text_align: Unspecified,
+                                                        text_outline_color: None,
+                                                        text_outline_width: None,
+                                                        text_overflow_position: Unspecified,
+                                                        visibility: Unspecified,
+                                                        white_space: Unspecified,
+                                                        width: None,
+                                                        word_spacing: None,
+                                                        background_image_scale_multiplier: None,
+                                                        fixed_background_image_aspect_ratio: false,
+                                                        picking_mode: Unspecified,
+                                                    },
+                                                ),
+                                                hover_style: None,
+                                                pressed_style: None,
+                                            },
+                                        ),
+                                        card_anchor_nodes: [
+                                            CardAnchorNode {
+                                                card_id: Some(
+                                                    CardIdentifier {
+                                                        side: Overlord,
+                                                        index: 1,
+                                                    },
+                                                ),
+                                                node: Some(
+                                                    Node {
+                                                        id: "",
+                                                        name: "",
+                                                        node_type: None,
+                                                        children: [
+                                                            Node {
+                                                                id: "",
+                                                                name: "Button Score!",
+                                                                node_type: None,
+                                                                children: [
+                                                                    Node {
+                                                                        id: "",
+                                                                        name: "",
+                                                                        node_type: Some(
+                                                                            NodeType {
+                                                                                node_type: Some(
+                                                                                    Text(
+                                                                                        Text {
+                                                                                            label: "Score!",
+                                                                                        },
+                                                                                    ),
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                        children: [],
+                                                                        event_handlers: None,
+                                                                        style: Some(
+                                                                            FlexStyle {
+                                                                                align_content: Unspecified,
+                                                                                align_items: Unspecified,
+                                                                                align_self: Unspecified,
+                                                                                background_color: None,
+                                                                                background_image: None,
+                                                                                border_color: None,
+                                                                                border_radius: None,
+                                                                                border_width: None,
+                                                                                inset: None,
+                                                                                color: Some(
+                                                                                    FlexColor {
+                                                                                        red: 1.0,
+                                                                                        green: 1.0,
+                                                                                        blue: 1.0,
+                                                                                        alpha: 1.0,
+                                                                                    },
+                                                                                ),
+                                                                                display: Unspecified,
+                                                                                flex_basis: None,
+                                                                                flex_direction: Unspecified,
+                                                                                flex_grow: None,
+                                                                                flex_shrink: None,
+                                                                                wrap: Unspecified,
+                                                                                font_size: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 32.0,
+                                                                                    },
+                                                                                ),
+                                                                                height: None,
+                                                                                justify_content: Unspecified,
+                                                                                letter_spacing: None,
+                                                                                margin: Some(
+                                                                                    DimensionGroup {
+                                                                                        top: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        right: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 16.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        bottom: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        left: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 16.0,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                max_height: None,
+                                                                                max_width: None,
+                                                                                min_height: None,
+                                                                                min_width: None,
+                                                                                opacity: None,
+                                                                                overflow: Unspecified,
+                                                                                padding: Some(
+                                                                                    DimensionGroup {
+                                                                                        top: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        right: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        bottom: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                        left: Some(
+                                                                                            Dimension {
+                                                                                                unit: Pixels,
+                                                                                                value: 0.0,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                position: Unspecified,
+                                                                                rotate: None,
+                                                                                scale: None,
+                                                                                text_overflow: Unspecified,
+                                                                                text_shadow: None,
+                                                                                transform_origin: None,
+                                                                                transition_delays: [],
+                                                                                transition_durations: [],
+                                                                                transition_properties: [],
+                                                                                transition_easing_modes: [],
+                                                                                translate: None,
+                                                                                background_image_tint_color: None,
+                                                                                background_image_scale_mode: Unspecified,
+                                                                                font: Some(
+                                                                                    FontAddress {
+                                                                                        address: "Fonts/Roboto",
+                                                                                    },
+                                                                                ),
+                                                                                font_style: Unspecified,
+                                                                                overflow_clip_box: Unspecified,
+                                                                                paragraph_spacing: None,
+                                                                                image_slice: None,
+                                                                                text_align: MiddleCenter,
+                                                                                text_outline_color: None,
+                                                                                text_outline_width: None,
+                                                                                text_overflow_position: Unspecified,
+                                                                                visibility: Unspecified,
+                                                                                white_space: Unspecified,
+                                                                                width: None,
+                                                                                word_spacing: None,
+                                                                                background_image_scale_multiplier: None,
+                                                                                fixed_background_image_aspect_ratio: false,
+                                                                                picking_mode: Unspecified,
+                                                                            },
+                                                                        ),
+                                                                        hover_style: None,
+                                                                        pressed_style: None,
+                                                                    },
+                                                                ],
+                                                                event_handlers: Some(
+                                                                    EventHandlers {
+                                                                        on_click: Some(
+                                                                            GameAction {
+                                                                                action: Some(
+                                                                                    StandardAction(
+                                                                                        StandardAction {
+                                                                                            payload: [
+                                                                                                1,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                4,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                1,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                                0,
+                                                                                            ],
+                                                                                            update: Some(
+                                                                                                CommandList {
+                                                                                                    commands: [
+                                                                                                        GameCommand {
+                                                                                                            command: Some(
+                                                                                                                RenderInterface(
+                                                                                                                    RenderInterfaceCommand {
+                                                                                                                        panels: [],
+                                                                                                                        main_controls: Some(
+                                                                                                                            InterfaceMainControls {
+                                                                                                                                node: None,
+                                                                                                                                card_anchor_nodes: [],
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            ),
+                                                                                            debug_payload: None,
+                                                                                        },
+                                                                                    ),
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                                style: Some(
+                                                                    FlexStyle {
+                                                                        align_content: Unspecified,
+                                                                        align_items: Center,
+                                                                        align_self: Unspecified,
+                                                                        background_color: None,
+                                                                        background_image: Some(
+                                                                            SpriteAddress {
+                                                                                address: "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange",
+                                                                            },
+                                                                        ),
+                                                                        border_color: None,
+                                                                        border_radius: None,
+                                                                        border_width: None,
+                                                                        inset: None,
+                                                                        color: None,
+                                                                        display: Unspecified,
+                                                                        flex_basis: None,
+                                                                        flex_direction: Row,
+                                                                        flex_grow: None,
+                                                                        flex_shrink: Some(
+                                                                            0.0,
+                                                                        ),
+                                                                        wrap: Unspecified,
+                                                                        font_size: None,
+                                                                        height: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 88.0,
+                                                                            },
+                                                                        ),
+                                                                        justify_content: Center,
+                                                                        letter_spacing: None,
+                                                                        margin: Some(
+                                                                            DimensionGroup {
+                                                                                top: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                right: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 16.0,
+                                                                                    },
+                                                                                ),
+                                                                                bottom: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 0.0,
+                                                                                    },
+                                                                                ),
+                                                                                left: Some(
+                                                                                    Dimension {
+                                                                                        unit: Pixels,
+                                                                                        value: 16.0,
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                        max_height: None,
+                                                                        max_width: None,
+                                                                        min_height: None,
+                                                                        min_width: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 132.0,
+                                                                            },
+                                                                        ),
+                                                                        opacity: None,
+                                                                        overflow: Unspecified,
+                                                                        padding: None,
+                                                                        position: Unspecified,
+                                                                        rotate: None,
+                                                                        scale: None,
+                                                                        text_overflow: Unspecified,
+                                                                        text_shadow: None,
+                                                                        transform_origin: None,
+                                                                        transition_delays: [],
+                                                                        transition_durations: [],
+                                                                        transition_properties: [],
+                                                                        transition_easing_modes: [],
+                                                                        translate: None,
+                                                                        background_image_tint_color: None,
+                                                                        background_image_scale_mode: Unspecified,
+                                                                        font: None,
+                                                                        font_style: Unspecified,
+                                                                        overflow_clip_box: Unspecified,
+                                                                        paragraph_spacing: None,
+                                                                        image_slice: Some(
+                                                                            ImageSlice {
+                                                                                top: 0,
+                                                                                right: 16,
+                                                                                bottom: 0,
+                                                                                left: 16,
+                                                                            },
+                                                                        ),
+                                                                        text_align: Unspecified,
+                                                                        text_outline_color: None,
+                                                                        text_outline_width: None,
+                                                                        text_overflow_position: Unspecified,
+                                                                        visibility: Unspecified,
+                                                                        white_space: Unspecified,
+                                                                        width: None,
+                                                                        word_spacing: None,
+                                                                        background_image_scale_multiplier: None,
+                                                                        fixed_background_image_aspect_ratio: false,
+                                                                        picking_mode: Unspecified,
+                                                                    },
+                                                                ),
+                                                                hover_style: None,
+                                                                pressed_style: None,
+                                                            },
+                                                        ],
+                                                        event_handlers: None,
+                                                        style: Some(
+                                                            FlexStyle {
+                                                                align_content: Unspecified,
+                                                                align_items: Center,
+                                                                align_self: Unspecified,
+                                                                background_color: None,
+                                                                background_image: None,
+                                                                border_color: None,
+                                                                border_radius: None,
+                                                                border_width: None,
+                                                                inset: None,
+                                                                color: None,
+                                                                display: Unspecified,
+                                                                flex_basis: None,
+                                                                flex_direction: Row,
+                                                                flex_grow: None,
+                                                                flex_shrink: None,
+                                                                wrap: Unspecified,
+                                                                font_size: None,
+                                                                height: None,
+                                                                justify_content: Center,
+                                                                letter_spacing: None,
+                                                                margin: None,
+                                                                max_height: None,
+                                                                max_width: None,
+                                                                min_height: None,
+                                                                min_width: None,
+                                                                opacity: None,
+                                                                overflow: Unspecified,
+                                                                padding: Some(
+                                                                    DimensionGroup {
+                                                                        top: Some(
+                                                                            Dimension {
+                                                                                unit: Pixels,
+                                                                                value: 8.0,
+                                                                            },
+                                                                        ),
+                                                                        right: None,
+                                                                        bottom: None,
+                                                                        left: None,
+                                                                    },
+                                                                ),
+                                                                position: Unspecified,
+                                                                rotate: None,
+                                                                scale: None,
+                                                                text_overflow: Unspecified,
+                                                                text_shadow: None,
+                                                                transform_origin: None,
+                                                                transition_delays: [],
+                                                                transition_durations: [],
+                                                                transition_properties: [],
+                                                                transition_easing_modes: [],
+                                                                translate: None,
+                                                                background_image_tint_color: None,
+                                                                background_image_scale_mode: Unspecified,
+                                                                font: None,
+                                                                font_style: Unspecified,
+                                                                overflow_clip_box: Unspecified,
+                                                                paragraph_spacing: None,
+                                                                image_slice: None,
+                                                                text_align: Unspecified,
+                                                                text_outline_color: None,
+                                                                text_outline_width: None,
+                                                                text_overflow_position: Unspecified,
+                                                                visibility: Unspecified,
+                                                                white_space: Unspecified,
+                                                                width: None,
+                                                                word_spacing: None,
+                                                                background_image_scale_multiplier: None,
+                                                                fixed_background_image_aspect_ratio: false,
+                                                                picking_mode: Unspecified,
+                                                            },
+                                                        ),
+                                                        hover_style: None,
+                                                        pressed_style: None,
+                                                    },
+                                                ),
+                                                anchor_position: Unspecified,
+                                                anchors: [
+                                                    CardAnchor {
+                                                        node_corner: TopLeft,
+                                                        card_corner: BottomLeft,
+                                                    },
+                                                    CardAnchor {
+                                                        node_corner: TopRight,
+                                                        card_corner: BottomRight,
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+            ],
+        },
+        channel_response: Some(
+            (
+                1005,
+                CommandList {
+                    commands: [
+                        GameCommand {
+                            command: Some(
+                                FireProjectile(
+                                    FireProjectileCommand {
+                                        source_id: Some(
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Champion,
+                                                            index: 1,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        target_id: Some(
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 2,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        projectile: Some(
+                                            ProjectileAddress {
+                                                address: "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 3",
+                                            },
+                                        ),
+                                        travel_duration: Some(
+                                            TimeValue {
+                                                milliseconds: 300,
+                                            },
+                                        ),
+                                        fire_sound: None,
+                                        impact_sound: None,
+                                        additional_hit: None,
+                                        additional_hit_delay: None,
+                                        wait_duration: Some(
+                                            TimeValue {
+                                                milliseconds: 300,
+                                            },
+                                        ),
+                                        hide_on_hit: false,
+                                        jump_to_position: None,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                UpdateGameView(
+                                    UpdateGameViewCommand {
+                                        game: Some(
+                                            GameView {
+                                                game_id: Some(
+                                                    GameIdentifier {
+                                                        value: 1004,
+                                                    },
+                                                ),
+                                                user: None,
+                                                opponent: Some(
+                                                    PlayerView {
+                                                        side: Champion,
+                                                        player_info: None,
+                                                        score: None,
+                                                        mana: Some(
+                                                            ManaView {
+                                                                amount: 96,
+                                                            },
+                                                        ),
+                                                        action_tracker: None,
+                                                    },
+                                                ),
+                                                current_priority: Opponent,
+                                                raid_active: true,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                CreateOrUpdateCard(
+                                    CreateOrUpdateCardCommand {
+                                        card: Some(
+                                            CardView {
+                                                card_id: Some(
+                                                    CardIdentifier {
+                                                        side: Overlord,
+                                                        index: 1,
+                                                    },
+                                                ),
+                                                card_icons: None,
+                                                arena_frame: None,
+                                                owning_player: User,
+                                                revealed_card: Some(
+                                                    RevealedCardView {
+                                                        card_frame: None,
+                                                        title_background: None,
+                                                        jewel: None,
+                                                        image: None,
+                                                        title: None,
+                                                        rules_text: None,
+                                                        revealed_in_arena: true,
+                                                        targeting: None,
+                                                        on_release_position: None,
+                                                        can_play: false,
+                                                        supplemental_info: None,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        create_position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 2,
+                                                position: Some(
+                                                    Room(
+                                                        ObjectPositionRoom {
+                                                            room_id: RoomA,
+                                                            room_location: Back,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        create_animation: Unspecified,
+                                        disable_flip_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 2,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 4,
+                                                position: Some(
+                                                    Room(
+                                                        ObjectPositionRoom {
+                                                            room_id: RoomA,
+                                                            room_location: Front,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    Identity(
+                                                        Opponent,
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 1,
+                                                position: Some(
+                                                    Raid(
+                                                        ObjectPositionRaid,
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                    ],
+                },
+            ),
+        ),
+    },
+)
