@@ -162,7 +162,7 @@ pub fn handle_prompt_action(
             raid::destroy_card_action(game, user_side, card_id)
         }
         PromptAction::RaidScoreCard(card_id) => raid::score_card_action(game, user_side, card_id),
-        PromptAction::RaidEnd => raid::raid_end_action(game, user_side),
+        PromptAction::EndRaid => raid::raid_end_action(game, user_side),
     }
 }
 

@@ -313,8 +313,12 @@ Ok(
                     RenderInterface(
                         RenderInterfaceCommand {
                             panels: [],
-                            main_controls: None,
-                            card_anchor_nodes: [],
+                            main_controls: Some(
+                                InterfaceMainControls {
+                                    node: None,
+                                    card_anchor_nodes: [],
+                                },
+                            ),
                         },
                     ),
                 ),

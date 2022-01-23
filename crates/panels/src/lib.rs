@@ -32,6 +32,5 @@ pub fn render_panel(address: PanelAddress) -> Result<RenderInterfaceCommand> {
             }),
         }],
         main_controls: None,
-        card_anchor_nodes: vec![],
     })
 }

@@ -28,6 +28,14 @@ using UnityEngine.UIElements;
 
 namespace Spelldawn.Services
 {
+  public sealed record ElementPosition
+  {
+    public float Top { get; init; }
+    public float Right { get; init; }
+    public float Bottom { get; init; }
+    public float Left { get; init; }
+  }
+
   public sealed class DocumentService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
@@ -53,19 +61,23 @@ namespace Spelldawn.Services
     float ScreenPxToElementDip(float value) => value * _document.panelSettings.referenceDpi / Screen.dpi;
 
     /// <summary>
-    /// Returns a (left, top) position vector in interface coordinates corresponding to a screen position.
-    /// If 'anchorRight' is true, returns a (right, top) vector instead.
+    /// Returns an ElementPosition in interface coordinates corresponding to a screen position.
     /// </summary>
-    public Vector2 ScreenPositionToElementPosition(Vector3 screenPosition, bool anchorRight = false) =>
-      new(ScreenPxToElementDip(anchorRight ? Screen.width - screenPosition.x : screenPosition.x),
-        ScreenPxToElementDip(Screen.height - screenPosition.y));
+    public ElementPosition ScreenPositionToElementPosition(Vector3 screenPosition) =>
+      new()
+      {
+        Top = ScreenPxToElementDip(Screen.height - screenPosition.y),
+        Right = ScreenPxToElementDip(Screen.width - screenPosition.x),
+        Bottom = ScreenPxToElementDip(screenPosition.y),
+        Left = ScreenPxToElementDip(screenPosition.x)
+      };
 
     /// <summary>
-    /// Returns a (left, top) position vector in interface coordinates corresponding to the position of the
-    /// provided transform. If 'anchorRight' is true, returns a (right, top) vector instead.
+    /// Returns an ElementPosition in interface coordinates corresponding to the position of the
+    /// provided transform.
     /// </summary>
-    public Vector2 TransformPositionToElementPosition(Transform t, bool anchorRight = false) =>
-      ScreenPositionToElementPosition(_registry.MainCamera.WorldToScreenPoint(t.position), anchorRight);
+    public ElementPosition TransformPositionToElementPosition(Transform t)
+      => ScreenPositionToElementPosition(_registry.MainCamera.WorldToScreenPoint(t.position));
 
     public void TogglePanel(bool open, PanelAddress address)
     {
@@ -92,16 +104,21 @@ namespace Spelldawn.Services
 
       RenderPanels();
 
-      Reconcile(
-        ref _mainControlsNode,
-        ref _mainControls,
-        MainControls(command.MainControls?.Node));
-
-      _cardControls.Clear();
-      if (command.CardAnchorNodes.Count > 0)
+      if (command.MainControls != null)
       {
-        _cardControls.Add(Mason.Render(_registry,
-          Row("CardAnchors", new FlexStyle(), command.CardAnchorNodes.Select(RenderCardAnchorNode))));
+        Reconcile(
+          ref _mainControlsNode,
+          ref _mainControls,
+          MainControls(command.MainControls.Node));
+
+        Reconcile(
+          ref _cardControlsNode,
+          ref _cardControls,
+          Row("CardAnchors", new FlexStyle
+          {
+            Position = FlexPosition.Absolute,
+            Inset = AllDip(0),
+          }, command.MainControls.CardAnchorNodes.Select(RenderCardAnchorNode)));
       }
     }
 
@@ -147,8 +164,7 @@ namespace Spelldawn.Services
 
     public void RenderSupplementalCardInfo(Card card, Node node, CardNodeAnchorPosition position)
     {
-      ClearCardControls();
-      _cardControls.Add(Mason.Render(_registry, WrapCardAnchor(card, node, position)));
+      throw new NotImplementedException();
     }
 
     void AddRoot(string elementName, out VisualElement element, out Node node)
@@ -183,51 +199,51 @@ namespace Spelldawn.Services
         }
       }, content);
 
-    Node RenderCardAnchorNode(CardAnchorNode controlNode) =>
-      WrapCardAnchor(
-        _registry.CardService.FindCard(controlNode.CardId),
-        controlNode.Node,
-        controlNode.AnchorPosition);
-
-    Node WrapCardAnchor(Card card, Node node, CardNodeAnchorPosition anchorPosition)
+    Node RenderCardAnchorNode(CardAnchorNode anchorNode)
     {
-      // Left-side nodes get anchored on their right.
-      var anchorRight = anchorPosition == CardNodeAnchorPosition.Left;
-      var anchor = anchorPosition switch
-      {
-        CardNodeAnchorPosition.Bottom => card.BottomLeftAnchor,
-        CardNodeAnchorPosition.Left => card.TopLeftAnchor,
-        CardNodeAnchorPosition.Right => card.TopRightAnchor,
-        _ => throw new ArgumentOutOfRangeException()
-      };
+      var card = _registry.CardService.FindCard(anchorNode.CardId);
+      var node = anchorNode.Node;
+      node.Style.Position = FlexPosition.Absolute;
+      var inset = new DimensionGroup();
 
-      var position = TransformPositionToElementPosition(anchor, anchorRight);
-
-      return Column("CardAnchor", new FlexStyle
+      foreach (var anchor in anchorNode.Anchors)
       {
-        Position = FlexPosition.Absolute,
-        Inset = anchorPosition switch
+        var target = anchor.CardCorner switch
         {
-          CardNodeAnchorPosition.Bottom => GroupDip(
-            position.y,
-            TransformPositionToElementPosition(card.BottomRightAnchor, anchorRight: true).x,
-            0,
-            position.x),
-          CardNodeAnchorPosition.Left =>
-            GroupDip(position.y, position.x, 0, 0),
-          CardNodeAnchorPosition.Right =>
-            GroupDip(position.y, 0, 0, position.x),
+          AnchorCorner.TopLeft => card.TopLeftAnchor,
+          AnchorCorner.TopRight => card.TopRightAnchor,
+          AnchorCorner.BottomLeft => card.BottomLeftAnchor,
+          AnchorCorner.BottomRight => card.BottomRightAnchor,
           _ => throw new ArgumentOutOfRangeException()
-        },
-        JustifyContent = FlexJustify.FlexStart,
-        AlignItems = anchorPosition switch
+        };
+
+        var position = TransformPositionToElementPosition(target);
+
+        switch (anchor.NodeCorner)
         {
-          CardNodeAnchorPosition.Bottom => FlexAlign.Center,
-          CardNodeAnchorPosition.Left => FlexAlign.FlexEnd,
-          CardNodeAnchorPosition.Right => FlexAlign.FlexStart,
-          _ => throw new ArgumentOutOfRangeException()
+          case AnchorCorner.TopLeft:
+            inset.Left = Dip(position.Left);
+            inset.Top = Dip(position.Top);
+            break;
+          case AnchorCorner.TopRight:
+            inset.Right = Dip(position.Right);
+            inset.Top = Dip(position.Top);
+            break;
+          case AnchorCorner.BottomLeft:
+            inset.Left = Dip(position.Left);
+            inset.Bottom = Dip(position.Bottom);
+            break;
+          case AnchorCorner.BottomRight:
+            inset.Right = Dip(position.Right);
+            inset.Bottom = Dip(position.Bottom);
+            break;
+          default:
+            throw new ArgumentOutOfRangeException();
         }
-      }, node);
+      }
+
+      node.Style.Inset = inset;
+      return node;
     }
 
     public static Node ControlGroup(params Node[] nodes) => Row("ControlGroup",

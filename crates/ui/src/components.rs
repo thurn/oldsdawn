@@ -245,7 +245,7 @@ impl Component for Button {
                     ButtonLines::TwoLines => TextVariant::TwoLineButton,
                 },
                 style: FlexStyle {
-                    margin: px_group_2(0.0, 16.0),
+                    margin: px_pair(0.0, 16.0),
                     text_align: TextAlign::MiddleCenter.into(),
                     ..FlexStyle::default()
                 },

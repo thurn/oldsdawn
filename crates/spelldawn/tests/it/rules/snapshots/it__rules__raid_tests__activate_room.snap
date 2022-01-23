@@ -351,9 +351,9 @@ Ok(
                                                 pressed_style: None,
                                             },
                                         ),
+                                        card_anchor_nodes: [],
                                     },
                                 ),
-                                card_anchor_nodes: [],
                             },
                         ),
                     ),
@@ -743,7 +743,27 @@ Ok(
                                                                                                 0,
                                                                                                 0,
                                                                                             ],
-                                                                                            update: None,
+                                                                                            update: Some(
+                                                                                                CommandList {
+                                                                                                    commands: [
+                                                                                                        GameCommand {
+                                                                                                            command: Some(
+                                                                                                                RenderInterface(
+                                                                                                                    RenderInterfaceCommand {
+                                                                                                                        panels: [],
+                                                                                                                        main_controls: Some(
+                                                                                                                            InterfaceMainControls {
+                                                                                                                                node: None,
+                                                                                                                                card_anchor_nodes: [],
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            ),
                                                                                             debug_payload: None,
                                                                                         },
                                                                                     ),
@@ -1043,7 +1063,27 @@ Ok(
                                                                                                 0,
                                                                                                 0,
                                                                                             ],
-                                                                                            update: None,
+                                                                                            update: Some(
+                                                                                                CommandList {
+                                                                                                    commands: [
+                                                                                                        GameCommand {
+                                                                                                            command: Some(
+                                                                                                                RenderInterface(
+                                                                                                                    RenderInterfaceCommand {
+                                                                                                                        panels: [],
+                                                                                                                        main_controls: Some(
+                                                                                                                            InterfaceMainControls {
+                                                                                                                                node: None,
+                                                                                                                                card_anchor_nodes: [],
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            ),
                                                                                             debug_payload: None,
                                                                                         },
                                                                                     ),
@@ -1262,9 +1302,9 @@ Ok(
                                                         pressed_style: None,
                                                     },
                                                 ),
+                                                card_anchor_nodes: [],
                                             },
                                         ),
-                                        card_anchor_nodes: [],
                                     },
                                 ),
                             ),

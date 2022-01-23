@@ -103,7 +103,7 @@ impl Component for TitleBar {
                     translate: translate_percent(-50.0, -50.0),
                     align_items: FlexAlign::Center.into(),
                     justify_content: FlexJustify::Center.into(),
-                    padding: px_group_2(16.0, 32.0),
+                    padding: px_pair(16.0, 32.0),
                     background_image: sprite(
                         "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/QuarterSize/Basic_big_bar_512",
                     ),

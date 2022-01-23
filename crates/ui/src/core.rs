@@ -29,6 +29,13 @@ pub type Percent = f32;
 
 pub trait Component {
     fn render(self) -> Node;
+
+    fn child(self) -> Option<Node>
+    where
+        Self: Sized,
+    {
+        Some(self.render())
+    }
 }
 
 pub fn child(component: impl Component) -> Option<Node> {
@@ -79,14 +86,14 @@ pub fn right_top_px(right: Px, top: Px) -> Option<DimensionGroup> {
 }
 
 pub fn all_px(all: Px) -> Option<DimensionGroup> {
-    px_group_2(all, all)
+    px_pair(all, all)
 }
 
-pub fn px_group_2(top_bottom: Px, right_left: Px) -> Option<DimensionGroup> {
-    px_group_4(top_bottom, right_left, top_bottom, right_left)
+pub fn px_pair(top_bottom: Px, right_left: Px) -> Option<DimensionGroup> {
+    dimension_group_px(top_bottom, right_left, top_bottom, right_left)
 }
 
-pub fn px_group_4(top: Px, right: Px, bottom: Px, left: Px) -> Option<DimensionGroup> {
+pub fn dimension_group_px(top: Px, right: Px, bottom: Px, left: Px) -> Option<DimensionGroup> {
     dimension_group(px(top), px(right), px(bottom), px(left))
 }
 

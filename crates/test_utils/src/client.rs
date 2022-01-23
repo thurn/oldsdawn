@@ -420,11 +420,8 @@ impl ClientInterface {
             self.main_controls = None;
 
             if let Some(main_controls) = render.main_controls {
-                self.main_controls = main_controls.node
-            }
-
-            if !render.card_anchor_nodes.is_empty() {
-                self.card_anchors = render.card_anchor_nodes;
+                self.main_controls = main_controls.node;
+                self.card_anchors = main_controls.card_anchor_nodes;
             }
         }
     }

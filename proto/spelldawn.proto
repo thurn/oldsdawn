@@ -870,10 +870,6 @@ message InterfacePanel {
     Node node = 2;
 }
 
-message InterfaceMainControls {
-    Node node = 1;
-}
-
 enum CardNodeAnchorPosition {
     CARD_NODE_ANCHOR_POSITION_UNSPECIFIED = 0;
 
@@ -884,11 +880,40 @@ enum CardNodeAnchorPosition {
     CARD_NODE_ANCHOR_POSITION_RIGHT = 3;
 }
 
-/* Render an interface element attached to a specific card. */
+// Possible corners which can be anchored.
+enum AnchorCorner {
+    ANCHOR_CORNER_UNSPECIFIED = 0;
+    ANCHOR_CORNER_TOP_LEFT = 1;
+    ANCHOR_CORNER_TOP_RIGHT = 2;
+    ANCHOR_CORNER_BOTTOM_LEFT = 3;
+    ANCHOR_CORNER_BOTTOM_RIGHT = 4;
+}
+
+// Requests that a specific corner of a Node be anchored to a specific
+// corner of a card.
+message CardAnchor {
+    AnchorCorner node_corner = 1;
+    AnchorCorner card_corner = 2;
+}
+
+// Render an interface element attached to a specific card.
 message CardAnchorNode {
     CardIdentifier card_id = 1;
     Node node = 2;
     CardNodeAnchorPosition anchor_position = 3;
+
+    // Used to set the absolute position inset of 'node' to match corners of
+    // the identified card. Later anchors in this list overwrite earlier
+    // anchors in the case of a conflict.
+    repeated CardAnchor anchors = 4;
+}
+
+message InterfaceMainControls {
+    // Main controls area
+    Node node = 1;
+
+    // Controls for specific cards
+    repeated CardAnchorNode card_anchor_nodes = 3;
 }
 
 // Updates the content of the user interface.
@@ -899,10 +924,9 @@ message RenderInterfaceCommand {
     // of each known panel are cached and can then be opened immediately
     // via TogglePanelAction, without waiting for a server response.
     repeated InterfacePanel panels = 1;
+
     // Controls for game actions such as interface prompts
     InterfaceMainControls main_controls = 2;
-    // Controls for specific cards
-    repeated CardAnchorNode card_anchor_nodes = 3;
 }
 
 /* Updates the current GameView state. */

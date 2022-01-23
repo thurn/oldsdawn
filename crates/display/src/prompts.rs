@@ -17,13 +17,73 @@ use data::actions::{
     UserAction,
 };
 use data::game::GameState;
-use protos::spelldawn::{FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node};
+use data::primitives::CardId;
+use protos::spelldawn::{
+    AnchorCorner, CardAnchor, CardAnchorNode, CardNodeAnchorPosition, FlexAlign, FlexJustify,
+    FlexStyle, FlexWrap, InterfaceMainControls, Node, RenderInterfaceCommand,
+};
 use rules::queries;
+use ui::components::{Button, ButtonLines, ButtonVariant, Row, Text, TextVariant};
+use ui::core::*;
+use ui::icons;
 
-use crate::components::{Button, ButtonLines, ButtonVariant, Row, Text, TextVariant};
-use crate::core::*;
-use crate::icons;
-use crate::macros::children;
+use crate::adapters;
+
+pub fn action_prompt(game: &GameState, prompt: &Prompt) -> RenderInterfaceCommand {
+    let mut main_controls = vec![];
+    let mut card_anchor_nodes = vec![];
+
+    if let Some(label) = prompt_context(prompt.context) {
+        main_controls.push(child(Text {
+            label,
+            variant: TextVariant::PanelTitle,
+            ..Text::default()
+        }))
+    }
+
+    for response in &prompt.responses {
+        let button = response_button(game, *response);
+        if let Some(anchor_to_card) = button.anchor_to_card {
+            card_anchor_nodes.push(CardAnchorNode {
+                card_id: Some(adapters::adapt_card_id(anchor_to_card)),
+                node: Some(
+                    Row {
+                        style: FlexStyle {
+                            padding: top_px(8.0),
+                            justify_content: FlexJustify::Center.into(),
+                            align_items: FlexAlign::Center.into(),
+                            ..FlexStyle::default()
+                        },
+                        children: vec![button.child()],
+                        ..Row::default()
+                    }
+                    .render(),
+                ),
+                anchor_position: CardNodeAnchorPosition::Unspecified.into(),
+                anchors: vec![
+                    CardAnchor {
+                        node_corner: AnchorCorner::TopLeft.into(),
+                        card_corner: AnchorCorner::BottomLeft.into(),
+                    },
+                    CardAnchor {
+                        node_corner: AnchorCorner::TopRight.into(),
+                        card_corner: AnchorCorner::BottomRight.into(),
+                    },
+                ],
+            });
+        } else {
+            main_controls.push(child(button));
+        }
+    }
+
+    RenderInterfaceCommand {
+        panels: vec![],
+        main_controls: Some(InterfaceMainControls {
+            node: Some(node(PromptContainer { name: "Prompt", children: main_controls })),
+            card_anchor_nodes,
+        }),
+    }
+}
 
 /// Component to render a given [Prompt]
 #[derive(Debug, Clone)]
@@ -61,12 +121,13 @@ impl Component for WaitingPrompt {
     fn render(self) -> Node {
         node(PromptContainer {
             name: "WaitingPrompt",
-            children: children!(Text {
+            children: vec![Text {
                 label: "Waiting for Opponent...".to_string(),
                 variant: TextVariant::PanelTitle,
-                style: FlexStyle { margin: px_group_2(0.0, 16.0), ..FlexStyle::default() },
+                style: FlexStyle { margin: px_pair(0.0, 16.0), ..FlexStyle::default() },
                 ..Text::default()
-            }),
+            }
+            .child()],
             ..PromptContainer::default()
         })
     }
@@ -88,7 +149,7 @@ impl Component for PromptContainer {
                 flex_grow: Some(1.0),
                 align_items: FlexAlign::Center.into(),
                 wrap: FlexWrap::WrapReverse.into(),
-                margin: px_group_2(0.0, 16.0),
+                margin: px_pair(0.0, 16.0),
                 ..FlexStyle::default()
             },
             children: self.children,
@@ -111,7 +172,29 @@ fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
             encounter_action_button(game, encounter_action)
         }
         PromptAction::AdvanceAction(advance_action) => advance_action_button(advance_action),
-        _ => todo!("Not yet implemented"),
+        PromptAction::RaidScoreCard(card_id) => ResponseButton {
+            label: "Score!".to_string(),
+            anchor_to_card: Some(card_id),
+            ..ResponseButton::default()
+        },
+        PromptAction::RaidDestroyCard(card_id) => {
+            let cost = queries::shield(game, card_id);
+            ResponseButton {
+                label: if cost == 0 {
+                    "Raze".to_string()
+                } else {
+                    format!("{}{}: Raze", cost, icons::MANA)
+                },
+                anchor_to_card: Some(card_id),
+                ..ResponseButton::default()
+            }
+        }
+        PromptAction::EndRaid => ResponseButton {
+            label: "End Raid".to_string(),
+            primary: false,
+            shift_down: true,
+            ..ResponseButton::default()
+        },
     };
     ResponseButton { action: Some(response), ..button }
 }
@@ -120,14 +203,23 @@ fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
 #[derive(Debug, Clone)]
 struct ResponseButton {
     pub label: String,
+    pub anchor_to_card: Option<CardId>,
     pub primary: bool,
     pub two_lines: bool,
     pub action: Option<PromptAction>,
+    pub shift_down: bool,
 }
 
 impl Default for ResponseButton {
     fn default() -> Self {
-        Self { label: "".to_string(), primary: true, two_lines: false, action: None }
+        Self {
+            label: "".to_string(),
+            anchor_to_card: None,
+            primary: true,
+            two_lines: false,
+            action: None,
+            shift_down: false,
+        }
     }
 }
 
@@ -136,9 +228,19 @@ impl Component for ResponseButton {
         node(Button {
             label: self.label,
             variant: if self.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
-            action: self.action.and_then(|a| action(Some(UserAction::PromptAction(a)), None)),
+            action: self.action.and_then(|a| {
+                action(Some(UserAction::PromptAction(a)), ui::clear_main_controls_command())
+            }),
             lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },
-            style: FlexStyle { margin: px_group_2(0.0, 16.0), ..FlexStyle::default() },
+            style: FlexStyle {
+                margin: dimension_group_px(
+                    0.0,
+                    16.0,
+                    if self.shift_down { 200.0 } else { 0.0 },
+                    16.0,
+                ),
+                ..FlexStyle::default()
+            },
             ..Button::default()
         })
     }

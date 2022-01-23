@@ -21612,7 +21612,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _panel: 1
-  _isOpen: 0
 --- !u!65 &741407422
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -43956,7 +43955,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _userId: 1
   _currentGameId: 0
 --- !u!1 &1451530778
 GameObject:
@@ -46866,7 +46864,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _panel: 0
-  _isOpen: 0
 --- !u!65 &1543109783
 BoxCollider:
   m_ObjectHideFlags: 0

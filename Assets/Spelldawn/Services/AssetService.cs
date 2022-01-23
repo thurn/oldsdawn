@@ -137,11 +137,14 @@ namespace Spelldawn.Services
         LoadNodeAssets(requests, panel.Node);
       }
 
-      LoadNodeAssets(requests, command.MainControls?.Node);
-
-      foreach (var controlNode in command.CardAnchorNodes)
+      if (command.MainControls != null)
       {
-        LoadNodeAssets(requests, controlNode.Node);
+        LoadNodeAssets(requests, command.MainControls.Node);
+
+        foreach (var controlNode in command.MainControls.CardAnchorNodes)
+        {
+          LoadNodeAssets(requests, controlNode.Node);
+        }
       }
     }
 

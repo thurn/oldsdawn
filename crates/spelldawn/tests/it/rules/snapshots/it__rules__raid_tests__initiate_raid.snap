@@ -43,6 +43,96 @@ Ok(
                 },
                 GameCommand {
                     command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 1,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 0,
+                                        position: Some(
+                                            Raid(
+                                                ObjectPositionRaid,
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 2,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 1,
+                                        position: Some(
+                                            Raid(
+                                                ObjectPositionRaid,
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            Identity(
+                                                User,
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 2,
+                                        position: Some(
+                                            Raid(
+                                                ObjectPositionRaid,
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
                         RenderInterface(
                             RenderInterfaceCommand {
                                 panels: [],
@@ -300,99 +390,9 @@ Ok(
                                                 pressed_style: None,
                                             },
                                         ),
+                                        card_anchor_nodes: [],
                                     },
                                 ),
-                                card_anchor_nodes: [],
-                            },
-                        ),
-                    ),
-                },
-                GameCommand {
-                    command: Some(
-                        MoveGameObjects(
-                            MoveGameObjectsCommand {
-                                ids: [
-                                    GameObjectIdentifier {
-                                        id: Some(
-                                            CardId(
-                                                CardIdentifier {
-                                                    side: Overlord,
-                                                    index: 1,
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                ],
-                                position: Some(
-                                    ObjectPosition {
-                                        sorting_key: 0,
-                                        position: Some(
-                                            Raid(
-                                                ObjectPositionRaid,
-                                            ),
-                                        ),
-                                    },
-                                ),
-                                disable_animation: false,
-                            },
-                        ),
-                    ),
-                },
-                GameCommand {
-                    command: Some(
-                        MoveGameObjects(
-                            MoveGameObjectsCommand {
-                                ids: [
-                                    GameObjectIdentifier {
-                                        id: Some(
-                                            CardId(
-                                                CardIdentifier {
-                                                    side: Overlord,
-                                                    index: 2,
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                ],
-                                position: Some(
-                                    ObjectPosition {
-                                        sorting_key: 1,
-                                        position: Some(
-                                            Raid(
-                                                ObjectPositionRaid,
-                                            ),
-                                        ),
-                                    },
-                                ),
-                                disable_animation: false,
-                            },
-                        ),
-                    ),
-                },
-                GameCommand {
-                    command: Some(
-                        MoveGameObjects(
-                            MoveGameObjectsCommand {
-                                ids: [
-                                    GameObjectIdentifier {
-                                        id: Some(
-                                            Identity(
-                                                User,
-                                            ),
-                                        ),
-                                    },
-                                ],
-                                position: Some(
-                                    ObjectPosition {
-                                        sorting_key: 2,
-                                        position: Some(
-                                            Raid(
-                                                ObjectPositionRaid,
-                                            ),
-                                        ),
-                                    },
-                                ),
-                                disable_animation: false,
                             },
                         ),
                     ),
@@ -457,6 +457,96 @@ Ok(
                                                 raid_active: true,
                                             },
                                         ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 1,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 0,
+                                                position: Some(
+                                                    Raid(
+                                                        ObjectPositionRaid,
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 2,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 1,
+                                                position: Some(
+                                                    Raid(
+                                                        ObjectPositionRaid,
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    Identity(
+                                                        Opponent,
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 2,
+                                                position: Some(
+                                                    Raid(
+                                                        ObjectPositionRaid,
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
                                     },
                                 ),
                             ),
@@ -774,7 +864,27 @@ Ok(
                                                                                                 0,
                                                                                                 0,
                                                                                             ],
-                                                                                            update: None,
+                                                                                            update: Some(
+                                                                                                CommandList {
+                                                                                                    commands: [
+                                                                                                        GameCommand {
+                                                                                                            command: Some(
+                                                                                                                RenderInterface(
+                                                                                                                    RenderInterfaceCommand {
+                                                                                                                        panels: [],
+                                                                                                                        main_controls: Some(
+                                                                                                                            InterfaceMainControls {
+                                                                                                                                node: None,
+                                                                                                                                card_anchor_nodes: [],
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            ),
                                                                                             debug_payload: None,
                                                                                         },
                                                                                     ),
@@ -1074,7 +1184,27 @@ Ok(
                                                                                                 0,
                                                                                                 0,
                                                                                             ],
-                                                                                            update: None,
+                                                                                            update: Some(
+                                                                                                CommandList {
+                                                                                                    commands: [
+                                                                                                        GameCommand {
+                                                                                                            command: Some(
+                                                                                                                RenderInterface(
+                                                                                                                    RenderInterfaceCommand {
+                                                                                                                        panels: [],
+                                                                                                                        main_controls: Some(
+                                                                                                                            InterfaceMainControls {
+                                                                                                                                node: None,
+                                                                                                                                card_anchor_nodes: [],
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            ),
                                                                                             debug_payload: None,
                                                                                         },
                                                                                     ),
@@ -1293,99 +1423,9 @@ Ok(
                                                         pressed_style: None,
                                                     },
                                                 ),
+                                                card_anchor_nodes: [],
                                             },
                                         ),
-                                        card_anchor_nodes: [],
-                                    },
-                                ),
-                            ),
-                        },
-                        GameCommand {
-                            command: Some(
-                                MoveGameObjects(
-                                    MoveGameObjectsCommand {
-                                        ids: [
-                                            GameObjectIdentifier {
-                                                id: Some(
-                                                    CardId(
-                                                        CardIdentifier {
-                                                            side: Overlord,
-                                                            index: 1,
-                                                        },
-                                                    ),
-                                                ),
-                                            },
-                                        ],
-                                        position: Some(
-                                            ObjectPosition {
-                                                sorting_key: 0,
-                                                position: Some(
-                                                    Raid(
-                                                        ObjectPositionRaid,
-                                                    ),
-                                                ),
-                                            },
-                                        ),
-                                        disable_animation: false,
-                                    },
-                                ),
-                            ),
-                        },
-                        GameCommand {
-                            command: Some(
-                                MoveGameObjects(
-                                    MoveGameObjectsCommand {
-                                        ids: [
-                                            GameObjectIdentifier {
-                                                id: Some(
-                                                    CardId(
-                                                        CardIdentifier {
-                                                            side: Overlord,
-                                                            index: 2,
-                                                        },
-                                                    ),
-                                                ),
-                                            },
-                                        ],
-                                        position: Some(
-                                            ObjectPosition {
-                                                sorting_key: 1,
-                                                position: Some(
-                                                    Raid(
-                                                        ObjectPositionRaid,
-                                                    ),
-                                                ),
-                                            },
-                                        ),
-                                        disable_animation: false,
-                                    },
-                                ),
-                            ),
-                        },
-                        GameCommand {
-                            command: Some(
-                                MoveGameObjects(
-                                    MoveGameObjectsCommand {
-                                        ids: [
-                                            GameObjectIdentifier {
-                                                id: Some(
-                                                    Identity(
-                                                        Opponent,
-                                                    ),
-                                                ),
-                                            },
-                                        ],
-                                        position: Some(
-                                            ObjectPosition {
-                                                sorting_key: 2,
-                                                position: Some(
-                                                    Raid(
-                                                        ObjectPositionRaid,
-                                                    ),
-                                                ),
-                                            },
-                                        ),
-                                        disable_animation: false,
                                     },
                                 ),
                             ),

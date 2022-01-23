@@ -14,8 +14,10 @@
 
 use data::game::GameState;
 use data::primitives::Side;
+use prompts::WaitingPrompt;
 use protos::spelldawn::RenderInterfaceCommand;
-use ui::prompts::{ActionPrompt, WaitingPrompt};
+
+use crate::prompts;
 
 /// Returns a [RenderInterfaceCommand] to render the interface state for the
 /// provided `game`.
@@ -23,7 +25,7 @@ pub fn render(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
     if game.overlord.prompt.is_some() || game.champion.prompt.is_some() {
         render_prompt(game, user_side)
     } else {
-        ui::clear_interface()
+        ui::clear_main_controls()
     }
 }
 
@@ -31,6 +33,6 @@ pub fn render(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
 fn render_prompt(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
     game.player(user_side).prompt.as_ref().map_or_else(
         || ui::main_controls(WaitingPrompt {}),
-        |prompt| ui::main_controls(ActionPrompt { game, prompt }),
+        |prompt| prompts::action_prompt(game, prompt),
     )
 }

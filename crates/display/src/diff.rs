@@ -64,16 +64,17 @@ pub fn execute(
         ),
     );
 
-    if old.map(|old| &old.interface) != Some(&new.interface) {
-        commands.push(CommandPhase::Update, Command::RenderInterface(new.interface.clone()));
-    }
-
     diff_card_position_updates(
         commands,
         game,
         old.map(|old| &old.position_overrides),
         &new.position_overrides,
     );
+
+    if old.map(|old| &old.interface) != Some(&new.interface) {
+        commands
+            .push(CommandPhase::RenderInterface, Command::RenderInterface(new.interface.clone()));
+    }
 }
 
 fn diff_update_game_view_command(

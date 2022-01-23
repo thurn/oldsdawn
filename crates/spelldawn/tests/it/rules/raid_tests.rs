@@ -70,19 +70,19 @@ fn initiate_raid() {
         &response,
         vec![
             "UpdateGameView",
+            "MoveGameObjects",
+            "MoveGameObjects",
+            "MoveGameObjects",
             "RenderInterface",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "MoveGameObjects",
         ],
         vec![
             "VisitRoom",
             "Delay",
             "UpdateGameView",
+            "MoveGameObjects",
+            "MoveGameObjects",
+            "MoveGameObjects",
             "RenderInterface",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "MoveGameObjects",
         ],
     );
     assert!(g.user.interface.main_controls().has_text("Waiting"));

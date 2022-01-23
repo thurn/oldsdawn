@@ -901,15 +901,15 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       {
         RenderInterface = new RenderInterfaceCommand
         {
-          CardAnchorNodes =
-          {
-              new CardAnchorNode
-              {
-                CardId = id,
-                Node = Button(label, action: onClick, smallText: false, orange: true),
-                AnchorPosition = CardNodeAnchorPosition.Bottom
-              }
-          }
+          // CardAnchorNodes =
+          // {
+          //     new CardAnchorNode
+          //     {
+          //       CardId = id,
+          //       Node = Button(label, action: onClick, smallText: false, orange: true),
+          //       AnchorPosition = CardNodeAnchorPosition.Bottom
+          //     }
+          // }
         }
       };
     }

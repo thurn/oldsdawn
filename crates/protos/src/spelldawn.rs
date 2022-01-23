@@ -839,10 +839,14 @@ pub struct InterfacePanel {
     #[prost(message, optional, tag = "2")]
     pub node: ::core::option::Option<Node>,
 }
+/// Requests that a specific corner of a Node be anchored to a specific
+/// corner of a card.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct InterfaceMainControls {
-    #[prost(message, optional, tag = "1")]
-    pub node: ::core::option::Option<Node>,
+pub struct CardAnchor {
+    #[prost(enumeration = "AnchorCorner", tag = "1")]
+    pub node_corner: i32,
+    #[prost(enumeration = "AnchorCorner", tag = "2")]
+    pub card_corner: i32,
 }
 /// Render an interface element attached to a specific card.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -853,6 +857,20 @@ pub struct CardAnchorNode {
     pub node: ::core::option::Option<Node>,
     #[prost(enumeration = "CardNodeAnchorPosition", tag = "3")]
     pub anchor_position: i32,
+    /// Used to set the absolute position inset of 'node' to match corners of
+    /// the identified card. Later anchors in this list overwrite earlier
+    /// anchors in the case of a conflict.
+    #[prost(message, repeated, tag = "4")]
+    pub anchors: ::prost::alloc::vec::Vec<CardAnchor>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct InterfaceMainControls {
+    /// Main controls area
+    #[prost(message, optional, tag = "1")]
+    pub node: ::core::option::Option<Node>,
+    /// Controls for specific cards
+    #[prost(message, repeated, tag = "3")]
+    pub card_anchor_nodes: ::prost::alloc::vec::Vec<CardAnchorNode>,
 }
 /// Updates the content of the user interface.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -867,9 +885,6 @@ pub struct RenderInterfaceCommand {
     /// Controls for game actions such as interface prompts
     #[prost(message, optional, tag = "2")]
     pub main_controls: ::core::option::Option<InterfaceMainControls>,
-    /// Controls for specific cards
-    #[prost(message, repeated, tag = "3")]
-    pub card_anchor_nodes: ::prost::alloc::vec::Vec<CardAnchorNode>,
 }
 /// Updates the current GameView state.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1376,6 +1391,16 @@ pub enum CardNodeAnchorPosition {
     Bottom = 1,
     Left = 2,
     Right = 3,
+}
+/// Possible corners which can be anchored.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AnchorCorner {
+    Unspecified = 0,
+    TopLeft = 1,
+    TopRight = 2,
+    BottomLeft = 3,
+    BottomRight = 4,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

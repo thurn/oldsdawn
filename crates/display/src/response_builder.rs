@@ -23,6 +23,7 @@ pub enum CommandPhase {
     Update,
     Animate,
     Move,
+    RenderInterface,
 }
 
 /// Keeps track of [Command]s required to update the client

@@ -21,7 +21,7 @@ use data::actions::{
     ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
 };
 use data::game::{GameState, RaidPhase};
-use data::primitives::{CardId, RoomId, Side};
+use data::primitives::{CardId, CardType, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use if_chain::if_chain;
 use tracing::{info, instrument};
@@ -60,7 +60,7 @@ pub fn activate_room_action(
     game.raid_mut()?.active = data == ActivateRoomAction::Activate;
 
     if defender_count == 0 {
-        return initiate_access_phase(game, user_side);
+        return initiate_access_phase(game);
     }
 
     game.raid_mut()?.phase = RaidPhase::Encounter(defender_count - 1);
@@ -139,7 +139,7 @@ pub fn encounter_action(
     }
 
     if encounter_number == 0 {
-        initiate_access_phase(game, user_side)?;
+        initiate_access_phase(game)?;
     } else {
         game.raid_mut()?.phase = RaidPhase::Continue(encounter_number - 1);
         mutations::set_prompt(
@@ -204,7 +204,7 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
 
 /// Invoked once all of the defenders for a room during a raid (if any) have
 /// been passed.
-fn initiate_access_phase(game: &mut GameState, _user_side: Side) -> Result<()> {
+fn initiate_access_phase(game: &mut GameState) -> Result<()> {
     game.raid_mut()?.phase = RaidPhase::Access;
     let target = game.raid()?.target;
 
@@ -223,8 +223,36 @@ fn initiate_access_phase(game: &mut GameState, _user_side: Side) -> Result<()> {
             for occupant_id in occupants {
                 mutations::set_revealed(game, occupant_id, true);
             }
+
+            mutations::set_prompt(
+                game,
+                Side::Champion,
+                Prompt {
+                    context: None,
+                    responses: game
+                        .occupants(target)
+                        .filter_map(|c| access_prompt_for_card(game, c.id))
+                        .chain(iter::once(PromptAction::EndRaid))
+                        .collect(),
+                },
+            )
         }
     }
 
     Ok(())
+}
+
+/// Returns a [PromptAction] for the Champion to access the provided `card_id`,
+/// if any action can be taken.
+fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAction> {
+    let definition = crate::card_definition(game, card_id);
+    match definition.card_type {
+        CardType::Scheme => Some(PromptAction::RaidScoreCard(card_id)),
+        CardType::Project | CardType::Upgrade
+            if flags::can_destroy_accessed_card(game, card_id) =>
+        {
+            Some(PromptAction::RaidDestroyCard(card_id))
+        }
+        _ => None,
+    }
 }

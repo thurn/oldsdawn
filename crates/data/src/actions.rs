@@ -58,7 +58,7 @@ pub enum PromptAction {
     /// Action to score an accessed card
     RaidScoreCard(CardId),
     /// Action to end a raid after the access phase
-    RaidEnd,
+    EndRaid,
 }
 
 /// Presents a choice to a user, typically communicated via a series of buttons

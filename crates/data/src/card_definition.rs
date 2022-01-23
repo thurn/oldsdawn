@@ -65,7 +65,7 @@ pub struct SchemePoints {
 pub struct CardStats {
     /// Damage required to destroy this card
     pub health: Option<HealthValue>,
-    /// Mana cost required in order to attack this card
+    /// Mana cost required in order to interact with this card
     pub shield: Option<ShieldValue>,
     /// Base damage dealt by this card during an encounter
     pub base_attack: Option<AttackValue>,

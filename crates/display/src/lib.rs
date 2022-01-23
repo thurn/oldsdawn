@@ -33,6 +33,7 @@ pub mod assets;
 pub mod diff;
 pub mod full_sync;
 pub mod interface;
+pub mod prompts;
 pub mod response_builder;
 pub mod rules_text;
 
