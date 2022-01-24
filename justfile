@@ -1,7 +1,5 @@
 code-review: git-status check-format build clippy test check-docs outdated
 
-fix: fix-lints fmt fix-clippy
-
 clean:
     cargo clean
     mkdir target
@@ -26,6 +24,10 @@ test-backtrace:
     RUST_BACKTRACE=1 && cargo +nightly test
 doc:
     cargo doc
+
+fix: git-status fix-lints fmt fix-clippy
+
+fix-amend: git-status fix-lints git-amend1 fmt git-amend2 fix-clippy git-amend3
 
 clippy:
     cargo clippy --workspace --exclude "protos" -- \
@@ -166,3 +168,12 @@ coverage: gen-gcda
 git-status:
     git diff-index --quiet HEAD --
     git ls-files --exclude-standard --others
+
+git-amend1:
+    git commit -a --amend -C HEAD
+
+git-amend2:
+    git commit -a --amend -C HEAD
+
+git-amend3:
+    git commit -a --amend -C HEAD

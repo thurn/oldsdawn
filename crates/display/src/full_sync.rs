@@ -59,17 +59,23 @@ pub struct FullSync {
 /// If [CardCreationStrategy] values are provided in the `card_creation` map,
 /// these override the default card creation behavior of placing cards in their
 /// current game position.
-pub fn run(
-    game: &GameState,
-    user_side: Side,
-    card_creation: HashMap<CardId, CardCreationStrategy>,
-) -> FullSync {
+pub fn run(game: &GameState, user_side: Side) -> FullSync {
     FullSync {
         game: update_game_view(game, user_side),
         cards: game
             .all_cards()
             .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
-            .map(|c| (c.id, create_or_update_card(game, c, user_side, &card_creation)))
+            .map(|c| {
+                (
+                    c.id,
+                    create_or_update_card(
+                        game,
+                        c,
+                        user_side,
+                        CardCreationStrategy::SnapToCurrentPosition,
+                    ),
+                )
+            })
             .collect(),
         interface: interface::render(game, user_side),
         position_overrides: position_overrides(game, user_side),
@@ -137,17 +143,15 @@ pub enum CardCreationStrategy {
 }
 
 /// Creates a command to create or update a card.
-fn create_or_update_card(
+pub fn create_or_update_card(
     game: &GameState,
     card: &CardState,
     user_side: Side,
-    card_creation: &HashMap<CardId, CardCreationStrategy>,
+    creation_strategy: CardCreationStrategy,
 ) -> CreateOrUpdateCardCommand {
     let definition = rules::get(card.name);
     let revealed = card.is_revealed_to(user_side);
-    let creation_strategy =
-        card_creation.get(&card.id).unwrap_or(&CardCreationStrategy::SnapToCurrentPosition);
-    let create_animation = if *creation_strategy == CardCreationStrategy::DrawUserCard {
+    let create_animation = if creation_strategy == CardCreationStrategy::DrawUserCard {
         CardCreationAnimation::DrawCard.into()
     } else {
         CardCreationAnimation::Unspecified.into()
@@ -155,7 +159,7 @@ fn create_or_update_card(
     let position = match creation_strategy {
         CardCreationStrategy::DrawUserCard => None,
         CardCreationStrategy::SnapToCurrentPosition => adapt_position(card, user_side),
-        CardCreationStrategy::CreateAtPosition(p) => Some(p.clone()),
+        CardCreationStrategy::CreateAtPosition(p) => Some(p),
     };
 
     CreateOrUpdateCardCommand {

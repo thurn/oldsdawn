@@ -72,8 +72,9 @@ fn draw_card() {
     assert_commands_match(
         &response,
         vec![
-            "UpdateGameView",     // Spend mana & actions
             "CreateOrUpdateCard", // Create card on top of deck
+            "UpdateGameView",     // Spend mana & actions
+            "CreateOrUpdateCard", // Update card state in full sync
             "MoveGameObjects",    // Move card to hand
         ],
     );

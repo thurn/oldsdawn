@@ -15,12 +15,9 @@
 //! Converts internal game state representation into a format the client can
 //! understand
 
-use std::collections::HashMap;
-
 use dashmap::DashMap;
 use data::game::GameState;
 use data::primitives::{PlayerId, Side};
-use data::updates::GameUpdate;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_command::Command;
 
@@ -51,7 +48,7 @@ pub fn on_disconnect(player_id: PlayerId) {
 /// updates via [render_updates].
 pub fn connect(game: &GameState, user_side: Side) -> Vec<Command> {
     let user_id = game.player(user_side).id;
-    let sync = full_sync::run(game, user_side, HashMap::new());
+    let sync = full_sync::run(game, user_side);
     let mut builder = ResponseBuilder::new(user_side, false /* animate */);
     diff::execute(&mut builder, game, None, &sync);
     RESPONSES.insert(user_id, sync);
@@ -78,18 +75,7 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<Command> {
     let user_id = game.player(user_side).id;
     let mut builder = ResponseBuilder::new(user_side, true /* animate */);
 
-    // Some animations need to modify the game sync behavior -- for example, for
-    // the 'draw card' animation, we cause the card to initially appear on top
-    // of the user's deck, even though this card is really in the user's hand.
-    let mut card_creation = HashMap::new();
-    for update in updates {
-        if let GameUpdate::DrawCard(card_id) = update {
-            card_creation
-                .insert(*card_id, animations::card_draw_creation_strategy(user_side, *card_id));
-        }
-    }
-
-    let sync = full_sync::run(game, user_side, card_creation);
+    let sync = full_sync::run(game, user_side);
 
     let previous_response = RESPONSES.get(&user_id).map(|r| r.value());
     diff::execute(&mut builder, game, previous_response, &sync);

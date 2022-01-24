@@ -59,7 +59,10 @@ pub fn render(
         GameUpdate::StartTurn(side) => {
             start_turn(commands, side);
         }
-        GameUpdate::DrawCard(card_id) | GameUpdate::MoveCard(card_id) => {
+        GameUpdate::DrawCard(card_id) => {
+            draw_card(commands, game, user_side, card_id);
+        }
+        GameUpdate::MoveCard(card_id) => {
             move_card(commands, game.card(card_id));
         }
         GameUpdate::RevealCard(card_id) => {
@@ -78,8 +81,8 @@ pub fn render(
 
 /// Builds a [CardCreationStrategy] for representing the provided `card_id`
 /// being drawn.
-pub fn card_draw_creation_strategy(user_side: Side, card_id: CardId) -> CardCreationStrategy {
-    if card_id.side == user_side {
+fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, card_id: CardId) {
+    let creation_strategy = if card_id.side == user_side {
         CardCreationStrategy::DrawUserCard
     } else {
         CardCreationStrategy::CreateAtPosition(ObjectPosition {
@@ -88,7 +91,19 @@ pub fn card_draw_creation_strategy(user_side: Side, card_id: CardId) -> CardCrea
                 owner: PlayerName::Opponent.into(),
             })),
         })
-    }
+    };
+
+    commands.push(
+        CommandPhase::PreUpdate,
+        Command::CreateOrUpdateCard(full_sync::create_or_update_card(
+            game,
+            game.card(card_id),
+            user_side,
+            creation_strategy,
+        )),
+    );
+
+    move_card(commands, game.card(card_id));
 }
 
 /// Appends a move card command to move a card to its current location. Skips
