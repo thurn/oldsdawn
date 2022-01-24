@@ -18,7 +18,7 @@ use data::card_definition::{Ability, AbilityType};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use data::game::GameState;
-use data::primitives::{AttackValue, CardId, DamageType, DamageTypeTrait, ManaValue, Side};
+use data::primitives::{AttackValue, CardId, DamageTypeTrait, ManaValue, Side};
 use data::text::{AbilityText, Keyword, TextToken};
 
 use crate::card_text::text;
@@ -66,10 +66,13 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
 }
 
 /// Discard a random card from the hand of the `side` player, if there are any
-/// cards present.
-pub fn discard_random_card(game: &mut GameState, side: Side, _damage_type: DamageType) {
+/// cards present. Invokes the `on_empty` function if a card cannot be
+/// discarded.
+pub fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&mut GameState)) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
         mutations::move_card(game, card_id, CardPosition::DiscardPile(side));
+    } else {
+        on_empty(game);
     }
 }
 
@@ -79,14 +82,16 @@ pub fn discard_random_card(game: &mut GameState, side: Side, _damage_type: Damag
 pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
     combat(text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())], |g, _, _| {
         for _ in 0..N {
-            discard_random_card(g, Side::Champion, TDamage::damage_type());
+            discard_random_card(g, Side::Champion, |g| {
+                panic!("Game Over {:?} with {:?}", g.id, TDamage::damage_type())
+            });
         }
     })
 }
 
 /// Minion combat ability which ends the current raid.
 pub fn end_raid() -> Ability {
-    combat(text![Keyword::Combat, "End the raid."], |g, _, _| {
+    combat(text![Keyword::Combat, Keyword::EndRaid], |g, _, _| {
         mutations::end_raid(g);
     })
 }

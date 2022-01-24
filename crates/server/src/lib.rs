@@ -14,7 +14,7 @@
 
 //! Top-level server response handling
 
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, ensure, Context, Result};
 use dashmap::DashMap;
 use data::actions::UserAction;
 use data::card_name::CardName;
@@ -22,6 +22,7 @@ use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
 use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::UpdateTracker;
+use data::with_error::WithError;
 use display::adapters;
 use maplit::hashmap;
 use once_cell::sync::Lazy;
@@ -284,8 +285,9 @@ fn handle_standard_action(
     game_id: Option<GameId>,
     standard_action: &StandardAction,
 ) -> Result<GameResponse> {
+    ensure!(!standard_action.payload.is_empty(), "Empty action payload received");
     let action: UserAction = bincode::deserialize(&standard_action.payload)
-        .with_context(|| "Failed to deserialize action payload")?;
+        .with_error(|| "Failed to deserialize action payload")?;
     match action {
         UserAction::DebugAction(debug_action) => {
             debug::handle_debug_action(database, player_id, game_id, debug_action)

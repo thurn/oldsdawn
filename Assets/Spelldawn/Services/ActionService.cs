@@ -216,6 +216,13 @@ namespace Spelldawn.Services
       // Introduce simulated server delay
       yield return new WaitForSeconds(Random.Range(0.1f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
 
+      if (IsClientOnlyAction(action))
+      {
+        // Client-only action, do not send to server
+        _currentlyHandlingAction = false;
+        yield break;
+      }
+      
       // Send to server
       if (_fakeActionResponse)
       {
@@ -315,5 +322,13 @@ namespace Spelldawn.Services
 
       return _registry.ObjectPositionService.MoveGameObject(card, position);
     }
+
+    static bool IsClientOnlyAction(GameAction action) => action.ActionCase switch
+    {
+      GameAction.ActionOneofCase.None => true,
+      GameAction.ActionOneofCase.StandardAction => action.StandardAction.Payload.Length == 0,
+      GameAction.ActionOneofCase.TogglePanel => !action.TogglePanel.Open,
+      _ => false
+    };
   }
 }

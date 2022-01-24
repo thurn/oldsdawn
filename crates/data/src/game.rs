@@ -14,7 +14,7 @@
 
 //! Core data structures for tracking the state of an ongoing game.
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
@@ -26,6 +26,7 @@ use crate::primitives::{
     RoomLocation, Side, TurnNumber,
 };
 use crate::updates::UpdateTracker;
+use crate::with_error::WithError;
 
 /// State of a player within a game, containing their score and available
 /// resources
@@ -330,12 +331,12 @@ impl GameState {
     /// Helper method to return the current [RaidData] or an error when one is
     /// expected to exist.
     pub fn raid(&self) -> Result<&RaidData> {
-        self.data.raid.as_ref().with_context(|| "Expected Raid")
+        self.data.raid.as_ref().with_error(|| "Expected Raid")
     }
 
     /// Mutable version of [Self::raid].
     pub fn raid_mut(&mut self) -> Result<&mut RaidData> {
-        self.data.raid.as_mut().with_context(|| "Expected Raid")
+        self.data.raid.as_mut().with_error(|| "Expected Raid")
     }
 
     /// Create card states for a deck

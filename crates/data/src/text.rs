@@ -66,6 +66,7 @@ pub enum Keyword {
     Combat,
     Store(u32),
     DealDamage(u32, DamageType),
+    EndRaid,
 }
 
 impl Keyword {

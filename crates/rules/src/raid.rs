@@ -21,14 +21,14 @@ use data::actions::{
     ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
 };
 use data::card_state::CardPosition;
-use data::delegates::{ChampionScoreCardEvent, RaidEndEvent};
+use data::delegates::{ChampionScoreCardEvent, MinionCombatAbilityEvent};
 use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use if_chain::if_chain;
 use tracing::{info, instrument};
 
-use crate::{actions, dispatch, flags, mutations, queries};
+use crate::{dispatch, flags, mutations, queries};
 
 #[instrument(skip(game))]
 pub fn initiate_raid_action(
@@ -56,9 +56,7 @@ pub fn activate_room_action(
         user_side
     );
 
-    let defender_count = game
-        .defenders_alphabetical(game.data.raid.with_context(|| "No active raid")?.target)
-        .count();
+    let defender_count = game.defenders_alphabetical(game.raid()?.target).count();
     game.raid_mut()?.active = data == ActivateRoomAction::Activate;
 
     if defender_count == 0 {
@@ -67,8 +65,7 @@ pub fn activate_room_action(
 
     game.raid_mut()?.phase = RaidPhase::Encounter(defender_count - 1);
     let target = game.raid()?.target;
-    let defender_id =
-        game.defender_list(target).get(defender_count - 1).with_context(|| "No defender")?.id;
+    let defender_id = find_defender(game, target, defender_count - 1)?;
 
     if_chain! {
         if let Some(cost) = queries::mana_cost(game, defender_id);
@@ -118,7 +115,7 @@ pub fn encounter_action(
         user_side
     );
 
-    let encounter_number = match game.data.raid.with_context(|| "Expected Raid")?.phase {
+    let encounter_number = match game.raid()?.phase {
         RaidPhase::Encounter(n) => n,
         _ => bail!("Expected Encounter phase"),
     };
@@ -136,12 +133,21 @@ pub fn encounter_action(
             }))
         }
         EncounterAction::Continue => {
-            todo!("Fire weapon effects")
+            let target = game.raid()?.target;
+            let defender_id = find_defender(game, target, encounter_number)?;
+            dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id));
+            game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
+                source: InteractionObjectId::CardId(defender_id),
+                target: InteractionObjectId::Identity(Side::Champion),
+            }));
         }
     }
 
-    if encounter_number == 0 {
-        initiate_access_phase(game)?;
+    if game.data.raid.is_none() {
+        // Raid may have been ended by an ability.
+        Ok(())
+    } else if encounter_number == 0 {
+        initiate_access_phase(game)
     } else {
         game.raid_mut()?.phase = RaidPhase::Continue(encounter_number - 1);
         mutations::set_prompt(
@@ -155,9 +161,8 @@ pub fn encounter_action(
                 ],
             },
         );
+        Ok(())
     }
-
-    Ok(())
 }
 
 #[instrument(skip(game))]
@@ -213,12 +218,7 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
         user_side
     );
 
-    let raid = *game.raid()?;
-    game.data.raid = None;
-    dispatch::invoke_event(game, RaidEndEvent(raid));
-    game.updates.push(GameUpdate::EndRaid);
-
-    actions::check_end_turn(game, user_side)?;
+    mutations::end_raid(game);
     Ok(())
 }
 
@@ -293,4 +293,8 @@ fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAct
         }
         _ => None,
     }
+}
+
+fn find_defender(game: &GameState, room_id: RoomId, index: usize) -> Result<CardId> {
+    Ok(game.defender_list(room_id).get(index).with_context(|| "Defender Not Found")?.id)
 }

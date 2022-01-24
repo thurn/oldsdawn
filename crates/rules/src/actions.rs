@@ -46,7 +46,8 @@ pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
     let card = queries::top_of_deck(game, user_side).with_context(|| "Deck is empty!")?;
     mutations::spend_action_points(game, user_side, 1);
     mutations::move_card(game, card, CardPosition::Hand(user_side));
-    check_end_turn(game, user_side)
+    check_end_turn(game, user_side);
+    Ok(())
 }
 
 /// Possible targets for the 'play card' action. Note that many types of targets
@@ -120,7 +121,8 @@ pub fn play_card_action(
 
     mutations::move_card(game, card_id, new_position);
 
-    check_end_turn(game, user_side)
+    check_end_turn(game, user_side);
+    Ok(())
 }
 
 /// The basic game action to gain 1 mana during your turn by spending one
@@ -135,7 +137,8 @@ pub fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     );
     mutations::spend_action_points(game, user_side, 1);
     mutations::gain_mana(game, user_side, 1);
-    check_end_turn(game, user_side)
+    check_end_turn(game, user_side);
+    Ok(())
 }
 
 /// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
@@ -166,15 +169,14 @@ pub fn handle_prompt_action(
     }
 }
 
-/// Invoked after taking a primary game action to check if the turn should be
-/// switched.
-pub fn check_end_turn(game: &mut GameState, user_side: Side) -> Result<()> {
-    ensure!(game.data.turn == user_side, "Not currently {:?}'s turn", user_side);
-    if game.player(user_side).actions == 0 {
-        let new_turn = user_side.opponent();
+/// Invoked after taking a game action to check if the turn should be
+/// switched for the provided player.
+pub fn check_end_turn(game: &mut GameState, side: Side) {
+    if game.data.turn == side && game.player(side).actions == 0 {
+        let new_turn = side.opponent();
         info!(?new_turn, "start_player_turn");
         game.data.turn = new_turn;
-        if user_side == Side::Champion {
+        if side == Side::Champion {
             game.data.turn_number += 1;
             dispatch::invoke_event(game, DuskEvent(game.data.turn_number));
         } else {
@@ -183,5 +185,4 @@ pub fn check_end_turn(game: &mut GameState, user_side: Side) -> Result<()> {
         game.player_mut(new_turn).actions = queries::start_of_turn_action_count(game, new_turn);
         game.updates.push(GameUpdate::StartTurn(new_turn));
     }
-    Ok(())
 }

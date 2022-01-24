@@ -95,6 +95,7 @@ fn ability_text(tokens: &[TextToken]) -> String {
                         DamageType::Cold => "cold",
                     }
                 ),
+                Keyword::EndRaid => "End the raid.".to_string(),
             },
             TextToken::Cost(cost) => format!("{}: ", ability_text(cost)),
         })
@@ -152,27 +153,45 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
     keywords.dedup();
 
     for keyword in keywords {
-        output.push(match keyword {
+        match keyword {
             KeywordKind::Play => {
-                "\u{f0e7}<b>Play:</b> Triggers when this card enters the arena.".to_string()
+                output.push(
+                    "\u{f0e7}<b>Play:</b> Triggers when this card enters the arena.".to_string(),
+                );
             }
             KeywordKind::Dawn => {
-                "\u{f0e7}<b>Dawn:</b> Triggers at the start of the Champion's turn.".to_string()
+                output.push(
+                    "\u{f0e7}<b>Dawn:</b> Triggers at the start of the Champion's turn."
+                        .to_string(),
+                );
             }
             KeywordKind::Dusk => {
-                "\u{f0e7}<b>Dusk:</b> Triggers at the start of the Overlord's turn.".to_string()
+                output.push(
+                    "\u{f0e7}<b>Dusk:</b> Triggers at the start of the Overlord's turn."
+                        .to_string(),
+                );
             }
             KeywordKind::Score => {
-                "\u{f0e7}<b>Score:</b> Triggers when the Overlord scores this card.".to_string()
+                output.push(
+                    "\u{f0e7}<b>Score:</b> Triggers when the Overlord scores this card."
+                        .to_string(),
+                );
             }
             KeywordKind::Combat => {
-                "\u{f0e7}<b>Combat:</b> Triggers if this minion is not defeated in combat."
-                    .to_string()
+                output.push(
+                    "\u{f0e7}<b>Combat:</b> Triggers if this minion is not defeated in combat."
+                        .to_string(),
+                );
             }
-            KeywordKind::Store => "<b>Store</b> Put \u{f06d} into this card.".to_string(),
+            KeywordKind::Store => {
+                output.push("<b>Store</b> Put \u{f06d} into this card.".to_string());
+            }
             KeywordKind::DealDamage => {
-                "<b>Damage</b>: Causes the Champion to discard cards at random.".to_string()
+                output.push(
+                    "<b>Damage</b>: Causes the Champion to discard cards at random.".to_string(),
+                );
             }
-        });
+            _ => {}
+        };
     }
 }

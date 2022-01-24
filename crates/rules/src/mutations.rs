@@ -33,7 +33,7 @@ use data::primitives::{ActionCount, BoostData, CardId, ManaValue, RaidId, RoomId
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
-use crate::dispatch;
+use crate::{actions, dispatch};
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events appropriately
@@ -181,11 +181,13 @@ pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
 }
 
 /// Ends the current raid. Panics if no raid is currently active. Appends
-/// [GameUpdate::EndRaid].
+/// [GameUpdate::EndRaid]. [GameUpdate::EndRaid].
 #[instrument(skip(game))]
 pub fn end_raid(game: &mut GameState) {
     info!("end_raid");
+    let raid = *game.raid().expect("Active raid");
     game.data.raid = None;
-    dispatch::invoke_event(game, RaidEndEvent(game.data.raid.expect("Active raid")));
+    dispatch::invoke_event(game, RaidEndEvent(raid));
     game.updates.push(GameUpdate::EndRaid);
+    actions::check_end_turn(game, Side::Champion);
 }

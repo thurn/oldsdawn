@@ -197,7 +197,7 @@ fn apply_projectile(
 ) {
     if let (InteractionObjectId::CardId(card_id), _) = (interaction.source, interaction.target) {
         let effects = &rules::card_definition(game, card_id).config.special_effects;
-        if let Some(projectile) = effects.custom_projectile {
+        if let Some(projectile) = effects.projectile {
             command.projectile = Some(assets::projectile(projectile));
         }
         if let Some(additional_hit) = effects.additional_hit {

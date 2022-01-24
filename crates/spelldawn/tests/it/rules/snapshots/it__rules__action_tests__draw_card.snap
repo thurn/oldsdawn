@@ -92,7 +92,7 @@ Ok(
                                                 ),
                                                 rules_text: Some(
                                                     RulesText {
-                                                        text: "<b>\u{f0e7}Combat:</b> Deal 2 cold damage.\n<b>\u{f0e7}Combat:</b> End the raid.",
+                                                        text: "<b>\u{f0e7}Combat:</b> Deal 1 cold damage.\n<b>\u{f0e7}Combat:</b> End the raid.",
                                                     },
                                                 ),
                                                 revealed_in_arena: false,
@@ -1188,7 +1188,7 @@ Ok(
                                                 ),
                                                 rules_text: Some(
                                                     RulesText {
-                                                        text: "<b>\u{f0e7}Combat:</b> Deal 2 cold damage.\n<b>\u{f0e7}Combat:</b> End the raid.",
+                                                        text: "<b>\u{f0e7}Combat:</b> Deal 1 cold damage.\n<b>\u{f0e7}Combat:</b> End the raid.",
                                                     },
                                                 ),
                                                 revealed_in_arena: false,

@@ -33,7 +33,7 @@ pub fn ice_dragon() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![abilities::deal_damage::<ColdDamage, 2>(), abilities::end_raid()],
+        abilities: vec![abilities::deal_damage::<ColdDamage, 1>(), abilities::end_raid()],
         config: CardConfig {
             stats: health(5),
             faction: Some(Faction::Infernal),

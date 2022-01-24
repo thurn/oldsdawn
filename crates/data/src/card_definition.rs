@@ -102,8 +102,8 @@ pub struct Ability {
 /// Describes custom visual & audio effects for this card
 #[derive(Debug, Default)]
 pub struct SpecialEffects {
-    /// Custom projectile to be fired by this card during targeted interactions
-    pub custom_projectile: Option<Projectile>,
+    /// Projectile to be fired by this card during targeted interactions
+    pub projectile: Option<Projectile>,
     /// Additional hit effect after primary projectile impact
     pub additional_hit: Option<TimedEffect>,
 }
