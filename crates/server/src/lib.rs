@@ -248,7 +248,9 @@ pub fn handle_connect(
     };
 
     let side = user_side(player_id, &game)?;
-    Ok(display::connect(&game, side))
+    let mut commands = display::connect(&game, side);
+    panels::render_standard_panels(&mut commands)?;
+    Ok(command_list(commands))
 }
 
 /// Queries the [GameState] for a game from the [Database] and then invokes the
@@ -269,9 +271,9 @@ fn handle_action(
     let opponent_id = game.player(user_side.opponent()).id;
 
     let channel_response =
-        Some((opponent_id, display::render_updates(&game, user_side.opponent())));
+        Some((opponent_id, command_list(display::render_updates(&game, user_side.opponent()))));
     database.write_game(&game)?;
-    Ok(GameResponse { command_list: user_result, channel_response })
+    Ok(GameResponse { command_list: command_list(user_result), channel_response })
 }
 
 /// Parses the serialized payload in a [StandardAction] and dispatches to the
@@ -350,6 +352,12 @@ fn card_target(target: &Option<CardTarget>) -> PlayCardTarget {
             }
         })
     })
+}
+
+fn command_list(commands: Vec<Command>) -> CommandList {
+    CommandList {
+        commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
+    }
 }
 
 fn to_server_game_id(game_id: &Option<GameIdentifier>) -> Option<GameId> {

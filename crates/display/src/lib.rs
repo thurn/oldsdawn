@@ -22,7 +22,7 @@ use data::game::GameState;
 use data::primitives::{PlayerId, Side};
 use data::updates::GameUpdate;
 use once_cell::sync::Lazy;
-use protos::spelldawn::CommandList;
+use protos::spelldawn::game_command::Command;
 
 use crate::full_sync::FullSync;
 use crate::response_builder::ResponseBuilder;
@@ -49,7 +49,7 @@ pub fn on_disconnect(player_id: PlayerId) {
 /// the state of the provided `game`, returning a command to update the state of
 /// every active game object. Caches the response for use by future incremental
 /// updates via [render_updates].
-pub fn connect(game: &GameState, user_side: Side) -> CommandList {
+pub fn connect(game: &GameState, user_side: Side) -> Vec<Command> {
     let user_id = game.player(user_side).id;
     let sync = full_sync::run(game, user_side, HashMap::new());
     let mut builder = ResponseBuilder::new(user_side, false /* animate */);
@@ -73,7 +73,7 @@ pub fn connect(game: &GameState, user_side: Side) -> CommandList {
 /// 3) Any animations required on top of the basic game object state sync are
 /// added, by calling [animations::render]. The animation system is responsible
 /// for tasks like moving cards around and playing visual effects.
-pub fn render_updates(game: &GameState, user_side: Side) -> CommandList {
+pub fn render_updates(game: &GameState, user_side: Side) -> Vec<Command> {
     let updates = game.updates.list().expect("Update tracking is not enabled");
     let user_id = game.player(user_side).id;
     let mut builder = ResponseBuilder::new(user_side, true /* animate */);

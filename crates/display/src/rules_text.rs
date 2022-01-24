@@ -96,7 +96,7 @@ fn ability_text(tokens: &[TextToken]) -> String {
                     }
                 ),
             },
-            TextToken::Cost(cost) => ability_text(cost),
+            TextToken::Cost(cost) => format!("{}: ", ability_text(cost)),
         })
     }
 

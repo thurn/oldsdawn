@@ -18,7 +18,14 @@
 pub mod debug_panel;
 
 use anyhow::{bail, Result};
+use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{InterfacePanel, PanelAddress, RenderInterfaceCommand};
+
+/// Appends commands to `commands` to render commonly-used panels.
+pub fn render_standard_panels(commands: &mut Vec<Command>) -> Result<()> {
+    commands.push(Command::RenderInterface(render_panel(PanelAddress::DebugPanel)?));
+    Ok(())
+}
 
 /// Primary entry-point for panels. Given a [PanelAddress], creates its UI
 /// hierarchy.

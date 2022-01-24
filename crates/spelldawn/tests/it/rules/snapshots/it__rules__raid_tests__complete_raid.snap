@@ -1,0 +1,197 @@
+---
+source: crates/spelldawn/tests/it/rules/raid_tests.rs
+assertion_line: 395
+expression: response
+
+---
+Ok(
+    GameResponse {
+        command_list: CommandList {
+            commands: [
+                GameCommand {
+                    command: Some(
+                        UpdateGameView(
+                            UpdateGameViewCommand {
+                                game: Some(
+                                    GameView {
+                                        game_id: Some(
+                                            GameIdentifier {
+                                                value: 1008,
+                                            },
+                                        ),
+                                        user: None,
+                                        opponent: Some(
+                                            PlayerView {
+                                                side: Overlord,
+                                                player_info: None,
+                                                score: None,
+                                                mana: None,
+                                                action_tracker: Some(
+                                                    ActionTrackerView {
+                                                        available_action_count: 3,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                        current_priority: Opponent,
+                                        raid_active: false,
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            Identity(
+                                                User,
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 0,
+                                        position: Some(
+                                            IdentityContainer(
+                                                ObjectPositionIdentityContainer {
+                                                    owner: User,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        RenderInterface(
+                            RenderInterfaceCommand {
+                                panels: [],
+                                main_controls: Some(
+                                    InterfaceMainControls {
+                                        node: None,
+                                        card_anchor_nodes: [],
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        DisplayGameMessage(
+                            DisplayGameMessageCommand {
+                                message_type: Dusk,
+                            },
+                        ),
+                    ),
+                },
+            ],
+        },
+        channel_response: Some(
+            (
+                1009,
+                CommandList {
+                    commands: [
+                        GameCommand {
+                            command: Some(
+                                UpdateGameView(
+                                    UpdateGameViewCommand {
+                                        game: Some(
+                                            GameView {
+                                                game_id: Some(
+                                                    GameIdentifier {
+                                                        value: 1008,
+                                                    },
+                                                ),
+                                                user: Some(
+                                                    PlayerView {
+                                                        side: Overlord,
+                                                        player_info: None,
+                                                        score: None,
+                                                        mana: None,
+                                                        action_tracker: Some(
+                                                            ActionTrackerView {
+                                                                available_action_count: 3,
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                opponent: None,
+                                                current_priority: User,
+                                                raid_active: false,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    Identity(
+                                                        Opponent,
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 0,
+                                                position: Some(
+                                                    IdentityContainer(
+                                                        ObjectPositionIdentityContainer {
+                                                            owner: Opponent,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                RenderInterface(
+                                    RenderInterfaceCommand {
+                                        panels: [],
+                                        main_controls: Some(
+                                            InterfaceMainControls {
+                                                node: None,
+                                                card_anchor_nodes: [],
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                DisplayGameMessage(
+                                    DisplayGameMessageCommand {
+                                        message_type: Dusk,
+                                    },
+                                ),
+                            ),
+                        },
+                    ],
+                },
+            ),
+        ),
+    },
+)

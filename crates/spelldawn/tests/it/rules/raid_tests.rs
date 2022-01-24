@@ -19,8 +19,8 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    ClientRoomLocation, InitiateRaidAction, ObjectPositionIdentity, ObjectPositionRaid,
-    ObjectPositionRoom, PlayerName,
+    ClientRoomLocation, GainManaAction, InitiateRaidAction, ObjectPositionIdentity,
+    ObjectPositionIdentityContainer, ObjectPositionRaid, ObjectPositionRoom, PlayerName,
 };
 use test_utils::client::HasText;
 use test_utils::{test_games, *};
@@ -344,6 +344,52 @@ fn score_scheme_card() {
             "MoveGameObjects",
             "MoveGameObjects",
         ],
+    );
+
+    assert_debug_snapshot!(response);
+}
+
+#[test]
+fn complete_raid() {
+    let (mut g, ids) = test_games::simple_game(
+        Side::Champion,
+        Some(1008),
+        CardName::TestScheme31,
+        CardName::TestMinion5Health,
+        CardName::TestWeapon3Attack12Boost,
+    );
+    // Gain mana to spend an action point. Should be Overlord turn after this raid.
+    g.perform(Action::GainMana(GainManaAction {}), g.user_id());
+    g.perform(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    g.perform_click_on(g.opponent_id(), "Activate");
+    g.perform_click_on(g.user_id(), "Test Weapon");
+    g.perform_click_on(g.user_id(), "Score");
+    let response = g.click_on(g.user_id(), "End Raid");
+
+    assert_eq!(g.user.this_player.score(), 1);
+    assert_eq!(g.opponent.other_player.score(), 1);
+    assert_eq!(PlayerName::Opponent, g.user.data.priority());
+    assert_eq!(PlayerName::User, g.opponent.data.priority());
+    assert_eq!(g.opponent.interface.main_controls_option(), None);
+    assert_eq!(g.user.interface.main_controls_option(), None);
+
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(ids.scheme_id)),
+        Position::Identity(ObjectPositionIdentity { owner: PlayerName::User.into() })
+    );
+    assert_eq!(
+        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        Position::IdentityContainer(ObjectPositionIdentityContainer {
+            owner: PlayerName::User.into()
+        })
+    );
+
+    assert_commands_match(
+        &response,
+        vec!["UpdateGameView", "MoveGameObjects", "RenderInterface", "DisplayGameMessage"],
     );
 
     assert_debug_snapshot!(response);

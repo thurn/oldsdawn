@@ -168,7 +168,7 @@ pub fn handle_prompt_action(
 
 /// Invoked after taking a primary game action to check if the turn should be
 /// switched.
-fn check_end_turn(game: &mut GameState, user_side: Side) -> Result<()> {
+pub fn check_end_turn(game: &mut GameState, user_side: Side) -> Result<()> {
     ensure!(game.data.turn == user_side, "Not currently {:?}'s turn", user_side);
     if game.player(user_side).actions == 0 {
         let new_turn = user_side.opponent();

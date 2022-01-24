@@ -411,6 +411,10 @@ pub struct ClientInterface {
 }
 
 impl ClientInterface {
+    pub fn main_controls_option(&self) -> Option<Node> {
+        self.main_controls.clone()
+    }
+
     pub fn main_controls(&self) -> &Node {
         self.main_controls.as_ref().expect("MainControls Node")
     }

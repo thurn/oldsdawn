@@ -21,14 +21,14 @@ use data::actions::{
     ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
 };
 use data::card_state::CardPosition;
-use data::delegates::ChampionScoreCardEvent;
+use data::delegates::{ChampionScoreCardEvent, RaidEndEvent};
 use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use if_chain::if_chain;
 use tracing::{info, instrument};
 
-use crate::{dispatch, flags, mutations, queries};
+use crate::{actions, dispatch, flags, mutations, queries};
 
 #[instrument(skip(game))]
 pub fn initiate_raid_action(
@@ -212,6 +212,13 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
         "Cannot take raid end action for {:?}",
         user_side
     );
+
+    let raid = *game.raid()?;
+    game.data.raid = None;
+    dispatch::invoke_event(game, RaidEndEvent(raid));
+    game.updates.push(GameUpdate::EndRaid);
+
+    actions::check_end_turn(game, user_side)?;
     Ok(())
 }
 

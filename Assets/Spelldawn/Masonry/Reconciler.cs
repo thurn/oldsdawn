@@ -44,7 +44,8 @@ namespace Spelldawn.Masonry
       VisualElement? previousElement = null,
       Node? previousNode = null)
     {
-      if (previousElement != null && previousNode != null &&
+      if (previousElement != null &&
+          previousNode != null &&
           previousNode.NodeType?.NodeTypeCase == node.NodeType?.NodeTypeCase)
       {
         // If node types match, reuse this node

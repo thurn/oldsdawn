@@ -182,6 +182,11 @@ pub fn can_score_card(game: &GameState, side: Side, card_id: CardId) -> bool {
         && crate::card_definition(game, card_id).config.stats.scheme_points.is_some()
 }
 
-pub fn can_take_raid_end_action(_game: &GameState, _side: Side) -> bool {
-    true
+pub fn can_take_raid_end_action(game: &GameState, side: Side) -> bool {
+    let raid = match game.data.raid {
+        Some(r) => r,
+        None => return false,
+    };
+
+    side == Side::Champion && raid.phase == RaidPhase::Access
 }

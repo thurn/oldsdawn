@@ -132,7 +132,7 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
 /// Starts the `side` player's turn
 fn start_turn(commands: &mut ResponseBuilder, side: Side) {
     commands.push(
-        CommandPhase::Animate,
+        CommandPhase::PostMove,
         Command::DisplayGameMessage(DisplayGameMessageCommand {
             message_type: match side {
                 Side::Overlord => GameMessageType::Dusk.into(),

@@ -14,7 +14,6 @@
 
 use data::primitives::Side;
 use protos::spelldawn::game_command::Command;
-use protos::spelldawn::{CommandList, GameCommand};
 
 /// Key used to sort [Command]s into distinct groups
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
@@ -24,6 +23,7 @@ pub enum CommandPhase {
     Animate,
     Move,
     RenderInterface,
+    PostMove,
 }
 
 /// Keeps track of [Command]s required to update the client
@@ -55,15 +55,9 @@ impl ResponseBuilder {
         }
     }
 
-    /// Converts this builder into a [CommandList]
-    pub fn build(mut self) -> CommandList {
+    /// Converts this builder into a [Command] vector
+    pub fn build(mut self) -> Vec<Command> {
         self.commands.sort_by_key(|(phase, _)| *phase);
-        CommandList {
-            commands: self
-                .commands
-                .into_iter()
-                .map(|(_, command)| GameCommand { command: Some(command) })
-                .collect(),
-        }
+        self.commands.into_iter().map(|(_, c)| c).collect()
     }
 }
