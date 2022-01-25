@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 395
+assertion_line: 455
 expression: response
 
 ---
@@ -16,7 +16,7 @@ Ok(
                                     GameView {
                                         game_id: Some(
                                             GameIdentifier {
-                                                value: 1008,
+                                                value: 1010,
                                             },
                                         ),
                                         user: None,
@@ -99,7 +99,7 @@ Ok(
         },
         channel_response: Some(
             (
-                1009,
+                1011,
                 CommandList {
                     commands: [
                         GameCommand {
@@ -110,7 +110,7 @@ Ok(
                                             GameView {
                                                 game_id: Some(
                                                     GameIdentifier {
-                                                        value: 1008,
+                                                        value: 1010,
                                                     },
                                                 ),
                                                 user: Some(

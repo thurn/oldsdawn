@@ -1,0 +1,391 @@
+---
+source: crates/spelldawn/tests/it/rules/raid_tests.rs
+assertion_line: 346
+expression: response
+
+---
+Ok(
+    GameResponse {
+        command_list: CommandList {
+            commands: [
+                GameCommand {
+                    command: Some(
+                        FireProjectile(
+                            FireProjectileCommand {
+                                source_id: Some(
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 2,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                target_id: Some(
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            Identity(
+                                                User,
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                projectile: Some(
+                                    ProjectileAddress {
+                                        address: "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 3",
+                                    },
+                                ),
+                                travel_duration: Some(
+                                    TimeValue {
+                                        milliseconds: 300,
+                                    },
+                                ),
+                                fire_sound: None,
+                                impact_sound: None,
+                                additional_hit: None,
+                                additional_hit_delay: None,
+                                wait_duration: Some(
+                                    TimeValue {
+                                        milliseconds: 300,
+                                    },
+                                ),
+                                hide_on_hit: false,
+                                jump_to_position: None,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        UpdateGameView(
+                            UpdateGameViewCommand {
+                                game: Some(
+                                    GameView {
+                                        game_id: Some(
+                                            GameIdentifier {
+                                                value: 1006,
+                                            },
+                                        ),
+                                        user: None,
+                                        opponent: None,
+                                        current_priority: User,
+                                        raid_active: false,
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 1,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 2,
+                                        position: Some(
+                                            Room(
+                                                ObjectPositionRoom {
+                                                    room_id: RoomA,
+                                                    room_location: Back,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            CardId(
+                                                CardIdentifier {
+                                                    side: Overlord,
+                                                    index: 2,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 4,
+                                        position: Some(
+                                            Room(
+                                                ObjectPositionRoom {
+                                                    room_id: RoomA,
+                                                    room_location: Front,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        MoveGameObjects(
+                            MoveGameObjectsCommand {
+                                ids: [
+                                    GameObjectIdentifier {
+                                        id: Some(
+                                            Identity(
+                                                User,
+                                            ),
+                                        ),
+                                    },
+                                ],
+                                position: Some(
+                                    ObjectPosition {
+                                        sorting_key: 0,
+                                        position: Some(
+                                            IdentityContainer(
+                                                ObjectPositionIdentityContainer {
+                                                    owner: User,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                disable_animation: false,
+                            },
+                        ),
+                    ),
+                },
+                GameCommand {
+                    command: Some(
+                        RenderInterface(
+                            RenderInterfaceCommand {
+                                panels: [],
+                                main_controls: Some(
+                                    InterfaceMainControls {
+                                        node: None,
+                                        card_anchor_nodes: [],
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                },
+            ],
+        },
+        channel_response: Some(
+            (
+                1007,
+                CommandList {
+                    commands: [
+                        GameCommand {
+                            command: Some(
+                                FireProjectile(
+                                    FireProjectileCommand {
+                                        source_id: Some(
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 2,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        target_id: Some(
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    Identity(
+                                                        Opponent,
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        projectile: Some(
+                                            ProjectileAddress {
+                                                address: "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile 3",
+                                            },
+                                        ),
+                                        travel_duration: Some(
+                                            TimeValue {
+                                                milliseconds: 300,
+                                            },
+                                        ),
+                                        fire_sound: None,
+                                        impact_sound: None,
+                                        additional_hit: None,
+                                        additional_hit_delay: None,
+                                        wait_duration: Some(
+                                            TimeValue {
+                                                milliseconds: 300,
+                                            },
+                                        ),
+                                        hide_on_hit: false,
+                                        jump_to_position: None,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                UpdateGameView(
+                                    UpdateGameViewCommand {
+                                        game: Some(
+                                            GameView {
+                                                game_id: Some(
+                                                    GameIdentifier {
+                                                        value: 1006,
+                                                    },
+                                                ),
+                                                user: None,
+                                                opponent: None,
+                                                current_priority: Opponent,
+                                                raid_active: false,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 1,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 2,
+                                                position: Some(
+                                                    Room(
+                                                        ObjectPositionRoom {
+                                                            room_id: RoomA,
+                                                            room_location: Back,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    CardId(
+                                                        CardIdentifier {
+                                                            side: Overlord,
+                                                            index: 2,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 4,
+                                                position: Some(
+                                                    Room(
+                                                        ObjectPositionRoom {
+                                                            room_id: RoomA,
+                                                            room_location: Front,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                MoveGameObjects(
+                                    MoveGameObjectsCommand {
+                                        ids: [
+                                            GameObjectIdentifier {
+                                                id: Some(
+                                                    Identity(
+                                                        Opponent,
+                                                    ),
+                                                ),
+                                            },
+                                        ],
+                                        position: Some(
+                                            ObjectPosition {
+                                                sorting_key: 0,
+                                                position: Some(
+                                                    IdentityContainer(
+                                                        ObjectPositionIdentityContainer {
+                                                            owner: Opponent,
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                        disable_animation: false,
+                                    },
+                                ),
+                            ),
+                        },
+                        GameCommand {
+                            command: Some(
+                                RenderInterface(
+                                    RenderInterfaceCommand {
+                                        panels: [],
+                                        main_controls: Some(
+                                            InterfaceMainControls {
+                                                node: None,
+                                                card_anchor_nodes: [],
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ),
+                        },
+                    ],
+                },
+            ),
+        ),
+    },
+)
