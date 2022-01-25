@@ -1,97 +1,23 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 223
-expression: response
+assertion_line: 221
+expression: summary
 
 ---
-Ok(
-    GameResponse {
-        command_list: CommandList {
-            commands: [
-                GameCommand {
-                    command: Some(
-                        UpdateGameView(
-                            UpdateGameViewCommand {
-                                game: Some(
-                                    GameView {
-                                        game_id: Some(
-                                            GameIdentifier {
-                                                value: 12,
-                                            },
-                                        ),
-                                        user: Some(
-                                            PlayerView {
-                                                side: Overlord,
-                                                player_info: None,
-                                                score: None,
-                                                mana: Some(
-                                                    ManaView {
-                                                        amount: 6,
-                                                    },
-                                                ),
-                                                action_tracker: Some(
-                                                    ActionTrackerView {
-                                                        available_action_count: 2,
-                                                    },
-                                                ),
-                                            },
-                                        ),
-                                        opponent: None,
-                                        current_priority: User,
-                                        raid_active: false,
-                                    },
-                                ),
-                            },
-                        ),
-                    ),
-                },
-            ],
-        },
-        channel_response: Some(
-            (
-                13,
-                CommandList {
-                    commands: [
-                        GameCommand {
-                            command: Some(
-                                UpdateGameView(
-                                    UpdateGameViewCommand {
-                                        game: Some(
-                                            GameView {
-                                                game_id: Some(
-                                                    GameIdentifier {
-                                                        value: 12,
-                                                    },
-                                                ),
-                                                user: None,
-                                                opponent: Some(
-                                                    PlayerView {
-                                                        side: Overlord,
-                                                        player_info: None,
-                                                        score: None,
-                                                        mana: Some(
-                                                            ManaView {
-                                                                amount: 6,
-                                                            },
-                                                        ),
-                                                        action_tracker: Some(
-                                                            ActionTrackerView {
-                                                                available_action_count: 2,
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
-                                                current_priority: Opponent,
-                                                raid_active: false,
-                                            },
-                                        ),
-                                    },
-                                ),
-                            ),
-                        },
-                    ],
-                },
-            ),
-        ),
-    },
-)
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            mana: 6
+            action_tracker: 2
+        current_priority: User
+        raid_active: false
+channel_response: 
+    UpdateGameView: 
+        opponent: 
+            side: Overlord
+            mana: 6
+            action_tracker: 2
+        current_priority: Opponent
+        raid_active: false

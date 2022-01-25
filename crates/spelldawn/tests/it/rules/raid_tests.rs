@@ -14,7 +14,7 @@
 
 use data::card_name::CardName;
 use data::primitives::Side;
-use insta::assert_debug_snapshot;
+use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
@@ -23,13 +23,13 @@ use protos::spelldawn::{
     ObjectPositionIdentityContainer, ObjectPositionRaid, ObjectPositionRoom, PlayerName,
 };
 use test_utils::client::HasText;
+use test_utils::summarize::Summary;
 use test_utils::{test_games, *};
 
 #[test]
 fn initiate_raid() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
-        Some(1000),
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon3Attack12Boost,
@@ -69,36 +69,17 @@ fn initiate_raid() {
         (2, Position::Raid(ObjectPositionRaid {}))
     );
 
-    assert_commands_match_lists(
-        &response,
-        vec![
-            "UpdateGameView",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "RenderInterface",
-        ],
-        vec![
-            "VisitRoom",
-            "Delay",
-            "UpdateGameView",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "RenderInterface",
-        ],
-    );
     assert!(g.user.interface.main_controls().has_text("Waiting"));
     assert!(g.opponent.interface.main_controls().has_text("Activate"));
     assert!(g.opponent.interface.main_controls().has_text("Pass"));
-    assert_debug_snapshot!(response);
+
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
 fn activate_room() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
-        Some(1002),
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon3Attack12Boost,
@@ -132,22 +113,13 @@ fn activate_room() {
         (2, Position::Raid(ObjectPositionRaid {}))
     );
 
-    assert_commands_match(
-        &response,
-        vec![
-            "UpdateGameView",
-            "CreateOrUpdateCard", // Reveal Card
-            "RenderInterface",    // Render Prompts
-        ],
-    );
-    assert_debug_snapshot!(response);
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
 fn activate_room_weapon_2() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
-        None,
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon2Attack,
@@ -166,7 +138,6 @@ fn activate_room_weapon_2() {
 fn activate_room_weapon_2_12() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
-        None,
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon2Attack12Boost,
@@ -186,7 +157,6 @@ fn activate_room_weapon_2_12() {
 fn activate_room_weapon_4_12() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
-        None,
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon4Attack12Boost,
@@ -206,7 +176,6 @@ fn activate_room_weapon_4_12() {
 fn activate_room_weapon_5() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
-        None,
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon5Attack,
@@ -226,7 +195,6 @@ fn activate_room_weapon_5() {
 fn use_weapon() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
-        Some(1004),
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon3Attack12Boost,
@@ -264,33 +232,13 @@ fn use_weapon() {
         (1, Position::Raid(ObjectPositionRaid {}))
     );
 
-    assert_commands_match_lists(
-        &response,
-        vec![
-            "FireProjectile",
-            "UpdateGameView",
-            "CreateOrUpdateCard", // Reveal card
-            "MoveGameObjects",    // Move identity
-            "MoveGameObjects",    // Move minion
-            "RenderInterface",
-        ],
-        vec![
-            "FireProjectile",
-            "UpdateGameView",
-            "CreateOrUpdateCard", // Reveal card
-            "MoveGameObjects",    // Move identity
-            "MoveGameObjects",    // Move minion
-        ],
-    );
-
-    assert_debug_snapshot!(response);
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
 fn fire_combat_ability() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
-        Some(1006),
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon3Attack12Boost,
@@ -331,26 +279,13 @@ fn fire_combat_ability() {
         })
     );
 
-    assert_commands_match(
-        &response,
-        vec![
-            "FireProjectile",
-            "UpdateGameView",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "RenderInterface",
-        ],
-    );
-
-    assert_debug_snapshot!(response);
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
 fn score_scheme_card() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
-        Some(1008),
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon3Attack12Boost,
@@ -381,41 +316,13 @@ fn score_scheme_card() {
         (0, Position::Raid(ObjectPositionRaid {}))
     );
 
-    assert_commands_match_lists(
-        &response,
-        vec![
-            "SetMusic",
-            "PlaySound",
-            "MoveGameObjects",
-            "PlayEffect",
-            "PlayEffect",
-            "UpdateGameView",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "RenderInterface",
-        ],
-        vec![
-            "SetMusic",
-            "PlaySound",
-            "MoveGameObjects",
-            "PlayEffect",
-            "PlayEffect",
-            "UpdateGameView",
-            "MoveGameObjects",
-            "MoveGameObjects",
-            "MoveGameObjects",
-        ],
-    );
-
-    assert_debug_snapshot!(response);
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
 fn complete_raid() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
-        Some(1010),
         CardName::TestScheme31,
         CardName::TestMinion5Health,
         CardName::TestWeapon3Attack12Boost,
@@ -451,10 +358,5 @@ fn complete_raid() {
         })
     );
 
-    assert_commands_match(
-        &response,
-        vec!["UpdateGameView", "MoveGameObjects", "RenderInterface", "DisplayGameMessage"],
-    );
-
-    assert_debug_snapshot!(response);
+    assert_snapshot!(Summary::run(&response));
 }

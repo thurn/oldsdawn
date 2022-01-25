@@ -36,7 +36,6 @@ pub struct SimpleIds {
 /// created cards
 pub fn simple_game(
     user_side: Side,
-    id_basis: Option<u64>,
     scheme: CardName,
     minion: CardName,
     weapon: CardName,
@@ -45,7 +44,6 @@ pub fn simple_game(
         user_side,
         Args {
             turn: Some(Side::Overlord),
-            id_basis,
             actions: 2,
             opponent_actions: 2,
             mana: 100,

@@ -15,33 +15,28 @@
 use data::card_name::CardName;
 use data::game::RaidPhase;
 use data::primitives::Side;
-use insta::assert_debug_snapshot;
+use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::{
     card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, PlayCardAction,
     PlayerName,
 };
+use test_utils::summarize::Summary;
 use test_utils::*;
 
 #[test]
 fn connect() {
-    let mut g =
-        new_game(Side::Overlord, Args { id_basis: Some(2), connect: false, ..Args::default() });
+    let mut g = new_game(Side::Overlord, Args { connect: false, ..Args::default() });
     let response = g.connect(g.user_id(), Some(g.game_id()));
-    assert_ok(&response);
-    assert_debug_snapshot!(response);
+    let _summary = Summary::run(&response);
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
 fn connect_to_ongoing() {
     let mut g = new_game(
         Side::Overlord,
-        Args {
-            id_basis: Some(4),
-            actions: 3,
-            next_draw: Some(CardName::IceDragon),
-            ..Args::default()
-        },
+        Args { actions: 3, next_draw: Some(CardName::IceDragon), ..Args::default() },
     );
     let r1 = g.connect(g.user_id(), Some(g.game_id()));
     assert_ok(&r1);
@@ -49,36 +44,23 @@ fn connect_to_ongoing() {
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
     assert_ok(&r2);
     let r3 = g.connect(g.opponent_id(), Some(g.game_id()));
-    assert_ok(&r3);
-    assert_debug_snapshot!(r3);
+
+    assert_snapshot!(Summary::run(&r3));
 }
 
 #[test]
 fn draw_card() {
     let mut g = new_game(
         Side::Overlord,
-        Args {
-            id_basis: Some(6),
-            actions: 3,
-            next_draw: Some(CardName::IceDragon),
-            ..Args::default()
-        },
+        Args { actions: 3, next_draw: Some(CardName::IceDragon), ..Args::default() },
     );
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.hand(PlayerName::Opponent));
     assert_eq!(2, g.player().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_commands_match(
-        &response,
-        vec![
-            "CreateOrUpdateCard", // Create card on top of deck
-            "UpdateGameView",     // Spend mana & actions
-            "CreateOrUpdateCard", // Update card state in full sync
-            "MoveGameObjects",    // Move card to hand
-        ],
-    );
-    assert_debug_snapshot!(response);
+
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
@@ -107,10 +89,7 @@ fn cannot_draw_during_raid() {
 
 #[test]
 fn play_card() {
-    let mut g = new_game(
-        Side::Champion,
-        Args { id_basis: Some(8), actions: 3, mana: 5, ..Args::default() },
-    );
+    let mut g = new_game(Side::Champion, Args { actions: 3, mana: 5, ..Args::default() });
     let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
@@ -125,25 +104,13 @@ fn play_card() {
         vec![CardName::ArcaneRecovery],
         g.opponent.cards.discard_pile(PlayerName::Opponent),
     );
-    assert_commands_match_lists(
-        &response,
-        vec![
-            "UpdateGameView",     // Spend mana & actions
-            "CreateOrUpdateCard", // Update canPlay
-            "MoveGameObjects",    // Move to discard
-        ],
-        // Update card and move it to staging for a short delay, then move it to discard
-        vec!["UpdateGameView", "CreateOrUpdateCard", "MoveGameObjects", "Delay", "MoveGameObjects"],
-    );
-    assert_debug_snapshot!(response);
+
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
 fn play_hidden_card() {
-    let mut g = new_game(
-        Side::Overlord,
-        Args { id_basis: Some(10), actions: 3, mana: 0, ..Args::default() },
-    );
+    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 0, ..Args::default() });
     let card_id = g.add_to_hand(CardName::DungeonAnnex);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction {
@@ -163,14 +130,8 @@ fn play_hidden_card() {
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Back),
     );
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.room_cards(ROOM_ID, ClientRoomLocation::Back));
-    assert_commands_match_lists(
-        &response,
-        // Update state and move to room
-        vec!["UpdateGameView", "CreateOrUpdateCard", "MoveGameObjects"],
-        // No card update required, state does not change
-        vec!["UpdateGameView", "MoveGameObjects"],
-    );
-    assert_debug_snapshot!(response);
+
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
@@ -211,17 +172,15 @@ fn cannot_play_card_during_raid() {
 
 #[test]
 fn gain_mana() {
-    let mut g = new_game(
-        Side::Overlord,
-        Args { id_basis: Some(12), actions: 3, mana: 5, ..Args::default() },
-    );
+    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
+
     assert_eq!(2, g.player().actions());
     assert_eq!(2, g.opponent.other_player.actions());
     assert_eq!(6, g.player().mana());
     assert_eq!(6, g.opponent.other_player.mana());
-    assert_commands_match(&response, vec!["UpdateGameView"]);
-    assert_debug_snapshot!(response);
+
+    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
@@ -250,10 +209,7 @@ fn cannot_gain_mana_during_raid() {
 
 #[test]
 fn switch_turn() {
-    let mut g = new_game(
-        Side::Overlord,
-        Args { id_basis: Some(14), actions: 3, mana: 5, ..Args::default() },
-    );
+    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
@@ -265,6 +221,6 @@ fn switch_turn() {
     assert_eq!(3, g.opponent.this_player.actions());
     assert_eq!(g.user.data.priority(), PlayerName::Opponent);
     assert_eq!(g.opponent.data.priority(), PlayerName::User);
-    assert_commands_match(&response, vec!["UpdateGameView", "DisplayGameMessage"]);
-    assert_debug_snapshot!(response);
+
+    assert_snapshot!(Summary::run(&response));
 }

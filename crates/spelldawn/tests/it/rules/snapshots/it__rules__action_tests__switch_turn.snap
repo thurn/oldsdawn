@@ -1,139 +1,31 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 268
-expression: response
+assertion_line: 248
+expression: "Summary::run(&response)"
 
 ---
-Ok(
-    GameResponse {
-        command_list: CommandList {
-            commands: [
-                GameCommand {
-                    command: Some(
-                        UpdateGameView(
-                            UpdateGameViewCommand {
-                                game: Some(
-                                    GameView {
-                                        game_id: Some(
-                                            GameIdentifier {
-                                                value: 14,
-                                            },
-                                        ),
-                                        user: Some(
-                                            PlayerView {
-                                                side: Overlord,
-                                                player_info: None,
-                                                score: None,
-                                                mana: Some(
-                                                    ManaView {
-                                                        amount: 8,
-                                                    },
-                                                ),
-                                                action_tracker: Some(
-                                                    ActionTrackerView {
-                                                        available_action_count: 0,
-                                                    },
-                                                ),
-                                            },
-                                        ),
-                                        opponent: Some(
-                                            PlayerView {
-                                                side: Champion,
-                                                player_info: None,
-                                                score: None,
-                                                mana: None,
-                                                action_tracker: Some(
-                                                    ActionTrackerView {
-                                                        available_action_count: 3,
-                                                    },
-                                                ),
-                                            },
-                                        ),
-                                        current_priority: Opponent,
-                                        raid_active: false,
-                                    },
-                                ),
-                            },
-                        ),
-                    ),
-                },
-                GameCommand {
-                    command: Some(
-                        DisplayGameMessage(
-                            DisplayGameMessageCommand {
-                                message_type: Dawn,
-                            },
-                        ),
-                    ),
-                },
-            ],
-        },
-        channel_response: Some(
-            (
-                15,
-                CommandList {
-                    commands: [
-                        GameCommand {
-                            command: Some(
-                                UpdateGameView(
-                                    UpdateGameViewCommand {
-                                        game: Some(
-                                            GameView {
-                                                game_id: Some(
-                                                    GameIdentifier {
-                                                        value: 14,
-                                                    },
-                                                ),
-                                                user: Some(
-                                                    PlayerView {
-                                                        side: Champion,
-                                                        player_info: None,
-                                                        score: None,
-                                                        mana: None,
-                                                        action_tracker: Some(
-                                                            ActionTrackerView {
-                                                                available_action_count: 3,
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
-                                                opponent: Some(
-                                                    PlayerView {
-                                                        side: Overlord,
-                                                        player_info: None,
-                                                        score: None,
-                                                        mana: Some(
-                                                            ManaView {
-                                                                amount: 8,
-                                                            },
-                                                        ),
-                                                        action_tracker: Some(
-                                                            ActionTrackerView {
-                                                                available_action_count: 0,
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
-                                                current_priority: User,
-                                                raid_active: false,
-                                            },
-                                        ),
-                                    },
-                                ),
-                            ),
-                        },
-                        GameCommand {
-                            command: Some(
-                                DisplayGameMessage(
-                                    DisplayGameMessageCommand {
-                                        message_type: Dawn,
-                                    },
-                                ),
-                            ),
-                        },
-                    ],
-                },
-            ),
-        ),
-    },
-)
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            mana: 8
+            action_tracker: 0
+        opponent: 
+            side: Champion
+            action_tracker: 3
+        current_priority: Opponent
+        raid_active: false
+    DisplayGameMessage: Dawn
+channel_response: 
+    UpdateGameView: 
+        user: 
+            side: Champion
+            action_tracker: 3
+        opponent: 
+            side: Overlord
+            mana: 8
+            action_tracker: 0
+        current_priority: User
+        raid_active: false
+    DisplayGameMessage: Dawn

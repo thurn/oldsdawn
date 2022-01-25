@@ -1,208 +1,42 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 172
-expression: response
+assertion_line: 151
+expression: "Summary::run(&response)"
 
 ---
-Ok(
-    GameResponse {
-        command_list: CommandList {
-            commands: [
-                GameCommand {
-                    command: Some(
-                        UpdateGameView(
-                            UpdateGameViewCommand {
-                                game: Some(
-                                    GameView {
-                                        game_id: Some(
-                                            GameIdentifier {
-                                                value: 10,
-                                            },
-                                        ),
-                                        user: Some(
-                                            PlayerView {
-                                                side: Overlord,
-                                                player_info: None,
-                                                score: None,
-                                                mana: None,
-                                                action_tracker: Some(
-                                                    ActionTrackerView {
-                                                        available_action_count: 2,
-                                                    },
-                                                ),
-                                            },
-                                        ),
-                                        opponent: None,
-                                        current_priority: User,
-                                        raid_active: false,
-                                    },
-                                ),
-                            },
-                        ),
-                    ),
-                },
-                GameCommand {
-                    command: Some(
-                        CreateOrUpdateCard(
-                            CreateOrUpdateCardCommand {
-                                card: Some(
-                                    CardView {
-                                        card_id: Some(
-                                            CardIdentifier {
-                                                side: Overlord,
-                                                index: 1,
-                                            },
-                                        ),
-                                        card_icons: None,
-                                        arena_frame: None,
-                                        owning_player: User,
-                                        revealed_card: Some(
-                                            RevealedCardView {
-                                                card_frame: None,
-                                                title_background: None,
-                                                jewel: None,
-                                                image: None,
-                                                title: None,
-                                                rules_text: None,
-                                                revealed_in_arena: false,
-                                                targeting: None,
-                                                on_release_position: None,
-                                                can_play: false,
-                                                supplemental_info: None,
-                                            },
-                                        ),
-                                    },
-                                ),
-                                create_position: Some(
-                                    ObjectPosition {
-                                        sorting_key: 2,
-                                        position: Some(
-                                            Room(
-                                                ObjectPositionRoom {
-                                                    room_id: RoomA,
-                                                    room_location: Back,
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                ),
-                                create_animation: Unspecified,
-                                disable_flip_animation: false,
-                            },
-                        ),
-                    ),
-                },
-                GameCommand {
-                    command: Some(
-                        MoveGameObjects(
-                            MoveGameObjectsCommand {
-                                ids: [
-                                    GameObjectIdentifier {
-                                        id: Some(
-                                            CardId(
-                                                CardIdentifier {
-                                                    side: Overlord,
-                                                    index: 1,
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                ],
-                                position: Some(
-                                    ObjectPosition {
-                                        sorting_key: 2,
-                                        position: Some(
-                                            Room(
-                                                ObjectPositionRoom {
-                                                    room_id: RoomA,
-                                                    room_location: Back,
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                ),
-                                disable_animation: false,
-                            },
-                        ),
-                    ),
-                },
-            ],
-        },
-        channel_response: Some(
-            (
-                11,
-                CommandList {
-                    commands: [
-                        GameCommand {
-                            command: Some(
-                                UpdateGameView(
-                                    UpdateGameViewCommand {
-                                        game: Some(
-                                            GameView {
-                                                game_id: Some(
-                                                    GameIdentifier {
-                                                        value: 10,
-                                                    },
-                                                ),
-                                                user: None,
-                                                opponent: Some(
-                                                    PlayerView {
-                                                        side: Overlord,
-                                                        player_info: None,
-                                                        score: None,
-                                                        mana: None,
-                                                        action_tracker: Some(
-                                                            ActionTrackerView {
-                                                                available_action_count: 2,
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
-                                                current_priority: Opponent,
-                                                raid_active: false,
-                                            },
-                                        ),
-                                    },
-                                ),
-                            ),
-                        },
-                        GameCommand {
-                            command: Some(
-                                MoveGameObjects(
-                                    MoveGameObjectsCommand {
-                                        ids: [
-                                            GameObjectIdentifier {
-                                                id: Some(
-                                                    CardId(
-                                                        CardIdentifier {
-                                                            side: Overlord,
-                                                            index: 1,
-                                                        },
-                                                    ),
-                                                ),
-                                            },
-                                        ],
-                                        position: Some(
-                                            ObjectPosition {
-                                                sorting_key: 2,
-                                                position: Some(
-                                                    Room(
-                                                        ObjectPositionRoom {
-                                                            room_id: RoomA,
-                                                            room_location: Back,
-                                                        },
-                                                    ),
-                                                ),
-                                            },
-                                        ),
-                                        disable_animation: false,
-                                    },
-                                ),
-                            ),
-                        },
-                    ],
-                },
-            ),
-        ),
-    },
-)
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            action_tracker: 2
+        current_priority: User
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: CardIdentifier { side: Overlord, index: 1 }
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: false
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: CardIdentifier { side: Overlord, index: 1 }
+        position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
+channel_response: 
+    UpdateGameView: 
+        opponent: 
+            side: Overlord
+            action_tracker: 2
+        current_priority: Opponent
+        raid_active: false
+    MoveGameObjects: 
+        id: CardIdentifier { side: Overlord, index: 1 }
+        position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }

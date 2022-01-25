@@ -18,6 +18,7 @@
 #![allow(clippy::unwrap_in_result)]
 
 pub mod client;
+pub mod summarize;
 pub mod test_games;
 
 use std::fmt::Debug;
@@ -55,7 +56,7 @@ pub const RAID_ID: RaidId = RaidId(1);
 pub fn new_game(user_side: Side, args: Args) -> TestGame {
     let discovered = cards::initialize();
     println!("Discovered {} cards", discovered);
-    let (game_id, user_id, opponent_id) = generate_ids(args.id_basis);
+    let (game_id, user_id, opponent_id) = generate_ids();
     let (overlord_user, champion_user) = match user_side {
         Side::Overlord => (user_id, opponent_id),
         Side::Champion => (opponent_id, user_id),
@@ -107,8 +108,8 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
     game
 }
 
-fn generate_ids(basis: Option<u64>) -> (GameId, PlayerId, PlayerId) {
-    let next_id = basis.unwrap_or_else(|| NEXT_ID.fetch_add(2, Ordering::SeqCst));
+fn generate_ids() -> (GameId, PlayerId, PlayerId) {
+    let next_id = NEXT_ID.fetch_add(2, Ordering::SeqCst);
     (GameId::new(next_id), PlayerId::new(next_id), PlayerId::new(next_id + 1))
 }
 
@@ -117,10 +118,6 @@ fn generate_ids(basis: Option<u64>) -> (GameId, PlayerId, PlayerId) {
 pub struct Args {
     /// Player whose turn it should be. Defaults to the `user_side` player.
     pub turn: Option<Side>,
-    /// Value to use for generated GameID and UserIds, in order to ensure
-    /// deterministic snapshots. Game ID and User ID will use this number,
-    /// Opponent ID will use this number + 1. Must be less than 1,000,000.
-    pub id_basis: Option<u64>,
     /// Mana available for the `user_side` player. Defaults to 5.
     pub mana: ManaValue,
     /// Mana for the opponent of the `user_side` player. Defaults to 5.
@@ -151,7 +148,6 @@ impl Default for Args {
     fn default() -> Self {
         Self {
             turn: None,
-            id_basis: None,
             mana: 5,
             opponent_mana: 5,
             actions: 3,
