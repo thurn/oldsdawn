@@ -19,7 +19,7 @@ use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::actions::Prompt;
-use crate::card_state::{CardPosition, CardPositionKind, CardState, SortingKey};
+use crate::card_state::{CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
 use crate::primitives::{
     ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId, RoomId,
@@ -71,7 +71,7 @@ pub enum RaidPhase {
 }
 
 /// Data about an active raid
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RaidData {
     /// Unique ID for this raid
     pub raid_id: RaidId,
@@ -83,6 +83,8 @@ pub struct RaidData {
     ///
     /// Initially false if the activation decision has not been made yet.
     pub active: bool,
+    /// Cards which have been accessed as part of this raid's Access phase.
+    pub accessed: Vec<CardId>,
 }
 
 /// Describes options for this game & the set of rules it is using.
@@ -98,7 +100,7 @@ pub struct GameConfiguration {
 
 /// State and configuration of the overall game, including whose turn it is and
 /// whether a raid is active.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameData {
     /// Current player whose turn it is
     pub turn: Side,
@@ -140,7 +142,7 @@ pub struct GameState {
     pub champion: PlayerState,
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::next_sorting_key] and [Self::move_card].
-    next_sorting_key: SortingKey,
+    next_sorting_key: u32,
 }
 
 impl GameState {
@@ -175,7 +177,7 @@ impl GameState {
     pub fn identity(&self, side: Side) -> &CardState {
         self.cards(side)
             .iter()
-            .find(|c| c.position.kind() == CardPositionKind::Identity)
+            .find(|c| c.position().kind() == CardPositionKind::Identity)
             .expect("Identity Card")
     }
 
@@ -233,15 +235,14 @@ impl GameState {
     /// Moves a card to a new [CardPosition], updating its sorting key.
     pub fn move_card(&mut self, card_id: CardId, new_position: CardPosition) {
         let key = self.next_sorting_key();
-        let mut card = self.card_mut(card_id);
-        card.position = new_position;
-        card.sorting_key = key;
+        let card = self.card_mut(card_id);
+        card.set_position(key, new_position);
     }
 
     /// Return a random card in the provided `position`, or None if there are no
     /// cards in that position
     pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
-        let mut cards = self.all_cards().filter(|c| c.position == position);
+        let mut cards = self.all_cards().filter(|c| c.position() == position);
         if self.data.config.deterministic {
             cards.next()
         } else {
@@ -256,28 +257,35 @@ impl GameState {
         side: Side,
         position: CardPosition,
     ) -> impl Iterator<Item = &CardState> {
-        self.cards(side).iter().filter(move |c| c.position == position)
+        self.cards(side).iter().filter(move |c| c.position() == position)
+    }
+
+    /// Cards owned by a player in a given position, in sorting-key order
+    pub fn card_list_for_position(&self, side: Side, position: CardPosition) -> Vec<&CardState> {
+        let mut result = self.cards_in_position(side, position).collect::<Vec<_>>();
+        result.sort();
+        result
     }
 
     /// Cards in a player's hand, in alphabetical order
     pub fn hand(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards(side).iter().filter(|c| c.position.in_hand())
-    }
-
-    /// Cards in a player's discard pile, in alphabetical order
-    pub fn discard_pile(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards(side).iter().filter(|c| c.position.in_discard_pile())
+        self.cards(side).iter().filter(|c| c.position().in_hand())
     }
 
     /// Cards in a player's deck, in alphabetical order
     pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
-        self.cards(side).iter().filter(|c| c.position.in_deck())
+        self.cards(side).iter().filter(|c| c.position().in_deck())
+    }
+
+    /// Cards in a player's discard pile, in alphabetical order
+    pub fn discard_pile(&self, side: Side) -> impl Iterator<Item = &CardState> {
+        self.cards(side).iter().filter(|c| c.position().in_discard_pile())
     }
 
     /// Returns true if this room has at least one hidden defender.
     pub fn has_hidden_defenders(&self, room_id: RoomId) -> bool {
         self.overlord_cards.iter().any(|c| {
-            c.position == CardPosition::Room(room_id, RoomLocation::Defender) && !c.data.revealed
+            c.position() == CardPosition::Room(room_id, RoomLocation::Defender) && !c.data.revealed
         })
     }
 
@@ -289,9 +297,10 @@ impl GameState {
     /// Overlord cards defending a given room, in sorting-key order (higher
     /// array indices are closer to the front of the room).
     pub fn defender_list(&self, room_id: RoomId) -> Vec<&CardState> {
-        let mut result = self.defenders_alphabetical(room_id).collect::<Vec<_>>();
-        result.sort();
-        result
+        self.card_list_for_position(
+            Side::Overlord,
+            CardPosition::Room(room_id, RoomLocation::Defender),
+        )
     }
 
     /// Overlord cards in a given room, in alphabetical order
@@ -341,15 +350,11 @@ impl GameState {
 
     /// Create card states for a deck
     fn make_deck(deck: &Deck, side: Side) -> Vec<CardState> {
-        let mut result = vec![CardState::new(
-            CardId::new(side, 0),
-            deck.identity,
-            side,
-            true, /* is_identity */
-        )];
+        let mut result =
+            vec![CardState::new(CardId::new(side, 0), deck.identity, true /* is_identity */)];
 
         result.extend(deck.card_names().iter().enumerate().map(move |(index, name)| {
-            CardState::new(CardId::new(side, index + 1), *name, side, false /* is_identity */)
+            CardState::new(CardId::new(side, index + 1), *name, false /* is_identity */)
         }));
 
         result

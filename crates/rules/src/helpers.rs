@@ -56,7 +56,7 @@ pub fn always<T>(_: &GameState, _: Scope, _: T) -> bool {
 
 /// RequirementFn that this delegate's card is currently in play
 pub fn in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
-    game.card(scope.card_id()).position.in_play()
+    game.card(scope.card_id()).position().in_play()
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their

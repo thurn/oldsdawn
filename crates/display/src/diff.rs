@@ -53,15 +53,15 @@ pub fn execute(
     commands.push_all(
         CommandPhase::Update,
         // Iterate over `all_cards` again to ensure response order is deterministic
-        game.all_cards().filter(|c| c.position.kind() != CardPositionKind::DeckUnknown).filter_map(
-            |card| {
+        game.all_cards()
+            .filter(|c| c.position().kind() != CardPositionKind::DeckUnknown)
+            .filter_map(|card| {
                 diff_create_or_update_card(
                     old.and_then(|old| old.cards.get(&card.id)),
                     new.cards.get(&card.id),
                 )
                 .map(Command::CreateOrUpdateCard)
-            },
-        ),
+            }),
     );
 
     diff_card_position_updates(

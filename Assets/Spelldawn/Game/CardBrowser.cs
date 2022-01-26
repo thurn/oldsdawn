@@ -32,6 +32,12 @@ namespace Spelldawn.Game
 
     protected override void OnUpdated()
     {
+      if (Registry.RaidService.RaidActive)
+      {
+        // If the browser is opened *during* a raid, do not update the overlay.
+        return;
+      }
+
       switch (ObjectCount)
       {
         case > 0 when !_active:

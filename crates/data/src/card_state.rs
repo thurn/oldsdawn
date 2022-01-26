@@ -28,11 +28,6 @@ use crate::primitives::{
     Side,
 };
 
-/// Determines display order when multiple cards are in the same position.
-/// Typically, this is taken from an opaque, sequentially increasing counter
-/// representing what time the card first moved to this position.
-pub type SortingKey = u32;
-
 /// Identifies the location of a card during an active game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind, Serialize, Deserialize)]
 #[enum_kind(CardPositionKind)]
@@ -125,31 +120,41 @@ pub struct CardState {
     pub side: Side,
     /// Optional state for this card
     pub data: CardData,
-    /// Where this card is located in the game. Use
-    /// [crate::game::GameState::move_card] instead of modifying this
-    /// directly.
-    pub position: CardPosition,
-    /// Opaque value identifying this card's sort order within its position
-    pub sorting_key: SortingKey,
+    /// Opaque value identifying this card's sort order within its CardPosition.
+    /// Higher sorting keys are closer to the 'top' or 'front' of the position.
+    pub sorting_key: u32,
+    position: CardPosition,
 }
 
 impl CardState {
     /// Creates a new card state, placing the card into the `side` player's
     /// deck. If `is_identity` is true, the card is instead marked as revealed
     /// and placed into the player's identity zone.
-    pub fn new(id: CardId, name: CardName, side: Side, is_identity: bool) -> Self {
+    pub fn new(id: CardId, name: CardName, is_identity: bool) -> Self {
         Self {
             id,
             name,
-            side,
+            side: id.side,
             position: if is_identity {
-                CardPosition::Identity(side)
+                CardPosition::Identity(id.side)
             } else {
-                CardPosition::DeckUnknown(side)
+                CardPosition::DeckUnknown(id.side)
             },
             sorting_key: 0,
             data: CardData { revealed: is_identity, ..CardData::default() },
         }
+    }
+
+    /// Where this card is located in the game.
+    pub fn position(&self) -> CardPosition {
+        self.position
+    }
+
+    /// Sets the position of this card. Please use `Game::move_card` instead of
+    /// invoking this directly.
+    pub fn set_position(&mut self, sorting_key: u32, position: CardPosition) {
+        self.sorting_key = sorting_key;
+        self.position = position;
     }
 
     /// Returns true if this card is currently revealed to the indicated user

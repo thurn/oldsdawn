@@ -222,7 +222,7 @@ namespace Spelldawn.Services
         _currentlyHandlingAction = false;
         yield break;
       }
-      
+
       // Send to server
       if (_fakeActionResponse)
       {

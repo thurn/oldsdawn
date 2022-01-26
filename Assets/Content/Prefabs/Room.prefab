@@ -46,10 +46,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _parent: {fileID: 0}
   _gameContext: 1
+  _sortingGroup: {fileID: 0}
+  _objects: []
+  _updateRequired: 0
+  _animateNextUpdate: 0
+  _animationRunning: 0
   _width: 7
   _height: 9
   _initialSpacing: 1
   _cardSize: 3.5
+  _registry: {fileID: 0}
 --- !u!1 &3086487373951498873
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,10 +102,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _parent: {fileID: 0}
   _gameContext: 1
+  _sortingGroup: {fileID: 0}
+  _objects: []
+  _updateRequired: 0
+  _animateNextUpdate: 0
+  _animationRunning: 0
   _width: 7
   _height: 9
   _initialSpacing: 1
   _cardSize: 3.5
+  _registry: {fileID: 0}
 --- !u!1 &5875982806262253910
 GameObject:
   m_ObjectHideFlags: 0

@@ -203,6 +203,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
 
     game.champion.score += scheme_points.points;
     mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion));
+    game.raid_mut()?.accessed.retain(|c| *c != card_id);
     set_access_phase_prompts(game)?;
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id));
     game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
@@ -225,12 +226,11 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
 /// Invoked once all of the defenders for a room during a raid (if any) have
 /// been passed.
 fn initiate_access_phase(game: &mut GameState) -> Result<()> {
-    game.raid_mut()?.phase = RaidPhase::Access;
     let target = game.raid()?.target;
 
-    match target {
+    let accessed = match target {
         RoomId::Vault => {
-            todo!("Access Vault")
+            mutations::top_of_deck(game, Side::Overlord, queries::vault_access_count(game))
         }
         RoomId::Sanctum => {
             todo!("Access Sanctum")
@@ -238,13 +238,15 @@ fn initiate_access_phase(game: &mut GameState) -> Result<()> {
         RoomId::Crypts => {
             todo!("Access Crypts")
         }
-        _ => {
-            let occupants = game.occupants(target).map(|c| c.id).collect::<Vec<_>>();
-            for occupant_id in occupants {
-                mutations::set_revealed(game, occupant_id, true);
-            }
-        }
+        _ => game.occupants(target).map(|c| c.id).collect::<Vec<_>>(),
+    };
+
+    for card_id in &accessed {
+        mutations::set_revealed(game, *card_id, true);
     }
+
+    game.raid_mut()?.phase = RaidPhase::Access;
+    game.raid_mut()?.accessed = accessed;
 
     set_access_phase_prompts(game)?;
     Ok(())

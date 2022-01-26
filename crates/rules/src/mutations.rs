@@ -31,12 +31,15 @@ use data::delegates::{
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, RaidId, RoomId, Side};
 use data::updates::GameUpdate;
+use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
 use crate::{actions, dispatch};
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
-/// cards, and shuffling cards back into the deck and fires events appropriately
+/// cards, and shuffling cards back into the deck and fires events
+/// appropriately. The card will be placed in the position in global sorting-key
+/// order, via [GameState::move_card].
 ///
 /// This function does *not* handle changing the 'revealed' status of the card,
 /// the caller is responsible for updating that when the card moves to a public
@@ -45,7 +48,7 @@ use crate::{actions, dispatch};
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
     info!(?card_id, ?new_position, "move_card");
     let mut pushed_update = false;
-    let old_position = game.card(card_id).position;
+    let old_position = game.card(card_id).position();
     game.move_card(card_id, new_position);
 
     dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }));
@@ -172,11 +175,11 @@ pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
         RaidPhase::Access
     };
 
-    let raid =
-        RaidData { target: room_id, raid_id: RaidId(game.data.next_raid_id), phase, active: false };
+    let raid_id = RaidId(game.data.next_raid_id);
+    let raid = RaidData { target: room_id, raid_id, phase, active: false, accessed: vec![] };
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
-    dispatch::invoke_event(game, RaidBeginEvent(raid));
+    dispatch::invoke_event(game, RaidBeginEvent(raid_id));
     game.updates.push(GameUpdate::InitiateRaid(room_id));
 }
 
@@ -185,9 +188,42 @@ pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
 #[instrument(skip(game))]
 pub fn end_raid(game: &mut GameState) {
     info!("end_raid");
-    let raid = *game.raid().expect("Active raid");
+    let raid = game.raid().expect("Active raid").raid_id;
     game.data.raid = None;
     dispatch::invoke_event(game, RaidEndEvent(raid));
     game.updates.push(GameUpdate::EndRaid);
     actions::check_end_turn(game, Side::Champion);
+}
+
+/// Returns a list of `count` cards from the top of the `side` player's
+/// deck, in sorting-key order (higher indices are are closer to the top
+/// of the deck).
+///
+/// Selects randomly unless cards are already known to be in this position.
+/// If insufficient cards are present in the deck, returns all available
+/// cards. Cards are moved to their new positions via [move_card], meaning that
+/// subsequent calls to this function will see the same results.
+pub fn top_of_deck(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
+    let mut cards = game.card_list_for_position(side, CardPosition::DeckTop(side));
+    let result = if count <= cards.len() {
+        cards[0..count].to_vec()
+    } else {
+        let remaining = count - cards.len();
+        let unknown = game.cards_in_position(side, CardPosition::DeckUnknown(side));
+        let mut shuffled = if game.data.config.deterministic {
+            unknown.take(remaining).collect()
+        } else {
+            unknown.choose_multiple(&mut rand::thread_rng(), remaining)
+        };
+        shuffled.append(&mut cards);
+        shuffled
+    };
+    let card_ids = result.into_iter().map(|c| c.id).collect::<Vec<_>>();
+    assert_eq!(card_ids.len(), count);
+
+    for card_id in &card_ids {
+        move_card(game, *card_id, CardPosition::DeckTop(side));
+    }
+
+    card_ids
 }

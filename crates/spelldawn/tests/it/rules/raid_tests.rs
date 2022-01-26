@@ -19,8 +19,9 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    ClientRoomLocation, GainManaAction, InitiateRaidAction, ObjectPositionIdentity,
-    ObjectPositionIdentityContainer, ObjectPositionRaid, ObjectPositionRoom, PlayerName,
+    ClientRoomLocation, GainManaAction, InitiateRaidAction, ObjectPositionBrowser,
+    ObjectPositionIdentity, ObjectPositionIdentityContainer, ObjectPositionRaid,
+    ObjectPositionRoom, PlayerName,
 };
 use test_utils::client::HasText;
 use test_utils::summarize::Summary;
@@ -218,7 +219,7 @@ fn use_weapon() {
 
     assert_eq!(
         g.user.data.object_index_position(Id::CardId(ids.scheme_id)),
-        (0, Position::Raid(ObjectPositionRaid {}))
+        (0, Position::Browser(ObjectPositionBrowser {}))
     );
     assert_eq!(
         g.user.data.object_position(Id::CardId(ids.minion_id)),
@@ -228,8 +229,10 @@ fn use_weapon() {
         })
     );
     assert_eq!(
-        g.user.data.object_index_position(Id::Identity(PlayerName::User.into())),
-        (1, Position::Raid(ObjectPositionRaid {}))
+        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        Position::IdentityContainer(ObjectPositionIdentityContainer {
+            owner: PlayerName::User.into()
+        })
     );
 
     assert_snapshot!(Summary::run(&response));
@@ -312,8 +315,10 @@ fn score_scheme_card() {
         Position::Identity(ObjectPositionIdentity { owner: PlayerName::User.into() })
     );
     assert_eq!(
-        g.user.data.object_index_position(Id::Identity(PlayerName::User.into())),
-        (0, Position::Raid(ObjectPositionRaid {}))
+        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        Position::IdentityContainer(ObjectPositionIdentityContainer {
+            owner: PlayerName::User.into()
+        })
     );
 
     assert_snapshot!(Summary::run(&response));

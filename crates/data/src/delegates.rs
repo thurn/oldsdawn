@@ -72,10 +72,10 @@ use crate::card_definition::CardStats;
 use crate::card_definition::Cost;
 #[allow(unused)] // Used in rustdocs
 use crate::card_state::{CardData, CardPosition};
-use crate::game::{GameState, RaidData};
+use crate::game::GameState;
 use crate::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
-    ShieldValue, Side, TurnNumber,
+    RaidId, ShieldValue, Side, TurnNumber,
 };
 
 /// Identifies the context for a given request to a delegate: which player,
@@ -253,9 +253,9 @@ pub enum Delegate {
     /// A card is scored by the Champion
     ChampionScoreCard(EventDelegate<CardId>),
     /// A Raid is initiated
-    RaidBegin(EventDelegate<RaidData>),
+    RaidBegin(EventDelegate<RaidId>),
     /// A minion is encountered during a raid
-    EncounterBegin(EventDelegate<RaidData>),
+    EncounterBegin(EventDelegate<RaidId>),
     /// A weapon boost is activated for a given card
     ActivateBoost(EventDelegate<BoostData>),
     /// A minion is defeated during an encounter by dealing damage to it equal
@@ -266,9 +266,9 @@ pub enum Delegate {
     MinionCombatAbility(EventDelegate<CardId>),
     /// A minion finishes being encountered during a raid. Invokes regardless of
     /// whether the encounter was successful.
-    EncounterEnd(EventDelegate<RaidData>),
+    EncounterEnd(EventDelegate<RaidId>),
     /// A Raid is completed, either successfully or unsuccessfully.
-    RaidEnd(EventDelegate<RaidData>),
+    RaidEnd(EventDelegate<RaidId>),
     /// Stored mana is taken from a card
     StoredManaTaken(EventDelegate<CardId>),
 
@@ -311,6 +311,12 @@ pub enum Delegate {
     BoostCount(QueryDelegate<CardId, BoostCount>),
     /// Get the number of actions a player gets at the start of their turn.
     StartOfTurnActions(QueryDelegate<Side, ActionCount>),
+    /// Gets the number of cards the Champion player can access from the Vault
+    /// during this raid
+    VaultAccessCount(QueryDelegate<RaidId, usize>),
+    /// Gets the number of cards the Champion player can access from the Sanctum
+    /// during this raid
+    SanctumAccessCount(QueryDelegate<RaidId, usize>),
 }
 
 impl fmt::Debug for Delegate {

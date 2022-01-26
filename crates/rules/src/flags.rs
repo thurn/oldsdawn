@@ -31,7 +31,7 @@ use crate::{dispatch, queries};
 pub fn can_take_play_card_action(game: &GameState, side: Side, card_id: CardId) -> bool {
     let mut can_play = queries::in_main_phase(game, side)
         && side == card_id.side
-        && game.card(card_id).position == CardPosition::Hand(side);
+        && game.card(card_id).position() == CardPosition::Hand(side);
     if enters_play_revealed(game, card_id) {
         can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
                              if cost <= game.player(side).mana);
@@ -136,7 +136,7 @@ pub fn can_take_raid_encounter_action(
     side: Side,
     action: EncounterAction,
 ) -> bool {
-    let raid = match game.data.raid {
+    let raid = match &game.data.raid {
         Some(r) => r,
         None => return false,
     };
@@ -171,19 +171,19 @@ pub fn can_take_raid_destroy_card_action(_game: &GameState, _side: Side, _card_i
 
 /// Can the provided player score the `card_id` card?
 pub fn can_score_card(game: &GameState, side: Side, card_id: CardId) -> bool {
-    let raid = match game.data.raid {
+    let raid = match &game.data.raid {
         Some(r) => r,
         None => return false,
     };
 
     side == Side::Champion
         && raid.phase == RaidPhase::Access
-        && game.card(card_id).position.is_room_occupant(raid.target)
+        && game.card(card_id).position().is_room_occupant(raid.target)
         && crate::card_definition(game, card_id).config.stats.scheme_points.is_some()
 }
 
 pub fn can_take_raid_end_action(game: &GameState, side: Side) -> bool {
-    let raid = match game.data.raid {
+    let raid = match &game.data.raid {
         Some(r) => r,
         None => return false,
     };

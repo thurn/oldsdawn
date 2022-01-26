@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 371
+assertion_line: 361
 expression: "Summary::run(&response)"
 
 ---
@@ -12,11 +12,6 @@ command_list:
             action_tracker: 3
         current_priority: Opponent
         raid_active: false
-    MoveGameObjects: 
-        id: Identity(User)
-        position: 
-            sorting_key: 0
-            position: ObjectPositionIdentityContainer { owner: User }
     RenderInterface: 
     panels: 
         main_controls: 
@@ -29,11 +24,6 @@ channel_response:
             action_tracker: 3
         current_priority: User
         raid_active: false
-    MoveGameObjects: 
-        id: Identity(Opponent)
-        position: 
-            sorting_key: 0
-            position: ObjectPositionIdentityContainer { owner: Opponent }
     RenderInterface: 
     panels: 
         main_controls: 

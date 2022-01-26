@@ -89,15 +89,20 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         let target_id = state
             .cards(user_side)
             .iter()
-            .find(|c| c.position.kind() == CardPositionKind::DeckUnknown)
+            .find(|c| c.position().kind() == CardPositionKind::DeckUnknown)
             .expect("No cards in deck")
             .id;
         client::overwrite_card(&mut state, target_id, next_draw);
     }
 
     if let Some(raid) = args.raid {
-        state.data.raid =
-            Some(RaidData { raid_id: RAID_ID, target: ROOM_ID, phase: raid.phase, active: false })
+        state.data.raid = Some(RaidData {
+            raid_id: RAID_ID,
+            target: ROOM_ID,
+            phase: raid.phase,
+            active: false,
+            accessed: vec![],
+        })
     }
 
     let mut game = TestGame::new(state, user_id, opponent_id);

@@ -21,8 +21,9 @@ use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
 use protos::spelldawn::card_targeting::Targeting;
-use protos::spelldawn::game_object_identifier;
+use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
+use protos::spelldawn::ObjectPositionBrowser;
 #[allow(unused)] // Used in rustdoc
 use protos::spelldawn::{
     ActionTrackerView, CardCreationAnimation, CardIcon, CardIcons, CardTargeting, CardTitle,
@@ -49,7 +50,7 @@ pub struct FullSync {
     pub interface: RenderInterfaceCommand,
     /// Positions for Game Objects which are in non-standard positions, e.g.
     /// because they are currently participating in a raid.
-    pub position_overrides: HashMap<game_object_identifier::Id, ObjectPosition>,
+    pub position_overrides: HashMap<Id, ObjectPosition>,
 }
 
 /// Builds a complete representation of the provided game as viewed by the
@@ -64,7 +65,7 @@ pub fn run(game: &GameState, user_side: Side) -> FullSync {
         game: update_game_view(game, user_side),
         cards: game
             .all_cards()
-            .filter(|c| c.position.kind() != CardPositionKind::DeckUnknown)
+            .filter(|c| c.position().kind() != CardPositionKind::DeckUnknown)
             .map(|c| {
                 (
                     c.id,
@@ -117,7 +118,7 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
 /// this game
 fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
     adapters::to_player_name(
-        match game.data.raid {
+        match &game.data.raid {
             Some(raid) => match raid.phase {
                 RaidPhase::Activation => Side::Overlord,
                 _ => Side::Champion,
@@ -253,11 +254,8 @@ fn revealed_card_view(
 }
 
 /// Calculates game object positions for an ongoing raid, if any
-fn position_overrides(
-    game: &GameState,
-    user_side: Side,
-) -> HashMap<game_object_identifier::Id, ObjectPosition> {
-    game.data.raid.map_or_else(HashMap::new, |raid| {
+fn position_overrides(game: &GameState, user_side: Side) -> HashMap<Id, ObjectPosition> {
+    game.data.raid.as_ref().map_or_else(HashMap::new, |raid| {
         if raid.phase == RaidPhase::Access {
             raid_access_position_overrides(game, user_side, raid)
         } else {
@@ -270,32 +268,26 @@ fn position_overrides(
 fn raid_position_overrides(
     game: &GameState,
     user_side: Side,
-    raid: RaidData,
-) -> HashMap<game_object_identifier::Id, ObjectPosition> {
+    raid: &RaidData,
+) -> HashMap<Id, ObjectPosition> {
     let mut result = Vec::new();
 
     match raid.target {
         RoomId::Vault => {
-            result.push(game_object_identifier::Id::Deck(
-                adapters::to_player_name(Side::Overlord, user_side).into(),
-            ));
+            result.push(Id::Deck(adapters::to_player_name(Side::Overlord, user_side).into()));
         }
         RoomId::Sanctum => {
-            result.push(game_object_identifier::Id::Identity(
-                adapters::to_player_name(Side::Overlord, user_side).into(),
-            ));
+            result.push(Id::Identity(adapters::to_player_name(Side::Overlord, user_side).into()));
         }
         RoomId::Crypts => {
-            result.push(game_object_identifier::Id::DiscardPile(
-                adapters::to_player_name(Side::Overlord, user_side).into(),
-            ));
+            result
+                .push(Id::DiscardPile(adapters::to_player_name(Side::Overlord, user_side).into()));
         }
         _ => {}
     }
 
     result.extend(
-        game.occupants(raid.target)
-            .map(|card| game_object_identifier::Id::CardId(adapters::adapt_card_id(card.id))),
+        game.occupants(raid.target).map(|card| Id::CardId(adapters::adapt_card_id(card.id))),
     );
 
     let defenders = game.defender_list(raid.target);
@@ -305,15 +297,9 @@ fn raid_position_overrides(
         RaidPhase::Continue(i) => &defenders[..=i],
         RaidPhase::Access => &[],
     };
-    result.extend(
-        included
-            .iter()
-            .map(|card| game_object_identifier::Id::CardId(adapters::adapt_card_id(card.id))),
-    );
+    result.extend(included.iter().map(|card| Id::CardId(adapters::adapt_card_id(card.id))));
 
-    result.push(game_object_identifier::Id::Identity(
-        adapters::to_player_name(Side::Champion, user_side).into(),
-    ));
+    result.push(Id::Identity(adapters::to_player_name(Side::Champion, user_side).into()));
 
     result
         .iter()
@@ -332,23 +318,30 @@ fn raid_position_overrides(
 
 /// Calculates positions for game objects during the access phase of a raid
 fn raid_access_position_overrides(
-    game: &GameState,
-    user_side: Side,
-    raid: RaidData,
-) -> HashMap<game_object_identifier::Id, ObjectPosition> {
-    match raid.target {
-        RoomId::Vault => todo!(),
-        RoomId::Sanctum => todo!(),
-        RoomId::Crypts => todo!(),
-        _ => raid_position_overrides(game, user_side, raid),
-    }
+    _game: &GameState,
+    _user_side: Side,
+    raid: &RaidData,
+) -> HashMap<Id, ObjectPosition> {
+    raid.accessed
+        .iter()
+        .enumerate()
+        .map(|(i, card_id)| {
+            (
+                Id::CardId(adapters::adapt_card_id(*card_id)),
+                ObjectPosition {
+                    sorting_key: i as u32,
+                    position: Some(Position::Browser(ObjectPositionBrowser {})),
+                },
+            )
+        })
+        .collect()
 }
 
 /// Converts a card's position into a rendered [ObjectPosition]. Returns None if
 /// this [CardPosition] has no equivalent object position, e.g. if the card is
 /// currently shuffled into the deck.
 pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPosition> {
-    let result = match card.position {
+    let result = match card.position() {
         CardPosition::Room(room_id, location) => Some(Position::Room(ObjectPositionRoom {
             room_id: adapters::adapt_room_id(room_id).into(),
             room_location: match location {

@@ -18,7 +18,7 @@ use data::card_definition::CardStats;
 use data::card_state::CardPosition;
 use data::delegates::{
     ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery, ManaCostQuery,
-    ShieldValueQuery, StartOfTurnActionsQuery,
+    SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery, VaultAccessCountQuery,
 };
 use data::game::GameState;
 use data::primitives::{
@@ -29,10 +29,13 @@ use crate::dispatch;
 
 /// Returns the top card of the indicated player's deck, selecting randomly if
 /// no cards are known to be present there. Returns None if the deck is empty.
+///
+/// Does not save the result, meaning that subsequent calls to this function may
+/// return different results.
 pub fn top_of_deck(game: &GameState, side: Side) -> Option<CardId> {
     game.cards(side)
         .iter()
-        .filter(|c| c.position == CardPosition::DeckTop(side))
+        .filter(|c| c.position() == CardPosition::DeckTop(side))
         .max_by_key(|c| c.sorting_key)
         .map_or_else(|| game.random_card(CardPosition::DeckUnknown(side)), |card| Some(card.id))
 }
@@ -135,4 +138,18 @@ pub fn in_main_phase(game: &GameState, side: Side) -> bool {
 /// turn
 pub fn start_of_turn_action_count(game: &GameState, side: Side) -> ActionCount {
     dispatch::perform_query(game, StartOfTurnActionsQuery(side), 3)
+}
+
+/// Look up the number of cards the Champion player can access from the Vault
+/// during the current raid
+pub fn vault_access_count(game: &GameState) -> usize {
+    let raid_id = game.data.raid.as_ref().expect("Active Raid").raid_id;
+    dispatch::perform_query(game, VaultAccessCountQuery(raid_id), 1)
+}
+
+/// Look up the number of cards the Champion player can access from the Sanctum
+/// during the current raid
+pub fn sanctum_access_count(game: &GameState) -> usize {
+    let raid_id = game.data.raid.as_ref().expect("Active Raid").raid_id;
+    dispatch::perform_query(game, SanctumAccessCountQuery(raid_id), 1)
 }
