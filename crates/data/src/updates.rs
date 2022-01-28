@@ -53,6 +53,8 @@ pub enum GameUpdate {
     ShuffleIntoDeck(CardId),
     /// A card has been completely removed from the game
     DestroyCard(CardId),
+    /// A card from within a deck has been locked into the 'top of deck' zone.
+    TopOfDeckCard(CardId),
     /// A card has been moved to a new game location not described by one of the
     /// above updates
     MoveCard(CardId),

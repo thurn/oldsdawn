@@ -33,9 +33,9 @@ use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, game_object_identifier, node_type, CardAnchorNode, CardIdentifier, CardTarget,
     CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
-    GameAction, GameIdentifier, GameObjectIdentifier, GameRequest, Node, NodeType, ObjectPosition,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
-    PlayerView, RevealedCardView,
+    GameAction, GameIdentifier, GameObjectIdentifier, GameRequest, InitiateRaidAction, Node,
+    NodeType, ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom,
+    PlayCardAction, PlayerName, PlayerView, RevealedCardView,
 };
 use server::database::Database;
 use server::GameResponse;
@@ -149,6 +149,17 @@ impl TestGame {
         self.perform_action(action, user_id).expect("Request failed");
     }
 
+    /// Helper function to invoke [Self::perform] to initiate a raid on the
+    /// provided `room_id`.
+    pub fn initiate_raid(&mut self, room_id: RoomId) {
+        self.perform(
+            Action::InitiateRaid(InitiateRaidAction {
+                room_id: adapters::adapt_room_id(room_id).into(),
+            }),
+            self.player_id_for_side(Side::Champion),
+        );
+    }
+
     /// Adds a named card to its owner's hand.
     ///
     /// This function operates by locating a test card in the owner's deck and
@@ -167,8 +178,9 @@ impl TestGame {
         let card_id = self
             .game
             .cards_in_position(side, CardPosition::DeckUnknown(side))
-            .find(|c| c.name.is_test_card())
-            .expect("No test cards remaining in deck")
+            .filter(|c| c.name.is_test_card())
+            .last() // Use last to avoid overwriting 'next draw' configuration
+            .unwrap()
             .id;
         overwrite_card(&mut self.game, card_id, card_name);
         self.game.move_card(card_id, CardPosition::Hand(side));
@@ -192,13 +204,24 @@ impl TestGame {
     ///
     /// Panics if the server returns an error for playing this card.
     pub fn play_from_hand(&mut self, card_name: CardName) -> (GameResponse, CardIdentifier) {
+        self.play_in_room(card_name, crate::ROOM_ID)
+    }
+
+    /// Equivalent method to [Self::play_from_hand] which explicitly specifies
+    /// the target room to use if this is a minion, project, scheme, or
+    /// upgrade card.
+    pub fn play_in_room(
+        &mut self,
+        card_name: CardName,
+        room_id: RoomId,
+    ) -> (GameResponse, CardIdentifier) {
         let card_id = self.add_to_hand(card_name);
 
         let target = match rules::get(card_name).card_type {
             CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
                 Some(CardTarget {
                     card_target: Some(card_target::CardTarget::RoomId(
-                        adapters::adapt_room_id(crate::ROOM_ID).into(),
+                        adapters::adapt_room_id(room_id).into(),
                     )),
                 })
             }
@@ -241,6 +264,16 @@ impl TestGame {
                 (self.user.id, &mut self.opponent, &mut self.user)
             }
             _ => panic!("Unknown user id: {:?}", player_id),
+        }
+    }
+
+    fn player_id_for_side(&self, side: Side) -> PlayerId {
+        if self.game.player(side).id == self.user.id {
+            self.user.id
+        } else if self.game.player(side).id == self.opponent.id {
+            self.opponent.id
+        } else {
+            panic!("Cannot find PlayerId for side {:?}", side)
         }
     }
 }

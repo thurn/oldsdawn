@@ -1,13 +1,13 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 290
+assertion_line: 285
 expression: "Summary::run(&response)"
 
 ---
 
 command_list: 
     FireProjectile: 
-        source_id: CardIdentifier { side: Overlord, index: 2 }
+        source_id: O44
         target_id: Identity(User)
         projectile: "<ProjectileAddress>"
         travel_duration: 300
@@ -16,15 +16,15 @@ command_list:
         current_priority: User
         raid_active: false
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
-        position: 
-            sorting_key: 2
-            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
-    MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 2 }
+        id: O44
         position: 
             sorting_key: 4
             position: ObjectPositionRoom { room_id: RoomA, room_location: Front }
+    MoveGameObjects: 
+        id: O45
+        position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
     MoveGameObjects: 
         id: Identity(User)
         position: 
@@ -36,7 +36,7 @@ command_list:
         card_anchor_nodes: 
 channel_response: 
     FireProjectile: 
-        source_id: CardIdentifier { side: Overlord, index: 2 }
+        source_id: O44
         target_id: Identity(Opponent)
         projectile: "<ProjectileAddress>"
         travel_duration: 300
@@ -45,15 +45,15 @@ channel_response:
         current_priority: Opponent
         raid_active: false
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
-        position: 
-            sorting_key: 2
-            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
-    MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 2 }
+        id: O44
         position: 
             sorting_key: 4
             position: ObjectPositionRoom { room_id: RoomA, room_location: Front }
+    MoveGameObjects: 
+        id: O45
+        position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
     MoveGameObjects: 
         id: Identity(Opponent)
         position: 

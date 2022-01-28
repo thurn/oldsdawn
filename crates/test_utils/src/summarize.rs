@@ -15,6 +15,7 @@
 use std::fmt::Debug;
 
 use anyhow::Result;
+use display::adapters;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
@@ -167,7 +168,7 @@ impl Summarize for RoomIdentifier {
 
 impl Summarize for CardIdentifier {
     fn summarize(self, summary: &mut Summary) {
-        summary.primitive(self)
+        summary.primitive(adapters::from_card_identifier(self))
     }
 }
 
@@ -469,7 +470,7 @@ impl Summarize for RevealedCardView {
 
 impl Summarize for CardTitle {
     fn summarize(self, summary: &mut Summary) {
-        summary.primitive("<CardTitle>")
+        summary.primitive(self.text)
     }
 }
 

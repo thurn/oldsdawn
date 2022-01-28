@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 54
+assertion_line: 48
 expression: "Summary::run(&r3)"
 
 ---
@@ -13,7 +13,7 @@ expression: "Summary::run(&r3)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
-            mana: 5
+            mana: 999
             action_tracker: 0
             score: 0
         opponent: 
@@ -23,14 +23,14 @@ expression: "Summary::run(&r3)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
-            mana: 5
+            mana: 999
             action_tracker: 2
             score: 0
         current_priority: Opponent
         raid_active: false
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Overlord, index: 0 }
+            card_id: O0
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -39,7 +39,7 @@ expression: "Summary::run(&r3)"
                 title_background: "<SpriteAddress>"
                 jewel: "<SpriteAddress>"
                 image: "<SpriteAddress>"
-                title: "<CardTitle>"
+                title: "Test Overlord Identity"
                 rules_text: "<RulesText>"
                 revealed_in_arena: true
                 targeting: 
@@ -53,7 +53,7 @@ expression: "Summary::run(&r3)"
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Overlord, index: 1 }
+            card_id: O1
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -63,7 +63,7 @@ expression: "Summary::run(&r3)"
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Champion, index: 0 }
+            card_id: C0
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -72,7 +72,7 @@ expression: "Summary::run(&r3)"
                 title_background: "<SpriteAddress>"
                 jewel: "<SpriteAddress>"
                 image: "<SpriteAddress>"
-                title: "<CardTitle>"
+                title: "Test Champion Identity"
                 rules_text: "<RulesText>"
                 revealed_in_arena: true
                 targeting: 

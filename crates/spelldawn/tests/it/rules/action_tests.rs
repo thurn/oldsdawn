@@ -36,7 +36,7 @@ fn connect() {
 fn connect_to_ongoing() {
     let mut g = new_game(
         Side::Overlord,
-        Args { actions: 3, next_draw: Some(CardName::IceDragon), ..Args::default() },
+        Args { actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
     );
     let r1 = g.connect(g.user_id(), Some(g.game_id()));
     assert_ok(&r1);
@@ -52,7 +52,7 @@ fn connect_to_ongoing() {
 fn draw_card() {
     let mut g = new_game(
         Side::Overlord,
-        Args { actions: 3, next_draw: Some(CardName::IceDragon), ..Args::default() },
+        Args { actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
     );
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));

@@ -62,7 +62,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         Side::Champion => (opponent_id, user_id),
     };
 
-    let mut state = GameState::new_game(
+    let mut game = GameState::new_game(
         game_id,
         Deck {
             owner_id: overlord_user,
@@ -77,26 +77,19 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         GameConfiguration { deterministic: true, ..GameConfiguration::default() },
     );
 
-    state.data.turn = args.turn.unwrap_or(user_side);
-    state.player_mut(user_side).mana = args.mana;
-    state.player_mut(user_side).actions = args.actions;
-    state.player_mut(user_side).score = args.score;
-    state.player_mut(user_side.opponent()).mana = args.opponent_mana;
-    state.player_mut(user_side.opponent()).actions = args.opponent_actions;
-    state.player_mut(user_side.opponent()).score = args.opponent_score;
+    game.data.turn = args.turn.unwrap_or(user_side);
+    game.player_mut(user_side).mana = args.mana;
+    game.player_mut(user_side).actions = args.actions;
+    game.player_mut(user_side).score = args.score;
+    game.player_mut(user_side.opponent()).mana = args.opponent_mana;
+    game.player_mut(user_side.opponent()).actions = args.opponent_actions;
+    game.player_mut(user_side.opponent()).score = args.opponent_score;
 
-    if let Some(next_draw) = args.next_draw {
-        let target_id = state
-            .cards(user_side)
-            .iter()
-            .find(|c| c.position().kind() == CardPositionKind::DeckUnknown)
-            .expect("No cards in deck")
-            .id;
-        client::overwrite_card(&mut state, target_id, next_draw);
-    }
+    set_deck_top(&mut game, user_side, args.deck_top);
+    set_deck_top(&mut game, user_side.opponent(), args.opponent_deck_top);
 
     if let Some(raid) = args.raid {
-        state.data.raid = Some(RaidData {
+        game.data.raid = Some(RaidData {
             raid_id: RAID_ID,
             target: ROOM_ID,
             phase: raid.phase,
@@ -105,7 +98,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         })
     }
 
-    let mut game = TestGame::new(state, user_id, opponent_id);
+    let mut game = TestGame::new(game, user_id, opponent_id);
     if args.connect {
         game.connect(user_id, Some(game_id)).expect("Connection failed");
         game.connect(opponent_id, Some(game_id)).expect("Connection failed");
@@ -123,9 +116,9 @@ fn generate_ids() -> (GameId, PlayerId, PlayerId) {
 pub struct Args {
     /// Player whose turn it should be. Defaults to the `user_side` player.
     pub turn: Option<Side>,
-    /// Mana available for the `user_side` player. Defaults to 5.
+    /// Mana available for the `user_side` player. Defaults to 999.
     pub mana: ManaValue,
-    /// Mana for the opponent of the `user_side` player. Defaults to 5.
+    /// Mana for the opponent of the `user_side` player. Defaults to 999.
     pub opponent_mana: ManaValue,
     /// Actions available for the `user_side` player. Defaults to 3.
     pub actions: ActionCount,
@@ -140,7 +133,9 @@ pub struct Args {
     /// This card will be drawn when drawing randomly from the deck (as long as
     /// no known cards are placed on top of it) because the game is created with
     /// [GameConfiguration::deterministic] set to true.
-    pub next_draw: Option<CardName>,
+    pub deck_top: Option<CardName>,
+    /// Card to be inserted into the opponent player's deck as the next draw.
+    pub opponent_deck_top: Option<CardName>,
     /// Set up an active raid within the created game using [ROOM_ID] as the
     /// target and [RAID_ID] as the ID.
     pub raid: Option<TestRaid>,
@@ -153,13 +148,14 @@ impl Default for Args {
     fn default() -> Self {
         Self {
             turn: None,
-            mana: 5,
-            opponent_mana: 5,
+            mana: 999,
+            opponent_mana: 999,
             actions: 3,
             opponent_actions: 0,
             score: 0,
             opponent_score: 0,
-            next_draw: None,
+            deck_top: None,
+            opponent_deck_top: None,
             raid: None,
             connect: true,
         }
@@ -171,6 +167,18 @@ impl Default for Args {
 pub struct TestRaid {
     pub phase: RaidPhase,
     pub active: bool,
+}
+
+fn set_deck_top(game: &mut GameState, side: Side, deck_top: Option<CardName>) {
+    if let Some(deck_top) = deck_top {
+        let target_id = game
+            .cards(side)
+            .iter()
+            .find(|c| c.position().kind() == CardPositionKind::DeckUnknown)
+            .expect("No cards in deck")
+            .id;
+        client::overwrite_card(game, target_id, deck_top);
+    }
 }
 
 /// Asserts that the display names of the provided vector of [CardName]s are

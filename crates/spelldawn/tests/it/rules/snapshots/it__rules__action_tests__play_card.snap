@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 122
+assertion_line: 108
 expression: "Summary::run(&response)"
 
 ---
@@ -15,7 +15,7 @@ command_list:
         raid_active: false
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Champion, index: 1 }
+            card_id: C45
             owning_player: User
             revealed_card: 
                 revealed_in_arena: true
@@ -25,7 +25,7 @@ command_list:
             position: ObjectPositionDiscardPile { owner: User }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: CardIdentifier { side: Champion, index: 1 }
+        id: C45
         position: 
             sorting_key: 2
             position: ObjectPositionDiscardPile { owner: User }
@@ -39,7 +39,7 @@ channel_response:
         raid_active: false
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Champion, index: 1 }
+            card_id: C45
             card_icons: 
                 top_left_icon: "5"
             owning_player: Opponent
@@ -48,7 +48,7 @@ channel_response:
                 title_background: "<SpriteAddress>"
                 jewel: "<SpriteAddress>"
                 image: "<SpriteAddress>"
-                title: "<CardTitle>"
+                title: "Arcane Recovery"
                 rules_text: "<RulesText>"
                 revealed_in_arena: true
                 targeting: 
@@ -61,13 +61,13 @@ channel_response:
             position: ObjectPositionDiscardPile { owner: Opponent }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: CardIdentifier { side: Champion, index: 1 }
+        id: C45
         position: 
             sorting_key: 0
             position: ObjectPositionStaging
     Delay: 1500
     MoveGameObjects: 
-        id: CardIdentifier { side: Champion, index: 1 }
+        id: C45
         position: 
             sorting_key: 2
             position: ObjectPositionDiscardPile { owner: Opponent }

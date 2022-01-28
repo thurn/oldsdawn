@@ -60,13 +60,7 @@ impl CardName {
 
     /// Returns true if this card is a test blank
     pub fn is_test_card(&self) -> bool {
-        matches!(
-            self,
-            CardName::TestOverlordIdentity
-                | CardName::TestChampionIdentity
-                | CardName::TestOverlordSpell
-                | CardName::TestChampionSpell
-        )
+        self.displayed_name().starts_with("Test")
     }
 }
 

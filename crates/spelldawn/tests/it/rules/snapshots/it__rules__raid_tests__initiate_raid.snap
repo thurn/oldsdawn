@@ -13,14 +13,14 @@ command_list:
         current_priority: Opponent
         raid_active: true
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
-        position: 
-            sorting_key: 0
-            position: ObjectPositionRaid
-    MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 2 }
+        id: O44
         position: 
             sorting_key: 1
+            position: ObjectPositionRaid
+    MoveGameObjects: 
+        id: O45
+        position: 
+            sorting_key: 0
             position: ObjectPositionRaid
     MoveGameObjects: 
         id: Identity(User)
@@ -46,14 +46,14 @@ channel_response:
         current_priority: User
         raid_active: true
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
-        position: 
-            sorting_key: 0
-            position: ObjectPositionRaid
-    MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 2 }
+        id: O44
         position: 
             sorting_key: 1
+            position: ObjectPositionRaid
+    MoveGameObjects: 
+        id: O45
+        position: 
+            sorting_key: 0
             position: ObjectPositionRaid
     MoveGameObjects: 
         id: Identity(Opponent)

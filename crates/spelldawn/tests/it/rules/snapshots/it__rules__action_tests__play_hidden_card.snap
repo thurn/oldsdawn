@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 151
+assertion_line: 134
 expression: "Summary::run(&response)"
 
 ---
@@ -14,7 +14,7 @@ command_list:
         raid_active: false
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Overlord, index: 1 }
+            card_id: O45
             owning_player: User
             revealed_card: 
                 revealed_in_arena: false
@@ -24,7 +24,7 @@ command_list:
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 2
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
@@ -36,7 +36,7 @@ channel_response:
         current_priority: Opponent
         raid_active: false
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 2
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }

@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 33
+assertion_line: 32
 expression: "Summary::run(&response)"
 
 ---
@@ -13,7 +13,7 @@ expression: "Summary::run(&response)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
-            mana: 5
+            mana: 999
             action_tracker: 3
             score: 0
         opponent: 
@@ -23,14 +23,14 @@ expression: "Summary::run(&response)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
-            mana: 5
+            mana: 999
             action_tracker: 0
             score: 0
         current_priority: User
         raid_active: false
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Overlord, index: 0 }
+            card_id: O0
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -39,7 +39,7 @@ expression: "Summary::run(&response)"
                 title_background: "<SpriteAddress>"
                 jewel: "<SpriteAddress>"
                 image: "<SpriteAddress>"
-                title: "<CardTitle>"
+                title: "Test Overlord Identity"
                 rules_text: "<RulesText>"
                 revealed_in_arena: true
                 targeting: 
@@ -53,7 +53,7 @@ expression: "Summary::run(&response)"
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: CardIdentifier { side: Champion, index: 0 }
+            card_id: C0
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -62,7 +62,7 @@ expression: "Summary::run(&response)"
                 title_background: "<SpriteAddress>"
                 jewel: "<SpriteAddress>"
                 image: "<SpriteAddress>"
-                title: "<CardTitle>"
+                title: "Test Champion Identity"
                 rules_text: "<RulesText>"
                 revealed_in_arena: true
                 targeting: 

@@ -253,30 +253,20 @@ fn initiate_access_phase(game: &mut GameState) -> Result<()> {
 }
 
 fn set_access_phase_prompts(game: &mut GameState) -> Result<()> {
-    let target = game.raid()?.target;
-    match target {
-        RoomId::Vault => {
-            todo!("Access Vault")
-        }
-        RoomId::Sanctum => {
-            todo!("Access Sanctum")
-        }
-        RoomId::Crypts => {
-            todo!("Access Crypts")
-        }
-        _ => mutations::set_prompt(
-            game,
-            Side::Champion,
-            Prompt {
-                context: None,
-                responses: game
-                    .occupants(target)
-                    .filter_map(|c| access_prompt_for_card(game, c.id))
-                    .chain(iter::once(PromptAction::EndRaid))
-                    .collect(),
-            },
-        ),
-    }
+    mutations::set_prompt(
+        game,
+        Side::Champion,
+        Prompt {
+            context: None,
+            responses: game
+                .raid()?
+                .accessed
+                .iter()
+                .filter_map(|card_id| access_prompt_for_card(game, *card_id))
+                .chain(iter::once(PromptAction::EndRaid))
+                .collect(),
+        },
+    );
     Ok(())
 }
 

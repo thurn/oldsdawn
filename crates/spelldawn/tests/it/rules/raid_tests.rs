@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use data::card_name::CardName;
-use data::primitives::Side;
+use data::primitives::{RoomId, Side};
 use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
@@ -363,5 +363,28 @@ fn complete_raid() {
         })
     );
 
+    assert_snapshot!(Summary::run(&response));
+}
+
+#[test]
+fn raid_vault() {
+    let mut g = new_game(
+        Side::Champion,
+        Args {
+            turn: Some(Side::Overlord),
+            opponent_actions: 1,
+            opponent_deck_top: Some(CardName::TestScheme31),
+            ..Args::default()
+        },
+    );
+
+    g.play_in_room(CardName::TestMinion5Health, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.initiate_raid(RoomId::Vault);
+    g.perform_click_on(g.opponent_id(), "Activate");
+
+    let response = g.click_on(g.user_id(), "Test Weapon");
+    assert!(g.user.interface.all_controls().has_text("Score"));
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert_snapshot!(Summary::run(&response));
 }

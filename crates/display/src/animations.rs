@@ -124,11 +124,8 @@ fn move_card(commands: &mut ResponseBuilder, card: &CardState) {
 
 /// Commands to reveal the indicated card to all players
 fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState) {
-    if commands.user_side != card.side
-        && game.data.raid.as_ref().map_or(true, |raid| !card.is_in_room(raid.target))
-    {
-        // If the hidden card is not part of an active raid, animate it to
-        // the staging area on reveal.
+    if commands.user_side != card.side && game.data.raid.is_none() {
+        // If there is no active raid, animate the card to the staging area on reveal.
         commands.push(
             CommandPhase::Animate,
             Command::MoveGameObjects(MoveGameObjectsCommand {

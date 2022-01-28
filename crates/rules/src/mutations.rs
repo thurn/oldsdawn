@@ -53,6 +53,11 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 
     dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }));
 
+    if old_position.in_deck() && matches!(new_position, CardPosition::DeckTop(_)) {
+        game.updates.push(GameUpdate::TopOfDeckCard(card_id));
+        pushed_update = true;
+    }
+
     if old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, DrawCardEvent(card_id));
         game.updates.push(GameUpdate::DrawCard(card_id));

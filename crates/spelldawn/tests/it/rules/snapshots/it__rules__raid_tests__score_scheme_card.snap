@@ -11,18 +11,18 @@ command_list:
     PlaySound: 
         sound: "<AudioClipAddress>"
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 0
             position: ObjectPositionScoreAnimation
     PlayEffect: 
         effect: "<EffectAddress>"
-        position: CardIdentifier { side: Overlord, index: 1 }
+        position: O45
         duration: 700
         sound: "<AudioClipAddress>"
     PlayEffect: 
         effect: "<EffectAddress>"
-        position: CardIdentifier { side: Overlord, index: 1 }
+        position: O45
         duration: 300
         sound: "<AudioClipAddress>"
     UpdateGameView: 
@@ -32,12 +32,12 @@ command_list:
         current_priority: User
         raid_active: true
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 7
             position: ObjectPositionIdentity { owner: User }
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 7
             position: ObjectPositionIdentity { owner: User }
@@ -53,18 +53,18 @@ channel_response:
     PlaySound: 
         sound: "<AudioClipAddress>"
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 0
             position: ObjectPositionScoreAnimation
     PlayEffect: 
         effect: "<EffectAddress>"
-        position: CardIdentifier { side: Overlord, index: 1 }
+        position: O45
         duration: 700
         sound: "<AudioClipAddress>"
     PlayEffect: 
         effect: "<EffectAddress>"
-        position: CardIdentifier { side: Overlord, index: 1 }
+        position: O45
         duration: 300
         sound: "<AudioClipAddress>"
     UpdateGameView: 
@@ -74,12 +74,12 @@ channel_response:
         current_priority: Opponent
         raid_active: true
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 7
             position: ObjectPositionIdentity { owner: Opponent }
     MoveGameObjects: 
-        id: CardIdentifier { side: Overlord, index: 1 }
+        id: O45
         position: 
             sorting_key: 7
             position: ObjectPositionIdentity { owner: Opponent }

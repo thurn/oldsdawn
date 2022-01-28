@@ -178,7 +178,7 @@ pub fn can_score_card(game: &GameState, side: Side, card_id: CardId) -> bool {
 
     side == Side::Champion
         && raid.phase == RaidPhase::Access
-        && game.card(card_id).position().is_room_occupant(raid.target)
+        && raid.accessed.contains(&card_id)
         && crate::card_definition(game, card_id).config.stats.scheme_points.is_some()
 }
 
