@@ -26,6 +26,8 @@ use data::game::{GameState, RaidPhase};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use if_chain::if_chain;
+use rand::seq::IteratorRandom;
+use rand::thread_rng;
 use tracing::{info, instrument};
 
 use crate::{dispatch, flags, mutations, queries};
@@ -233,12 +235,18 @@ fn initiate_access_phase(game: &mut GameState) -> Result<()> {
             mutations::top_of_deck(game, Side::Overlord, queries::vault_access_count(game))
         }
         RoomId::Sanctum => {
-            todo!("Access Sanctum")
+            let count = queries::sanctum_access_count(game);
+            if game.data.config.deterministic {
+                game.hand(Side::Overlord).map(|c| c.id).take(count).collect()
+            } else {
+                game.hand(Side::Overlord).map(|c| c.id).choose_multiple(&mut thread_rng(), count)
+            }
         }
+
         RoomId::Crypts => {
             todo!("Access Crypts")
         }
-        _ => game.occupants(target).map(|c| c.id).collect::<Vec<_>>(),
+        _ => game.occupants(target).map(|c| c.id).collect(),
     };
 
     for card_id in &accessed {

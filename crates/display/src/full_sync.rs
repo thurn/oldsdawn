@@ -318,23 +318,38 @@ fn raid_position_overrides(
 
 /// Calculates positions for game objects during the access phase of a raid
 fn raid_access_position_overrides(
-    _game: &GameState,
+    game: &GameState,
     _user_side: Side,
     raid: &RaidData,
 ) -> HashMap<Id, ObjectPosition> {
-    raid.accessed
-        .iter()
-        .enumerate()
-        .map(|(i, card_id)| {
-            (
-                Id::CardId(adapters::adapt_card_id(*card_id)),
-                ObjectPosition {
-                    sorting_key: i as u32,
-                    position: Some(Position::Browser(ObjectPositionBrowser {})),
-                },
-            )
-        })
-        .collect()
+    fn create_position(i: usize, card_id: CardId) -> (Id, ObjectPosition) {
+        (
+            Id::CardId(adapters::adapt_card_id(card_id)),
+            ObjectPosition {
+                sorting_key: i as u32,
+                position: Some(Position::Browser(ObjectPositionBrowser {})),
+            },
+        )
+    }
+
+    match raid.target {
+        RoomId::Sanctum => game
+            .hand(Side::Overlord)
+            .enumerate()
+            .map(|(i, card)| create_position(i, card.id))
+            .collect(),
+        RoomId::Crypts => game
+            .discard_pile(Side::Overlord)
+            .enumerate()
+            .map(|(i, card)| create_position(i, card.id))
+            .collect(),
+        _ => raid
+            .accessed
+            .iter()
+            .enumerate()
+            .map(|(i, card_id)| create_position(i, *card_id))
+            .collect(),
+    }
 }
 
 /// Converts a card's position into a rendered [ObjectPosition]. Returns None if

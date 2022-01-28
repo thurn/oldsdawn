@@ -388,3 +388,22 @@ fn raid_vault() {
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert_snapshot!(Summary::run(&response));
 }
+
+#[test]
+fn raid_sanctum() {
+    let mut g = new_game(
+        Side::Champion,
+        Args { turn: Some(Side::Overlord), turn_actions: 1, ..Args::default() },
+    );
+
+    g.add_to_hand(CardName::TestScheme31);
+    g.play_in_room(CardName::TestMinion5Health, RoomId::Sanctum);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.initiate_raid(RoomId::Sanctum);
+    g.perform_click_on(g.opponent_id(), "Activate");
+
+    let response = g.click_on(g.user_id(), "Test Weapon");
+    assert!(g.user.interface.all_controls().has_text("Score"));
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert_snapshot!(Summary::run(&response));
+}

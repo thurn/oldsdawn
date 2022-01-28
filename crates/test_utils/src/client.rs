@@ -167,9 +167,9 @@ impl TestGame {
     /// moved to the user's hand via [GameState::move_card].
     /// CreateOrUpdateCard commands are sent to the attached test clients.
     ///
-    /// This function will *not* check the legality of drawing a card, invoke
-    /// any game events, or append a game update. It will correctly update
-    /// the card's sorting key, however.
+    /// This function will *not* spend action points, check the legality of
+    /// drawing a card, invoke any game events, or append a game update. It
+    /// will correctly update the card's sorting key, however.
     ///
     /// Returns the client [CardIdentifier] for the drawn card. Panics if no
     /// test cards remain in the user's deck.
