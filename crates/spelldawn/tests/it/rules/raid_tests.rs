@@ -89,10 +89,10 @@ fn activate_room() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    assert_eq!(g.opponent.this_player.mana(), 100);
+    assert_eq!(g.opponent.this_player.mana(), 999);
     assert!(!g.user.cards.get(ids.minion_id).revealed_to_me());
     let response = g.click_on(g.opponent_id(), "Activate");
-    assert_eq!(g.opponent.this_player.mana(), 97); // Minion costs 3 to summon
+    assert_eq!(g.opponent.this_player.mana(), 996); // Minion costs 3 to summon
     assert!(g.user.cards.get(ids.minion_id).revealed_to_me());
     assert!(g.opponent.cards.get(ids.minion_id).revealed_to_me());
     assert_eq!(PlayerName::User, g.user.data.priority());
@@ -205,10 +205,10 @@ fn use_weapon() {
         g.user_id(),
     );
     g.perform_click_on(g.opponent_id(), "Activate");
-    assert_eq!(g.user.this_player.mana(), 97); // Minion costs 3 to summon
+    assert_eq!(g.user.this_player.mana(), 996); // Minion costs 3 to summon
     let response = g.click_on(g.user_id(), "Test Weapon");
-    assert_eq!(g.user.this_player.mana(), 96); // Weapon costs 1 to use
-    assert_eq!(g.opponent.other_player.mana(), 96); // Weapon costs 1 to use
+    assert_eq!(g.user.this_player.mana(), 995); // Weapon costs 1 to use
+    assert_eq!(g.opponent.other_player.mana(), 995); // Weapon costs 1 to use
     assert!(g.user.cards.get(ids.scheme_id).revealed_to_me());
     assert!(g.opponent.cards.get(ids.scheme_id).revealed_to_me());
     assert_eq!(PlayerName::User, g.user.data.priority());
@@ -251,10 +251,10 @@ fn fire_combat_ability() {
         g.user_id(),
     );
     g.perform_click_on(g.opponent_id(), "Activate");
-    assert_eq!(g.user.this_player.mana(), 97); // Minion costs 3 to summon
+    assert_eq!(g.user.this_player.mana(), 996); // Minion costs 3 to summon
     let response = g.click_on(g.user_id(), "Continue");
-    assert_eq!(g.user.this_player.mana(), 97); // Mana is unchanged
-    assert_eq!(g.opponent.other_player.mana(), 97);
+    assert_eq!(g.user.this_player.mana(), 996); // Mana is unchanged
+    assert_eq!(g.opponent.other_player.mana(), 996);
     assert!(!g.user.cards.get(ids.scheme_id).revealed_to_me()); // Scheme is not revealed
     assert_eq!(PlayerName::User, g.user.data.priority()); // Still Champion turn
     assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
@@ -372,7 +372,7 @@ fn raid_vault() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            opponent_actions: 1,
+            turn_actions: 1,
             opponent_deck_top: Some(CardName::TestScheme31),
             ..Args::default()
         },

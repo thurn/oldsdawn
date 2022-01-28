@@ -15,7 +15,7 @@ command_list:
     UpdateGameView: 
         user: 
             side: Champion
-            mana: 96
+            mana: 995
         current_priority: User
         raid_active: true
     CreateOrUpdateCard: 
@@ -78,7 +78,7 @@ channel_response:
     UpdateGameView: 
         opponent: 
             side: Champion
-            mana: 96
+            mana: 995
         current_priority: Opponent
         raid_active: true
     CreateOrUpdateCard: 

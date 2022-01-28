@@ -79,11 +79,10 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
 
     game.data.turn = args.turn.unwrap_or(user_side);
     game.player_mut(user_side).mana = args.mana;
-    game.player_mut(user_side).actions = args.actions;
     game.player_mut(user_side).score = args.score;
     game.player_mut(user_side.opponent()).mana = args.opponent_mana;
-    game.player_mut(user_side.opponent()).actions = args.opponent_actions;
     game.player_mut(user_side.opponent()).score = args.opponent_score;
+    game.player_mut(game.data.turn).actions = args.turn_actions;
 
     set_deck_top(&mut game, user_side, args.deck_top);
     set_deck_top(&mut game, user_side.opponent(), args.opponent_deck_top);
@@ -120,10 +119,8 @@ pub struct Args {
     pub mana: ManaValue,
     /// Mana for the opponent of the `user_side` player. Defaults to 999.
     pub opponent_mana: ManaValue,
-    /// Actions available for the `user_side` player. Defaults to 3.
-    pub actions: ActionCount,
-    /// Actions for the opponent of the `user_side` player. Defaults to 0.
-    pub opponent_actions: ActionCount,
+    /// Actions available for the `turn` player. Defaults to 3.
+    pub turn_actions: ActionCount,
     /// Score for the `user_side` player. Defaults to 0.
     pub score: PointsValue,
     /// Score for the opponent of the `user_side` player. Defaults to 0.
@@ -150,8 +147,7 @@ impl Default for Args {
             turn: None,
             mana: 999,
             opponent_mana: 999,
-            actions: 3,
-            opponent_actions: 0,
+            turn_actions: 3,
             score: 0,
             opponent_score: 0,
             deck_top: None,

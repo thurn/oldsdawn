@@ -30,7 +30,7 @@ pub struct SimpleIds {
 /// - The Overlord has a scheme and a minion in play in the [crate::ROOM_ID]
 ///   room.
 /// - The Champion has a weapon in play
-/// - Both players have 100 mana available
+/// - Both players have 999 mana available
 ///
 /// Returns the game along with a [SimpleIds] struct containing the IDs of the
 /// created cards
@@ -42,14 +42,7 @@ pub fn simple_game(
 ) -> (TestGame, SimpleIds) {
     let mut game = new_game(
         user_side,
-        Args {
-            turn: Some(Side::Overlord),
-            actions: 2,
-            opponent_actions: 2,
-            mana: 100,
-            opponent_mana: 100,
-            ..Args::default()
-        },
+        Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },
     );
     let (_, scheme_id) = game.play_from_hand(scheme);
     let (_, minion_id) = game.play_from_hand(minion);

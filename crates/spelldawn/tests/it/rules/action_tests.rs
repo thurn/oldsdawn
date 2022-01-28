@@ -36,7 +36,7 @@ fn connect() {
 fn connect_to_ongoing() {
     let mut g = new_game(
         Side::Overlord,
-        Args { actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
+        Args { turn_actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
     );
     let r1 = g.connect(g.user_id(), Some(g.game_id()));
     assert_ok(&r1);
@@ -52,7 +52,7 @@ fn connect_to_ongoing() {
 fn draw_card() {
     let mut g = new_game(
         Side::Overlord,
-        Args { actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
+        Args { turn_actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
     );
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
@@ -71,7 +71,7 @@ fn cannot_draw_card_on_opponent_turn() {
 
 #[test]
 fn cannot_draw_when_out_of_action_points() {
-    let mut g = new_game(Side::Overlord, Args { actions: 0, ..Args::default() });
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 0, ..Args::default() });
     assert_error(g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id()));
 }
 
@@ -89,7 +89,7 @@ fn cannot_draw_during_raid() {
 
 #[test]
 fn play_card() {
-    let mut g = new_game(Side::Champion, Args { actions: 3, mana: 5, ..Args::default() });
+    let mut g = new_game(Side::Champion, Args { turn_actions: 3, mana: 5, ..Args::default() });
     let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
@@ -110,7 +110,7 @@ fn play_card() {
 
 #[test]
 fn play_hidden_card() {
-    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 0, ..Args::default() });
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 3, mana: 0, ..Args::default() });
     let card_id = g.add_to_hand(CardName::DungeonAnnex);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction {
@@ -146,7 +146,7 @@ fn cannot_play_card_on_opponent_turn() {
 
 #[test]
 fn cannot_play_card_when_out_of_action_points() {
-    let mut g = new_game(Side::Champion, Args { actions: 0, ..Args::default() });
+    let mut g = new_game(Side::Champion, Args { turn_actions: 0, ..Args::default() });
     let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     assert_error(g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
@@ -172,7 +172,7 @@ fn cannot_play_card_during_raid() {
 
 #[test]
 fn gain_mana() {
-    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 3, mana: 5, ..Args::default() });
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
 
     assert_eq!(2, g.player().actions());
@@ -191,7 +191,7 @@ fn cannot_gain_mana_on_opponent_turn() {
 
 #[test]
 fn cannot_gain_mana_when_out_of_action_points() {
-    let mut g = new_game(Side::Overlord, Args { actions: 0, ..Args::default() });
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 0, ..Args::default() });
     assert_error(g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()));
 }
 
@@ -209,7 +209,7 @@ fn cannot_gain_mana_during_raid() {
 
 #[test]
 fn switch_turn() {
-    let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 5, ..Args::default() });
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 3, mana: 5, ..Args::default() });
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());

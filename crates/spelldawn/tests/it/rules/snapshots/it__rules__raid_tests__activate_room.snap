@@ -9,7 +9,7 @@ command_list:
     UpdateGameView: 
         user: 
             side: Overlord
-            mana: 97
+            mana: 996
         current_priority: Opponent
         raid_active: true
     CreateOrUpdateCard: 
@@ -33,7 +33,7 @@ channel_response:
     UpdateGameView: 
         opponent: 
             side: Overlord
-            mana: 97
+            mana: 996
         current_priority: User
         raid_active: true
     CreateOrUpdateCard: 
