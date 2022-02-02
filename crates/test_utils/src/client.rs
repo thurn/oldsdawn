@@ -337,6 +337,14 @@ impl TestClient {
         self.other_player.update(command.clone());
         self.interface.update(command.clone());
         self.cards.update(command.clone());
+
+        if let Command::RunInParallel(run_in_parallel) = command {
+            for list in &run_in_parallel.commands {
+                for command in &list.commands {
+                    self.handle_command(command.command.as_ref().expect("Command"));
+                }
+            }
+        }
     }
 }
 

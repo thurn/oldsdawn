@@ -19,11 +19,11 @@ use std::collections::HashMap;
 use data::card_state::CardPositionKind;
 use data::game::GameState;
 use protos::spelldawn::game_command::Command;
+use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    game_object_identifier, CardIcon, CardIcons, CardView, CreateOrUpdateCardCommand,
-    DestroyCardCommand, GameObjectIdentifier, GameView, MoveGameObjectsCommand, ObjectPosition,
-    ObjectPositionDeckContainer, ObjectPositionDiscardPileContainer,
+    CardIcon, CardIcons, CardView, CreateOrUpdateCardCommand, DestroyCardCommand, GameView,
+    ObjectPosition, ObjectPositionDeckContainer, ObjectPositionDiscardPileContainer,
     ObjectPositionIdentityContainer, PlayerInfo, PlayerName, PlayerView, RevealedCardView,
     UpdateGameViewCommand,
 };
@@ -197,61 +197,22 @@ fn diff_card_icon(old: Option<&CardIcon>, new: Option<&CardIcon>) -> Option<Card
 fn diff_card_position_updates(
     commands: &mut ResponseBuilder,
     game: &GameState,
-    old: Option<&HashMap<game_object_identifier::Id, ObjectPosition>>,
-    new: &HashMap<game_object_identifier::Id, ObjectPosition>,
+    old: Option<&HashMap<Id, ObjectPosition>>,
+    new: &HashMap<Id, ObjectPosition>,
 ) {
-    for id in game.all_card_ids() {
-        push_move_command(
-            commands,
-            game,
-            old,
-            new,
-            game_object_identifier::Id::CardId(adapters::adapt_card_id(id)),
-        );
-    }
+    let mut ids = vec![
+        Id::Identity(PlayerName::User.into()),
+        Id::Identity(PlayerName::Opponent.into()),
+        Id::Deck(PlayerName::User.into()),
+        Id::Deck(PlayerName::Opponent.into()),
+        Id::DiscardPile(PlayerName::User.into()),
+        Id::DiscardPile(PlayerName::Opponent.into()),
+    ];
+    ids.extend(game.all_card_ids().map(|id| Id::CardId(adapters::adapt_card_id(id))));
 
-    push_move_command(
-        commands,
-        game,
-        old,
-        new,
-        game_object_identifier::Id::Identity(PlayerName::User.into()),
-    );
-    push_move_command(
-        commands,
-        game,
-        old,
-        new,
-        game_object_identifier::Id::Identity(PlayerName::Opponent.into()),
-    );
-    push_move_command(
-        commands,
-        game,
-        old,
-        new,
-        game_object_identifier::Id::Deck(PlayerName::User.into()),
-    );
-    push_move_command(
-        commands,
-        game,
-        old,
-        new,
-        game_object_identifier::Id::Deck(PlayerName::Opponent.into()),
-    );
-    push_move_command(
-        commands,
-        game,
-        old,
-        new,
-        game_object_identifier::Id::DiscardPile(PlayerName::User.into()),
-    );
-    push_move_command(
-        commands,
-        game,
-        old,
-        new,
-        game_object_identifier::Id::DiscardPile(PlayerName::Opponent.into()),
-    );
+    for id in ids {
+        push_move_command(commands, game, old, new, id);
+    }
 }
 
 /// Appends a command to update the position for the provided `id` if it has
@@ -259,9 +220,9 @@ fn diff_card_position_updates(
 fn push_move_command(
     commands: &mut ResponseBuilder,
     game: &GameState,
-    old: Option<&HashMap<game_object_identifier::Id, ObjectPosition>>,
-    new: &HashMap<game_object_identifier::Id, ObjectPosition>,
-    id: game_object_identifier::Id,
+    old: Option<&HashMap<Id, ObjectPosition>>,
+    new: &HashMap<Id, ObjectPosition>,
+    id: Id,
 ) {
     match old {
         None if new.contains_key(&id) => move_to_position(commands, game, id, new.get(&id)),
@@ -273,18 +234,19 @@ fn push_move_command(
 }
 
 /// Appends a command to move `id` to its indicated `position` (if provided) or
-/// else to its default game position.
+/// else to its default game position. Will be run in parallel with other move
+/// commands.
 fn move_to_position(
     commands: &mut ResponseBuilder,
     game: &GameState,
-    id: game_object_identifier::Id,
+    id: Id,
     position: Option<&ObjectPosition>,
 ) {
     let new_position = if let Some(new) = position {
         new.clone()
     } else {
         match id {
-            game_object_identifier::Id::CardId(card_id) => {
+            Id::CardId(card_id) => {
                 let id = adapters::from_card_identifier(card_id);
                 if let Some(card_position) =
                     full_sync::adapt_position(game.card(id), commands.user_side)
@@ -301,19 +263,19 @@ fn move_to_position(
                     return;
                 }
             }
-            game_object_identifier::Id::Identity(name) => ObjectPosition {
+            Id::Identity(name) => ObjectPosition {
                 sorting_key: 0,
                 position: Some(Position::IdentityContainer(ObjectPositionIdentityContainer {
                     owner: name,
                 })),
             },
-            game_object_identifier::Id::Deck(name) => ObjectPosition {
+            Id::Deck(name) => ObjectPosition {
                 sorting_key: 0,
                 position: Some(Position::DeckContainer(ObjectPositionDeckContainer {
                     owner: name,
                 })),
             },
-            game_object_identifier::Id::DiscardPile(name) => ObjectPosition {
+            Id::DiscardPile(name) => ObjectPosition {
                 sorting_key: 0,
                 position: Some(Position::DiscardPileContainer(
                     ObjectPositionDiscardPileContainer { owner: name },
@@ -322,14 +284,7 @@ fn move_to_position(
         }
     };
 
-    commands.push(
-        CommandPhase::Move,
-        Command::MoveGameObjects(MoveGameObjectsCommand {
-            ids: vec![GameObjectIdentifier { id: Some(id) }],
-            position: Some(new_position),
-            disable_animation: !commands.animate,
-        }),
-    )
+    commands.move_object(id, new_position);
 }
 
 /// Diffs two values. If the values are equal, returns None, otherwise invokes
