@@ -21,15 +21,15 @@
 //! delegate event *after* performing their mutation to inform other systems
 //! that game state has changed.
 
-use data::actions::{ActivateRoomAction, Prompt, PromptAction, PromptContext};
+use data::actions::Prompt;
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidBeginEvent, RaidEndEvent,
-    RevealCardEvent, Scope, StoredManaTakenEvent,
+    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, RevealCardEvent, Scope,
+    StoredManaTakenEvent,
 };
-use data::game::{GameState, RaidData, RaidPhase};
-use data::primitives::{ActionCount, BoostData, CardId, ManaValue, RaidId, RoomId, Side};
+use data::game::GameState;
+use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
@@ -155,37 +155,6 @@ pub fn set_prompt(game: &mut GameState, side: Side, prompt: Prompt) {
 pub fn clear_prompts(game: &mut GameState) {
     game.overlord.prompt = None;
     game.champion.prompt = None;
-}
-
-/// Initiates a new raid on the given `room_id`. Panics if a raid is already
-/// active. Appends [GameUpdate::InitiateRaid].
-#[instrument(skip(game))]
-pub fn initiate_raid(game: &mut GameState, room_id: RoomId) {
-    info!(?room_id, "initiate_raid");
-    assert!(game.data.raid.is_none(), "Raid is already active");
-    let phase = if game.has_hidden_defenders(room_id) {
-        set_prompt(
-            game,
-            Side::Overlord,
-            Prompt {
-                context: Some(PromptContext::ActivateRoom),
-                responses: vec![
-                    PromptAction::ActivateRoomAction(ActivateRoomAction::Activate),
-                    PromptAction::ActivateRoomAction(ActivateRoomAction::Pass),
-                ],
-            },
-        );
-        RaidPhase::Activation
-    } else {
-        RaidPhase::Access
-    };
-
-    let raid_id = RaidId(game.data.next_raid_id);
-    let raid = RaidData { target: room_id, raid_id, phase, active: false, accessed: vec![] };
-    game.data.next_raid_id += 1;
-    game.data.raid = Some(raid);
-    dispatch::invoke_event(game, RaidBeginEvent(raid_id));
-    game.updates.push(GameUpdate::InitiateRaid(room_id));
 }
 
 /// Ends the current raid. Panics if no raid is currently active. Appends

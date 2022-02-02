@@ -85,7 +85,7 @@ pub fn can_take_raid_activate_room_action(game: &GameState, side: Side) -> bool 
         && matches!(
             game.data.raid,
             Some(RaidData { phase: RaidPhase::Activation, target, .. })
-            if game.has_hidden_defenders(target)
+            if game.defenders_alphabetical(target).any(|c| !c.data.revealed_to_opponent)
         )
 }
 

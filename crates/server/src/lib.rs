@@ -34,7 +34,7 @@ use protos::spelldawn::{
     RoomIdentifier, StandardAction,
 };
 use rules::actions::PlayCardTarget;
-use rules::{actions, raid};
+use rules::{actions, raid_actions};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
@@ -181,7 +181,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
         }
         Action::InitiateRaid(action) => {
             handle_action(database, player_id, game_id, |game, user_side| {
-                raid::initiate_raid_action(
+                raid_actions::initiate_raid_action(
                     game,
                     user_side,
                     to_server_room_id(RoomIdentifier::from_i32(action.room_id))

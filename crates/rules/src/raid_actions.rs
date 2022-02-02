@@ -14,23 +14,16 @@
 
 //! Handling for raid-related user actions.
 
-use std::iter;
-
 use anyhow::{bail, ensure, Context, Result};
-use data::actions::{
-    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
-};
+use data::actions::{ActivateRoomAction, AdvanceAction, EncounterAction};
 use data::card_state::CardPosition;
-use data::delegates::{ChampionScoreCardEvent, MinionCombatAbilityEvent};
+use data::delegates::{ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidBeginEvent};
 use data::game::{GameState, RaidPhase};
-use data::primitives::{CardId, CardType, RoomId, Side};
+use data::primitives::{CardId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
-use if_chain::if_chain;
-use rand::seq::IteratorRandom;
-use rand::thread_rng;
 use tracing::{info, instrument};
 
-use crate::{dispatch, flags, mutations, queries};
+use crate::{dispatch, flags, mutations, queries, raid_phases};
 
 #[instrument(skip(game))]
 pub fn initiate_raid_action(
@@ -41,7 +34,22 @@ pub fn initiate_raid_action(
     info!(?user_side, "initiate_raid_action");
     ensure!(flags::can_initiate_raid(game, user_side), "Cannot initiate raid for {:?}", user_side);
     mutations::spend_action_points(game, user_side, 1);
-    mutations::initiate_raid(game, target_room);
+
+    let phase = if game.defenders_alphabetical(target_room).any(|c| !c.data.revealed_to_opponent) {
+        RaidPhase::Activation
+    } else {
+        let defender_count = game.defenders_alphabetical(target_room).count();
+        if defender_count == 0 {
+            RaidPhase::Access
+        } else {
+            RaidPhase::Encounter(defender_count - 1)
+        }
+    };
+
+    let raid_id = raid_phases::create_raid(game, target_room, phase)?;
+    dispatch::invoke_event(game, RaidBeginEvent(raid_id));
+    game.updates.push(GameUpdate::InitiateRaid(target_room));
+
     Ok(())
 }
 
@@ -59,49 +67,16 @@ pub fn activate_room_action(
     );
 
     let defender_count = game.defenders_alphabetical(game.raid()?.target).count();
-    game.raid_mut()?.active = data == ActivateRoomAction::Activate;
+    game.raid_mut()?.room_active = data == ActivateRoomAction::Activate;
 
-    if defender_count == 0 {
-        return initiate_access_phase(game);
-    }
-
-    game.raid_mut()?.phase = RaidPhase::Encounter(defender_count - 1);
-    let target = game.raid()?.target;
-    let defender_id = find_defender(game, target, defender_count - 1)?;
-
-    if_chain! {
-        if let Some(cost) = queries::mana_cost(game, defender_id);
-        if cost <= game.player(Side::Overlord).mana;
-        then {
-            mutations::spend_mana(game, Side::Overlord, cost);
-            mutations::set_revealed(game, defender_id, true);
-
-            mutations::set_prompt(
-                game,
-                Side::Champion,
-                Prompt {
-                    context: None,
-                    responses: game
-                        .weapons()
-                        .filter(|weapon| flags::can_defeat_target(game, weapon.id, defender_id))
-                        .map(|weapon| {
-                            PromptAction::EncounterAction(EncounterAction::UseWeaponAbility(
-                                weapon.id,
-                                defender_id,
-                            ))
-                        })
-                        .chain(iter::once(PromptAction::EncounterAction(
-                            EncounterAction::Continue,
-                        )))
-                        .collect(),
-                },
-            );
+    raid_phases::set_raid_phase(
+        game,
+        if defender_count == 0 {
+            RaidPhase::Access
         } else {
-            todo!("Continue")
-        }
-    }
-
-    Ok(())
+            RaidPhase::Encounter(defender_count - 1)
+        },
+    )
 }
 
 #[instrument(skip(game))]
@@ -136,7 +111,7 @@ pub fn encounter_action(
         }
         EncounterAction::Continue => {
             let target = game.raid()?.target;
-            let defender_id = find_defender(game, target, encounter_number)?;
+            let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
             dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id));
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(defender_id),
@@ -149,21 +124,9 @@ pub fn encounter_action(
         // Raid may have been ended by an ability.
         Ok(())
     } else if encounter_number == 0 {
-        initiate_access_phase(game)
+        raid_phases::set_raid_phase(game, RaidPhase::Access)
     } else {
-        game.raid_mut()?.phase = RaidPhase::Continue(encounter_number - 1);
-        mutations::set_prompt(
-            game,
-            user_side,
-            Prompt {
-                context: Some(PromptContext::RaidAdvance),
-                responses: vec![
-                    PromptAction::AdvanceAction(AdvanceAction::Advance),
-                    PromptAction::AdvanceAction(AdvanceAction::Retreat),
-                ],
-            },
-        );
-        Ok(())
+        raid_phases::set_raid_phase(game, RaidPhase::Continue(encounter_number - 1))
     }
 }
 
@@ -175,7 +138,7 @@ pub fn advance_action(game: &mut GameState, user_side: Side, data: AdvanceAction
         "Cannot take advance action for {:?}",
         user_side
     );
-    Ok(())
+    todo!()
 }
 
 #[instrument(skip(game))]
@@ -186,7 +149,7 @@ pub fn destroy_card_action(game: &mut GameState, user_side: Side, card_id: CardI
         "Cannot take destroy card action for {:?}",
         user_side
     );
-    Ok(())
+    todo!()
 }
 
 #[instrument(skip(game))]
@@ -206,7 +169,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
     game.champion.score += scheme_points.points;
     mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion));
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
-    set_access_phase_prompts(game)?;
+    raid_phases::set_raid_prompt(game)?;
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id));
     game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
     Ok(())
@@ -223,80 +186,4 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
 
     mutations::end_raid(game);
     Ok(())
-}
-
-/// Invoked once all of the defenders for a room during a raid (if any) have
-/// been passed.
-fn initiate_access_phase(game: &mut GameState) -> Result<()> {
-    let target = game.raid()?.target;
-
-    let accessed = match target {
-        RoomId::Vault => {
-            mutations::top_of_deck(game, Side::Overlord, queries::vault_access_count(game))
-        }
-        RoomId::Sanctum => {
-            let count = queries::sanctum_access_count(game);
-            if game.data.config.deterministic {
-                game.hand(Side::Overlord).map(|c| c.id).take(count).collect()
-            } else {
-                game.hand(Side::Overlord).map(|c| c.id).choose_multiple(&mut thread_rng(), count)
-            }
-        }
-        RoomId::Crypts => game
-            .card_list_for_position(Side::Overlord, CardPosition::DiscardPile(Side::Overlord))
-            .iter()
-            .filter(|c| !c.data.revealed_to_opponent)
-            .map(|c| c.id)
-            .collect(),
-        _ => game.occupants(target).map(|c| c.id).collect(),
-    };
-
-    for card_id in &accessed {
-        mutations::set_revealed(game, *card_id, true);
-    }
-
-    game.raid_mut()?.phase = RaidPhase::Access;
-    game.raid_mut()?.accessed = accessed;
-
-    set_access_phase_prompts(game)?;
-    Ok(())
-}
-
-fn set_access_phase_prompts(game: &mut GameState) -> Result<()> {
-    mutations::set_prompt(
-        game,
-        Side::Champion,
-        Prompt {
-            context: None,
-            responses: game
-                .raid()?
-                .accessed
-                .iter()
-                .filter_map(|card_id| access_prompt_for_card(game, *card_id))
-                .chain(iter::once(PromptAction::EndRaid))
-                .collect(),
-        },
-    );
-    Ok(())
-}
-
-/// Returns a [PromptAction] for the Champion to access the provided `card_id`,
-/// if any action can be taken.
-fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAction> {
-    let definition = crate::card_definition(game, card_id);
-    match definition.card_type {
-        CardType::Scheme if flags::can_score_card(game, Side::Champion, card_id) => {
-            Some(PromptAction::RaidScoreCard(card_id))
-        }
-        CardType::Project | CardType::Upgrade
-            if flags::can_destroy_accessed_card(game, card_id) =>
-        {
-            Some(PromptAction::RaidDestroyCard(card_id))
-        }
-        _ => None,
-    }
-}
-
-fn find_defender(game: &GameState, room_id: RoomId, index: usize) -> Result<CardId> {
-    Ok(game.defender_list(room_id).get(index).with_context(|| "Defender Not Found")?.id)
 }

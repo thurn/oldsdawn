@@ -39,7 +39,7 @@ fn initiate_raid() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    assert_eq!(1, g.player().actions());
+    assert_eq!(1, g.me().actions());
     assert_eq!(PlayerName::Opponent, g.user.data.priority());
     assert_eq!(PlayerName::User, g.opponent.data.priority());
     assert!(g.user.data.raid_active());
@@ -384,7 +384,7 @@ fn raid_vault() {
     g.perform_click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
-    assert!(g.user.interface.all_controls().has_text("Score"));
+    assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert_snapshot!(Summary::run(&response));
 }
@@ -403,7 +403,7 @@ fn raid_sanctum() {
     g.perform_click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
-    assert!(g.user.interface.all_controls().has_text("Score"));
+    assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert_snapshot!(Summary::run(&response));
 }
@@ -427,7 +427,51 @@ fn raid_crypts() {
     g.perform_click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
-    assert!(g.user.interface.all_controls().has_text("Score"));
+    assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert_snapshot!(Summary::run(&response));
+}
+
+#[test]
+fn raid_vault_twice() {
+    let mut g = new_game(
+        Side::Champion,
+        Args {
+            turn: Some(Side::Overlord),
+            turn_actions: 1,
+            opponent_deck_top: Some(CardName::TestScheme31),
+            ..Args::default()
+        },
+    );
+
+    g.play_in_room(CardName::TestMinion5Health, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.initiate_raid(RoomId::Vault);
+    g.perform_click_on(g.opponent_id(), "Activate");
+    g.perform_click_on(g.user_id(), "Test Weapon");
+    g.perform_click_on(g.user_id(), "Score");
+    g.perform_click_on(g.user_id(), "End Raid");
+
+    g.initiate_raid(RoomId::Vault);
+    // Should not need to activate when already revealed
+    assert!(!g.opponent.interface.controls().has_text("Activate"));
+
+    // Champion spent mana on playing + activating weapon, overlord on summoning
+    // minion
+    assert_eq!(g.me().mana(), STARTING_MANA - 4);
+    assert_eq!(g.you().mana(), STARTING_MANA - 3);
+
+    // Should skip Activation phase:
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(g.user.interface.controls().has_text("Test Weapon"));
+    g.perform_click_on(g.user_id(), "Test Weapon");
+
+    // Champion spends mana again to use weapon, Overlord mana is unchanged.
+    assert_eq!(g.me().mana(), STARTING_MANA - 5);
+    assert_eq!(g.you().mana(), STARTING_MANA - 3);
+
+    // Scheme should not longer be on top for second raid
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(g.user.interface.controls().has_text("End Raid"));
+    assert!(!g.user.interface.controls().has_text("Score"));
 }

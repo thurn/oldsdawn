@@ -45,6 +45,8 @@ pub const ROOM_ID: RoomId = RoomId::RoomA;
 pub const CLIENT_ROOM_ID: RoomIdentifier = RoomIdentifier::RoomA;
 /// Default Raid ID to use during testing
 pub const RAID_ID: RaidId = RaidId(1);
+/// Default mana for players in a test game if not otherwise specified
+pub const STARTING_MANA: ManaValue = 999;
 
 /// Creates a new game with the user playing as the `user_side` player.
 ///
@@ -93,7 +95,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
             raid_id: RAID_ID,
             target: ROOM_ID,
             phase: raid.phase,
-            active: false,
+            room_active: false,
             accessed: vec![],
         })
     }
@@ -116,9 +118,11 @@ fn generate_ids() -> (GameId, PlayerId, PlayerId) {
 pub struct Args {
     /// Player whose turn it should be. Defaults to the `user_side` player.
     pub turn: Option<Side>,
-    /// Mana available for the `user_side` player. Defaults to 999.
+    /// Mana available for the `user_side` player. Defaults to 999
+    /// ([STARTING_MANA]).
     pub mana: ManaValue,
-    /// Mana for the opponent of the `user_side` player. Defaults to 999.
+    /// Mana for the opponent of the `user_side` player. Defaults to 999
+    /// ([STARTING_MANA]).
     pub opponent_mana: ManaValue,
     /// Actions available for the `turn` player. Defaults to 3.
     pub turn_actions: ActionCount,

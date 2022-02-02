@@ -57,7 +57,7 @@ fn draw_card() {
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.hand(PlayerName::Opponent));
-    assert_eq!(2, g.player().actions());
+    assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
 
     assert_snapshot!(Summary::run(&response));
@@ -95,9 +95,9 @@ fn play_card() {
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         g.user_id(),
     );
-    assert_eq!(2, g.player().actions());
+    assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_eq!(9, g.player().mana());
+    assert_eq!(9, g.me().mana());
     assert_eq!(9, g.opponent.other_player.mana());
     assert_identical(vec![CardName::ArcaneRecovery], g.user.cards.discard_pile(PlayerName::User));
     assert_identical(
@@ -121,9 +121,9 @@ fn play_hidden_card() {
         }),
         g.user_id(),
     );
-    assert_eq!(2, g.player().actions());
+    assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_eq!(0, g.player().mana());
+    assert_eq!(0, g.me().mana());
     assert_eq!(0, g.opponent.other_player.mana());
     assert_identical(
         vec![CardName::DungeonAnnex],
@@ -175,9 +175,9 @@ fn gain_mana() {
     let mut g = new_game(Side::Overlord, Args { turn_actions: 3, mana: 5, ..Args::default() });
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
 
-    assert_eq!(2, g.player().actions());
+    assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-    assert_eq!(6, g.player().mana());
+    assert_eq!(6, g.me().mana());
     assert_eq!(6, g.opponent.other_player.mana());
 
     assert_snapshot!(Summary::run(&response));
@@ -213,9 +213,9 @@ fn switch_turn() {
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
-    assert_eq!(8, g.player().mana());
+    assert_eq!(8, g.me().mana());
     assert_eq!(8, g.opponent.other_player.mana());
-    assert_eq!(0, g.player().actions());
+    assert_eq!(0, g.me().actions());
     assert_eq!(0, g.opponent.other_player.actions());
     assert_eq!(3, g.user.other_player.actions());
     assert_eq!(3, g.opponent.this_player.actions());

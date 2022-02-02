@@ -87,8 +87,14 @@ impl TestGame {
 
     /// Returns the user player state for the user client, (i.e. the user's
     /// state from *their own* perspective).
-    pub fn player(&self) -> &ClientPlayer {
+    pub fn me(&self) -> &ClientPlayer {
         &self.user.this_player
+    }
+
+    /// Returns the opponent player state for the oppponent client (i.e. the
+    /// opponent's state from their perspective).
+    pub fn you(&self) -> &ClientPlayer {
+        &self.opponent.this_player
     }
 
     /// Simulates a client connecting to the server, either creating a new game
@@ -242,7 +248,7 @@ impl TestGame {
     /// main controls and invoke its registered action.
     pub fn click_on(&mut self, player_id: PlayerId, text: &'static str) -> Result<GameResponse> {
         let (_, player, _) = self.get_player(player_id);
-        let handlers = player.interface.all_controls().find_handlers(text);
+        let handlers = player.interface.controls().find_handlers(text);
         let action = handlers.expect("Button not found").on_click.expect("OnClick not found");
         self.perform_action(action.action.expect("Action"), player_id)
     }
@@ -460,7 +466,7 @@ impl ClientInterface {
         &self.card_anchors
     }
 
-    pub fn all_controls(&self) -> Vec<&Node> {
+    pub fn controls(&self) -> Vec<&Node> {
         let mut result =
             vec![self.main_controls.as_ref()].into_iter().flatten().collect::<Vec<_>>();
         result.extend(self.card_anchor_nodes());

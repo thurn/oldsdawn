@@ -82,7 +82,7 @@ pub struct RaidData {
     /// True if the Overlord activated this room in response to the raid.
     ///
     /// Initially false if the activation decision has not been made yet.
-    pub active: bool,
+    pub room_active: bool,
     /// Cards which have been accessed as part of this raid's Access phase.
     pub accessed: Vec<CardId>,
 }
@@ -282,15 +282,7 @@ impl GameState {
         self.cards(side).iter().filter(|c| c.position().in_discard_pile())
     }
 
-    /// Returns true if this room has at least one hidden defender.
-    pub fn has_hidden_defenders(&self, room_id: RoomId) -> bool {
-        self.overlord_cards.iter().any(|c| {
-            c.position() == CardPosition::Room(room_id, RoomLocation::Defender)
-                && !c.data.revealed_to_opponent
-        })
-    }
-
-    /// Returns Overlord card defending a given room in alphabetical order
+    /// Returns Overlord cards defending a given room in alphabetical order
     pub fn defenders_alphabetical(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Defender))
     }

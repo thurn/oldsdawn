@@ -31,7 +31,8 @@ pub mod flags;
 pub mod helpers;
 pub mod mutations;
 pub mod queries;
-pub mod raid;
+pub mod raid_actions;
+pub mod raid_phases;
 
 #[distributed_slice]
 pub static DEFINITIONS: [fn() -> CardDefinition] = [..];

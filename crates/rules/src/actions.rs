@@ -31,7 +31,7 @@ use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Sid
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
-use crate::{dispatch, flags, mutations, queries, raid};
+use crate::{dispatch, flags, mutations, queries, raid_actions};
 
 /// The basic game action to draw a card during your turn by spending one
 /// action.
@@ -158,14 +158,20 @@ pub fn handle_prompt_action(
     mutations::clear_prompts(game);
 
     match action {
-        PromptAction::ActivateRoomAction(data) => raid::activate_room_action(game, user_side, data),
-        PromptAction::EncounterAction(data) => raid::encounter_action(game, user_side, data),
-        PromptAction::AdvanceAction(data) => raid::advance_action(game, user_side, data),
-        PromptAction::RaidDestroyCard(card_id) => {
-            raid::destroy_card_action(game, user_side, card_id)
+        PromptAction::ActivateRoomAction(data) => {
+            raid_actions::activate_room_action(game, user_side, data)
         }
-        PromptAction::RaidScoreCard(card_id) => raid::score_card_action(game, user_side, card_id),
-        PromptAction::EndRaid => raid::raid_end_action(game, user_side),
+        PromptAction::EncounterAction(data) => {
+            raid_actions::encounter_action(game, user_side, data)
+        }
+        PromptAction::AdvanceAction(data) => raid_actions::advance_action(game, user_side, data),
+        PromptAction::RaidDestroyCard(card_id) => {
+            raid_actions::destroy_card_action(game, user_side, card_id)
+        }
+        PromptAction::RaidScoreCard(card_id) => {
+            raid_actions::score_card_action(game, user_side, card_id)
+        }
+        PromptAction::EndRaid => raid_actions::raid_end_action(game, user_side),
     }
 }
 
