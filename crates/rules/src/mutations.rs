@@ -82,9 +82,9 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 /// [GameUpdate::RevealCard] if the new state is revealed.
 #[instrument(skip(game))]
 pub fn set_revealed(game: &mut GameState, card_id: CardId, revealed: bool) {
-    let current = game.card(card_id).data.revealed;
+    let current = game.card(card_id).data.revealed_to_opponent;
 
-    game.card_mut(card_id).data.revealed = revealed;
+    game.card_mut(card_id).data.revealed_to_opponent = revealed;
 
     if !current && revealed {
         game.updates.push(GameUpdate::RevealCard(card_id));

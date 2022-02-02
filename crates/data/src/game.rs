@@ -285,7 +285,8 @@ impl GameState {
     /// Returns true if this room has at least one hidden defender.
     pub fn has_hidden_defenders(&self, room_id: RoomId) -> bool {
         self.overlord_cards.iter().any(|c| {
-            c.position() == CardPosition::Room(room_id, RoomLocation::Defender) && !c.data.revealed
+            c.position() == CardPosition::Room(room_id, RoomLocation::Defender)
+                && !c.data.revealed_to_opponent
         })
     }
 

@@ -26,7 +26,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use anyhow::Result;
 use data::card_name::CardName;
-use data::card_state::CardPositionKind;
+use data::card_state::{CardPosition, CardPositionKind};
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState, RaidData, RaidPhase};
 use data::primitives::{
@@ -34,7 +34,6 @@ use data::primitives::{
 };
 use maplit::hashmap;
 use protos::spelldawn::RoomIdentifier;
-use server::GameResponse;
 
 use crate::client::TestGame;
 pub static NEXT_ID: AtomicU64 = AtomicU64::new(1_000_000);
@@ -86,6 +85,8 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
 
     set_deck_top(&mut game, user_side, args.deck_top);
     set_deck_top(&mut game, user_side.opponent(), args.opponent_deck_top);
+    set_discard_pile(&mut game, user_side, args.discard);
+    set_discard_pile(&mut game, user_side.opponent(), args.opponent_discard);
 
     if let Some(raid) = args.raid {
         game.data.raid = Some(RaidData {
@@ -133,8 +134,12 @@ pub struct Args {
     pub deck_top: Option<CardName>,
     /// Card to be inserted into the opponent player's deck as the next draw.
     pub opponent_deck_top: Option<CardName>,
+    /// Card to be inserted into the `user_side` player's discard pile.
+    pub discard: Option<CardName>,
+    /// Card to be inserted into the opponent player's discard pile.
+    pub opponent_discard: Option<CardName>,
     /// Set up an active raid within the created game using [ROOM_ID] as the
-    /// target and [RAID_ID] as the ID.
+    /// target and [RAID_ID] as the ID.    
     pub raid: Option<TestRaid>,
     /// If false, will not attempt to automatically connect to this game.
     /// Defaults to true.
@@ -152,6 +157,8 @@ impl Default for Args {
             opponent_score: 0,
             deck_top: None,
             opponent_deck_top: None,
+            discard: None,
+            opponent_discard: None,
             raid: None,
             connect: true,
         }
@@ -177,6 +184,20 @@ fn set_deck_top(game: &mut GameState, side: Side, deck_top: Option<CardName>) {
     }
 }
 
+fn set_discard_pile(game: &mut GameState, side: Side, discard: Option<CardName>) {
+    if let Some(discard) = discard {
+        let target_id = game
+            .cards(side)
+            .iter()
+            .filter(|c| c.position().kind() == CardPositionKind::DeckUnknown)
+            .last() // Take last to avoid overwriting deck top
+            .expect("No cards in deck")
+            .id;
+        client::overwrite_card(game, target_id, discard);
+        game.move_card(target_id, CardPosition::DiscardPile(side));
+    }
+}
+
 /// Asserts that the display names of the provided vector of [CardName]s are
 /// precisely identical to the provided vector of strings.
 pub fn assert_identical(expected: Vec<CardName>, actual: Vec<String>) {
@@ -192,31 +213,4 @@ pub fn assert_ok<T: Debug, E: Debug>(result: &Result<T, E>) {
 /// Asserts that a [Result] is an error
 pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
     assert!(result.is_err(), "Expected an error, got {:?}", result)
-}
-
-/// Helper function to invoke [assert_commands_match_lists] with the same
-/// command names for both players.
-pub fn assert_commands_match(response: &Result<GameResponse>, names: Vec<&str>) {
-    assert_commands_match_lists(response, names.clone(), names.clone());
-}
-
-/// Asserts that each player receives the named commands
-pub fn assert_commands_match_lists(
-    response: &Result<GameResponse>,
-    local_names: Vec<&str>,
-    remote_names: Vec<&str>,
-) {
-    let value = response.as_ref().expect("Server error");
-    let local = value.command_list.commands.iter().map(server::command_name).collect::<Vec<_>>();
-    assert_eq!(local_names, local, "Local commands do not match expected");
-    let remote = value
-        .channel_response
-        .clone()
-        .expect("Channel Response")
-        .1
-        .commands
-        .iter()
-        .map(server::command_name)
-        .collect::<Vec<_>>();
-    assert_eq!(remote_names, remote, "Remote commands do not match expected");
 }

@@ -95,7 +95,7 @@ pub struct AbilityState {}
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CardData {
     // Has this card been revealed to the opponent?
-    pub revealed: bool,
+    pub revealed_to_opponent: bool,
     /// How many times has this card been leveled up?
     pub card_level: LevelValue,
     /// How many times the boost ability of this card has been activated --
@@ -141,7 +141,7 @@ impl CardState {
                 CardPosition::DeckUnknown(id.side)
             },
             sorting_key: 0,
-            data: CardData { revealed: is_identity, ..CardData::default() },
+            data: CardData { revealed_to_opponent: is_identity, ..CardData::default() },
         }
     }
 
@@ -164,7 +164,7 @@ impl CardState {
         } else if self.id.side == side {
             true
         } else {
-            self.data.revealed
+            self.data.revealed_to_opponent
         }
     }
 

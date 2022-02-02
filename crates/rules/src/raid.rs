@@ -242,10 +242,12 @@ fn initiate_access_phase(game: &mut GameState) -> Result<()> {
                 game.hand(Side::Overlord).map(|c| c.id).choose_multiple(&mut thread_rng(), count)
             }
         }
-
-        RoomId::Crypts => {
-            todo!("Access Crypts")
-        }
+        RoomId::Crypts => game
+            .card_list_for_position(Side::Overlord, CardPosition::DiscardPile(Side::Overlord))
+            .iter()
+            .filter(|c| !c.data.revealed_to_opponent)
+            .map(|c| c.id)
+            .collect(),
         _ => game.occupants(target).map(|c| c.id).collect(),
     };
 
