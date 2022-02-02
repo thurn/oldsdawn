@@ -114,7 +114,7 @@ fn activate_room() {
         (2, Position::Raid(ObjectPositionRaid {}))
     );
 
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -129,7 +129,7 @@ fn activate_room_weapon_2() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert!(!g.user.interface.main_controls().has_text("Test Weapon"));
     assert!(g.user.interface.main_controls().has_text("Continue"));
@@ -147,7 +147,7 @@ fn activate_room_weapon_2_12() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert!(g.user.interface.main_controls().has_text("Test Weapon"));
     assert!(g.user.interface.main_controls().has_text("2\u{f06d}"));
@@ -166,7 +166,7 @@ fn activate_room_weapon_4_12() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert!(g.user.interface.main_controls().has_text("Test Weapon"));
     assert!(g.user.interface.main_controls().has_text("1\u{f06d}"));
@@ -185,7 +185,7 @@ fn activate_room_weapon_5() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
     assert!(g.user.interface.main_controls().has_text("Test Weapon"));
     assert!(!g.user.interface.main_controls().has_text("\u{f06d}"));
@@ -204,7 +204,7 @@ fn use_weapon() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
     assert_eq!(g.user.this_player.mana(), 996); // Minion costs 3 to summon
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert_eq!(g.user.this_player.mana(), 995); // Weapon costs 1 to use
@@ -235,7 +235,7 @@ fn use_weapon() {
         })
     );
 
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -250,7 +250,7 @@ fn fire_combat_ability() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
     assert_eq!(g.user.this_player.mana(), 996); // Minion costs 3 to summon
     let response = g.click_on(g.user_id(), "Continue");
     assert_eq!(g.user.this_player.mana(), 996); // Mana is unchanged
@@ -282,7 +282,7 @@ fn fire_combat_ability() {
         })
     );
 
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -297,8 +297,8 @@ fn score_scheme_card() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
-    g.perform_click_on(g.user_id(), "Test Weapon");
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
     let response = g.click_on(g.user_id(), "Score");
 
     assert_eq!(g.user.this_player.score(), 1);
@@ -321,7 +321,7 @@ fn score_scheme_card() {
         })
     );
 
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -338,9 +338,9 @@ fn complete_raid() {
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
         g.user_id(),
     );
-    g.perform_click_on(g.opponent_id(), "Activate");
-    g.perform_click_on(g.user_id(), "Test Weapon");
-    g.perform_click_on(g.user_id(), "Score");
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
+    g.click_on(g.user_id(), "Score");
     let response = g.click_on(g.user_id(), "End Raid");
 
     assert_eq!(g.user.this_player.score(), 1);
@@ -363,7 +363,7 @@ fn complete_raid() {
         })
     );
 
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -381,12 +381,12 @@ fn raid_vault() {
     g.play_in_room(CardName::TestMinion5Health, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost);
     g.initiate_raid(RoomId::Vault);
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -400,12 +400,12 @@ fn raid_sanctum() {
     g.play_in_room(CardName::TestMinion5Health, RoomId::Sanctum);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost);
     g.initiate_raid(RoomId::Sanctum);
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -424,12 +424,12 @@ fn raid_crypts() {
     g.play_in_room(CardName::TestMinion5Health, RoomId::Crypts);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost);
     g.initiate_raid(RoomId::Crypts);
-    g.perform_click_on(g.opponent_id(), "Activate");
+    g.click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert_snapshot!(Summary::run(&response));
+    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]
@@ -447,10 +447,10 @@ fn raid_vault_twice() {
     g.play_in_room(CardName::TestMinion5Health, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost);
     g.initiate_raid(RoomId::Vault);
-    g.perform_click_on(g.opponent_id(), "Activate");
-    g.perform_click_on(g.user_id(), "Test Weapon");
-    g.perform_click_on(g.user_id(), "Score");
-    g.perform_click_on(g.user_id(), "End Raid");
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
+    g.click_on(g.user_id(), "Score");
+    g.click_on(g.user_id(), "End Raid");
 
     g.initiate_raid(RoomId::Vault);
     // Should not need to activate when already revealed
@@ -464,7 +464,7 @@ fn raid_vault_twice() {
     // Should skip Activation phase:
     assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("Test Weapon"));
-    g.perform_click_on(g.user_id(), "Test Weapon");
+    g.click_on(g.user_id(), "Test Weapon");
 
     // Champion spends mana again to use weapon, Overlord mana is unchanged.
     assert_eq!(g.me().mana(), STARTING_MANA - 5);
@@ -474,4 +474,65 @@ fn raid_vault_twice() {
     assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("End Raid"));
     assert!(!g.user.interface.controls().has_text("Score"));
+}
+
+#[test]
+fn raid_no_defenders() {
+    let mut g = new_game(
+        Side::Champion,
+        Args { turn: Some(Side::Overlord), turn_actions: 1, ..Args::default() },
+    );
+
+    g.play_from_hand(CardName::TestScheme31);
+    let response = g.initiate_raid(ROOM_ID);
+    // Should immediately jump to the Score action
+    assert!(g.user.interface.controls().has_text("Score"));
+    assert!(g.user.interface.controls().has_text("End Raid"));
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn raid_vault_no_defenders() {
+    let mut g = new_game(
+        Side::Champion,
+        Args { opponent_deck_top: Some(CardName::TestScheme31), ..Args::default() },
+    );
+
+    g.initiate_raid(RoomId::Vault);
+    // Should immediately jump to the Score action
+    assert!(g.user.interface.controls().has_text("Score"));
+    assert!(g.user.interface.controls().has_text("End Raid"));
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+}
+
+#[test]
+fn raid_no_occupants() {
+    let mut g = new_game(
+        Side::Champion,
+        Args { turn: Some(Side::Overlord), turn_actions: 1, ..Args::default() },
+    );
+
+    g.play_from_hand(CardName::TestMinion5Health);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.initiate_raid(ROOM_ID);
+    g.click_on(g.opponent_id(), "Activate");
+    let response = g.click_on(g.user_id(), "Test Weapon");
+
+    // End Raid should be the only option
+    assert!(g.user.interface.controls().has_text("End Raid"));
+    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn raid_no_occupants_or_defenders() {
+    let mut g = new_game(Side::Champion, Args::default());
+
+    let response = g.perform_action(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+
+    assert_error(response);
 }

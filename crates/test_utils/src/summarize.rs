@@ -53,6 +53,12 @@ impl Default for Summary {
 }
 
 impl Summary {
+    pub fn summarize(value: &(impl Clone + Summarize)) -> String {
+        let mut summary = Self::default();
+        value.clone().summarize(&mut summary);
+        summary.value
+    }
+
     pub fn run(response: &Result<impl Clone + Summarize>) -> String {
         let mut summary = Self::default();
         if let Ok(v) = response {

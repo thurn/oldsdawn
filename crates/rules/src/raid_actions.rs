@@ -32,7 +32,11 @@ pub fn initiate_raid_action(
     target_room: RoomId,
 ) -> Result<()> {
     info!(?user_side, "initiate_raid_action");
-    ensure!(flags::can_initiate_raid(game, user_side), "Cannot initiate raid for {:?}", user_side);
+    ensure!(
+        flags::can_initiate_raid(game, user_side, target_room),
+        "Cannot initiate raid for {:?}",
+        user_side
+    );
     mutations::spend_action_points(game, user_side, 1);
 
     let phase = if game.defenders_alphabetical(target_room).any(|c| !c.data.revealed_to_opponent) {

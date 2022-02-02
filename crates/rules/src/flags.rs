@@ -22,7 +22,7 @@ use data::delegates::{
     CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
 };
 use data::game::{GameState, RaidData, RaidPhase};
-use data::primitives::{CardId, CardType, Faction, Side};
+use data::primitives::{CardId, CardType, Faction, RoomId, Side};
 
 use crate::{dispatch, queries};
 
@@ -64,10 +64,15 @@ pub fn can_take_gain_mana_action(game: &GameState, side: Side) -> bool {
 }
 
 /// Returns whether the indicated player can currently take the basic game
-/// action to initiate a raid.
-pub fn can_initiate_raid(game: &GameState, side: Side) -> bool {
-    let can_initiate =
-        side == Side::Champion && game.data.raid.is_none() && queries::in_main_phase(game, side);
+/// action to initiate a raid on the target [RoomId].
+pub fn can_initiate_raid(game: &GameState, side: Side, target: RoomId) -> bool {
+    let non_empty = target.is_inner_room()
+        || game.occupants(target).next().is_some()
+        || game.defenders_alphabetical(target).next().is_some();
+    let can_initiate = non_empty
+        && side == Side::Champion
+        && game.data.raid.is_none()
+        && queries::in_main_phase(game, side);
     dispatch::perform_query(game, CanInitiateRaidQuery(side), Flag::new(can_initiate)).into()
 }
 
