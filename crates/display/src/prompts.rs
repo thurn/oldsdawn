@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use data::actions::{
-    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
+    ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
     UserAction,
 };
 use data::game::GameState;
@@ -176,7 +176,7 @@ fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
         PromptAction::EncounterAction(encounter_action) => {
             encounter_action_button(game, encounter_action)
         }
-        PromptAction::AdvanceAction(advance_action) => advance_action_button(advance_action),
+        PromptAction::ContinueAction(advance_action) => advance_action_button(advance_action),
         PromptAction::RaidScoreCard(card_id) => ResponseButton {
             label: "Score!".to_string(),
             anchor_to_card: Some(card_id),
@@ -251,12 +251,12 @@ impl Component for ResponseButton {
     }
 }
 
-fn activate_button(activate: ActivateRoomAction) -> ResponseButton {
+fn activate_button(activate: RoomActivationAction) -> ResponseButton {
     match activate {
-        ActivateRoomAction::Activate => {
+        RoomActivationAction::Activate => {
             ResponseButton { label: "Activate".to_string(), ..ResponseButton::default() }
         }
-        ActivateRoomAction::Pass => ResponseButton {
+        RoomActivationAction::Pass => ResponseButton {
             label: "Pass".to_string(),
             primary: false,
             ..ResponseButton::default()
@@ -282,7 +282,7 @@ fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) 
                 ResponseButton { label, ..ResponseButton::default() }
             }
         }
-        EncounterAction::Continue => ResponseButton {
+        EncounterAction::NoWeapon => ResponseButton {
             label: "Continue".to_string(),
             primary: false,
             ..ResponseButton::default()
@@ -290,15 +290,15 @@ fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) 
     }
 }
 
-fn advance_action_button(advance_action: AdvanceAction) -> ResponseButton {
+fn advance_action_button(advance_action: ContinueAction) -> ResponseButton {
     match advance_action {
-        AdvanceAction::Advance => ResponseButton {
+        ContinueAction::Advance => ResponseButton {
             label: "Advance".to_string(),
             primary: true,
             ..ResponseButton::default()
         },
-        AdvanceAction::Retreat => ResponseButton {
-            label: "Continue".to_string(),
+        ContinueAction::Retreat => ResponseButton {
+            label: "Retreat".to_string(),
             primary: false,
             ..ResponseButton::default()
         },

@@ -16,34 +16,18 @@
 
 use std::iter;
 
-use anyhow::{ensure, Result};
+use anyhow::Result;
 use data::actions::{
-    ActivateRoomAction, AdvanceAction, EncounterAction, Prompt, PromptAction, PromptContext,
+    ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
 };
 use data::card_state::CardPosition;
-use data::game::{GameState, RaidData, RaidPhase};
-use data::primitives::{CardId, CardType, RaidId, RoomId, Side};
+use data::game::{GameState, RaidPhase};
+use data::primitives::{CardId, CardType, RoomId, Side};
 use data::with_error::WithError;
-use if_chain::if_chain;
 use rand::seq::IteratorRandom;
 use rand::thread_rng;
 
 use crate::{flags, mutations, queries};
-
-/// Creates a new raid, setting the [RaidData] for the provided `game` to
-/// reference the provided `target` room and `RaidPhase`.
-///
-/// Does not invoke 'raid start' or similar callbacks. Returns the [RaidId] for
-/// the newly-created raid.
-pub fn create_raid(game: &mut GameState, target: RoomId, phase: RaidPhase) -> Result<RaidId> {
-    ensure!(game.data.raid.is_none(), "Game already has an active raid!");
-    let raid_id = RaidId(game.data.next_raid_id);
-    let raid = RaidData { target, raid_id, phase, room_active: false, accessed: vec![] };
-    game.data.next_raid_id += 1;
-    game.data.raid = Some(raid);
-    on_enter_raid_phase(game)?;
-    Ok(raid_id)
-}
 
 /// Updates the [RaidPhase] for the ongoing raid in the provided `game` and
 /// invokes callbacks as appropriate.
@@ -58,28 +42,36 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
     match game.raid()?.phase {
         RaidPhase::Activation => {}
         RaidPhase::Encounter(defender_index) => {
-            let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
-            if_chain! {
-                if game.raid()?.room_active;
-                if !game.card(defender_id).data.revealed_to_opponent;
-                if let Some(cost) = queries::mana_cost(game, defender_id);
-                if cost <= game.player(Side::Overlord).mana;
-                then {
-                    // Pay for and reveal defender
-                    mutations::spend_mana(game, Side::Overlord, cost);
-                    mutations::set_revealed(game, defender_id, true);
-                }
+            if can_reveal_defender(game, defender_index) {
+                let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
+                let cost = queries::mana_cost(game, defender_id).with_error(|| "Expected cost")?;
+                mutations::spend_mana(game, Side::Overlord, cost);
+                mutations::set_revealed_to(game, defender_id, Side::Champion, true);
             }
         }
-        RaidPhase::Continue(_) => {
-            todo!()
-        }
+        RaidPhase::Continue(_) => {}
         RaidPhase::Access => {
             game.raid_mut()?.accessed = accessed_cards(game)?;
         }
     }
 
     set_raid_prompt(game)
+}
+
+/// Returns true if the raid defender at `defender_index` is not *currently*
+/// revealed to the Champion player, but can be revealed automatically by paying
+/// its mana cost.
+///
+/// Panics if there is no active raid or if this is an invalid defender index.
+pub fn can_reveal_defender(game: &GameState, defender_index: usize) -> bool {
+    let raid = game.raid().expect("Active Raid");
+    let defender_id = find_defender(game, raid.target, defender_index).expect("Defender");
+    raid.room_active
+        && !game.card(defender_id).is_revealed_to(Side::Champion)
+        && matches!(queries::mana_cost(game, defender_id),
+            Some(cost)
+            if cost <= game.player(Side::Overlord).mana
+        )
 }
 
 /// Returns a vector of the cards accessed for the current raid target, mutating
@@ -89,7 +81,7 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
 
     let accessed = match target {
         RoomId::Vault => {
-            mutations::top_of_deck(game, Side::Overlord, queries::vault_access_count(game))
+            mutations::realize_top_of_deck(game, Side::Overlord, queries::vault_access_count(game))
         }
         RoomId::Sanctum => {
             let count = queries::sanctum_access_count(game);
@@ -102,14 +94,14 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
         RoomId::Crypts => game
             .card_list_for_position(Side::Overlord, CardPosition::DiscardPile(Side::Overlord))
             .iter()
-            .filter(|c| !c.data.revealed_to_opponent)
+            .filter(|c| !c.is_revealed_to(Side::Champion))
             .map(|c| c.id)
             .collect(),
         _ => game.occupants(target).map(|c| c.id).collect(),
     };
 
     for card_id in &accessed {
-        mutations::set_revealed(game, *card_id, true);
+        mutations::set_revealed_to(game, *card_id, Side::Champion, true);
     }
 
     Ok(accessed)
@@ -135,8 +127,8 @@ fn build_activation_prompt() -> Prompt {
     Prompt {
         context: Some(PromptContext::ActivateRoom),
         responses: vec![
-            PromptAction::ActivateRoomAction(ActivateRoomAction::Activate),
-            PromptAction::ActivateRoomAction(ActivateRoomAction::Pass),
+            PromptAction::ActivateRoomAction(RoomActivationAction::Activate),
+            PromptAction::ActivateRoomAction(RoomActivationAction::Pass),
         ],
     }
 }
@@ -154,7 +146,7 @@ fn build_encounter_prompt(game: &GameState, defender: usize) -> Result<Prompt> {
                     defender_id,
                 ))
             })
-            .chain(iter::once(PromptAction::EncounterAction(EncounterAction::Continue)))
+            .chain(iter::once(PromptAction::EncounterAction(EncounterAction::NoWeapon)))
             .collect(),
     })
 }
@@ -163,8 +155,8 @@ fn build_continue_prompt() -> Prompt {
     Prompt {
         context: Some(PromptContext::RaidAdvance),
         responses: vec![
-            PromptAction::AdvanceAction(AdvanceAction::Advance),
-            PromptAction::AdvanceAction(AdvanceAction::Retreat),
+            PromptAction::ContinueAction(ContinueAction::Advance),
+            PromptAction::ContinueAction(ContinueAction::Retreat),
         ],
     }
 }

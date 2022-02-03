@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 389
+assertion_line: 734
 expression: "Summary::summarize(&response)"
 
 ---
@@ -15,14 +15,12 @@ command_list:
     UpdateGameView: 
         user: 
             side: Champion
-            mana: 995
+            mana: 993
         current_priority: User
         raid_active: true
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
-            card_icons: 
-            arena_frame: "<SpriteAddress>"
+            card_id: O42
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"
@@ -31,19 +29,19 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Scheme 31"
                 rules_text: "<RulesText>"
-                revealed_in_arena: false
+                revealed_in_arena: true
                 targeting: "PickRoom"
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
                 can_play: false
         create_position: 
-            sorting_key: 5
-            position: ObjectPositionDeck { owner: Opponent }
+            sorting_key: 11
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
+            id: O42
             position: 
                 sorting_key: 0
                 position: ObjectPositionBrowser
@@ -51,24 +49,19 @@ command_list:
             id: O45
             position: 
                 sorting_key: 2
-                position: ObjectPositionRoom { room_id: Vault, room_location: Front }
+                position: ObjectPositionRoom { room_id: RoomA, room_location: Front }
         MoveGameObjects: 
             id: Identity(User)
             position: 
                 sorting_key: 0
                 position: ObjectPositionIdentityContainer { owner: User }
-        MoveGameObjects: 
-            id: Deck(Opponent)
-            position: 
-                sorting_key: 0
-                position: ObjectPositionDeckContainer { owner: Opponent }
     RenderInterface: 
     panels: 
         main_controls: 
             node: 
                 text: "End Raid"
         card_anchor_nodes: 
-            card_id: O1
+            card_id: O42
             node: 
                 text: "Score!"
         anchors: 
@@ -86,22 +79,23 @@ channel_response:
     UpdateGameView: 
         opponent: 
             side: Champion
-            mana: 995
+            mana: 993
         current_priority: Opponent
         raid_active: true
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
-            card_icons: 
-            arena_frame: "<SpriteAddress>"
+            card_id: O42
             owning_player: User
+            revealed_card: 
+                revealed_in_arena: true
+                can_play: false
         create_position: 
-            sorting_key: 5
-            position: ObjectPositionDeck { owner: User }
+            sorting_key: 11
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
+            id: O42
             position: 
                 sorting_key: 0
                 position: ObjectPositionBrowser
@@ -109,14 +103,9 @@ channel_response:
             id: O45
             position: 
                 sorting_key: 2
-                position: ObjectPositionRoom { room_id: Vault, room_location: Front }
+                position: ObjectPositionRoom { room_id: RoomA, room_location: Front }
         MoveGameObjects: 
             id: Identity(Opponent)
             position: 
                 sorting_key: 0
                 position: ObjectPositionIdentityContainer { owner: Opponent }
-        MoveGameObjects: 
-            id: Deck(User)
-            position: 
-                sorting_key: 0
-                position: ObjectPositionDeckContainer { owner: User }

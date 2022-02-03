@@ -14,7 +14,7 @@
 
 use data::card_definition::{AttackBoost, CardConfig, CardDefinition, Cost, SchemePoints};
 use data::card_name::CardName;
-use data::primitives::{CardType, Faction, Rarity, School, Side};
+use data::primitives::{CardType, ColdDamage, Faction, Rarity, School, Side};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::{abilities, DEFINITIONS};
@@ -86,11 +86,27 @@ pub fn test_scheme_31() -> CardDefinition {
 }
 
 #[distributed_slice(DEFINITIONS)]
-pub fn test_minion_5_health() -> CardDefinition {
+pub fn test_minion_alpha() -> CardDefinition {
     CardDefinition {
-        name: CardName::TestMinion5Health,
+        name: CardName::TestMinionAlpha,
         cost: cost(3),
         abilities: vec![abilities::end_raid()],
+        card_type: CardType::Minion,
+        config: CardConfig {
+            stats: health(5),
+            faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
+        ..test_overlord_spell()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_minion_beta() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestMinionBeta,
+        cost: cost(1),
+        abilities: vec![abilities::deal_damage::<ColdDamage, 1>()],
         card_type: CardType::Minion,
         config: CardConfig {
             stats: health(5),
@@ -133,7 +149,7 @@ pub fn test_weapon_2_attack_12_boost() -> CardDefinition {
 #[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_3_attack_12_boost() -> CardDefinition {
     CardDefinition {
-        name: CardName::TestWeapon3Attack12Boost,
+        name: CardName::TestWeapon3Attack12Boost3Cost,
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),

@@ -244,8 +244,6 @@ pub enum Delegate {
     CastCard(EventDelegate<CardId>),
     /// A card is moved from a non-arena position to an arena position
     PlayCard(EventDelegate<CardId>),
-    /// A card transitions from secret to being revealed to all players
-    RevealCard(EventDelegate<CardId>),
     /// A card is moved to a new position
     MoveCard(EventDelegate<CardMoved>),
     /// A card is scored by the Overlord

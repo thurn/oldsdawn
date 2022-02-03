@@ -33,9 +33,10 @@ use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, game_object_identifier, node_type, CardAnchorNode, CardIdentifier, CardTarget,
     CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
-    GameAction, GameIdentifier, GameObjectIdentifier, GameRequest, InitiateRaidAction, Node,
-    NodeType, ObjectPosition, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom,
-    PlayCardAction, PlayerName, PlayerView, RevealedCardView,
+    GameAction, GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest,
+    InitiateRaidAction, Node, NodeType, ObjectPosition, ObjectPositionDiscardPile,
+    ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName, PlayerView,
+    RevealedCardView,
 };
 use server::database::Database;
 use server::GameResponse;
@@ -191,6 +192,7 @@ impl TestGame {
             .id;
         overwrite_card(&mut self.game, card_id, card_name);
         self.game.move_card(card_id, CardPosition::Hand(side));
+        self.game.card_mut(card_id).set_revealed_to(card_id.side, true);
 
         self.connect(self.user.id, Some(self.game.id)).expect("User connection error");
         self.connect(self.opponent.id, Some(self.game.id)).expect("Opponent connection error");
@@ -252,6 +254,18 @@ impl TestGame {
         let handlers = player.interface.controls().find_handlers(text);
         let action = handlers.expect("Button not found").on_click.expect("OnClick not found");
         self.perform_action(action.action.expect("Action"), player_id).expect("Server Error")
+    }
+
+    /// Returns true if the last-received Game Message was 'Dawn'.
+    pub fn dawn(&self) -> bool {
+        assert_eq!(self.user.data.last_message(), self.opponent.data.last_message());
+        self.user.data.last_message() == GameMessageType::Dawn
+    }
+
+    /// Returns true if the last-received Game Message was 'Dusk'.
+    pub fn dusk(&self) -> bool {
+        assert_eq!(self.user.data.last_message(), self.opponent.data.last_message());
+        self.user.data.last_message() == GameMessageType::Dusk
     }
 
     /// Returns a triple of (opponent_id, local_client, remote_client) for the
@@ -355,6 +369,7 @@ pub struct ClientGameData {
     priority: Option<PlayerName>,
     raid_active: Option<bool>,
     object_positions: HashMap<GameObjectIdentifier, (u32, Position)>,
+    last_message: Option<GameMessageType>,
 }
 
 impl ClientGameData {
@@ -377,6 +392,10 @@ impl ClientGameData {
         self.object_index_position(id).1
     }
 
+    pub fn last_message(&self) -> GameMessageType {
+        self.last_message.expect("Game Message")
+    }
+
     fn update(&mut self, command: Command) {
         match command {
             Command::UpdateGameView(update_game) => {
@@ -390,6 +409,9 @@ impl ClientGameData {
                     self.object_positions
                         .insert(id, (p.sorting_key, p.position.expect("Position")));
                 }
+            }
+            Command::DisplayGameMessage(display_message) => {
+                self.last_message = GameMessageType::from_i32(display_message.message_type);
             }
             _ => {}
         }

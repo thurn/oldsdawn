@@ -199,6 +199,7 @@ fn set_discard_pile(game: &mut GameState, side: Side, discard: Option<CardName>)
             .id;
         client::overwrite_card(game, target_id, discard);
         game.move_card(target_id, CardPosition::DiscardPile(side));
+        game.card_mut(target_id).set_revealed_to(side, true);
     }
 }
 

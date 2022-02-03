@@ -33,13 +33,15 @@ pub enum CardName {
     /// Scheme requiring 3 levels to score 1 point
     TestScheme31,
     /// Minion with 5 health, 3 mana cost, and an "end the raid" ability.
-    TestMinion5Health,
+    TestMinionAlpha,
+    /// Minion with 5 health, 1 mana cost, and a "deal 1 damage" ability.
+    TestMinionBeta,
     /// Weapon with 2 attack and no boost.
     TestWeapon2Attack,
     /// Weapon with 2 attack and a '1 mana: +2 attack' boost.
     TestWeapon2Attack12Boost,
     /// Weapon with 3 attack and a '1 mana: +2 attack' boost.
-    TestWeapon3Attack12Boost,
+    TestWeapon3Attack12Boost3Cost,
     /// Weapon with 4 attack and a '1 mana: +2 attack' boost.
     TestWeapon4Attack12Boost,
     /// Weapon with 5 attack and no boost

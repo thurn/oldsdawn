@@ -58,10 +58,10 @@ pub enum GameUpdate {
     /// A card has been moved to a new game location not described by one of the
     /// above updates
     MoveCard(CardId),
-    /// A card has become revealed. If this occurs while a card is changing
-    /// zones, this update should be added before `MoveCard` to move the card to
-    /// its final destination.
-    RevealCard(CardId),
+    /// A card has become revealed to the opponent. If this occurs while a card
+    /// is changing zones, this update should be added before `MoveCard` to
+    /// move the card to its final destination.
+    RevealToOpponent(CardId),
     /// A room has been leveled up
     LevelUpRoom(RoomId),
     /// A raid has started on the indicated room

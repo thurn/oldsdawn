@@ -14,7 +14,10 @@
 
 //! Core data structures for tracking the state of an ongoing game.
 
+#![allow(clippy::use_self)] // Required to use EnumKind
+
 use anyhow::Result;
+use enum_kinds::EnumKind;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
@@ -49,7 +52,8 @@ impl PlayerState {
 }
 
 /// Identifies steps within a raid.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, EnumKind)]
+#[enum_kind(RaidPhaseKind)]
 pub enum RaidPhase {
     /// The raid has started and the Overlord is deciding whether to activate
     /// the target room.
@@ -68,6 +72,12 @@ pub enum RaidPhase {
     /// The Champion has bypassed all of the defenders for this room and is now
     /// accessing its contents
     Access,
+}
+
+impl RaidPhase {
+    pub fn kind(&self) -> RaidPhaseKind {
+        self.into()
+    }
 }
 
 /// Data about an active raid

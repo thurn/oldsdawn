@@ -15,7 +15,6 @@
 //! Core functions for querying the current state of a game
 
 use data::card_definition::CardStats;
-use data::card_state::CardPosition;
 use data::delegates::{
     ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery, ManaCostQuery,
     SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery, VaultAccessCountQuery,
@@ -26,19 +25,6 @@ use data::primitives::{
 };
 
 use crate::dispatch;
-
-/// Returns the top card of the indicated player's deck, selecting randomly if
-/// no cards are known to be present there. Returns None if the deck is empty.
-///
-/// Does not save the result, meaning that subsequent calls to this function may
-/// return different results.
-pub fn top_of_deck(game: &GameState, side: Side) -> Option<CardId> {
-    game.cards(side)
-        .iter()
-        .filter(|c| c.position() == CardPosition::DeckTop(side))
-        .max_by_key(|c| c.sorting_key)
-        .map_or_else(|| game.random_card(CardPosition::DeckUnknown(side)), |card| Some(card.id))
-}
 
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: CardId) -> &CardStats {

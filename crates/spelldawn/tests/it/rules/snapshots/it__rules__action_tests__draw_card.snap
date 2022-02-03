@@ -56,13 +56,13 @@ command_list:
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
                 can_play: true
         create_position: 
-            sorting_key: 1
+            sorting_key: 2
             position: ObjectPositionHand { owner: User }
         create_animation: Unspecified
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 1
+            sorting_key: 2
             position: ObjectPositionHand { owner: User }
 channel_response: 
     CreateOrUpdateCard: 
@@ -88,11 +88,11 @@ channel_response:
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
         create_position: 
-            sorting_key: 1
+            sorting_key: 2
             position: ObjectPositionHand { owner: Opponent }
         create_animation: Unspecified
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 1
+            sorting_key: 2
             position: ObjectPositionHand { owner: Opponent }

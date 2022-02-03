@@ -245,7 +245,8 @@ fn revealed_card_view(
         image: Some(sprite(&definition.image)),
         title: Some(CardTitle { text: definition.name.displayed_name() }),
         rules_text: Some(rules_text::build(game, card, definition)),
-        revealed_in_arena: card.data.revealed_to_opponent,
+        revealed_in_arena: card.is_revealed_to(Side::Overlord)
+            && card.is_revealed_to(Side::Champion),
         targeting: Some(card_targeting(definition)),
         on_release_position: Some(release_position(definition)),
         can_play: flags::can_take_play_card_action(game, user_side, card.id),

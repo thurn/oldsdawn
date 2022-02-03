@@ -15,13 +15,13 @@
 //! Functions to query boolean game information, typically whether some game
 //! action can currently be taken
 
-use data::actions::{AdvanceAction, EncounterAction};
+use data::actions::EncounterAction;
 use data::card_state::CardPosition;
 use data::delegates::{
     CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpRoomQuery,
     CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
 };
-use data::game::{GameState, RaidData, RaidPhase};
+use data::game::{GameState, RaidData, RaidPhase, RaidPhaseKind};
 use data::primitives::{CardId, CardType, Faction, RoomId, Side};
 
 use crate::{dispatch, queries};
@@ -85,12 +85,12 @@ pub fn can_level_up_room(game: &GameState, side: Side) -> bool {
 }
 
 /// Whether a room can currently be activated
-pub fn can_take_raid_activate_room_action(game: &GameState, side: Side) -> bool {
+pub fn can_take_room_activation_action(game: &GameState, side: Side) -> bool {
     side == Side::Overlord
         && matches!(
             game.data.raid,
             Some(RaidData { phase: RaidPhase::Activation, target, .. })
-            if game.defenders_alphabetical(target).any(|c| !c.data.revealed_to_opponent)
+            if game.defenders_alphabetical(target).any(|c| !c.is_revealed_to(Side::Champion))
         )
 }
 
@@ -161,8 +161,10 @@ pub fn can_take_raid_encounter_action(
     }
 }
 
-pub fn can_take_raid_advance_action(_game: &GameState, _side: Side, _data: AdvanceAction) -> bool {
-    true
+/// Whether the `side` user can take a raid `ContinueAction`.
+pub fn can_take_continue_action(game: &GameState, side: Side) -> bool {
+    side == Side::Champion
+        && matches!(game.data.raid, Some(ref raid) if raid.phase.kind() == RaidPhaseKind::Continue)
 }
 
 /// Can the Champion player destroy the accessed card `card_id`?

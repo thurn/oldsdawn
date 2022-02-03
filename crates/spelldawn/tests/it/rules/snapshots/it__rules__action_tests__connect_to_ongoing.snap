@@ -58,7 +58,7 @@ expression: "Summary::run(&r3)"
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
         create_position: 
-            sorting_key: 1
+            sorting_key: 2
             position: ObjectPositionHand { owner: Opponent }
         create_animation: Unspecified
     CreateOrUpdateCard: 

@@ -65,7 +65,7 @@ pub fn render(
         GameUpdate::MoveCard(card_id) => {
             move_card(commands, game.card(card_id));
         }
-        GameUpdate::RevealCard(card_id) => {
+        GameUpdate::RevealToOpponent(card_id) => {
             reveal_card(commands, game, game.card(card_id));
         }
         GameUpdate::InitiateRaid(room_id) => {

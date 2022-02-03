@@ -32,8 +32,8 @@ fn initiate_raid() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
-        CardName::TestWeapon3Attack12Boost,
+        CardName::TestMinionAlpha,
+        CardName::TestWeapon3Attack12Boost3Cost,
     );
     let response = g.perform_action(
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
@@ -70,9 +70,9 @@ fn initiate_raid() {
         (2, Position::Raid(ObjectPositionRaid {}))
     );
 
-    assert!(g.user.interface.main_controls().has_text("Waiting"));
-    assert!(g.opponent.interface.main_controls().has_text("Activate"));
-    assert!(g.opponent.interface.main_controls().has_text("Pass"));
+    assert!(g.user.interface.controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Activate"));
+    assert!(g.opponent.interface.controls().has_text("Pass"));
 
     assert_snapshot!(Summary::run(&response));
 }
@@ -82,8 +82,8 @@ fn activate_room() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
-        CardName::TestWeapon3Attack12Boost,
+        CardName::TestMinionAlpha,
+        CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
@@ -97,10 +97,10 @@ fn activate_room() {
     assert!(g.opponent.cards.get(ids.minion_id).revealed_to_me());
     assert_eq!(PlayerName::User, g.user.data.priority());
     assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
-    assert!(g.user.interface.main_controls().has_text("1\u{f06d}"));
-    assert!(g.user.interface.main_controls().has_text("Continue"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(g.user.interface.controls().has_text("Test Weapon"));
+    assert!(g.user.interface.controls().has_text("1\u{f06d}"));
+    assert!(g.user.interface.controls().has_text("Continue"));
     assert_eq!(
         g.user.data.object_index_position(Id::CardId(ids.scheme_id)),
         (0, Position::Raid(ObjectPositionRaid {}))
@@ -122,7 +122,7 @@ fn activate_room_weapon_2() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
+        CardName::TestMinionAlpha,
         CardName::TestWeapon2Attack,
     );
     g.perform(
@@ -130,9 +130,9 @@ fn activate_room_weapon_2() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert!(!g.user.interface.main_controls().has_text("Test Weapon"));
-    assert!(g.user.interface.main_controls().has_text("Continue"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(!g.user.interface.controls().has_text("Test Weapon"));
+    assert!(g.user.interface.controls().has_text("Continue"));
 }
 
 #[test]
@@ -140,7 +140,7 @@ fn activate_room_weapon_2_12() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
+        CardName::TestMinionAlpha,
         CardName::TestWeapon2Attack12Boost,
     );
     g.perform(
@@ -148,10 +148,10 @@ fn activate_room_weapon_2_12() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
-    assert!(g.user.interface.main_controls().has_text("2\u{f06d}"));
-    assert!(g.user.interface.main_controls().has_text("Continue"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(g.user.interface.controls().has_text("Test Weapon"));
+    assert!(g.user.interface.controls().has_text("2\u{f06d}"));
+    assert!(g.user.interface.controls().has_text("Continue"));
 }
 
 #[test]
@@ -159,7 +159,7 @@ fn activate_room_weapon_4_12() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
+        CardName::TestMinionAlpha,
         CardName::TestWeapon4Attack12Boost,
     );
     g.perform(
@@ -167,10 +167,10 @@ fn activate_room_weapon_4_12() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
-    assert!(g.user.interface.main_controls().has_text("1\u{f06d}"));
-    assert!(g.user.interface.main_controls().has_text("Continue"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(g.user.interface.controls().has_text("Test Weapon"));
+    assert!(g.user.interface.controls().has_text("1\u{f06d}"));
+    assert!(g.user.interface.controls().has_text("Continue"));
 }
 
 #[test]
@@ -178,7 +178,7 @@ fn activate_room_weapon_5() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
+        CardName::TestMinionAlpha,
         CardName::TestWeapon5Attack,
     );
     g.perform(
@@ -186,10 +186,10 @@ fn activate_room_weapon_5() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert!(g.user.interface.main_controls().has_text("Test Weapon"));
-    assert!(!g.user.interface.main_controls().has_text("\u{f06d}"));
-    assert!(g.user.interface.main_controls().has_text("Continue"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(g.user.interface.controls().has_text("Test Weapon"));
+    assert!(!g.user.interface.controls().has_text("\u{f06d}"));
+    assert!(g.user.interface.controls().has_text("Continue"));
 }
 
 #[test]
@@ -197,8 +197,8 @@ fn use_weapon() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
-        CardName::TestWeapon3Attack12Boost,
+        CardName::TestMinionAlpha,
+        CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
@@ -213,9 +213,9 @@ fn use_weapon() {
     assert!(g.opponent.cards.get(ids.scheme_id).revealed_to_me());
     assert_eq!(PlayerName::User, g.user.data.priority());
     assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.card_anchor_nodes().has_text("Score!"));
-    assert!(g.user.interface.main_controls().has_text("End Raid"));
+    assert!(g.user.interface.controls().has_text("End Raid"));
 
     assert_eq!(
         g.user.data.object_index_position(Id::CardId(ids.scheme_id)),
@@ -243,8 +243,8 @@ fn fire_combat_ability() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
-        CardName::TestWeapon3Attack12Boost,
+        CardName::TestMinionAlpha,
+        CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
@@ -290,8 +290,8 @@ fn score_scheme_card() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
-        CardName::TestWeapon3Attack12Boost,
+        CardName::TestMinionAlpha,
+        CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
         Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
@@ -307,8 +307,8 @@ fn score_scheme_card() {
     assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
     assert!(g.user.data.raid_active()); // Raid still active
     assert!(g.opponent.data.raid_active());
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
-    assert!(g.user.interface.main_controls().has_text("End Raid"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert!(g.user.interface.controls().has_text("End Raid"));
 
     assert_eq!(
         g.user.data.object_position(Id::CardId(ids.scheme_id)),
@@ -329,8 +329,8 @@ fn complete_raid() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinion5Health,
-        CardName::TestWeapon3Attack12Boost,
+        CardName::TestMinionAlpha,
+        CardName::TestWeapon3Attack12Boost3Cost,
     );
     // Gain mana to spend an action point. Should be Overlord turn after this raid.
     g.perform(Action::GainMana(GainManaAction {}), g.user_id());
@@ -367,6 +367,26 @@ fn complete_raid() {
 }
 
 #[test]
+fn no_activate() {
+    let mut g = new_game(
+        Side::Champion,
+        Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },
+    );
+
+    g.play_from_hand(CardName::TestScheme31);
+    g.play_from_hand(CardName::TestMinionAlpha);
+
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    g.initiate_raid(ROOM_ID);
+    let response = g.click_on(g.opponent_id(), "Pass");
+
+    assert!(g.user.interface.controls().has_text("Score"));
+    assert!(g.user.interface.controls().has_text("End Raid"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
 fn raid_vault() {
     let mut g = new_game(
         Side::Champion,
@@ -378,14 +398,15 @@ fn raid_vault() {
         },
     );
 
-    g.play_in_room(CardName::TestMinion5Health, RoomId::Vault);
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    // TODO: Deck top should not be revealed to overlord
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -397,14 +418,14 @@ fn raid_sanctum() {
     );
 
     g.add_to_hand(CardName::TestScheme31);
-    g.play_in_room(CardName::TestMinion5Health, RoomId::Sanctum);
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Sanctum);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Sanctum);
     g.click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -421,14 +442,14 @@ fn raid_crypts() {
     );
 
     g.add_to_hand(CardName::TestScheme31);
-    g.play_in_room(CardName::TestMinion5Health, RoomId::Crypts);
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Crypts);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Crypts);
     g.click_on(g.opponent_id(), "Activate");
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -444,8 +465,8 @@ fn raid_vault_twice() {
         },
     );
 
-    g.play_in_room(CardName::TestMinion5Health, RoomId::Vault);
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
     g.click_on(g.user_id(), "Test Weapon");
@@ -488,7 +509,7 @@ fn raid_no_defenders() {
     // Should immediately jump to the Score action
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.user.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -503,7 +524,7 @@ fn raid_vault_no_defenders() {
     // Should immediately jump to the Score action
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.user.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
 }
 
 #[test]
@@ -513,15 +534,15 @@ fn raid_no_occupants() {
         Args { turn: Some(Side::Overlord), turn_actions: 1, ..Args::default() },
     );
 
-    g.play_from_hand(CardName::TestMinion5Health);
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost);
+    g.play_from_hand(CardName::TestMinionAlpha);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(ROOM_ID);
     g.click_on(g.opponent_id(), "Activate");
     let response = g.click_on(g.user_id(), "Test Weapon");
 
     // End Raid should be the only option
     assert!(g.user.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.main_controls().has_text("Waiting"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -535,4 +556,180 @@ fn raid_no_occupants_or_defenders() {
     );
 
     assert_error(response);
+}
+
+#[test]
+fn raid_two_defenders() {
+    let mut g = new_game(
+        Side::Champion,
+        Args {
+            turn: Some(Side::Overlord),
+            turn_actions: 2,
+            opponent_deck_top: Some(CardName::TestScheme31),
+            ..Args::default()
+        },
+    );
+
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    g.initiate_raid(RoomId::Vault);
+    g.click_on(g.opponent_id(), "Activate");
+    let response = g.click_on(g.user_id(), "Test Weapon");
+
+    assert!(g.user.interface.controls().has_text("Advance"));
+    assert!(g.user.interface.controls().has_text("Retreat"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn raid_two_defenders_advance() {
+    let mut g = new_game(
+        Side::Champion,
+        Args {
+            turn: Some(Side::Overlord),
+            turn_actions: 2,
+            opponent_deck_top: Some(CardName::TestScheme31),
+            ..Args::default()
+        },
+    );
+
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    g.initiate_raid(RoomId::Vault);
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
+    let response = g.click_on(g.user_id(), "Advance");
+    assert!(g.user.interface.controls().has_text("Test Weapon"));
+    assert!(g.opponent.interface.controls().has_text("Waiting"));
+
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn raid_two_defenders_retreat() {
+    let mut g = new_game(
+        Side::Champion,
+        Args {
+            turn: Some(Side::Overlord),
+            turn_actions: 2,
+            opponent_deck_top: Some(CardName::TestScheme31),
+            ..Args::default()
+        },
+    );
+
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    g.initiate_raid(RoomId::Vault);
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
+    let response = g.click_on(g.user_id(), "Retreat");
+    assert!(!g.user.data.raid_active());
+    assert!(!g.opponent.data.raid_active());
+    assert_eq!(g.opponent.interface.main_controls_option(), None);
+    assert_eq!(g.user.interface.main_controls_option(), None);
+    assert_eq!(
+        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
+        Position::IdentityContainer(ObjectPositionIdentityContainer {
+            owner: PlayerName::User.into()
+        })
+    );
+
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn raid_two_defenders_full_raid() {
+    let mut g = new_game(
+        Side::Champion,
+        Args {
+            turn: Some(Side::Overlord),
+            turn_actions: 2,
+            opponent_deck_top: Some(CardName::TestScheme31),
+            ..Args::default()
+        },
+    );
+
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    g.initiate_raid(RoomId::Vault);
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
+    g.click_on(g.user_id(), "Advance");
+    g.click_on(g.user_id(), "Test Weapon");
+    let response = g.click_on(g.user_id(), "Score");
+    assert_eq!(g.me().mana(), STARTING_MANA - 5);
+    assert_eq!(g.you().mana(), STARTING_MANA - 4);
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn raid_two_defenders_cannot_afford_second() {
+    let mut g = new_game(
+        Side::Champion,
+        Args {
+            turn: Some(Side::Overlord),
+            turn_actions: 2,
+            opponent_deck_top: Some(CardName::TestScheme31),
+            opponent_mana: 1,
+            ..Args::default()
+        },
+    );
+
+    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    g.initiate_raid(RoomId::Vault);
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
+    let response = g.click_on(g.user_id(), "Score");
+    assert_eq!(g.me().mana(), STARTING_MANA - 4);
+    assert_eq!(g.you().mana(), 0);
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn raid_add_defender() {
+    let mut g = new_game(
+        Side::Champion,
+        Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },
+    );
+
+    g.play_from_hand(CardName::TestMinionAlpha);
+    g.play_from_hand(CardName::TestScheme31);
+    assert!(g.dawn());
+
+    // Raid 1
+    g.initiate_raid(ROOM_ID);
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Continue");
+    assert!(!g.user.data.raid_active());
+
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+
+    // Raid 2, no activate
+    g.initiate_raid(ROOM_ID);
+    g.click_on(g.user_id(), "Test Weapon");
+    g.click_on(g.user_id(), "Score");
+    g.click_on(g.user_id(), "End Raid");
+    assert!(!g.user.data.raid_active());
+
+    // Opponent Turn
+    assert!(g.dusk());
+    g.play_from_hand(CardName::TestMinionBeta);
+    g.play_from_hand(CardName::TestScheme31);
+    g.perform(Action::GainMana(GainManaAction {}), g.opponent_id());
+
+    // User Turn, Raid 3
+    assert!(g.dawn());
+    g.initiate_raid(ROOM_ID);
+    g.click_on(g.opponent_id(), "Activate");
+    g.click_on(g.user_id(), "Test Weapon");
+    g.click_on(g.user_id(), "Advance");
+    let response = g.click_on(g.user_id(), "Test Weapon");
+    assert_snapshot!(Summary::summarize(&response));
 }

@@ -15,14 +15,15 @@
 //! Handling for raid-related user actions.
 
 use anyhow::{bail, ensure, Context, Result};
-use data::actions::{ActivateRoomAction, AdvanceAction, EncounterAction};
+use data::actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::card_state::CardPosition;
 use data::delegates::{ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidBeginEvent};
-use data::game::{GameState, RaidPhase};
-use data::primitives::{CardId, RoomId, Side};
+use data::game::{GameState, RaidData, RaidPhase};
+use data::primitives::{CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use tracing::{info, instrument};
 
+use crate::mutations::end_raid;
 use crate::{dispatch, flags, mutations, queries, raid_phases};
 
 #[instrument(skip(game))]
@@ -39,18 +40,26 @@ pub fn initiate_raid_action(
     );
     mutations::spend_action_points(game, user_side, 1);
 
-    let phase = if game.defenders_alphabetical(target_room).any(|c| !c.data.revealed_to_opponent) {
-        RaidPhase::Activation
-    } else {
-        let defender_count = game.defenders_alphabetical(target_room).count();
-        if defender_count == 0 {
-            RaidPhase::Access
-        } else {
-            RaidPhase::Encounter(defender_count - 1)
-        }
+    let raid_id = RaidId(game.data.next_raid_id);
+    let raid = RaidData {
+        target: target_room,
+        raid_id,
+        phase: RaidPhase::Activation,
+        room_active: false,
+        accessed: vec![],
     };
 
-    let raid_id = raid_phases::create_raid(game, target_room, phase)?;
+    game.data.next_raid_id += 1;
+    game.data.raid = Some(raid);
+
+    let phase =
+        if game.defenders_alphabetical(target_room).any(|c| !c.is_revealed_to(Side::Champion)) {
+            RaidPhase::Activation
+        } else {
+            next_encounter(game, None, RaidPhase::Encounter)?
+        };
+
+    raid_phases::set_raid_phase(game, phase)?;
     dispatch::invoke_event(game, RaidBeginEvent(raid_id));
     game.updates.push(GameUpdate::InitiateRaid(target_room));
 
@@ -58,29 +67,20 @@ pub fn initiate_raid_action(
 }
 
 #[instrument(skip(game))]
-pub fn activate_room_action(
+pub fn room_activation_action(
     game: &mut GameState,
     user_side: Side,
-    data: ActivateRoomAction,
+    data: RoomActivationAction,
 ) -> Result<()> {
     info!(?user_side, ?data, "raid_activate_room_action");
     ensure!(
-        flags::can_take_raid_activate_room_action(game, user_side),
+        flags::can_take_room_activation_action(game, user_side),
         "Cannot activate room for {:?}",
         user_side
     );
 
-    let defender_count = game.defenders_alphabetical(game.raid()?.target).count();
-    game.raid_mut()?.room_active = data == ActivateRoomAction::Activate;
-
-    raid_phases::set_raid_phase(
-        game,
-        if defender_count == 0 {
-            RaidPhase::Access
-        } else {
-            RaidPhase::Encounter(defender_count - 1)
-        },
-    )
+    game.raid_mut()?.room_active = data == RoomActivationAction::Activate;
+    raid_phases::set_raid_phase(game, next_encounter(game, None, RaidPhase::Encounter)?)
 }
 
 #[instrument(skip(game))]
@@ -113,7 +113,7 @@ pub fn encounter_action(
                 target: InteractionObjectId::CardId(target_id),
             }))
         }
-        EncounterAction::Continue => {
+        EncounterAction::NoWeapon => {
             let target = game.raid()?.target;
             let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
             dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id));
@@ -127,22 +127,40 @@ pub fn encounter_action(
     if game.data.raid.is_none() {
         // Raid may have been ended by an ability.
         Ok(())
-    } else if encounter_number == 0 {
-        raid_phases::set_raid_phase(game, RaidPhase::Access)
     } else {
-        raid_phases::set_raid_phase(game, RaidPhase::Continue(encounter_number - 1))
+        raid_phases::set_raid_phase(
+            game,
+            next_encounter(game, Some(encounter_number), RaidPhase::Continue)?,
+        )
     }
 }
 
 #[instrument(skip(game))]
-pub fn advance_action(game: &mut GameState, user_side: Side, data: AdvanceAction) -> Result<()> {
-    info!(?user_side, ?data, "raid_advance_action");
+pub fn continue_action(
+    game: &mut GameState,
+    user_side: Side,
+    action: ContinueAction,
+) -> Result<()> {
+    info!(?user_side, ?action, "raid_advance_action");
     ensure!(
-        flags::can_take_raid_advance_action(game, user_side, data),
+        flags::can_take_continue_action(game, user_side),
         "Cannot take advance action for {:?}",
         user_side
     );
-    todo!()
+    let encounter_number = match game.raid()?.phase {
+        RaidPhase::Continue(n) => n,
+        _ => bail!("Expected Continue phase"),
+    };
+
+    match action {
+        ContinueAction::Advance => {
+            raid_phases::set_raid_phase(game, RaidPhase::Encounter(encounter_number))
+        }
+        ContinueAction::Retreat => {
+            end_raid(game);
+            Ok(())
+        }
+    }
 }
 
 #[instrument(skip(game))]
@@ -190,4 +208,27 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
 
     mutations::end_raid(game);
     Ok(())
+}
+
+/// Searches for the next defender to encounter during an ongoing raid with a
+/// position less than the provided index  (or any index if not provided). If an
+/// eligible defender is available with position < `index`, invokes
+/// `constructor` with that position. Otherwise, returns `RaidPhase::Access`.
+///
+/// An 'eligible' defender is either one which has been revealed to the
+/// Champion, or one which *can* be revealed by paying its costs if
+/// [RaidData::room_active] is true.
+fn next_encounter(
+    game: &GameState,
+    less_than: Option<usize>,
+    constructor: impl Fn(usize) -> RaidPhase,
+) -> Result<RaidPhase> {
+    let defenders = game.defender_list(game.raid()?.target);
+    let position = defenders.iter().enumerate().rev().find(|(index, card)| {
+        less_than.map_or(true, |less_than| *index < less_than)
+            && (card.is_revealed_to(Side::Champion)
+                || raid_phases::can_reveal_defender(game, *index))
+    });
+
+    Ok(if let Some((index, _)) = position { constructor(index) } else { RaidPhase::Access })
 }

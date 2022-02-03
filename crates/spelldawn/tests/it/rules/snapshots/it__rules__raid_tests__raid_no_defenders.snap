@@ -1,0 +1,90 @@
+---
+source: crates/spelldawn/tests/it/rules/raid_tests.rs
+assertion_line: 492
+expression: "Summary::summarize(&response)"
+
+---
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Champion
+            action_tracker: 2
+        current_priority: User
+        raid_active: true
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O45
+            owning_player: Opponent
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Scheme 31"
+                rules_text: "<RulesText>"
+                revealed_in_arena: true
+                targeting: "PickRoom"
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
+                can_play: false
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
+        create_animation: Unspecified
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O45
+            position: 
+                sorting_key: 0
+                position: ObjectPositionBrowser
+    RenderInterface: 
+    panels: 
+        main_controls: 
+            node: 
+                text: "End Raid"
+        card_anchor_nodes: 
+            card_id: O45
+            node: 
+                text: "Score!"
+        anchors: 
+            node_corner: TopLeft
+            card_corner: BottomLeft
+            node_corner: TopRight
+            card_corner: BottomRight
+channel_response: 
+    VisitRoom: 
+        initiator: Opponent
+        room_id: RoomA
+        visit_type: InitiateRaid
+    Delay: 500
+    UpdateGameView: 
+        opponent: 
+            side: Champion
+            action_tracker: 2
+        current_priority: Opponent
+        raid_active: true
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O45
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: true
+                can_play: false
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
+        create_animation: Unspecified
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O45
+            position: 
+                sorting_key: 0
+                position: ObjectPositionBrowser
+    RenderInterface: 
+    panels: 
+        main_controls: 
+            node: 
+                text: "Waiting for Opponent..."
+        card_anchor_nodes: 

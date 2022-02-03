@@ -43,9 +43,10 @@ pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
         "Cannot draw card for {:?}",
         user_side
     );
-    let card = queries::top_of_deck(game, user_side).with_context(|| "Deck is empty!")?;
+    let card_id = mutations::realize_top_of_deck(game, user_side, 1)[0];
+    mutations::set_revealed_to(game, card_id, user_side, true);
     mutations::spend_action_points(game, user_side, 1);
-    mutations::move_card(game, card, CardPosition::Hand(user_side));
+    mutations::move_card(game, card_id, CardPosition::Hand(user_side));
     check_end_turn(game, user_side);
     Ok(())
 }
@@ -116,7 +117,7 @@ pub fn play_card_action(
     };
 
     if enters_revealed {
-        mutations::set_revealed(game, card_id, true);
+        mutations::set_revealed_to(game, card_id, user_side.opponent(), true);
     }
 
     mutations::move_card(game, card_id, new_position);
@@ -159,12 +160,12 @@ pub fn handle_prompt_action(
 
     match action {
         PromptAction::ActivateRoomAction(data) => {
-            raid_actions::activate_room_action(game, user_side, data)
+            raid_actions::room_activation_action(game, user_side, data)
         }
         PromptAction::EncounterAction(data) => {
             raid_actions::encounter_action(game, user_side, data)
         }
-        PromptAction::AdvanceAction(data) => raid_actions::advance_action(game, user_side, data),
+        PromptAction::ContinueAction(data) => raid_actions::continue_action(game, user_side, data),
         PromptAction::RaidDestroyCard(card_id) => {
             raid_actions::destroy_card_action(game, user_side, card_id)
         }

@@ -25,7 +25,7 @@ use data::actions::Prompt;
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, RevealCardEvent, Scope,
+    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, Scope,
     StoredManaTakenEvent,
 };
 use data::game::GameState;
@@ -41,8 +41,8 @@ use crate::{actions, dispatch};
 /// appropriately. The card will be placed in the position in global sorting-key
 /// order, via [GameState::move_card].
 ///
-/// This function does *not* handle changing the 'revealed' status of the card,
-/// the caller is responsible for updating that when the card moves to a public
+/// This function does *not* handle changing the 'revealed' state of the card,
+/// the caller is responsible for updating that when the card moves to a new
 /// game zone.
 #[instrument(skip(game))]
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
@@ -78,17 +78,18 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     }
 }
 
-/// Updates the 'revealed' state of a card. Fires [RevealCardEvent] and appends
-/// [GameUpdate::RevealCard] if the new state is revealed.
+/// Updates the 'revealed' state of a card to be visible to the indicated `side`
+/// player.
+///
+/// Appends [GameUpdate::RevealToOpponent] if the new state is revealed to the
+/// opponent.
 #[instrument(skip(game))]
-pub fn set_revealed(game: &mut GameState, card_id: CardId, revealed: bool) {
-    let current = game.card(card_id).data.revealed_to_opponent;
+pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, revealed: bool) {
+    let current = game.card(card_id).is_revealed_to(side);
+    game.card_mut(card_id).set_revealed_to(side, revealed);
 
-    game.card_mut(card_id).data.revealed_to_opponent = revealed;
-
-    if !current && revealed {
-        game.updates.push(GameUpdate::RevealCard(card_id));
-        dispatch::invoke_event(game, RevealCardEvent(card_id));
+    if side != card_id.side && !current && revealed {
+        game.updates.push(GameUpdate::RevealToOpponent(card_id));
     }
 }
 
@@ -158,7 +159,7 @@ pub fn clear_prompts(game: &mut GameState) {
 }
 
 /// Ends the current raid. Panics if no raid is currently active. Appends
-/// [GameUpdate::EndRaid]. [GameUpdate::EndRaid].
+/// [GameUpdate::EndRaid].
 #[instrument(skip(game))]
 pub fn end_raid(game: &mut GameState) {
     info!("end_raid");
@@ -170,14 +171,16 @@ pub fn end_raid(game: &mut GameState) {
 }
 
 /// Returns a list of `count` cards from the top of the `side` player's
-/// deck, in sorting-key order (higher indices are are closer to the top
+/// deck, in sorting-key order (later IDs are are closer to the top
 /// of the deck).
 ///
 /// Selects randomly unless cards are already known to be in this position.
 /// If insufficient cards are present in the deck, returns all available
 /// cards. Cards are moved to their new positions via [move_card], meaning that
 /// subsequent calls to this function will see the same results.
-pub fn top_of_deck(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
+///
+/// Does not change the 'revealed' state of cards.
+pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
     let mut cards = game.card_list_for_position(side, CardPosition::DeckTop(side));
     let result = if count <= cards.len() {
         cards[0..count].to_vec()

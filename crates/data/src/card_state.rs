@@ -94,8 +94,6 @@ pub struct AbilityState {}
 /// Optional card state, properties which are not universal
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CardData {
-    // Has this card been revealed to the opponent?
-    pub revealed_to_opponent: bool,
     /// How many times has this card been leveled up?
     pub card_level: LevelValue,
     /// How many times the boost ability of this card has been activated --
@@ -105,6 +103,10 @@ pub struct CardData {
     pub stored_mana: ManaValue,
     /// State for this card's abilities
     pub ability_state: BTreeMap<AbilityIndex, AbilityState>,
+    /// Is this card revealed to the [CardId.side] user?
+    revealed_to_owner: bool,
+    /// Is this card revealed to opponent of the [CardId.side] user?
+    revealed_to_opponent: bool,
 }
 
 /// Stores the state of a Card during an ongoing game. The game rules for a
@@ -141,7 +143,11 @@ impl CardState {
                 CardPosition::DeckUnknown(id.side)
             },
             sorting_key: 0,
-            data: CardData { revealed_to_opponent: is_identity, ..CardData::default() },
+            data: CardData {
+                revealed_to_owner: is_identity,
+                revealed_to_opponent: is_identity,
+                ..CardData::default()
+            },
         }
     }
 
@@ -157,12 +163,19 @@ impl CardState {
         self.position = position;
     }
 
+    /// Sets whether this card is revealed to the `side` player.
+    pub fn set_revealed_to(&mut self, side: Side, revealed: bool) {
+        if self.id.side == side {
+            self.data.revealed_to_owner = revealed
+        } else {
+            self.data.revealed_to_opponent = revealed
+        }
+    }
+
     /// Returns true if this card is currently revealed to the indicated user
     pub fn is_revealed_to(&self, side: Side) -> bool {
-        if self.position.kind() == CardPositionKind::DeckUnknown {
-            false
-        } else if self.id.side == side {
-            true
+        if self.id.side == side {
+            self.data.revealed_to_owner
         } else {
             self.data.revealed_to_opponent
         }
