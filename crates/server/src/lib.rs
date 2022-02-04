@@ -74,7 +74,7 @@ impl Spelldawn for GameService {
         let (tx, rx) = mpsc::channel(4);
 
         let mut database = SledDatabase;
-        match handle_connect(&mut database, player_id, game_id, message.test_mode) {
+        match handle_connect(&mut database, player_id, game_id) {
             Ok(commands) => {
                 let names = commands.commands.iter().map(command_name).collect::<Vec<_>>();
                 info!(?player_id, ?names, "sending_connection_response");
@@ -207,51 +207,55 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
 }
 
 /// Sets up the game state for a game connection request, either connecting to
-/// the `game_id` game or creating a new game if `game_id` is not provided. If
-/// `test_mode` is true, the new game's ID will be set to 0.
+/// the `game_id` game or creating a new game if `game_id` is not provided.
 pub fn handle_connect(
     database: &mut impl Database,
     player_id: PlayerId,
     game_id: Option<GameId>,
-    test_mode: bool,
 ) -> Result<CommandList> {
     let game = if let Some(game_id) = game_id {
-        database.game(game_id)?
-    } else {
-        let new_game_id = if test_mode { GameId::new(0) } else { database.generate_game_id()? };
-        let mut game = GameState::new_game(
-            new_game_id,
-            Deck {
-                owner_id: PlayerId::new(2),
-                identity: CardName::TestOverlordIdentity,
-                cards: hashmap! {
-                    CardName::DungeonAnnex => 1,
-                    CardName::IceDragon => 44,
-                },
-            },
-            Deck {
-                owner_id: PlayerId::new(1),
-                identity: CardName::TestChampionIdentity,
-                cards: hashmap! {
-                    CardName::Greataxe => 45,
-                },
-            },
-            GameConfiguration { deterministic: true, ..GameConfiguration::default() },
-        );
-
-        if test_mode {
-            game.overlord.actions = 4;
+        if database.has_game(game_id)? {
+            database.game(game_id)?
+        } else if cfg!(debug_assertions) && game_id.value == 0 {
+            create_new_game(database, game_id)?
+        } else {
+            bail!("Game not found: {:?}", game_id)
         }
-
-        database.write_game(&game)?;
-        info!(?new_game_id, "create_new_game");
-        game
+    } else {
+        create_new_game(database, database.generate_game_id()?)?
     };
 
     let side = user_side(player_id, &game)?;
     let mut commands = display::connect(&game, side);
     panels::render_standard_panels(&mut commands)?;
     Ok(command_list(commands))
+}
+
+/// Creates a new default [GameState] and writes its value to the database.
+fn create_new_game(database: &mut impl Database, new_game_id: GameId) -> Result<GameState> {
+    let game = GameState::new_game(
+        new_game_id,
+        Deck {
+            owner_id: PlayerId::new(2),
+            identity: CardName::TestOverlordIdentity,
+            cards: hashmap! {
+                CardName::DungeonAnnex => 1,
+                CardName::IceDragon => 44,
+            },
+        },
+        Deck {
+            owner_id: PlayerId::new(1),
+            identity: CardName::TestChampionIdentity,
+            cards: hashmap! {
+                CardName::Greataxe => 45,
+            },
+        },
+        GameConfiguration { deterministic: true, ..GameConfiguration::default() },
+    );
+
+    database.write_game(&game)?;
+    info!(?new_game_id, "create_new_game");
+    Ok(game)
 }
 
 /// Queries the [GameState] for a game from the [Database] and then invokes the

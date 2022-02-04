@@ -29,9 +29,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let fmt_layer = fmt::Layer::default().pretty().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(fmt_layer).init();
 
-    let address = "127.0.0.1:50052".parse().expect("valid address");
+    let address = "0.0.0.0:50052".parse().expect("valid address");
     let service = tonic_web::config()
-        .allow_origins(vec!["127.0.0.1"])
+        //.allow_origins(vec!["127.0.0.1"])
         .enable(SpelldawnServer::new(GameService {}));
 
     warn!("Discovered {} cards. Server listening on {}.", found_cards, address);

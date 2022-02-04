@@ -18,6 +18,7 @@ use anyhow::{Context, Result};
 use bincode;
 use data::game::GameState;
 use data::primitives::GameId;
+use data::with_error::WithError;
 use once_cell::sync::Lazy;
 use sled::{Db, Tree};
 
@@ -27,6 +28,8 @@ static DATABASE: Lazy<Db> = Lazy::new(|| sled::open("db").expect("Unable to open
 pub trait Database {
     /// Generate a new unique [GameId] to be used for a new game
     fn generate_game_id(&self) -> Result<GameId>;
+    /// Check whether a given game exists.
+    fn has_game(&self, id: GameId) -> Result<bool>;
     /// Look up an ongoing [GameState] by ID. It is an error to look up an ID
     /// which does not exist.
     fn game(&self, id: GameId) -> Result<GameState>;
@@ -42,25 +45,29 @@ impl Database for SledDatabase {
         Ok(GameId::new(DATABASE.generate_id().with_context(|| "Error generating ID")?))
     }
 
+    fn has_game(&self, id: GameId) -> Result<bool> {
+        games()?.contains_key(id.key()).with_error(|| format!("Error reading key {:?}", id))
+    }
+
     fn game(&self, id: GameId) -> Result<GameState> {
         let content = games()?
             .get(id.key())
-            .with_context(|| format!("Error reading  game: {:?}", id))?
-            .with_context(|| format!("Game not found: {:?}", id))?;
+            .with_error(|| format!("Error reading  game: {:?}", id))?
+            .with_error(|| format!("Game not found: {:?}", id))?;
         bincode::deserialize(content.as_ref())
-            .with_context(|| format!("Error deserializing game {:?}", id))
+            .with_error(|| format!("Error deserializing game {:?}", id))
     }
 
     fn write_game(&mut self, game: &GameState) -> Result<()> {
         let serialized = bincode::serialize(game)
-            .with_context(|| format!("Error serializing game {:?}", game.id))?;
+            .with_error(|| format!("Error serializing game {:?}", game.id))?;
         games()?
             .insert(game.id.key(), serialized)
             .map(|_| ()) // Ignore previously-set value
-            .with_context(|| format!("Error writing game {:?}", game.id))
+            .with_error(|| format!("Error writing game {:?}", game.id))
     }
 }
 
 fn games() -> Result<Tree> {
-    DATABASE.open_tree("games").with_context(|| "Error opening the 'games table")
+    DATABASE.open_tree("games").with_error(|| "Error opening the 'games table")
 }

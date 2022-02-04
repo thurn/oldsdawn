@@ -1182,12 +1182,6 @@ message ConnectRequest {
 
     /* User making this request. */
     PlayerIdentifier player_id = 2;
-
-    /*
-     * If test_mode is true, the generated GameId for a new game will always
-     * be 0.
-     */
-    bool test_mode = 3;
 }
 
 service Spelldawn {

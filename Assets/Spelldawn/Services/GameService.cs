@@ -23,8 +23,9 @@ namespace Spelldawn.Services
   public sealed class GameService : MonoBehaviour
   {
     const int DefaultUserId = 1;
+    const ulong DefaultGameId = 0;
+
     [SerializeField] Registry _registry = null!;
-    [SerializeField] string? _currentGameId;
 
     public PlayerIdentifier PlayerId
     {
@@ -53,19 +54,23 @@ namespace Spelldawn.Services
     {
       get
       {
-        if (ulong.TryParse(_currentGameId, out var result))
+        if (PlayerPrefs.HasKey(Preferences.CurrentGameId) &&
+            ulong.TryParse(PlayerPrefs.GetString(Preferences.CurrentGameId), out var currentGameId))
         {
           return new GameIdentifier
           {
-            Value = result
+            Value = currentGameId
           };
         }
         else
         {
-          return null;
+          return new GameIdentifier
+          {
+            Value = DefaultGameId
+          };
         }
       }
-      set => _currentGameId = value?.Value.ToString();
+      set => PlayerPrefs.SetString(Preferences.CurrentGameId, value?.Value.ToString());
     }
 
     void Start()

@@ -103,7 +103,7 @@ impl TestGame {
     /// be sent to the client when connected. If a new game is created, its
     /// ID will be 0.
     pub fn connect(&mut self, user_id: PlayerId, game_id: Option<GameId>) -> Result<CommandList> {
-        let result = server::handle_connect(self, user_id, game_id, true /* test mode */)?;
+        let result = server::handle_connect(self, user_id, game_id)?;
         let to_update = match () {
             _ if user_id == self.user.id => &mut self.user,
             _ if user_id == self.opponent.id => &mut self.opponent,
@@ -309,6 +309,10 @@ pub fn side_for_card_name(name: CardName) -> Side {
 impl Database for TestGame {
     fn generate_game_id(&self) -> Result<GameId> {
         panic!("Attempted to generate new ID for test game!")
+    }
+
+    fn has_game(&self, _: GameId) -> Result<bool> {
+        Ok(true)
     }
 
     fn game(&self, _id: GameId) -> Result<GameState> {

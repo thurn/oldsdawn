@@ -329,7 +329,7 @@ pub struct Node {
 // Game Primitives
 // ============================================================================
 
-#[derive(Eq, Hash, Copy, Clone, PartialEq, ::prost::Message)]
+#[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Message)]
 pub struct PlayerIdentifier {
     #[prost(uint64, tag = "1")]
     pub value: u64,
@@ -339,21 +339,21 @@ pub struct GameIdentifier {
     #[prost(uint64, tag = "1")]
     pub value: u64,
 }
-#[derive(Eq, Hash, Copy, Clone, PartialEq, Ord, PartialOrd, ::prost::Message)]
+#[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Message)]
 pub struct CardIdentifier {
     #[prost(enumeration = "PlayerSide", tag = "1")]
     pub side: i32,
     #[prost(uint32, tag = "2")]
     pub index: u32,
 }
-#[derive(Eq, Hash, Copy, Clone, PartialEq, ::prost::Message)]
+#[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Message)]
 pub struct GameObjectIdentifier {
     #[prost(oneof = "game_object_identifier::Id", tags = "1, 2, 3, 4")]
     pub id: ::core::option::Option<game_object_identifier::Id>,
 }
 /// Nested message and enum types in `GameObjectIdentifier`.
 pub mod game_object_identifier {
-    #[derive(Eq, Hash, Copy, Clone, PartialEq, Ord, PartialOrd, ::prost::Oneof)]
+    #[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Oneof)]
     pub enum Id {
         #[prost(message, tag = "1")]
         CardId(super::CardIdentifier),
@@ -1145,11 +1145,6 @@ pub struct ConnectRequest {
     /// User making this request.
     #[prost(message, optional, tag = "2")]
     pub player_id: ::core::option::Option<PlayerIdentifier>,
-    ///
-    /// If test_mode is true, the generated GameId for a new game will always
-    /// be 0.
-    #[prost(bool, tag = "3")]
-    pub test_mode: bool,
 }
 // ============================================================================
 // Masonry

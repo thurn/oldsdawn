@@ -31,10 +31,13 @@ namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
   {
+    // static readonly string ServerAddress = "http://localhost:50052";
+    static readonly string ServerAddress = "http://192.168.0.175:50052";
+
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
     readonly Protos.Spelldawn.SpelldawnClient _client = new(GrpcChannel.ForAddress(
-      "http://localhost:50052", new GrpcChannelOptions
+      ServerAddress, new GrpcChannelOptions
       {
         HttpHandler = new GrpcWebHandler(new HttpClientHandler()),
         Credentials = ChannelCredentials.Insecure
@@ -193,11 +196,11 @@ namespace Spelldawn.Services
 
     async void ConnectToServer()
     {
+      Debug.Log($"Trying to connect to {ServerAddress}");
       using var call = _client.Connect(new ConnectRequest
       {
         GameId = _registry.GameService.CurrentGameId,
         PlayerId = _registry.GameService.PlayerId,
-        TestMode = true
       });
 
       while (await call.ResponseStream.MoveNext())
