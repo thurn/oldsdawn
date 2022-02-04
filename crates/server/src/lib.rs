@@ -346,6 +346,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::DisplayRewards(_) => "DisplayRewards",
         Command::LoadScene(_) => "LoadScene",
         Command::SetPlayerId(_) => "SetPlayerIdentifier",
+        Command::ClientDebugAction(_) => "ClientDebugAction",
     })
 }
 

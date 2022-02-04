@@ -51,9 +51,11 @@ pub fn node(component: impl Component) -> Node {
 /// An `optimistic` value can also optionally be provided to give commands to
 /// run immediately, before a server response is received.
 pub fn action(action: Option<UserAction>, optimistic: Option<CommandList>) -> Option<GameAction> {
-    action.map(|action| GameAction {
+    Some(GameAction {
         action: Some(game_action::Action::StandardAction(StandardAction {
-            payload: bincode::serialize(&action).expect("Serialization failed"),
+            payload: action.map_or(vec![], |action| {
+                bincode::serialize(&action).expect("Serialization failed")
+            }),
             update: optimistic,
             debug_payload: None,
         })),

@@ -17,7 +17,11 @@
 //! users.
 
 use data::actions::{DebugAction, UserAction};
-use protos::spelldawn::{FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node, PanelAddress};
+use protos::spelldawn::game_command::Command;
+use protos::spelldawn::{
+    ClientDebugAction, ClientDebugActionCommand, CommandList, FlexAlign, FlexJustify, FlexStyle,
+    FlexWrap, GameCommand, Node, PanelAddress,
+};
 use ui::components::{Button, Row};
 use ui::core::{child, node};
 use ui::panel::Panel;
@@ -41,6 +45,12 @@ pub fn render() -> Node {
             children: vec![
                 debug_button("Reset", UserAction::DebugAction(DebugAction::ResetGame)),
                 debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
+                client_debug_button(
+                    "Show Logs",
+                    vec![Command::ClientDebugAction(ClientDebugActionCommand {
+                        action: ClientDebugAction::ShowLogs.into(),
+                    })],
+                ),
                 debug_button(
                     format!("+10{}", icons::MANA),
                     UserAction::DebugAction(DebugAction::AddMana(10)),
@@ -88,6 +98,20 @@ fn debug_button(label: impl Into<String>, action: UserAction) -> Option<Node> {
     child(Button {
         label: label.into(),
         action: core::action(Some(action), None),
+        style: FlexStyle { margin: core::all_px(8.0), ..FlexStyle::default() },
+        ..Button::default()
+    })
+}
+
+fn client_debug_button(label: impl Into<String>, commands: Vec<Command>) -> Option<Node> {
+    child(Button {
+        label: label.into(),
+        action: core::action(
+            None,
+            Some(CommandList {
+                commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
+            }),
+        ),
         style: FlexStyle { margin: core::all_px(8.0), ..FlexStyle::default() },
         ..Button::default()
     })

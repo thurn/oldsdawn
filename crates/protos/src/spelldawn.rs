@@ -1062,7 +1062,7 @@ pub struct DisplayRewardsCommand {
     #[prost(message, repeated, tag = "1")]
     pub rewards: ::prost::alloc::vec::Vec<CardView>,
 }
-//// Loads a named Unity scene
+/// Loads a named Unity scene
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LoadSceneCommand {
     #[prost(string, tag = "1")]
@@ -1070,17 +1070,23 @@ pub struct LoadSceneCommand {
     #[prost(enumeration = "SceneLoadMode", tag = "2")]
     pub mode: i32,
 }
-//// Writes the PlayerIdentifier for the client to storage
+/// Writes the PlayerIdentifier for the client to storage
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SetPlayerIdentifierCommand {
     #[prost(message, optional, tag = "1")]
     pub id: ::core::option::Option<PlayerIdentifier>,
 }
+/// Activates client-side debugging functionality
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ClientDebugActionCommand {
+    #[prost(enumeration = "ClientDebugAction", tag = "1")]
+    pub action: i32,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21"
+        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1126,6 +1132,8 @@ pub mod game_command {
         LoadScene(super::LoadSceneCommand),
         #[prost(message, tag = "21")]
         SetPlayerId(super::SetPlayerIdentifierCommand),
+        #[prost(message, tag = "22")]
+        ClientDebugAction(super::ClientDebugActionCommand),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1436,6 +1444,12 @@ pub enum SceneLoadMode {
     Single = 1,
     /// Adds a scene to the current loaded scenes.
     Additive = 2,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ClientDebugAction {
+    Unspecified = 0,
+    ShowLogs = 1,
 }
 #[doc = r" Generated server implementations."]
 pub mod spelldawn_server {

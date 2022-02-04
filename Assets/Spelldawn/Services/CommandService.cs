@@ -123,6 +123,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.SetPlayerId:
             _registry.GameService.PlayerId = command.SetPlayerId.Id;
             break;
+          case GameCommand.CommandOneofCase.ClientDebugAction:
+            HandleClientDebugAction(command.ClientDebugAction);
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;
@@ -244,6 +247,16 @@ namespace Spelldawn.Services
         SceneLoadMode.Additive => LoadSceneMode.Additive,
         _ => LoadSceneMode.Single
       });
+    }
+
+    void HandleClientDebugAction(ClientDebugActionCommand command)
+    {
+      switch (command.Action)
+      {
+        case ClientDebugAction.ShowLogs:
+          _registry.LogViewer.DoShow();
+          break;
+      }
     }
   }
 }

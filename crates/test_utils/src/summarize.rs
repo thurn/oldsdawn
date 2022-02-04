@@ -272,6 +272,7 @@ impl Summarize for Command {
             Command::DisplayRewards(v) => summary.child_node("DisplayRewards", v),
             Command::LoadScene(v) => summary.child_node("LoadScene", v),
             Command::SetPlayerId(v) => summary.child_node("SetPlayerId", v),
+            Command::ClientDebugAction(_) => summary.primitive("ClientDebugActions"),
         }
     }
 }

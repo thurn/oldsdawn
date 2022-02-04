@@ -1115,7 +1115,7 @@ message DisplayGameMessageCommand {
     GameMessageType message_type = 1;
 }
 
-/* Used to hide and show all game UI elements. */
+// Used to hide and show all game UI elements.
 message SetGameObjectsEnabledCommand {
     bool game_objects_enabled = 1;
 }
@@ -1132,15 +1132,25 @@ enum SceneLoadMode {
     SCENE_LOAD_MODE_ADDITIVE = 2;
 }
 
-/// Loads a named Unity scene
+// Loads a named Unity scene
 message LoadSceneCommand {
     string scene_name = 1;
     SceneLoadMode mode = 2;
 }
 
-/// Writes the PlayerIdentifier for the client to storage
+// Writes the PlayerIdentifier for the client to storage
 message SetPlayerIdentifierCommand {
     PlayerIdentifier id = 1;
+}
+
+enum ClientDebugAction {
+    CLIENT_DEBUG_ACTION_UNSPECIFIED = 0;
+    CLIENT_DEBUG_ACTION_SHOW_LOGS = 1;
+}
+
+// Activates client-side debugging functionality
+message ClientDebugActionCommand {
+    ClientDebugAction action = 1;
 }
 
 message GameCommand {
@@ -1164,6 +1174,7 @@ message GameCommand {
         DisplayRewardsCommand display_rewards = 19;
         LoadSceneCommand load_scene = 20;
         SetPlayerIdentifierCommand set_player_id = 21;
+        ClientDebugActionCommand client_debug_action = 22;
     }
 }
 

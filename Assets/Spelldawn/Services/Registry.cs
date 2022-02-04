@@ -25,6 +25,9 @@ namespace Spelldawn.Services
     [SerializeField] Camera _mainCamera = null!;
     public Camera MainCamera => _mainCamera;
 
+    [SerializeField] Reporter _logViewer = null!;
+    public Reporter LogViewer => _logViewer;
+
     [SerializeField] AudioSource _mainAudioSource = null!;
     public AudioSource MainAudioSource => _mainAudioSource;
 

@@ -196,7 +196,7 @@ namespace Spelldawn.Services
 
     async void ConnectToServer()
     {
-      Debug.Log($"Trying to connect to {ServerAddress}");
+      Debug.Log($"Connecting to {ServerAddress}");
       using var call = _client.Connect(new ConnectRequest
       {
         GameId = _registry.GameService.CurrentGameId,
