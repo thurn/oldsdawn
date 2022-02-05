@@ -886,6 +886,15 @@ pub struct RenderInterfaceCommand {
     #[prost(message, optional, tag = "2")]
     pub main_controls: ::core::option::Option<InterfaceMainControls>,
 }
+/// Opens or closes the given interface panel.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TogglePanelCommand {
+    #[prost(enumeration = "PanelAddress", tag = "1")]
+    pub panel_address: i32,
+    /// Should the panel be opened or closed?
+    #[prost(bool, tag = "2")]
+    pub open: bool,
+}
 /// Updates the current GameView state.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateGameViewCommand {
@@ -1086,7 +1095,7 @@ pub struct ClientDebugActionCommand {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
+        tags = "1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1103,8 +1112,10 @@ pub mod game_command {
         #[prost(message, tag = "4")]
         RenderInterface(super::RenderInterfaceCommand),
         #[prost(message, tag = "5")]
+        TogglePanel(super::TogglePanelCommand),
+        #[prost(message, tag = "6")]
         UpdateGameView(super::UpdateGameViewCommand),
-        #[prost(message, tag = "8")]
+        #[prost(message, tag = "7")]
         VisitRoom(super::VisitRoomCommand),
         #[prost(message, tag = "9")]
         CreateOrUpdateCard(super::CreateOrUpdateCardCommand),

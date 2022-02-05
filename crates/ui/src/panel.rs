@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use protos::spelldawn::game_action::Action;
+use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    FlexAlign, FlexJustify, FlexPosition, FlexStyle, GameAction, ImageScaleMode, Node,
-    PanelAddress, TextAlign, TogglePanelAction,
+    FlexAlign, FlexJustify, FlexPosition, FlexStyle, ImageScaleMode, Node, PanelAddress, TextAlign,
+    TogglePanelCommand,
 };
 
 use crate::components::{IconButton, Row, Text};
@@ -61,12 +61,10 @@ impl<TContent: Component> Component for Panel<TContent> {
                 self.show_close_button.then(||
                     IconButton {
                         icon: icons::CLOSE,
-                        action: Some(GameAction {
-                            action: Some(Action::TogglePanel(TogglePanelAction {
-                                panel_address: self.address.into(),
-                                open: false,
-                            }))
-                        }),
+                        action: action(None, Some(vec![Command::TogglePanel(TogglePanelCommand {
+                            open: false,
+                            panel_address: self.address.into()
+                        })])),
                         style: FlexStyle {
                             position: FlexPosition::Absolute.into(),
                             inset: right_top_px(-20.0, -20.0),

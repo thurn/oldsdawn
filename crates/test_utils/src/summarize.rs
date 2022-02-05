@@ -33,7 +33,8 @@ use protos::spelldawn::{
     PlayerInfo, PlayerName, PlayerSide, PlayerView, ProjectileAddress, RenderInterfaceCommand,
     RevealedCardView, RoomIdentifier, RoomVisitType, RulesText, RunInParallelCommand,
     SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand,
-    SetPlayerIdentifierCommand, SpriteAddress, TimeValue, UpdateGameViewCommand, VisitRoomCommand,
+    SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
+    UpdateGameViewCommand, VisitRoomCommand,
 };
 use server::GameResponse;
 
@@ -257,6 +258,7 @@ impl Summarize for Command {
             Command::RunInParallel(v) => summary.child_node("RunInParallel", v),
             Command::Delay(v) => summary.child_node("Delay", v),
             Command::RenderInterface(v) => summary.child_node("RenderInterface", v),
+            Command::TogglePanel(v) => summary.child_node("TogglePanel", v),
             Command::UpdateGameView(v) => summary.child_node("UpdateGameView", v),
             Command::VisitRoom(v) => summary.child_node("VisitRoom", v),
             Command::CreateOrUpdateCard(v) => summary.child_node("CreateOrUpdateCard", v),
@@ -292,6 +294,13 @@ impl Summarize for RunInParallelCommand {
 impl Summarize for DelayCommand {
     fn summarize(self, summary: &mut Summary) {
         summary.value(self.duration)
+    }
+}
+
+impl Summarize for TogglePanelCommand {
+    fn summarize(self, summary: &mut Summary) {
+        summary.child_node("open", self.open);
+        summary.child("address", PanelAddress::from_i32(self.panel_address));
     }
 }
 

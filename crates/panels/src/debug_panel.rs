@@ -19,8 +19,8 @@
 use data::actions::{DebugAction, UserAction};
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugAction, ClientDebugActionCommand, CommandList, FlexAlign, FlexJustify, FlexStyle,
-    FlexWrap, GameCommand, Node, PanelAddress,
+    ClientDebugAction, ClientDebugActionCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node,
+    PanelAddress, TogglePanelCommand,
 };
 use ui::components::{Button, Row};
 use ui::core::{child, node};
@@ -47,9 +47,15 @@ pub fn render() -> Node {
                 debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
                 client_debug_button(
                     "Show Logs",
-                    vec![Command::ClientDebugAction(ClientDebugActionCommand {
-                        action: ClientDebugAction::ShowLogs.into(),
-                    })],
+                    vec![
+                        Command::ClientDebugAction(ClientDebugActionCommand {
+                            action: ClientDebugAction::ShowLogs.into(),
+                        }),
+                        Command::TogglePanel(TogglePanelCommand {
+                            panel_address: PanelAddress::DebugPanel.into(),
+                            open: false,
+                        }),
+                    ],
                 ),
                 debug_button(
                     format!("+10{}", icons::MANA),
@@ -106,12 +112,7 @@ fn debug_button(label: impl Into<String>, action: UserAction) -> Option<Node> {
 fn client_debug_button(label: impl Into<String>, commands: Vec<Command>) -> Option<Node> {
     child(Button {
         label: label.into(),
-        action: core::action(
-            None,
-            Some(CommandList {
-                commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
-            }),
-        ),
+        action: core::action(None, Some(commands)),
         style: FlexStyle { margin: core::all_px(8.0), ..FlexStyle::default() },
         ..Button::default()
     })

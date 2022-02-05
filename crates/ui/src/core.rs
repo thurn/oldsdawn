@@ -18,10 +18,11 @@
 //! APIs exclusively consume [Option] types.
 
 use data::actions::UserAction;
+use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     game_action, BorderColor, BorderRadius, BorderWidth, CommandList, Dimension, DimensionGroup,
     DimensionUnit, EventHandlers, FlexColor, FlexRotate, FlexScale, FlexTranslate, FlexVector3,
-    GameAction, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
+    GameAction, GameCommand, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
 };
 
 pub type Px = f32;
@@ -50,13 +51,15 @@ pub fn node(component: impl Component) -> Node {
 ///
 /// An `optimistic` value can also optionally be provided to give commands to
 /// run immediately, before a server response is received.
-pub fn action(action: Option<UserAction>, optimistic: Option<CommandList>) -> Option<GameAction> {
+pub fn action(action: Option<UserAction>, optimistic: Option<Vec<Command>>) -> Option<GameAction> {
     Some(GameAction {
         action: Some(game_action::Action::StandardAction(StandardAction {
             payload: action.map_or(vec![], |action| {
                 bincode::serialize(&action).expect("Serialization failed")
             }),
-            update: optimistic,
+            update: optimistic.map(|commands| CommandList {
+                commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
+            }),
             debug_payload: None,
         })),
     })

@@ -929,6 +929,13 @@ message RenderInterfaceCommand {
     InterfaceMainControls main_controls = 2;
 }
 
+// Opens or closes the given interface panel.
+message TogglePanelCommand {
+    PanelAddress panel_address = 1;
+    // Should the panel be opened or closed?
+    bool open = 2;
+}
+
 /* Updates the current GameView state. */
 message UpdateGameViewCommand {
     GameView game = 1;
@@ -1159,8 +1166,9 @@ message GameCommand {
         RunInParallelCommand run_in_parallel = 2;
         DelayCommand delay = 3;
         RenderInterfaceCommand render_interface = 4;
-        UpdateGameViewCommand update_game_view = 5;
-        VisitRoomCommand visit_room = 8;
+        TogglePanelCommand toggle_panel = 5;
+        UpdateGameViewCommand update_game_view = 6;
+        VisitRoomCommand visit_room = 7;
         CreateOrUpdateCardCommand create_or_update_card = 9;
         DestroyCardCommand destroy_card = 10;
         MoveGameObjectsCommand move_game_objects = 11;

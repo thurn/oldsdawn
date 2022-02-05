@@ -15,7 +15,7 @@
 //! Library for user interface rendering
 
 use protos::spelldawn::game_command::Command;
-use protos::spelldawn::{CommandList, GameCommand, InterfaceMainControls, RenderInterfaceCommand};
+use protos::spelldawn::{InterfaceMainControls, RenderInterfaceCommand};
 
 use crate::core::Component;
 
@@ -50,11 +50,7 @@ pub fn clear_main_controls() -> RenderInterfaceCommand {
 }
 
 /// Equivalent to [clear_main_controls] which wraps the result in a
-/// [CommandList].
-pub fn clear_main_controls_command() -> Option<CommandList> {
-    Some(CommandList {
-        commands: vec![GameCommand {
-            command: Some(Command::RenderInterface(clear_main_controls())),
-        }],
-    })
+/// [Command] vector.
+pub fn clear_main_controls_command() -> Vec<Command> {
+    vec![Command::RenderInterface(clear_main_controls())]
 }

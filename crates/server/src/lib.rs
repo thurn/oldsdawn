@@ -331,6 +331,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::RunInParallel(_) => "RunInParallel",
         Command::Delay(_) => "Delay",
         Command::RenderInterface(_) => "RenderInterface",
+        Command::TogglePanel(_) => "TogglePanel",
         Command::UpdateGameView(_) => "UpdateGameView",
         Command::VisitRoom(_) => "VisitRoom",
         Command::CreateOrUpdateCard(_) => "CreateOrUpdateCard",
