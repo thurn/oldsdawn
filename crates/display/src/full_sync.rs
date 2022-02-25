@@ -18,7 +18,7 @@ use std::collections::HashMap;
 
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
-use data::game::{GameState, RaidData, RaidPhase};
+use data::game::{GamePhase, GameState, RaidData, RaidPhase};
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_object_identifier::Id;
@@ -117,13 +117,18 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
 /// Returns the [PlayerName] that currently has priority (is next to act) in
 /// this game
 fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
+    let turn = match &game.data.phase {
+        GamePhase::Play(turn) => turn,
+        _ => return PlayerName::Unspecified,
+    };
+
     adapters::to_player_name(
         match &game.data.raid {
             Some(raid) => match raid.phase {
                 RaidPhase::Activation => Side::Overlord,
                 _ => Side::Champion,
             },
-            None => game.data.turn,
+            None => turn.side,
         },
         user_side,
     )

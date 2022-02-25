@@ -19,7 +19,7 @@ use data::delegates::{
     ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery, ManaCostQuery,
     SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery, VaultAccessCountQuery,
 };
-use data::game::GameState;
+use data::game::{GamePhase, GameState};
 use data::primitives::{
     ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue, Side,
 };
@@ -114,7 +114,7 @@ pub fn cost_to_defeat_target(
 /// with no pending prompt responses, and thus can take a primary game action.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {
     game.player(side).actions > 0
-        && game.data.turn == side
+        && matches!(&game.data.phase, GamePhase::Play(current_turn) if current_turn.side == side)
         && game.data.raid.is_none()
         && game.overlord.prompt.is_none()
         && game.champion.prompt.is_none()

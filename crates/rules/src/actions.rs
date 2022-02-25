@@ -25,10 +25,9 @@
 use anyhow::{anyhow, ensure, Context, Result};
 use data::actions::PromptAction;
 use data::card_state::CardPosition;
-use data::delegates::{CastCardEvent, DawnEvent, DuskEvent, PayCardCostsEvent};
+use data::delegates::{CastCardEvent, PayCardCostsEvent};
 use data::game::GameState;
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
-use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
 use crate::{dispatch, flags, mutations, queries, raid_actions};
@@ -47,7 +46,7 @@ pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
     mutations::set_revealed_to(game, card_id, user_side, true);
     mutations::spend_action_points(game, user_side, 1);
     mutations::move_card(game, card_id, CardPosition::Hand(user_side));
-    check_end_turn(game, user_side);
+    mutations::check_end_turn(game, user_side);
     Ok(())
 }
 
@@ -122,7 +121,7 @@ pub fn play_card_action(
 
     mutations::move_card(game, card_id, new_position);
 
-    check_end_turn(game, user_side);
+    mutations::check_end_turn(game, user_side);
     Ok(())
 }
 
@@ -138,7 +137,7 @@ pub fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     );
     mutations::spend_action_points(game, user_side, 1);
     mutations::gain_mana(game, user_side, 1);
-    check_end_turn(game, user_side);
+    mutations::check_end_turn(game, user_side);
     Ok(())
 }
 
@@ -173,23 +172,5 @@ pub fn handle_prompt_action(
             raid_actions::score_card_action(game, user_side, card_id)
         }
         PromptAction::EndRaid => raid_actions::raid_end_action(game, user_side),
-    }
-}
-
-/// Invoked after taking a game action to check if the turn should be
-/// switched for the provided player.
-pub fn check_end_turn(game: &mut GameState, side: Side) {
-    if game.data.turn == side && game.player(side).actions == 0 {
-        let new_turn = side.opponent();
-        info!(?new_turn, "start_player_turn");
-        game.data.turn = new_turn;
-        if side == Side::Champion {
-            game.data.turn_number += 1;
-            dispatch::invoke_event(game, DuskEvent(game.data.turn_number));
-        } else {
-            dispatch::invoke_event(game, DawnEvent(game.data.turn_number));
-        }
-        game.player_mut(new_turn).actions = queries::start_of_turn_action_count(game, new_turn);
-        game.updates.push(GameUpdate::StartTurn(new_turn));
     }
 }

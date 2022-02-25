@@ -16,7 +16,7 @@
 
 #![allow(clippy::use_self)] // Required to use EnumKind
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use enum_kinds::EnumKind;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
@@ -108,14 +108,56 @@ pub struct GameConfiguration {
     pub simulation: bool,
 }
 
+/// Mulligan decision a player made for their opening hand
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum MulliganDecision {
+    /// The player has decided to keep their initial hand of 5 cards
+    Keep,
+    /// The player has elected to draw a new hand of 5 cards
+    Mulligan,
+}
+
+/// [MulliganDecision]s for both players.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct MulliganData {
+    /// The mulligan decision for the Overlord player, or None if no decision
+    /// has been made.
+    pub overlord: Option<MulliganDecision>,
+    /// The mulligan decision for the Champion player, or None if no decision
+    /// has been made.
+    pub champion: Option<MulliganDecision>,
+}
+
+/// Identifies the player whose turn it is
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CurrentTurn {
+    /// Current player whose turn it is
+    pub side: Side,
+    /// Turn number for that player
+    pub turn_number: TurnNumber,
+}
+
+/// Describes the final outcome of a game
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GameOverData {
+    /// Player who won the game
+    pub winner: Side,
+}
+
+/// High level status of a game, including e.g. whose turn it is
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum GamePhase {
+    ResolveMulligans(MulliganData),
+    Play(CurrentTurn),
+    GameOver(GameOverData),
+}
+
 /// State and configuration of the overall game, including whose turn it is and
 /// whether a raid is active.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameData {
-    /// Current player whose turn it is
-    pub turn: Side,
-    /// Turn number for that player
-    pub turn_number: TurnNumber,
+    /// Current [GamePhase].
+    pub phase: GamePhase,
     /// Data about an ongoing raid, if any
     pub raid: Option<RaidData>,
     /// Counter to create unique IDs for raids within this game
@@ -170,8 +212,7 @@ impl GameState {
             overlord: PlayerState::new_game(overlord_deck.owner_id, 3 /* actions */),
             champion: PlayerState::new_game(champion_deck.owner_id, 0 /* actions */),
             data: GameData {
-                turn: Side::Overlord,
-                turn_number: 1,
+                phase: GamePhase::ResolveMulligans(MulliganData::default()),
                 raid: None,
                 next_raid_id: 1,
                 config,
@@ -349,6 +390,22 @@ impl GameState {
     /// Mutable version of [Self::raid].
     pub fn raid_mut(&mut self) -> Result<&mut RaidData> {
         self.data.raid.as_mut().with_error(|| "Expected Raid")
+    }
+
+    /// Helper to get the [CurrentTurn] of a game when it is expected to exist.
+    pub fn current_turn(&self) -> Result<&CurrentTurn> {
+        match &self.data.phase {
+            GamePhase::Play(turn) => Ok(turn),
+            _ => bail!("Game is not currently active"),
+        }
+    }
+
+    /// Mutable version of [Self::current_turn]
+    pub fn current_turn_mut(&mut self) -> Result<&mut CurrentTurn> {
+        match &mut self.data.phase {
+            GamePhase::Play(turn) => Ok(turn),
+            _ => bail!("Game is not currently active"),
+        }
     }
 
     /// Create card states for a deck

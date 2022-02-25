@@ -17,24 +17,24 @@
 //! are not met, the higher-level game UI is responsible for ensuring this does
 //! not happen.
 //!
-//! Generally, mutation functions are expected to invoke a
-//! delegate event *after* performing their mutation to inform other systems
-//! that game state has changed.
+//! Generally, mutation functions are expected to invoke a delegate event
+//! *after* performing their mutation to inform other systems that game state
+//! has changed.
 
 use data::actions::Prompt;
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    CardMoved, DrawCardEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent, Scope,
-    StoredManaTakenEvent,
+    CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent,
+    Scope, StoredManaTakenEvent,
 };
-use data::game::GameState;
+use data::game::{CurrentTurn, GamePhase, GameState};
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
-use crate::{actions, dispatch};
+use crate::{dispatch, queries};
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events
@@ -167,11 +167,11 @@ pub fn end_raid(game: &mut GameState) {
     game.data.raid = None;
     dispatch::invoke_event(game, RaidEndEvent(raid));
     game.updates.push(GameUpdate::EndRaid);
-    actions::check_end_turn(game, Side::Champion);
+    check_end_turn(game, Side::Champion)
 }
 
 /// Returns a list of `count` cards from the top of the `side` player's
-/// deck, in sorting-key order (later IDs are are closer to the top
+/// deck, in sorting-key order (later indices are are closer to the top
 /// of the deck).
 ///
 /// Selects randomly unless cards are already known to be in this position.
@@ -203,4 +203,30 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Ve
     }
 
     card_ids
+}
+
+/// Invoked after taking a game action to check if the turn should be switched
+/// for the provided player.
+///
+/// Panics if the provided game is not currently active.
+pub fn check_end_turn(game: &mut GameState, side: Side) {
+    let turn = game.current_turn().expect("current_turn");
+
+    if turn.side == side && game.player(side).actions == 0 {
+        let turn_number = match side {
+            Side::Overlord => turn.turn_number,
+            Side::Champion => turn.turn_number + 1,
+        };
+        let next_side = side.opponent();
+        game.data.phase = GamePhase::Play(CurrentTurn { side: next_side, turn_number });
+
+        info!(?next_side, "start_player_turn");
+        if side == Side::Champion {
+            dispatch::invoke_event(game, DuskEvent(turn_number));
+        } else {
+            dispatch::invoke_event(game, DawnEvent(turn_number));
+        }
+        game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
+        game.updates.push(GameUpdate::StartTurn(next_side));
+    }
 }

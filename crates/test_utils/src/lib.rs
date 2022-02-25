@@ -28,7 +28,7 @@ use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardPositionKind};
 use data::deck::Deck;
-use data::game::{GameConfiguration, GameState, RaidData, RaidPhase};
+use data::game::{CurrentTurn, GameConfiguration, GamePhase, GameState, RaidData, RaidPhase};
 use data::primitives::{
     ActionCount, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
 };
@@ -77,13 +77,14 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         },
         GameConfiguration { deterministic: true, ..GameConfiguration::default() },
     );
+    let turn_side = args.turn.unwrap_or(user_side);
+    game.data.phase = GamePhase::Play(CurrentTurn { side: turn_side, turn_number: 0 });
 
-    game.data.turn = args.turn.unwrap_or(user_side);
     game.player_mut(user_side).mana = args.mana;
     game.player_mut(user_side).score = args.score;
     game.player_mut(user_side.opponent()).mana = args.opponent_mana;
     game.player_mut(user_side.opponent()).score = args.opponent_score;
-    game.player_mut(game.data.turn).actions = args.turn_actions;
+    game.player_mut(turn_side).actions = args.turn_actions;
 
     set_deck_top(&mut game, user_side, args.deck_top);
     set_deck_top(&mut game, user_side.opponent(), args.opponent_deck_top);

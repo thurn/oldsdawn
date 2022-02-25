@@ -69,14 +69,14 @@ pub fn handle_debug_action(
             })
         }
         DebugAction::SwitchTurn => crate::handle_action(database, player_id, game_id, |game, _| {
-            game.player_mut(game.data.turn).actions = 0;
-            let new_turn = game.data.turn.opponent();
-            game.data.turn = new_turn;
+            game.player_mut(game.current_turn()?.side).actions = 0;
+            let new_turn = game.current_turn()?.side.opponent();
+            game.current_turn_mut()?.side = new_turn;
             if new_turn == Side::Overlord {
-                game.data.turn_number += 1;
-                dispatch::invoke_event(game, DuskEvent(game.data.turn_number));
+                game.current_turn_mut()?.turn_number += 1;
+                dispatch::invoke_event(game, DuskEvent(game.current_turn()?.turn_number));
             } else {
-                dispatch::invoke_event(game, DawnEvent(game.data.turn_number));
+                dispatch::invoke_event(game, DawnEvent(game.current_turn()?.turn_number));
             }
             game.player_mut(new_turn).actions = queries::start_of_turn_action_count(game, new_turn);
             game.updates.push(GameUpdate::StartTurn(new_turn));
