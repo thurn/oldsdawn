@@ -94,9 +94,10 @@ namespace Spelldawn.Services
 
     IEnumerator HandleCreateCard(CreateOrUpdateCardCommand command)
     {
+      var isOptimistic = (bool)_optimisticCard;
       var waitForStaging = false;
       Card card;
-      if (_optimisticCard)
+      if (isOptimistic)
       {
         waitForStaging = true;
         card = _optimisticCard!;
@@ -110,14 +111,6 @@ namespace Spelldawn.Services
         Errors.CheckNotNull(command.CreatePosition, "No create position specified");
         StartCoroutine(_registry.ObjectPositionService.ObjectDisplayForPosition(command.CreatePosition)
           .AddObject(card, animate: false));
-
-        switch (command.CreateAnimation)
-        {
-          case CardCreationAnimation.DrawCard:
-            _registry.ObjectPositionService.PlayDrawCardAnimation(card);
-            waitForStaging = true;
-            break;
-        }
       }
 
       card.Render(
@@ -125,8 +118,13 @@ namespace Spelldawn.Services
         command.Card,
         GameContext.Staging,
         animate: !command.DisableFlipAnimation);
-
       _cards[Errors.CheckNotNull(command.Card.CardId)] = card;
+
+      if (!isOptimistic && command.CreateAnimation == CardCreationAnimation.DrawCard)
+      {
+        _registry.ObjectPositionService.PlayDrawCardAnimation(card);
+        waitForStaging = true;
+      }
 
       if (waitForStaging)
       {
@@ -175,6 +173,19 @@ namespace Spelldawn.Services
       _registry.DocumentService.ClearSupplementalCardInfo();
       _infoZoomLeft.DestroyAll();
       _infoZoomRight.DestroyAll();
+    }
+
+    public IEnumerator HandleDestroyCard(CardIdentifier cardId)
+    {
+      var card = FindCard(cardId);
+      _cards.Remove(cardId);
+      if (card.Parent && card.Parent != null)
+      {
+        card.Parent.RemoveObjectIfPresent(card, animate: false);
+      }
+
+      Destroy(card.gameObject);
+      yield break;
     }
   }
 }

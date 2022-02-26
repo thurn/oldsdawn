@@ -26,7 +26,7 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode, SetPlayerIdentifierCommand,
 };
-use rules::{dispatch, queries};
+use rules::{dispatch, mutations, queries};
 
 use crate::{Database, GameResponse};
 
@@ -114,27 +114,37 @@ pub fn handle_debug_action(
 }
 
 fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<()> {
-    let game = load_game(database, game_id)?;
-    database.write_game(&GameState::new(
-        game.id,
+    let current_game = load_game(database, game_id)?;
+    let mut new_game = GameState::new(
+        current_game.id,
         Deck {
-            owner_id: game.overlord.id,
-            identity: game.identity(Side::Overlord).name,
-            cards: game.overlord_cards.iter().fold(HashMap::new(), |mut acc, card| {
-                *acc.entry(card.name).or_insert(0) += 1;
-                acc
-            }),
+            owner_id: current_game.overlord.id,
+            identity: current_game.identity(Side::Overlord).name,
+            cards: current_game
+                .overlord_cards
+                .iter()
+                .filter(|c| c.id != current_game.identity(Side::Overlord).id)
+                .fold(HashMap::new(), |mut acc, card| {
+                    *acc.entry(card.name).or_insert(0) += 1;
+                    acc
+                }),
         },
         Deck {
-            owner_id: game.champion.id,
-            identity: game.identity(Side::Champion).name,
-            cards: game.champion_cards.iter().fold(HashMap::new(), |mut acc, card| {
-                *acc.entry(card.name).or_insert(0) += 1;
-                acc
-            }),
+            owner_id: current_game.champion.id,
+            identity: current_game.identity(Side::Champion).name,
+            cards: current_game
+                .champion_cards
+                .iter()
+                .filter(|c| c.id != current_game.identity(Side::Champion).id)
+                .fold(HashMap::new(), |mut acc, card| {
+                    *acc.entry(card.name).or_insert(0) += 1;
+                    acc
+                }),
         },
-        game.data.config,
-    ))?;
+        current_game.data.config,
+    );
+    mutations::deal_opening_hands(&mut new_game);
+    database.write_game(&new_game)?;
     Ok(())
 }
 

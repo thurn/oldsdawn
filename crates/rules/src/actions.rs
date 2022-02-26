@@ -55,13 +55,9 @@ pub fn handle_mulligan_decision(
     }
 
     if decision == MulliganDecision::Mulligan {
-        mutations::move_cards(
-            game,
-            game.hand(user_side).map(|c| c.id).collect(),
-            CardPosition::DeckUnknown(user_side),
-        );
-        mutations::shuffle_deck(game, user_side);
-        mutations::draw_cards(game, user_side, 5);
+        let cards = game.hand(user_side).map(|c| c.id).collect::<Vec<_>>();
+        mutations::shuffle_into_deck(game, user_side, &cards);
+        // mutations::draw_cards(game, user_side, 5, false /* push updates */);
     }
 
     Ok(())
@@ -78,7 +74,7 @@ pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    mutations::draw_cards(game, user_side, 1);
+    mutations::draw_cards(game, user_side, 1, true /* push updates */);
     mutations::check_end_turn(game, user_side);
     Ok(())
 }

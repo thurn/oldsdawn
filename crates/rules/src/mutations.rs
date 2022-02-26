@@ -46,53 +46,72 @@ use crate::{dispatch, queries};
 /// game zone.
 #[instrument(skip(game))]
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
+    move_card_internal(game, card_id, new_position, true)
+}
+
+/// Implementation for [move_card] which exposes the ability to turn off
+/// updates.
+fn move_card_internal(
+    game: &mut GameState,
+    card_id: CardId,
+    new_position: CardPosition,
+    mut push_update: bool,
+) {
     info!(?card_id, ?new_position, "move_card");
-    let mut pushed_update = false;
     let old_position = game.card(card_id).position();
     game.move_card(card_id, new_position);
 
     dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }));
 
-    if old_position.in_deck() && matches!(new_position, CardPosition::DeckTop(_)) {
-        game.updates.push(GameUpdate::TopOfDeckCard(card_id));
-        pushed_update = true;
-    }
-
-    if old_position.in_deck() && new_position.in_hand() {
+    if push_update && old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, DrawCardEvent(card_id));
         game.updates.push(GameUpdate::DrawCard(card_id));
-        pushed_update = true;
+        push_update = false;
     }
 
     if !old_position.in_play() && new_position.in_play() {
         dispatch::invoke_event(game, PlayCardEvent(card_id));
     }
 
-    if new_position.kind() == CardPositionKind::DeckUnknown {
-        game.updates.push(GameUpdate::DestroyCard(card_id));
-        pushed_update = true;
+    if push_update && new_position.kind() == CardPositionKind::DeckUnknown {
+        game.updates.push(GameUpdate::ShuffleIntoDeck(card_id));
+        push_update = false;
     }
 
-    if !pushed_update {
+    if push_update {
         game.updates.push(GameUpdate::MoveCard(card_id));
     }
 }
 
 /// Helper to move all cards in a list to a new [CardPosition] via [move_card].
-pub fn move_cards(game: &mut GameState, cards: Vec<CardId>, to_position: CardPosition) {
+pub fn move_cards(
+    game: &mut GameState,
+    cards: &[CardId],
+    to_position: CardPosition,
+    push_updates: bool,
+) {
     for card_id in cards {
-        move_card(game, card_id, to_position);
+        move_card_internal(game, *card_id, to_position, push_updates);
     }
+}
+
+// Shuffles the provided `cards` into the `side` player's deck, clearing their
+// revealed state for both players.
+pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) {
+    move_cards(game, cards, CardPosition::DeckUnknown(side), true /* push updates */);
+    for card_id in cards {
+        set_revealed_to(game, *card_id, Side::Overlord, false);
+        set_revealed_to(game, *card_id, Side::Champion, false);
+    }
+    shuffle_deck(game, side);
 }
 
 /// Shuffles the `side` player's deck, moving all cards into the `DeckUnknown`
 /// card position.
 pub fn shuffle_deck(game: &mut GameState, side: Side) {
-    move_cards(
-        game,
-        game.cards_in_position(side, CardPosition::DeckTop(side)).map(|c| c.id).collect(),
-        CardPosition::DeckUnknown(side),
-    );
+    let cards =
+        game.cards_in_position(side, CardPosition::DeckTop(side)).map(|c| c.id).collect::<Vec<_>>();
+    move_cards(game, &cards, CardPosition::DeckUnknown(side), false);
 }
 
 /// Updates the 'revealed' state of a card to be visible to the indicated `side`
@@ -113,12 +132,13 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 /// Helper function to draw `count` cards from the top of a player's deck and
 /// place them into their hand.
 ///
-/// Cards are set as revealed to the `side` player.
-pub fn draw_cards(game: &mut GameState, side: Side, count: usize) {
+/// Cards are set as revealed to the `side` player. If `push_updates` is true,
+/// [GameUpdate] values will be appended for each draw.
+pub fn draw_cards(game: &mut GameState, side: Side, count: usize, push_updates: bool) {
     let card_ids = realize_top_of_deck(game, side, count);
     for card_id in card_ids {
         set_revealed_to(game, card_id, side, true);
-        move_card(game, card_id, CardPosition::Hand(side))
+        move_card_internal(game, card_id, CardPosition::Hand(side), push_updates)
     }
 }
 
@@ -187,15 +207,13 @@ pub fn clear_prompts(game: &mut GameState) {
     game.champion.prompt = None;
 }
 
-/// Ends the current raid. Panics if no raid is currently active. Appends
-/// [GameUpdate::EndRaid].
+/// Ends the current raid. Panics if no raid is currently active.
 #[instrument(skip(game))]
 pub fn end_raid(game: &mut GameState) {
     info!("end_raid");
     let raid = game.raid().expect("Active raid").raid_id;
     game.data.raid = None;
     dispatch::invoke_event(game, RaidEndEvent(raid));
-    game.updates.push(GameUpdate::EndRaid);
     check_end_turn(game, Side::Champion)
 }
 
@@ -210,9 +228,9 @@ pub fn deal_opening_hands(game: &mut GameState) {
             PromptAction::MulliganDecision(MulliganDecision::Mulligan),
         ],
     };
-    draw_cards(game, Side::Overlord, 5);
+    draw_cards(game, Side::Overlord, 5, false);
     set_prompt(game, Side::Overlord, prompt.clone());
-    draw_cards(game, Side::Champion, 5);
+    draw_cards(game, Side::Champion, 5, false);
     set_prompt(game, Side::Champion, prompt);
 }
 

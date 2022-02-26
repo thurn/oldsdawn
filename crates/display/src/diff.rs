@@ -255,7 +255,7 @@ fn move_to_position(
                 } else {
                     // Card has no valid position, destroy it
                     commands.push(
-                        CommandPhase::Move,
+                        CommandPhase::PostMove,
                         Command::DestroyCard(DestroyCardCommand {
                             card_id: Some(adapters::adapt_card_id(id)),
                         }),

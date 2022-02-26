@@ -236,7 +236,7 @@ impl GameState {
         }
     }
 
-    /// Returns the identity card for the provided Side.
+    /// Returns the identity card for the provided Side
     ///
     /// Panics if no identity card is present for this player.
     pub fn identity(&self, side: Side) -> &CardState {

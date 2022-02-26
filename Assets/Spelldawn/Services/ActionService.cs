@@ -81,6 +81,11 @@ namespace Spelldawn.Services
     /// </summary>
     public bool CanInfoZoom(GameContext gameContext)
     {
+      if (_registry.DocumentService.IsAnyPanelOpen())
+      {
+        return false;
+      }
+
       switch (gameContext)
       {
         case GameContext.ArenaRaidParticipant:
@@ -102,14 +107,18 @@ namespace Spelldawn.Services
     /// <see cref="CanExecuteAction"/> below.
     /// </summary>
     public bool CanInitiateAction() => !_registry.CardService.CurrentlyDragging &&
-                                       !_registry.BackgroundOverlay.Enabled;
+                                       !_registry.BackgroundOverlay.Enabled &&
+                                       !_registry.DocumentService.IsAnyPanelOpen();
 
     /// <summary>
     /// Can the user currently perform a game action of the provided type?
     /// </summary>
     public bool CanExecuteAction(GameAction.ActionOneofCase actionType) => actionType switch
     {
-      GameAction.ActionOneofCase.StandardAction => CanAct(allowInOverlay: true, actionPointRequired: false),
+      GameAction.ActionOneofCase.StandardAction => CanAct(
+        allowInOverlay: true,
+        actionPointRequired: false,
+        allowWithPanelOpen: true),
       GameAction.ActionOneofCase.TogglePanel => true,
       GameAction.ActionOneofCase.GainMana => CanAct(),
       GameAction.ActionOneofCase.DrawCard => CanAct(),
@@ -119,10 +128,11 @@ namespace Spelldawn.Services
       _ => false
     };
 
-    bool CanAct(bool allowInOverlay = false, bool actionPointRequired = true) =>
+    bool CanAct(bool allowInOverlay = false, bool actionPointRequired = true, bool allowWithPanelOpen = false) =>
       !_currentlyHandlingAction &&
       !_registry.CommandService.CurrentlyHandlingCommand &&
       !_registry.CardService.CurrentlyDragging &&
+      (allowWithPanelOpen || !_registry.DocumentService.IsAnyPanelOpen()) &&
       (allowInOverlay || !_registry.BackgroundOverlay.Enabled) &&
       (allowInOverlay || !_registry.RaidService.RaidActive) &&
       (!actionPointRequired || _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0);

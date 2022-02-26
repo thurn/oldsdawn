@@ -239,18 +239,20 @@ fn create_new_game(database: &mut impl Database, new_game_id: GameId) -> Result<
             owner_id: PlayerId::new(2),
             identity: CardName::TestOverlordIdentity,
             cards: hashmap! {
-                CardName::DungeonAnnex => 1,
-                CardName::IceDragon => 44,
+                CardName::DungeonAnnex => 15,
+                CardName::IceDragon => 15,
+                CardName::GoldMine => 15
             },
         },
         Deck {
             owner_id: PlayerId::new(1),
             identity: CardName::TestChampionIdentity,
             cards: hashmap! {
-                CardName::Greataxe => 45,
+                CardName::Greataxe => 20,
+                CardName::ArcaneRecovery => 20,
             },
         },
-        GameConfiguration { deterministic: true, ..GameConfiguration::default() },
+        GameConfiguration { deterministic: false, ..GameConfiguration::default() },
     );
 
     mutations::deal_opening_hands(&mut game);

@@ -53,8 +53,6 @@ pub enum GameUpdate {
     ShuffleIntoDeck(CardId),
     /// A card has been completely removed from the game
     DestroyCard(CardId),
-    /// A card from within a deck has been locked into the 'top of deck' zone.
-    TopOfDeckCard(CardId),
     /// A card has been moved to a new game location not described by one of the
     /// above updates
     MoveCard(CardId),
@@ -74,8 +72,6 @@ pub enum GameUpdate {
     OverlordScoreCard(CardId, PointsValue),
     /// A card has been scored by the champion player
     ChampionScoreCard(CardId, PointsValue),
-    /// A raid has ended
-    EndRaid,
     /// The game has ended and the indicated player has won
     GameOver(Side),
 }

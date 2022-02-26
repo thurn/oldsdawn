@@ -98,6 +98,8 @@ namespace Spelldawn.Services
 
     public bool IsOpen(PanelAddress address) => _openPanels.Contains(address);
 
+    public bool IsAnyPanelOpen() => _openPanels.Count > 0;
+
     public void HandleRenderInterface(RenderInterfaceCommand command)
     {
       foreach (var panel in command.Panels)

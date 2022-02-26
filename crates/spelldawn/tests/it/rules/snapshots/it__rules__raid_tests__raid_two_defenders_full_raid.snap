@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 665
+assertion_line: 667
 expression: "Summary::summarize(&response)"
 
 ---

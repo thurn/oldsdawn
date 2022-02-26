@@ -38,8 +38,8 @@ use protos::spelldawn::{
     ObjectPositionStaging, PlayerName, RoomVisitType, TimeValue, VisitRoomCommand,
 };
 use protos::spelldawn::{
-    FireProjectileCommand, MusicState, ObjectPositionScoreAnimation, PlayEffectCommand,
-    PlayEffectPosition, PlaySoundCommand, SetMusicCommand,
+    DestroyCardCommand, FireProjectileCommand, MusicState, ObjectPositionScoreAnimation,
+    PlayEffectCommand, PlayEffectPosition, PlaySoundCommand, SetMusicCommand,
 };
 
 use crate::full_sync::CardCreationStrategy;
@@ -75,7 +75,9 @@ pub fn render(
             targeted_interaction(commands, game, user_side, interaction);
         }
         GameUpdate::ChampionScoreCard(card_id, _) => score_champion_card(commands, card_id),
-        _ => {}
+        GameUpdate::ShuffleIntoDeck(card_id) => shuffle_into_deck(commands, user_side, card_id),
+        GameUpdate::DestroyCard(card_id) => destroy_card(commands, card_id),
+        _ => todo!("Implement {:?}", update),
     }
 }
 
@@ -244,6 +246,30 @@ fn score_champion_card(commands: &mut ResponseBuilder, card_id: CardId) {
                 ..PlayEffectOptions::default()
             },
         ),
+    );
+}
+
+fn shuffle_into_deck(commands: &mut ResponseBuilder, user_side: Side, card_id: CardId) {
+    commands.move_object(
+        Id::CardId(adapters::adapt_card_id(card_id)),
+        ObjectPosition {
+            sorting_key: 0,
+            position: Some(Position::Deck(ObjectPositionDeck {
+                owner: adapters::to_player_name(card_id.side, user_side).into(),
+            })),
+        },
+    );
+
+    // Cards shuffled into the deck are automatically destroyed during the
+    // PostMove phase by `diff::move_to_position()`.
+}
+
+fn destroy_card(commands: &mut ResponseBuilder, card_id: CardId) {
+    commands.push(
+        CommandPhase::Animate,
+        Command::DestroyCard(DestroyCardCommand {
+            card_id: Some(adapters::adapt_card_id(card_id)),
+        }),
     );
 }
 
