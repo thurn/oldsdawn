@@ -40,14 +40,14 @@ pub struct PlayerState {
     pub actions: ActionCount,
     pub score: PointsValue,
     /// A choice this player is currently facing. Automatically cleared when
-    /// a [Prompt] response is received.
+    /// a `PromptAction` response is received.
     pub prompt: Option<Prompt>,
 }
 
 impl PlayerState {
-    /// Create the default player state for a new game
-    pub fn new_game(id: PlayerId, actions: ActionCount) -> Self {
-        Self { id, mana: 5, actions, score: 0, prompt: None }
+    /// Create an empty player state.
+    pub fn new(id: PlayerId) -> Self {
+        Self { id, mana: 0, actions: 0, score: 0, prompt: None }
     }
 }
 
@@ -109,7 +109,7 @@ pub struct GameConfiguration {
 }
 
 /// Mulligan decision a player made for their opening hand
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub enum MulliganDecision {
     /// The player has decided to keep their initial hand of 5 cards
     Keep,
@@ -126,6 +126,16 @@ pub struct MulliganData {
     /// The mulligan decision for the Champion player, or None if no decision
     /// has been made.
     pub champion: Option<MulliganDecision>,
+}
+
+impl MulliganData {
+    pub fn decision(&self, side: Side) -> Option<&MulliganDecision> {
+        match side {
+            Side::Overlord => &self.overlord,
+            Side::Champion => &self.champion,
+        }
+        .as_ref()
+    }
 }
 
 /// Identifies the player whose turn it is
@@ -199,7 +209,11 @@ pub struct GameState {
 
 impl GameState {
     /// Creates a new game with the provided [GameId] and decks for both players
-    pub fn new_game(
+    /// in the [GamePhase::ResolveMulligans] phase.
+    ///
+    /// Does *not* handle dealing opening hands, prompting for mulligan
+    /// decisions, assigning starting mana, etc.
+    pub fn new(
         id: GameId,
         overlord_deck: Deck,
         champion_deck: Deck,
@@ -209,8 +223,8 @@ impl GameState {
             id,
             overlord_cards: Self::make_deck(&overlord_deck, Side::Overlord),
             champion_cards: Self::make_deck(&champion_deck, Side::Champion),
-            overlord: PlayerState::new_game(overlord_deck.owner_id, 3 /* actions */),
-            champion: PlayerState::new_game(champion_deck.owner_id, 0 /* actions */),
+            overlord: PlayerState::new(overlord_deck.owner_id),
+            champion: PlayerState::new(champion_deck.owner_id),
             data: GameData {
                 phase: GamePhase::ResolveMulligans(MulliganData::default()),
                 raid: None,

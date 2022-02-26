@@ -16,6 +16,7 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::game::MulliganDecision;
 use crate::primitives::{ActionCount, CardId, ManaValue, PointsValue};
 
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
@@ -47,6 +48,8 @@ pub enum PromptContext {
 /// the client.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum PromptAction {
+    /// Action to keep or mulligan opening hand
+    MulliganDecision(MulliganDecision),
     /// Action for the Overlord to activate the room currently being raided
     ActivateRoomAction(RoomActivationAction),
     /// Champion action in response to a raid encounter

@@ -16,7 +16,7 @@ use data::actions::{
     ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
     UserAction,
 };
-use data::game::GameState;
+use data::game::{GameState, MulliganDecision};
 use data::primitives::CardId;
 use protos::spelldawn::{
     AnchorCorner, CardAnchor, CardAnchorNode, CardNodeAnchorPosition, FlexAlign, FlexJustify,
@@ -172,6 +172,7 @@ fn prompt_context(context: Option<PromptContext>) -> Option<String> {
 
 fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
     let button = match response {
+        PromptAction::MulliganDecision(mulligan) => mulligan_button(mulligan),
         PromptAction::ActivateRoomAction(activate) => activate_button(activate),
         PromptAction::EncounterAction(encounter_action) => {
             encounter_action_button(game, encounter_action)
@@ -248,6 +249,19 @@ impl Component for ResponseButton {
             },
             ..Button::default()
         })
+    }
+}
+
+fn mulligan_button(mulligan: MulliganDecision) -> ResponseButton {
+    match mulligan {
+        MulliganDecision::Keep => {
+            ResponseButton { label: "Keep".to_string(), ..ResponseButton::default() }
+        }
+        MulliganDecision::Mulligan => ResponseButton {
+            label: "Mulligan".to_string(),
+            primary: false,
+            ..ResponseButton::default()
+        },
     }
 }
 

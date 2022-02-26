@@ -34,7 +34,7 @@ use protos::spelldawn::{
     RoomIdentifier, StandardAction,
 };
 use rules::actions::PlayCardTarget;
-use rules::{actions, raid_actions};
+use rules::{actions, mutations, raid_actions};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
@@ -233,7 +233,7 @@ pub fn handle_connect(
 
 /// Creates a new default [GameState] and writes its value to the database.
 fn create_new_game(database: &mut impl Database, new_game_id: GameId) -> Result<GameState> {
-    let game = GameState::new_game(
+    let mut game = GameState::new(
         new_game_id,
         Deck {
             owner_id: PlayerId::new(2),
@@ -252,6 +252,8 @@ fn create_new_game(database: &mut impl Database, new_game_id: GameId) -> Result<
         },
         GameConfiguration { deterministic: true, ..GameConfiguration::default() },
     );
+
+    mutations::deal_opening_hands(&mut game);
 
     database.write_game(&game)?;
     info!(?new_game_id, "create_new_game");

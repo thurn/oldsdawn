@@ -22,15 +22,50 @@
 
 //! Defines handling for the basic top-level game actions a player can take.
 
-use anyhow::{anyhow, ensure, Context, Result};
+use anyhow::{anyhow, bail, ensure, Context, Result};
 use data::actions::PromptAction;
 use data::card_state::CardPosition;
 use data::delegates::{CastCardEvent, PayCardCostsEvent};
-use data::game::GameState;
+use data::game::{GamePhase, GameState, MulliganDecision};
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 use tracing::{info, instrument};
 
 use crate::{dispatch, flags, mutations, queries, raid_actions};
+
+/// Handles a choice to keep or mulligan an opening hand
+pub fn handle_mulligan_decision(
+    game: &mut GameState,
+    user_side: Side,
+    decision: MulliganDecision,
+) -> Result<()> {
+    info!(?user_side, ?decision, "handle_mulligan_decision");
+    ensure!(
+        flags::can_make_mulligan_decision(game, user_side),
+        "Cannot make mulligan decision for {:?}",
+        user_side
+    );
+    let mut mulligans = match &mut game.data.phase {
+        GamePhase::ResolveMulligans(mulligans) => mulligans,
+        _ => bail!("Incorrect game phase"),
+    };
+
+    match user_side {
+        Side::Overlord => mulligans.overlord = Some(decision),
+        Side::Champion => mulligans.champion = Some(decision),
+    }
+
+    if decision == MulliganDecision::Mulligan {
+        mutations::move_cards(
+            game,
+            game.hand(user_side).map(|c| c.id).collect(),
+            CardPosition::DeckUnknown(user_side),
+        );
+        mutations::shuffle_deck(game, user_side);
+        mutations::draw_cards(game, user_side, 5);
+    }
+
+    Ok(())
+}
 
 /// The basic game action to draw a card during your turn by spending one
 /// action.
@@ -42,10 +77,8 @@ pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
         "Cannot draw card for {:?}",
         user_side
     );
-    let card_id = mutations::realize_top_of_deck(game, user_side, 1)[0];
-    mutations::set_revealed_to(game, card_id, user_side, true);
     mutations::spend_action_points(game, user_side, 1);
-    mutations::move_card(game, card_id, CardPosition::Hand(user_side));
+    mutations::draw_cards(game, user_side, 1);
     mutations::check_end_turn(game, user_side);
     Ok(())
 }
@@ -158,6 +191,9 @@ pub fn handle_prompt_action(
     mutations::clear_prompts(game);
 
     match action {
+        PromptAction::MulliganDecision(mulligan) => {
+            handle_mulligan_decision(game, user_side, mulligan)
+        }
         PromptAction::ActivateRoomAction(data) => {
             raid_actions::room_activation_action(game, user_side, data)
         }

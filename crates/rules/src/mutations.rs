@@ -21,14 +21,14 @@
 //! *after* performing their mutation to inform other systems that game state
 //! has changed.
 
-use data::actions::Prompt;
+use data::actions::{Prompt, PromptAction};
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent,
     Scope, StoredManaTakenEvent,
 };
-use data::game::{CurrentTurn, GamePhase, GameState};
+use data::game::{CurrentTurn, GamePhase, GameState, MulliganDecision};
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
@@ -78,6 +78,23 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     }
 }
 
+/// Helper to move all cards in a list to a new [CardPosition] via [move_card].
+pub fn move_cards(game: &mut GameState, cards: Vec<CardId>, to_position: CardPosition) {
+    for card_id in cards {
+        move_card(game, card_id, to_position);
+    }
+}
+
+/// Shuffles the `side` player's deck, moving all cards into the `DeckUnknown`
+/// card position.
+pub fn shuffle_deck(game: &mut GameState, side: Side) {
+    move_cards(
+        game,
+        game.cards_in_position(side, CardPosition::DeckTop(side)).map(|c| c.id).collect(),
+        CardPosition::DeckUnknown(side),
+    );
+}
+
 /// Updates the 'revealed' state of a card to be visible to the indicated `side`
 /// player.
 ///
@@ -90,6 +107,18 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 
     if side != card_id.side && !current && revealed {
         game.updates.push(GameUpdate::RevealToOpponent(card_id));
+    }
+}
+
+/// Helper function to draw `count` cards from the top of a player's deck and
+/// place them into their hand.
+///
+/// Cards are set as revealed to the `side` player.
+pub fn draw_cards(game: &mut GameState, side: Side, count: usize) {
+    let card_ids = realize_top_of_deck(game, side, count);
+    for card_id in card_ids {
+        set_revealed_to(game, card_id, side, true);
+        move_card(game, card_id, CardPosition::Hand(side))
     }
 }
 
@@ -168,6 +197,23 @@ pub fn end_raid(game: &mut GameState) {
     dispatch::invoke_event(game, RaidEndEvent(raid));
     game.updates.push(GameUpdate::EndRaid);
     check_end_turn(game, Side::Champion)
+}
+
+/// Deals initial hands to both players and prompts for mulligan decisions.
+#[instrument(skip(game))]
+pub fn deal_opening_hands(game: &mut GameState) {
+    info!("deal_opening_hands");
+    let prompt = Prompt {
+        context: None,
+        responses: vec![
+            PromptAction::MulliganDecision(MulliganDecision::Keep),
+            PromptAction::MulliganDecision(MulliganDecision::Mulligan),
+        ],
+    };
+    draw_cards(game, Side::Overlord, 5);
+    set_prompt(game, Side::Overlord, prompt.clone());
+    draw_cards(game, Side::Champion, 5);
+    set_prompt(game, Side::Champion, prompt);
 }
 
 /// Returns a list of `count` cards from the top of the `side` player's

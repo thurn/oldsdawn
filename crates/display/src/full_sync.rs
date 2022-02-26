@@ -18,7 +18,7 @@ use std::collections::HashMap;
 
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
-use data::game::{GamePhase, GameState, RaidData, RaidPhase};
+use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_object_identifier::Id;
@@ -259,15 +259,45 @@ fn revealed_card_view(
     }
 }
 
-/// Calculates game object positions for an ongoing raid, if any
+/// Calculates non-standard game object positions
 fn position_overrides(game: &GameState, user_side: Side) -> HashMap<Id, ObjectPosition> {
-    game.data.raid.as_ref().map_or_else(HashMap::new, |raid| {
-        if raid.phase == RaidPhase::Access {
-            raid_access_position_overrides(game, user_side, raid)
-        } else {
-            raid_position_overrides(game, user_side, raid)
+    match &game.data.phase {
+        GamePhase::ResolveMulligans(mulligans) => {
+            opening_hand_position_overrides(game, user_side, mulligans)
         }
-    })
+        GamePhase::Play(_) => game.data.raid.as_ref().map_or_else(HashMap::new, |raid| {
+            if raid.phase == RaidPhase::Access {
+                raid_access_position_overrides(game, user_side, raid)
+            } else {
+                raid_position_overrides(game, user_side, raid)
+            }
+        }),
+        GamePhase::GameOver(_) => HashMap::new(),
+    }
+}
+
+/// Positions for cards during the opening hand mulligan decision
+fn opening_hand_position_overrides(
+    game: &GameState,
+    user_side: Side,
+    mulligans: &MulliganData,
+) -> HashMap<Id, ObjectPosition> {
+    match mulligans.decision(user_side) {
+        None => game
+            .hand(user_side)
+            .enumerate()
+            .map(|(i, card)| {
+                (
+                    Id::CardId(adapters::adapt_card_id(card.id)),
+                    ObjectPosition {
+                        sorting_key: i as u32,
+                        position: Some(Position::Browser(ObjectPositionBrowser {})),
+                    },
+                )
+            })
+            .collect(),
+        Some(_) => HashMap::new(),
+    }
 }
 
 /// Positions for game objects during a raid.

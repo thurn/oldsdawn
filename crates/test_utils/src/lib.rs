@@ -63,7 +63,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         Side::Champion => (opponent_id, user_id),
     };
 
-    let mut game = GameState::new_game(
+    let mut game = GameState::new(
         game_id,
         Deck {
             owner_id: overlord_user,

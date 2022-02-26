@@ -115,7 +115,7 @@ pub fn handle_debug_action(
 
 fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<()> {
     let game = load_game(database, game_id)?;
-    database.write_game(&GameState::new_game(
+    database.write_game(&GameState::new(
         game.id,
         Deck {
             owner_id: game.overlord.id,

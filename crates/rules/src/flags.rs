@@ -21,10 +21,17 @@ use data::delegates::{
     CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpRoomQuery,
     CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
 };
-use data::game::{GameState, RaidData, RaidPhase, RaidPhaseKind};
+use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
 use data::primitives::{CardId, CardType, Faction, RoomId, Side};
 
 use crate::{dispatch, queries};
+
+/// Returns whether a player can currently make a mulligan decision
+pub fn can_make_mulligan_decision(game: &GameState, side: Side) -> bool {
+    matches!(
+        &game.data.phase, GamePhase::ResolveMulligans(mulligan) if mulligan.decision(side).is_none()
+    )
+}
 
 /// Returns whether a given card can currently be played via the basic game
 /// action to play a card.
