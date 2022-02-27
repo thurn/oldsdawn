@@ -285,12 +285,11 @@ fn opening_hand_position_overrides(
     match mulligans.decision(user_side) {
         None => game
             .hand(user_side)
-            .enumerate()
-            .map(|(i, card)| {
+            .map(|card| {
                 (
                     Id::CardId(adapters::adapt_card_id(card.id)),
                     ObjectPosition {
-                        sorting_key: i as u32,
+                        sorting_key: card.sorting_key,
                         position: Some(Position::Browser(ObjectPositionBrowser {})),
                     },
                 )

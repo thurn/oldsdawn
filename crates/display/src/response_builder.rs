@@ -23,12 +23,14 @@ use protos::spelldawn::{
 /// Key used to sort [Command]s into distinct groups
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub enum CommandPhase {
+    Start,
     PreUpdate,
     Update,
     Animate,
     Move,
     RenderInterface,
     PostMove,
+    End,
 }
 
 /// Keeps track of [Command]s required to update the client
@@ -36,12 +38,13 @@ pub struct ResponseBuilder {
     pub user_side: Side,
     pub animate: bool,
     commands: Vec<(CommandPhase, Command)>,
+    start_moves: Vec<(Id, ObjectPosition)>,
     moves: Vec<(Id, ObjectPosition)>,
 }
 
 impl ResponseBuilder {
     pub fn new(user_side: Side, animate: bool) -> Self {
-        Self { user_side, animate, commands: vec![], moves: vec![] }
+        Self { user_side, animate, commands: vec![], start_moves: vec![], moves: vec![] }
     }
 
     /// Append a new command to this builder
@@ -69,29 +72,44 @@ impl ResponseBuilder {
         self.moves.push((id, position));
     }
 
+    /// Equivalent to [Self::move_object] which runs move commands during the
+    /// `Start` phase.
+    pub fn move_at_start(&mut self, id: Id, position: ObjectPosition) {
+        self.start_moves.push((id, position));
+    }
+
     /// Converts this builder into a [Command] vector
     pub fn build(mut self) -> Vec<Command> {
+        if !self.start_moves.is_empty() {
+            self.start_moves.sort_by_key(|(id, _)| *id);
+            let parallel_move = self.parallel_move(&self.start_moves);
+            self.commands.push((CommandPhase::Start, parallel_move));
+        }
+
         if !self.moves.is_empty() {
             self.moves.sort_by_key(|(id, _)| *id);
-            let parallel_move = Command::RunInParallel(RunInParallelCommand {
-                commands: self
-                    .moves
-                    .into_iter()
-                    .map(|(id, position)| CommandList {
-                        commands: vec![GameCommand {
-                            command: Some(Command::MoveGameObjects(MoveGameObjectsCommand {
-                                ids: vec![GameObjectIdentifier { id: Some(id) }],
-                                position: Some(position),
-                                disable_animation: !self.animate,
-                            })),
-                        }],
-                    })
-                    .collect(),
-            });
+            let parallel_move = self.parallel_move(&self.moves);
             self.commands.push((CommandPhase::Move, parallel_move));
         }
 
         self.commands.sort_by_key(|(phase, _)| *phase);
         self.commands.into_iter().map(|(_, c)| c).collect()
+    }
+
+    fn parallel_move(&self, moves: &[(Id, ObjectPosition)]) -> Command {
+        Command::RunInParallel(RunInParallelCommand {
+            commands: moves
+                .iter()
+                .map(|(id, position)| CommandList {
+                    commands: vec![GameCommand {
+                        command: Some(Command::MoveGameObjects(MoveGameObjectsCommand {
+                            ids: vec![GameObjectIdentifier { id: Some(*id) }],
+                            position: Some(position.clone()),
+                            disable_animation: !self.animate,
+                        })),
+                    }],
+                })
+                .collect(),
+        })
     }
 }

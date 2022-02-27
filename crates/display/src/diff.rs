@@ -22,8 +22,8 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    CardIcon, CardIcons, CardView, CreateOrUpdateCardCommand, DestroyCardCommand, GameView,
-    ObjectPosition, ObjectPositionDeckContainer, ObjectPositionDiscardPileContainer,
+    CardIcon, CardIcons, CardView, CreateOrUpdateCardCommand, GameView, ObjectPosition,
+    ObjectPositionDeckContainer, ObjectPositionDiscardPileContainer,
     ObjectPositionIdentityContainer, PlayerInfo, PlayerName, PlayerView, RevealedCardView,
     UpdateGameViewCommand,
 };
@@ -253,13 +253,8 @@ fn move_to_position(
                 {
                     card_position
                 } else {
-                    // Card has no valid position, destroy it
-                    commands.push(
-                        CommandPhase::PostMove,
-                        Command::DestroyCard(DestroyCardCommand {
-                            card_id: Some(adapters::adapt_card_id(id)),
-                        }),
-                    );
+                    // Card has no position, e.g. because it has been shuffled back into the deck.
+                    // The effect which causes this transition is responsible for destroying it.
                     return;
                 }
             }

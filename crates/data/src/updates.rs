@@ -40,15 +40,15 @@ pub struct TargetedInteraction {
 /// into a client update
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum GameUpdate {
-    /// Indicates that a player's opening hand has been drawn and may be kept or
-    /// mulliganed
-    ShowOpeningHand(Side),
-    /// Indicates that a player has kept their current hand
-    KeepOpeningHand(Side),
     /// Indicates that a player's turn has started
     StartTurn(Side),
+    /// Indicates that a new hand of cards has been drawn for the provided
+    /// player.
+    DrawHand(Side),
     /// A card has moved from a deck to a player's hand.
     DrawCard(CardId),
+    /// Shuffle a card back into a deck during a mulligan
+    MulliganCard(CardId),
     /// A card has been shuffled back into a player's deck
     ShuffleIntoDeck(CardId),
     /// A card has been completely removed from the game

@@ -97,8 +97,8 @@ pub fn move_cards(
 
 // Shuffles the provided `cards` into the `side` player's deck, clearing their
 // revealed state for both players.
-pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) {
-    move_cards(game, cards, CardPosition::DeckUnknown(side), true /* push updates */);
+pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId], push_updates: bool) {
+    move_cards(game, cards, CardPosition::DeckUnknown(side), push_updates);
     for card_id in cards {
         set_revealed_to(game, *card_id, Side::Overlord, false);
         set_revealed_to(game, *card_id, Side::Champion, false);
@@ -135,7 +135,7 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 /// Cards are set as revealed to the `side` player. If `push_updates` is true,
 /// [GameUpdate] values will be appended for each draw.
 pub fn draw_cards(game: &mut GameState, side: Side, count: usize, push_updates: bool) {
-    let card_ids = realize_top_of_deck(game, side, count);
+    let card_ids = realize_top_of_deck(game, side, count, push_updates);
     for card_id in card_ids {
         set_revealed_to(game, card_id, side, true);
         move_card_internal(game, card_id, CardPosition::Hand(side), push_updates)
@@ -244,7 +244,12 @@ pub fn deal_opening_hands(game: &mut GameState) {
 /// subsequent calls to this function will see the same results.
 ///
 /// Does not change the 'revealed' state of cards.
-pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
+pub fn realize_top_of_deck(
+    game: &mut GameState,
+    side: Side,
+    count: usize,
+    push_updates: bool,
+) -> Vec<CardId> {
     let mut cards = game.card_list_for_position(side, CardPosition::DeckTop(side));
     let result = if count <= cards.len() {
         cards[0..count].to_vec()
@@ -263,7 +268,7 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Ve
     assert_eq!(card_ids.len(), count);
 
     for card_id in &card_ids {
-        move_card(game, *card_id, CardPosition::DeckTop(side));
+        move_card_internal(game, *card_id, CardPosition::DeckTop(side), push_updates);
     }
 
     card_ids
