@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using Grpc.Core;
@@ -43,6 +44,8 @@ namespace Spelldawn.Services
         Credentials = ChannelCredentials.Insecure
       }));
 
+    readonly Queue<GameAction> _actionQueue = new();
+
     [SerializeField] bool _fakeActionResponse;
     [SerializeField] Registry _registry = null!;
     [SerializeField] PlayerName _currentPriority;
@@ -68,12 +71,10 @@ namespace Spelldawn.Services
       {
         var message = new StringBuilder();
         message.Append($"Error: User cannot currently perform action {action}");
-        message.Append($"\nCurrently Handling Action: {_currentlyHandlingAction}");
         throw new InvalidOperationException(message.ToString());
       }
 
-      _currentlyHandlingAction = true;
-      StartCoroutine(HandleActionAsync(action));
+      _actionQueue.Enqueue(action);
     }
 
     /// <summary>
@@ -130,8 +131,6 @@ namespace Spelldawn.Services
     };
 
     bool CanAct(bool allowInOverlay = false, bool actionPointRequired = true, bool allowWithPanelOpen = false) =>
-      !_currentlyHandlingAction &&
-      !_registry.CommandService.CurrentlyHandlingCommand &&
       !_registry.CardService.CurrentlyDragging &&
       (allowWithPanelOpen || !_registry.DocumentService.IsAnyPanelOpen()) &&
       (allowInOverlay || !_registry.BackgroundOverlay.Enabled) &&
@@ -140,6 +139,12 @@ namespace Spelldawn.Services
 
     void Update()
     {
+      if (_actionQueue.Count > 0 && !_currentlyHandlingAction)
+      {
+        _currentlyHandlingAction = true;
+        StartCoroutine(HandleActionAsync(_actionQueue.Dequeue()));
+      }
+
       var userLight = _registry.ActiveLightForPlayer(PlayerName.User);
       var opponentLight = _registry.ActiveLightForPlayer(PlayerName.Opponent);
 
