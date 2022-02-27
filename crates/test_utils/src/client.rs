@@ -21,6 +21,7 @@ use std::collections::HashMap;
 use anyhow::{Context, Result};
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
+use data::deck::Deck;
 use data::game::GameState;
 use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
@@ -322,6 +323,10 @@ impl Database for TestGame {
     fn write_game(&mut self, game: &GameState) -> Result<()> {
         self.game = game.clone();
         Ok(())
+    }
+
+    fn deck(&self, _player_id: PlayerId, _side: Side) -> Result<Deck> {
+        todo!("Implement this")
     }
 }
 

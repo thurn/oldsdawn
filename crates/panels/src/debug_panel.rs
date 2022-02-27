@@ -17,10 +17,12 @@
 //! users.
 
 use data::actions::{DebugAction, UserAction};
+use data::primitives::Side;
+use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugAction, ClientDebugActionCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node,
-    PanelAddress, TogglePanelCommand,
+    ClientDebugCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node, PanelAddress,
+    TogglePanelCommand,
 };
 use ui::components::{Button, Row};
 use ui::core::{child, node};
@@ -43,13 +45,21 @@ pub fn render() -> Node {
                 ..FlexStyle::default()
             },
             children: vec![
+                debug_button(
+                    "New Game (O)",
+                    UserAction::DebugAction(DebugAction::NewGame(Side::Overlord)),
+                ),
+                debug_button(
+                    "New Game (C)",
+                    UserAction::DebugAction(DebugAction::NewGame(Side::Champion)),
+                ),
                 debug_button("Reset", UserAction::DebugAction(DebugAction::ResetGame)),
                 debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
                 client_debug_button(
                     "Show Logs",
                     vec![
-                        Command::ClientDebugAction(ClientDebugActionCommand {
-                            action: ClientDebugAction::ShowLogs.into(),
+                        Command::Debug(ClientDebugCommand {
+                            debug_command: Some(DebugCommand::ShowLogs(())),
                         }),
                         Command::TogglePanel(TogglePanelCommand {
                             panel_address: PanelAddress::DebugPanel.into(),

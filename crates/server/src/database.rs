@@ -16,9 +16,12 @@
 
 use anyhow::{Context, Result};
 use bincode;
+use data::card_name::CardName;
+use data::deck::Deck;
 use data::game::GameState;
-use data::primitives::GameId;
+use data::primitives::{GameId, PlayerId, Side};
 use data::with_error::WithError;
+use maplit::hashmap;
 use once_cell::sync::Lazy;
 use sled::{Db, Tree};
 
@@ -35,6 +38,8 @@ pub trait Database {
     fn game(&self, id: GameId) -> Result<GameState>;
     /// Store a [GameState] in the database based on its ID.
     fn write_game(&mut self, game: &GameState) -> Result<()>;
+    /// Retrieve a player's [Deck] for a given [Side].
+    fn deck(&self, player_id: PlayerId, side: Side) -> Result<Deck>;
 }
 
 /// Database implementation based on the sled database
@@ -65,6 +70,29 @@ impl Database for SledDatabase {
             .insert(game.id.key(), serialized)
             .map(|_| ()) // Ignore previously-set value
             .with_error(|| format!("Error writing game {:?}", game.id))
+    }
+
+    fn deck(&self, player_id: PlayerId, side: Side) -> Result<Deck> {
+        Ok(if side == Side::Champion {
+            Deck {
+                owner_id: player_id,
+                identity: CardName::TestChampionIdentity,
+                cards: hashmap! {
+                    CardName::Greataxe => 20,
+                    CardName::ArcaneRecovery => 20,
+                },
+            }
+        } else {
+            Deck {
+                owner_id: player_id,
+                identity: CardName::TestOverlordIdentity,
+                cards: hashmap! {
+                    CardName::DungeonAnnex => 15,
+                    CardName::IceDragon => 15,
+                    CardName::GoldMine => 15
+                },
+            }
+        })
     }
 }
 

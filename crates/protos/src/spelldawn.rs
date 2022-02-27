@@ -764,6 +764,13 @@ pub struct TogglePanelAction {
     #[prost(bool, tag = "2")]
     pub open: bool,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateNewGameAction {
+    #[prost(enumeration = "PlayerSide", tag = "1")]
+    pub side: i32,
+    #[prost(message, optional, tag = "2")]
+    pub opponent_id: ::core::option::Option<PlayerIdentifier>,
+}
 ///
 /// Possible game actions taken by the user.
 ///
@@ -772,7 +779,7 @@ pub struct TogglePanelAction {
 /// same time -- interaction should be disabled while an action is pending.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameAction {
-    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7")]
+    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7, 8")]
     pub action: ::core::option::Option<game_action::Action>,
 }
 /// Nested message and enum types in `GameAction`.
@@ -784,14 +791,16 @@ pub mod game_action {
         #[prost(message, tag = "2")]
         TogglePanel(super::TogglePanelAction),
         #[prost(message, tag = "3")]
-        GainMana(super::GainManaAction),
+        CreateNewGame(super::CreateNewGameAction),
         #[prost(message, tag = "4")]
-        DrawCard(super::DrawCardAction),
+        GainMana(super::GainManaAction),
         #[prost(message, tag = "5")]
-        PlayCard(super::PlayCardAction),
+        DrawCard(super::DrawCardAction),
         #[prost(message, tag = "6")]
-        LevelUpRoom(super::LevelUpRoomAction),
+        PlayCard(super::PlayCardAction),
         #[prost(message, tag = "7")]
+        LevelUpRoom(super::LevelUpRoomAction),
+        #[prost(message, tag = "8")]
         InitiateRaid(super::InitiateRaidAction),
     }
 }
@@ -831,6 +840,15 @@ pub struct RunInParallelCommand {
 pub struct DelayCommand {
     #[prost(message, optional, tag = "1")]
     pub duration: ::core::option::Option<TimeValue>,
+}
+/// Instructs the client to load a given scene and then connect to the indicated
+/// game.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConnectToGameCommand {
+    #[prost(message, optional, tag = "1")]
+    pub game_id: ::core::option::Option<GameIdentifier>,
+    #[prost(string, tag = "2")]
+    pub scene_name: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InterfacePanel {
@@ -1087,15 +1105,27 @@ pub struct SetPlayerIdentifierCommand {
 }
 /// Activates client-side debugging functionality
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ClientDebugActionCommand {
-    #[prost(enumeration = "ClientDebugAction", tag = "1")]
-    pub action: i32,
+pub struct ClientDebugCommand {
+    #[prost(oneof = "client_debug_command::DebugCommand", tags = "1, 2, 3")]
+    pub debug_command: ::core::option::Option<client_debug_command::DebugCommand>,
+}
+/// Nested message and enum types in `ClientDebugCommand`.
+pub mod client_debug_command {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum DebugCommand {
+        #[prost(message, tag = "1")]
+        ShowLogs(()),
+        #[prost(message, tag = "2")]
+        InvokeAction(super::GameAction),
+        #[prost(string, tag = "3")]
+        LogMessage(::prost::alloc::string::String),
+    }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
+        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1104,18 +1134,20 @@ pub mod game_command {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Command {
         #[prost(message, tag = "1")]
-        DebugLog(super::DebugLogCommand),
+        Debug(super::ClientDebugCommand),
         #[prost(message, tag = "2")]
         RunInParallel(super::RunInParallelCommand),
         #[prost(message, tag = "3")]
         Delay(super::DelayCommand),
         #[prost(message, tag = "4")]
-        RenderInterface(super::RenderInterfaceCommand),
+        ConnectToGame(super::ConnectToGameCommand),
         #[prost(message, tag = "5")]
-        TogglePanel(super::TogglePanelCommand),
+        RenderInterface(super::RenderInterfaceCommand),
         #[prost(message, tag = "6")]
-        UpdateGameView(super::UpdateGameViewCommand),
+        TogglePanel(super::TogglePanelCommand),
         #[prost(message, tag = "7")]
+        UpdateGameView(super::UpdateGameViewCommand),
+        #[prost(message, tag = "8")]
         VisitRoom(super::VisitRoomCommand),
         #[prost(message, tag = "9")]
         CreateOrUpdateCard(super::CreateOrUpdateCardCommand),
@@ -1143,8 +1175,6 @@ pub mod game_command {
         LoadScene(super::LoadSceneCommand),
         #[prost(message, tag = "21")]
         SetPlayerId(super::SetPlayerIdentifierCommand),
-        #[prost(message, tag = "22")]
-        ClientDebugAction(super::ClientDebugActionCommand),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1455,12 +1485,6 @@ pub enum SceneLoadMode {
     Single = 1,
     /// Adds a scene to the current loaded scenes.
     Additive = 2,
-}
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum ClientDebugAction {
-    Unspecified = 0,
-    ShowLogs = 1,
 }
 #[doc = r" Generated server implementations."]
 pub mod spelldawn_server {

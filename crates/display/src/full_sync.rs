@@ -87,7 +87,7 @@ pub fn run(game: &GameState, user_side: Side) -> FullSync {
 fn update_game_view(game: &GameState, user_side: Side) -> UpdateGameViewCommand {
     UpdateGameViewCommand {
         game: Some(GameView {
-            game_id: Some(GameIdentifier { value: game.id.value }),
+            game_id: Some(adapters::adapt_game_id(game.id)),
             user: Some(player_view(game, user_side)),
             opponent: Some(player_view(game, user_side.opponent())),
             current_priority: current_priority(game, user_side).into(),

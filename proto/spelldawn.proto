@@ -19,6 +19,7 @@ option csharp_namespace = "Spelldawn.Protos";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
 
 // ============================================================================
 // Masonry
@@ -806,6 +807,12 @@ message TogglePanelAction {
     bool open = 2;
 }
 
+message CreateNewGameAction {
+    PlayerSide side = 1;
+
+    PlayerIdentifier opponent_id = 2;
+}
+
 /*
 * Possible game actions taken by the user.
 *
@@ -817,11 +824,12 @@ message GameAction {
     oneof action {
         StandardAction standard_action = 1;
         TogglePanelAction toggle_panel = 2;
-        GainManaAction gain_mana = 3;
-        DrawCardAction draw_card = 4;
-        PlayCardAction play_card = 5;
-        LevelUpRoomAction level_up_room = 6;
-        InitiateRaidAction initiate_raid = 7;
+        CreateNewGameAction create_new_game = 3;
+        GainManaAction gain_mana = 4;
+        DrawCardAction draw_card = 5;
+        PlayCardAction play_card = 6;
+        LevelUpRoomAction level_up_room = 7;
+        InitiateRaidAction initiate_raid = 8;
     }
 }
 
@@ -858,6 +866,13 @@ message RunInParallelCommand {
 /* Wait before executing the next command in sequence. */
 message DelayCommand {
     TimeValue duration = 1;
+}
+
+// Instructs the client to load a given scene and then connect to the indicated
+// game.
+message ConnectToGameCommand {
+    GameIdentifier game_id = 1;
+    string scene_name = 2;
 }
 
 enum PanelAddress {
@@ -1150,25 +1165,25 @@ message SetPlayerIdentifierCommand {
     PlayerIdentifier id = 1;
 }
 
-enum ClientDebugAction {
-    CLIENT_DEBUG_ACTION_UNSPECIFIED = 0;
-    CLIENT_DEBUG_ACTION_SHOW_LOGS = 1;
-}
-
 // Activates client-side debugging functionality
-message ClientDebugActionCommand {
-    ClientDebugAction action = 1;
+message ClientDebugCommand {
+    oneof debug_command {
+        google.protobuf.Empty ShowLogs = 1;
+        GameAction invoke_action = 2;
+        string log_message = 3;
+    }
 }
 
 message GameCommand {
     oneof command {
-        DebugLogCommand debug_log = 1;
+        ClientDebugCommand debug = 1;
         RunInParallelCommand run_in_parallel = 2;
         DelayCommand delay = 3;
-        RenderInterfaceCommand render_interface = 4;
-        TogglePanelCommand toggle_panel = 5;
-        UpdateGameViewCommand update_game_view = 6;
-        VisitRoomCommand visit_room = 7;
+        ConnectToGameCommand connect_to_game = 4;
+        RenderInterfaceCommand render_interface = 5;
+        TogglePanelCommand toggle_panel = 6;
+        UpdateGameViewCommand update_game_view = 7;
+        VisitRoomCommand visit_room = 8;
         CreateOrUpdateCardCommand create_or_update_card = 9;
         DestroyCardCommand destroy_card = 10;
         MoveGameObjectsCommand move_game_objects = 11;
@@ -1182,7 +1197,6 @@ message GameCommand {
         DisplayRewardsCommand display_rewards = 19;
         LoadSceneCommand load_scene = 20;
         SetPlayerIdentifierCommand set_player_id = 21;
-        ClientDebugActionCommand client_debug_action = 22;
     }
 }
 

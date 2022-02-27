@@ -1223,15 +1223,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
       }
     };
 
-    // ReSharper disable once UnusedMember.Local
-    GameCommand DebugLog(string message) => new()
-    {
-      DebugLog = new DebugLogCommand
-      {
-        Message = message
-      }
-    };
-
     GameCommand FireProjectile(
       GameObjectIdentifier sourceId,
       GameObjectIdentifier targetId,

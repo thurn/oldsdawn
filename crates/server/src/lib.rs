@@ -17,21 +17,19 @@
 use anyhow::{bail, ensure, Context, Result};
 use dashmap::DashMap;
 use data::actions::UserAction;
-use data::card_name::CardName;
-use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
 use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::UpdateTracker;
 use data::with_error::WithError;
 use display::adapters;
-use maplit::hashmap;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
-    card_target, CardTarget, CommandList, ConnectRequest, GameCommand, GameIdentifier, GameRequest,
-    RoomIdentifier, StandardAction,
+    card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand,
+    CreateNewGameAction, GameCommand, GameIdentifier, GameRequest, PlayerSide, RoomIdentifier,
+    StandardAction,
 };
 use rules::actions::PlayCardTarget;
 use rules::{actions, mutations, raid_actions};
@@ -65,7 +63,7 @@ impl Spelldawn for GameService {
     ) -> Result<Response<Self::ConnectStream>, Status> {
         let message = request.get_ref();
         let game_id = to_server_game_id(&message.game_id);
-        let player_id = match adapters::to_server_player_id(&message.player_id) {
+        let player_id = match adapters::to_server_player_id(message.player_id) {
             Ok(player_id) => player_id,
             _ => return Err(Status::unauthenticated("PlayerId is required")),
         };
@@ -150,7 +148,7 @@ impl GameResponse {
 /// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
     let game_id = to_server_game_id(&request.game_id);
-    let player_id = adapters::to_server_player_id(&request.player_id)?;
+    let player_id = adapters::to_server_player_id(request.player_id)?;
     let game_action = request
         .action
         .as_ref()
@@ -163,6 +161,15 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     warn!(?player_id, ?game_id, ?game_action, "received_request");
 
     let response = match game_action {
+        Action::StandardAction(standard_action) => {
+            handle_standard_action(database, player_id, game_id, standard_action)
+        }
+        Action::TogglePanel(toggle_panel) => {
+            Ok(GameResponse::from_commands(vec![Command::RenderInterface(panels::render_panel(
+                toggle_panel.panel_address(),
+            )?)]))
+        }
+        Action::CreateNewGame(create_game) => create_new_game(database, player_id, create_game),
         Action::DrawCard(_) => {
             handle_action(database, player_id, game_id, actions::draw_card_action)
         }
@@ -189,14 +196,6 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
                 )
             })
         }
-        Action::StandardAction(standard_action) => {
-            handle_standard_action(database, player_id, game_id, standard_action)
-        }
-        Action::TogglePanel(toggle_panel) => {
-            Ok(GameResponse::from_commands(vec![Command::RenderInterface(panels::render_panel(
-                toggle_panel.panel_address(),
-            )?)]))
-        }
         _ => Ok(GameResponse::default()),
     }?;
 
@@ -206,60 +205,66 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     Ok(response)
 }
 
-/// Sets up the game state for a game connection request, either connecting to
-/// the `game_id` game or creating a new game if `game_id` is not provided.
+/// Sets up the game state for a game connection request, connecting to
+/// the `game_id` game.
 pub fn handle_connect(
     database: &mut impl Database,
     player_id: PlayerId,
     game_id: Option<GameId>,
 ) -> Result<CommandList> {
-    let game = if let Some(game_id) = game_id {
+    if let Some(game_id) = game_id {
         if database.has_game(game_id)? {
-            database.game(game_id)?
-        } else if cfg!(debug_assertions) && game_id.value == 0 {
-            create_new_game(database, game_id)?
+            let game = database.game(game_id)?;
+            let side = user_side(player_id, &game)?;
+            let mut commands = display::connect(&game, side);
+            panels::render_standard_panels(&mut commands)?;
+            Ok(command_list(commands))
         } else {
             bail!("Game not found: {:?}", game_id)
         }
     } else {
-        create_new_game(database, database.generate_game_id()?)?
-    };
-
-    let side = user_side(player_id, &game)?;
-    let mut commands = display::connect(&game, side);
-    panels::render_standard_panels(&mut commands)?;
-    Ok(command_list(commands))
+        Ok(command_list(vec![]))
+    }
 }
 
-/// Creates a new default [GameState] and writes its value to the database.
-fn create_new_game(database: &mut impl Database, new_game_id: GameId) -> Result<GameState> {
+/// Creates a new default [GameState], deals opening hands, and writes its value
+/// to the database.
+fn create_new_game(
+    database: &mut impl Database,
+    user_id: PlayerId,
+    action: &CreateNewGameAction,
+) -> Result<GameResponse> {
+    let game_id = database.generate_game_id()?;
+    info!(?game_id, "create_new_game");
+    let opponent_id = adapters::to_server_player_id(action.opponent_id)?;
+    let user_side = adapters::to_server_side(PlayerSide::from_i32(action.side))?;
+    let (overlord_deck, champion_deck) = match user_side {
+        Side::Overlord => {
+            (database.deck(user_id, Side::Overlord)?, database.deck(opponent_id, Side::Champion)?)
+        }
+        Side::Champion => {
+            (database.deck(opponent_id, Side::Overlord)?, database.deck(user_id, Side::Champion)?)
+        }
+    };
+
     let mut game = GameState::new(
-        new_game_id,
-        Deck {
-            owner_id: PlayerId::new(2),
-            identity: CardName::TestOverlordIdentity,
-            cards: hashmap! {
-                CardName::DungeonAnnex => 15,
-                CardName::IceDragon => 15,
-                CardName::GoldMine => 15
-            },
-        },
-        Deck {
-            owner_id: PlayerId::new(1),
-            identity: CardName::TestChampionIdentity,
-            cards: hashmap! {
-                CardName::Greataxe => 20,
-                CardName::ArcaneRecovery => 20,
-            },
-        },
+        game_id,
+        overlord_deck,
+        champion_deck,
         GameConfiguration { deterministic: false, ..GameConfiguration::default() },
     );
 
     mutations::deal_opening_hands(&mut game);
-
     database.write_game(&game)?;
-    info!(?new_game_id, "create_new_game");
-    Ok(game)
+    let commands = command_list(vec![Command::ConnectToGame(ConnectToGameCommand {
+        game_id: Some(adapters::adapt_game_id(game.id)),
+        scene_name: "Labyrinth".to_string(),
+    })]);
+
+    Ok(GameResponse {
+        command_list: commands.clone(),
+        channel_response: Some((opponent_id, commands)),
+    })
 }
 
 /// Queries the [GameState] for a game from the [Database] and then invokes the
@@ -331,9 +336,10 @@ pub fn user_side(player_id: PlayerId, game: &GameState) -> Result<Side> {
 /// Get a display name for a command. Used for debugging.
 pub fn command_name(command: &GameCommand) -> &'static str {
     command.command.as_ref().map_or("None", |c| match c {
-        Command::DebugLog(_) => "DebugLog",
+        Command::Debug(_) => "Debug",
         Command::RunInParallel(_) => "RunInParallel",
         Command::Delay(_) => "Delay",
+        Command::ConnectToGame(_) => "ConnectToGame",
         Command::RenderInterface(_) => "RenderInterface",
         Command::TogglePanel(_) => "TogglePanel",
         Command::UpdateGameView(_) => "UpdateGameView",
@@ -351,7 +357,6 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::DisplayRewards(_) => "DisplayRewards",
         Command::LoadScene(_) => "LoadScene",
         Command::SetPlayerId(_) => "SetPlayerIdentifier",
-        Command::ClientDebugAction(_) => "ClientDebugAction",
     })
 }
 

@@ -17,7 +17,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::MulliganDecision;
-use crate::primitives::{ActionCount, CardId, ManaValue, PointsValue};
+use crate::primitives::{ActionCount, CardId, ManaValue, PointsValue, Side};
 
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomActivationAction {
@@ -78,6 +78,7 @@ pub struct Prompt {
 /// production.
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum DebugAction {
+    NewGame(Side),
     ResetGame,
     FetchStandardPanels,
     AddMana(ManaValue),

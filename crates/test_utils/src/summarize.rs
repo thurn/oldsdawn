@@ -24,11 +24,11 @@ use protos::spelldawn::play_effect_position::EffectPosition;
 use protos::spelldawn::{
     game_object_identifier, node_type, ActionTrackerView, AnchorCorner, AudioClipAddress,
     CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons, CardIdentifier,
-    CardTargeting, CardTitle, CardView, CommandList, CreateOrUpdateCardCommand, DebugLogCommand,
-    DelayCommand, DestroyCardCommand, DisplayGameMessageCommand, DisplayRewardsCommand,
-    EffectAddress, FireProjectileCommand, GameCommand, GameMessageType, GameObjectIdentifier,
-    GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView,
-    MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MusicState, Node, NodeType,
+    CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
+    CreateOrUpdateCardCommand, DelayCommand, DestroyCardCommand, DisplayGameMessageCommand,
+    DisplayRewardsCommand, EffectAddress, FireProjectileCommand, GameCommand, GameMessageType,
+    GameObjectIdentifier, GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand,
+    ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MusicState, Node, NodeType,
     ObjectPosition, PanelAddress, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand,
     PlayerInfo, PlayerName, PlayerSide, PlayerView, ProjectileAddress, RenderInterfaceCommand,
     RevealedCardView, RoomIdentifier, RoomVisitType, RulesText, RunInParallelCommand,
@@ -254,9 +254,10 @@ impl Summarize for GameCommand {
 impl Summarize for Command {
     fn summarize(self, summary: &mut Summary) {
         match self {
-            Command::DebugLog(v) => summary.child_node("DebugLog", v),
+            Command::Debug(_) => summary.primitive("Debug!"),
             Command::RunInParallel(v) => summary.child_node("RunInParallel", v),
             Command::Delay(v) => summary.child_node("Delay", v),
+            Command::ConnectToGame(v) => summary.child_node("ConnectToGame", v),
             Command::RenderInterface(v) => summary.child_node("RenderInterface", v),
             Command::TogglePanel(v) => summary.child_node("TogglePanel", v),
             Command::UpdateGameView(v) => summary.child_node("UpdateGameView", v),
@@ -274,14 +275,7 @@ impl Summarize for Command {
             Command::DisplayRewards(v) => summary.child_node("DisplayRewards", v),
             Command::LoadScene(v) => summary.child_node("LoadScene", v),
             Command::SetPlayerId(v) => summary.child_node("SetPlayerId", v),
-            Command::ClientDebugAction(_) => summary.primitive("ClientDebugActions"),
         }
-    }
-}
-
-impl Summarize for DebugLogCommand {
-    fn summarize(self, summary: &mut Summary) {
-        summary.primitive(self.message);
     }
 }
 
@@ -294,6 +288,12 @@ impl Summarize for RunInParallelCommand {
 impl Summarize for DelayCommand {
     fn summarize(self, summary: &mut Summary) {
         summary.value(self.duration)
+    }
+}
+
+impl Summarize for ConnectToGameCommand {
+    fn summarize(self, summary: &mut Summary) {
+        summary.child_node("scene_name", self.scene_name);
     }
 }
 

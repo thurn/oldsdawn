@@ -68,11 +68,14 @@ namespace Spelldawn.Services
       {
         switch (command.CommandCase)
         {
-          case GameCommand.CommandOneofCase.DebugLog:
-            Debug.Log(command.DebugLog.Message);
+          case GameCommand.CommandOneofCase.Debug:
+            HandleClientDebugCommand(command.Debug);
             break;
           case GameCommand.CommandOneofCase.RunInParallel:
             yield return HandleRunInParallel(command.RunInParallel);
+            break;
+          case GameCommand.CommandOneofCase.ConnectToGame:
+            yield return ConnectToGame(command.ConnectToGame);
             break;
           case GameCommand.CommandOneofCase.RenderInterface:
             HandleRenderInterface(command.RenderInterface);
@@ -130,9 +133,6 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.SetPlayerId:
             _registry.GameService.PlayerId = command.SetPlayerId.Id;
             break;
-          case GameCommand.CommandOneofCase.ClientDebugAction:
-            HandleClientDebugAction(command.ClientDebugAction);
-            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;
@@ -140,6 +140,12 @@ namespace Spelldawn.Services
       }
 
       onComplete?.Invoke();
+    }
+
+    IEnumerator ConnectToGame(ConnectToGameCommand command)
+    {
+      _registry.GameService.CurrentGameId = command.GameId;
+      yield return SceneManager.LoadSceneAsync(command.SceneName, LoadSceneMode.Single);
     }
 
     IEnumerator HandleRunInParallel(RunInParallelCommand command)
@@ -256,14 +262,27 @@ namespace Spelldawn.Services
       });
     }
 
-    void HandleClientDebugAction(ClientDebugActionCommand command)
+    void HandleClientDebugCommand(ClientDebugCommand command)
     {
-      switch (command.Action)
+      switch (command.DebugCommandCase)
       {
-        case ClientDebugAction.ShowLogs:
+        case ClientDebugCommand.DebugCommandOneofCase.ShowLogs:
           _registry.LogViewer.DoShow();
           break;
+        case ClientDebugCommand.DebugCommandOneofCase.InvokeAction:
+          // TODO: Enqueue actions
+          StartCoroutine(HandleActionAsync(command.InvokeAction));
+          break;
+        case ClientDebugCommand.DebugCommandOneofCase.LogMessage:
+          Debug.Log(command.LogMessage);
+          break;
       }
+    }
+
+    IEnumerator HandleActionAsync(GameAction action)
+    {
+      yield return new WaitForSeconds(0.5f);
+      _registry.ActionService.HandleAction(action);
     }
   }
 }
