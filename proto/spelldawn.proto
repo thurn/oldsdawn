@@ -811,6 +811,9 @@ message CreateNewGameAction {
     PlayerSide side = 1;
 
     PlayerIdentifier opponent_id = 2;
+
+    // If true, all game events will be non-random.
+    bool deterministic = 3;
 }
 
 /*

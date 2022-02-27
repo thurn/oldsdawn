@@ -23,8 +23,8 @@ pub struct SimpleIds {
     pub weapon_id: CardIdentifier,
 }
 
-/// Creates an ongoing [TestGame] with the provided `user_side` and `id_basis`
-/// with the following properties:
+/// Creates an ongoing [TestSession] with the provided `user_side` and
+/// `id_basis` with the following properties:
 ///
 /// - It is the Champion's turn and they have 2 action points remaining
 /// - The Overlord has a scheme and a minion in play in the [crate::ROOM_ID]
@@ -39,7 +39,7 @@ pub fn simple_game(
     scheme: CardName,
     minion: CardName,
     weapon: CardName,
-) -> (TestGame, SimpleIds) {
+) -> (TestSession, SimpleIds) {
     let mut game = new_game(
         user_side,
         Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },

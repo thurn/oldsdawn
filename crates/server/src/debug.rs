@@ -54,6 +54,7 @@ pub fn handle_debug_action(
                                         PlayerId::new(1)
                                     },
                                 )),
+                                deterministic: false,
                             })),
                         })),
                     })),

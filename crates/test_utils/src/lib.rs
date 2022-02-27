@@ -18,6 +18,7 @@
 #![allow(clippy::unwrap_in_result)]
 
 pub mod client;
+pub mod fake_database;
 pub mod summarize;
 pub mod test_games;
 
@@ -35,7 +36,9 @@ use data::primitives::{
 use maplit::hashmap;
 use protos::spelldawn::RoomIdentifier;
 
-use crate::client::TestGame;
+use crate::client::TestSession;
+use crate::fake_database::FakeDatabase;
+
 pub static NEXT_ID: AtomicU64 = AtomicU64::new(1_000_000);
 /// The title returned for hidden cards
 pub const HIDDEN_CARD: &str = "Hidden Card";
@@ -54,7 +57,7 @@ pub const STARTING_MANA: ManaValue = 999;
 /// blank test cards and all other game zones empty (no cards are drawn). The
 /// game is advanced to the user's first turn. See [Args] for information about
 /// the default configuration options and how to modify them.
-pub fn new_game(user_side: Side, args: Args) -> TestGame {
+pub fn new_game(user_side: Side, args: Args) -> TestSession {
     let discovered = cards::initialize();
     println!("Discovered {} cards", discovered);
     let (game_id, user_id, opponent_id) = generate_ids();
@@ -104,7 +107,13 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
         }
     }
 
-    let mut game = TestGame::new(game, user_id, opponent_id);
+    let database = FakeDatabase {
+        generated_game_id: None,
+        game: Some(game),
+        overlord_deck: None,
+        champion_deck: None,
+    };
+    let mut game = TestSession::new(database, user_id, opponent_id);
     if args.connect {
         game.connect(user_id, Some(game_id)).expect("Connection failed");
         game.connect(opponent_id, Some(game_id)).expect("Connection failed");
@@ -112,7 +121,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestGame {
     game
 }
 
-fn generate_ids() -> (GameId, PlayerId, PlayerId) {
+pub fn generate_ids() -> (GameId, PlayerId, PlayerId) {
     let next_id = NEXT_ID.fetch_add(2, Ordering::SeqCst);
     (GameId::new(next_id), PlayerId::new(next_id), PlayerId::new(next_id + 1))
 }

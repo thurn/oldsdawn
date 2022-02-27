@@ -1,0 +1,120 @@
+---
+source: crates/spelldawn/tests/it/rules/create_game_tests.rs
+assertion_line: 156
+expression: "Summary::summarize(&response)"
+
+---
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Champion
+            mana: 5
+        opponent: 
+            side: Overlord
+            mana: 5
+            action_tracker: 3
+        current_priority: Opponent
+        raid_active: false
+    RunInParallel: 
+        MoveGameObjects: 
+            id: C1
+            position: 
+                sorting_key: 16
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: C2
+            position: 
+                sorting_key: 17
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: C3
+            position: 
+                sorting_key: 18
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: C4
+            position: 
+                sorting_key: 19
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: C5
+            position: 
+                sorting_key: 20
+                position: ObjectPositionHand { owner: User }
+    RenderInterface: 
+    panels: 
+        main_controls: 
+        card_anchor_nodes: 
+    DisplayGameMessage: Dusk
+channel_response: 
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            mana: 5
+            action_tracker: 3
+        opponent: 
+            side: Champion
+            mana: 5
+        current_priority: User
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O1
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: true
+        create_position: 
+            sorting_key: 6
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O2
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: true
+        create_position: 
+            sorting_key: 7
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O3
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: true
+        create_position: 
+            sorting_key: 8
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O4
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: true
+        create_position: 
+            sorting_key: 9
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O5
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: true
+        create_position: 
+            sorting_key: 10
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    RenderInterface: 
+    panels: 
+        main_controls: 
+        card_anchor_nodes: 
+    DisplayGameMessage: Dusk

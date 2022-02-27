@@ -1,0 +1,41 @@
+---
+source: crates/spelldawn/tests/it/rules/create_game_tests.rs
+assertion_line: 101
+expression: "Summary::summarize(&response)"
+
+---
+
+command_list: 
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 6
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 7
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 8
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 9
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 10
+                position: ObjectPositionHand { owner: User }
+    RenderInterface: 
+    panels: 
+        main_controls: 
+            node: 
+                text: "Waiting for Opponent..."
+        card_anchor_nodes: 
+channel_response: 

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //! A fake game client. Records server responses about a game and stores them in
-//! [TestGame].
+//! [TestSession].
 
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -21,7 +21,6 @@ use std::collections::HashMap;
 use anyhow::{Context, Result};
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
-use data::deck::Deck;
 use data::game::GameState;
 use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
@@ -35,48 +34,49 @@ use protos::spelldawn::{
     card_target, game_object_identifier, node_type, CardAnchorNode, CardIdentifier, CardTarget,
     CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
     GameAction, GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest,
-    InitiateRaidAction, Node, NodeType, ObjectPosition, ObjectPositionDiscardPile,
-    ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName, PlayerView,
-    RevealedCardView,
+    InitiateRaidAction, Node, NodeType, ObjectPosition, ObjectPositionBrowser,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
+    PlayerView, RevealedCardView,
 };
-use server::database::Database;
 use server::GameResponse;
 
-/// A fake game for use in testing.
+use crate::fake_database::FakeDatabase;
+
+/// A helper for interacting with a database and server calls during testing.
 ///
-/// This struct keeps track of server responses related to an ongoing game and
-/// converts them into a useful format for writing tests. This enables our
-/// 'black box' testing strategy, where the game is almost exclusively tested
-/// via the public client-facing API.
+/// This struct keeps track of server responses and converts them into a useful
+/// format for writing tests. This enables our 'black box' testing strategy,
+/// where the game is almost exclusively tested via the public client-facing
+/// API.
 ///
 /// There are actually two perspectives on an ongoing game: each player has
 /// their own view of the state of the game, which differs due to hidden
 /// information. This struct has two different [TestClient]s which get updated
 /// based on server responses, representing what the two players are seeing.
 #[derive(Clone)]
-pub struct TestGame {
+pub struct TestSession {
     /// This is the perspective of the player identified by the `user_id`
     /// parameter to [Self::new].
     pub user: TestClient,
     /// This is the perspective of the player identified by the `opponent_id`
     /// parameter to [Self::new].
     pub opponent: TestClient,
-    game: GameState,
+    database: FakeDatabase,
 }
 
-impl TestGame {
+impl TestSession {
     /// Creates a new game, starting in the provided [GameState].
     ///
     /// It is usually better to create a blank new game and then update its
     /// state via the action methods on this struct instead of putting a bunch
     /// of information into the [GameState] here, because this helps avoid
     /// coupling tests to the specific implementation details of [GameState].
-    pub fn new(game: GameState, user_id: PlayerId, opponent_id: PlayerId) -> Self {
-        Self { user: TestClient::new(user_id), opponent: TestClient::new(opponent_id), game }
+    pub fn new(database: FakeDatabase, user_id: PlayerId, opponent_id: PlayerId) -> Self {
+        Self { user: TestClient::new(user_id), opponent: TestClient::new(opponent_id), database }
     }
 
     pub fn game_id(&self) -> GameId {
-        self.game.id
+        self.database.game().id
     }
 
     pub fn user_id(&self) -> PlayerId {
@@ -104,7 +104,7 @@ impl TestGame {
     /// be sent to the client when connected. If a new game is created, its
     /// ID will be 0.
     pub fn connect(&mut self, user_id: PlayerId, game_id: Option<GameId>) -> Result<CommandList> {
-        let result = server::handle_connect(self, user_id, game_id)?;
+        let result = server::handle_connect(&mut self.database, user_id, game_id)?;
         let to_update = match () {
             _ if user_id == self.user.id => &mut self.user,
             _ if user_id == self.opponent.id => &mut self.opponent,
@@ -115,7 +115,7 @@ impl TestGame {
         *to_update = TestClient::new(user_id);
 
         for command in result.commands.iter() {
-            let c = command.command.as_ref().with_context(|| "Command not received")?;
+            let c = command.command.as_ref().with_context(|| "command")?;
             to_update.handle_command(c);
         }
 
@@ -127,11 +127,23 @@ impl TestGame {
     /// Returns the [GameResponse] for this action or an error if the server
     /// request failed.
     pub fn perform_action(&mut self, action: Action, player_id: PlayerId) -> Result<GameResponse> {
+        let game_id = adapters::adapt_game_id(self.game_id());
+        self.perform_action_with_game_id(action, player_id, Some(game_id))
+    }
+
+    /// Equivalent to [Self::perform_action] which allows the game id to be
+    /// specified.
+    pub fn perform_action_with_game_id(
+        &mut self,
+        action: Action,
+        player_id: PlayerId,
+        game_id: Option<GameIdentifier>,
+    ) -> Result<GameResponse> {
         let response = server::handle_request(
-            self,
+            &mut self.database,
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),
-                game_id: Some(GameIdentifier { value: self.game.id.value }),
+                game_id,
                 player_id: Some(adapters::adapt_player_id(player_id)),
             },
         )?;
@@ -185,18 +197,20 @@ impl TestGame {
     pub fn add_to_hand(&mut self, card_name: CardName) -> CardIdentifier {
         let side = side_for_card_name(card_name);
         let card_id = self
-            .game
+            .database
+            .game()
             .cards_in_position(side, CardPosition::DeckUnknown(side))
             .filter(|c| c.name.is_test_card())
             .last() // Use last to avoid overwriting 'next draw' configuration
             .unwrap()
             .id;
-        overwrite_card(&mut self.game, card_id, card_name);
-        self.game.move_card(card_id, CardPosition::Hand(side));
-        self.game.card_mut(card_id).set_revealed_to(card_id.side, true);
+        overwrite_card(self.database.game_mut(), card_id, card_name);
+        self.database.game_mut().move_card(card_id, CardPosition::Hand(side));
+        self.database.game_mut().card_mut(card_id).set_revealed_to(card_id.side, true);
 
-        self.connect(self.user.id, Some(self.game.id)).expect("User connection error");
-        self.connect(self.opponent.id, Some(self.game.id)).expect("Opponent connection error");
+        self.connect(self.user.id, Some(self.database.game().id)).expect("User connection error");
+        self.connect(self.opponent.id, Some(self.database.game().id))
+            .expect("Opponent connection error");
 
         adapters::adapt_card_id(card_id)
     }
@@ -241,7 +255,7 @@ impl TestGame {
         let response = self
             .perform_action(
                 Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
-                self.game.player(side_for_card_name(card_name)).id,
+                self.database.game().player(side_for_card_name(card_name)).id,
             )
             .expect("Server error playing card");
 
@@ -284,9 +298,9 @@ impl TestGame {
     }
 
     fn player_id_for_side(&self, side: Side) -> PlayerId {
-        if self.game.player(side).id == self.user.id {
+        if self.database.game().player(side).id == self.user.id {
             self.user.id
-        } else if self.game.player(side).id == self.opponent.id {
+        } else if self.database.game().player(side).id == self.opponent.id {
             self.opponent.id
         } else {
             panic!("Cannot find PlayerId for side {:?}", side)
@@ -307,28 +321,28 @@ pub fn side_for_card_name(name: CardName) -> Side {
     rules::get(name).side
 }
 
-impl Database for TestGame {
-    fn generate_game_id(&self) -> Result<GameId> {
-        panic!("Attempted to generate new ID for test game!")
-    }
-
-    fn has_game(&self, _: GameId) -> Result<bool> {
-        Ok(true)
-    }
-
-    fn game(&self, _id: GameId) -> Result<GameState> {
-        Ok(self.game.clone())
-    }
-
-    fn write_game(&mut self, game: &GameState) -> Result<()> {
-        self.game = game.clone();
-        Ok(())
-    }
-
-    fn deck(&self, _player_id: PlayerId, _side: Side) -> Result<Deck> {
-        todo!("Implement this")
-    }
-}
+// impl Database for TestGame {
+//     fn generate_game_id(&self) -> Result<GameId> {
+//         panic!("Attempted to generate new ID for test game!")
+//     }
+//
+//     fn has_game(&self, _: GameId) -> Result<bool> {
+//         Ok(true)
+//     }
+//
+//     fn game(&self, _id: GameId) -> Result<GameState> {
+//         Ok(self.game.clone())
+//     }
+//
+//     fn write_game(&mut self, game: &GameState) -> Result<()> {
+//         self.game = game.clone();
+//         Ok(())
+//     }
+//
+//     fn deck(&self, _player_id: PlayerId, _side: Side) -> Result<Deck> {
+//         panic!("Unexpected call to deck()")
+//     }
+// }
 
 /// Represents a user client connected to a test game
 #[derive(Clone)]
@@ -372,7 +386,7 @@ impl TestClient {
     }
 }
 
-/// Simulated game state in an ongoing [TestGame]
+/// Simulated game state in an ongoing [TestSession]
 #[derive(Clone, Default)]
 pub struct ClientGameData {
     priority: Option<PlayerName>,
@@ -427,7 +441,7 @@ impl ClientGameData {
     }
 }
 
-/// Simulated player state in an ongoing [TestGame]
+/// Simulated player state in an ongoing [TestSession]
 #[derive(Debug, Clone)]
 pub struct ClientPlayer {
     name: PlayerName,
@@ -505,8 +519,6 @@ impl ClientInterface {
 
     fn update(&mut self, command: Command) {
         if let Command::RenderInterface(render) = command {
-            self.main_controls = None;
-
             if let Some(main_controls) = render.main_controls {
                 self.main_controls = main_controls.node;
                 self.card_anchors = main_controls.card_anchor_nodes;
@@ -593,15 +605,15 @@ impl HasText for Vec<&Node> {
     }
 }
 
-/// Simulated card state in an ongoing [TestGame]
+/// Simulated card state in an ongoing [TestSession]
 #[derive(Debug, Clone, Default)]
 pub struct ClientCards {
-    cards: HashMap<CardId, ClientCard>,
+    pub card_map: HashMap<CardId, ClientCard>,
 }
 
 impl ClientCards {
     pub fn get(&self, card_id: CardIdentifier) -> &ClientCard {
-        self.cards.get(&adapters::from_card_identifier(card_id)).expect("Card not found")
+        self.card_map.get(&adapters::from_card_identifier(card_id)).expect("Card not found")
     }
 
     /// Returns a vec containing the titles of all of the cards in the provided
@@ -610,6 +622,11 @@ impl ClientCards {
     /// ordered by their sorting key.
     pub fn hand(&self, player: PlayerName) -> Vec<String> {
         self.names_in_position(Position::Hand(ObjectPositionHand { owner: player.into() }))
+    }
+
+    /// Returns a vec of card names currently displayed in the card browser
+    pub fn browser(&self) -> Vec<String> {
+        self.names_in_position(Position::Browser(ObjectPositionBrowser {}))
     }
 
     /// Returns a player's discard pile in the same manner as [Self::hand]
@@ -632,7 +649,7 @@ impl ClientCards {
     /// Returns an iterator over the cards in a given [Position] in an arbitrary
     /// order.
     pub fn in_position(&self, position: Position) -> impl Iterator<Item = &ClientCard> {
-        self.cards.values().filter(move |c| c.position() == position)
+        self.card_map.values().filter(move |c| c.position() == position)
     }
 
     /// Returns a list of the titles of cards in the provided `position`, or the
@@ -653,7 +670,7 @@ impl ClientCards {
             Command::CreateOrUpdateCard(create_or_update) => {
                 let card_view = create_or_update.clone().card.expect("CardView");
                 let card_id = adapters::to_server_card_id(&card_view.card_id).expect("CardId");
-                self.cards
+                self.card_map
                     .entry(card_id)
                     .and_modify(|c| c.update(&card_view))
                     .or_insert_with(|| ClientCard::new(&create_or_update));
@@ -665,18 +682,18 @@ impl ClientCards {
                         let card_id =
                             adapters::to_server_card_id(&Some(identifier)).expect("CardId");
                         assert!(
-                            self.cards.contains_key(&card_id),
+                            self.card_map.contains_key(&card_id),
                             "Expected a CreateOrUpdate command before a Move command for card {:?}",
                             card_id
                         );
-                        let mut card = self.cards.get_mut(&card_id).unwrap();
+                        let mut card = self.card_map.get_mut(&card_id).unwrap();
                         card.position = Some(position.clone());
                     }
                 }
             }
             Command::DestroyCard(destroy_card) => {
                 let card_id = adapters::to_server_card_id(&destroy_card.card_id).expect("CardId");
-                self.cards.remove(&card_id);
+                self.card_map.remove(&card_id);
             }
             _ => {}
         }

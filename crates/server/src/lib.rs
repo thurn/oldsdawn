@@ -251,7 +251,7 @@ fn create_new_game(
         game_id,
         overlord_deck,
         champion_deck,
-        GameConfiguration { deterministic: false, ..GameConfiguration::default() },
+        GameConfiguration { deterministic: action.deterministic, ..GameConfiguration::default() },
     );
 
     mutations::deal_opening_hands(&mut game);

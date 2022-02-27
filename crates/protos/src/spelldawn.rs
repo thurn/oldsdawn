@@ -770,6 +770,9 @@ pub struct CreateNewGameAction {
     pub side: i32,
     #[prost(message, optional, tag = "2")]
     pub opponent_id: ::core::option::Option<PlayerIdentifier>,
+    /// If true, all game events will be non-random.
+    #[prost(bool, tag = "3")]
+    pub deterministic: bool,
 }
 ///
 /// Possible game actions taken by the user.

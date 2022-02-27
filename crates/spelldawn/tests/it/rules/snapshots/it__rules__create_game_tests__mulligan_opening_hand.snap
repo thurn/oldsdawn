@@ -1,0 +1,360 @@
+---
+source: crates/spelldawn/tests/it/rules/create_game_tests.rs
+assertion_line: 132
+expression: "Summary::summarize(&response)"
+
+---
+
+command_list: 
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: User }
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: User }
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: User }
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: User }
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: User }
+    DestroyCard: 
+        card_id: O1
+    DestroyCard: 
+        card_id: O2
+    DestroyCard: 
+        card_id: O3
+    DestroyCard: 
+        card_id: O4
+    DestroyCard: 
+        card_id: O5
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O1
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 31
+            position: ObjectPositionDeck { owner: User }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 31
+            position: ObjectPositionBrowser
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O2
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 32
+            position: ObjectPositionDeck { owner: User }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: O2
+        position: 
+            sorting_key: 32
+            position: ObjectPositionBrowser
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O3
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 33
+            position: ObjectPositionDeck { owner: User }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: O3
+        position: 
+            sorting_key: 33
+            position: ObjectPositionBrowser
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O4
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 34
+            position: ObjectPositionDeck { owner: User }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: O4
+        position: 
+            sorting_key: 34
+            position: ObjectPositionBrowser
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O5
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 35
+            position: ObjectPositionDeck { owner: User }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: O5
+        position: 
+            sorting_key: 35
+            position: ObjectPositionBrowser
+    Delay: 1500
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 31
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 31
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 32
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 32
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 33
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 33
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 34
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 34
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 35
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 35
+                position: ObjectPositionHand { owner: User }
+    RenderInterface: 
+    panels: 
+        main_controls: 
+            node: 
+                text: "Waiting for Opponent..."
+        card_anchor_nodes: 
+channel_response: 
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: Opponent }
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: Opponent }
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: Opponent }
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: Opponent }
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 0
+                position: ObjectPositionDeck { owner: Opponent }
+    DestroyCard: 
+        card_id: O1
+    DestroyCard: 
+        card_id: O2
+    DestroyCard: 
+        card_id: O3
+    DestroyCard: 
+        card_id: O4
+    DestroyCard: 
+        card_id: O5
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O1
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 31
+            position: ObjectPositionDeck { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O2
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 32
+            position: ObjectPositionDeck { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O3
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 33
+            position: ObjectPositionDeck { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O4
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 34
+            position: ObjectPositionDeck { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O5
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 35
+            position: ObjectPositionDeck { owner: Opponent }
+        create_animation: Unspecified
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 31
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 32
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 33
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 34
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 35
+                position: ObjectPositionHand { owner: Opponent }
