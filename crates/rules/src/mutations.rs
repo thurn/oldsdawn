@@ -29,7 +29,7 @@ use data::delegates::{
     Scope, StoredManaTakenEvent,
 };
 use data::game::{CurrentTurn, GamePhase, GameState, MulliganDecision};
-use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side};
+use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side, TurnNumber};
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
@@ -201,10 +201,9 @@ pub fn set_prompt(game: &mut GameState, side: Side, prompt: Prompt) {
     game.player_mut(side).prompt = Some(prompt);
 }
 
-/// Clears shown prompts for both players.
-pub fn clear_prompts(game: &mut GameState) {
-    game.overlord.prompt = None;
-    game.champion.prompt = None;
+/// Clears shown prompt a player.
+pub fn clear_prompt(game: &mut GameState, side: Side) {
+    game.player_mut(side).prompt = None;
 }
 
 /// Ends the current raid. Panics if no raid is currently active.
@@ -232,6 +231,24 @@ pub fn deal_opening_hands(game: &mut GameState) {
     set_prompt(game, Side::Overlord, prompt.clone());
     draw_cards(game, Side::Champion, 5, false);
     set_prompt(game, Side::Champion, prompt);
+}
+
+/// Invoked after a mulligan decision is received in order to check if the game
+/// should be started.
+///
+/// Handles assigning initial mana & action points to players.
+#[instrument(skip(game))]
+pub fn check_start_game(game: &mut GameState) {
+    match &game.data.phase {
+        GamePhase::ResolveMulligans(mulligans)
+            if mulligans.overlord.is_some() && mulligans.champion.is_some() =>
+        {
+            game.overlord.mana = 5;
+            game.champion.mana = 5;
+            start_turn(game, Side::Overlord, 1);
+        }
+        _ => {}
+    }
 }
 
 /// Returns a list of `count` cards from the top of the `side` player's
@@ -287,15 +304,20 @@ pub fn check_end_turn(game: &mut GameState, side: Side) {
             Side::Champion => turn.turn_number + 1,
         };
         let next_side = side.opponent();
-        game.data.phase = GamePhase::Play(CurrentTurn { side: next_side, turn_number });
-
-        info!(?next_side, "start_player_turn");
-        if side == Side::Champion {
-            dispatch::invoke_event(game, DuskEvent(turn_number));
-        } else {
-            dispatch::invoke_event(game, DawnEvent(turn_number));
-        }
-        game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
-        game.updates.push(GameUpdate::StartTurn(next_side));
+        start_turn(game, next_side, turn_number);
     }
+}
+
+/// Starts the turn for the `next_side` player.
+fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
+    game.data.phase = GamePhase::Play(CurrentTurn { side: next_side, turn_number });
+
+    info!(?next_side, "start_player_turn");
+    if next_side == Side::Overlord {
+        dispatch::invoke_event(game, DuskEvent(turn_number));
+    } else {
+        dispatch::invoke_event(game, DawnEvent(turn_number));
+    }
+    game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
+    game.updates.push(GameUpdate::StartTurn(next_side));
 }

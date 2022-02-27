@@ -108,17 +108,19 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
             )),
         );
 
-        commands.push(
-            CommandPhase::PreUpdate,
-            Command::MoveGameObjects(MoveGameObjectsCommand {
-                ids: vec![card_id_to_object_id(card.id)],
-                position: Some(ObjectPosition {
-                    sorting_key: card.sorting_key,
-                    position: Some(Position::Browser(ObjectPositionBrowser {})),
+        if user_side == side {
+            commands.push(
+                CommandPhase::PreUpdate,
+                Command::MoveGameObjects(MoveGameObjectsCommand {
+                    ids: vec![card_id_to_object_id(card.id)],
+                    position: Some(ObjectPosition {
+                        sorting_key: card.sorting_key,
+                        position: Some(Position::Browser(ObjectPositionBrowser {})),
+                    }),
+                    disable_animation: false,
                 }),
-                disable_animation: false,
-            }),
-        );
+            );
+        }
 
         commands.move_object(
             Id::CardId(adapters::adapt_card_id(card.id)),
@@ -131,7 +133,9 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
         );
     }
 
-    commands.push(CommandPhase::PreUpdate, delay(1500));
+    if user_side == side {
+        commands.push(CommandPhase::PreUpdate, delay(1500));
+    }
 }
 
 /// Builds a [CardCreationStrategy] for representing the provided `card_id`

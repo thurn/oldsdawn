@@ -24,7 +24,8 @@ use data::updates::GameUpdate;
 use display::adapters;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode, SetPlayerIdentifierCommand,
+    CommandList, GameCommand, LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode,
+    SetPlayerIdentifierCommand,
 };
 use rules::{dispatch, mutations, queries};
 
@@ -38,12 +39,25 @@ pub fn handle_debug_action(
 ) -> Result<GameResponse> {
     match action {
         DebugAction::ResetGame => {
+            let game = load_game(database, game_id)?;
+            display::on_disconnect(game.overlord.id);
+            display::on_disconnect(game.champion.id);
             reset_game(database, game_id)?;
-            display::on_disconnect(player_id);
-            Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
-                scene_name: "Labyrinth".to_string(),
-                mode: SceneLoadMode::Single.into(),
-            })]))
+            let commands = CommandList {
+                commands: vec![GameCommand {
+                    command: Some(Command::LoadScene(LoadSceneCommand {
+                        scene_name: "Labyrinth".to_string(),
+                        mode: SceneLoadMode::Single.into(),
+                    })),
+                }],
+            };
+            Ok(GameResponse {
+                command_list: commands.clone(),
+                channel_response: Some((
+                    if player_id == game.overlord.id { game.champion.id } else { game.overlord.id },
+                    commands,
+                )),
+            })
         }
         DebugAction::FetchStandardPanels => {
             Ok(GameResponse::from_commands(vec![Command::RenderInterface(panels::render_panel(

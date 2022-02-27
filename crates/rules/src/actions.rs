@@ -65,6 +65,8 @@ pub fn handle_mulligan_decision(
         game.updates.push(GameUpdate::DrawHand(user_side));
     }
 
+    mutations::check_start_game(game);
+
     Ok(())
 }
 
@@ -189,7 +191,7 @@ pub fn handle_prompt_action(
         "Unexpected action {:?} received",
         action
     );
-    mutations::clear_prompts(game);
+    mutations::clear_prompt(game, user_side);
 
     match action {
         PromptAction::MulliganDecision(mulligan) => {
