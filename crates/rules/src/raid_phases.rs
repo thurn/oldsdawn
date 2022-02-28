@@ -80,12 +80,9 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
     let target = game.raid()?.target;
 
     let accessed = match target {
-        RoomId::Vault => mutations::realize_top_of_deck(
-            game,
-            Side::Overlord,
-            queries::vault_access_count(game),
-            true, /* push_updates */
-        ),
+        RoomId::Vault => {
+            mutations::realize_top_of_deck(game, Side::Overlord, queries::vault_access_count(game))
+        }
         RoomId::Sanctum => {
             let count = queries::sanctum_access_count(game);
             if game.data.config.deterministic {

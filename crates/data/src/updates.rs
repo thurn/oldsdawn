@@ -76,6 +76,15 @@ pub enum GameUpdate {
     GameOver(Side),
 }
 
+/// Allows update tracking to be disabled on a case-by-case basis
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum UpdateMode {
+    /// Append [GameUpdate]s for this mutation
+    Push,
+    /// Do not append [GameUpdate]s for this mutation
+    None,
+}
+
 /// Tracks game mutations for a given network request. If a vector is present
 /// here, then code which mutates the GameState is also responsible for
 /// appending a [GameUpdate] which describes the mutation. If no vector is
@@ -99,6 +108,12 @@ impl UpdateTracker {
     pub fn push(&mut self, update: GameUpdate) {
         if let Some(vec) = &mut self.update_list {
             vec.push(update)
+        }
+    }
+
+    pub fn push_with_update_mode(&mut self, update: GameUpdate, mode: UpdateMode) {
+        if mode == UpdateMode::Push {
+            self.push(update);
         }
     }
 }
