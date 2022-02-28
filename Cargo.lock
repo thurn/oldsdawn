@@ -204,6 +204,7 @@ dependencies = [
  "dashmap",
  "data",
  "if_chain",
+ "itertools",
  "once_cell",
  "protos",
  "rules",

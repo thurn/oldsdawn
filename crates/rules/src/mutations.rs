@@ -348,4 +348,6 @@ fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
     }
     game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
     game.updates.push(GameUpdate::StartTurn(next_side));
+
+    // draw_cards(game, next_side, 1)
 }

@@ -16,8 +16,10 @@
 
 use anyhow::{anyhow, bail, Context, Result};
 use data::primitives::{CardId, GameId, PlayerId, RoomId, Side};
+use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::{
-    CardIdentifier, GameIdentifier, PlayerIdentifier, PlayerName, PlayerSide, RoomIdentifier,
+    CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerName, PlayerSide,
+    RoomIdentifier,
 };
 
 pub fn adapt_game_id(game_id: GameId) -> GameIdentifier {
@@ -99,6 +101,11 @@ pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
     } else {
         Err(anyhow!("Missing Required CardId"))
     }
+}
+
+/// Converts a [CardId] into a client [GameObjectIdentifier]
+pub fn card_id_to_object_id(id: CardId) -> GameObjectIdentifier {
+    GameObjectIdentifier { id: Some(Id::CardId(adapt_card_id(id))) }
 }
 
 /// Converts a client [PlayerIdentifier] into a server [PlayerId].

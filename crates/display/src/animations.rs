@@ -44,7 +44,7 @@ use protos::spelldawn::{
 };
 
 use crate::full_sync::CardCreationStrategy;
-use crate::response_builder::{CommandPhase, ResponseBuilder};
+use crate::response_builder::{CommandPhase, MovePhase, MoveType, ResponseBuilder};
 use crate::{adapters, assets, full_sync};
 
 /// Takes a [GameUpdate] and converts it into an animation, a series of
@@ -67,7 +67,7 @@ pub fn render(
             draw_card(commands, game, user_side, card_id);
         }
         GameUpdate::MoveCard(card_id) => {
-            move_card(commands, game.card(card_id));
+            move_card(commands, game.card(card_id), CommandPhase::Animate);
         }
         GameUpdate::RevealToOpponent(card_id) => {
             reveal_card(commands, game, game.card(card_id));
@@ -79,12 +79,14 @@ pub fn render(
             targeted_interaction(commands, game, user_side, interaction);
         }
         GameUpdate::ChampionScoreCard(card_id, _) => score_champion_card(commands, card_id),
-        GameUpdate::MulliganCard(card_id) => {
-            shuffle_into_deck(commands, user_side, card_id, true /* move_at_start */)
-        }
-        GameUpdate::ShuffleIntoDeck(card_id) => {
-            shuffle_into_deck(commands, user_side, card_id, false /* move_at_start */)
-        }
+        GameUpdate::MulliganCard(card_id) => shuffle_into_deck(
+            commands,
+            game,
+            user_side,
+            card_id,
+            MovePhase::StartMoves,
+            CommandPhase::PreUpdate,
+        ),
         GameUpdate::DestroyCard(card_id) => destroy_card(commands, card_id, CommandPhase::Animate),
         _ => todo!("Implement {:?}", update),
     }
@@ -112,7 +114,7 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
             commands.push(
                 CommandPhase::PreUpdate,
                 Command::MoveGameObjects(MoveGameObjectsCommand {
-                    ids: vec![card_id_to_object_id(card.id)],
+                    ids: vec![adapters::card_id_to_object_id(card.id)],
                     position: Some(ObjectPosition {
                         sorting_key: card.sorting_key,
                         position: Some(Position::Browser(ObjectPositionBrowser {})),
@@ -122,14 +124,12 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
             );
         }
 
-        commands.move_object(
-            Id::CardId(adapters::adapt_card_id(card.id)),
-            ObjectPosition {
-                sorting_key: card.sorting_key,
-                position: Some(Position::Hand(ObjectPositionHand {
-                    owner: adapters::to_player_name(side, user_side).into(),
-                })),
-            },
+        commands.move_card(
+            card,
+            Position::Hand(ObjectPositionHand {
+                owner: adapters::to_player_name(side, user_side).into(),
+            }),
+            MoveType::default(),
         );
     }
 
@@ -162,18 +162,18 @@ fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
         )),
     );
 
-    move_card(commands, game.card(card_id));
+    move_card(commands, game.card(card_id), CommandPhase::Animate);
 }
 
 /// Appends a move card command to move a card to its current location. Skips
 /// appending the command if the destination would not be a valid game position,
 /// e.g. if it is [CardPosition::DeckUnknown].
-fn move_card(commands: &mut ResponseBuilder, card: &CardState) {
+fn move_card(commands: &mut ResponseBuilder, card: &CardState, phase: CommandPhase) {
     commands.push_optional(
-        CommandPhase::Animate,
+        phase,
         full_sync::adapt_position(card, commands.user_side).map(|position| {
             Command::MoveGameObjects(MoveGameObjectsCommand {
-                ids: vec![card_id_to_object_id(card.id)],
+                ids: vec![adapters::card_id_to_object_id(card.id)],
                 position: Some(position),
                 disable_animation: false,
             })
@@ -188,7 +188,7 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
         commands.push(
             CommandPhase::Animate,
             Command::MoveGameObjects(MoveGameObjectsCommand {
-                ids: vec![card_id_to_object_id(card.id)],
+                ids: vec![adapters::card_id_to_object_id(card.id)],
                 position: Some(ObjectPosition {
                     sorting_key: 0,
                     position: Some(Position::Staging(ObjectPositionStaging {})),
@@ -264,7 +264,7 @@ fn apply_projectile(
 }
 
 fn score_champion_card(commands: &mut ResponseBuilder, card_id: CardId) {
-    let object_id = card_id_to_object_id(card_id);
+    let object_id = adapters::card_id_to_object_id(card_id);
     commands.push(CommandPhase::PreUpdate, set_music(MusicState::Silent));
     commands.push(
         CommandPhase::PreUpdate,
@@ -306,27 +306,26 @@ fn score_champion_card(commands: &mut ResponseBuilder, card_id: CardId) {
     );
 }
 
+/// Moves a card to its owner's deck and then destroys it.
+///
+/// The provided `destroy_phase` should be after the provided `move_phase`.
 fn shuffle_into_deck(
     commands: &mut ResponseBuilder,
+    game: &GameState,
     user_side: Side,
     card_id: CardId,
-    move_at_start: bool,
+    move_phase: MovePhase,
+    destroy_phase: CommandPhase,
 ) {
-    let id = Id::CardId(adapters::adapt_card_id(card_id));
-    let position = ObjectPosition {
-        sorting_key: 0,
-        position: Some(Position::Deck(ObjectPositionDeck {
+    commands.move_card(
+        game.card(card_id),
+        Position::Deck(ObjectPositionDeck {
             owner: adapters::to_player_name(card_id.side, user_side).into(),
-        })),
-    };
+        }),
+        MoveType { phase: move_phase, ..MoveType::default() },
+    );
 
-    if move_at_start {
-        commands.move_at_start(id, position);
-    } else {
-        commands.move_object(id, position);
-    }
-
-    destroy_card(commands, card_id, CommandPhase::PreUpdate);
+    destroy_card(commands, card_id, destroy_phase);
 }
 
 fn destroy_card(commands: &mut ResponseBuilder, card_id: CardId, phase: CommandPhase) {
@@ -385,11 +384,6 @@ fn play_effect(
 /// Constructs a [TimeValue].
 fn duration_ms(milliseconds: u32) -> TimeValue {
     TimeValue { milliseconds }
-}
-
-/// Converts a [CardId] into a client [GameObjectIdentifier]
-fn card_id_to_object_id(id: CardId) -> GameObjectIdentifier {
-    GameObjectIdentifier { id: Some(Id::CardId(adapters::adapt_card_id(id))) }
 }
 
 fn adapt_interaction_id(id: InteractionObjectId, user_side: Side) -> GameObjectIdentifier {

@@ -321,29 +321,6 @@ pub fn side_for_card_name(name: CardName) -> Side {
     rules::get(name).side
 }
 
-// impl Database for TestGame {
-//     fn generate_game_id(&self) -> Result<GameId> {
-//         panic!("Attempted to generate new ID for test game!")
-//     }
-//
-//     fn has_game(&self, _: GameId) -> Result<bool> {
-//         Ok(true)
-//     }
-//
-//     fn game(&self, _id: GameId) -> Result<GameState> {
-//         Ok(self.game.clone())
-//     }
-//
-//     fn write_game(&mut self, game: &GameState) -> Result<()> {
-//         self.game = game.clone();
-//         Ok(())
-//     }
-//
-//     fn deck(&self, _player_id: PlayerId, _side: Side) -> Result<Deck> {
-//         panic!("Unexpected call to deck()")
-//     }
-// }
-
 /// Represents a user client connected to a test game
 #[derive(Clone)]
 pub struct TestClient {
@@ -683,8 +660,9 @@ impl ClientCards {
                             adapters::to_server_card_id(&Some(identifier)).expect("CardId");
                         assert!(
                             self.card_map.contains_key(&card_id),
-                            "Expected a CreateOrUpdate command before a Move command for card {:?}",
-                            card_id
+                            "Card not found (not created/already destroyed?) for {:?} -> {:?}",
+                            card_id,
+                            position
                         );
                         let mut card = self.card_map.get_mut(&card_id).unwrap();
                         card.position = Some(position.clone());

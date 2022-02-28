@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/create_game_tests.rs
-assertion_line: 132
+assertion_line: 128
 expression: "Summary::summarize(&response)"
 
 ---
@@ -10,27 +10,27 @@ command_list:
         MoveGameObjects: 
             id: O1
             position: 
-                sorting_key: 0
+                sorting_key: 31
                 position: ObjectPositionDeck { owner: User }
         MoveGameObjects: 
             id: O2
             position: 
-                sorting_key: 0
+                sorting_key: 32
                 position: ObjectPositionDeck { owner: User }
         MoveGameObjects: 
             id: O3
             position: 
-                sorting_key: 0
+                sorting_key: 33
                 position: ObjectPositionDeck { owner: User }
         MoveGameObjects: 
             id: O4
             position: 
-                sorting_key: 0
+                sorting_key: 34
                 position: ObjectPositionDeck { owner: User }
         MoveGameObjects: 
             id: O5
             position: 
-                sorting_key: 0
+                sorting_key: 35
                 position: ObjectPositionDeck { owner: User }
     DestroyCard: 
         card_id: O1
@@ -250,27 +250,27 @@ channel_response:
         MoveGameObjects: 
             id: O1
             position: 
-                sorting_key: 0
+                sorting_key: 31
                 position: ObjectPositionDeck { owner: Opponent }
         MoveGameObjects: 
             id: O2
             position: 
-                sorting_key: 0
+                sorting_key: 32
                 position: ObjectPositionDeck { owner: Opponent }
         MoveGameObjects: 
             id: O3
             position: 
-                sorting_key: 0
+                sorting_key: 33
                 position: ObjectPositionDeck { owner: Opponent }
         MoveGameObjects: 
             id: O4
             position: 
-                sorting_key: 0
+                sorting_key: 34
                 position: ObjectPositionDeck { owner: Opponent }
         MoveGameObjects: 
             id: O5
             position: 
-                sorting_key: 0
+                sorting_key: 35
                 position: ObjectPositionDeck { owner: Opponent }
     DestroyCard: 
         card_id: O1
