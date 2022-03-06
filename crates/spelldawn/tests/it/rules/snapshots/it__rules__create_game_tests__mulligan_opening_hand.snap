@@ -195,16 +195,6 @@ command_list:
                 sorting_key: 31
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
-            id: O1
-            position: 
-                sorting_key: 31
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O2
-            position: 
-                sorting_key: 32
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
             id: O2
             position: 
                 sorting_key: 32
@@ -215,24 +205,9 @@ command_list:
                 sorting_key: 33
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
-            id: O3
-            position: 
-                sorting_key: 33
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
             id: O4
             position: 
                 sorting_key: 34
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O4
-            position: 
-                sorting_key: 34
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O5
-            position: 
-                sorting_key: 35
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
             id: O5

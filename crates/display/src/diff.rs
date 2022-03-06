@@ -29,7 +29,7 @@ use protos::spelldawn::{
 };
 
 use crate::full_sync::FullSync;
-use crate::response_builder::{CommandPhase, MoveType, ResponseBuilder};
+use crate::response_builder::{CommandPhase, MovePhase, MoveType, ResponseBuilder};
 use crate::{adapters, full_sync};
 
 /// Performs a diff operation on two provided [FullSync] values, appending the
@@ -234,8 +234,11 @@ fn push_move_command(
 }
 
 /// Appends a command to move `id` to its indicated `position` (if provided) or
-/// else to its default game position. Will be run in parallel with other move
-/// commands.
+/// else to its default game position.
+///
+/// Will be run in parallel with other move commands. If no `position` is
+/// specified, this will be recorded as an *optional move*, i.e. it will be
+/// skipped if any other move request is received for the indicated `id`.
 fn move_to_position(
     commands: &mut ResponseBuilder,
     game: &GameState,
@@ -279,7 +282,11 @@ fn move_to_position(
         }
     };
 
-    commands.move_object(id, new_position, MoveType::default());
+    commands.move_object(
+        id,
+        new_position,
+        MoveType { phase: MovePhase::StandardMoves, parallel: true, required: position.is_some() },
+    );
 }
 
 /// Diffs two values. If the values are equal, returns None, otherwise invokes

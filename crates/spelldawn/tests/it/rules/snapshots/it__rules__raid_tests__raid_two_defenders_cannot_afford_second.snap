@@ -36,12 +36,6 @@ command_list:
         position: 
             sorting_key: 8
             position: ObjectPositionIdentity { owner: User }
-    RunInParallel: 
-        MoveGameObjects: 
-            id: O1
-            position: 
-                sorting_key: 8
-                position: ObjectPositionIdentity { owner: User }
     RenderInterface: 
     panels: 
         main_controls: 
@@ -79,9 +73,3 @@ channel_response:
         position: 
             sorting_key: 8
             position: ObjectPositionIdentity { owner: Opponent }
-    RunInParallel: 
-        MoveGameObjects: 
-            id: O1
-            position: 
-                sorting_key: 8
-                position: ObjectPositionIdentity { owner: Opponent }
