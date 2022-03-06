@@ -67,7 +67,7 @@ pub fn render(
             draw_card(commands, game, user_side, card_id);
         }
         GameUpdate::MoveCard(card_id) => {
-            move_card(commands, game.card(card_id), CommandPhase::Animate);
+            move_card(commands, game.card(card_id), MovePhase::StandardMoves);
         }
         GameUpdate::RevealToOpponent(card_id) => {
             reveal_card(commands, game, game.card(card_id));
@@ -162,23 +162,18 @@ fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
         )),
     );
 
-    move_card(commands, game.card(card_id), CommandPhase::Animate);
+    move_card(commands, game.card(card_id), MovePhase::StandardMoves);
 }
 
 /// Appends a move card command to move a card to its current location. Skips
 /// appending the command if the destination would not be a valid game position,
 /// e.g. if it is [CardPosition::DeckUnknown].
-fn move_card(commands: &mut ResponseBuilder, card: &CardState, phase: CommandPhase) {
-    commands.push_optional(
-        phase,
-        full_sync::adapt_position(card, commands.user_side).map(|position| {
-            Command::MoveGameObjects(MoveGameObjectsCommand {
-                ids: vec![adapters::card_id_to_object_id(card.id)],
-                position: Some(position),
-                disable_animation: false,
-            })
-        }),
-    )
+fn move_card(commands: &mut ResponseBuilder, card: &CardState, phase: MovePhase) {
+    commands.move_object_optional(
+        Id::CardId(adapters::adapt_card_id(card.id)),
+        full_sync::adapt_position(card, commands.user_side),
+        MoveType { phase, parallel: false, required: true },
+    );
 }
 
 /// Commands to reveal the indicated card to all players

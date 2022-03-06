@@ -111,6 +111,19 @@ impl ResponseBuilder {
         self.moves.push((id, position, move_type))
     }
 
+    /// Equivalent method to [Self::move_object] which takes an
+    /// `Option<ObjectPosition>`.
+    pub fn move_object_optional(
+        &mut self,
+        id: Id,
+        position: Option<ObjectPosition>,
+        move_type: MoveType,
+    ) {
+        if let Some(p) = position {
+            self.move_object(id, p, move_type);
+        }
+    }
+
     /// Move a card to a new client position
     pub fn move_card(&mut self, card: &CardState, position: Position, move_type: MoveType) {
         self.move_object(
@@ -154,17 +167,19 @@ impl ResponseBuilder {
             }
         }
 
-        result.push((
-            phase,
-            Command::RunInParallel(RunInParallelCommand {
-                commands: parallel
-                    .into_iter()
-                    .map(|command| CommandList {
-                        commands: vec![GameCommand { command: Some(command) }],
-                    })
-                    .collect(),
-            }),
-        ));
+        if !parallel.is_empty() {
+            result.push((
+                phase,
+                Command::RunInParallel(RunInParallelCommand {
+                    commands: parallel
+                        .into_iter()
+                        .map(|command| CommandList {
+                            commands: vec![GameCommand { command: Some(command) }],
+                        })
+                        .collect(),
+                }),
+            ));
+        }
         result
     }
 
