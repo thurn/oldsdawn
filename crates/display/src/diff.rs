@@ -29,7 +29,7 @@ use protos::spelldawn::{
 };
 
 use crate::full_sync::FullSync;
-use crate::response_builder::{CommandPhase, MovePhase, MoveType, ResponseBuilder};
+use crate::response_builder::{CommandPhase, MoveType, ResponseBuilder};
 use crate::{adapters, full_sync};
 
 /// Performs a diff operation on two provided [FullSync] values, appending the
@@ -279,11 +279,7 @@ fn move_to_position(
         }
     };
 
-    commands.move_object(
-        id,
-        new_position,
-        MoveType { phase: MovePhase::StandardMoves, parallel: true, required: false },
-    );
+    commands.move_object(id, new_position, MoveType::default());
 }
 
 /// Diffs two values. If the values are equal, returns None, otherwise invokes
