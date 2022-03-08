@@ -21,7 +21,7 @@ use data::game::{GameConfiguration, GameState};
 use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::UpdateTracker;
 use data::with_error::WithError;
-use display::adapters;
+use display::{adapters, render};
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -216,7 +216,7 @@ pub fn handle_connect(
         if database.has_game(game_id)? {
             let game = database.game(game_id)?;
             let side = user_side(player_id, &game)?;
-            let mut commands = display::connect(&game, side);
+            let mut commands = render::connect(&game, side);
             panels::render_standard_panels(&mut commands)?;
             Ok(command_list(commands))
         } else {
@@ -281,11 +281,11 @@ fn handle_action(
     let user_side = user_side(player_id, &game)?;
     function(&mut game, user_side)?;
 
-    let user_result = display::render_updates(&game, user_side);
+    let user_result = render::render_updates(&game, user_side);
     let opponent_id = game.player(user_side.opponent()).id;
 
     let channel_response =
-        Some((opponent_id, command_list(display::render_updates(&game, user_side.opponent()))));
+        Some((opponent_id, command_list(render::render_updates(&game, user_side.opponent()))));
     database.write_game(&game)?;
     Ok(GameResponse { command_list: command_list(user_result), channel_response })
 }

@@ -13,7 +13,7 @@ command_list:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 0
+            sorting_key: 8
             position: ObjectPositionScoreAnimation
     PlayEffect: 
         effect: "<EffectAddress>"
@@ -25,17 +25,17 @@ command_list:
         position: O1
         duration: 300
         sound: "<AudioClipAddress>"
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 8
+            position: ObjectPositionIdentity { owner: User }
     UpdateGameView: 
         user: 
             side: Champion
             score: 1
         current_priority: User
         raid_active: true
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 8
-            position: ObjectPositionIdentity { owner: User }
     RenderInterface: 
     panels: 
         main_controls: 
@@ -50,7 +50,7 @@ channel_response:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 0
+            sorting_key: 8
             position: ObjectPositionScoreAnimation
     PlayEffect: 
         effect: "<EffectAddress>"
@@ -62,14 +62,14 @@ channel_response:
         position: O1
         duration: 300
         sound: "<AudioClipAddress>"
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 8
+            position: ObjectPositionIdentity { owner: Opponent }
     UpdateGameView: 
         opponent: 
             side: Champion
             score: 1
         current_priority: Opponent
         raid_active: true
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 8
-            position: ObjectPositionIdentity { owner: Opponent }

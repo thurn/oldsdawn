@@ -14,6 +14,9 @@
 
 //! Used to track mutations during a game for rendering by the client
 
+#![allow(clippy::use_self)] // Required to use EnumKind
+
+use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
 
 use crate::primitives::{CardId, PointsValue, RoomId, Side};
@@ -38,51 +41,50 @@ pub struct TargetedInteraction {
 
 /// Represents an update to the state of the game which should be translated
 /// into a client update
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, EnumKind)]
+#[enum_kind(GameUpdateKind, derive(Ord, PartialOrd))]
 pub enum GameUpdate {
-    /// Indicates that a player's turn has started
-    StartTurn(Side),
     /// Indicates that a new hand of cards has been drawn for the provided
     /// player.
     DrawHand(Side),
     /// A card has moved from a deck to a player's hand.
     DrawCard(CardId),
-    /// Shuffle a card back into a deck during a mulligan
-    MulliganCard(CardId),
+    /// Shuffle cards back into a deck during a mulligan
+    MulliganHand(Side, Vec<CardId>),
     /// A card has been shuffled back into a player's deck
     ShuffleIntoDeck(CardId),
     /// A card has been completely removed from the game
     DestroyCard(CardId),
-    /// A card has been moved to a new game location not described by one of the
-    /// above updates
-    MoveCard(CardId),
-    /// A card has become revealed to the opponent. If this occurs while a card
-    /// is changing zones, this update should be added before `MoveCard` to
-    /// move the card to its final destination.
-    RevealToOpponent(CardId),
     /// A room has been leveled up
     LevelUpRoom(RoomId),
     /// A raid has started on the indicated room
     InitiateRaid(RoomId),
     /// Indicates that one card or game object targeted another with an effect.
     TargetedInteraction(TargetedInteraction),
-    /// The current raid has gained access to the indicated room
-    RaidAccess(RoomId),
     /// A card has been scored by the overlord player
     OverlordScoreCard(CardId, PointsValue),
     /// A card has been scored by the champion player
     ChampionScoreCard(CardId, PointsValue),
+
+    GeneralUpdate,
+
+    /// Indicates that a player's turn has started
+    StartTurn(Side),
+    /// A card has become revealed to the opponent. If this occurs while a card
+    /// is changing zones, this update should be added before `MoveCard` to
+    /// move the card to its final destination.
+    RevealToOpponent(CardId),
+    /// The current raid has gained access to the indicated room
+    RaidAccess(RoomId),
     /// The game has ended and the indicated player has won
     GameOver(Side),
+    MoveToZone(CardId),
 }
 
-/// Allows update tracking to be disabled on a case-by-case basis
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum UpdateMode {
-    /// Append [GameUpdate]s for this mutation
-    Push,
-    /// Do not append [GameUpdate]s for this mutation
-    None,
+impl GameUpdate {
+    pub fn kind(&self) -> GameUpdateKind {
+        self.into()
+    }
 }
 
 /// Tracks game mutations for a given network request. If a vector is present
@@ -97,7 +99,7 @@ pub struct UpdateTracker {
 
 impl UpdateTracker {
     pub fn new(enabled: bool) -> Self {
-        Self { update_list: enabled.then(Vec::new) }
+        Self { update_list: enabled.then(|| vec![GameUpdate::GeneralUpdate]) }
     }
 
     pub fn list(&self) -> Option<&Vec<GameUpdate>> {
@@ -108,12 +110,6 @@ impl UpdateTracker {
     pub fn push(&mut self, update: GameUpdate) {
         if let Some(vec) = &mut self.update_list {
             vec.push(update)
-        }
-    }
-
-    pub fn push_with_update_mode(&mut self, update: GameUpdate, mode: UpdateMode) {
-        if mode == UpdateMode::Push {
-            self.push(update);
         }
     }
 }

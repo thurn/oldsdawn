@@ -39,80 +39,119 @@ use protos::spelldawn::{
 };
 use protos::spelldawn::{
     DestroyCardCommand, FireProjectileCommand, MusicState, ObjectPositionBrowser,
-    ObjectPositionHand, ObjectPositionScoreAnimation, PlayEffectCommand, PlayEffectPosition,
-    PlaySoundCommand, SetMusicCommand,
+    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionScoreAnimation, PlayEffectCommand,
+    PlayEffectPosition, PlaySoundCommand, SetMusicCommand,
 };
 
 use crate::full_sync::CardCreationStrategy;
-use crate::response_builder::{CommandPhase, MovePhase, MoveType, ResponseBuilder};
+use crate::response_builder::{CardUpdateTypes, ResponseBuilder, UpdateType};
 use crate::{adapters, assets, full_sync};
+
+pub fn populate_card_update_types(
+    game: &GameState,
+    update: &GameUpdate,
+    types: &mut CardUpdateTypes,
+) {
+    match update {
+        GameUpdate::DrawHand(side) => {
+            for card in game.hand(*side) {
+                types.insert(card.id, UpdateType::Animation);
+            }
+        }
+        GameUpdate::DrawCard(card_id) => {
+            types.insert(*card_id, UpdateType::Utility);
+        }
+        GameUpdate::MulliganHand(side, cards) => {
+            for card_id in cards {
+                types.insert(*card_id, UpdateType::Animation);
+            }
+            for card in game.hand(*side) {
+                types.insert(card.id, UpdateType::Animation);
+            }
+        }
+        GameUpdate::ShuffleIntoDeck(card_id) => {
+            types.insert(*card_id, UpdateType::Utility);
+        }
+        GameUpdate::DestroyCard(card_id) => {
+            types.insert(*card_id, UpdateType::Utility);
+        }
+        GameUpdate::OverlordScoreCard(card_id, _) => {
+            types.insert(*card_id, UpdateType::Animation);
+        }
+        GameUpdate::ChampionScoreCard(card_id, _) => {
+            types.insert(*card_id, UpdateType::Animation);
+        }
+        // GameUpdate::MoveToDiscard(card_id) => types.insert(card_id, UpdateType::Utility),
+        _ => {}
+    }
+}
 
 /// Takes a [GameUpdate] and converts it into an animation, a series of
 /// corresponding [GameCommand]s. Commands are appended to the provided
 /// `commands` list.
 pub fn render(
     commands: &mut ResponseBuilder,
-    update: GameUpdate,
+    update: &GameUpdate,
     game: &GameState,
     user_side: Side,
 ) {
     match update {
         GameUpdate::StartTurn(side) => {
-            start_turn(commands, side);
+            start_turn(commands, *side);
         }
         GameUpdate::DrawHand(side) => {
-            draw_hand(commands, game, user_side, side);
+            draw_hand(commands, game, *side);
+        }
+        GameUpdate::MulliganHand(side, cards) => {
+            mulligan_hand(commands, game, *side, cards);
         }
         GameUpdate::DrawCard(card_id) => {
-            draw_card(commands, game, user_side, card_id);
-        }
-        GameUpdate::MoveCard(card_id) => {
-            move_card(commands, game.card(card_id), MovePhase::StandardMoves);
+            draw_card(commands, game, user_side, *card_id);
         }
         GameUpdate::RevealToOpponent(card_id) => {
-            reveal_card(commands, game, game.card(card_id));
+            reveal_card(commands, game, game.card(*card_id));
         }
         GameUpdate::InitiateRaid(room_id) => {
-            initiate_raid(commands, room_id);
+            initiate_raid(commands, *room_id);
         }
         GameUpdate::TargetedInteraction(interaction) => {
-            targeted_interaction(commands, game, user_side, interaction);
+            targeted_interaction(commands, game, user_side, *interaction);
         }
-        GameUpdate::ChampionScoreCard(card_id, _) => score_champion_card(commands, card_id),
-        GameUpdate::MulliganCard(card_id) => shuffle_into_deck(
-            commands,
-            game,
-            user_side,
-            card_id,
-            MovePhase::StartMoves,
-            CommandPhase::PreUpdate,
-        ),
-        GameUpdate::DestroyCard(card_id) => destroy_card(commands, card_id, CommandPhase::Animate),
+        GameUpdate::ChampionScoreCard(card_id, _) => {
+            score_champion_card(commands, game.card(*card_id))
+        }
+        GameUpdate::DestroyCard(card_id) => destroy_card(commands, UpdateType::Utility, *card_id),
+        GameUpdate::MoveToZone(card_id) => {
+            move_card(commands, UpdateType::Utility, game.card(*card_id))
+        }
+        GameUpdate::ShuffleIntoDeck(card_id) => {
+            shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
+        }
         _ => todo!("Implement {:?}", update),
     }
 }
 
-fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, side: Side) {
+fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
     let hand = game.card_list_for_position(side, CardPosition::Hand(side));
     for card in hand {
         commands.push(
-            CommandPhase::PreUpdate,
+            UpdateType::Animation,
             Command::CreateOrUpdateCard(full_sync::create_or_update_card(
                 game,
                 game.card(card.id),
-                user_side,
+                commands.user_side,
                 CardCreationStrategy::CreateAtPosition(ObjectPosition {
                     sorting_key: card.sorting_key,
                     position: Some(Position::Deck(ObjectPositionDeck {
-                        owner: adapters::to_player_name(side, user_side).into(),
+                        owner: adapters::to_player_name(side, commands.user_side).into(),
                     })),
                 }),
             )),
         );
 
-        if user_side == side {
+        if commands.user_side == side {
             commands.push(
-                CommandPhase::PreUpdate,
+                UpdateType::Animation,
                 Command::MoveGameObjects(MoveGameObjectsCommand {
                     ids: vec![adapters::card_id_to_object_id(card.id)],
                     position: Some(ObjectPosition {
@@ -125,17 +164,73 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
         }
 
         commands.move_card(
+            UpdateType::Animation,
             card,
             Position::Hand(ObjectPositionHand {
-                owner: adapters::to_player_name(side, user_side).into(),
+                owner: adapters::to_player_name(side, commands.user_side).into(),
             }),
-            MoveType::default(),
         );
     }
 
-    if user_side == side {
-        commands.push(CommandPhase::PreUpdate, delay(1500));
+    if commands.user_side == side {
+        commands.push(UpdateType::Animation, delay(1500));
     }
+}
+
+fn mulligan_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, cards: &[CardId]) {
+    let mulligan_player_name = adapters::to_player_name(side, commands.user_side);
+    for card_id in cards {
+        commands.move_card(
+            UpdateType::Animation,
+            game.card(*card_id),
+            Position::Deck(ObjectPositionDeck { owner: mulligan_player_name.into() }),
+        );
+    }
+    commands.apply_parallel_moves();
+
+    for card_id in cards {
+        destroy_card(commands, UpdateType::Animation, *card_id);
+    }
+
+    let hand = game.card_list_for_position(side, CardPosition::Hand(side));
+    for card in &hand {
+        commands.push(
+            UpdateType::Animation,
+            create_or_update(
+                game,
+                commands.user_side,
+                card.id,
+                CardCreationStrategy::CreateAtPosition(ObjectPosition {
+                    sorting_key: card.sorting_key,
+                    position: Some(Position::Deck(ObjectPositionDeck {
+                        owner: mulligan_player_name.into(),
+                    })),
+                }),
+            ),
+        );
+
+        if side == commands.user_side {
+            commands.move_card_immediate(
+                UpdateType::Animation,
+                card,
+                Position::Browser(ObjectPositionBrowser {}),
+            );
+        }
+    }
+
+    if side == commands.user_side {
+        commands.push(UpdateType::Animation, delay(1500));
+    }
+
+    for card in &hand {
+        commands.move_card(
+            UpdateType::Animation,
+            card,
+            Position::Hand(ObjectPositionHand { owner: mulligan_player_name.into() }),
+        );
+    }
+
+    commands.apply_parallel_moves();
 }
 
 /// Builds a [CardCreationStrategy] for representing the provided `card_id`
@@ -153,7 +248,7 @@ fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
     };
 
     commands.push(
-        CommandPhase::PreUpdate,
+        UpdateType::Utility,
         Command::CreateOrUpdateCard(full_sync::create_or_update_card(
             game,
             game.card(card_id),
@@ -162,17 +257,17 @@ fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
         )),
     );
 
-    move_card(commands, game.card(card_id), MovePhase::StandardMoves);
+    move_card(commands, UpdateType::Utility, game.card(card_id));
 }
 
 /// Appends a move card command to move a card to its current location. Skips
 /// appending the command if the destination would not be a valid game position,
 /// e.g. if it is [CardPosition::DeckUnknown].
-fn move_card(commands: &mut ResponseBuilder, card: &CardState, phase: MovePhase) {
+fn move_card(commands: &mut ResponseBuilder, update_type: UpdateType, card: &CardState) {
     commands.move_object_optional(
+        update_type,
         Id::CardId(adapters::adapt_card_id(card.id)),
         full_sync::adapt_position(card, commands.user_side),
-        MoveType { phase, parallel: false, required: true },
     );
 }
 
@@ -181,7 +276,7 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
     if commands.user_side != card.side && game.data.raid.is_none() {
         // If there is no active raid, animate the card to the staging area on reveal.
         commands.push(
-            CommandPhase::Animate,
+            UpdateType::Utility,
             Command::MoveGameObjects(MoveGameObjectsCommand {
                 ids: vec![adapters::card_id_to_object_id(card.id)],
                 position: Some(ObjectPosition {
@@ -191,14 +286,14 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
                 disable_animation: false,
             }),
         );
-        commands.push(CommandPhase::Animate, delay(1500));
+        commands.push(UpdateType::Utility, delay(1500));
     }
 }
 
 /// Starts the `side` player's turn
 fn start_turn(commands: &mut ResponseBuilder, side: Side) {
     commands.push(
-        CommandPhase::PostMove,
+        UpdateType::Animation,
         Command::DisplayGameMessage(DisplayGameMessageCommand {
             message_type: match side {
                 Side::Overlord => GameMessageType::Dusk.into(),
@@ -211,14 +306,14 @@ fn start_turn(commands: &mut ResponseBuilder, side: Side) {
 fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
     if commands.user_side == Side::Overlord {
         commands.push(
-            CommandPhase::PreUpdate,
+            UpdateType::Animation,
             Command::VisitRoom(VisitRoomCommand {
                 initiator: adapters::to_player_name(Side::Champion, commands.user_side).into(),
                 room_id: adapters::adapt_room_id(target).into(),
                 visit_type: RoomVisitType::InitiateRaid.into(),
             }),
         );
-        commands.push(CommandPhase::PreUpdate, delay(500));
+        commands.push(UpdateType::Animation, delay(500));
     }
 }
 
@@ -237,7 +332,7 @@ fn targeted_interaction(
         ..FireProjectileCommand::default()
     };
     apply_projectile(game, &mut projectile, interaction);
-    commands.push(CommandPhase::PreUpdate, Command::FireProjectile(projectile));
+    commands.push(UpdateType::Animation, Command::FireProjectile(projectile));
 }
 
 /// Applies custom projectile effects for a targeted interaction.
@@ -258,25 +353,25 @@ fn apply_projectile(
     }
 }
 
-fn score_champion_card(commands: &mut ResponseBuilder, card_id: CardId) {
-    let object_id = adapters::card_id_to_object_id(card_id);
-    commands.push(CommandPhase::PreUpdate, set_music(MusicState::Silent));
+fn score_champion_card(commands: &mut ResponseBuilder, card: &CardState) {
+    let object_id = adapters::card_id_to_object_id(card.id);
+    commands.push(UpdateType::Animation, set_music(MusicState::Silent));
     commands.push(
-        CommandPhase::PreUpdate,
+        UpdateType::Animation,
         play_sound(SoundEffect::FantasyEvents(FantasyEventSounds::Positive1)),
     );
     commands.push(
-        CommandPhase::PreUpdate,
+        UpdateType::Animation,
         move_to(
             object_id,
             ObjectPosition {
-                sorting_key: 0,
+                sorting_key: card.sorting_key,
                 position: Some(Position::ScoreAnimation(ObjectPositionScoreAnimation {})),
             },
         ),
     );
     commands.push(
-        CommandPhase::PreUpdate,
+        UpdateType::Animation,
         play_effect(
             TimedEffect::HovlMagicHit(4),
             object_id,
@@ -288,7 +383,7 @@ fn score_champion_card(commands: &mut ResponseBuilder, card_id: CardId) {
         ),
     );
     commands.push(
-        CommandPhase::PreUpdate,
+        UpdateType::Animation,
         play_effect(
             TimedEffect::HovlMagicHit(4),
             object_id,
@@ -299,33 +394,43 @@ fn score_champion_card(commands: &mut ResponseBuilder, card_id: CardId) {
             },
         ),
     );
+
+    commands.push(
+        UpdateType::Animation,
+        move_to(
+            object_id,
+            ObjectPosition {
+                sorting_key: card.sorting_key,
+                position: Some(Position::Identity(ObjectPositionIdentity {
+                    owner: adapters::to_player_name(Side::Champion, commands.user_side).into(),
+                })),
+            },
+        ),
+    );
 }
 
 /// Moves a card to its owner's deck and then destroys it.
-///
-/// The provided `destroy_phase` should be after the provided `move_phase`.
 fn shuffle_into_deck(
     commands: &mut ResponseBuilder,
     game: &GameState,
     user_side: Side,
     card_id: CardId,
-    move_phase: MovePhase,
-    destroy_phase: CommandPhase,
+    update_type: UpdateType,
 ) {
     commands.move_card(
+        update_type,
         game.card(card_id),
         Position::Deck(ObjectPositionDeck {
             owner: adapters::to_player_name(card_id.side, user_side).into(),
         }),
-        MoveType { phase: move_phase, ..MoveType::default() },
     );
 
-    destroy_card(commands, card_id, destroy_phase);
+    destroy_card(commands, update_type, card_id);
 }
 
-fn destroy_card(commands: &mut ResponseBuilder, card_id: CardId, phase: CommandPhase) {
+fn destroy_card(commands: &mut ResponseBuilder, update_type: UpdateType, card_id: CardId) {
     commands.push(
-        phase,
+        update_type,
         Command::DestroyCard(DestroyCardCommand {
             card_id: Some(adapters::adapt_card_id(card_id)),
         }),
@@ -379,6 +484,20 @@ fn play_effect(
 /// Constructs a [TimeValue].
 fn duration_ms(milliseconds: u32) -> TimeValue {
     TimeValue { milliseconds }
+}
+
+fn create_or_update(
+    game: &GameState,
+    user_side: Side,
+    card_id: CardId,
+    creation: CardCreationStrategy,
+) -> Command {
+    Command::CreateOrUpdateCard(full_sync::create_or_update_card(
+        game,
+        game.card(card_id),
+        user_side,
+        creation,
+    ))
 }
 
 fn adapt_interaction_id(id: InteractionObjectId, user_side: Side) -> GameObjectIdentifier {

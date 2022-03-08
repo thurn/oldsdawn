@@ -29,7 +29,7 @@ use protos::spelldawn::{
 };
 
 use crate::full_sync::FullSync;
-use crate::response_builder::{CommandPhase, MovePhase, MoveType, ResponseBuilder};
+use crate::response_builder::{ResponseBuilder, UpdateType};
 use crate::{adapters, full_sync};
 
 /// Performs a diff operation on two provided [FullSync] values, appending the
@@ -46,23 +46,20 @@ pub fn execute(
     old: Option<&FullSync>,
     new: &FullSync,
 ) {
+    commands.apply_parallel_moves();
+
     if let Some(update) = diff_update_game_view_command(old.map(|old| &old.game), Some(&new.game)) {
-        commands.push(CommandPhase::Update, Command::UpdateGameView(update));
+        commands.push(UpdateType::General, Command::UpdateGameView(update));
     }
 
-    commands.push_all(
-        CommandPhase::Update,
-        // Iterate over `all_cards` again to ensure response order is deterministic
-        game.all_cards()
-            .filter(|c| c.position().kind() != CardPositionKind::DeckUnknown)
-            .filter_map(|card| {
-                diff_create_or_update_card(
-                    old.and_then(|old| old.cards.get(&card.id)),
-                    new.cards.get(&card.id),
-                )
-                .map(Command::CreateOrUpdateCard)
-            }),
-    );
+    // Iterate over `all_cards` again to ensure response order is deterministic
+    for card in game.all_cards().filter(|c| c.position().kind() != CardPositionKind::DeckUnknown) {
+        diff_create_or_update_card(
+            commands,
+            old.and_then(|old| old.cards.get(&card.id)),
+            new.cards.get(&card.id),
+        );
+    }
 
     diff_card_position_updates(
         commands,
@@ -71,9 +68,10 @@ pub fn execute(
         &new.position_overrides,
     );
 
+    commands.apply_parallel_moves();
+
     if old.map(|old| &old.interface) != Some(&new.interface) {
-        commands
-            .push(CommandPhase::RenderInterface, Command::RenderInterface(new.interface.clone()));
+        commands.push(UpdateType::General, Command::RenderInterface(new.interface.clone()));
     }
 }
 
@@ -116,9 +114,10 @@ fn diff_player_info(old: Option<&PlayerInfo>, new: Option<&PlayerInfo>) -> Optio
 }
 
 fn diff_create_or_update_card(
+    commands: &mut ResponseBuilder,
     old: Option<&CreateOrUpdateCardCommand>,
     new: Option<&CreateOrUpdateCardCommand>,
-) -> Option<CreateOrUpdateCardCommand> {
+) {
     // We only want to send this command if the card's own state has changed.
     // Changes to create behavior should be handled by the animation layer.
     let card_view = diff_card_view(
@@ -127,14 +126,15 @@ fn diff_create_or_update_card(
     );
 
     if let (Some(card_view), Some(new)) = (card_view, new) {
-        Some(CreateOrUpdateCardCommand {
-            card: Some(card_view),
-            create_position: new.create_position.clone(),
-            create_animation: new.create_animation,
-            disable_flip_animation: new.disable_flip_animation,
-        })
-    } else {
-        None
+        commands.push(
+            UpdateType::General,
+            Command::CreateOrUpdateCard(CreateOrUpdateCardCommand {
+                card: Some(card_view),
+                create_position: new.create_position.clone(),
+                create_animation: new.create_animation,
+                disable_flip_animation: new.disable_flip_animation,
+            }),
+        );
     }
 }
 
@@ -282,11 +282,7 @@ fn move_to_position(
         }
     };
 
-    commands.move_object(
-        id,
-        new_position,
-        MoveType { phase: MovePhase::StandardMoves, parallel: true, required: position.is_some() },
-    );
+    commands.move_object(UpdateType::General, id, new_position);
 }
 
 /// Diffs two values. If the values are equal, returns None, otherwise invokes

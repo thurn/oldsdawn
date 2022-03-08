@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 use data::card_state::CardState;
-use data::primitives::Side;
-use itertools::Itertools;
+use data::primitives::{CardId, Side};
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
@@ -27,47 +26,34 @@ use protos::spelldawn::{
 
 use crate::adapters;
 
-/// Subset of [CommandPhase] during which moves can occur.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum MovePhase {
-    StartMoves,
-    StandardMoves,
+pub enum UpdateType {
+    None,
+    General,
+    Utility,
+    Animation,
 }
 
-/// Key used to sort [Command]s into distinct groups
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum CommandPhase {
-    StartMoves,
-    PreUpdate,
-    Update,
-    Animate,
-    StandardMoves,
-    RenderInterface,
-    PostMove,
-    End,
+#[derive(Clone, Debug, Default)]
+pub struct CardUpdateTypes {
+    data: HashMap<CardId, UpdateType>,
 }
 
-/// Options for configuring a move command.
-#[derive(Clone, Copy, Debug)]
-pub struct MoveType {
-    /// Target phase to run the move command.
-    ///
-    /// Defaults to [MovePhase::StandardMoves].
-    pub phase: MovePhase,
-    /// Run in parallel with other moves during this phase.
-    ///
-    /// Defaults to true.
-    pub parallel: bool,
-    /// Whether this command can be skipped.
-    ///
-    /// If false, skip this move if the target object receives a required move
-    /// command. Defaults to true.
-    pub required: bool,
-}
+impl CardUpdateTypes {
+    pub fn insert(&mut self, id: CardId, update_type: UpdateType) {
+        match self.data.get(&id) {
+            None => {
+                self.data.insert(id, update_type);
+            }
+            Some(u) if update_type > *u => {
+                self.data.insert(id, update_type);
+            }
+            _ => {}
+        };
+    }
 
-impl Default for MoveType {
-    fn default() -> Self {
-        Self { phase: MovePhase::StandardMoves, parallel: true, required: true }
+    pub fn get(&self, id: CardId) -> UpdateType {
+        *self.data.get(&id).unwrap_or(&UpdateType::None)
     }
 }
 
@@ -76,125 +62,156 @@ impl Default for MoveType {
 pub struct ResponseBuilder {
     pub user_side: Side,
     pub animate: bool,
-    commands: Vec<(CommandPhase, Command)>,
-    required: HashSet<Id>,
-    moves: Vec<(Id, ObjectPosition, MoveType)>,
+    card_update_types: CardUpdateTypes,
+    commands: Vec<Command>,
+    moves: Vec<(UpdateType, Id, ObjectPosition)>,
 }
 
 impl ResponseBuilder {
-    pub fn new(user_side: Side, animate: bool) -> Self {
-        Self { user_side, animate, commands: vec![], required: HashSet::new(), moves: vec![] }
+    pub fn new(user_side: Side, card_update_types: CardUpdateTypes, animate: bool) -> Self {
+        Self { user_side, animate, commands: vec![], card_update_types, moves: vec![] }
     }
 
     /// Append a new command to this builder
-    pub fn push(&mut self, phase: CommandPhase, command: Command) {
-        self.commands.push((phase, command))
-    }
-
-    pub fn push_optional(&mut self, phase: CommandPhase, option: Option<Command>) {
-        if let Some(command) = option {
-            self.push(phase, command);
+    pub fn push(&mut self, update_type: UpdateType, command: Command) {
+        if let Some(card_id) = card_id_for_command(&command) {
+            if update_type >= self.card_update_types.get(card_id) {
+                self.commands.push(command)
+            }
+        } else {
+            self.commands.push(command)
         }
     }
 
-    pub fn push_all(&mut self, phase: CommandPhase, iterator: impl Iterator<Item = Command>) {
+    pub fn push_optional(&mut self, update_type: UpdateType, option: Option<Command>) {
+        if let Some(command) = option {
+            self.push(update_type, command);
+        }
+    }
+
+    pub fn push_all(&mut self, update_type: UpdateType, iterator: impl Iterator<Item = Command>) {
         for item in iterator {
-            self.push(phase, item)
+            self.push(update_type, item)
         }
     }
 
     /// Move a GameObject to a new client position
-    pub fn move_object(&mut self, id: Id, position: ObjectPosition, move_type: MoveType) {
-        if move_type.required {
-            self.required.insert(id);
-        }
-        self.moves.push((id, position, move_type))
+    pub fn move_object(&mut self, update_type: UpdateType, id: Id, position: ObjectPosition) {
+        self.moves.push((update_type, id, position));
     }
 
     /// Equivalent method to [Self::move_object] which takes an
     /// `Option<ObjectPosition>`.
     pub fn move_object_optional(
         &mut self,
+        update_type: UpdateType,
         id: Id,
         position: Option<ObjectPosition>,
-        move_type: MoveType,
     ) {
         if let Some(p) = position {
-            self.move_object(id, p, move_type);
+            self.move_object(update_type, id, p)
         }
     }
 
     /// Move a card to a new client position
-    pub fn move_card(&mut self, card: &CardState, position: Position, move_type: MoveType) {
+    pub fn move_card(&mut self, update_type: UpdateType, card: &CardState, position: Position) {
         self.move_object(
+            update_type,
             Id::CardId(adapters::adapt_card_id(card.id)),
             ObjectPosition { sorting_key: card.sorting_key, position: Some(position) },
-            move_type,
         )
+    }
+
+    pub fn move_card_immediate(
+        &mut self,
+        update_type: UpdateType,
+        card: &CardState,
+        position: Position,
+    ) {
+        self.push(
+            update_type,
+            Command::MoveGameObjects(MoveGameObjectsCommand {
+                ids: vec![GameObjectIdentifier {
+                    id: Some(Id::CardId(adapters::adapt_card_id(card.id))),
+                }],
+                position: Some(ObjectPosition {
+                    sorting_key: card.sorting_key,
+                    position: Some(position),
+                }),
+                disable_animation: !self.animate,
+            }),
+        );
+    }
+
+    pub fn apply_parallel_moves(&mut self) {
+        if !self.moves.is_empty() {
+            self.moves.sort_by_key(|(_, id, _)| *id);
+            let commands = self
+                .moves
+                .iter()
+                .filter_map(|(update_type, id, position)| {
+                    self.process_move(*update_type, *id, position)
+                })
+                .collect::<Vec<_>>();
+
+            match commands.len() {
+                0 => {}
+                1 => self.commands.push(commands.into_iter().next().expect("command")),
+                _ => self.commands.push(Command::RunInParallel(RunInParallelCommand {
+                    commands: commands
+                        .into_iter()
+                        .map(|c| CommandList { commands: vec![GameCommand { command: Some(c) }] })
+                        .collect(),
+                })),
+            }
+
+            self.moves.clear();
+        }
     }
 
     /// Converts this builder into a [Command] vector
     pub fn build(mut self) -> Vec<Command> {
-        self.moves.retain(|(id, _, move_type)| move_type.required || !self.required.contains(id));
-        self.moves.sort_by_key(|(id, _, move_type)| (move_type.phase, *id));
-
-        let mut moves = vec![];
-        for (phase, commands) in &self.moves.iter().group_by(|(_, _, move_type)| move_type.phase) {
-            moves.extend(self.create_move_group(phase, commands.collect()));
-        }
-
-        for (phase, command) in moves {
-            self.push(phase, command);
-        }
-
-        self.commands.sort_by_key(|(phase, _)| *phase);
-        self.commands.into_iter().map(|(_, c)| c).collect()
+        self.apply_parallel_moves();
+        self.commands
     }
 
-    fn create_move_group(
+    fn process_move(
         &self,
-        move_phase: MovePhase,
-        group: Vec<&(Id, ObjectPosition, MoveType)>,
-    ) -> Vec<(CommandPhase, Command)> {
-        let phase = to_command_phase(move_phase);
-        let mut result = vec![];
-        let mut parallel = vec![];
-        for (id, position, move_type) in group {
-            if move_type.parallel {
-                parallel.push(self.new_move_command(*id, position.clone()))
-            } else {
-                result.push((phase, self.new_move_command(*id, position.clone())))
-            }
-        }
+        update_type: UpdateType,
+        id: Id,
+        position: &ObjectPosition,
+    ) -> Option<Command> {
+        let include = if let Id::CardId(card_id) = id {
+            update_type >= self.card_update_types.get(adapters::from_card_identifier(card_id))
+        } else {
+            true
+        };
 
-        if !parallel.is_empty() {
-            result.push((
-                phase,
-                Command::RunInParallel(RunInParallelCommand {
-                    commands: parallel
-                        .into_iter()
-                        .map(|command| CommandList {
-                            commands: vec![GameCommand { command: Some(command) }],
-                        })
-                        .collect(),
-                }),
-            ));
+        if include {
+            Some(Command::MoveGameObjects(MoveGameObjectsCommand {
+                ids: vec![GameObjectIdentifier { id: Some(id) }],
+                position: Some(position.clone()),
+                disable_animation: !self.animate,
+            }))
+        } else {
+            None
         }
-        result
-    }
-
-    fn new_move_command(&self, id: Id, position: ObjectPosition) -> Command {
-        Command::MoveGameObjects(MoveGameObjectsCommand {
-            ids: vec![GameObjectIdentifier { id: Some(id) }],
-            position: Some(position),
-            disable_animation: !self.animate,
-        })
     }
 }
 
-fn to_command_phase(move_phase: MovePhase) -> CommandPhase {
-    match move_phase {
-        MovePhase::StartMoves => CommandPhase::StartMoves,
-        MovePhase::StandardMoves => CommandPhase::StandardMoves,
-    }
+fn card_id_for_command(command: &Command) -> Option<CardId> {
+    let result = match command {
+        Command::CreateOrUpdateCard(c) => c.card.as_ref()?.card_id,
+        Command::DestroyCard(c) => c.card_id,
+        Command::MoveGameObjects(c) => {
+            if let Id::CardId(card_id) = c.ids[0].id? {
+                Some(card_id)
+            } else {
+                None
+            }
+        }
+        _ => None,
+    };
+
+    adapters::to_server_card_id(&result).ok()
 }

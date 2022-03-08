@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 492
+assertion_line: 513
 expression: "Summary::summarize(&response)"
 
 ---
@@ -33,12 +33,11 @@ command_list:
             sorting_key: 2
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
-    RunInParallel: 
-        MoveGameObjects: 
-            id: O45
-            position: 
-                sorting_key: 0
-                position: ObjectPositionBrowser
+    MoveGameObjects: 
+        id: O45
+        position: 
+            sorting_key: 0
+            position: ObjectPositionBrowser
     RenderInterface: 
     panels: 
         main_controls: 
@@ -76,12 +75,11 @@ channel_response:
             sorting_key: 2
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
-    RunInParallel: 
-        MoveGameObjects: 
-            id: O45
-            position: 
-                sorting_key: 0
-                position: ObjectPositionBrowser
+    MoveGameObjects: 
+        id: O45
+        position: 
+            sorting_key: 0
+            position: ObjectPositionBrowser
     RenderInterface: 
     panels: 
         main_controls: 

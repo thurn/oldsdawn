@@ -28,47 +28,17 @@ command_list:
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
                 can_play: true
         create_animation: DrawCard
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 2
+            position: ObjectPositionHand { owner: User }
     UpdateGameView: 
         user: 
             side: Overlord
             action_tracker: 2
         current_priority: User
         raid_active: false
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O1
-            card_icons: 
-                top_left_icon: "3"
-                bottom_right_icon: "5"
-            arena_frame: "<SpriteAddress>"
-            owning_player: User
-            revealed_card: 
-                card_frame: "<SpriteAddress>"
-                title_background: "<SpriteAddress>"
-                jewel: "<SpriteAddress>"
-                image: "<SpriteAddress>"
-                title: "Ice Dragon"
-                rules_text: "<RulesText>"
-                revealed_in_arena: false
-                targeting: "PickRoom"
-                on_release_position: 
-                    sorting_key: 4294967295
-                    position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
-                can_play: true
-        create_position: 
-            sorting_key: 2
-            position: ObjectPositionHand { owner: User }
-        create_animation: Unspecified
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 2
-            position: ObjectPositionHand { owner: User }
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 2
-            position: ObjectPositionHand { owner: User }
 channel_response: 
     CreateOrUpdateCard: 
         card: 
@@ -80,29 +50,14 @@ channel_response:
             sorting_key: 4294967295
             position: ObjectPositionDeck { owner: Opponent }
         create_animation: Unspecified
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 2
+            position: ObjectPositionHand { owner: Opponent }
     UpdateGameView: 
         opponent: 
             side: Overlord
             action_tracker: 2
         current_priority: Opponent
         raid_active: false
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O1
-            card_icons: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: Opponent
-        create_position: 
-            sorting_key: 2
-            position: ObjectPositionHand { owner: Opponent }
-        create_animation: Unspecified
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 2
-            position: ObjectPositionHand { owner: Opponent }
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 2
-            position: ObjectPositionHand { owner: Opponent }

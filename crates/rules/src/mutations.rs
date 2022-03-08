@@ -30,7 +30,7 @@ use data::delegates::{
 };
 use data::game::{CurrentTurn, GamePhase, GameState, MulliganDecision};
 use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side, TurnNumber};
-use data::updates::{GameUpdate, UpdateMode};
+use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
@@ -46,87 +46,57 @@ use crate::{dispatch, queries};
 /// game zone.
 #[instrument(skip(game))]
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
-    move_card_with_update_mode(game, card_id, new_position, UpdateMode::Push)
-}
-
-/// Implementation for [move_card] which exposes the ability to turn off
-/// updates.
-fn move_card_with_update_mode(
-    game: &mut GameState,
-    card_id: CardId,
-    new_position: CardPosition,
-    mut update_mode: UpdateMode,
-) {
     info!(?card_id, ?new_position, "move_card");
     let old_position = game.card(card_id).position();
     game.move_card(card_id, new_position);
 
     dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }));
 
-    if update_mode == UpdateMode::Push && old_position.in_deck() && new_position.in_hand() {
+    if old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, DrawCardEvent(card_id));
         game.updates.push(GameUpdate::DrawCard(card_id));
-        update_mode = UpdateMode::None;
     }
 
     if !old_position.in_play() && new_position.in_play() {
         dispatch::invoke_event(game, PlayCardEvent(card_id));
     }
 
-    if update_mode == UpdateMode::Push && new_position.kind() == CardPositionKind::DeckUnknown {
+    if new_position.kind() == CardPositionKind::DeckUnknown {
         game.updates.push(GameUpdate::ShuffleIntoDeck(card_id));
-        update_mode = UpdateMode::None;
     }
 
-    game.updates.push_with_update_mode(GameUpdate::MoveCard(card_id), update_mode);
+    if new_position.in_discard_pile()
+        || new_position.kind() == CardPositionKind::Room
+        || new_position.kind() == CardPositionKind::ArenaItem
+    {
+        game.updates.push(GameUpdate::MoveToZone(card_id));
+    }
 }
 
 /// Helper to move all cards in a list to a new [CardPosition] via [move_card].
 pub fn move_cards(game: &mut GameState, cards: &[CardId], to_position: CardPosition) {
-    move_cards_with_update_mode(game, cards, to_position, UpdateMode::Push)
-}
-
-pub fn move_cards_with_update_mode(
-    game: &mut GameState,
-    cards: &[CardId],
-    to_position: CardPosition,
-    update_mode: UpdateMode,
-) {
     for card_id in cards {
-        move_card_with_update_mode(game, *card_id, to_position, update_mode);
+        move_card(game, *card_id, to_position);
     }
 }
 
 // Shuffles the provided `cards` into the `side` player's deck, clearing their
 // revealed state for both players.
 pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) {
-    shuffle_into_deck_with_update_mode(game, side, cards, UpdateMode::Push)
-}
-
-pub fn shuffle_into_deck_with_update_mode(
-    game: &mut GameState,
-    side: Side,
-    cards: &[CardId],
-    update_mode: UpdateMode,
-) {
-    move_cards_with_update_mode(game, cards, CardPosition::DeckUnknown(side), update_mode);
+    move_cards(game, cards, CardPosition::DeckUnknown(side));
     for card_id in cards {
         set_revealed_to(game, *card_id, Side::Overlord, false);
         set_revealed_to(game, *card_id, Side::Champion, false);
     }
-    shuffle_deck_with_update_mode(game, side, update_mode);
+    shuffle_deck(game, side);
 }
 
 /// Shuffles the `side` player's deck, moving all cards into the `DeckUnknown`
 /// card position.
-pub fn shuffle_deck(game: &mut GameState, side: Side, _update_mode: UpdateMode) {
-    shuffle_deck_with_update_mode(game, side, UpdateMode::Push)
-}
-
-pub fn shuffle_deck_with_update_mode(game: &mut GameState, side: Side, update_mode: UpdateMode) {
+pub fn shuffle_deck(game: &mut GameState, side: Side) {
     let cards =
         game.cards_in_position(side, CardPosition::DeckTop(side)).map(|c| c.id).collect::<Vec<_>>();
-    move_cards_with_update_mode(game, &cards, CardPosition::DeckUnknown(side), update_mode);
+    move_cards(game, &cards, CardPosition::DeckUnknown(side));
 }
 
 /// Updates the 'revealed' state of a card to be visible to the indicated `side`
@@ -150,19 +120,10 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 /// Cards are set as revealed to the `side` player. If `push_updates` is true,
 /// [GameUpdate] values will be appended for each draw.
 pub fn draw_cards(game: &mut GameState, side: Side, count: usize) {
-    draw_cards_with_update_mode(game, side, count, UpdateMode::Push)
-}
-
-pub fn draw_cards_with_update_mode(
-    game: &mut GameState,
-    side: Side,
-    count: usize,
-    update_mode: UpdateMode,
-) {
-    let card_ids = realize_top_of_deck_with_update_mode(game, side, count, update_mode);
+    let card_ids = realize_top_of_deck(game, side, count);
     for card_id in card_ids {
         set_revealed_to(game, card_id, side, true);
-        move_card_with_update_mode(game, card_id, CardPosition::Hand(side), update_mode)
+        move_card(game, card_id, CardPosition::Hand(side))
     }
 }
 
@@ -251,9 +212,9 @@ pub fn deal_opening_hands(game: &mut GameState) {
             PromptAction::MulliganDecision(MulliganDecision::Mulligan),
         ],
     };
-    draw_cards_with_update_mode(game, Side::Overlord, 5, UpdateMode::None);
+    draw_cards(game, Side::Overlord, 5);
     set_prompt(game, Side::Overlord, prompt.clone());
-    draw_cards_with_update_mode(game, Side::Champion, 5, UpdateMode::None);
+    draw_cards(game, Side::Champion, 5);
     set_prompt(game, Side::Champion, prompt);
 }
 
@@ -286,15 +247,6 @@ pub fn check_start_game(game: &mut GameState) {
 ///
 /// Does not change the 'revealed' state of cards.
 pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
-    realize_top_of_deck_with_update_mode(game, side, count, UpdateMode::Push)
-}
-
-pub fn realize_top_of_deck_with_update_mode(
-    game: &mut GameState,
-    side: Side,
-    count: usize,
-    update_mode: UpdateMode,
-) -> Vec<CardId> {
     let mut cards = game.card_list_for_position(side, CardPosition::DeckTop(side));
     let result = if count <= cards.len() {
         cards[0..count].to_vec()
@@ -313,7 +265,7 @@ pub fn realize_top_of_deck_with_update_mode(
     assert_eq!(card_ids.len(), count);
 
     for card_id in &card_ids {
-        move_card_with_update_mode(game, *card_id, CardPosition::DeckTop(side), update_mode);
+        move_card(game, *card_id, CardPosition::DeckTop(side));
     }
 
     card_ids

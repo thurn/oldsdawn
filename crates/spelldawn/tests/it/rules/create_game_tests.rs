@@ -38,6 +38,7 @@ fn create_new_game() {
         session.user_id(),
         None,
     );
+
     assert_snapshot!(Summary::run(&response));
 }
 
@@ -116,6 +117,8 @@ fn mulligan_opening_hand() {
     session.connect(champion_id, Some(game_id)).expect("connect");
 
     let response = session.click_on(overlord_id, "Mulligan");
+    assert_snapshot!(Summary::summarize(&response));
+
     assert!(session.user.interface.controls().has_text("Waiting"));
     assert_eq!(0, session.user.cards.browser().len());
     assert_eq!(5, session.user.cards.hand(PlayerName::User).len());
@@ -124,8 +127,6 @@ fn mulligan_opening_hand() {
     assert_eq!(0, session.opponent.cards.hand(PlayerName::User).len());
     assert_eq!(5, session.opponent.cards.hand(PlayerName::Opponent).len());
     assert_eq!(5, session.opponent.cards.browser().len());
-
-    assert_snapshot!(Summary::summarize(&response));
 }
 
 #[test]

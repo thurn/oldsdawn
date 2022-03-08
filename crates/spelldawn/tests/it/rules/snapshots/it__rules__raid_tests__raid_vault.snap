@@ -41,11 +41,6 @@ command_list:
             sorting_key: 5
             position: ObjectPositionDeck { owner: Opponent }
         create_animation: Unspecified
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 5
-            position: ObjectPositionDeck { owner: Opponent }
     RunInParallel: 
         MoveGameObjects: 
             id: O1
@@ -104,11 +99,6 @@ channel_response:
             sorting_key: 5
             position: ObjectPositionDeck { owner: User }
         create_animation: Unspecified
-    MoveGameObjects: 
-        id: O1
-        position: 
-            sorting_key: 5
-            position: ObjectPositionDeck { owner: User }
     RunInParallel: 
         MoveGameObjects: 
             id: O1

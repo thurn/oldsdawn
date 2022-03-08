@@ -55,12 +55,12 @@ fn draw_card() {
         Args { turn_actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
     );
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
+    assert_snapshot!(Summary::run(&response));
+
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.hand(PlayerName::Opponent));
     assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
-
-    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
@@ -95,6 +95,8 @@ fn play_card() {
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
         g.user_id(),
     );
+    assert_snapshot!(Summary::run(&response));
+
     assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
     assert_eq!(9, g.me().mana());
@@ -104,8 +106,6 @@ fn play_card() {
         vec![CardName::ArcaneRecovery],
         g.opponent.cards.discard_pile(PlayerName::Opponent),
     );
-
-    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]
@@ -121,6 +121,8 @@ fn play_hidden_card() {
         }),
         g.user_id(),
     );
+    assert_snapshot!(Summary::run(&response));
+
     assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
     assert_eq!(0, g.me().mana());
@@ -130,8 +132,6 @@ fn play_hidden_card() {
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Back),
     );
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.room_cards(ROOM_ID, ClientRoomLocation::Back));
-
-    assert_snapshot!(Summary::run(&response));
 }
 
 #[test]

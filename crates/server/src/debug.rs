@@ -21,7 +21,7 @@ use data::delegates::{DawnEvent, DuskEvent};
 use data::game::GameState;
 use data::primitives::{GameId, PlayerId, Side};
 use data::updates::GameUpdate;
-use display::adapters;
+use display::{adapters, render};
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -64,8 +64,8 @@ pub fn handle_debug_action(
         }),
         DebugAction::ResetGame => {
             let game = load_game(database, game_id)?;
-            display::on_disconnect(game.overlord.id);
-            display::on_disconnect(game.champion.id);
+            render::on_disconnect(game.overlord.id);
+            render::on_disconnect(game.champion.id);
             reset_game(database, game_id)?;
             let commands = CommandList {
                 commands: vec![GameCommand {
@@ -121,7 +121,7 @@ pub fn handle_debug_action(
             Ok(())
         }),
         DebugAction::FlipViewpoint => {
-            display::on_disconnect(player_id);
+            render::on_disconnect(player_id);
             Ok(GameResponse::from_commands(vec![
                 Command::SetPlayerId(SetPlayerIdentifierCommand {
                     id: Some(opponent_player_id(database, player_id, game_id)?),
@@ -142,7 +142,7 @@ pub fn handle_debug_action(
             let mut game = database.game(GameId::new(u64::MAX - index))?;
             game.id = game_id.with_context(|| "Expected GameId")?;
             database.write_game(&game)?;
-            display::on_disconnect(player_id);
+            render::on_disconnect(player_id);
             Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
                 scene_name: "Labyrinth".to_string(),
                 mode: SceneLoadMode::Single.into(),
