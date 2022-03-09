@@ -149,6 +149,7 @@ fn both_keep_opening_hands() {
 
     session.click_on(overlord_id, "Keep");
     let response = session.click_on(champion_id, "Keep");
+    assert_snapshot!(Summary::summarize(&response));
 
     assert_eq!(5, session.user.this_player.mana());
     assert_eq!(5, session.user.other_player.mana());
@@ -161,8 +162,6 @@ fn both_keep_opening_hands() {
     assert_eq!(3, session.opponent.other_player.actions());
 
     assert!(session.dusk());
-
-    assert_snapshot!(Summary::summarize(&response));
 }
 
 fn make_test_session(game_id: GameId, overlord_id: PlayerId, champion_id: PlayerId) -> TestSession {

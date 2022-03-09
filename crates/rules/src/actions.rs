@@ -55,11 +55,16 @@ pub fn handle_mulligan_decision(
         Side::Champion => mulligans.champion = Some(decision),
     }
 
-    if decision == MulliganDecision::Mulligan {
-        let cards = game.hand(user_side).map(|c| c.id).collect::<Vec<_>>();
-        mutations::shuffle_into_deck(game, user_side, &cards);
-        mutations::draw_cards(game, user_side, 5);
-        game.updates.push(GameUpdate::MulliganHand(user_side, cards));
+    let hand = game.hand(user_side).map(|c| c.id).collect::<Vec<_>>();
+    match decision {
+        MulliganDecision::Keep => {
+            game.updates.push(GameUpdate::KeepHand(user_side, hand));
+        }
+        MulliganDecision::Mulligan => {
+            mutations::shuffle_into_deck(game, user_side, &hand);
+            let new_hand = mutations::draw_cards(game, user_side, 5);
+            game.updates.push(GameUpdate::MulliganHand(user_side, hand, new_hand));
+        }
     }
 
     mutations::check_start_game(game);

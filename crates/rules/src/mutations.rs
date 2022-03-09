@@ -118,13 +118,15 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 /// place them into their hand.
 ///
 /// Cards are set as revealed to the `side` player. If `push_updates` is true,
-/// [GameUpdate] values will be appended for each draw.
-pub fn draw_cards(game: &mut GameState, side: Side, count: usize) {
+/// [GameUpdate] values will be appended for each draw. Returns a vector of the
+/// newly-drawn [CardId]s.
+pub fn draw_cards(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
     let card_ids = realize_top_of_deck(game, side, count);
-    for card_id in card_ids {
-        set_revealed_to(game, card_id, side, true);
-        move_card(game, card_id, CardPosition::Hand(side))
+    for card_id in &card_ids {
+        set_revealed_to(game, *card_id, side, true);
+        move_card(game, *card_id, CardPosition::Hand(side))
     }
+    card_ids
 }
 
 /// Give mana to the indicated player.
@@ -301,5 +303,5 @@ fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
     game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
     game.updates.push(GameUpdate::StartTurn(next_side));
 
-    // draw_cards(game, next_side, 1)
+    draw_cards(game, next_side, 1);
 }

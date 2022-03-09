@@ -33,6 +33,17 @@ command_list:
             sorting_key: 2
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C1
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: false
+        create_position: 
+            sorting_key: 4
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
     MoveGameObjects: 
         id: O45
         position: 

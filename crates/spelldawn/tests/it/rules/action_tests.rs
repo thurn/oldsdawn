@@ -213,6 +213,8 @@ fn switch_turn() {
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
     let response = g.perform_action(Action::GainMana(GainManaAction {}), g.user_id());
+    assert_snapshot!(Summary::run(&response));
+
     assert_eq!(8, g.me().mana());
     assert_eq!(8, g.opponent.other_player.mana());
     assert_eq!(0, g.me().actions());
@@ -221,6 +223,4 @@ fn switch_turn() {
     assert_eq!(3, g.opponent.this_player.actions());
     assert_eq!(g.user.data.priority(), PlayerName::Opponent);
     assert_eq!(g.opponent.data.priority(), PlayerName::User);
-
-    assert_snapshot!(Summary::run(&response));
 }

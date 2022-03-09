@@ -1,11 +1,26 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 248
+assertion_line: 216
 expression: "Summary::run(&response)"
 
 ---
 
 command_list: 
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C1
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 4294967295
+            position: ObjectPositionDeck { owner: Opponent }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: C1
+        position: 
+            sorting_key: 2
+            position: ObjectPositionHand { owner: Opponent }
     UpdateGameView: 
         user: 
             side: Overlord
@@ -18,6 +33,32 @@ command_list:
         raid_active: false
     DisplayGameMessage: Dawn
 channel_response: 
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C1
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Champion Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: true
+        create_animation: DrawCard
+    MoveGameObjects: 
+        id: C1
+        position: 
+            sorting_key: 2
+            position: ObjectPositionHand { owner: User }
     UpdateGameView: 
         user: 
             side: Champion

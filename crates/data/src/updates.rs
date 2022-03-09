@@ -47,10 +47,15 @@ pub enum GameUpdate {
     /// Indicates that a new hand of cards has been drawn for the provided
     /// player.
     DrawHand(Side),
+    /// A user kept a hand with the provided card list during the 'resolve
+    /// mulligans' step
+    KeepHand(Side, Vec<CardId>),
+    /// A user mulliganed a hand with the first provided card ID list and
+    /// received a hand with the second provided card ID list during the
+    /// 'resolve mulligans' step.
+    MulliganHand(Side, Vec<CardId>, Vec<CardId>),
     /// A card has moved from a deck to a player's hand.
     DrawCard(CardId),
-    /// Shuffle cards back into a deck during a mulligan
-    MulliganHand(Side, Vec<CardId>),
     /// A card has been shuffled back into a player's deck
     ShuffleIntoDeck(CardId),
     /// A card has been completely removed from the game
@@ -68,8 +73,6 @@ pub enum GameUpdate {
 
     GeneralUpdate,
 
-    /// Indicates that a player's turn has started
-    StartTurn(Side),
     /// A card has become revealed to the opponent. If this occurs while a card
     /// is changing zones, this update should be added before `MoveCard` to
     /// move the card to its final destination.
@@ -79,6 +82,9 @@ pub enum GameUpdate {
     /// The game has ended and the indicated player has won
     GameOver(Side),
     MoveToZone(CardId),
+
+    /// Indicates that a player's turn has started
+    StartTurn(Side),
 }
 
 impl GameUpdate {

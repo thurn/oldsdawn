@@ -12,6 +12,17 @@ command_list:
             action_tracker: 1
         current_priority: Opponent
         raid_active: true
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C1
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: false
+        create_position: 
+            sorting_key: 6
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
     RunInParallel: 
         MoveGameObjects: 
             id: O44

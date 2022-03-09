@@ -36,7 +36,7 @@ command_list:
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
                 can_play: false
         create_position: 
-            sorting_key: 11
+            sorting_key: 15
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
     RunInParallel: 
@@ -90,7 +90,7 @@ channel_response:
                 revealed_in_arena: true
                 can_play: false
         create_position: 
-            sorting_key: 11
+            sorting_key: 15
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
         create_animation: Unspecified
     RunInParallel: 

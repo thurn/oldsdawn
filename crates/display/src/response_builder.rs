@@ -169,6 +169,10 @@ impl ResponseBuilder {
         }
     }
 
+    pub fn adapt_player_name(&self, side: Side) -> i32 {
+        adapters::to_player_name(side, self.user_side).into()
+    }
+
     /// Converts this builder into a [Command] vector
     pub fn build(mut self) -> Vec<Command> {
         self.apply_parallel_moves();

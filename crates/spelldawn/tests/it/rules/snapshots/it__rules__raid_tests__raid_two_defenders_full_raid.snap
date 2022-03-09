@@ -13,7 +13,7 @@ command_list:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 8
+            sorting_key: 10
             position: ObjectPositionScoreAnimation
     PlayEffect: 
         effect: "<EffectAddress>"
@@ -28,7 +28,7 @@ command_list:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 8
+            sorting_key: 10
             position: ObjectPositionIdentity { owner: User }
     UpdateGameView: 
         user: 
@@ -50,7 +50,7 @@ channel_response:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 8
+            sorting_key: 10
             position: ObjectPositionScoreAnimation
     PlayEffect: 
         effect: "<EffectAddress>"
@@ -65,7 +65,7 @@ channel_response:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 8
+            sorting_key: 10
             position: ObjectPositionIdentity { owner: Opponent }
     UpdateGameView: 
         opponent: 

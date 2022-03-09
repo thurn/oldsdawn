@@ -38,7 +38,7 @@ command_list:
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
                 can_play: false
         create_position: 
-            sorting_key: 5
+            sorting_key: 7
             position: ObjectPositionDeck { owner: Opponent }
         create_animation: Unspecified
     RunInParallel: 
@@ -96,7 +96,7 @@ channel_response:
             arena_frame: "<SpriteAddress>"
             owning_player: User
         create_position: 
-            sorting_key: 5
+            sorting_key: 7
             position: ObjectPositionDeck { owner: User }
         create_animation: Unspecified
     RunInParallel: 

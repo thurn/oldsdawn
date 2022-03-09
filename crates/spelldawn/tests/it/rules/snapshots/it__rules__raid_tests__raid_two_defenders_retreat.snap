@@ -9,6 +9,17 @@ command_list:
     UpdateGameView: 
         current_priority: User
         raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C1
+            owning_player: User
+            revealed_card: 
+                revealed_in_arena: false
+                can_play: true
+        create_position: 
+            sorting_key: 6
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
     RunInParallel: 
         MoveGameObjects: 
             id: O45

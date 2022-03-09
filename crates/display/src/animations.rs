@@ -58,15 +58,20 @@ pub fn populate_card_update_types(
                 types.insert(card.id, UpdateType::Animation);
             }
         }
-        GameUpdate::DrawCard(card_id) => {
-            types.insert(*card_id, UpdateType::Utility);
-        }
-        GameUpdate::MulliganHand(side, cards) => {
+        GameUpdate::KeepHand(_, cards) => {
             for card_id in cards {
                 types.insert(*card_id, UpdateType::Animation);
             }
-            for card in game.hand(*side) {
-                types.insert(card.id, UpdateType::Animation);
+        }
+        GameUpdate::DrawCard(card_id) => {
+            types.insert(*card_id, UpdateType::Utility);
+        }
+        GameUpdate::MulliganHand(_, old_cards, new_cards) => {
+            for card_id in old_cards {
+                types.insert(*card_id, UpdateType::Animation);
+            }
+            for card_id in new_cards {
+                types.insert(*card_id, UpdateType::Animation);
             }
         }
         GameUpdate::ShuffleIntoDeck(card_id) => {
@@ -81,7 +86,6 @@ pub fn populate_card_update_types(
         GameUpdate::ChampionScoreCard(card_id, _) => {
             types.insert(*card_id, UpdateType::Animation);
         }
-        // GameUpdate::MoveToDiscard(card_id) => types.insert(card_id, UpdateType::Utility),
         _ => {}
     }
 }
@@ -96,26 +100,17 @@ pub fn render(
     user_side: Side,
 ) {
     match update {
-        GameUpdate::StartTurn(side) => {
-            start_turn(commands, *side);
+        GameUpdate::StartTurn(side) => start_turn(commands, *side),
+        GameUpdate::DrawHand(side) => draw_hand(commands, game, *side),
+        GameUpdate::KeepHand(side, cards) => keep_hand(commands, game, *side, cards),
+        GameUpdate::MulliganHand(side, old_cards, new_cards) => {
+            mulligan_hand(commands, game, *side, old_cards, new_cards)
         }
-        GameUpdate::DrawHand(side) => {
-            draw_hand(commands, game, *side);
-        }
-        GameUpdate::MulliganHand(side, cards) => {
-            mulligan_hand(commands, game, *side, cards);
-        }
-        GameUpdate::DrawCard(card_id) => {
-            draw_card(commands, game, user_side, *card_id);
-        }
-        GameUpdate::RevealToOpponent(card_id) => {
-            reveal_card(commands, game, game.card(*card_id));
-        }
-        GameUpdate::InitiateRaid(room_id) => {
-            initiate_raid(commands, *room_id);
-        }
+        GameUpdate::DrawCard(card_id) => draw_card(commands, game, user_side, *card_id),
+        GameUpdate::RevealToOpponent(card_id) => reveal_card(commands, game, game.card(*card_id)),
+        GameUpdate::InitiateRaid(room_id) => initiate_raid(commands, *room_id),
         GameUpdate::TargetedInteraction(interaction) => {
-            targeted_interaction(commands, game, user_side, *interaction);
+            targeted_interaction(commands, game, user_side, *interaction)
         }
         GameUpdate::ChampionScoreCard(card_id, _) => {
             score_champion_card(commands, game.card(*card_id))
@@ -177,9 +172,40 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
     }
 }
 
-fn mulligan_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, cards: &[CardId]) {
-    let mulligan_player_name = adapters::to_player_name(side, commands.user_side);
+fn keep_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, cards: &[CardId]) {
     for card_id in cards {
+        commands.move_card(
+            UpdateType::Animation,
+            game.card(*card_id),
+            Position::Hand(ObjectPositionHand { owner: commands.adapt_player_name(side) }),
+        );
+    }
+
+    commands.apply_parallel_moves();
+
+    for card_id in cards {
+        // Need to manually update cards to change their 'can play' value
+        commands.push(
+            UpdateType::Animation,
+            create_or_update(
+                game,
+                commands.user_side,
+                *card_id,
+                CardCreationStrategy::SnapToCurrentPosition,
+            ),
+        )
+    }
+}
+
+fn mulligan_hand(
+    commands: &mut ResponseBuilder,
+    game: &GameState,
+    side: Side,
+    old_cards: &[CardId],
+    new_cards: &[CardId],
+) {
+    let mulligan_player_name = adapters::to_player_name(side, commands.user_side);
+    for card_id in old_cards {
         commands.move_card(
             UpdateType::Animation,
             game.card(*card_id),
@@ -188,20 +214,19 @@ fn mulligan_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, c
     }
     commands.apply_parallel_moves();
 
-    for card_id in cards {
+    for card_id in old_cards {
         destroy_card(commands, UpdateType::Animation, *card_id);
     }
 
-    let hand = game.card_list_for_position(side, CardPosition::Hand(side));
-    for card in &hand {
+    for card_id in new_cards {
         commands.push(
             UpdateType::Animation,
             create_or_update(
                 game,
                 commands.user_side,
-                card.id,
+                *card_id,
                 CardCreationStrategy::CreateAtPosition(ObjectPosition {
-                    sorting_key: card.sorting_key,
+                    sorting_key: game.card(*card_id).sorting_key,
                     position: Some(Position::Deck(ObjectPositionDeck {
                         owner: mulligan_player_name.into(),
                     })),
@@ -212,7 +237,7 @@ fn mulligan_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, c
         if side == commands.user_side {
             commands.move_card_immediate(
                 UpdateType::Animation,
-                card,
+                game.card(*card_id),
                 Position::Browser(ObjectPositionBrowser {}),
             );
         }
@@ -222,10 +247,10 @@ fn mulligan_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, c
         commands.push(UpdateType::Animation, delay(1500));
     }
 
-    for card in &hand {
+    for card_id in new_cards {
         commands.move_card(
             UpdateType::Animation,
-            card,
+            game.card(*card_id),
             Position::Hand(ObjectPositionHand { owner: mulligan_player_name.into() }),
         );
     }

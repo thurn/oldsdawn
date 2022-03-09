@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/create_game_tests.rs
-assertion_line: 101
+assertion_line: 98
 expression: "Summary::summarize(&response)"
 
 ---
@@ -32,6 +32,126 @@ command_list:
             position: 
                 sorting_key: 10
                 position: ObjectPositionHand { owner: User }
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O1
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 6
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O2
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 7
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O3
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 8
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O4
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 9
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O5
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                revealed_in_arena: false
+                targeting: 
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+                can_play: false
+        create_position: 
+            sorting_key: 10
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
     RenderInterface: 
     panels: 
         main_controls: 
@@ -39,3 +159,79 @@ command_list:
                 text: "Waiting for Opponent..."
         card_anchor_nodes: 
 channel_response: 
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 6
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 7
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 8
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 9
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 10
+                position: ObjectPositionHand { owner: Opponent }
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O1
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 6
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O2
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 7
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O3
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 8
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O4
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 9
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O5
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 10
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
