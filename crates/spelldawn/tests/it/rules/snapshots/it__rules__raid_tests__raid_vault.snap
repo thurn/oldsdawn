@@ -76,6 +76,11 @@ command_list:
             card_corner: BottomLeft
             node_corner: TopRight
             card_corner: BottomRight
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 5
+            position: ObjectPositionDeck { owner: Opponent }
 channel_response: 
     FireProjectile: 
         source_id: C45
@@ -120,3 +125,8 @@ channel_response:
             position: 
                 sorting_key: 0
                 position: ObjectPositionDeckContainer { owner: User }
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 5
+            position: ObjectPositionDeck { owner: User }

@@ -51,9 +51,11 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     game.move_card(card_id, new_position);
 
     dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }));
+    let mut pushed_update = false;
 
     if old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, DrawCardEvent(card_id));
+        pushed_update = true;
         game.updates.push(GameUpdate::DrawCard(card_id));
     }
 
@@ -62,13 +64,11 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     }
 
     if new_position.kind() == CardPositionKind::DeckUnknown {
+        pushed_update = true;
         game.updates.push(GameUpdate::ShuffleIntoDeck(card_id));
     }
 
-    if new_position.in_discard_pile()
-        || new_position.kind() == CardPositionKind::Room
-        || new_position.kind() == CardPositionKind::ArenaItem
-    {
+    if !pushed_update {
         game.updates.push(GameUpdate::MoveToZone(card_id));
     }
 }
