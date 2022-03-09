@@ -81,7 +81,7 @@ pub fn populate_card_update_types(
         GameUpdate::ChampionScoreCard(card_id, _) => {
             types.insert(*card_id, UpdateType::Animation);
         }
-        GameUpdate::MoveToZone(card_id) => types.insert(*card_id, UpdateType::General),
+        // GameUpdate::MoveToDiscard(card_id) => types.insert(card_id, UpdateType::Utility),
         _ => {}
     }
 }
@@ -122,7 +122,7 @@ pub fn render(
         }
         GameUpdate::DestroyCard(card_id) => destroy_card(commands, UpdateType::Utility, *card_id),
         GameUpdate::MoveToZone(card_id) => {
-            move_card(commands, UpdateType::General, game.card(*card_id))
+            move_card(commands, UpdateType::Utility, game.card(*card_id))
         }
         GameUpdate::ShuffleIntoDeck(card_id) => {
             shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
