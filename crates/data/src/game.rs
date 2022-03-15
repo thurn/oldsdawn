@@ -325,6 +325,14 @@ impl GameState {
         self.cards(side).iter().filter(move |c| c.position() == position)
     }
 
+    pub fn cards_in_position_mut(
+        &mut self,
+        side: Side,
+        position: CardPosition,
+    ) -> impl Iterator<Item = &mut CardState> {
+        self.cards_mut(side).iter_mut().filter(move |c| c.position() == position)
+    }
+
     /// Cards owned by a player in a given position, in sorting-key order
     pub fn card_list_for_position(&self, side: Side, position: CardPosition) -> Vec<&CardState> {
         let mut result = self.cards_in_position(side, position).collect::<Vec<_>>();
@@ -361,7 +369,7 @@ impl GameState {
         )
     }
 
-    /// Overlord cards in a given room, in alphabetical order
+    /// Overlord cards in a given room (not defenders), in alphabetical order
     pub fn occupants(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
     }

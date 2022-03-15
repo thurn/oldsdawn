@@ -179,6 +179,22 @@ pub fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     Ok(())
 }
 
+pub fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) -> Result<()> {
+    info!(?user_side, "level_up_room_action");
+    ensure!(
+        flags::can_level_up_room(game, user_side, room_id),
+        "Cannot level up room for {:?}",
+        user_side
+    );
+    mutations::spend_action_points(game, user_side, 1);
+    mutations::spend_mana(game, user_side, 1);
+    mutations::level_up_room(game, room_id);
+    mutations::check_end_turn(game, user_side);
+    game.updates.push(GameUpdate::LevelUpRoom(room_id));
+
+    Ok(())
+}
+
 /// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
 pub fn handle_prompt_action(
     game: &mut GameState,

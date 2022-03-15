@@ -54,16 +54,16 @@ pub enum GameUpdate {
     /// received a hand with the second provided card ID list during the
     /// 'resolve mulligans' step.
     MulliganHand(Side, Vec<CardId>, Vec<CardId>),
+    /// A room has been leveled up
+    LevelUpRoom(RoomId),
+    /// A raid has started on the indicated room
+    InitiateRaid(RoomId),
     /// A card has moved from a deck to a player's hand.
     DrawCard(CardId),
     /// A card has been shuffled back into a player's deck
     ShuffleIntoDeck(CardId),
     /// A card has been completely removed from the game
     DestroyCard(CardId),
-    /// A room has been leveled up
-    LevelUpRoom(RoomId),
-    /// A raid has started on the indicated room
-    InitiateRaid(RoomId),
     /// Indicates that one card or game object targeted another with an effect.
     TargetedInteraction(TargetedInteraction),
     /// A card has been scored by the overlord player

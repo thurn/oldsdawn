@@ -29,7 +29,9 @@ use data::delegates::{
     Scope, StoredManaTakenEvent,
 };
 use data::game::{CurrentTurn, GamePhase, GameState, MulliganDecision};
-use data::primitives::{ActionCount, BoostData, CardId, ManaValue, Side, TurnNumber};
+use data::primitives::{
+    ActionCount, BoostData, CardId, ManaValue, RoomId, RoomLocation, Side, TurnNumber,
+};
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
@@ -287,6 +289,18 @@ pub fn check_end_turn(game: &mut GameState, side: Side) {
         };
         let next_side = side.opponent();
         start_turn(game, next_side, turn_number);
+    }
+}
+
+/// Increases the level of all `can_level_up` Overlord cards in a room by 1.
+///
+/// Does not spend mana/actions etc.
+pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
+    for occupant in game
+        .cards_in_position_mut(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
+        .filter(|card| crate::get(card.name).config.stats.can_level_up)
+    {
+        occupant.data.card_level += 1;
     }
 }
 

@@ -60,7 +60,7 @@ pub struct SchemePoints {
     pub points: PointsValue,
 }
 
-/// Base card numeric values
+/// Base card state values
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default)]
 pub struct CardStats {
     /// Damage required to destroy this card
@@ -74,6 +74,8 @@ pub struct CardStats {
     pub attack_boost: Option<AttackBoost>,
     /// Level Requirement & points for scoring this card
     pub scheme_points: Option<SchemePoints>,
+    /// Can this card gain levels from the 'level up room' action?
+    pub can_level_up: bool,
 }
 
 /// Possible types of ability

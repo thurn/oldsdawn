@@ -153,7 +153,8 @@ pub fn health(health: HealthValue) -> CardStats {
     CardStats { health: Some(health), ..CardStats::default() }
 }
 
-/// Helper to create a [CardStats] with the given [SchemePoints]
+/// Helper to create a [CardStats] with the given [SchemePoints] and mark it as
+/// a card which can be leveled up.
 pub fn scheme_points(points: SchemePoints) -> CardStats {
-    CardStats { scheme_points: Some(points), ..CardStats::default() }
+    CardStats { scheme_points: Some(points), can_level_up: true, ..CardStats::default() }
 }

@@ -196,7 +196,15 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
                 )
             })
         }
-        _ => Ok(GameResponse::default()),
+        Action::LevelUpRoom(level_up) => {
+            handle_action(database, player_id, game_id, |game, user_side| {
+                actions::level_up_room_action(
+                    game,
+                    user_side,
+                    adapters::to_server_room_id(level_up.room_id)?,
+                )
+            })
+        }
     }?;
 
     let commands = response.command_list.commands.iter().map(command_name).collect::<Vec<_>>();

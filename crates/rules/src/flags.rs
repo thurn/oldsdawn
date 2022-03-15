@@ -85,9 +85,15 @@ pub fn can_initiate_raid(game: &GameState, side: Side, target: RoomId) -> bool {
 
 /// Returns whether the indicated player can currently take the basic game
 /// action to level up a room
-pub fn can_level_up_room(game: &GameState, side: Side) -> bool {
-    let can_level_up =
-        side == Side::Overlord && game.player(side).mana > 0 && queries::in_main_phase(game, side);
+pub fn can_level_up_room(game: &GameState, side: Side, room_id: RoomId) -> bool {
+    let has_level_card = game
+        .occupants(room_id)
+        .chain(game.defenders_alphabetical(room_id))
+        .any(|card| crate::get(card.name).config.stats.can_level_up);
+    let can_level_up = has_level_card
+        && side == Side::Overlord
+        && game.player(side).mana > 0
+        && queries::in_main_phase(game, side);
     dispatch::perform_query(game, CanLevelUpRoomQuery(side), Flag::new(can_level_up)).into()
 }
 

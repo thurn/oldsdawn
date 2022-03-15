@@ -82,6 +82,20 @@ pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
     }
 }
 
+pub fn to_server_room_id(identifier: i32) -> Result<RoomId> {
+    match RoomIdentifier::from_i32(identifier) {
+        Some(RoomIdentifier::Vault) => Ok(RoomId::Vault),
+        Some(RoomIdentifier::Sanctum) => Ok(RoomId::Sanctum),
+        Some(RoomIdentifier::Crypts) => Ok(RoomId::Crypts),
+        Some(RoomIdentifier::RoomA) => Ok(RoomId::RoomA),
+        Some(RoomIdentifier::RoomB) => Ok(RoomId::RoomB),
+        Some(RoomIdentifier::RoomC) => Ok(RoomId::RoomC),
+        Some(RoomIdentifier::RoomD) => Ok(RoomId::RoomD),
+        Some(RoomIdentifier::RoomE) => Ok(RoomId::RoomE),
+        _ => bail!("Invalid RoomId: {:?}", identifier),
+    }
+}
+
 /// Equivalent to [to_server_card_id] which panics on failure
 pub fn from_card_identifier(card_id: CardIdentifier) -> CardId {
     to_server_card_id(&Some(card_id)).expect("Invalid CardIdentifier")

@@ -39,8 +39,9 @@ use protos::spelldawn::{
 };
 use protos::spelldawn::{
     DestroyCardCommand, FireProjectileCommand, MusicState, ObjectPositionBrowser,
-    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionScoreAnimation, PlayEffectCommand,
-    PlayEffectPosition, PlaySoundCommand, SetMusicCommand,
+    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionIdentityContainer,
+    ObjectPositionScoreAnimation, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand,
+    SetMusicCommand,
 };
 
 use crate::full_sync::CardCreationStrategy;
@@ -100,6 +101,8 @@ pub fn render(
     user_side: Side,
 ) {
     match update {
+        GameUpdate::LevelUpRoom(room_id) => level_up_room(commands, *room_id),
+        GameUpdate::InitiateRaid(room_id) => initiate_raid(commands, *room_id),
         GameUpdate::StartTurn(side) => start_turn(commands, *side),
         GameUpdate::DrawHand(side) => draw_hand(commands, game, *side),
         GameUpdate::KeepHand(side, cards) => keep_hand(commands, game, *side, cards),
@@ -108,7 +111,6 @@ pub fn render(
         }
         GameUpdate::DrawCard(card_id) => draw_card(commands, game, user_side, *card_id),
         GameUpdate::RevealToOpponent(card_id) => reveal_card(commands, game, game.card(*card_id)),
-        GameUpdate::InitiateRaid(room_id) => initiate_raid(commands, *room_id),
         GameUpdate::TargetedInteraction(interaction) => {
             targeted_interaction(commands, game, user_side, *interaction)
         }
@@ -333,13 +335,39 @@ fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
         commands.push(
             UpdateType::Animation,
             Command::VisitRoom(VisitRoomCommand {
-                initiator: adapters::to_player_name(Side::Champion, commands.user_side).into(),
+                initiator: commands.adapt_player_name(Side::Champion),
                 room_id: adapters::adapt_room_id(target).into(),
                 visit_type: RoomVisitType::InitiateRaid.into(),
             }),
         );
         commands.push(UpdateType::Animation, delay(500));
     }
+}
+
+fn level_up_room(commands: &mut ResponseBuilder, target: RoomId) {
+    let overlord_player_name = commands.adapt_player_name(Side::Overlord);
+    if commands.user_side == Side::Champion {
+        commands.push(
+            UpdateType::Animation,
+            Command::VisitRoom(VisitRoomCommand {
+                initiator: overlord_player_name,
+                room_id: adapters::adapt_room_id(target).into(),
+                visit_type: RoomVisitType::LevelUpRoom.into(),
+            }),
+        );
+        commands.push(UpdateType::Animation, delay(500));
+    }
+
+    commands.move_object(
+        UpdateType::Animation,
+        Id::Identity(overlord_player_name),
+        ObjectPosition {
+            sorting_key: 0,
+            position: Some(Position::IdentityContainer(ObjectPositionIdentityContainer {
+                owner: overlord_player_name,
+            })),
+        },
+    )
 }
 
 fn targeted_interaction(
