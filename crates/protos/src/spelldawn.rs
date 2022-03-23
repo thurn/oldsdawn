@@ -545,43 +545,45 @@ pub struct RevealedCardView {
     #[prost(message, optional, tag = "6")]
     pub rules_text: ::core::option::Option<RulesText>,
     ///
-    /// True if this card should be displayed as visible to the opponent when in
-    /// the arena.
-    #[prost(bool, tag = "7")]
-    pub revealed_in_arena: bool,
-    ///
     /// Custom targeting behavior for a card. If unspecified, no targeting UI
     /// is shown.
-    #[prost(message, optional, tag = "8")]
+    #[prost(message, optional, tag = "7")]
     pub targeting: ::core::option::Option<CardTargeting>,
     ///
     /// Where to move a played card. Information from 'targeting' will be
     /// incorporated to fill this in, e.g. if a room is targeted and
     /// ObjectPositionRoom is selected here with no RoomId, the targeted room
     /// is used.
-    #[prost(message, optional, tag = "9")]
+    #[prost(message, optional, tag = "8")]
     pub on_release_position: ::core::option::Option<ObjectPosition>,
     /// Can this card currently be played when it is in hand?
-    #[prost(bool, tag = "10")]
+    #[prost(bool, tag = "9")]
     pub can_play: bool,
     ///
     /// Additional interface element rendered to the side of the card during an
     /// info zoom.
-    #[prost(message, optional, tag = "11")]
+    #[prost(message, optional, tag = "10")]
     pub supplemental_info: ::core::option::Option<Node>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardView {
     #[prost(message, optional, tag = "1")]
     pub card_id: ::core::option::Option<CardIdentifier>,
-    #[prost(message, optional, tag = "2")]
+    /// * Whether the current user is able to see the front of this card.
+    #[prost(bool, tag = "2")]
+    pub revealed_to_viewer: bool,
+    /// * Whether the opposing player is able to see the front of this card.
+    #[prost(bool, tag = "3")]
+    pub revealed_to_opponent: bool,
+    #[prost(message, optional, tag = "4")]
     pub card_icons: ::core::option::Option<CardIcons>,
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "5")]
     pub arena_frame: ::core::option::Option<SpriteAddress>,
     /// Used to e.g. determine which card back to display for this card.
-    #[prost(enumeration = "PlayerName", tag = "4")]
+    #[prost(enumeration = "PlayerName", tag = "6")]
     pub owning_player: i32,
-    #[prost(message, optional, tag = "5")]
+    /// * Card information which is only present on revealed cards.
+    #[prost(message, optional, tag = "7")]
     pub revealed_card: ::core::option::Option<RevealedCardView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

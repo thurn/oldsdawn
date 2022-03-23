@@ -171,6 +171,8 @@ pub fn create_or_update_card(
     CreateOrUpdateCardCommand {
         card: Some(CardView {
             card_id: Some(adapters::adapt_card_id(card.id)),
+            revealed_to_viewer: card.is_revealed_to(user_side),
+            revealed_to_opponent: card.is_revealed_to(user_side.opponent()),
             card_icons: Some(card_icons(game, card, definition, revealed)),
             arena_frame: Some(assets::arena_frame(
                 definition.side,
@@ -193,46 +195,46 @@ fn card_icons(
     definition: &CardDefinition,
     revealed: bool,
 ) -> CardIcons {
-    if revealed {
-        CardIcons {
-            top_left_icon: queries::mana_cost(game, card.id).map(|mana| CardIcon {
-                background: Some(assets::card_icon(CardIconType::Mana)),
-                text: Some(mana.to_string()),
-                background_scale: assets::background_scale(CardIconType::Mana),
-            }),
-            bottom_left_icon: definition.config.stats.shield.map(|_| CardIcon {
-                background: Some(assets::card_icon(CardIconType::Shield)),
-                text: Some(queries::shield(game, card.id).to_string()),
-                background_scale: assets::background_scale(CardIconType::Shield),
-            }),
-            bottom_right_icon: definition
-                .config
-                .stats
-                .base_attack
-                .map(|_| CardIcon {
-                    background: Some(assets::card_icon(CardIconType::Attack)),
-                    text: Some(queries::attack(game, card.id).to_string()),
-                    background_scale: assets::background_scale(CardIconType::Attack),
-                })
-                .or_else(|| {
-                    definition.config.stats.health.map(|_| CardIcon {
-                        background: Some(assets::card_icon(CardIconType::Health)),
-                        text: Some(queries::health(game, card.id).to_string()),
-                        background_scale: assets::background_scale(CardIconType::Health),
-                    })
-                }),
-            ..CardIcons::default()
-        }
-    } else {
-        CardIcons {
-            arena_icon: (card.data.card_level > 0).then(|| CardIcon {
-                background: Some(assets::card_icon(CardIconType::LevelCounter)),
-                text: Some(card.data.card_level.to_string()),
-                background_scale: assets::background_scale(CardIconType::LevelCounter),
-            }),
-            ..CardIcons::default()
-        }
+    let mut icons = CardIcons::default();
+
+    if card.data.card_level > 0 {
+        icons.arena_icon = Some(CardIcon {
+            background: Some(assets::card_icon(CardIconType::LevelCounter)),
+            text: Some(card.data.card_level.to_string()),
+            background_scale: assets::background_scale(CardIconType::LevelCounter),
+        });
     }
+
+    if revealed {
+        icons.top_left_icon = queries::mana_cost(game, card.id).map(|mana| CardIcon {
+            background: Some(assets::card_icon(CardIconType::Mana)),
+            text: Some(mana.to_string()),
+            background_scale: assets::background_scale(CardIconType::Mana),
+        });
+        icons.bottom_left_icon = definition.config.stats.shield.map(|_| CardIcon {
+            background: Some(assets::card_icon(CardIconType::Shield)),
+            text: Some(queries::shield(game, card.id).to_string()),
+            background_scale: assets::background_scale(CardIconType::Shield),
+        });
+        icons.bottom_right_icon = definition
+            .config
+            .stats
+            .base_attack
+            .map(|_| CardIcon {
+                background: Some(assets::card_icon(CardIconType::Attack)),
+                text: Some(queries::attack(game, card.id).to_string()),
+                background_scale: assets::background_scale(CardIconType::Attack),
+            })
+            .or_else(|| {
+                definition.config.stats.health.map(|_| CardIcon {
+                    background: Some(assets::card_icon(CardIconType::Health)),
+                    text: Some(queries::health(game, card.id).to_string()),
+                    background_scale: assets::background_scale(CardIconType::Health),
+                })
+            });
+    }
+
+    icons
 }
 
 /// Builds a [RevealedCardView], displaying a card for a user who can currently
@@ -250,8 +252,6 @@ fn revealed_card_view(
         image: Some(sprite(&definition.image)),
         title: Some(CardTitle { text: definition.name.displayed_name() }),
         rules_text: Some(rules_text::build(game, card, definition)),
-        revealed_in_arena: card.is_revealed_to(Side::Overlord)
-            && card.is_revealed_to(Side::Champion),
         targeting: Some(card_targeting(definition)),
         on_release_position: Some(release_position(definition)),
         can_play: flags::can_take_play_card_action(game, user_side, card.id),

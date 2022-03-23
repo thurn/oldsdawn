@@ -122,27 +122,27 @@ namespace Spelldawn.Game
 
       _registry.AssetService.AssignSprite(_arenaFrame, cardView.ArenaFrame);
 
-      if (cardView.RevealedCard != null)
+      if (cardView.RevealedToViewer)
       {
         if (_isRevealed)
         {
-          RenderRevealedCard(cardView);
+          RenderCardView(cardView);
           return null;
         }
         else
         {
-          return Flip(_cardFront, _cardBack, () => RenderRevealedCard(cardView), animate);
+          return Flip(_cardFront, _cardBack, () => RenderCardView(cardView), animate);
         }
       }
       else
       {
         if (_isRevealed)
         {
-          return Flip(_cardBack, _cardFront, RenderHiddenCard, animate);
+          return Flip(_cardBack, _cardFront, () => RenderCardView(cardView), animate);
         }
         else
         {
-          RenderHiddenCard();
+          RenderCardView(cardView);
           return null;
         }
       }
@@ -353,9 +353,25 @@ namespace Spelldawn.Game
       }
     }
 
-    void RenderRevealedCard(CardView card)
+    void RenderCardView(CardView card)
     {
-      var revealed = card.RevealedCard;
+      _serverRevealedInArena = card.RevealedToViewer && card.RevealedToOpponent;
+
+      if (card.RevealedToViewer && card.RevealedCard != null)
+      {
+        RenderRevealedCard(card.RevealedCard);
+      }
+      else if (!card.RevealedToViewer)
+      {
+        RenderHiddenCard();
+      }
+
+      UpdateIcons(card.CardIcons, GameContext.IsArenaContext());
+      UpdateRevealedToOpponent(GameContext.IsArenaContext());
+    }
+
+    void RenderRevealedCard(RevealedCardView revealed)
+    {
       _isRevealed = true;
 
       if (revealed.Title?.Text != null)
@@ -364,7 +380,6 @@ namespace Spelldawn.Game
       }
 
       _serverCanPlay = revealed.CanPlay;
-      _serverRevealedInArena = revealed.RevealedInArena;
 
       if (revealed.Targeting?.TargetingCase is { } targeting)
       {
@@ -394,8 +409,14 @@ namespace Spelldawn.Game
       }
 
       _registry.AssetService.AssignSprite(_jewel, revealed.Jewel);
-      UpdateIcons(card.CardIcons, GameContext.IsArenaContext());
-      UpdateRevealedToOpponent(GameContext.IsArenaContext());
+    }
+
+    void RenderHiddenCard()
+    {
+      _isRevealed = false;
+      gameObject.name = "Hidden Card";
+      _cardBack.gameObject.SetActive(value: true);
+      _cardFront.gameObject.SetActive(value: false);
     }
 
     void UpdateIcons(CardIcons? cardIcons, bool inArena)
@@ -481,14 +502,6 @@ namespace Spelldawn.Game
         var internalText = ComponentUtils.GetComponent<TMP_Text>(_title);
         StartCoroutine(_warpText.WarpText(internalText));
       }
-    }
-
-    void RenderHiddenCard()
-    {
-      _isRevealed = false;
-      gameObject.name = "Hidden Card";
-      _cardBack.gameObject.SetActive(value: true);
-      _cardFront.gameObject.SetActive(value: false);
     }
   }
 }

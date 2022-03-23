@@ -15,10 +15,9 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O44
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             owning_player: User
-            revealed_card: 
-                revealed_in_arena: true
-                can_play: false
         create_position: 
             sorting_key: 4
             position: ObjectPositionRoom { room_id: RoomA, room_location: Front }
@@ -39,6 +38,8 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O44
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             card_icons: 
                 top_left_icon: "3"
                 bottom_right_icon: "5"
@@ -50,7 +51,6 @@ channel_response:
                 image: "<SpriteAddress>"
                 title: "Test Minion Alpha"
                 rules_text: "<RulesText>"
-                revealed_in_arena: true
                 targeting: "PickRoom"
                 on_release_position: 
                     sorting_key: 4294967295

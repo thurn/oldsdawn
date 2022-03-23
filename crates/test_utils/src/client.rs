@@ -683,8 +683,8 @@ impl ClientCards {
 pub struct ClientCard {
     title: Option<String>,
     position: Option<ObjectPosition>,
-    revealed_to_me: bool,
-    revealed_in_arena: Option<bool>,
+    revealed_to_me: Option<bool>,
+    revealed_to_opponent: Option<bool>,
     can_play: Option<bool>,
 }
 
@@ -707,11 +707,11 @@ impl ClientCard {
     }
 
     pub fn revealed_to_me(&self) -> bool {
-        self.revealed_to_me
+        self.revealed_to_me.expect("revealed_to_me")
     }
 
-    pub fn revealed_in_arena(&self) -> bool {
-        self.revealed_in_arena.expect("revealed_in_arena")
+    pub fn revealed_to_opponent(&self) -> bool {
+        self.revealed_to_opponent.expect("revealed_in_arena")
     }
 
     pub fn can_play(&self) -> bool {
@@ -725,14 +725,14 @@ impl ClientCard {
     }
 
     fn update(&mut self, view: &CardView) {
+        self.revealed_to_me = Some(view.revealed_to_viewer);
+        self.revealed_to_opponent = Some(view.revealed_to_opponent);
         if let Some(revealed) = &view.revealed_card {
             self.update_revealed_card(revealed);
         }
     }
 
     fn update_revealed_card(&mut self, revealed: &RevealedCardView) {
-        self.revealed_to_me = true;
-        self.revealed_in_arena = Some(revealed.revealed_in_arena);
         self.can_play = Some(revealed.can_play);
 
         if let Some(title) = revealed.clone().title.map(|title| title.text) {

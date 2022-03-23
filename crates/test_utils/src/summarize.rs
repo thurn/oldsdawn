@@ -444,6 +444,8 @@ impl Summarize for CardCreationAnimation {
 impl Summarize for CardView {
     fn summarize(self, summary: &mut Summary) {
         summary.child("card_id", self.card_id);
+        summary.child_node("revealed_to_viewer", self.revealed_to_viewer);
+        summary.child_node("revealed_to_opponent", self.revealed_to_opponent);
         summary.child("card_icons", self.card_icons);
         summary.child("arena_frame", self.arena_frame);
         summary.child("owning_player", PlayerName::from_i32(self.owning_player));
@@ -477,7 +479,6 @@ impl Summarize for RevealedCardView {
         summary.child("image", self.image);
         summary.child("title", self.title);
         summary.child("rules_text", self.rules_text);
-        summary.child_node("revealed_in_arena", self.revealed_in_arena);
         summary.child("targeting", self.targeting);
         summary.child("on_release_position", self.on_release_position);
         summary.child_node("can_play", self.can_play);

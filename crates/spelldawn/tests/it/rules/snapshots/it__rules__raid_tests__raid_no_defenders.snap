@@ -15,6 +15,8 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O45
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"
@@ -23,7 +25,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Scheme 31"
                 rules_text: "<RulesText>"
-                revealed_in_arena: true
                 targeting: "PickRoom"
                 on_release_position: 
                     sorting_key: 4294967295
@@ -36,9 +37,10 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: C1
+            revealed_to_viewer: true
+            revealed_to_opponent: false
             owning_player: User
             revealed_card: 
-                revealed_in_arena: false
                 can_play: false
         create_position: 
             sorting_key: 4
@@ -78,10 +80,9 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O45
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             owning_player: User
-            revealed_card: 
-                revealed_in_arena: true
-                can_play: false
         create_position: 
             sorting_key: 2
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }

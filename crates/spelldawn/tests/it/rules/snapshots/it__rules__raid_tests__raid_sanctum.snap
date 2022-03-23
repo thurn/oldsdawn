@@ -1,7 +1,7 @@
 ---
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
-assertion_line: 408
-expression: "Summary::run(&response)"
+assertion_line: 429
+expression: "Summary::summarize(&response)"
 
 ---
 
@@ -21,6 +21,8 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O45
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"
@@ -29,7 +31,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Scheme 31"
                 rules_text: "<RulesText>"
-                revealed_in_arena: true
                 targeting: "PickRoom"
                 on_release_position: 
                     sorting_key: 4294967295
@@ -90,10 +91,9 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O45
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             owning_player: User
-            revealed_card: 
-                revealed_in_arena: true
-                can_play: false
         create_position: 
             sorting_key: 1
             position: ObjectPositionHand { owner: User }

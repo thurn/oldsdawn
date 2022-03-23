@@ -141,6 +141,8 @@ fn diff_create_or_update_card(
 fn diff_card_view(old: Option<&CardView>, new: Option<&CardView>) -> Option<CardView> {
     run_diff(old, new, |old, new| CardView {
         card_id: new.card_id,
+        revealed_to_viewer: new.revealed_to_viewer,
+        revealed_to_opponent: new.revealed_to_opponent,
         card_icons: diff_card_icons(old.card_icons.as_ref(), new.card_icons.as_ref()),
         arena_frame: diff_simple(&old.arena_frame, &new.arena_frame),
         owning_player: new.owning_player,
@@ -162,7 +164,6 @@ fn diff_revealed_card_view(
         image: diff_simple(&old.image, &new.image),
         title: diff_simple(&old.title, &new.title),
         rules_text: diff_simple(&old.rules_text, &new.rules_text),
-        revealed_in_arena: new.revealed_in_arena,
         targeting: diff_simple(&old.targeting, &new.targeting),
         on_release_position: diff_simple(&old.on_release_position, &new.on_release_position),
         can_play: new.can_play,

@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 108
+assertion_line: 98
 expression: "Summary::run(&response)"
 
 ---
@@ -16,9 +16,10 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: C45
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             owning_player: User
             revealed_card: 
-                revealed_in_arena: true
                 can_play: false
         create_position: 
             sorting_key: 2
@@ -40,6 +41,8 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: C45
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             card_icons: 
                 top_left_icon: "5"
             owning_player: Opponent
@@ -50,7 +53,6 @@ channel_response:
                 image: "<SpriteAddress>"
                 title: "Arcane Recovery"
                 rules_text: "<RulesText>"
-                revealed_in_arena: true
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295

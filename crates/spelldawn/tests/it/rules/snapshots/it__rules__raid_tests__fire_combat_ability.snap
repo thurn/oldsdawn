@@ -18,9 +18,10 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: C1
+            revealed_to_viewer: true
+            revealed_to_opponent: false
             owning_player: User
             revealed_card: 
-                revealed_in_arena: false
                 can_play: true
         create_position: 
             sorting_key: 6

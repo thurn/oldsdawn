@@ -31,6 +31,8 @@ expression: "Summary::run(&response)"
     CreateOrUpdateCard: 
         card: 
             card_id: O0
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -41,7 +43,6 @@ expression: "Summary::run(&response)"
                 image: "<SpriteAddress>"
                 title: "Test Overlord Identity"
                 rules_text: "<RulesText>"
-                revealed_in_arena: true
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295
@@ -54,6 +55,8 @@ expression: "Summary::run(&response)"
     CreateOrUpdateCard: 
         card: 
             card_id: C0
+            revealed_to_viewer: true
+            revealed_to_opponent: true
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -64,7 +67,6 @@ expression: "Summary::run(&response)"
                 image: "<SpriteAddress>"
                 title: "Test Champion Identity"
                 rules_text: "<RulesText>"
-                revealed_in_arena: true
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295

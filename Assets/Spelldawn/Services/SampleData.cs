@@ -641,7 +641,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           Targeting = IsItem(cardId) ? null : roomTarget,
           OnReleasePosition = IsItem(cardId) ? itemPos : roomPos,
           CanPlay = true,
-          RevealedInArena = true,
           SupplementalInfo = SupplementalInfo(cardType switch
           {
             CardType.Abyssal => "Weapon • Abyssal",
@@ -683,7 +682,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         {
           Text = "Some card text"
         },
-        RevealedInArena = revealedInArena
       }
     };
 

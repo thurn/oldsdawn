@@ -612,16 +612,10 @@ message RevealedCardView {
     RulesText rules_text = 6;
 
     /*
-     * True if this card should be displayed as visible to the opponent when in
-     * the arena.
-     */
-    bool revealed_in_arena = 7;
-
-    /*
     * Custom targeting behavior for a card. If unspecified, no targeting UI
     * is shown.
     */
-    CardTargeting targeting = 8;
+    CardTargeting targeting = 7;
 
     /*
     * Where to move a played card. Information from 'targeting' will be
@@ -629,29 +623,36 @@ message RevealedCardView {
     * ObjectPositionRoom is selected here with no RoomId, the targeted room
     * is used.
     */
-    ObjectPosition on_release_position = 9;
+    ObjectPosition on_release_position = 8;
 
     /* Can this card currently be played when it is in hand? */
-    bool can_play = 10;
+    bool can_play = 9;
 
     /*
      * Additional interface element rendered to the side of the card during an
      * info zoom.
      */
-    Node supplemental_info = 11;
+    Node supplemental_info = 10;
 }
 
 message CardView {
     CardIdentifier card_id = 1;
 
-    CardIcons card_icons = 2;
+    /** Whether the current user is able to see the front of this card. */
+    bool revealed_to_viewer = 2;
 
-    SpriteAddress arena_frame = 3;
+    /** Whether the opposing player is able to see the front of this card. */
+    bool revealed_to_opponent = 3;
+
+    CardIcons card_icons = 4;
+
+    SpriteAddress arena_frame = 5;
 
     /* Used to e.g. determine which card back to display for this card. */
-    PlayerName owning_player = 4;
+    PlayerName owning_player = 6;
 
-    RevealedCardView revealed_card = 5;
+    /** Card information which is only present on revealed cards. */
+    RevealedCardView revealed_card = 7;
 }
 
 message HandView {

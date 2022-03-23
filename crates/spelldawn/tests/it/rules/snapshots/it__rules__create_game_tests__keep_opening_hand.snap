@@ -35,6 +35,8 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O1
+            revealed_to_viewer: true
+            revealed_to_opponent: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -46,7 +48,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
-                revealed_in_arena: false
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295
@@ -59,6 +60,8 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O2
+            revealed_to_viewer: true
+            revealed_to_opponent: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -70,7 +73,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
-                revealed_in_arena: false
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295
@@ -83,6 +85,8 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O3
+            revealed_to_viewer: true
+            revealed_to_opponent: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -94,7 +98,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
-                revealed_in_arena: false
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295
@@ -107,6 +110,8 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O4
+            revealed_to_viewer: true
+            revealed_to_opponent: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -118,7 +123,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
-                revealed_in_arena: false
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295
@@ -131,6 +135,8 @@ command_list:
     CreateOrUpdateCard: 
         card: 
             card_id: O5
+            revealed_to_viewer: true
+            revealed_to_opponent: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -142,7 +148,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
-                revealed_in_arena: false
                 targeting: 
                 on_release_position: 
                     sorting_key: 4294967295
@@ -188,6 +193,8 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O1
+            revealed_to_viewer: false
+            revealed_to_opponent: true
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -198,6 +205,8 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O2
+            revealed_to_viewer: false
+            revealed_to_opponent: true
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -208,6 +217,8 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O3
+            revealed_to_viewer: false
+            revealed_to_opponent: true
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -218,6 +229,8 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O4
+            revealed_to_viewer: false
+            revealed_to_opponent: true
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -228,6 +241,8 @@ channel_response:
     CreateOrUpdateCard: 
         card: 
             card_id: O5
+            revealed_to_viewer: false
+            revealed_to_opponent: true
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
