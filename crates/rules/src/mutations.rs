@@ -25,8 +25,8 @@ use data::actions::{Prompt, PromptAction};
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, PlayCardEvent, RaidEndEvent,
-    Scope, StoredManaTakenEvent,
+    CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
+    PlayCardEvent, RaidEndEvent, Scope, StoredManaTakenEvent,
 };
 use data::game::{CurrentTurn, GamePhase, GameState, MulliganDecision};
 use data::primitives::{
@@ -292,15 +292,32 @@ pub fn check_end_turn(game: &mut GameState, side: Side) {
     }
 }
 
-/// Increases the level of all `can_level_up` Overlord cards in a room by 1.
+/// Increases the level of all `can_level_up` Overlord cards in a room by 1. If
+/// a card's level reaches its `level_requirement`, that card is immediately
+/// scored and moved to the Overlord score zone.
 ///
 /// Does not spend mana/actions etc.
 pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
+    let mut scored = vec![];
     for occupant in game
         .cards_in_position_mut(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
         .filter(|card| crate::get(card.name).config.stats.can_level_up)
     {
         occupant.data.card_level += 1;
+
+        if let Some(scheme_points) = crate::get(occupant.name).config.stats.scheme_points {
+            if occupant.data.card_level >= scheme_points.level_requirement {
+                scored.push((occupant.id, scheme_points));
+            }
+        }
+    }
+
+    for (card_id, scheme_points) in scored {
+        set_revealed_to(game, card_id, Side::Champion, true);
+        game.overlord.score += scheme_points.points;
+        move_card(game, card_id, CardPosition::Scored(Side::Overlord));
+        dispatch::invoke_event(game, OverlordScoreCardEvent(card_id));
+        game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
     }
 }
 

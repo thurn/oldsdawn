@@ -114,8 +114,11 @@ pub fn render(
         GameUpdate::TargetedInteraction(interaction) => {
             targeted_interaction(commands, game, user_side, *interaction)
         }
+        GameUpdate::OverlordScoreCard(card_id, _) => {
+            score_card(commands, game, game.card(*card_id), Side::Overlord)
+        }
         GameUpdate::ChampionScoreCard(card_id, _) => {
-            score_champion_card(commands, game.card(*card_id))
+            score_card(commands, game, game.card(*card_id), Side::Champion)
         }
         GameUpdate::DestroyCard(card_id) => destroy_card(commands, UpdateType::Utility, *card_id),
         GameUpdate::MoveToZone(card_id) => {
@@ -406,8 +409,21 @@ fn apply_projectile(
     }
 }
 
-fn score_champion_card(commands: &mut ResponseBuilder, card: &CardState) {
+fn score_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState, side: Side) {
     let object_id = adapters::card_id_to_object_id(card.id);
+
+    if side == Side::Overlord && commands.user_side == Side::Champion {
+        commands.push(
+            UpdateType::Animation,
+            create_or_update(
+                game,
+                commands.user_side,
+                card.id,
+                CardCreationStrategy::SnapToCurrentPosition,
+            ),
+        );
+    }
+
     commands.push(UpdateType::Animation, set_music(MusicState::Silent));
     commands.push(
         UpdateType::Animation,
@@ -455,7 +471,7 @@ fn score_champion_card(commands: &mut ResponseBuilder, card: &CardState) {
             ObjectPosition {
                 sorting_key: card.sorting_key,
                 position: Some(Position::Identity(ObjectPositionIdentity {
-                    owner: adapters::to_player_name(Side::Champion, commands.user_side).into(),
+                    owner: commands.adapt_player_name(side),
                 })),
             },
         ),

@@ -189,6 +189,7 @@ pub fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: Room
     mutations::spend_action_points(game, user_side, 1);
     mutations::spend_mana(game, user_side, 1);
     mutations::level_up_room(game, room_id);
+
     mutations::check_end_turn(game, user_side);
     game.updates.push(GameUpdate::LevelUpRoom(room_id));
 

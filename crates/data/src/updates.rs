@@ -73,9 +73,7 @@ pub enum GameUpdate {
 
     GeneralUpdate,
 
-    /// A card has become revealed to the opponent. If this occurs while a card
-    /// is changing zones, this update should be added before `MoveCard` to
-    /// move the card to its final destination.
+    /// A card has become revealed to the opponent.
     RevealToOpponent(CardId),
     /// The current raid has gained access to the indicated room
     RaidAccess(RoomId),
