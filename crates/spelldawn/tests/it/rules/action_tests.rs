@@ -222,6 +222,23 @@ fn level_up_room() {
 }
 
 #[test]
+fn score_overlord_card() {
+    let mut g = new_game(Side::Overlord, Args { mana: 10, turn_actions: 5, ..Args::default() });
+    let (_, scheme_id) = g.play_from_hand(CardName::TestScheme31);
+    let level_up = Action::LevelUpRoom(LevelUpRoomAction { room_id: CLIENT_ROOM_ID.into() });
+    g.perform(level_up.clone(), g.user_id());
+    g.perform(level_up.clone(), g.user_id());
+    let response = g.perform_action(level_up, g.user_id());
+
+    assert_snapshot!(Summary::run(&response));
+    assert!(g.opponent.cards.get(scheme_id).revealed_to_me());
+    assert_eq!(g.user.this_player.mana(), 7);
+    assert_eq!(g.opponent.other_player.mana(), 7);
+    assert_eq!(g.user.this_player.score(), 1);
+    assert_eq!(g.opponent.other_player.score(), 1);
+}
+
+#[test]
 fn switch_turn() {
     let mut g = new_game(Side::Overlord, Args { turn_actions: 3, mana: 5, ..Args::default() });
     g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()).unwrap();
