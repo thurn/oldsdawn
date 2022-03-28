@@ -18,8 +18,8 @@ use data::primitives::Side;
 use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::{
-    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, PlayCardAction,
-    PlayerName,
+    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, LevelUpRoomAction,
+    PlayCardAction, PlayerName,
 };
 use test_utils::summarize::Summary;
 use test_utils::*;
@@ -205,6 +205,20 @@ fn cannot_gain_mana_during_raid() {
         },
     );
     assert_error(g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()));
+}
+
+#[test]
+fn level_up_room() {
+    let mut g = new_game(Side::Overlord, Args { mana: 10, ..Args::default() });
+    g.play_from_hand(CardName::TestScheme31);
+    let response = g.perform_action(
+        Action::LevelUpRoom(LevelUpRoomAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+
+    assert_snapshot!(Summary::run(&response));
+    assert_eq!(g.user.this_player.mana(), 9);
+    assert_eq!(g.opponent.other_player.mana(), 9);
 }
 
 #[test]

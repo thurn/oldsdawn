@@ -1,0 +1,62 @@
+---
+source: crates/spelldawn/tests/it/rules/action_tests.rs
+assertion_line: 219
+expression: "Summary::run(&response)"
+
+---
+
+command_list: 
+    MoveGameObjects: 
+        id: Identity(User)
+        position: 
+            sorting_key: 0
+            position: ObjectPositionIdentityContainer { owner: User }
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            mana: 9
+            action_tracker: 1
+        current_priority: User
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O45
+            revealed_to_viewer: true
+            revealed_to_opponent: false
+            card_icons: 
+                arena_icon: "1"
+            owning_player: User
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
+        create_animation: Unspecified
+channel_response: 
+    VisitRoom: 
+        initiator: Opponent
+        room_id: RoomA
+        visit_type: LevelUpRoom
+    Delay: 500
+    MoveGameObjects: 
+        id: Identity(Opponent)
+        position: 
+            sorting_key: 0
+            position: ObjectPositionIdentityContainer { owner: Opponent }
+    UpdateGameView: 
+        opponent: 
+            side: Overlord
+            mana: 9
+            action_tracker: 1
+        current_priority: Opponent
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O45
+            revealed_to_viewer: false
+            revealed_to_opponent: true
+            card_icons: 
+                arena_icon: "1"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
+        create_animation: Unspecified
