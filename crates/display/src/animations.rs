@@ -127,6 +127,7 @@ pub fn render(
         GameUpdate::ShuffleIntoDeck(card_id) => {
             shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
         }
+        GameUpdate::GameOver(side) => game_over(commands, *side),
         _ => todo!("Implement {:?}", update),
     }
 }
@@ -502,6 +503,20 @@ fn destroy_card(commands: &mut ResponseBuilder, update_type: UpdateType, card_id
         update_type,
         Command::DestroyCard(DestroyCardCommand {
             card_id: Some(adapters::adapt_card_id(card_id)),
+        }),
+    );
+}
+
+fn game_over(commands: &mut ResponseBuilder, winner: Side) {
+    commands.push(
+        UpdateType::Animation,
+        Command::DisplayGameMessage(DisplayGameMessageCommand {
+            message_type: if winner == commands.user_side {
+                GameMessageType::Victory
+            } else {
+                GameMessageType::Defeat
+            }
+            .into(),
         }),
     );
 }

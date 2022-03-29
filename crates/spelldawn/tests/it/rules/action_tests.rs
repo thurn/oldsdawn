@@ -18,8 +18,8 @@ use data::primitives::Side;
 use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::{
-    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, LevelUpRoomAction,
-    PlayCardAction, PlayerName,
+    card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, GameMessageType,
+    LevelUpRoomAction, PlayCardAction, PlayerName,
 };
 use test_utils::summarize::Summary;
 use test_utils::*;
@@ -236,6 +236,21 @@ fn score_overlord_card() {
     assert_eq!(g.opponent.other_player.mana(), 7);
     assert_eq!(g.user.this_player.score(), 1);
     assert_eq!(g.opponent.other_player.score(), 1);
+}
+
+#[test]
+fn overlord_win_game() {
+    let mut g =
+        new_game(Side::Overlord, Args { mana: 10, score: 6, turn_actions: 5, ..Args::default() });
+    let (_, scheme_id) = g.play_from_hand(CardName::TestScheme31);
+    let level_up = Action::LevelUpRoom(LevelUpRoomAction { room_id: CLIENT_ROOM_ID.into() });
+    g.perform(level_up.clone(), g.user_id());
+    g.perform(level_up.clone(), g.user_id());
+    let response = g.perform_action(level_up, g.user_id());
+
+    assert_snapshot!(Summary::run(&response));
+    assert_eq!(g.user.data.last_message(), GameMessageType::Victory);
+    assert_eq!(g.opponent.data.last_message(), GameMessageType::Defeat);
 }
 
 #[test]

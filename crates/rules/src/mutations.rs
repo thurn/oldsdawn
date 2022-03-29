@@ -28,9 +28,9 @@ use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
     PlayCardEvent, RaidEndEvent, Scope, StoredManaTakenEvent,
 };
-use data::game::{CurrentTurn, GamePhase, GameState, MulliganDecision};
+use data::game::{CurrentTurn, GameOverData, GamePhase, GameState, MulliganDecision};
 use data::primitives::{
-    ActionCount, BoostData, CardId, ManaValue, RoomId, RoomLocation, Side, TurnNumber,
+    ActionCount, BoostData, CardId, ManaValue, PointsValue, RoomId, RoomLocation, Side, TurnNumber,
 };
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
@@ -156,6 +156,15 @@ pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount
     game.player_mut(side).actions -= amount;
 }
 
+/// Adds points to a player's score and checks for the Game Over condition.
+pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) {
+    game.player_mut(side).score += amount;
+    if game.player(side).score >= 7 {
+        game.data.phase = GamePhase::GameOver(GameOverData { winner: side });
+        game.updates.push(GameUpdate::GameOver(side));
+    }
+}
+
 /// Takes *up to* `maximum` stored mana from a card and gives it to the player
 /// who owns this card.
 #[instrument(skip(game))]
@@ -277,10 +286,11 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Ve
 
 /// Invoked after taking a game action to check if the turn should be switched
 /// for the provided player.
-///
-/// Panics if the provided game is not currently active.
 pub fn check_end_turn(game: &mut GameState, side: Side) {
-    let turn = game.current_turn().expect("current_turn");
+    let turn = match &game.data.phase {
+        GamePhase::Play(turn) => turn,
+        _ => return,
+    };
 
     if turn.side == side && game.player(side).actions == 0 {
         let turn_number = match side {
@@ -314,10 +324,10 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
 
     for (card_id, scheme_points) in scored {
         set_revealed_to(game, card_id, Side::Champion, true);
-        game.overlord.score += scheme_points.points;
         move_card(game, card_id, CardPosition::Scored(Side::Overlord));
         dispatch::invoke_event(game, OverlordScoreCardEvent(card_id));
         game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
+        score_points(game, Side::Overlord, scheme_points.points);
     }
 }
 

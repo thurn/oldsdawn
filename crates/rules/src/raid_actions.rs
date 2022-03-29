@@ -188,12 +188,12 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
         .scheme_points
         .with_context(|| format!("Expected SchemePoints for {:?}", card_id))?;
 
-    game.champion.score += scheme_points.points;
     mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion));
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
     raid_phases::set_raid_prompt(game)?;
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id));
     game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
+    mutations::score_points(game, Side::Champion, scheme_points.points);
     Ok(())
 }
 
