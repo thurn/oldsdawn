@@ -242,7 +242,7 @@ fn score_overlord_card() {
 fn overlord_win_game() {
     let mut g =
         new_game(Side::Overlord, Args { mana: 10, score: 6, turn_actions: 5, ..Args::default() });
-    let (_, scheme_id) = g.play_from_hand(CardName::TestScheme31);
+    g.play_from_hand(CardName::TestScheme31);
     let level_up = Action::LevelUpRoom(LevelUpRoomAction { room_id: CLIENT_ROOM_ID.into() });
     g.perform(level_up.clone(), g.user_id());
     g.perform(level_up.clone(), g.user_id());

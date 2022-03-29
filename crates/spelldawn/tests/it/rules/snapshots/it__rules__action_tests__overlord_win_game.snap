@@ -43,7 +43,30 @@ command_list:
             score: 7
         current_priority: Unspecified
         raid_active: false
+    Delay: 500
+    SetGameObjectsEnabled: 
+        game_objects_enabled: false
     DisplayGameMessage: Victory
+    DisplayRewards: 
+        card_id: O45
+        revealed_to_viewer: true
+        revealed_to_opponent: true
+        card_icons: 
+            arena_icon: "3"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Scheme 31"
+            rules_text: "<RulesText>"
+            targeting: "PickRoom"
+            on_release_position: 
+                sorting_key: 4294967295
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
+            can_play: false
 channel_response: 
     VisitRoom: 
         initiator: Opponent
@@ -113,4 +136,7 @@ channel_response:
         current_priority: Unspecified
         raid_active: false
     Delay: 1500
+    Delay: 500
+    SetGameObjectsEnabled: 
+        game_objects_enabled: false
     DisplayGameMessage: Defeat

@@ -85,6 +85,10 @@ impl CardPosition {
     pub fn in_score_pile(&self) -> bool {
         self.kind() == CardPositionKind::Scored
     }
+
+    pub fn is_identity(&self) -> bool {
+        self.kind() == CardPositionKind::Identity
+    }
 }
 
 /// Stores the state of a specific ability of a card

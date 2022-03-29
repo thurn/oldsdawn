@@ -38,10 +38,10 @@ use protos::spelldawn::{
     ObjectPositionStaging, PlayerName, RoomVisitType, TimeValue, VisitRoomCommand,
 };
 use protos::spelldawn::{
-    DestroyCardCommand, FireProjectileCommand, MusicState, ObjectPositionBrowser,
-    ObjectPositionHand, ObjectPositionIdentity, ObjectPositionIdentityContainer,
-    ObjectPositionScoreAnimation, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand,
-    SetMusicCommand,
+    DestroyCardCommand, DisplayRewardsCommand, FireProjectileCommand, MusicState,
+    ObjectPositionBrowser, ObjectPositionHand, ObjectPositionIdentity,
+    ObjectPositionIdentityContainer, ObjectPositionScoreAnimation, PlayEffectCommand,
+    PlayEffectPosition, PlaySoundCommand, SetGameObjectsEnabledCommand, SetMusicCommand,
 };
 
 use crate::full_sync::CardCreationStrategy;
@@ -127,7 +127,7 @@ pub fn render(
         GameUpdate::ShuffleIntoDeck(card_id) => {
             shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
         }
-        GameUpdate::GameOver(side) => game_over(commands, *side),
+        GameUpdate::GameOver(side) => game_over(commands, game, *side),
         _ => todo!("Implement {:?}", update),
     }
 }
@@ -507,7 +507,16 @@ fn destroy_card(commands: &mut ResponseBuilder, update_type: UpdateType, card_id
     );
 }
 
-fn game_over(commands: &mut ResponseBuilder, winner: Side) {
+fn game_over(commands: &mut ResponseBuilder, game: &GameState, winner: Side) {
+    commands.push(UpdateType::Animation, delay(500));
+
+    commands.push(
+        UpdateType::Animation,
+        Command::SetGameObjectsEnabled(SetGameObjectsEnabledCommand {
+            game_objects_enabled: false,
+        }),
+    );
+
     commands.push(
         UpdateType::Animation,
         Command::DisplayGameMessage(DisplayGameMessageCommand {
@@ -519,6 +528,22 @@ fn game_over(commands: &mut ResponseBuilder, winner: Side) {
             .into(),
         }),
     );
+
+    if winner == commands.user_side {
+        // TODO: Show real rewards instead of placeholder values
+        commands.push(
+            UpdateType::Animation,
+            Command::DisplayRewards(DisplayRewardsCommand {
+                rewards: game
+                    .cards(winner)
+                    .iter()
+                    .filter(|card| card.is_revealed_to(winner) && !card.position().is_identity())
+                    .take(5)
+                    .map(|card| full_sync::card_view(game, card, winner))
+                    .collect(),
+            }),
+        );
+    }
 }
 
 /// Constructs a delay command

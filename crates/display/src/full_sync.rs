@@ -155,8 +155,6 @@ pub fn create_or_update_card(
     user_side: Side,
     creation_strategy: CardCreationStrategy,
 ) -> CreateOrUpdateCardCommand {
-    let definition = rules::get(card.name);
-    let revealed = card.is_revealed_to(user_side);
     let create_animation = if creation_strategy == CardCreationStrategy::DrawUserCard {
         CardCreationAnimation::DrawCard.into()
     } else {
@@ -169,22 +167,29 @@ pub fn create_or_update_card(
     };
 
     CreateOrUpdateCardCommand {
-        card: Some(CardView {
-            card_id: Some(adapters::adapt_card_id(card.id)),
-            revealed_to_viewer: card.is_revealed_to(user_side),
-            revealed_to_opponent: card.is_revealed_to(user_side.opponent()),
-            card_icons: Some(card_icons(game, card, definition, revealed)),
-            arena_frame: Some(assets::arena_frame(
-                definition.side,
-                definition.card_type,
-                definition.config.faction,
-            )),
-            owning_player: adapters::to_player_name(definition.side, user_side).into(),
-            revealed_card: revealed.then(|| revealed_card_view(game, card, definition, user_side)),
-        }),
+        card: Some(card_view(game, card, user_side)),
         create_position: position,
         create_animation,
         disable_flip_animation: false,
+    }
+}
+
+/// Converts a [CardState] into a [CardView] for a given game state.
+pub fn card_view(game: &GameState, card: &CardState, user_side: Side) -> CardView {
+    let definition = rules::get(card.name);
+    let revealed = card.is_revealed_to(user_side);
+    CardView {
+        card_id: Some(adapters::adapt_card_id(card.id)),
+        revealed_to_viewer: card.is_revealed_to(user_side),
+        revealed_to_opponent: card.is_revealed_to(user_side.opponent()),
+        card_icons: Some(card_icons(game, card, definition, revealed)),
+        arena_frame: Some(assets::arena_frame(
+            definition.side,
+            definition.card_type,
+            definition.config.faction,
+        )),
+        owning_player: adapters::to_player_name(definition.side, user_side).into(),
+        revealed_card: revealed.then(|| revealed_card_view(game, card, definition, user_side)),
     }
 }
 
