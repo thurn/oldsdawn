@@ -9,6 +9,8 @@ command_list:
     UpdateGameView: 
         user: 
             side: Champion
+            player_info: 
+            valid_rooms_to_visit: 
             action_tracker: 1
         current_priority: Opponent
         raid_active: true
@@ -19,7 +21,8 @@ command_list:
             revealed_to_opponent: false
             owning_player: User
             revealed_card: 
-                can_play: false
+                targeting: 
+                    can_play: false
         create_position: 
             sorting_key: 6
             position: ObjectPositionHand { owner: User }
@@ -55,6 +58,8 @@ channel_response:
     UpdateGameView: 
         opponent: 
             side: Champion
+            player_info: 
+            valid_rooms_to_visit: 
             action_tracker: 1
         current_priority: User
         raid_active: true

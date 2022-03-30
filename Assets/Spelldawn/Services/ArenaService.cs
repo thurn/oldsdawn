@@ -75,7 +75,7 @@ namespace Spelldawn.Services
       }
     }
 
-    public void ShowRoomSelectorForMousePosition()
+    public void ShowRoomSelectorForMousePosition(ISet<RoomIdentifier> validRooms)
     {
       HideRoomSelector();
 
@@ -88,9 +88,12 @@ namespace Spelldawn.Services
         var selector = hit.collider.GetComponent<Room>();
         if (selector)
         {
-          selector.SpriteRenderer.enabled = true;
-          _curentRoomSelector = selector;
-          break;
+          if (validRooms.Contains(selector.RoomId))
+          {
+            selector.SpriteRenderer.enabled = true;
+            _curentRoomSelector = selector;
+            break;
+          }
         }
       }
 

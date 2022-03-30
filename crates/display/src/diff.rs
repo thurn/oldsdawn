@@ -109,6 +109,7 @@ fn diff_player_info(old: Option<&PlayerInfo>, new: Option<&PlayerInfo>) -> Optio
         name: diff_simple(&old.name, &new.name),
         portrait: diff_simple(&old.portrait, &new.portrait),
         portrait_frame: diff_simple(&old.portrait_frame, &new.portrait_frame),
+        valid_rooms_to_visit: new.valid_rooms_to_visit.clone(),
         card_back: diff_simple(&old.card_back, &new.card_back),
     })
 }
@@ -166,7 +167,6 @@ fn diff_revealed_card_view(
         rules_text: diff_simple(&old.rules_text, &new.rules_text),
         targeting: diff_simple(&old.targeting, &new.targeting),
         on_release_position: diff_simple(&old.on_release_position, &new.on_release_position),
-        can_play: new.can_play,
         supplemental_info: diff_simple(&old.supplemental_info, &new.supplemental_info),
     })
 }

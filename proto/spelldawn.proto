@@ -496,13 +496,22 @@ enum TargetingArrow {
     TARGETING_ARROW_GREEN = 3;
 }
 
-/* This card should prompt for a room to be played into. */
-message PickRoom {
+// Card has no targeting requirement
+message NoTargeting {
+    // True if this card can currently be played
+    bool can_play = 1;
+}
+
+// This card should prompt for a room to be played into.
+message RoomTargeting {
+    // The card can be played if at least one identifier is present here
+    repeated RoomIdentifier valid_rooms = 1;
 }
 
 message CardTargeting {
     oneof targeting {
-        PickRoom pick_room = 1;
+        NoTargeting no_targeting = 1;
+        RoomTargeting room_targeting = 2;
     }
 }
 
@@ -625,14 +634,11 @@ message RevealedCardView {
     */
     ObjectPosition on_release_position = 8;
 
-    /* Can this card currently be played when it is in hand? */
-    bool can_play = 9;
-
     /*
      * Additional interface element rendered to the side of the card during an
      * info zoom.
      */
-    Node supplemental_info = 10;
+    Node supplemental_info = 9;
 }
 
 message CardView {
@@ -667,8 +673,10 @@ message PlayerInfo {
     google.protobuf.StringValue name = 1;
     SpriteAddress portrait = 2;
     SpriteAddress portrait_frame = 3;
+    repeated RoomIdentifier valid_rooms_to_visit = 4;
+
     /* Card back asset to use for this player's cards. */
-    SpriteAddress card_back = 4;
+    SpriteAddress card_back = 5;
 }
 
 message ManaView {

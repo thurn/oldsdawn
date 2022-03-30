@@ -19,7 +19,8 @@ command_list:
             revealed_to_opponent: false
             owning_player: User
             revealed_card: 
-                can_play: false
+                targeting: 
+                valid_rooms: 
         create_position: 
             sorting_key: 2
             position: ObjectPositionRoom { room_id: RoomA, room_location: Back }

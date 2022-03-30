@@ -52,10 +52,10 @@ channel_response:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: true
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: true
         create_animation: DrawCard
     MoveGameObjects: 
         id: O1

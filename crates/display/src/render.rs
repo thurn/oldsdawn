@@ -60,7 +60,8 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<Command> {
 
     for update in &updates {
         if update.kind() == GameUpdateKind::GeneralUpdate {
-            let previous_response = RESPONSES.get(&user_id).map(|r| r.value());
+            let reference = RESPONSES.get(&user_id);
+            let previous_response = reference.as_deref();
             diff::execute(&mut builder, game, previous_response, &sync);
         } else {
             animations::render(&mut builder, update, game, user_side);

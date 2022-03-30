@@ -121,7 +121,7 @@ pub fn play_card_action(
 ) -> Result<()> {
     info!(?user_side, ?card_id, ?target, "play_card_action");
     ensure!(
-        flags::can_take_play_card_action(game, user_side, card_id),
+        flags::can_take_play_card_action(game, user_side, card_id, target),
         "Cannot play card {:?}",
         card_id
     );

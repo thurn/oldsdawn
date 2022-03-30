@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 216
+assertion_line: 262
 expression: "Summary::run(&response)"
 
 ---
@@ -30,6 +30,8 @@ command_list:
             action_tracker: 0
         opponent: 
             side: Champion
+            player_info: 
+            valid_rooms_to_visit: VaultSanctumCrypts
             action_tracker: 3
         current_priority: Opponent
         raid_active: false
@@ -52,10 +54,10 @@ channel_response:
                 title: "Test Champion Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: true
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: true
         create_animation: DrawCard
     MoveGameObjects: 
         id: C1
@@ -65,6 +67,8 @@ channel_response:
     UpdateGameView: 
         user: 
             side: Champion
+            player_info: 
+            valid_rooms_to_visit: VaultSanctumCrypts
             action_tracker: 3
         opponent: 
             side: Overlord

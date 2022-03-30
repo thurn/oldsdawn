@@ -49,10 +49,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 6
             position: ObjectPositionHand { owner: User }
@@ -74,10 +74,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 7
             position: ObjectPositionHand { owner: User }
@@ -99,10 +99,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 8
             position: ObjectPositionHand { owner: User }
@@ -124,10 +124,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 9
             position: ObjectPositionHand { owner: User }
@@ -149,10 +149,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 10
             position: ObjectPositionHand { owner: User }

@@ -1,4 +1,4 @@
-code-review: git-status check-format build clippy test check-docs outdated
+code-review: git-status check-format build clippy test check-docs
 
 clean:
     cargo clean

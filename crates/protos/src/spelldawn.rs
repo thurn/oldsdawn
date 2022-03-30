@@ -404,12 +404,23 @@ pub struct RulesText {
     #[prost(string, tag = "1")]
     pub text: ::prost::alloc::string::String,
 }
+/// Card has no targeting requirement
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NoTargeting {
+    /// True if this card can currently be played
+    #[prost(bool, tag = "1")]
+    pub can_play: bool,
+}
 /// This card should prompt for a room to be played into.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct PickRoom {}
+pub struct RoomTargeting {
+    /// The card can be played if at least one identifier is present here
+    #[prost(enumeration = "RoomIdentifier", repeated, tag = "1")]
+    pub valid_rooms: ::prost::alloc::vec::Vec<i32>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardTargeting {
-    #[prost(oneof = "card_targeting::Targeting", tags = "1")]
+    #[prost(oneof = "card_targeting::Targeting", tags = "1, 2")]
     pub targeting: ::core::option::Option<card_targeting::Targeting>,
 }
 /// Nested message and enum types in `CardTargeting`.
@@ -417,7 +428,9 @@ pub mod card_targeting {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Targeting {
         #[prost(message, tag = "1")]
-        PickRoom(super::PickRoom),
+        NoTargeting(super::NoTargeting),
+        #[prost(message, tag = "2")]
+        RoomTargeting(super::RoomTargeting),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -556,13 +569,10 @@ pub struct RevealedCardView {
     /// is used.
     #[prost(message, optional, tag = "8")]
     pub on_release_position: ::core::option::Option<ObjectPosition>,
-    /// Can this card currently be played when it is in hand?
-    #[prost(bool, tag = "9")]
-    pub can_play: bool,
     ///
     /// Additional interface element rendered to the side of the card during an
     /// info zoom.
-    #[prost(message, optional, tag = "10")]
+    #[prost(message, optional, tag = "9")]
     pub supplemental_info: ::core::option::Option<Node>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -604,8 +614,10 @@ pub struct PlayerInfo {
     pub portrait: ::core::option::Option<SpriteAddress>,
     #[prost(message, optional, tag = "3")]
     pub portrait_frame: ::core::option::Option<SpriteAddress>,
+    #[prost(enumeration = "RoomIdentifier", repeated, tag = "4")]
+    pub valid_rooms_to_visit: ::prost::alloc::vec::Vec<i32>,
     /// Card back asset to use for this player's cards.
-    #[prost(message, optional, tag = "4")]
+    #[prost(message, optional, tag = "5")]
     pub card_back: ::core::option::Option<SpriteAddress>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

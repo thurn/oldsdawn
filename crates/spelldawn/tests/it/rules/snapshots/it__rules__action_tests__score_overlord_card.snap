@@ -38,6 +38,8 @@ command_list:
     UpdateGameView: 
         user: 
             side: Overlord
+            player_info: 
+            valid_rooms_to_visit: 
             mana: 7
             action_tracker: 1
             score: 1
@@ -65,11 +67,11 @@ channel_response:
                 image: "<SpriteAddress>"
                 title: "Test Scheme 31"
                 rules_text: "<RulesText>"
-                targeting: "PickRoom"
+                targeting: 
+                valid_rooms: 
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
-                can_play: false
         create_position: 
             sorting_key: 3
             position: ObjectPositionIdentity { owner: Opponent }
@@ -106,6 +108,8 @@ channel_response:
     UpdateGameView: 
         opponent: 
             side: Overlord
+            player_info: 
+            valid_rooms_to_visit: 
             mana: 7
             action_tracker: 1
             score: 1

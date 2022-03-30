@@ -23,11 +23,11 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Ice Dragon"
                 rules_text: "<RulesText>"
-                targeting: "PickRoom"
+                targeting: 
+                valid_rooms: VaultSanctumCryptsRoomARoomBRoomCRoomDRoomE
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
-                can_play: true
         create_animation: DrawCard
     MoveGameObjects: 
         id: O1

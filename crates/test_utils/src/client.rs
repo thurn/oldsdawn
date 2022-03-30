@@ -26,6 +26,7 @@ use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
 };
 use display::adapters;
+use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
@@ -34,9 +35,9 @@ use protos::spelldawn::{
     card_target, game_object_identifier, node_type, CardAnchorNode, CardIdentifier, CardTarget,
     CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
     GameAction, GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest,
-    InitiateRaidAction, Node, NodeType, ObjectPosition, ObjectPositionBrowser,
+    InitiateRaidAction, NoTargeting, Node, NodeType, ObjectPosition, ObjectPositionBrowser,
     ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
-    PlayerView, RevealedCardView,
+    PlayerView, RevealedCardView, RoomTargeting,
 };
 use server::GameResponse;
 
@@ -733,7 +734,19 @@ impl ClientCard {
     }
 
     fn update_revealed_card(&mut self, revealed: &RevealedCardView) {
-        self.can_play = Some(revealed.can_play);
+        self.can_play = Some(
+            match revealed
+                .targeting
+                .as_ref()
+                .expect("targeting")
+                .targeting
+                .as_ref()
+                .expect("targeting")
+            {
+                Targeting::NoTargeting(NoTargeting { can_play }) => *can_play,
+                Targeting::RoomTargeting(RoomTargeting { valid_rooms }) => valid_rooms.is_empty(),
+            },
+        );
 
         if let Some(title) = revealed.clone().title.map(|title| title.text) {
             self.title = Some(title);

@@ -24,6 +24,7 @@ use data::delegates::{
 use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
 use data::primitives::{CardId, CardType, Faction, RoomId, Side};
 
+use crate::actions::PlayCardTarget;
 use crate::{dispatch, queries};
 
 /// Returns whether a player can currently make a mulligan decision
@@ -35,16 +36,47 @@ pub fn can_make_mulligan_decision(game: &GameState, side: Side) -> bool {
 
 /// Returns whether a given card can currently be played via the basic game
 /// action to play a card.
-pub fn can_take_play_card_action(game: &GameState, side: Side, card_id: CardId) -> bool {
+pub fn can_take_play_card_action(
+    game: &GameState,
+    side: Side,
+    card_id: CardId,
+    target: PlayCardTarget,
+) -> bool {
     let mut can_play = queries::in_main_phase(game, side)
         && side == card_id.side
-        && game.card(card_id).position() == CardPosition::Hand(side);
+        && game.card(card_id).position() == CardPosition::Hand(side)
+        && is_valid_target(game, card_id, target);
     if enters_play_revealed(game, card_id) {
         can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
                              if cost <= game.player(side).mana);
     }
 
     dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
+}
+
+fn is_valid_target(game: &GameState, card_id: CardId, target: PlayCardTarget) -> bool {
+    fn room_can_add(game: &GameState, room_id: RoomId, card_types: Vec<CardType>) -> bool {
+        !room_id.is_inner_room()
+            && !game
+                .occupants(room_id)
+                .any(|card| card_types.contains(&crate::get(card.name).card_type))
+    }
+
+    match crate::get(game.card(card_id).name).card_type {
+        CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Sorcery => {
+            target == PlayCardTarget::None
+        }
+        CardType::Minion => matches!(target, PlayCardTarget::Room(_)),
+        CardType::Project | CardType::Scheme => {
+            matches!(target, PlayCardTarget::Room(room_id)
+                if room_can_add(game, room_id, vec![CardType::Project, CardType::Scheme]))
+        }
+        CardType::Upgrade => {
+            matches!(target, PlayCardTarget::Room(room_id)
+                if room_can_add(game, room_id, vec![CardType::Upgrade]))
+        }
+        CardType::Identity => false,
+    }
 }
 
 /// Returns true if the indicated card should enter play in the revealed state

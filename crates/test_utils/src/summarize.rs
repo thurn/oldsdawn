@@ -28,12 +28,12 @@ use protos::spelldawn::{
     CreateOrUpdateCardCommand, DelayCommand, DestroyCardCommand, DisplayGameMessageCommand,
     DisplayRewardsCommand, EffectAddress, FireProjectileCommand, GameCommand, GameMessageType,
     GameObjectIdentifier, GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand,
-    ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MusicState, Node, NodeType,
-    ObjectPosition, PanelAddress, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand,
-    PlayerInfo, PlayerName, PlayerSide, PlayerView, ProjectileAddress, RenderInterfaceCommand,
-    RevealedCardView, RoomIdentifier, RoomVisitType, RulesText, RunInParallelCommand,
-    SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand,
-    SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
+    ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MusicState, NoTargeting,
+    Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand, PlayEffectPosition,
+    PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide, PlayerView, ProjectileAddress,
+    RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomTargeting, RoomVisitType,
+    RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand,
+    SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
     UpdateGameViewCommand, VisitRoomCommand,
 };
 use server::GameResponse;
@@ -392,6 +392,13 @@ impl Summarize for PlayerInfo {
         summary.child("portrait", self.portrait);
         summary.child("portrait_frame", self.portrait_frame);
         summary.child("card_back", self.card_back);
+        summary.children(
+            "valid_rooms_to_visit",
+            self.valid_rooms_to_visit
+                .iter()
+                .map(|i| RoomIdentifier::from_i32(*i).expect("RoomIdentifier"))
+                .collect(),
+        );
     }
 }
 
@@ -481,7 +488,6 @@ impl Summarize for RevealedCardView {
         summary.child("rules_text", self.rules_text);
         summary.child("targeting", self.targeting);
         summary.child("on_release_position", self.on_release_position);
-        summary.child_node("can_play", self.can_play);
     }
 }
 
@@ -506,8 +512,17 @@ impl Summarize for CardTargeting {
 impl Summarize for Targeting {
     fn summarize(self, summary: &mut Summary) {
         match self {
-            Targeting::PickRoom(_) => {
-                summary.primitive("PickRoom");
+            Targeting::NoTargeting(NoTargeting { can_play }) => {
+                summary.child_node("can_play", can_play)
+            }
+            Targeting::RoomTargeting(RoomTargeting { valid_rooms }) => {
+                summary.children(
+                    "valid_rooms",
+                    valid_rooms
+                        .iter()
+                        .map(|i| RoomIdentifier::from_i32(*i).expect("RoomIdentifier"))
+                        .collect(),
+                );
             }
         }
     }

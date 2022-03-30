@@ -14,8 +14,11 @@
 
 //! Fundamental types and data structures for Spelldawn
 
+#![allow(clippy::copy_iterator)] // Suppress IntoEnumIterator warning
+
 use std::fmt;
 
+use enum_iterator::IntoEnumIterator;
 use serde::{Deserialize, Serialize};
 
 pub type TurnNumber = u32;
@@ -194,7 +197,7 @@ pub enum School {
 }
 
 /// The possible Rooms in which the Overlord player may play their cards.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, IntoEnumIterator)]
 pub enum RoomId {
     /// The Overlord's deck
     Vault,

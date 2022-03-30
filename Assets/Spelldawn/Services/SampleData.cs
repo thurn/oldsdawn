@@ -543,7 +543,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       var roomTarget = new CardTargeting
       {
-        PickRoom = new PickRoom()
+        RoomTargeting = new RoomTargeting()
       };
 
       var roomPos = new ObjectPosition
@@ -640,7 +640,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
           },
           Targeting = IsItem(cardId) ? null : roomTarget,
           OnReleasePosition = IsItem(cardId) ? itemPos : roomPos,
-          CanPlay = true,
           SupplementalInfo = SupplementalInfo(cardType switch
           {
             CardType.Abyssal => "Weapon • Abyssal",

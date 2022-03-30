@@ -13,8 +13,11 @@
 // limitations under the License.
 
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Spelldawn.Protos;
 using Spelldawn.Services;
+using Spelldawn.Utils;
 using TMPro;
 using UnityEngine;
 
@@ -30,6 +33,7 @@ namespace Spelldawn.Game
     [SerializeField] TextMeshPro _scoreText = null!;
     [SerializeField] GameObject _raidSymbol = null!;
     [SerializeField] PlayerName _owner;
+    ISet<RoomIdentifier>? _validRoomsToVisit;
 
     public PlayerSide Side { get; set; }
 
@@ -53,6 +57,7 @@ namespace Spelldawn.Game
 
     public IEnumerator RenderPlayerInfo(PlayerInfo playerInfo)
     {
+      _validRoomsToVisit = playerInfo.ValidRoomsToVisit.ToHashSet();
       _registry.AssetService.AssignSprite(_image, playerInfo.Portrait);
       _registry.AssetService.AssignSprite(_frame, playerInfo.PortraitFrame);
       yield break;
@@ -98,7 +103,7 @@ namespace Spelldawn.Game
 
     public void OnArrowMoved(Vector3 position)
     {
-      _registry.ArenaService.ShowRoomSelectorForMousePosition();
+      _registry.ArenaService.ShowRoomSelectorForMousePosition(Errors.CheckNotNull(_validRoomsToVisit));
     }
 
     public void OnArrowReleased(Vector3 position)

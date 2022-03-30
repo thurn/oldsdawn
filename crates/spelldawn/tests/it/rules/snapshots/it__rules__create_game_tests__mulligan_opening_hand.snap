@@ -59,10 +59,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 31
             position: ObjectPositionDeck { owner: User }
@@ -89,10 +89,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 32
             position: ObjectPositionDeck { owner: User }
@@ -119,10 +119,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 33
             position: ObjectPositionDeck { owner: User }
@@ -149,10 +149,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 34
             position: ObjectPositionDeck { owner: User }
@@ -179,10 +179,10 @@ command_list:
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 35
             position: ObjectPositionDeck { owner: User }

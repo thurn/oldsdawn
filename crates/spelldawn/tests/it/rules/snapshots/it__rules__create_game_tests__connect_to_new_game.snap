@@ -13,6 +13,7 @@ expression: "Summary::run(&response)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
             mana: 0
             action_tracker: 0
             score: 0
@@ -23,6 +24,7 @@ expression: "Summary::run(&response)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
             mana: 0
             action_tracker: 0
             score: 0
@@ -44,10 +46,10 @@ expression: "Summary::run(&response)"
                 title: "Test Overlord Identity"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 0
             position: ObjectPositionIdentity { owner: User }
@@ -69,10 +71,10 @@ expression: "Summary::run(&response)"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 6
             position: ObjectPositionHand { owner: User }
@@ -94,10 +96,10 @@ expression: "Summary::run(&response)"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 7
             position: ObjectPositionHand { owner: User }
@@ -119,10 +121,10 @@ expression: "Summary::run(&response)"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 8
             position: ObjectPositionHand { owner: User }
@@ -144,10 +146,10 @@ expression: "Summary::run(&response)"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 9
             position: ObjectPositionHand { owner: User }
@@ -169,10 +171,10 @@ expression: "Summary::run(&response)"
                 title: "Test Overlord Spell"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 10
             position: ObjectPositionHand { owner: User }
@@ -193,10 +195,10 @@ expression: "Summary::run(&response)"
                 title: "Test Champion Identity"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 0
             position: ObjectPositionIdentity { owner: Opponent }

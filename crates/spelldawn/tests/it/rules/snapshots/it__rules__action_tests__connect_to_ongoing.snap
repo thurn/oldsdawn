@@ -13,6 +13,7 @@ expression: "Summary::run(&r3)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
             mana: 999
             action_tracker: 0
             score: 0
@@ -23,6 +24,7 @@ expression: "Summary::run(&r3)"
                 portrait: "<SpriteAddress>"
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
             mana: 999
             action_tracker: 2
             score: 0
@@ -44,10 +46,10 @@ expression: "Summary::run(&r3)"
                 title: "Test Overlord Identity"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 0
             position: ObjectPositionIdentity { owner: Opponent }
@@ -80,10 +82,10 @@ expression: "Summary::run(&r3)"
                 title: "Test Champion Identity"
                 rules_text: "<RulesText>"
                 targeting: 
+                    can_play: false
                 on_release_position: 
                     sorting_key: 4294967295
                     position: ObjectPositionStaging
-                can_play: false
         create_position: 
             sorting_key: 0
             position: ObjectPositionIdentity { owner: User }

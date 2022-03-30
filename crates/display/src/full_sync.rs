@@ -20,20 +20,22 @@ use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
+use enum_iterator::IntoEnumIterator;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
-use protos::spelldawn::ObjectPositionBrowser;
 #[allow(unused)] // Used in rustdoc
 use protos::spelldawn::{
     ActionTrackerView, CardCreationAnimation, CardIcon, CardIcons, CardTargeting, CardTitle,
     CardView, ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand, GameIdentifier,
     GameView, ManaView, ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile,
     ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRaid,
-    ObjectPositionRoom, ObjectPositionStaging, PickRoom, PlayerInfo, PlayerName, PlayerView,
-    RenderInterfaceCommand, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress,
-    UpdateGameViewCommand,
+    ObjectPositionRoom, ObjectPositionStaging, PlayerInfo, PlayerName, PlayerView,
+    RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomTargeting, ScoreView,
+    SpriteAddress, UpdateGameViewCommand,
 };
+use protos::spelldawn::{NoTargeting, ObjectPositionBrowser};
+use rules::actions::PlayCardTarget;
 use rules::{flags, queries};
 
 use crate::assets::CardIconType;
@@ -106,6 +108,16 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
             name: Some(identity.name.displayed_name()),
             portrait: Some(sprite(&rules::get(identity.name).image)),
             portrait_frame: Some(assets::identity_card_frame(side)),
+            valid_rooms_to_visit: match side {
+                Side::Overlord => RoomId::into_enum_iter()
+                    .filter(|room_id| flags::can_level_up_room(game, side, *room_id))
+                    .map(|room_id| adapters::adapt_room_id(room_id).into())
+                    .collect(),
+                Side::Champion => RoomId::into_enum_iter()
+                    .filter(|room_id| flags::can_initiate_raid(game, side, *room_id))
+                    .map(|room_id| adapters::adapt_room_id(room_id).into())
+                    .collect(),
+            },
             card_back: Some(assets::card_back(rules::get(identity.name).school)),
         }),
         score: Some(ScoreView { score: data.score }),
@@ -257,9 +269,8 @@ fn revealed_card_view(
         image: Some(sprite(&definition.image)),
         title: Some(CardTitle { text: definition.name.displayed_name() }),
         rules_text: Some(rules_text::build(game, card, definition)),
-        targeting: Some(card_targeting(definition)),
+        targeting: Some(card_targeting(game, card, user_side)),
         on_release_position: Some(release_position(definition)),
-        can_play: flags::can_take_play_card_action(game, user_side, card.id),
         supplemental_info: Some(rules_text::build_supplemental_info(game, card, definition)),
     }
 }
@@ -433,16 +444,35 @@ pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPositio
 }
 
 /// Builds a description of the standard [CardTargeting] behavior of a card
-fn card_targeting(definition: &CardDefinition) -> CardTargeting {
+fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTargeting {
     CardTargeting {
-        targeting: match definition.card_type {
+        targeting: match rules::get(card.name).card_type {
             CardType::Sorcery
             | CardType::Spell
             | CardType::Weapon
             | CardType::Artifact
-            | CardType::Identity => None,
+            | CardType::Identity => Some(Targeting::NoTargeting(NoTargeting {
+                can_play: flags::can_take_play_card_action(
+                    game,
+                    user_side,
+                    card.id,
+                    PlayCardTarget::None,
+                ),
+            })),
             CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
-                Some(Targeting::PickRoom(PickRoom {}))
+                Some(Targeting::RoomTargeting(RoomTargeting {
+                    valid_rooms: RoomId::into_enum_iter()
+                        .filter(|room_id| {
+                            flags::can_take_play_card_action(
+                                game,
+                                user_side,
+                                card.id,
+                                PlayCardTarget::Room(*room_id),
+                            )
+                        })
+                        .map(|room_id| adapters::adapt_room_id(room_id).into())
+                        .collect(),
+                }))
             }
         },
     }

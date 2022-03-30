@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Spelldawn.Protos;
 using Spelldawn.Services;
@@ -65,7 +67,7 @@ namespace Spelldawn.Game
     CardIdentifier? _cardId;
     bool? _serverCanPlay;
     bool? _serverRevealedInArena;
-    bool? _isRoomTargeted;
+    ISet<RoomIdentifier>? _validRoomTargets;
     ObjectPosition? _releasePosition;
     Node? _supplementalInfo;
     Registry _registry = null!;
@@ -161,7 +163,7 @@ namespace Spelldawn.Game
       result._cardId = _cardId;
       result._serverCanPlay = _serverCanPlay;
       result._serverRevealedInArena = _serverRevealedInArena;
-      result._isRoomTargeted = _isRoomTargeted;
+      result._validRoomTargets = _validRoomTargets;
       result._releasePosition = _releasePosition;
       result._supplementalInfo = _supplementalInfo;
       result._registry = _registry;
@@ -254,9 +256,9 @@ namespace Spelldawn.Game
       {
         _registry.CardService.ClearInfoZoom();
 
-        if (_isRoomTargeted == true)
+        if (_validRoomTargets != null)
         {
-          _registry.ArenaService.ShowRoomSelectorForMousePosition();
+          _registry.ArenaService.ShowRoomSelectorForMousePosition(_validRoomTargets);
         }
       }
       else
@@ -290,11 +292,13 @@ namespace Spelldawn.Game
         CardId = Errors.CheckNotNull(_cardId)
       };
 
-      if (_isRoomTargeted == true)
+      if (_validRoomTargets != null)
       {
+        var roomId = Errors.CheckNotDefault(Errors.CheckNotNull(_registry.ArenaService.CurrentRoomSelector).RoomId);
+        Errors.CheckState(_validRoomTargets.Contains(roomId), "Invalid Room selected");
         action.Target = new CardTarget
         {
-          RoomId = Errors.CheckNotDefault(Errors.CheckNotNull(_registry.ArenaService.CurrentRoomSelector).RoomId)
+          RoomId = roomId
         };
       }
 
@@ -317,14 +321,14 @@ namespace Spelldawn.Game
         return true;
       }
 
-      if (_isRoomTargeted == true)
-      {
-        return !_registry.ArenaService.CurrentRoomSelector;
-      }
-      else
+      if (_validRoomTargets == null)
       {
         var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
         return distance < 3.5f;
+      }
+      else
+      {
+        return !_registry.ArenaService.CurrentRoomSelector;
       }
     }
 
@@ -379,11 +383,20 @@ namespace Spelldawn.Game
         gameObject.name = revealed.Title.Text;
       }
 
-      _serverCanPlay = revealed.CanPlay;
-
-      if (revealed.Targeting?.TargetingCase is { } targeting)
+      switch (revealed.Targeting?.TargetingCase)
       {
-        _isRoomTargeted = targeting == CardTargeting.TargetingOneofCase.PickRoom;
+        case CardTargeting.TargetingOneofCase.NoTargeting:
+          _validRoomTargets = null;
+          _serverCanPlay = revealed.Targeting.NoTargeting.CanPlay;
+          break;
+        case CardTargeting.TargetingOneofCase.RoomTargeting:
+          _validRoomTargets = revealed.Targeting.RoomTargeting.ValidRooms.ToHashSet();
+          _serverCanPlay = _validRoomTargets.Count > 0;
+          break;
+        default:
+          _validRoomTargets = null;
+          _serverCanPlay = false;
+          break;
       }
 
       if (revealed.OnReleasePosition is { } position)

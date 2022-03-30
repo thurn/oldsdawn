@@ -13,6 +13,10 @@ command_list:
         travel_duration: 300
         wait_duration: 300
     UpdateGameView: 
+        user: 
+            side: Champion
+            player_info: 
+            valid_rooms_to_visit: VaultSanctumCryptsRoomA
         current_priority: User
         raid_active: false
     CreateOrUpdateCard: 
@@ -22,7 +26,8 @@ command_list:
             revealed_to_opponent: false
             owning_player: User
             revealed_card: 
-                can_play: true
+                targeting: 
+                    can_play: true
         create_position: 
             sorting_key: 6
             position: ObjectPositionHand { owner: User }
@@ -55,6 +60,10 @@ channel_response:
         travel_duration: 300
         wait_duration: 300
     UpdateGameView: 
+        opponent: 
+            side: Champion
+            player_info: 
+            valid_rooms_to_visit: VaultSanctumCryptsRoomA
         current_priority: Opponent
         raid_active: false
     RunInParallel: 
