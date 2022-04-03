@@ -14,6 +14,7 @@
 
 //! Contains the definitions for all cards in the game.
 
+pub mod artifacts;
 pub mod minions;
 pub mod projects;
 pub mod schemes;
@@ -27,6 +28,7 @@ pub mod weapons;
 /// function on each module, not completely sure if this is expected behavior or
 /// a bug.
 pub fn initialize() -> usize {
+    artifacts::initialize();
     minions::initialize();
     projects::initialize();
     schemes::initialize();

@@ -78,8 +78,9 @@ impl Database for SledDatabase {
                 owner_id: player_id,
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
-                    CardName::Greataxe => 20,
-                    CardName::ArcaneRecovery => 20,
+                    CardName::Lodestone => 15,
+                    CardName::Greataxe => 15,
+                    CardName::ArcaneRecovery => 15,
                 },
             }
         } else {

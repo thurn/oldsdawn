@@ -49,6 +49,7 @@ pub enum CardName {
 
     ArcaneRecovery,
     Greataxe,
+    Lodestone,
     GoldMine,
     IceDragon,
     DungeonAnnex,

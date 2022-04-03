@@ -14,7 +14,7 @@
 
 //! Tools for rendering the text on a card
 
-use data::card_definition::CardDefinition;
+use data::card_definition::{AbilityType, CardDefinition, Cost};
 use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
@@ -29,13 +29,20 @@ use ui::core::Component;
 pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) -> RulesText {
     let mut lines = vec![];
     for (index, ability) in definition.abilities.iter().enumerate() {
-        lines.push(match &ability.text {
+        let mut line = String::new();
+        if let AbilityType::Activated(cost) = &ability.ability_type {
+            line.push_str(&cost_string(cost));
+        }
+
+        line.push_str(&match &ability.text {
             AbilityText::Text(text) => ability_text(text),
             AbilityText::TextFn(function) => {
                 let tokens = function(game, Scope::new(AbilityId::new(card.id, index)));
                 ability_text(&tokens)
             }
         });
+
+        lines.push(line);
     }
     RulesText { text: lines.join("\n") }
 }
@@ -62,6 +69,19 @@ pub fn build_supplemental_info(
     SupplementalCardInfo { info: result }.render()
 }
 
+fn cost_string(cost: &Cost) -> String {
+    let mut actions = "\u{f254}".repeat(cost.actions as usize);
+
+    if let Some(mana) = cost.mana {
+        if mana > 0 {
+            actions.push_str(&format!(",{}\u{f06d}", mana));
+        }
+    }
+
+    actions.push_str(" \u{f30b} ");
+    actions
+}
+
 /// Primary function for converting a sequence of [TextToken]s into a string
 fn ability_text(tokens: &[TextToken]) -> String {
     let mut result = vec![];
@@ -84,7 +104,8 @@ fn ability_text(tokens: &[TextToken]) -> String {
                 Keyword::Dusk => "<b>\u{f0e7}Dusk:</b>".to_string(),
                 Keyword::Score => "<b>\u{f0e7}Score:</b>".to_string(),
                 Keyword::Combat => "<b>\u{f0e7}Combat:</b>".to_string(),
-                Keyword::Store(n) => format!("<b>Store {}:</b>", n),
+                Keyword::Store(n) => format!("<b>Store {}\u{f06d}</b>", n),
+                Keyword::Take(n) => format!("Take {}\u{f06d}", n),
                 Keyword::DealDamage(amount, damage_type) => format!(
                     "Deal {} {} damage.",
                     amount,

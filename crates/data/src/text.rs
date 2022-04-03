@@ -65,6 +65,7 @@ pub enum Keyword {
     Score,
     Combat,
     Store(u32),
+    Take(u32),
     DealDamage(u32, DamageType),
     EndRaid,
 }

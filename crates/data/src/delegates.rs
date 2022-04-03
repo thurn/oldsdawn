@@ -244,6 +244,8 @@ pub enum Delegate {
     CastCard(EventDelegate<CardId>),
     /// A card is moved from a non-arena position to an arena position
     PlayCard(EventDelegate<CardId>),
+    /// A card ability with a cost is activated
+    ActivateAbility(EventDelegate<AbilityId>),
     /// A card is moved to a new position
     MoveCard(EventDelegate<CardMoved>),
     /// A card is scored by the Overlord

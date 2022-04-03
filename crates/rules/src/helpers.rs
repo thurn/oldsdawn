@@ -39,7 +39,7 @@ pub fn scheme_cost() -> Cost {
     Cost { mana: None, actions: 1 }
 }
 
-/// Provides the cost for a card
+/// Provides the cost for a card, with 1 action point required
 pub fn cost(mana: ManaValue) -> Cost {
     Cost { mana: Some(mana), actions: 1 }
 }

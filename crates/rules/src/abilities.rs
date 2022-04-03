@@ -14,7 +14,7 @@
 
 //! Helpers for defining common card abilities
 
-use data::card_definition::{Ability, AbilityType};
+use data::card_definition::{Ability, AbilityType, Cost};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use data::game::GameState;
@@ -62,6 +62,21 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
                 }
             })),
         ],
+    }
+}
+
+/// Activated ability to take `N` stored mana from this card by paying a
+pub fn take_mana<const N: ManaValue>(cost: Cost) -> Ability {
+    Ability {
+        text: text![Keyword::Take(N)],
+        ability_type: AbilityType::Activated(cost),
+        delegates: vec![Delegate::ActivateAbility(EventDelegate::new(
+            this_ability,
+            |g, _s, ability_id| {
+                assert!(g.card(ability_id.card_id).data.stored_mana >= N);
+                g.card_mut(ability_id.card_id).data.stored_mana -= N;
+            },
+        ))],
     }
 }
 
