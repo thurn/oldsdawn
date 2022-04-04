@@ -34,7 +34,7 @@ use protos::spelldawn::{
     RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomTargeting, ScoreView,
     SpriteAddress, UpdateGameViewCommand,
 };
-use protos::spelldawn::{NoTargeting, ObjectPositionBrowser};
+use protos::spelldawn::{CardIdentifier, NoTargeting, ObjectPositionBrowser};
 use rules::actions::PlayCardTarget;
 use rules::{flags, queries};
 
@@ -47,7 +47,7 @@ pub struct FullSync {
     /// Overall game state
     pub game: UpdateGameViewCommand,
     /// The state of each card in this game
-    pub cards: BTreeMap<CardId, CreateOrUpdateCardCommand>,
+    pub cards: BTreeMap<CardIdentifier, CreateOrUpdateCardCommand>,
     /// Content to display in the user interface
     pub interface: RenderInterfaceCommand,
     /// Positions for Game Objects which are in non-standard positions, e.g.
@@ -70,7 +70,7 @@ pub fn run(game: &GameState, user_side: Side) -> FullSync {
             .filter(|c| c.position().kind() != CardPositionKind::DeckUnknown)
             .map(|c| {
                 (
-                    c.id,
+                    adapters::adapt_card_id(c.id),
                     create_or_update_card(
                         game,
                         c,
