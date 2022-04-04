@@ -205,7 +205,9 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
                 );
             }
             KeywordKind::Store => {
-                output.push("<b>Store</b> Put \u{f06d} into this card.".to_string());
+                output.push(
+                    "<b>Store</b> Place \u{f06d} on this card, discard when empty.".to_string(),
+                );
             }
             KeywordKind::DealDamage => {
                 output.push(
