@@ -78,7 +78,7 @@ impl fmt::Debug for GameId {
 }
 
 /// The two players in a game: Overlord & Champion
-#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd)]
 pub enum Side {
     Overlord,
     Champion,
@@ -108,7 +108,7 @@ impl fmt::Debug for Side {
 }
 
 /// Identifies a card in an ongoing game
-#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd)]
 pub struct CardId {
     pub side: Side,
     pub index: usize,

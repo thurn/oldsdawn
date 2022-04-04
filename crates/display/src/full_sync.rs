@@ -14,7 +14,7 @@
 
 //! Functions for representing the current game state to the user.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
@@ -47,7 +47,7 @@ pub struct FullSync {
     /// Overall game state
     pub game: UpdateGameViewCommand,
     /// The state of each card in this game
-    pub cards: HashMap<CardId, CreateOrUpdateCardCommand>,
+    pub cards: BTreeMap<CardId, CreateOrUpdateCardCommand>,
     /// Content to display in the user interface
     pub interface: RenderInterfaceCommand,
     /// Positions for Game Objects which are in non-standard positions, e.g.

@@ -16,7 +16,6 @@
 
 use std::collections::HashMap;
 
-use data::card_state::CardPositionKind;
 use data::game::GameState;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
@@ -53,11 +52,11 @@ pub fn execute(
     }
 
     // Iterate over `all_cards` again to ensure response order is deterministic
-    for card in game.all_cards().filter(|c| c.position().kind() != CardPositionKind::DeckUnknown) {
+    for card_id in new.cards.keys() {
         diff_create_or_update_card(
             commands,
-            old.and_then(|old| old.cards.get(&card.id)),
-            new.cards.get(&card.id),
+            old.and_then(|old| old.cards.get(card_id)),
+            new.cards.get(card_id),
         );
     }
 
