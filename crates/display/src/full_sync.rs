@@ -14,7 +14,7 @@
 
 //! Functions for representing the current game state to the user.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 use data::card_definition::CardDefinition;
 use data::card_state::{CardPosition, CardPositionKind, CardState};
@@ -52,7 +52,7 @@ pub struct FullSync {
     pub interface: RenderInterfaceCommand,
     /// Positions for Game Objects which are in non-standard positions, e.g.
     /// because they are currently participating in a raid.
-    pub position_overrides: HashMap<Id, ObjectPosition>,
+    pub position_overrides: BTreeMap<Id, ObjectPosition>,
 }
 
 /// Builds a complete representation of the provided game as viewed by the
@@ -276,19 +276,19 @@ fn revealed_card_view(
 }
 
 /// Calculates non-standard game object positions
-fn position_overrides(game: &GameState, user_side: Side) -> HashMap<Id, ObjectPosition> {
+fn position_overrides(game: &GameState, user_side: Side) -> BTreeMap<Id, ObjectPosition> {
     match &game.data.phase {
         GamePhase::ResolveMulligans(mulligans) => {
             opening_hand_position_overrides(game, user_side, mulligans)
         }
-        GamePhase::Play(_) => game.data.raid.as_ref().map_or_else(HashMap::new, |raid| {
+        GamePhase::Play(_) => game.data.raid.as_ref().map_or_else(BTreeMap::new, |raid| {
             if raid.phase == RaidPhase::Access {
                 raid_access_position_overrides(game, user_side, raid)
             } else {
                 raid_position_overrides(game, user_side, raid)
             }
         }),
-        GamePhase::GameOver(_) => HashMap::new(),
+        GamePhase::GameOver(_) => BTreeMap::new(),
     }
 }
 
@@ -297,7 +297,7 @@ fn opening_hand_position_overrides(
     game: &GameState,
     user_side: Side,
     mulligans: &MulliganData,
-) -> HashMap<Id, ObjectPosition> {
+) -> BTreeMap<Id, ObjectPosition> {
     match mulligans.decision(user_side) {
         None => game
             .hand(user_side)
@@ -311,7 +311,7 @@ fn opening_hand_position_overrides(
                 )
             })
             .collect(),
-        Some(_) => HashMap::new(),
+        Some(_) => BTreeMap::new(),
     }
 }
 
@@ -320,7 +320,7 @@ fn raid_position_overrides(
     game: &GameState,
     user_side: Side,
     raid: &RaidData,
-) -> HashMap<Id, ObjectPosition> {
+) -> BTreeMap<Id, ObjectPosition> {
     let mut result = Vec::new();
 
     match raid.target {
@@ -372,7 +372,7 @@ fn raid_access_position_overrides(
     game: &GameState,
     _user_side: Side,
     raid: &RaidData,
-) -> HashMap<Id, ObjectPosition> {
+) -> BTreeMap<Id, ObjectPosition> {
     fn create_position(i: usize, card_id: CardId) -> (Id, ObjectPosition) {
         (
             Id::CardId(adapters::adapt_card_id(card_id)),

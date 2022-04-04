@@ -14,7 +14,7 @@
 
 //! Functions for producing a diff between two game updates
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use data::game::GameState;
 use protos::spelldawn::game_command::Command;
@@ -197,8 +197,8 @@ fn diff_card_icon(old: Option<&CardIcon>, new: Option<&CardIcon>) -> Option<Card
 fn diff_card_position_updates(
     commands: &mut ResponseBuilder,
     game: &GameState,
-    old: Option<&HashMap<Id, ObjectPosition>>,
-    new: &HashMap<Id, ObjectPosition>,
+    old: Option<&BTreeMap<Id, ObjectPosition>>,
+    new: &BTreeMap<Id, ObjectPosition>,
 ) {
     let mut ids = vec![
         Id::Identity(PlayerName::User.into()),
@@ -220,8 +220,8 @@ fn diff_card_position_updates(
 fn push_move_command(
     commands: &mut ResponseBuilder,
     game: &GameState,
-    old: Option<&HashMap<Id, ObjectPosition>>,
-    new: &HashMap<Id, ObjectPosition>,
+    old: Option<&BTreeMap<Id, ObjectPosition>>,
+    new: &BTreeMap<Id, ObjectPosition>,
     id: Id,
 ) {
     match old {
