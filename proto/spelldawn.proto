@@ -435,6 +435,10 @@ enum PlayerName {
 message CardIdentifier {
     PlayerSide side = 1;
     uint32 index = 2;
+
+    // Optionally, identifies a specific ability within a logical card which
+    // is represented by this displayed card.
+    google.protobuf.UInt32Value ability_id = 3;
 }
 
 message GameObjectIdentifier {
@@ -586,6 +590,11 @@ message ObjectPositionIdentityContainer {
 message ObjectPositionRewardChest {
 }
 
+/// An object position which represents moving into a given card.
+message ObjectPositionIntoCard {
+    CardIdentifier card_id = 1;
+}
+
 message ObjectPosition {
     /*
      * A key by which to sort this object -- objects with higher sorting keys
@@ -609,6 +618,7 @@ message ObjectPosition {
         ObjectPositionBrowser browser = 13;
         ObjectPositionIdentity identity = 14;
         ObjectPositionIdentityContainer identity_container = 15;
+        ObjectPositionIntoCard into_card = 16;
     }
 }
 

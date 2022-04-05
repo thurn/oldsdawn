@@ -63,6 +63,10 @@ impl CardPosition {
         self.kind() == CardPositionKind::Hand
     }
 
+    pub fn shuffled_into_deck(&self) -> bool {
+        self.kind() == CardPositionKind::DeckUnknown
+    }
+
     /// Returns true if this card is in a known or unknown deck position
     pub fn in_deck(&self) -> bool {
         matches!(self.kind(), CardPositionKind::DeckUnknown | CardPositionKind::DeckTop)

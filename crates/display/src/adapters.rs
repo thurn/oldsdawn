@@ -15,7 +15,7 @@
 //! Helpers for converting between server & client representations
 
 use anyhow::{anyhow, bail, Context, Result};
-use data::primitives::{CardId, GameId, PlayerId, RoomId, Side};
+use data::primitives::{AbilityIndex, CardId, GameId, PlayerId, RoomId, Side};
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::{
     CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerName, PlayerSide,
@@ -65,7 +65,13 @@ pub fn adapt_card_id(card_id: CardId) -> CardIdentifier {
         }
         .into(),
         index: card_id.index as u32,
+        ability_id: None,
     }
+}
+
+/// Turns a server [CardId] and [AbilityIndex] into a protobuf equivalent
+pub fn adapt_ability_card_id(card_id: CardId, ability_index: AbilityIndex) -> CardIdentifier {
+    CardIdentifier { ability_id: Some(ability_index.value() as u32), ..adapt_card_id(card_id) }
 }
 
 /// Turns a server [RoomId] into its protobuf equivalent

@@ -552,6 +552,7 @@ impl Summarize for Position {
             Position::Browser(v) => summary.primitive(v),
             Position::Identity(v) => summary.primitive(v),
             Position::IdentityContainer(v) => summary.primitive(v),
+            Position::IntoCard(v) => summary.primitive(v),
         }
     }
 }

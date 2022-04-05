@@ -138,6 +138,12 @@ impl fmt::Debug for CardId {
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct AbilityIndex(pub usize);
 
+impl AbilityIndex {
+    pub fn value(self) -> usize {
+        self.0
+    }
+}
+
 impl fmt::Debug for AbilityIndex {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)

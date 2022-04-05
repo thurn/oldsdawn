@@ -118,6 +118,16 @@ pub fn card_frame(school: School) -> SpriteAddress {
     }
 }
 
+pub fn ability_card_frame(side: Side) -> SpriteAddress {
+    SpriteAddress {
+        address: match side {
+            Side::Overlord => "",
+            Side::Champion => "",
+        }
+        .to_string(),
+    }
+}
+
 /// Address for an image to display as a background for a card of the given
 /// [Faction].
 pub fn title_background(faction: Option<Faction>) -> SpriteAddress {

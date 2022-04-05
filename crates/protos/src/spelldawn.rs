@@ -345,6 +345,10 @@ pub struct CardIdentifier {
     pub side: i32,
     #[prost(uint32, tag = "2")]
     pub index: u32,
+    /// Optionally, identifies a specific ability within a logical card which
+    /// is represented by this displayed card.
+    #[prost(message, optional, tag = "3")]
+    pub ability_id: ::core::option::Option<u32>,
 }
 #[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Message)]
 pub struct GameObjectIdentifier {
@@ -495,6 +499,12 @@ pub struct ObjectPositionIdentityContainer {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPositionRewardChest {}
+//// An object position which represents moving into a given card.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ObjectPositionIntoCard {
+    #[prost(message, optional, tag = "1")]
+    pub card_id: ::core::option::Option<CardIdentifier>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPosition {
     ///
@@ -505,7 +515,7 @@ pub struct ObjectPosition {
     pub sorting_key: u32,
     #[prost(
         oneof = "object_position::Position",
-        tags = "2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15"
+        tags = "2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16"
     )]
     pub position: ::core::option::Option<object_position::Position>,
 }
@@ -541,6 +551,8 @@ pub mod object_position {
         Identity(super::ObjectPositionIdentity),
         #[prost(message, tag = "15")]
         IdentityContainer(super::ObjectPositionIdentityContainer),
+        #[prost(message, tag = "16")]
+        IntoCard(super::ObjectPositionIntoCard),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

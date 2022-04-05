@@ -16,10 +16,12 @@
 
 use std::collections::BTreeMap;
 
-use data::card_definition::CardDefinition;
-use data::card_state::{CardPosition, CardPositionKind, CardState};
+use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
+use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
-use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite};
+use data::primitives::{
+    AbilityIndex, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite,
+};
 use enum_iterator::IntoEnumIterator;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_object_identifier::Id;
@@ -67,7 +69,7 @@ pub fn run(game: &GameState, user_side: Side) -> FullSync {
         game: update_game_view(game, user_side),
         cards: game
             .all_cards()
-            .filter(|c| c.position().kind() != CardPositionKind::DeckUnknown)
+            .filter(|c| !c.position().shuffled_into_deck())
             .map(|c| {
                 (
                     adapters::adapt_card_id(c.id),
@@ -79,6 +81,11 @@ pub fn run(game: &GameState, user_side: Side) -> FullSync {
                     ),
                 )
             })
+            .chain(
+                game.all_cards()
+                    .filter(|c| c.position().in_play() && c.side == user_side)
+                    .flat_map(|c| create_ability_cards(game, c, user_side)),
+            )
             .collect(),
         interface: interface::render(game, user_side),
         position_overrides: position_overrides(game, user_side),
@@ -183,6 +190,70 @@ pub fn create_or_update_card(
         create_position: position,
         create_animation,
         disable_flip_animation: false,
+    }
+}
+
+fn create_ability_cards(
+    game: &GameState,
+    card: &CardState,
+    user_side: Side,
+) -> Vec<(CardIdentifier, CreateOrUpdateCardCommand)> {
+    let mut result = vec![];
+    for (ability_index, ability) in rules::get(card.name).abilities.iter().enumerate() {
+        if let AbilityType::Activated(cost) = &ability.ability_type {
+            let identifier = adapters::adapt_ability_card_id(card.id, AbilityIndex(ability_index));
+            result.push((
+                identifier,
+                CreateOrUpdateCardCommand {
+                    card: Some(ability_card_view(game, card, ability, identifier, cost, user_side)),
+                    create_position: Some(ObjectPosition {
+                        sorting_key: card.sorting_key,
+                        position: Some(Position::Hand(ObjectPositionHand {
+                            owner: PlayerName::User.into(),
+                        })),
+                    }),
+                    create_animation: CardCreationAnimation::Unspecified.into(),
+                    disable_flip_animation: false,
+                },
+            ))
+        }
+    }
+    result
+}
+
+fn ability_card_view(
+    _game: &GameState,
+    card: &CardState,
+    _ability: &Ability,
+    identifier: CardIdentifier,
+    cost: &Cost,
+    _user_side: Side,
+) -> CardView {
+    CardView {
+        card_id: Some(identifier),
+        revealed_to_viewer: true,
+        revealed_to_opponent: false,
+        card_icons: cost.mana.map(|mana| CardIcons {
+            top_left_icon: Some(CardIcon {
+                background: Some(assets::card_icon(CardIconType::Mana)),
+                text: Some(mana.to_string()),
+                background_scale: assets::background_scale(CardIconType::Mana),
+            }),
+            ..CardIcons::default()
+        }),
+        arena_frame: None,
+        owning_player: PlayerName::User.into(),
+        revealed_card: Some(RevealedCardView {
+            card_frame: Some(assets::ability_card_frame(card.side)),
+            title_background: None,
+            jewel: None,
+            image: None,
+            title: None,
+            rules_text: None,
+            targeting: None,
+            on_release_position: None,
+            supplemental_info: None,
+        }),
     }
 }
 
