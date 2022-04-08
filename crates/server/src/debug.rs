@@ -26,8 +26,9 @@ use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugCommand, CommandList, CreateNewGameAction, GameAction, GameCommand,
-    LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode, SetPlayerIdentifierCommand,
+    ClientDebugCommand, CommandList, ConnectToGameCommand, CreateNewGameAction, GameAction,
+    GameCommand, GameIdentifier, LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode,
+    SetPlayerIdentifierCommand,
 };
 use rules::{dispatch, mutations, queries};
 
@@ -55,8 +56,20 @@ pub fn handle_debug_action(
                                     },
                                 )),
                                 deterministic: false,
+                                use_debug_id: true,
                             })),
                         })),
+                    })),
+                }],
+            },
+            channel_response: None,
+        }),
+        DebugAction::JoinGame => Ok(GameResponse {
+            command_list: CommandList {
+                commands: vec![GameCommand {
+                    command: Some(Command::ConnectToGame(ConnectToGameCommand {
+                        game_id: Some(GameIdentifier { value: 0 }),
+                        scene_name: "Labyrinth".to_string(),
                     })),
                 }],
             },

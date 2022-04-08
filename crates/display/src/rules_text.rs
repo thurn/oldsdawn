@@ -14,11 +14,11 @@
 
 //! Tools for rendering the text on a card
 
-use data::card_definition::{AbilityType, CardDefinition, Cost};
+use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
 use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
-use data::primitives::{AbilityId, CardSubtype, CardType, DamageType, Faction};
+use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, DamageType, Faction};
 use data::text::{AbilityText, Keyword, KeywordKind, NumericOperator, TextToken};
 use protos::spelldawn::{Node, RulesText};
 use ui::card_info::SupplementalCardInfo;
@@ -34,29 +34,43 @@ pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) ->
             line.push_str(&cost_string(cost));
         }
 
-        line.push_str(&match &ability.text {
-            AbilityText::Text(text) => ability_text(text),
-            AbilityText::TextFn(function) => {
-                let tokens = function(game, Scope::new(AbilityId::new(card.id, index)));
-                ability_text(&tokens)
-            }
-        });
+        line.push_str(&ability_text(game, AbilityId::new(card.id, index), ability));
 
         lines.push(line);
     }
     RulesText { text: lines.join("\n") }
 }
 
+/// Builds the rules text for a single [Ability], not including its cost (if
+/// any).
+pub fn ability_text(game: &GameState, ability_id: AbilityId, ability: &Ability) -> String {
+    match &ability.text {
+        AbilityText::Text(text) => process_text_tokens(text),
+        AbilityText::TextFn(function) => {
+            let tokens = function(game, Scope::new(ability_id));
+            process_text_tokens(&tokens)
+        }
+    }
+}
+
 /// Builds the supplemental info display for a card, which displays additional
 /// help information and appears on long-press.
+///
+/// If an `ability_index` is provided, only supplemental info for that index is
+/// returned. Otherwise, supplemental info for all abilities is returned.
 pub fn build_supplemental_info(
     game: &GameState,
     card: &CardState,
-    definition: &CardDefinition,
+    ability_index: Option<AbilityIndex>,
 ) -> Node {
+    let definition = rules::get(card.name);
     let mut result = vec![card_type_line(definition)];
     let mut keywords = vec![];
     for (index, ability) in definition.abilities.iter().enumerate() {
+        if matches!(ability_index, Some(i) if i.value() != index) {
+            continue;
+        }
+
         match &ability.text {
             AbilityText::Text(text) => find_keywords(text, &mut keywords),
             AbilityText::TextFn(function) => {
@@ -83,7 +97,7 @@ fn cost_string(cost: &Cost) -> String {
 }
 
 /// Primary function for converting a sequence of [TextToken]s into a string
-fn ability_text(tokens: &[TextToken]) -> String {
+fn process_text_tokens(tokens: &[TextToken]) -> String {
     let mut result = vec![];
     for token in tokens {
         result.push(match token {
@@ -118,7 +132,7 @@ fn ability_text(tokens: &[TextToken]) -> String {
                 ),
                 Keyword::EndRaid => "End the raid.".to_string(),
             },
-            TextToken::Cost(cost) => format!("{}: ", ability_text(cost)),
+            TextToken::Cost(cost) => format!("{}: ", process_text_tokens(cost)),
         })
     }
 
@@ -176,42 +190,33 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
     for keyword in keywords {
         match keyword {
             KeywordKind::Play => {
-                output.push(
-                    "\u{f0e7}<b>Play:</b> Triggers when this card enters the arena.".to_string(),
-                );
+                output.push("<b>Play:</b> Triggers when this card enters the arena.".to_string());
             }
             KeywordKind::Dawn => {
-                output.push(
-                    "\u{f0e7}<b>Dawn:</b> Triggers at the start of the Champion's turn."
-                        .to_string(),
-                );
+                output
+                    .push("<b>Dawn:</b> Triggers at the start of the Champion's turn.".to_string());
             }
             KeywordKind::Dusk => {
-                output.push(
-                    "\u{f0e7}<b>Dusk:</b> Triggers at the start of the Overlord's turn."
-                        .to_string(),
-                );
+                output
+                    .push("<b>Dusk:</b> Triggers at the start of the Overlord's turn.".to_string());
             }
             KeywordKind::Score => {
-                output.push(
-                    "\u{f0e7}<b>Score:</b> Triggers when the Overlord scores this card."
-                        .to_string(),
-                );
+                output
+                    .push("<b>Score:</b> Triggers when the Overlord scores this card.".to_string());
             }
             KeywordKind::Combat => {
                 output.push(
-                    "\u{f0e7}<b>Combat:</b> Triggers if this minion is not defeated in combat."
-                        .to_string(),
+                    "<b>Combat:</b> Triggers if this minion is not defeated in combat.".to_string(),
                 );
             }
             KeywordKind::Store => {
                 output.push(
-                    "<b>Store</b> Place \u{f06d} on this card, discard when empty.".to_string(),
+                    "<b>Store:</b> Place \u{f06d} on this card, discard when empty.".to_string(),
                 );
             }
             KeywordKind::DealDamage => {
                 output.push(
-                    "<b>Damage</b>: Causes the Champion to discard cards at random.".to_string(),
+                    "<b>Damage:</b> Causes the Champion to discard cards at random.".to_string(),
                 );
             }
             _ => {}

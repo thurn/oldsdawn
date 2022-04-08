@@ -121,8 +121,8 @@ pub fn card_frame(school: School) -> SpriteAddress {
 pub fn ability_card_frame(side: Side) -> SpriteAddress {
     SpriteAddress {
         address: match side {
-            Side::Overlord => "",
-            Side::Champion => "",
+            Side::Overlord => "LittleSweetDaemon/TCG_Card_Design/Custom/OverlordFront",
+            Side::Champion => "LittleSweetDaemon/TCG_Card_Design/Custom/ChampionFront",
         }
         .to_string(),
     }

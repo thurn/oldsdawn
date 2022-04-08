@@ -43967,6 +43967,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _cardPrefab: {fileID: 3573626451624847171, guid: 94ee6780efb164566b7977f07977d072, type: 3}
+  _tokenCardPrefab: {fileID: 3573626451624847171, guid: b493701223066439bb1e45ca83211d54, type: 3}
   _infoZoomLeft: {fileID: 2035485567}
   _infoZoomRight: {fileID: 939565026}
 --- !u!114 &1445473053

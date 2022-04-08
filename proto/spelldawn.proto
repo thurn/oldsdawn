@@ -651,24 +651,33 @@ message RevealedCardView {
     Node supplemental_info = 9;
 }
 
+enum CardPrefab {
+    CARD_PREFAB_UNSPECIFIED = 0;
+    CARD_PREFAB_STANDARD = 1;
+    CARD_PREFAB_TOKEN_CARD = 2;
+}
+
 message CardView {
     CardIdentifier card_id = 1;
 
-    /** Whether the current user is able to see the front of this card. */
-    bool revealed_to_viewer = 2;
+    // Which prefab to use for this card, controls the overall appearance
+    CardPrefab prefab = 2;
 
-    /** Whether the opposing player is able to see the front of this card. */
-    bool revealed_to_opponent = 3;
+    // Whether the current user is able to see the front of this card.
+    bool revealed_to_viewer = 3;
 
-    CardIcons card_icons = 4;
+    // Whether the opposing player is able to see the front of this card.
+    bool revealed_to_opponent = 4;
 
-    SpriteAddress arena_frame = 5;
+    CardIcons card_icons = 5;
 
-    /* Used to e.g. determine which card back to display for this card. */
-    PlayerName owning_player = 6;
+    SpriteAddress arena_frame = 6;
 
-    /** Card information which is only present on revealed cards. */
-    RevealedCardView revealed_card = 7;
+    // Used to e.g. determine which card back to display for this card.
+    PlayerName owning_player = 7;
+
+    // Card information which is only present on revealed cards.
+    RevealedCardView revealed_card = 8;
 }
 
 message HandView {
@@ -833,6 +842,9 @@ message CreateNewGameAction {
 
     // If true, all game events will be non-random.
     bool deterministic = 3;
+
+    // If true, the created game's ID will be 0.
+    bool use_debug_id = 4;
 }
 
 /*

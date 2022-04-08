@@ -591,21 +591,24 @@ pub struct RevealedCardView {
 pub struct CardView {
     #[prost(message, optional, tag = "1")]
     pub card_id: ::core::option::Option<CardIdentifier>,
-    /// * Whether the current user is able to see the front of this card.
-    #[prost(bool, tag = "2")]
-    pub revealed_to_viewer: bool,
-    /// * Whether the opposing player is able to see the front of this card.
+    /// Which prefab to use for this card, controls the overall appearance
+    #[prost(enumeration = "CardPrefab", tag = "2")]
+    pub prefab: i32,
+    /// Whether the current user is able to see the front of this card.
     #[prost(bool, tag = "3")]
+    pub revealed_to_viewer: bool,
+    /// Whether the opposing player is able to see the front of this card.
+    #[prost(bool, tag = "4")]
     pub revealed_to_opponent: bool,
-    #[prost(message, optional, tag = "4")]
-    pub card_icons: ::core::option::Option<CardIcons>,
     #[prost(message, optional, tag = "5")]
+    pub card_icons: ::core::option::Option<CardIcons>,
+    #[prost(message, optional, tag = "6")]
     pub arena_frame: ::core::option::Option<SpriteAddress>,
     /// Used to e.g. determine which card back to display for this card.
-    #[prost(enumeration = "PlayerName", tag = "6")]
+    #[prost(enumeration = "PlayerName", tag = "7")]
     pub owning_player: i32,
-    /// * Card information which is only present on revealed cards.
-    #[prost(message, optional, tag = "7")]
+    /// Card information which is only present on revealed cards.
+    #[prost(message, optional, tag = "8")]
     pub revealed_card: ::core::option::Option<RevealedCardView>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -799,6 +802,9 @@ pub struct CreateNewGameAction {
     /// If true, all game events will be non-random.
     #[prost(bool, tag = "3")]
     pub deterministic: bool,
+    /// If true, the created game's ID will be 0.
+    #[prost(bool, tag = "4")]
+    pub use_debug_id: bool,
 }
 ///
 /// Possible game actions taken by the user.
@@ -1450,6 +1456,13 @@ pub enum ClientItemLocation {
     Unspecified = 0,
     Left = 1,
     Right = 2,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum CardPrefab {
+    Unspecified = 0,
+    Standard = 1,
+    TokenCard = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

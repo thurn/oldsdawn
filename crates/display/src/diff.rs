@@ -141,6 +141,7 @@ fn diff_create_or_update_card(
 fn diff_card_view(old: Option<&CardView>, new: Option<&CardView>) -> Option<CardView> {
     run_diff(old, new, |old, new| CardView {
         card_id: new.card_id,
+        prefab: new.prefab,
         revealed_to_viewer: new.revealed_to_viewer,
         revealed_to_opponent: new.revealed_to_opponent,
         card_icons: diff_card_icons(old.card_icons.as_ref(), new.card_icons.as_ref()),

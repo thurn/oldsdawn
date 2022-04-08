@@ -20,7 +20,6 @@ using Spelldawn.Protos;
 using Spelldawn.Services;
 using Spelldawn.Utils;
 using TMPro;
-using TMPro.Examples;
 using UnityEngine;
 
 #nullable enable
@@ -30,8 +29,6 @@ namespace Spelldawn.Game
   public sealed class Card : Displayable
   {
     public const float CardScale = 1.5f;
-
-    static readonly Vector3 ArenaCardOffset = new(0, 0.6f, 0);
 
     [Header("Card")] [SerializeField] SpriteRenderer _cardBack = null!;
     [SerializeField] GameObject _arenaCardBack = null!;
@@ -44,10 +41,9 @@ namespace Spelldawn.Game
     [SerializeField] MeshRenderer _outline = null!;
     [SerializeField] TextMeshPro _title = null!;
     [SerializeField] TextMeshPro _rulesText = null!;
-    [SerializeField] SpriteRenderer _jewel = null!;
+    [SerializeField] SpriteRenderer? _jewel;
     [SerializeField] SpriteRenderer _arenaFrame = null!;
     [SerializeField] GameObject _arenaShadow = null!;
-    [SerializeField] WarpTextExample _warpText = null!;
     [SerializeField] Transform _topLeftAnchor = null!;
     [SerializeField] Transform _topRightAnchor = null!;
     [SerializeField] Transform _bottomLeftAnchor = null!;
@@ -71,6 +67,7 @@ namespace Spelldawn.Game
     ObjectPosition? _releasePosition;
     Node? _supplementalInfo;
     Registry _registry = null!;
+    float? _arenaCardYOffset;
 
     [Serializable]
     public sealed class Icon
@@ -100,6 +97,16 @@ namespace Spelldawn.Game
     public Transform BottomRightAnchor => _bottomRightAnchor;
 
     public Node? SupplementalInfo => _supplementalInfo;
+
+    void Awake()
+    {
+      // Minor hack: we want to shift the image down to be centered within the card in the arena, so we record
+      // the image position when the card is first rendered to restore it later.
+      if (_arenaCardYOffset == null && _arenaCard.localPosition.y > 0)
+      {
+        _arenaCardYOffset = _arenaCard.localPosition.y;
+      }
+    }
 
     public Sequence? Render(
       Registry registry,
@@ -181,7 +188,10 @@ namespace Spelldawn.Game
         _titleBackground.gameObject.SetActive(false);
         _title.gameObject.SetActive(false);
         _rulesText.gameObject.SetActive(false);
-        _jewel.gameObject.SetActive(false);
+        if (_jewel)
+        {
+          _jewel!.gameObject.SetActive(false);
+        }
         _arenaFrame.gameObject.SetActive(true);
         _cardShadow.SetActive(false);
         _arenaShadow.SetActive(true);
@@ -197,11 +207,15 @@ namespace Spelldawn.Game
         _titleBackground.gameObject.SetActive(true);
         _title.gameObject.SetActive(true);
         _rulesText.gameObject.SetActive(true);
-        _jewel.gameObject.SetActive(true);
+        if (_jewel)
+        {
+          _jewel!.gameObject.SetActive(true);
+        }
         _arenaFrame.gameObject.SetActive(false);
         _cardShadow.SetActive(true);
         _arenaShadow.SetActive(false);
-        _arenaCard.localPosition = ArenaCardOffset;
+        _arenaCard.localPosition = new Vector3(0, _arenaCardYOffset ?? 0, 0);
+        // _arenaCard.localPosition = new Vector3(0, Errors.CheckNotNull(_arenaCardYOffset), 0);
       }
 
       UpdateIcons(null, GameContext.IsArenaContext());
@@ -421,7 +435,10 @@ namespace Spelldawn.Game
         _rulesText.text = revealed.RulesText.Text;
       }
 
-      _registry.AssetService.AssignSprite(_jewel, revealed.Jewel);
+      if (_jewel)
+      {
+        _registry.AssetService.AssignSprite(_jewel!, revealed.Jewel);
+      }
     }
 
     void RenderHiddenCard()
@@ -479,42 +496,7 @@ namespace Spelldawn.Game
       {
         return;
       }
-
       _title.text = title;
-      var length = title.Length;
-
-      if (length < 10)
-      {
-        _title.transform.localPosition = new Vector3(0, 1.95f, 0);
-        _warpText.enabled = false;
-      }
-      else
-      {
-        _warpText.enabled = true;
-
-        switch (length)
-        {
-          case < 14:
-            _warpText.CurveScale = 0.75f;
-            _title.transform.localPosition = new Vector3(0, 1.93f, 0);
-            break;
-          case < 17:
-            _warpText.CurveScale = 1.5f;
-            _title.transform.localPosition = new Vector3(0, 1.89f, 0);
-            break;
-          case < 20:
-            _warpText.CurveScale = 1.7f;
-            _title.transform.localPosition = new Vector3(0, 1.87f, 0);
-            break;
-          default:
-            _warpText.CurveScale = 1.9f;
-            _title.transform.localPosition = new Vector3(0, 1.87f, 0);
-            break;
-        }
-
-        var internalText = ComponentUtils.GetComponent<TMP_Text>(_title);
-        StartCoroutine(_warpText.WarpText(internalText));
-      }
     }
   }
 }

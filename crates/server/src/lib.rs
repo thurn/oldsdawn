@@ -242,7 +242,7 @@ fn create_new_game(
     user_id: PlayerId,
     action: &CreateNewGameAction,
 ) -> Result<GameResponse> {
-    let game_id = database.generate_game_id()?;
+    let game_id = if action.use_debug_id { GameId::new(0) } else { database.generate_game_id()? };
     info!(?game_id, "create_new_game");
     let opponent_id = adapters::to_server_player_id(action.opponent_id)?;
     let user_side = adapters::to_server_side(PlayerSide::from_i32(action.side))?;

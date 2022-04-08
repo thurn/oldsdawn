@@ -79,6 +79,7 @@ pub struct Prompt {
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum DebugAction {
     NewGame(Side),
+    JoinGame,
     ResetGame,
     FetchStandardPanels,
     AddMana(ManaValue),

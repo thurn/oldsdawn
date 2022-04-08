@@ -53,6 +53,7 @@ pub fn render() -> Node {
                     "New Game (C)",
                     UserAction::DebugAction(DebugAction::NewGame(Side::Champion)),
                 ),
+                debug_button("Join Game", UserAction::DebugAction(DebugAction::JoinGame)),
                 debug_button("Reset", UserAction::DebugAction(DebugAction::ResetGame)),
                 debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
                 client_debug_button(

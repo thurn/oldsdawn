@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -28,6 +29,7 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] Card _cardPrefab = null!;
+    [SerializeField] Card _tokenCardPrefab = null!;
     [SerializeField] ObjectDisplay _infoZoomLeft = null!;
     [SerializeField] ObjectDisplay _infoZoomRight = null!;
 
@@ -70,7 +72,7 @@ namespace Spelldawn.Services
         Destroy(_optimisticCard);
       }
 
-      _optimisticCard = ComponentUtils.Instantiate(_cardPrefab);
+      _optimisticCard = InstantiateCardPrefab(CardPrefab.Standard);
       _optimisticCard.Render(_registry, new CardView { OwningPlayer = PlayerName.User }, GameContext.Staging);
       _optimisticCard.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       _registry.ObjectPositionService.PlayDrawCardAnimation(_optimisticCard);
@@ -105,7 +107,7 @@ namespace Spelldawn.Services
       }
       else
       {
-        card = ComponentUtils.Instantiate(_cardPrefab);
+        card = InstantiateCardPrefab(command.Card!.Prefab);
         card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
 
         if (command.CreateAnimation != CardCreationAnimation.DrawCard)
@@ -139,7 +141,7 @@ namespace Spelldawn.Services
 
     public Card CreateAndAddCard(CardView cardView, GameContext gameContext, bool animate)
     {
-      var card = ComponentUtils.Instantiate(_cardPrefab);
+      var card = InstantiateCardPrefab(cardView.Prefab);
       card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       card.Render(_registry, cardView, gameContext, animate: animate);
       _cards[Errors.CheckNotNull(cardView.CardId)] = card;
@@ -191,5 +193,12 @@ namespace Spelldawn.Services
       Destroy(card.gameObject);
       yield break;
     }
+
+    Card InstantiateCardPrefab(CardPrefab prefab) => ComponentUtils.Instantiate(prefab switch
+    {
+      CardPrefab.Standard => _cardPrefab,
+      CardPrefab.TokenCard => _tokenCardPrefab,
+      _ => throw new ArgumentOutOfRangeException()
+    });
   }
 }

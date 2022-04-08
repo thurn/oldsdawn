@@ -20,7 +20,7 @@ use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::primitives::{
-    AbilityIndex, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite,
+    AbilityId, AbilityIndex, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite,
 };
 use enum_iterator::IntoEnumIterator;
 use protos::spelldawn::card_targeting::Targeting;
@@ -36,7 +36,10 @@ use protos::spelldawn::{
     RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomTargeting, ScoreView,
     SpriteAddress, UpdateGameViewCommand,
 };
-use protos::spelldawn::{CardIdentifier, NoTargeting, ObjectPositionBrowser};
+use protos::spelldawn::{
+    CardIdentifier, CardPrefab, NoTargeting, ObjectPositionBrowser, ObjectPositionIntoCard,
+    RulesText,
+};
 use rules::actions::PlayCardTarget;
 use rules::{flags, queries};
 
@@ -193,6 +196,7 @@ pub fn create_or_update_card(
     }
 }
 
+/// Creates token cards representing activated abilities of the provided `card`.
 fn create_ability_cards(
     game: &GameState,
     card: &CardState,
@@ -205,7 +209,15 @@ fn create_ability_cards(
             result.push((
                 identifier,
                 CreateOrUpdateCardCommand {
-                    card: Some(ability_card_view(game, card, ability, identifier, cost, user_side)),
+                    card: Some(ability_card_view(
+                        game,
+                        card,
+                        AbilityId::new(card.id, ability_index),
+                        ability,
+                        identifier,
+                        cost,
+                        user_side,
+                    )),
                     create_position: Some(ObjectPosition {
                         sorting_key: card.sorting_key,
                         position: Some(Position::Hand(ObjectPositionHand {
@@ -222,15 +234,18 @@ fn create_ability_cards(
 }
 
 fn ability_card_view(
-    _game: &GameState,
+    game: &GameState,
     card: &CardState,
-    _ability: &Ability,
+    ability_id: AbilityId,
+    ability: &Ability,
     identifier: CardIdentifier,
     cost: &Cost,
     _user_side: Side,
 ) -> CardView {
+    let definition = rules::get(card.name);
     CardView {
         card_id: Some(identifier),
+        prefab: CardPrefab::TokenCard.into(),
         revealed_to_viewer: true,
         revealed_to_opponent: false,
         card_icons: cost.mana.map(|mana| CardIcons {
@@ -245,14 +260,25 @@ fn ability_card_view(
         owning_player: PlayerName::User.into(),
         revealed_card: Some(RevealedCardView {
             card_frame: Some(assets::ability_card_frame(card.side)),
-            title_background: None,
+            title_background: Some(assets::title_background(None)),
             jewel: None,
-            image: None,
-            title: None,
-            rules_text: None,
+            image: Some(sprite(&definition.image)),
+            title: Some(CardTitle { text: format!("Use {}", definition.name.displayed_name()) }),
+            rules_text: Some(RulesText {
+                text: rules_text::ability_text(game, ability_id, ability),
+            }),
             targeting: None,
-            on_release_position: None,
-            supplemental_info: None,
+            on_release_position: Some(ObjectPosition {
+                sorting_key: card.sorting_key,
+                position: Some(Position::IntoCard(ObjectPositionIntoCard {
+                    card_id: Some(identifier),
+                })),
+            }),
+            supplemental_info: Some(rules_text::build_supplemental_info(
+                game,
+                card,
+                Some(ability_id.index),
+            )),
         }),
     }
 }
@@ -263,6 +289,7 @@ pub fn card_view(game: &GameState, card: &CardState, user_side: Side) -> CardVie
     let revealed = card.is_revealed_to(user_side);
     CardView {
         card_id: Some(adapters::adapt_card_id(card.id)),
+        prefab: CardPrefab::Standard.into(),
         revealed_to_viewer: card.is_revealed_to(user_side),
         revealed_to_opponent: card.is_revealed_to(user_side.opponent()),
         card_icons: Some(card_icons(game, card, definition, revealed)),
@@ -342,7 +369,7 @@ fn revealed_card_view(
         rules_text: Some(rules_text::build(game, card, definition)),
         targeting: Some(card_targeting(game, card, user_side)),
         on_release_position: Some(release_position(definition)),
-        supplemental_info: Some(rules_text::build_supplemental_info(game, card, definition)),
+        supplemental_info: Some(rules_text::build_supplemental_info(game, card, None)),
     }
 }
 
