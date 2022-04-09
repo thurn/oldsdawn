@@ -126,8 +126,6 @@ pub struct CardState {
     pub id: CardId,
     /// Car d name, can be used to look up this card's definition
     pub name: CardName,
-    /// Player who owns this card
-    pub side: Side,
     /// Optional state for this card
     pub data: CardData,
     /// Opaque value identifying this card's sort order within its CardPosition.
@@ -144,7 +142,6 @@ impl CardState {
         Self {
             id,
             name,
-            side: id.side,
             position: if is_identity {
                 CardPosition::Identity(id.side)
             } else {
@@ -157,6 +154,10 @@ impl CardState {
                 ..CardData::default()
             },
         }
+    }
+
+    pub fn side(&self) -> Side {
+        self.id.side
     }
 
     /// Where this card is located in the game.

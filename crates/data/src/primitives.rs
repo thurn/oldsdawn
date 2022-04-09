@@ -274,7 +274,6 @@ pub enum CardType {
     Minion,
     Project,
     Scheme,
-    Upgrade,
     Identity,
 }
 

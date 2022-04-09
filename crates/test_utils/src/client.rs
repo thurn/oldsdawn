@@ -243,13 +243,11 @@ impl TestSession {
         let card_id = self.add_to_hand(card_name);
 
         let target = match rules::get(card_name).card_type {
-            CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
-                Some(CardTarget {
-                    card_target: Some(card_target::CardTarget::RoomId(
-                        adapters::adapt_room_id(room_id).into(),
-                    )),
-                })
-            }
+            CardType::Minion | CardType::Project | CardType::Scheme => Some(CardTarget {
+                card_target: Some(card_target::CardTarget::RoomId(
+                    adapters::adapt_room_id(room_id).into(),
+                )),
+            }),
             _ => None,
         };
 
@@ -586,12 +584,12 @@ impl HasText for Vec<&Node> {
 /// Simulated card state in an ongoing [TestSession]
 #[derive(Debug, Clone, Default)]
 pub struct ClientCards {
-    pub card_map: HashMap<CardId, ClientCard>,
+    pub card_map: HashMap<CardIdentifier, ClientCard>,
 }
 
 impl ClientCards {
     pub fn get(&self, card_id: CardIdentifier) -> &ClientCard {
-        self.card_map.get(&adapters::from_card_identifier(card_id)).expect("Card not found")
+        self.card_map.get(&card_id).expect("Card not found")
     }
 
     /// Returns a vec containing the titles of all of the cards in the provided
@@ -647,9 +645,8 @@ impl ClientCards {
         match command {
             Command::CreateOrUpdateCard(create_or_update) => {
                 let card_view = create_or_update.clone().card.expect("CardView");
-                let card_id = adapters::to_server_card_id(&card_view.card_id).expect("CardId");
                 self.card_map
-                    .entry(card_id)
+                    .entry(card_view.card_id.expect("card_id"))
                     .and_modify(|c| c.update(&card_view))
                     .or_insert_with(|| ClientCard::new(&create_or_update));
             }
@@ -657,22 +654,19 @@ impl ClientCards {
                 let position = move_objects.clone().position.expect("ObjectPosition");
                 for id in move_objects.ids {
                     if let game_object_identifier::Id::CardId(identifier) = id.id.expect("ID") {
-                        let card_id =
-                            adapters::to_server_card_id(&Some(identifier)).expect("CardId");
                         assert!(
-                            self.card_map.contains_key(&card_id),
+                            self.card_map.contains_key(&identifier),
                             "Card not found (not created/already destroyed?) for {:?} -> {:?}",
-                            card_id,
+                            identifier,
                             position
                         );
-                        let mut card = self.card_map.get_mut(&card_id).unwrap();
+                        let mut card = self.card_map.get_mut(&identifier).unwrap();
                         card.position = Some(position.clone());
                     }
                 }
             }
             Command::DestroyCard(destroy_card) => {
-                let card_id = adapters::to_server_card_id(&destroy_card.card_id).expect("CardId");
-                self.card_map.remove(&card_id);
+                self.card_map.remove(&destroy_card.card_id.expect("card_id"));
             }
             _ => {}
         }

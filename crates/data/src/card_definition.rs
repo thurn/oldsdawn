@@ -20,8 +20,8 @@ use std::fmt::Debug;
 use crate::card_name::CardName;
 use crate::delegates::Delegate;
 use crate::primitives::{
-    ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue, LevelValue, ManaValue,
-    PointsValue, Rarity, School, ShieldValue, Side, Sprite,
+    AbilityIndex, ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue,
+    LevelValue, ManaValue, PointsValue, Rarity, School, ShieldValue, Side, Sprite,
 };
 use crate::special_effects::{Projectile, TimedEffect};
 use crate::text::AbilityText;
@@ -135,4 +135,10 @@ pub struct CardDefinition {
     pub rarity: Rarity,
     pub abilities: Vec<Ability>,
     pub config: CardConfig,
+}
+
+impl CardDefinition {
+    pub fn ability(&self, index: AbilityIndex) -> &Ability {
+        &self.abilities[index.value()]
+    }
 }

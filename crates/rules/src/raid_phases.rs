@@ -182,9 +182,7 @@ fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAct
         CardType::Scheme if flags::can_score_card(game, Side::Champion, card_id) => {
             Some(PromptAction::RaidScoreCard(card_id))
         }
-        CardType::Project | CardType::Upgrade
-            if flags::can_destroy_accessed_card(game, card_id) =>
-        {
+        CardType::Project if flags::can_destroy_accessed_card(game, card_id) => {
             Some(PromptAction::RaidDestroyCard(card_id))
         }
         _ => None,

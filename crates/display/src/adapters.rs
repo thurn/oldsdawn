@@ -15,7 +15,7 @@
 //! Helpers for converting between server & client representations
 
 use anyhow::{anyhow, bail, Context, Result};
-use data::primitives::{AbilityIndex, CardId, GameId, PlayerId, RoomId, Side};
+use data::primitives::{AbilityId, AbilityIndex, CardId, GameId, PlayerId, RoomId, Side};
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::{
     CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerName, PlayerSide,
@@ -102,21 +102,40 @@ pub fn to_server_room_id(identifier: i32) -> Result<RoomId> {
     }
 }
 
-/// Equivalent to [to_server_card_id] which panics on failure
-pub fn from_card_identifier(card_id: CardIdentifier) -> CardId {
-    to_server_card_id(&Some(card_id)).expect("Invalid CardIdentifier")
+#[derive(Copy, Clone, Eq, PartialEq)]
+pub enum ServerCardId {
+    CardId(CardId),
+    AbilityId(AbilityId),
 }
 
-/// Converts a client [CardIdentifier] into a server [CardId]
-pub fn to_server_card_id(card_id: &Option<CardIdentifier>) -> Result<CardId> {
+impl ServerCardId {
+    // Helper for when it is an error for the value to not be a
+    // `ServerCardId::CardId`.
+    pub fn as_card_id(self) -> Result<CardId> {
+        match self {
+            ServerCardId::CardId(card_id) => Ok(card_id),
+            ServerCardId::AbilityId(_) => bail!("Expected CardId"),
+        }
+    }
+}
+
+/// Converts a client [CardIdentifier] into a server [CardId] or [AbilityId].
+pub fn to_server_card_id(card_id: Option<CardIdentifier>) -> Result<ServerCardId> {
     if let Some(id) = card_id {
-        Ok(CardId {
+        let result = CardId {
             side: match id.side() {
                 PlayerSide::Overlord => Side::Overlord,
                 PlayerSide::Champion => Side::Champion,
                 _ => bail!("Invalid CardId {:?}", card_id),
             },
             index: id.index as usize,
+        };
+
+        id.ability_id.map_or(Ok(ServerCardId::CardId(result)), |index| {
+            Ok(ServerCardId::AbilityId(AbilityId {
+                card_id: result,
+                index: AbilityIndex(index as usize),
+            }))
         })
     } else {
         Err(anyhow!("Missing Required CardId"))

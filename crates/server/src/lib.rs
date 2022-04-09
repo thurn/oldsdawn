@@ -21,6 +21,7 @@ use data::game::{GameConfiguration, GameState};
 use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::UpdateTracker;
 use data::with_error::WithError;
+use display::adapters::ServerCardId;
 use display::{adapters, render};
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
@@ -175,12 +176,17 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
         }
         Action::PlayCard(action) => {
             handle_action(database, player_id, game_id, |game, user_side| {
-                actions::play_card_action(
-                    game,
-                    user_side,
-                    adapters::to_server_card_id(&action.card_id)?,
-                    card_target(&action.target),
-                )
+                match adapters::to_server_card_id(action.card_id)? {
+                    ServerCardId::CardId(card_id) => actions::play_card_action(
+                        game,
+                        user_side,
+                        card_id,
+                        card_target(&action.target),
+                    ),
+                    ServerCardId::AbilityId(ability_id) => {
+                        actions::activate_ability_action(game, user_side, ability_id)
+                    }
+                }
             })
         }
         Action::GainMana(_) => {

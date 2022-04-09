@@ -24,10 +24,11 @@
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use data::actions::PromptAction;
+use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
-use data::delegates::{CastCardEvent, PayCardCostsEvent};
+use data::delegates::{ActivateAbilityEvent, CastCardEvent, PayCardCostsEvent};
 use data::game::{GamePhase, GameState, MulliganDecision};
-use data::primitives::{CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
+use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
@@ -139,7 +140,6 @@ pub fn play_card_action(
 
     mutations::spend_action_points(game, user_side, definition.cost.actions);
     dispatch::invoke_event(game, PayCardCostsEvent(card_id));
-
     dispatch::invoke_event(game, CastCardEvent(card_id));
 
     let new_position = match definition.card_type {
@@ -147,7 +147,7 @@ pub fn play_card_action(
         CardType::Weapon => CardPosition::ArenaItem(ItemLocation::Weapons),
         CardType::Artifact => CardPosition::ArenaItem(ItemLocation::Artifacts),
         CardType::Minion => CardPosition::Room(target.room_id()?, RoomLocation::Defender),
-        CardType::Project | CardType::Scheme | CardType::Upgrade => {
+        CardType::Project | CardType::Scheme => {
             CardPosition::Room(target.room_id()?, RoomLocation::Occupant)
         }
         CardType::Identity => CardPosition::Identity(user_side),
@@ -159,6 +159,35 @@ pub fn play_card_action(
 
     mutations::move_card(game, card_id, new_position);
 
+    mutations::check_end_turn(game, user_side);
+    Ok(())
+}
+
+/// The basic game action to activate an ability of a card in play.
+#[instrument(skip(game))]
+pub fn activate_ability_action(
+    game: &mut GameState,
+    user_side: Side,
+    ability_id: AbilityId,
+) -> Result<()> {
+    info!(?user_side, ?ability_id, "activate_ability_action");
+    ensure!(
+        flags::can_take_activate_ability_action(game, user_side, ability_id),
+        "Cannot activate ability {:?}",
+        ability_id
+    );
+    let card = game.card(ability_id.card_id);
+
+    if let AbilityType::Activated(cost) =
+        &crate::get(card.name).ability(ability_id.index).ability_type
+    {
+        mutations::spend_action_points(game, user_side, cost.actions);
+        if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
+            mutations::spend_mana(game, user_side, mana);
+        }
+    }
+
+    dispatch::invoke_event(game, ActivateAbilityEvent(ability_id));
     mutations::check_end_turn(game, user_side);
     Ok(())
 }

@@ -280,6 +280,8 @@ pub enum Delegate {
     CanTakeGainManaAction(QueryDelegate<Side, Flag>),
     /// Query whether a given card can currently be played.
     CanPlayCard(QueryDelegate<CardId, Flag>),
+    /// Query whether a given ability can currently be activated.
+    CanActivateAbility(QueryDelegate<AbilityId, Flag>),
     /// Can the indicated player currently take the basic game action to
     /// initiate a raid?
     CanInitiateRaid(QueryDelegate<Side, Flag>),
@@ -295,6 +297,8 @@ pub enum Delegate {
 
     /// Query the current mana cost of a card. Invoked with [Cost::mana].
     ManaCost(QueryDelegate<CardId, Option<ManaValue>>),
+    /// Query the current mana cost of an ability. Invoked with [Cost::mana].
+    AbilityManaCost(QueryDelegate<AbilityId, Option<ManaValue>>),
     /// Query the current mana cost of a card. Invoked with [Cost::actions].
     ActionCost(QueryDelegate<CardId, ActionCount>),
     /// Query the current attack value of a card. Invoked with

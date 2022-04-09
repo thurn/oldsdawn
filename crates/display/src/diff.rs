@@ -236,10 +236,6 @@ fn push_move_command(
 
 /// Appends a command to move `id` to its indicated `position` (if provided) or
 /// else to its default game position.
-///
-/// Will be run in parallel with other move commands. If no `position` is
-/// specified, this will be recorded as an *optional move*, i.e. it will be
-/// skipped if any other move request is received for the indicated `id`.
 fn move_to_position(
     commands: &mut ResponseBuilder,
     game: &GameState,
@@ -251,7 +247,10 @@ fn move_to_position(
     } else {
         match id {
             Id::CardId(card_id) => {
-                let id = adapters::from_card_identifier(card_id);
+                let id = adapters::to_server_card_id(Some(card_id))
+                    .expect("id")
+                    .as_card_id()
+                    .expect("card_id");
                 if let Some(card_position) =
                     full_sync::adapt_position(game.card(id), commands.user_side)
                 {

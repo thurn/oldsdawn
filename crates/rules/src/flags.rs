@@ -18,11 +18,12 @@
 use data::actions::EncounterAction;
 use data::card_state::CardPosition;
 use data::delegates::{
-    CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpRoomQuery,
-    CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
+    CanActivateAbilityQuery, CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery,
+    CanLevelUpRoomQuery, CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery,
+    CardEncounter, Flag,
 };
 use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
-use data::primitives::{CardId, CardType, Faction, RoomId, Side};
+use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
 
 use crate::actions::PlayCardTarget;
 use crate::{dispatch, queries};
@@ -46,12 +47,32 @@ pub fn can_take_play_card_action(
         && side == card_id.side
         && game.card(card_id).position() == CardPosition::Hand(side)
         && is_valid_target(game, card_id, target);
+    // TODO: Check action cost
+
     if enters_play_revealed(game, card_id) {
         can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
                              if cost <= game.player(side).mana);
     }
 
     dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
+}
+
+pub fn can_take_activate_ability_action(
+    game: &GameState,
+    side: Side,
+    ability_id: AbilityId,
+) -> bool {
+    let mut can_activate = queries::in_main_phase(game, side)
+        && side == ability_id.card_id.side
+        && game.card(ability_id.card_id).position().in_play();
+    // TODO: Check action cost
+
+    if let Some(cost) = queries::ability_mana_cost(game, ability_id) {
+        can_activate &= cost <= game.player(side).mana;
+    }
+
+    dispatch::perform_query(game, CanActivateAbilityQuery(ability_id), Flag::new(can_activate))
+        .into()
 }
 
 fn is_valid_target(game: &GameState, card_id: CardId, target: PlayCardTarget) -> bool {
@@ -70,10 +91,6 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: PlayCardTarget) ->
         CardType::Project | CardType::Scheme => {
             matches!(target, PlayCardTarget::Room(room_id)
                 if room_can_add(game, room_id, vec![CardType::Project, CardType::Scheme]))
-        }
-        CardType::Upgrade => {
-            matches!(target, PlayCardTarget::Room(room_id)
-                if room_can_add(game, room_id, vec![CardType::Upgrade]))
         }
         CardType::Identity => false,
     }

@@ -304,7 +304,7 @@ fn move_card(commands: &mut ResponseBuilder, update_type: UpdateType, card: &Car
 
 /// Commands to reveal the indicated card to all players
 fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState) {
-    if commands.user_side != card.side && game.data.raid.is_none() {
+    if commands.user_side != card.side() && game.data.raid.is_none() {
         // If there is no active raid, animate the card to the staging area on reveal.
         commands.push(
             UpdateType::Utility,

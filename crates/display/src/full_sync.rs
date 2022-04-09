@@ -87,7 +87,7 @@ pub fn run(game: &GameState, user_side: Side, options: ResponseOptions) -> FullS
             })
             .chain(
                 game.all_cards()
-                    .filter(|c| c.position().in_play() && c.side == user_side)
+                    .filter(|c| c.position().in_play() && c.side() == user_side)
                     .flat_map(|c| create_ability_cards(game, c, user_side, options)),
             )
             .collect(),
@@ -247,7 +247,7 @@ fn ability_card_view(
     ability: &Ability,
     identifier: CardIdentifier,
     cost: &Cost,
-    _user_side: Side,
+    user_side: Side,
 ) -> CardView {
     let definition = rules::get(card.name);
     CardView {
@@ -264,9 +264,9 @@ fn ability_card_view(
             ..CardIcons::default()
         }),
         arena_frame: None,
-        owning_player: PlayerName::User.into(),
+        owning_player: adapters::to_player_name(card.side(), user_side).into(),
         revealed_card: Some(RevealedCardView {
-            card_frame: Some(assets::ability_card_frame(card.side)),
+            card_frame: Some(assets::ability_card_frame(card.side())),
             title_background: Some(assets::title_background(None)),
             jewel: None,
             image: Some(sprite(&definition.image)),
@@ -275,7 +275,9 @@ fn ability_card_view(
                 text: rules_text::ability_text(game, ability_id, ability),
             }),
             targeting: Some(CardTargeting {
-                targeting: Some(Targeting::NoTargeting(NoTargeting { can_play: true })),
+                targeting: Some(Targeting::NoTargeting(NoTargeting {
+                    can_play: flags::can_take_activate_ability_action(game, user_side, ability_id),
+                })),
             }),
             on_release_position: Some(ObjectPosition {
                 sorting_key: card.sorting_key,
@@ -566,7 +568,7 @@ fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTa
                     PlayCardTarget::None,
                 ),
             })),
-            CardType::Minion | CardType::Project | CardType::Scheme | CardType::Upgrade => {
+            CardType::Minion | CardType::Project | CardType::Scheme => {
                 Some(Targeting::RoomTargeting(RoomTargeting {
                     valid_rooms: RoomId::into_enum_iter()
                         .filter(|room_id| {
@@ -603,12 +605,10 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
                 room_id: RoomIdentifier::Unspecified.into(),
                 room_location: ClientRoomLocation::Front.into(),
             }),
-            CardType::Project | CardType::Scheme | CardType::Upgrade => {
-                Position::Room(ObjectPositionRoom {
-                    room_id: RoomIdentifier::Unspecified.into(),
-                    room_location: ClientRoomLocation::Back.into(),
-                })
-            }
+            CardType::Project | CardType::Scheme => Position::Room(ObjectPositionRoom {
+                room_id: RoomIdentifier::Unspecified.into(),
+                room_location: ClientRoomLocation::Back.into(),
+            }),
         }),
     }
 }

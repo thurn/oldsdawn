@@ -21,8 +21,8 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    CommandList, GameCommand, GameObjectIdentifier, MoveGameObjectsCommand, ObjectPosition,
-    RunInParallelCommand,
+    CardIdentifier, CommandList, GameCommand, GameObjectIdentifier, MoveGameObjectsCommand,
+    ObjectPosition, RunInParallelCommand,
 };
 
 use crate::adapters;
@@ -37,23 +37,24 @@ pub enum UpdateType {
 
 #[derive(Clone, Debug, Default)]
 pub struct CardUpdateTypes {
-    data: HashMap<CardId, UpdateType>,
+    data: HashMap<CardIdentifier, UpdateType>,
 }
 
 impl CardUpdateTypes {
     pub fn insert(&mut self, id: CardId, update_type: UpdateType) {
-        match self.data.get(&id) {
+        let identifier = adapters::adapt_card_id(id);
+        match self.data.get(&identifier) {
             None => {
-                self.data.insert(id, update_type);
+                self.data.insert(identifier, update_type);
             }
             Some(u) if update_type > *u => {
-                self.data.insert(id, update_type);
+                self.data.insert(identifier, update_type);
             }
             _ => {}
         };
     }
 
-    pub fn get(&self, id: CardId) -> UpdateType {
+    pub fn get(&self, id: CardIdentifier) -> UpdateType {
         *self.data.get(&id).unwrap_or(&UpdateType::None)
     }
 }
@@ -198,7 +199,7 @@ impl ResponseBuilder {
         position: &ObjectPosition,
     ) -> Option<Command> {
         let include = if let Id::CardId(card_id) = id {
-            update_type >= self.card_update_types.get(adapters::from_card_identifier(card_id))
+            update_type >= self.card_update_types.get(card_id)
         } else {
             true
         };
@@ -215,8 +216,8 @@ impl ResponseBuilder {
     }
 }
 
-fn card_id_for_command(command: &Command) -> Option<CardId> {
-    let result = match command {
+fn card_id_for_command(command: &Command) -> Option<CardIdentifier> {
+    match command {
         Command::CreateOrUpdateCard(c) => c.card.as_ref()?.card_id,
         Command::DestroyCard(c) => c.card_id,
         Command::MoveGameObjects(c) => {
@@ -227,7 +228,5 @@ fn card_id_for_command(command: &Command) -> Option<CardId> {
             }
         }
         _ => None,
-    };
-
-    adapters::to_server_card_id(&result).ok()
+    }
 }

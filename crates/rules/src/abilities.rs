@@ -75,6 +75,7 @@ pub fn take_mana<const N: ManaValue>(cost: Cost) -> Ability {
             |g, _s, ability_id| {
                 assert!(g.card(ability_id.card_id).data.stored_mana >= N);
                 g.card_mut(ability_id.card_id).data.stored_mana -= N;
+                mutations::gain_mana(g, ability_id.card_id.side, N);
             },
         ))],
     }

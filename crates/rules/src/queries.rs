@@ -14,14 +14,16 @@
 
 //! Core functions for querying the current state of a game
 
-use data::card_definition::CardStats;
+use data::card_definition::{AbilityType, CardStats};
 use data::delegates::{
-    ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery, ManaCostQuery,
-    SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery, VaultAccessCountQuery,
+    AbilityManaCostQuery, ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery,
+    ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery,
+    VaultAccessCountQuery,
 };
 use data::game::{GamePhase, GameState};
 use data::primitives::{
-    ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue, Side,
+    AbilityId, ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue,
+    Side,
 };
 
 use crate::dispatch;
@@ -38,6 +40,19 @@ pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
         ManaCostQuery(card_id),
         crate::get(game.card(card_id).name).cost.mana,
     )
+}
+
+/// Returns the mana cost for a given ability, if any
+pub fn ability_mana_cost(game: &GameState, ability_id: AbilityId) -> Option<ManaValue> {
+    let cost = if let AbilityType::Activated(cost) =
+        &crate::get(game.card(ability_id.card_id).name).ability(ability_id.index).ability_type
+    {
+        cost.mana
+    } else {
+        None
+    };
+
+    dispatch::perform_query(game, AbilityManaCostQuery(ability_id), cost)
 }
 
 /// Returns the action point cost for a given card

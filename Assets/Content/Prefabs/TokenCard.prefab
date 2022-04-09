@@ -214,12 +214,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
+  m_fontSize: 15.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 8
-  m_fontSizeMax: 15
+  m_fontSizeMax: 20
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -839,7 +839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2085476032902578303
 Transform:
   m_ObjectHideFlags: 0
@@ -1541,7 +1541,6 @@ MonoBehaviour:
   _jewel: {fileID: 0}
   _arenaFrame: {fileID: 506407848545496258}
   _arenaShadow: {fileID: 8026857265719818714}
-  _warpText: {fileID: 4147502737440292297}
   _topLeftAnchor: {fileID: 5021137900452461215}
   _topRightAnchor: {fileID: 7583640043447273079}
   _bottomLeftAnchor: {fileID: 1028060153876712847}
@@ -1567,6 +1566,7 @@ MonoBehaviour:
   _dragOffset: {x: 0, y: 0, z: 0}
   _initialDragRotation: {x: 0, y: 0, z: 0, w: 0}
   _previousParent: {fileID: 0}
+  _containedObjectsDisplay: {fileID: 0}
 --- !u!210 &6859622998180740047
 SortingGroup:
   m_ObjectHideFlags: 0

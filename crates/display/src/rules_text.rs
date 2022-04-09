@@ -149,7 +149,6 @@ fn card_type_line(definition: &CardDefinition) -> String {
         CardType::Minion => "Minion",
         CardType::Project => "Project",
         CardType::Scheme => "Scheme",
-        CardType::Upgrade => "Upgrade",
         CardType::Identity => "Identity",
     });
 
