@@ -44,6 +44,7 @@ use rules::actions::PlayCardTarget;
 use rules::{flags, queries};
 
 use crate::assets::CardIconType;
+use crate::response_builder::ResponseOptions;
 use crate::{adapters, assets, interface, rules_text};
 
 /// State synchronization response, containing commands for the updated state of
@@ -67,7 +68,7 @@ pub struct FullSync {
 /// If [CardCreationStrategy] values are provided in the `card_creation` map,
 /// these override the default card creation behavior of placing cards in their
 /// current game position.
-pub fn run(game: &GameState, user_side: Side) -> FullSync {
+pub fn run(game: &GameState, user_side: Side, options: ResponseOptions) -> FullSync {
     FullSync {
         game: update_game_view(game, user_side),
         cards: game
@@ -87,7 +88,7 @@ pub fn run(game: &GameState, user_side: Side) -> FullSync {
             .chain(
                 game.all_cards()
                     .filter(|c| c.position().in_play() && c.side == user_side)
-                    .flat_map(|c| create_ability_cards(game, c, user_side)),
+                    .flat_map(|c| create_ability_cards(game, c, user_side, options)),
             )
             .collect(),
         interface: interface::render(game, user_side),
@@ -201,6 +202,7 @@ fn create_ability_cards(
     game: &GameState,
     card: &CardState,
     user_side: Side,
+    options: ResponseOptions,
 ) -> Vec<(CardIdentifier, CreateOrUpdateCardCommand)> {
     let mut result = vec![];
     for (ability_index, ability) in rules::get(card.name).abilities.iter().enumerate() {
@@ -224,7 +226,12 @@ fn create_ability_cards(
                             owner: PlayerName::User.into(),
                         })),
                     }),
-                    create_animation: CardCreationAnimation::Unspecified.into(),
+                    create_animation: if options.contains(ResponseOptions::IS_INITIAL_CONNECT) {
+                        CardCreationAnimation::Unspecified
+                    } else {
+                        CardCreationAnimation::FromParentCard
+                    }
+                    .into(),
                     disable_flip_animation: false,
                 },
             ))
@@ -267,11 +274,13 @@ fn ability_card_view(
             rules_text: Some(RulesText {
                 text: rules_text::ability_text(game, ability_id, ability),
             }),
-            targeting: None,
+            targeting: Some(CardTargeting {
+                targeting: Some(Targeting::NoTargeting(NoTargeting { can_play: true })),
+            }),
             on_release_position: Some(ObjectPosition {
                 sorting_key: card.sorting_key,
                 position: Some(Position::IntoCard(ObjectPositionIntoCard {
-                    card_id: Some(identifier),
+                    card_id: Some(adapters::adapt_card_id(card.id)),
                 })),
             }),
             supplemental_info: Some(rules_text::build_supplemental_info(

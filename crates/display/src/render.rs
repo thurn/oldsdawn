@@ -20,7 +20,7 @@ use once_cell::sync::Lazy;
 use protos::spelldawn::game_command::Command;
 
 use crate::full_sync::FullSync;
-use crate::response_builder::{CardUpdateTypes, ResponseBuilder};
+use crate::response_builder::{CardUpdateTypes, ResponseBuilder, ResponseOptions};
 use crate::{animations, diff, full_sync};
 
 /// Map from user IDs to the most recent game response we sent to that user.
@@ -37,9 +37,9 @@ pub fn on_disconnect(player_id: PlayerId) {
 /// updates via [render_updates].
 pub fn connect(game: &GameState, user_side: Side) -> Vec<Command> {
     let user_id = game.player(user_side).id;
-    let sync = full_sync::run(game, user_side);
-    let mut builder =
-        ResponseBuilder::new(user_side, CardUpdateTypes::default(), false /* animate */);
+    let options = ResponseOptions::ANIMATE | ResponseOptions::IS_INITIAL_CONNECT;
+    let sync = full_sync::run(game, user_side, options);
+    let mut builder = ResponseBuilder::new(user_side, CardUpdateTypes::default(), options);
     diff::execute(&mut builder, game, None, &sync);
     RESPONSES.insert(user_id, sync);
     builder.build()
@@ -54,9 +54,9 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<Command> {
     }
 
     let user_id = game.player(user_side).id;
-    let mut builder = ResponseBuilder::new(user_side, card_update_types, true /* animate */);
-
-    let sync = full_sync::run(game, user_side);
+    let options = ResponseOptions::ANIMATE;
+    let mut builder = ResponseBuilder::new(user_side, card_update_types, options);
+    let sync = full_sync::run(game, user_side, options);
 
     for update in &updates {
         if update.kind() == GameUpdateKind::GeneralUpdate {

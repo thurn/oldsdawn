@@ -14,6 +14,7 @@
 
 use std::collections::HashMap;
 
+use bitflags::bitflags;
 use data::card_state::CardState;
 use data::primitives::{CardId, Side};
 use protos::spelldawn::game_command::Command;
@@ -57,19 +58,30 @@ impl CardUpdateTypes {
     }
 }
 
+bitflags! {
+    pub struct ResponseOptions: u32 {
+        const ANIMATE = 0b00000001;
+        const IS_INITIAL_CONNECT = 0b00000010;
+    }
+}
+
 /// Keeps track of [Command]s required to update the client
 #[derive(Clone, Debug)]
 pub struct ResponseBuilder {
     pub user_side: Side,
-    pub animate: bool,
+    pub options: ResponseOptions,
     card_update_types: CardUpdateTypes,
     commands: Vec<Command>,
     moves: Vec<(UpdateType, Id, ObjectPosition)>,
 }
 
 impl ResponseBuilder {
-    pub fn new(user_side: Side, card_update_types: CardUpdateTypes, animate: bool) -> Self {
-        Self { user_side, animate, commands: vec![], card_update_types, moves: vec![] }
+    pub fn new(
+        user_side: Side,
+        card_update_types: CardUpdateTypes,
+        options: ResponseOptions,
+    ) -> Self {
+        Self { user_side, options, commands: vec![], card_update_types, moves: vec![] }
     }
 
     /// Append a new command to this builder
@@ -138,7 +150,7 @@ impl ResponseBuilder {
                     sorting_key: card.sorting_key,
                     position: Some(position),
                 }),
-                disable_animation: !self.animate,
+                disable_animation: !self.options.contains(ResponseOptions::ANIMATE),
             }),
         );
     }
@@ -195,7 +207,7 @@ impl ResponseBuilder {
             Some(Command::MoveGameObjects(MoveGameObjectsCommand {
                 ids: vec![GameObjectIdentifier { id: Some(id) }],
                 position: Some(position.clone()),
-                disable_animation: !self.animate,
+                disable_animation: !self.options.contains(ResponseOptions::ANIMATE),
             }))
         } else {
             None

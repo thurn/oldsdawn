@@ -203,6 +203,7 @@ name = "display"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "bitflags",
  "dashmap",
  "data",
  "enum-iterator",

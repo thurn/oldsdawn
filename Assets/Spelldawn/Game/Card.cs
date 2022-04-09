@@ -59,6 +59,7 @@ namespace Spelldawn.Game
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] ObjectDisplay? _previousParent;
+    [SerializeField] ObjectDisplay? _containedObjectsDisplay;
 
     CardIdentifier? _cardId;
     bool? _serverCanPlay;
@@ -97,6 +98,8 @@ namespace Spelldawn.Game
     public Transform BottomRightAnchor => _bottomRightAnchor;
 
     public Node? SupplementalInfo => _supplementalInfo;
+
+    public ObjectDisplay ContainedObjects => Errors.CheckNotNull(_containedObjectsDisplay);
 
     void Awake()
     {
@@ -192,6 +195,7 @@ namespace Spelldawn.Game
         {
           _jewel!.gameObject.SetActive(false);
         }
+
         _arenaFrame.gameObject.SetActive(true);
         _cardShadow.SetActive(false);
         _arenaShadow.SetActive(true);
@@ -211,6 +215,7 @@ namespace Spelldawn.Game
         {
           _jewel!.gameObject.SetActive(true);
         }
+
         _arenaFrame.gameObject.SetActive(false);
         _cardShadow.SetActive(true);
         _arenaShadow.SetActive(false);
@@ -496,6 +501,7 @@ namespace Spelldawn.Game
       {
         return;
       }
+
       _title.text = title;
     }
   }

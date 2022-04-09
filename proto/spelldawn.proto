@@ -1011,6 +1011,10 @@ enum CardCreationAnimation {
 
     /* Animates the card moving from the deck to the staging area. */
     CARD_CREATION_ANIMATION_DRAW_CARD = 1;
+
+    // Animates the card moving from its parent card (indicated by its card
+    // identifier with no 'ability_id') to its create position.
+    CARD_CREATION_ANIMATION_FROM_PARENT_CARD = 2;
 }
 
 /*

@@ -45,6 +45,7 @@ namespace Spelldawn.Game
 
     int Position() => _index + _gameContext switch
     {
+      GameContext.Hidden => 0,
       GameContext.Arena => 100,
       GameContext.Deck => 200,
       GameContext.DiscardPile => 300,

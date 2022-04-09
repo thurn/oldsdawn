@@ -20,6 +20,7 @@ namespace Spelldawn.Game
   {
     // Note: Enum numbers are serialized by Unity and cannot be changed
     Unspecified = 0,
+    Hidden = 17,
     Arena = 1,
     Deck = 2,
     DiscardPile = 3,

@@ -110,7 +110,7 @@ namespace Spelldawn.Services
         card = InstantiateCardPrefab(command.Card!.Prefab);
         card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
 
-        if (command.CreateAnimation != CardCreationAnimation.DrawCard)
+        if (command.CreateAnimation == CardCreationAnimation.Unspecified)
         {
           StartCoroutine(
             _registry.ObjectPositionService.ObjectDisplayForPosition(
@@ -126,10 +126,21 @@ namespace Spelldawn.Services
         animate: !command.DisableFlipAnimation);
       _cards[Errors.CheckNotNull(command.Card.CardId)] = card;
 
-      if (!isOptimistic && command.CreateAnimation == CardCreationAnimation.DrawCard)
+      if (!isOptimistic)
       {
-        _registry.ObjectPositionService.PlayDrawCardAnimation(card);
-        waitForStaging = true;
+        switch (command.CreateAnimation)
+        {
+          case CardCreationAnimation.DrawCard:
+            _registry.ObjectPositionService.PlayDrawCardAnimation(card);
+            waitForStaging = true;
+            break;
+          case CardCreationAnimation.FromParentCard:
+            yield return _registry.ObjectPositionService.PlayCreateFromParentCardAnimation(
+              card,
+              Errors.CheckNotNull(command.Card.CardId),
+              command.CreatePosition);
+            break;
+        }
       }
 
       if (waitForStaging)

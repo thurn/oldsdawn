@@ -195,6 +195,8 @@ namespace Spelldawn.Services
           _registry.IdentityCardForPlayer(position.Identity.Owner),
         ObjectPosition.PositionOneofCase.IdentityContainer =>
           _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner),
+        ObjectPosition.PositionOneofCase.IntoCard =>
+          _registry.CardService.FindCard(position.IntoCard.CardId).ContainedObjects,
         _ => throw new ArgumentOutOfRangeException()
       };
     }
@@ -218,6 +220,21 @@ namespace Spelldawn.Services
         .Insert(0.5f, card.transform.DORotateQuaternion(_registry.CardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
         .InsertCallback(0.5f, () => _registry.StaticAssets.PlayDrawCardSound())
         .AppendCallback(() => card.StagingAnimationComplete = true);
+    }
+
+    public IEnumerator PlayCreateFromParentCardAnimation(Card card, CardIdentifier identifier, ObjectPosition createPosition)
+    {
+      var parentCard = _registry.CardService.FindCard(new CardIdentifier
+      {
+        Index = identifier.Index,
+        Side = identifier.Side
+      });
+
+      card.transform.localScale = Vector3.zero;
+      card.transform.position = parentCard.transform.position;
+      card.transform.rotation = parentCard.transform.rotation;
+
+      return MoveGameObject(card, createPosition);
     }
 
     Vector3 DeckSpawnPosition(PlayerName playerName) =>

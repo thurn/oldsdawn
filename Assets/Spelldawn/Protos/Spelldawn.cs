@@ -466,22 +466,23 @@ namespace Spelldawn.Protos {
             "TkNIT1JfQ09STkVSX0JPVFRPTV9MRUZUEAMSHgoaQU5DSE9SX0NPUk5FUl9C",
             "T1RUT01fUklHSFQQBCp2Cg1Sb29tVmlzaXRUeXBlEh8KG1JPT01fVklTSVRf",
             "VFlQRV9VTlNQRUNJRklFRBAAEiEKHVJPT01fVklTSVRfVFlQRV9JTklUSUFU",
-            "RV9SQUlEEAESIQodUk9PTV9WSVNJVF9UWVBFX0xFVkVMX1VQX1JPT00QAipn",
-            "ChVDYXJkQ3JlYXRpb25BbmltYXRpb24SJwojQ0FSRF9DUkVBVElPTl9BTklN",
-            "QVRJT05fVU5TUEVDSUZJRUQQABIlCiFDQVJEX0NSRUFUSU9OX0FOSU1BVElP",
-            "Tl9EUkFXX0NBUkQQASpxCgpNdXNpY1N0YXRlEhsKF01VU0lDX1NUQVRFX1VO",
-            "U1BFQ0lGSUVEEAASFgoSTVVTSUNfU1RBVEVfU0lMRU5UEAESGAoUTVVTSUNf",
-            "U1RBVEVfR0FNRVBMQVkQAhIUChBNVVNJQ19TVEFURV9SQUlEEAMqqQEKD0dh",
-            "bWVNZXNzYWdlVHlwZRIhCh1HQU1FX01FU1NBR0VfVFlQRV9VTlNQRUNJRklF",
-            "RBAAEhoKFkdBTUVfTUVTU0FHRV9UWVBFX0RBV04QARIaChZHQU1FX01FU1NB",
-            "R0VfVFlQRV9EVVNLEAISHQoZR0FNRV9NRVNTQUdFX1RZUEVfVklDVE9SWRAD",
-            "EhwKGEdBTUVfTUVTU0FHRV9UWVBFX0RFRkVBVBAEKmoKDVNjZW5lTG9hZE1v",
-            "ZGUSHwobU0NFTkVfTE9BRF9NT0RFX1VOU1BFQ0lGSUVEEAASGgoWU0NFTkVf",
-            "TE9BRF9NT0RFX1NJTkdMRRABEhwKGFNDRU5FX0xPQURfTU9ERV9BRERJVElW",
-            "RRACMowBCglTcGVsbGRhd24SPgoHQ29ubmVjdBIZLnNwZWxsZGF3bi5Db25u",
-            "ZWN0UmVxdWVzdBoWLnNwZWxsZGF3bi5Db21tYW5kTGlzdDABEj8KDVBlcmZv",
-            "cm1BY3Rpb24SFi5zcGVsbGRhd24uR2FtZVJlcXVlc3QaFi5zcGVsbGRhd24u",
-            "Q29tbWFuZExpc3RCE6oCEFNwZWxsZGF3bi5Qcm90b3NiBnByb3RvMw=="));
+            "RV9SQUlEEAESIQodUk9PTV9WSVNJVF9UWVBFX0xFVkVMX1VQX1JPT00QAiqV",
+            "AQoVQ2FyZENyZWF0aW9uQW5pbWF0aW9uEicKI0NBUkRfQ1JFQVRJT05fQU5J",
+            "TUFUSU9OX1VOU1BFQ0lGSUVEEAASJQohQ0FSRF9DUkVBVElPTl9BTklNQVRJ",
+            "T05fRFJBV19DQVJEEAESLAooQ0FSRF9DUkVBVElPTl9BTklNQVRJT05fRlJP",
+            "TV9QQVJFTlRfQ0FSRBACKnEKCk11c2ljU3RhdGUSGwoXTVVTSUNfU1RBVEVf",
+            "VU5TUEVDSUZJRUQQABIWChJNVVNJQ19TVEFURV9TSUxFTlQQARIYChRNVVNJ",
+            "Q19TVEFURV9HQU1FUExBWRACEhQKEE1VU0lDX1NUQVRFX1JBSUQQAyqpAQoP",
+            "R2FtZU1lc3NhZ2VUeXBlEiEKHUdBTUVfTUVTU0FHRV9UWVBFX1VOU1BFQ0lG",
+            "SUVEEAASGgoWR0FNRV9NRVNTQUdFX1RZUEVfREFXThABEhoKFkdBTUVfTUVT",
+            "U0FHRV9UWVBFX0RVU0sQAhIdChlHQU1FX01FU1NBR0VfVFlQRV9WSUNUT1JZ",
+            "EAMSHAoYR0FNRV9NRVNTQUdFX1RZUEVfREVGRUFUEAQqagoNU2NlbmVMb2Fk",
+            "TW9kZRIfChtTQ0VORV9MT0FEX01PREVfVU5TUEVDSUZJRUQQABIaChZTQ0VO",
+            "RV9MT0FEX01PREVfU0lOR0xFEAESHAoYU0NFTkVfTE9BRF9NT0RFX0FERElU",
+            "SVZFEAIyjAEKCVNwZWxsZGF3bhI+CgdDb25uZWN0Ehkuc3BlbGxkYXduLkNv",
+            "bm5lY3RSZXF1ZXN0GhYuc3BlbGxkYXduLkNvbW1hbmRMaXN0MAESPwoNUGVy",
+            "Zm9ybUFjdGlvbhIWLnNwZWxsZGF3bi5HYW1lUmVxdWVzdBoWLnNwZWxsZGF3",
+            "bi5Db21tYW5kTGlzdEITqgIQU3BlbGxkYXduLlByb3Rvc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.AnyReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.EmptyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Spelldawn.Protos.FlexAlign), typeof(global::Spelldawn.Protos.FlexDisplayStyle), typeof(global::Spelldawn.Protos.FlexDirection), typeof(global::Spelldawn.Protos.FlexWrap), typeof(global::Spelldawn.Protos.FlexJustify), typeof(global::Spelldawn.Protos.FlexOverflow), typeof(global::Spelldawn.Protos.FlexPosition), typeof(global::Spelldawn.Protos.TextOverflow), typeof(global::Spelldawn.Protos.EasingMode), typeof(global::Spelldawn.Protos.ImageScaleMode), typeof(global::Spelldawn.Protos.FontStyle), typeof(global::Spelldawn.Protos.OverflowClipBox), typeof(global::Spelldawn.Protos.TextAlign), typeof(global::Spelldawn.Protos.TextOverflowPosition), typeof(global::Spelldawn.Protos.FlexVisibility), typeof(global::Spelldawn.Protos.WhiteSpace), typeof(global::Spelldawn.Protos.DimensionUnit), typeof(global::Spelldawn.Protos.FlexPickingMode), typeof(global::Spelldawn.Protos.PlayerSide), typeof(global::Spelldawn.Protos.PlayerName), typeof(global::Spelldawn.Protos.RoomIdentifier), typeof(global::Spelldawn.Protos.TargetingArrow), typeof(global::Spelldawn.Protos.ClientRoomLocation), typeof(global::Spelldawn.Protos.ClientItemLocation), typeof(global::Spelldawn.Protos.CardPrefab), typeof(global::Spelldawn.Protos.PanelAddress), typeof(global::Spelldawn.Protos.CardNodeAnchorPosition), typeof(global::Spelldawn.Protos.AnchorCorner), typeof(global::Spelldawn.Protos.RoomVisitType), typeof(global::Spelldawn.Protos.CardCreationAnimation), typeof(global::Spelldawn.Protos.MusicState), typeof(global::Spelldawn.Protos.GameMessageType), typeof(global::Spelldawn.Protos.SceneLoadMode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -849,6 +850,11 @@ namespace Spelldawn.Protos {
     /// Animates the card moving from the deck to the staging area. 
     /// </summary>
     [pbr::OriginalName("CARD_CREATION_ANIMATION_DRAW_CARD")] DrawCard = 1,
+    /// <summary>
+    /// Animates the card moving from its parent card (indicated by its card
+    /// identifier with no 'ability_id') to its create position.
+    /// </summary>
+    [pbr::OriginalName("CARD_CREATION_ANIMATION_FROM_PARENT_CARD")] FromParentCard = 2,
   }
 
   public enum MusicState {

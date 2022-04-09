@@ -1501,6 +1501,9 @@ pub enum CardCreationAnimation {
     Unspecified = 0,
     /// Animates the card moving from the deck to the staging area.
     DrawCard = 1,
+    /// Animates the card moving from its parent card (indicated by its card
+    /// identifier with no 'ability_id') to its create position.
+    FromParentCard = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
