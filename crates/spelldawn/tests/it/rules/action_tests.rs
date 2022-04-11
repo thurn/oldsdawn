@@ -270,3 +270,28 @@ fn switch_turn() {
     assert_eq!(g.user.data.priority(), PlayerName::Opponent);
     assert_eq!(g.opponent.data.priority(), PlayerName::User);
 }
+
+#[test]
+fn activate_ability() {
+    let mut g = new_game(Side::Champion, Args { turn_actions: 3, mana: 5, ..Args::default() });
+    g.play_from_hand(CardName::TestActivatedAbilityTake1Mana);
+    let ability_card_id = g
+        .user
+        .cards
+        .cards_in_hand(PlayerName::User)
+        .find(|c| c.id().ability_id.is_some())
+        .expect("ability card")
+        .id();
+
+    assert_eq!(4, g.me().mana());
+    assert_eq!(2, g.me().actions());
+
+    let response = g.perform_action(
+        Action::PlayCard(PlayCardAction { card_id: Some(ability_card_id), target: None }),
+        g.user_id(),
+    );
+
+    assert_snapshot!(Summary::run(&response));
+    assert_eq!(5, g.me().mana());
+    assert_eq!(1, g.me().actions());
+}

@@ -186,3 +186,15 @@ pub fn test_weapon_5_attack() -> CardDefinition {
         ..test_weapon_2_attack()
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn activated_ability_take_mana() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestActivatedAbilityTake1Mana,
+        cost: cost(1),
+        card_type: CardType::Artifact,
+        abilities: vec![abilities::store_mana::<10>(), abilities::take_mana::<1>(cost(0))],
+        config: CardConfig::default(),
+        ..test_champion_spell()
+    }
+}

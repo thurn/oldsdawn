@@ -521,7 +521,7 @@ fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_
         game,
         ability_id,
         commands.user_side,
-        false, /* targeting */
+        false, /* check_can_play */
     );
     commands.push(
         UpdateType::Animation,

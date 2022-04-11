@@ -223,7 +223,7 @@ impl TestSession {
     /// [PlayCardAction]. Action points and mana must be available and are spent
     /// as normal.
     ///
-    /// If the card is a minion, project, scheme, or upgrade card, it is played
+    /// If the card is a minion, project, or scheme card, it is played
     /// into the [crate::ROOM_ID] room. The [GameResponse] produced by
     /// playing the card is returned, along with its [CardIdentifier].
     ///
@@ -628,6 +628,11 @@ impl ClientCards {
         self.card_map.values().filter(move |c| c.position() == position)
     }
 
+    /// Iterator over cards in a player's hand
+    pub fn cards_in_hand(&self, player: PlayerName) -> impl Iterator<Item = &ClientCard> {
+        self.in_position(Position::Hand(ObjectPositionHand { owner: player.into() }))
+    }
+
     /// Returns a list of the titles of cards in the provided `position`, or the
     /// string [crate::HIDDEN_CARD] if no title is available. Cards are
     /// sorted in position order based on their `sorting_key` with ties being
@@ -676,6 +681,7 @@ impl ClientCards {
 /// Simulated state of a specific card
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct ClientCard {
+    id: Option<CardIdentifier>,
     title: Option<String>,
     position: Option<ObjectPosition>,
     revealed_to_me: Option<bool>,
@@ -684,6 +690,10 @@ pub struct ClientCard {
 }
 
 impl ClientCard {
+    pub fn id(&self) -> CardIdentifier {
+        self.id.expect("card_id")
+    }
+
     /// Returns the game object position for this card
     pub fn position(&self) -> Position {
         self.position.clone().expect("CardPosition").position.expect("Position")
@@ -720,6 +730,7 @@ impl ClientCard {
     }
 
     fn update(&mut self, view: &CardView) {
+        self.id = view.card_id;
         self.revealed_to_me = Some(view.revealed_to_viewer);
         self.revealed_to_opponent = Some(view.revealed_to_opponent);
         if let Some(revealed) = &view.revealed_card {

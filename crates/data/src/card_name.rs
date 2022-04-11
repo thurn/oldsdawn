@@ -46,6 +46,9 @@ pub enum CardName {
     TestWeapon4Attack12Boost,
     /// Weapon with 5 attack and no boost
     TestWeapon5Attack,
+    /// Artifact which stores mana on play, with the activated ability to take
+    /// mana from it
+    TestActivatedAbilityTake1Mana,
 
     ArcaneRecovery,
     Greataxe,

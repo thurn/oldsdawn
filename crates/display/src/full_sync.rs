@@ -215,7 +215,7 @@ fn create_ability_cards(
                         game,
                         AbilityId::new(card.id, ability_index),
                         user_side,
-                        true, /* targeting */
+                        true, /* check_can_play */
                     )),
                     create_position: Some(ObjectPosition {
                         sorting_key: card.sorting_key,
@@ -242,7 +242,7 @@ pub fn ability_card_view(
     game: &GameState,
     ability_id: AbilityId,
     user_side: Side,
-    targeting: bool,
+    check_can_play: bool,
 ) -> CardView {
     let card = game.card(ability_id.card_id);
     let identifier = adapters::adapt_ability_id(ability_id);
@@ -274,17 +274,15 @@ pub fn ability_card_view(
             rules_text: Some(RulesText {
                 text: rules_text::ability_text(game, ability_id, ability),
             }),
-            targeting: if targeting {
-                Some(CardTargeting {
-                    targeting: Some(Targeting::NoTargeting(NoTargeting {
-                        can_play: flags::can_take_activate_ability_action(
-                            game, user_side, ability_id,
-                        ),
-                    })),
-                })
-            } else {
-                None
-            },
+            targeting: Some(CardTargeting {
+                targeting: Some(Targeting::NoTargeting(NoTargeting {
+                    can_play: if check_can_play {
+                        flags::can_take_activate_ability_action(game, user_side, ability_id)
+                    } else {
+                        false
+                    },
+                })),
+            }),
             on_release_position: Some(ObjectPosition {
                 sorting_key: card.sorting_key,
                 position: Some(Position::IntoCard(ObjectPositionIntoCard {
