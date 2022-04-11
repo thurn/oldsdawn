@@ -16,7 +16,7 @@
 
 use std::collections::BTreeMap;
 
-use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
+use data::card_definition::{AbilityType, CardDefinition};
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::primitives::{
@@ -206,19 +206,16 @@ fn create_ability_cards(
 ) -> Vec<(CardIdentifier, CreateOrUpdateCardCommand)> {
     let mut result = vec![];
     for (ability_index, ability) in rules::get(card.name).abilities.iter().enumerate() {
-        if let AbilityType::Activated(cost) = &ability.ability_type {
+        if let AbilityType::Activated(_cost) = &ability.ability_type {
             let identifier = adapters::adapt_ability_card_id(card.id, AbilityIndex(ability_index));
             result.push((
                 identifier,
                 CreateOrUpdateCardCommand {
                     card: Some(ability_card_view(
                         game,
-                        card,
                         AbilityId::new(card.id, ability_index),
-                        ability,
-                        identifier,
-                        cost,
                         user_side,
+                        true, /* targeting */
                     )),
                     create_position: Some(ObjectPosition {
                         sorting_key: card.sorting_key,
@@ -240,22 +237,25 @@ fn create_ability_cards(
     result
 }
 
-fn ability_card_view(
+/// Creates a `CardView` representing an ability of a provided `card`.
+pub fn ability_card_view(
     game: &GameState,
-    card: &CardState,
     ability_id: AbilityId,
-    ability: &Ability,
-    identifier: CardIdentifier,
-    cost: &Cost,
     user_side: Side,
+    targeting: bool,
 ) -> CardView {
+    let card = game.card(ability_id.card_id);
+    let identifier = adapters::adapt_ability_id(ability_id);
     let definition = rules::get(card.name);
+    let ability = rules::get(card.name).ability(ability_id.index);
+    let mana_cost =
+        if let AbilityType::Activated(cost) = &ability.ability_type { cost.mana } else { None };
     CardView {
         card_id: Some(identifier),
         prefab: CardPrefab::TokenCard.into(),
         revealed_to_viewer: true,
         revealed_to_opponent: false,
-        card_icons: cost.mana.map(|mana| CardIcons {
+        card_icons: mana_cost.map(|mana| CardIcons {
             top_left_icon: Some(CardIcon {
                 background: Some(assets::card_icon(CardIconType::Mana)),
                 text: Some(mana.to_string()),
@@ -274,11 +274,17 @@ fn ability_card_view(
             rules_text: Some(RulesText {
                 text: rules_text::ability_text(game, ability_id, ability),
             }),
-            targeting: Some(CardTargeting {
-                targeting: Some(Targeting::NoTargeting(NoTargeting {
-                    can_play: flags::can_take_activate_ability_action(game, user_side, ability_id),
-                })),
-            }),
+            targeting: if targeting {
+                Some(CardTargeting {
+                    targeting: Some(Targeting::NoTargeting(NoTargeting {
+                        can_play: flags::can_take_activate_ability_action(
+                            game, user_side, ability_id,
+                        ),
+                    })),
+                })
+            } else {
+                None
+            },
             on_release_position: Some(ObjectPosition {
                 sorting_key: card.sorting_key,
                 position: Some(Position::IntoCard(ObjectPositionIntoCard {

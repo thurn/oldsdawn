@@ -74,6 +74,11 @@ pub fn adapt_ability_card_id(card_id: CardId, ability_index: AbilityIndex) -> Ca
     CardIdentifier { ability_id: Some(ability_index.value() as u32), ..adapt_card_id(card_id) }
 }
 
+/// Turns an [AbilityId] into a [CardIdentifier].
+pub fn adapt_ability_id(ability_id: AbilityId) -> CardIdentifier {
+    adapt_ability_card_id(ability_id.card_id, ability_id.index)
+}
+
 /// Turns a server [RoomId] into its protobuf equivalent
 pub fn adapt_room_id(room_id: RoomId) -> RoomIdentifier {
     match room_id {

@@ -188,6 +188,7 @@ pub fn activate_ability_action(
     }
 
     dispatch::invoke_event(game, ActivateAbilityEvent(ability_id));
+    game.updates.push(GameUpdate::AbilityActivated(ability_id));
     mutations::check_end_turn(game, user_side);
     Ok(())
 }

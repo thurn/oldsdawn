@@ -22,7 +22,7 @@
 
 use data::card_state::{CardPosition, CardState};
 use data::game::GameState;
-use data::primitives::{CardId, RoomId, Side};
+use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::special_effects::{
     FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
 };
@@ -38,10 +38,11 @@ use protos::spelldawn::{
     ObjectPositionStaging, PlayerName, RoomVisitType, TimeValue, VisitRoomCommand,
 };
 use protos::spelldawn::{
-    DestroyCardCommand, DisplayRewardsCommand, FireProjectileCommand, MusicState,
-    ObjectPositionBrowser, ObjectPositionHand, ObjectPositionIdentity,
-    ObjectPositionIdentityContainer, ObjectPositionScoreAnimation, PlayEffectCommand,
-    PlayEffectPosition, PlaySoundCommand, SetGameObjectsEnabledCommand, SetMusicCommand,
+    CardCreationAnimation, CreateOrUpdateCardCommand, DestroyCardCommand, DisplayRewardsCommand,
+    FireProjectileCommand, MusicState, ObjectPositionBrowser, ObjectPositionHand,
+    ObjectPositionIdentity, ObjectPositionIdentityContainer, ObjectPositionIntoCard,
+    ObjectPositionScoreAnimation, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand,
+    SetGameObjectsEnabledCommand, SetMusicCommand,
 };
 
 use crate::full_sync::CardCreationStrategy;
@@ -126,6 +127,11 @@ pub fn render(
         }
         GameUpdate::ShuffleIntoDeck(card_id) => {
             shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
+        }
+        GameUpdate::AbilityActivated(ability_id) => {
+            if ability_id.card_id.side != commands.user_side {
+                show_ability_fired(commands, game, *ability_id)
+            }
         }
         GameUpdate::GameOver(side) => game_over(commands, game, *side),
         _ => todo!("Implement {:?}", update),
@@ -504,6 +510,50 @@ fn destroy_card(commands: &mut ResponseBuilder, update_type: UpdateType, card_id
         Command::DestroyCard(DestroyCardCommand {
             card_id: Some(adapters::adapt_card_id(card_id)),
         }),
+    );
+}
+
+/// Animates a token card appearing, representing an ability being activated or
+/// triggered.
+fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_id: AbilityId) {
+    let identifier = adapters::adapt_ability_id(ability_id);
+    let card = full_sync::ability_card_view(
+        game,
+        ability_id,
+        commands.user_side,
+        false, /* targeting */
+    );
+    commands.push(
+        UpdateType::Animation,
+        Command::CreateOrUpdateCard(CreateOrUpdateCardCommand {
+            card: Some(card),
+            create_position: Some(ObjectPosition {
+                sorting_key: game.card(ability_id.card_id).sorting_key,
+                position: Some(Position::Staging(ObjectPositionStaging {})),
+            }),
+            create_animation: CardCreationAnimation::FromParentCard.into(),
+            disable_flip_animation: true,
+        }),
+    );
+    commands.push(UpdateType::Animation, delay(1000));
+
+    commands.push(
+        UpdateType::Animation,
+        Command::MoveGameObjects(MoveGameObjectsCommand {
+            ids: vec![GameObjectIdentifier { id: Some(Id::CardId(identifier)) }],
+            position: Some(ObjectPosition {
+                sorting_key: 0,
+                position: Some(Position::IntoCard(ObjectPositionIntoCard {
+                    card_id: Some(adapters::adapt_card_id(ability_id.card_id)),
+                })),
+            }),
+            disable_animation: false,
+        }),
+    );
+
+    commands.push(
+        UpdateType::Animation,
+        Command::DestroyCard(DestroyCardCommand { card_id: Some(identifier) }),
     );
 }
 

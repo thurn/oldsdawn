@@ -19,7 +19,7 @@
 use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
 
-use crate::primitives::{CardId, PointsValue, RoomId, Side};
+use crate::primitives::{AbilityId, CardId, PointsValue, RoomId, Side};
 
 /// Identifies the source or target of a game interaction
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
@@ -70,6 +70,8 @@ pub enum GameUpdate {
     OverlordScoreCard(CardId, PointsValue),
     /// A card has been scored by the champion player
     ChampionScoreCard(CardId, PointsValue),
+    /// A card's ability has been activated
+    AbilityActivated(AbilityId),
 
     GeneralUpdate,
 
