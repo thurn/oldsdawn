@@ -42,11 +42,11 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
     match game.raid()?.phase {
         RaidPhase::Activation => {}
         RaidPhase::Encounter(defender_index) => {
-            if can_reveal_defender(game, defender_index) {
+            if can_summon_defender(game, defender_index) {
                 let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
                 let cost = queries::mana_cost(game, defender_id).with_error(|| "Expected cost")?;
                 mutations::spend_mana(game, Side::Overlord, cost);
-                mutations::set_revealed_to(game, defender_id, Side::Champion, true);
+                mutations::turn_face_up(game, defender_id);
             }
         }
         RaidPhase::Continue(_) => {}
@@ -58,16 +58,15 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
     set_raid_prompt(game)
 }
 
-/// Returns true if the raid defender at `defender_index` is not *currently*
-/// revealed to the Champion player, but can be revealed automatically by paying
-/// its mana cost.
+/// Returns true if the raid defender at `defender_index` is currently face down
+/// and could be turned face up automatically by paying its mana cost.
 ///
 /// Panics if there is no active raid or if this is an invalid defender index.
-pub fn can_reveal_defender(game: &GameState, defender_index: usize) -> bool {
+pub fn can_summon_defender(game: &GameState, defender_index: usize) -> bool {
     let raid = game.raid().expect("Active Raid");
     let defender_id = find_defender(game, raid.target, defender_index).expect("Defender");
     raid.room_active
-        && !game.card(defender_id).is_revealed_to(Side::Champion)
+        && game.card(defender_id).is_face_down()
         && matches!(queries::mana_cost(game, defender_id),
             Some(cost)
             if cost <= game.player(Side::Overlord).mana
@@ -94,7 +93,6 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
         RoomId::Crypts => game
             .card_list_for_position(Side::Overlord, CardPosition::DiscardPile(Side::Overlord))
             .iter()
-            .filter(|c| !c.is_revealed_to(Side::Champion))
             .map(|c| c.id)
             .collect(),
         _ => game.occupants(target).map(|c| c.id).collect(),

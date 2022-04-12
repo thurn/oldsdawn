@@ -1,8 +1,7 @@
 ---
 source: crates/spelldawn/tests/it/rules/create_game_tests.rs
-assertion_line: 98
+assertion_line: 101
 expression: "Summary::summarize(&response)"
-
 ---
 
 command_list: 
@@ -36,7 +35,7 @@ command_list:
         card: 
             card_id: O1
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -61,7 +60,7 @@ command_list:
         card: 
             card_id: O2
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -86,7 +85,7 @@ command_list:
         card: 
             card_id: O3
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -111,7 +110,7 @@ command_list:
         card: 
             card_id: O4
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -136,7 +135,7 @@ command_list:
         card: 
             card_id: O5
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -194,7 +193,7 @@ channel_response:
         card: 
             card_id: O1
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -206,7 +205,7 @@ channel_response:
         card: 
             card_id: O2
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -218,7 +217,7 @@ channel_response:
         card: 
             card_id: O3
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -230,7 +229,7 @@ channel_response:
         card: 
             card_id: O4
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -242,7 +241,7 @@ channel_response:
         card: 
             card_id: O5
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent

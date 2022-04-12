@@ -378,7 +378,7 @@ namespace Spelldawn.Game
 
     void RenderCardView(CardView card)
     {
-      _serverRevealedInArena = card.RevealedToViewer && card.RevealedToOpponent;
+      _serverRevealedInArena = card.RevealedToViewer && card.IsFaceUp;
 
       if (card.RevealedToViewer && card.RevealedCard != null)
       {

@@ -597,9 +597,9 @@ pub struct CardView {
     /// Whether the current user is able to see the front of this card.
     #[prost(bool, tag = "3")]
     pub revealed_to_viewer: bool,
-    /// Whether the opposing player is able to see the front of this card.
+    /// Whether the card is in the 'face up' state.
     #[prost(bool, tag = "4")]
-    pub revealed_to_opponent: bool,
+    pub is_face_up: bool,
     #[prost(message, optional, tag = "5")]
     pub card_icons: ::core::option::Option<CardIcons>,
     #[prost(message, optional, tag = "6")]

@@ -111,6 +111,8 @@ pub struct CardData {
     pub stored_mana: ManaValue,
     /// State for this card's abilities
     pub ability_state: BTreeMap<AbilityIndex, AbilityState>,
+    /// Is this card face-up?
+    is_face_up: bool,
     /// Is this card revealed to the [CardId.side] user?
     revealed_to_owner: bool,
     /// Is this card revealed to opponent of the [CardId.side] user?
@@ -172,7 +174,33 @@ impl CardState {
         self.position = position;
     }
 
+    /// Whether this card is in the 'face up' state.
+    pub fn is_face_up(&self) -> bool {
+        self.data.is_face_up
+    }
+
+    /// Whether this card is not in the 'face up' state.
+    pub fn is_face_down(&self) -> bool {
+        !self.data.is_face_up
+    }
+
+    /// Change a card to the 'face up' state, revealing it to both players.
+    pub fn turn_face_up(&mut self) {
+        self.data.revealed_to_owner = true;
+        self.data.revealed_to_opponent = true;
+        self.data.is_face_up = true;
+    }
+
+    /// Change a card to the 'face down' state, but does *not* change its
+    /// revealed state for either player.
+    pub fn turn_face_down(&mut self) {
+        self.data.is_face_up = false;
+    }
+
     /// Sets whether this card is revealed to the `side` player.
+    ///
+    /// Note that this is not the same as [Self::turn_face_up], both players may
+    /// know a card without it being the the 'face up' state.
     pub fn set_revealed_to(&mut self, side: Side, revealed: bool) {
         if self.id.side == side {
             self.data.revealed_to_owner = revealed
@@ -182,6 +210,9 @@ impl CardState {
     }
 
     /// Returns true if this card is currently revealed to the indicated user
+    ///
+    /// Note that this is not the same as [Self::is_face_up], both players may
+    /// know a card without it being the the 'face up' state.
     pub fn is_revealed_to(&self, side: Side) -> bool {
         if self.id.side == side {
             self.data.revealed_to_owner

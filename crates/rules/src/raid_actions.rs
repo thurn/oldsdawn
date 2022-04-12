@@ -16,7 +16,7 @@
 
 use anyhow::{bail, ensure, Context, Result};
 use data::actions::{ContinueAction, EncounterAction, RoomActivationAction};
-use data::card_state::CardPosition;
+use data::card_state::{CardPosition, CardState};
 use data::delegates::{ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidBeginEvent};
 use data::game::{GameState, RaidData, RaidPhase};
 use data::primitives::{CardId, RaidId, RoomId, Side};
@@ -52,12 +52,11 @@ pub fn initiate_raid_action(
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
 
-    let phase =
-        if game.defenders_alphabetical(target_room).any(|c| !c.is_revealed_to(Side::Champion)) {
-            RaidPhase::Activation
-        } else {
-            next_encounter(game, None, RaidPhase::Encounter)?
-        };
+    let phase = if game.defenders_alphabetical(target_room).any(CardState::is_face_down) {
+        RaidPhase::Activation
+    } else {
+        next_encounter(game, None, RaidPhase::Encounter)?
+    };
 
     raid_phases::set_raid_phase(game, phase)?;
     dispatch::invoke_event(game, RaidBeginEvent(raid_id));
@@ -215,8 +214,8 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
 /// eligible defender is available with position < `index`, invokes
 /// `constructor` with that position. Otherwise, returns `RaidPhase::Access`.
 ///
-/// An 'eligible' defender is either one which has been revealed to the
-/// Champion, or one which *can* be revealed by paying its costs if
+/// An 'eligible' defender is either one which is face up, or one which *can* be
+/// turned face up by paying its costs
 /// [RaidData::room_active] is true.
 fn next_encounter(
     game: &GameState,
@@ -226,8 +225,7 @@ fn next_encounter(
     let defenders = game.defender_list(game.raid()?.target);
     let position = defenders.iter().enumerate().rev().find(|(index, card)| {
         less_than.map_or(true, |less_than| *index < less_than)
-            && (card.is_revealed_to(Side::Champion)
-                || raid_phases::can_reveal_defender(game, *index))
+            && (card.is_face_up() || raid_phases::can_summon_defender(game, *index))
     });
 
     Ok(if let Some((index, _)) = position { constructor(index) } else { RaidPhase::Access })

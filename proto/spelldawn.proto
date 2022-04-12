@@ -666,8 +666,8 @@ message CardView {
     // Whether the current user is able to see the front of this card.
     bool revealed_to_viewer = 3;
 
-    // Whether the opposing player is able to see the front of this card.
-    bool revealed_to_opponent = 4;
+    // Whether the card is in the 'face up' state.
+    bool is_face_up = 4;
 
     CardIcons card_icons = 5;
 

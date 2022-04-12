@@ -254,7 +254,7 @@ pub fn ability_card_view(
         card_id: Some(identifier),
         prefab: CardPrefab::TokenCard.into(),
         revealed_to_viewer: true,
-        revealed_to_opponent: false,
+        is_face_up: false,
         card_icons: mana_cost.map(|mana| CardIcons {
             top_left_icon: Some(CardIcon {
                 background: Some(assets::card_icon(CardIconType::Mana)),
@@ -306,7 +306,7 @@ pub fn card_view(game: &GameState, card: &CardState, user_side: Side) -> CardVie
         card_id: Some(adapters::adapt_card_id(card.id)),
         prefab: CardPrefab::Standard.into(),
         revealed_to_viewer: card.is_revealed_to(user_side),
-        revealed_to_opponent: card.is_revealed_to(user_side.opponent()),
+        is_face_up: card.is_face_up(),
         card_icons: Some(card_icons(game, card, definition, revealed)),
         arena_frame: Some(assets::arena_frame(
             definition.side,

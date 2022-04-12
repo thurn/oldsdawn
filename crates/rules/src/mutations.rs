@@ -87,6 +87,7 @@ pub fn move_cards(game: &mut GameState, cards: &[CardId], to_position: CardPosit
 pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) {
     move_cards(game, cards, CardPosition::DeckUnknown(side));
     for card_id in cards {
+        game.card_mut(*card_id).turn_face_down();
         set_revealed_to(game, *card_id, Side::Overlord, false);
         set_revealed_to(game, *card_id, Side::Champion, false);
     }
@@ -101,8 +102,17 @@ pub fn shuffle_deck(game: &mut GameState, side: Side) {
     move_cards(game, &cards, CardPosition::DeckUnknown(side));
 }
 
+/// Switches a card to be face-up and revealed to all players.
+pub fn turn_face_up(game: &mut GameState, card_id: CardId) {
+    let was_revealed_to_opponent = game.card(card_id).is_revealed_to(card_id.side.opponent());
+    game.card_mut(card_id).turn_face_up();
+    if !was_revealed_to_opponent {
+        game.updates.push(GameUpdate::RevealToOpponent(card_id));
+    }
+}
+
 /// Updates the 'revealed' state of a card to be visible to the indicated `side`
-/// player.
+/// player. Note that this is *not* the same as [turn_face_up].
 ///
 /// Appends [GameUpdate::RevealToOpponent] if the new state is revealed to the
 /// opponent.
@@ -323,7 +333,7 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
     }
 
     for (card_id, scheme_points) in scored {
-        set_revealed_to(game, card_id, Side::Champion, true);
+        turn_face_up(game, card_id);
         move_card(game, card_id, CardPosition::Scored(Side::Overlord));
         dispatch::invoke_event(game, OverlordScoreCardEvent(card_id));
         game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));

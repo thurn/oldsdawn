@@ -456,7 +456,7 @@ impl Summarize for CardView {
     fn summarize(self, summary: &mut Summary) {
         summary.child("card_id", self.card_id);
         summary.child_node("revealed_to_viewer", self.revealed_to_viewer);
-        summary.child_node("revealed_to_opponent", self.revealed_to_opponent);
+        summary.child_node("is_face_up", self.is_face_up);
         summary.child("card_icons", self.card_icons);
         summary.child("arena_frame", self.arena_frame);
         summary.child("owning_player", PlayerName::from_i32(self.owning_player));

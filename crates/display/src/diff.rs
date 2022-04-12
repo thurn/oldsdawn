@@ -143,7 +143,7 @@ fn diff_card_view(old: Option<&CardView>, new: Option<&CardView>) -> Option<Card
         card_id: new.card_id,
         prefab: new.prefab,
         revealed_to_viewer: new.revealed_to_viewer,
-        revealed_to_opponent: new.revealed_to_opponent,
+        is_face_up: new.is_face_up,
         card_icons: diff_card_icons(old.card_icons.as_ref(), new.card_icons.as_ref()),
         arena_frame: diff_simple(&old.arena_frame, &new.arena_frame),
         owning_player: new.owning_player,

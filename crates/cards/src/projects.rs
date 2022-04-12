@@ -36,7 +36,7 @@ pub fn gold_mine() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![
             abilities::store_mana::<12>(),
-            at_dusk(text![Keyword::Dusk, "Gain", mana(3), "from this card"], |g, s, _| {
+            at_dusk(text![Keyword::Dusk, Keyword::Take(3)], |g, s, _| {
                 mutations::take_stored_mana(g, s.card_id(), 3);
             }),
         ],

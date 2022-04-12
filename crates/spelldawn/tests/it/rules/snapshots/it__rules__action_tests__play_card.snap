@@ -2,7 +2,6 @@
 source: crates/spelldawn/tests/it/rules/action_tests.rs
 assertion_line: 98
 expression: "Summary::run(&response)"
-
 ---
 
 command_list: 
@@ -17,7 +16,7 @@ command_list:
         card: 
             card_id: C45
             revealed_to_viewer: true
-            revealed_to_opponent: true
+            is_face_up: true
             owning_player: User
             revealed_card: 
                 targeting: 
@@ -43,7 +42,7 @@ channel_response:
         card: 
             card_id: C45
             revealed_to_viewer: true
-            revealed_to_opponent: true
+            is_face_up: true
             card_icons: 
                 top_left_icon: "5"
             owning_player: Opponent

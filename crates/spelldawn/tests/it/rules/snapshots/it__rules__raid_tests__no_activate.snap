@@ -2,23 +2,12 @@
 source: crates/spelldawn/tests/it/rules/raid_tests.rs
 assertion_line: 386
 expression: "Summary::summarize(&response)"
-
 ---
 
 command_list: 
     UpdateGameView: 
         current_priority: Opponent
         raid_active: true
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O45
-            revealed_to_viewer: true
-            revealed_to_opponent: true
-            owning_player: User
-        create_position: 
-            sorting_key: 2
-            position: ObjectPositionRoom { room_id: RoomA, room_location: Back }
-        create_animation: Unspecified
     RunInParallel: 
         MoveGameObjects: 
             id: O44
@@ -49,7 +38,7 @@ channel_response:
         card: 
             card_id: O45
             revealed_to_viewer: true
-            revealed_to_opponent: true
+            is_face_up: false
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"

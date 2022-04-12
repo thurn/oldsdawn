@@ -1,8 +1,7 @@
 ---
 source: crates/spelldawn/tests/it/rules/create_game_tests.rs
-assertion_line: 67
+assertion_line: 69
 expression: "Summary::run(&response)"
-
 ---
 
     UpdateGameView: 
@@ -34,7 +33,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: O0
             revealed_to_viewer: true
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -58,7 +57,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: O1
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -83,7 +82,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: O2
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -108,7 +107,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: O3
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -133,7 +132,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: O4
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -158,7 +157,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: O5
             revealed_to_viewer: true
-            revealed_to_opponent: false
+            is_face_up: false
             card_icons: 
                 top_left_icon: "1"
             arena_frame: "<SpriteAddress>"
@@ -183,7 +182,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: C0
             revealed_to_viewer: true
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -207,7 +206,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: C1
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -219,7 +218,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: C2
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -231,7 +230,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: C3
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -243,7 +242,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: C4
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
@@ -255,7 +254,7 @@ expression: "Summary::run(&response)"
         card: 
             card_id: C5
             revealed_to_viewer: false
-            revealed_to_opponent: true
+            is_face_up: false
             card_icons: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent

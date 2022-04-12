@@ -16,7 +16,7 @@
 //! action can currently be taken
 
 use data::actions::EncounterAction;
-use data::card_state::CardPosition;
+use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     CanActivateAbilityQuery, CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery,
     CanLevelUpRoomQuery, CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery,
@@ -49,7 +49,7 @@ pub fn can_take_play_card_action(
         && is_valid_target(game, card_id, target);
     // TODO: Check action cost
 
-    if enters_play_revealed(game, card_id) {
+    if enters_play_face_up(game, card_id) {
         can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
                              if cost <= game.player(side).mana);
     }
@@ -96,9 +96,9 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: PlayCardTarget) ->
     }
 }
 
-/// Returns true if the indicated card should enter play in the revealed state
+/// Returns true if the indicated card should enter play in the face up state
 /// and is expected to pay its mana cost immediately.
-pub fn enters_play_revealed(game: &GameState, card_id: CardId) -> bool {
+pub fn enters_play_face_up(game: &GameState, card_id: CardId) -> bool {
     matches!(
         crate::get(game.card(card_id).name).card_type,
         CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Identity
@@ -152,7 +152,7 @@ pub fn can_take_room_activation_action(game: &GameState, side: Side) -> bool {
         && matches!(
             game.data.raid,
             Some(RaidData { phase: RaidPhase::Activation, target, .. })
-            if game.defenders_alphabetical(target).any(|c| !c.is_revealed_to(Side::Champion))
+            if game.defenders_alphabetical(target).any(CardState::is_face_down)
         )
 }
 

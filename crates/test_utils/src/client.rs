@@ -685,7 +685,7 @@ pub struct ClientCard {
     title: Option<String>,
     position: Option<ObjectPosition>,
     revealed_to_me: Option<bool>,
-    revealed_to_opponent: Option<bool>,
+    is_face_up: Option<bool>,
     can_play: Option<bool>,
 }
 
@@ -715,8 +715,8 @@ impl ClientCard {
         self.revealed_to_me.expect("revealed_to_me")
     }
 
-    pub fn revealed_to_opponent(&self) -> bool {
-        self.revealed_to_opponent.expect("revealed_in_arena")
+    pub fn is_face_up(&self) -> bool {
+        self.is_face_up.expect("is_face_up")
     }
 
     pub fn can_play(&self) -> bool {
@@ -732,7 +732,7 @@ impl ClientCard {
     fn update(&mut self, view: &CardView) {
         self.id = view.card_id;
         self.revealed_to_me = Some(view.revealed_to_viewer);
-        self.revealed_to_opponent = Some(view.revealed_to_opponent);
+        self.is_face_up = Some(view.is_face_up);
         if let Some(revealed) = &view.revealed_card {
             self.update_revealed_card(revealed);
         }

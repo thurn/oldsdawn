@@ -128,9 +128,9 @@ pub fn play_card_action(
     );
     let card = game.card(card_id);
     let definition = crate::get(card.name);
-    let enters_revealed = flags::enters_play_revealed(game, card_id);
+    let enters_face_up = flags::enters_play_face_up(game, card_id);
 
-    if enters_revealed {
+    if enters_face_up {
         mutations::spend_mana(
             game,
             user_side,
@@ -153,8 +153,8 @@ pub fn play_card_action(
         CardType::Identity => CardPosition::Identity(user_side),
     };
 
-    if enters_revealed {
-        mutations::set_revealed_to(game, card_id, user_side.opponent(), true);
+    if enters_face_up {
+        mutations::turn_face_up(game, card_id);
     }
 
     mutations::move_card(game, card_id, new_position);
