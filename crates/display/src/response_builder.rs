@@ -29,9 +29,22 @@ use crate::adapters;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub enum UpdateType {
+    /// Marker for updates which have not previously been registered.
     None,
+
+    /// Updates to game state, interface state, and card state which are checked
+    /// as part of every game update diff
     General,
+
+    /// Most types of standard card movements, e.g. move zone, shuffle into
+    /// deck, draw card, destroy card
     Utility,
+
+    /// Update to reveal a card to the opponent.
+    Reveal,
+
+    /// Animations for specialized game events, e.g. start turn, initiate raid,
+    /// level up room, score card
     Animation,
 }
 

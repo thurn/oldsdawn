@@ -50,7 +50,7 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<Command> {
     updates.sort_by_key(GameUpdate::kind);
     let mut card_update_types = CardUpdateTypes::default();
     for update in &updates {
-        animations::populate_card_update_types(game, update, &mut card_update_types);
+        animations::populate_card_update_types(game, user_side, update, &mut card_update_types);
     }
 
     let user_id = game.player(user_side).id;

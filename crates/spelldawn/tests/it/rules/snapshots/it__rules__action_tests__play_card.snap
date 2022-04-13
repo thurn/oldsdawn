@@ -38,6 +38,11 @@ channel_response:
             action_tracker: 2
         current_priority: Opponent
         raid_active: false
+    MoveGameObjects: 
+        id: C45
+        position: 
+            sorting_key: 0
+            position: ObjectPositionStaging
     CreateOrUpdateCard: 
         card: 
             card_id: C45
@@ -45,6 +50,7 @@ channel_response:
             is_face_up: true
             card_icons: 
                 top_left_icon: "5"
+            arena_frame: "<SpriteAddress>"
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"
@@ -62,11 +68,6 @@ channel_response:
             sorting_key: 2
             position: ObjectPositionDiscardPile { owner: Opponent }
         create_animation: Unspecified
-    MoveGameObjects: 
-        id: C45
-        position: 
-            sorting_key: 0
-            position: ObjectPositionStaging
     Delay: 1500
     MoveGameObjects: 
         id: C45

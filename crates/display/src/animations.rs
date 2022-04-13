@@ -51,6 +51,7 @@ use crate::{adapters, assets, full_sync};
 
 pub fn populate_card_update_types(
     game: &GameState,
+    user_side: Side,
     update: &GameUpdate,
     types: &mut CardUpdateTypes,
 ) {
@@ -87,6 +88,11 @@ pub fn populate_card_update_types(
         }
         GameUpdate::ChampionScoreCard(card_id, _) => {
             types.insert(*card_id, UpdateType::Animation);
+        }
+        GameUpdate::RevealToOpponent(card_id) => {
+            if game.data.raid.is_none() && user_side != game.card(*card_id).side() {
+                types.insert(*card_id, UpdateType::Reveal);
+            }
         }
         _ => {}
     }
@@ -313,7 +319,7 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
     if commands.user_side != card.side() && game.data.raid.is_none() {
         // If there is no active raid, animate the card to the staging area on reveal.
         commands.push(
-            UpdateType::Utility,
+            UpdateType::Reveal,
             Command::MoveGameObjects(MoveGameObjectsCommand {
                 ids: vec![adapters::card_id_to_object_id(card.id)],
                 position: Some(ObjectPosition {
@@ -323,7 +329,21 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
                 disable_animation: false,
             }),
         );
-        commands.push(UpdateType::Utility, delay(1500));
+        commands.push(
+            UpdateType::Reveal,
+            create_or_update(
+                game,
+                commands.user_side,
+                card.id,
+                CardCreationStrategy::SnapToCurrentPosition,
+            ),
+        );
+        commands.push(UpdateType::Reveal, delay(1500));
+        commands.move_object_optional(
+            UpdateType::Reveal,
+            Id::CardId(adapters::adapt_card_id(card.id)),
+            full_sync::adapt_position(card, commands.user_side),
+        );
     }
 }
 
