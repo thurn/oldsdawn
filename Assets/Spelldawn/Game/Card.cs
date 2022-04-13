@@ -60,6 +60,9 @@ namespace Spelldawn.Game
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] ObjectDisplay? _previousParent;
     [SerializeField] ObjectDisplay? _containedObjectsDisplay;
+    // Minor hack: we want to shift the image down to be centered within the card in the arena, so we store
+    // the image position here to restore it later.
+    [SerializeField] float _arenaCardYOffset;
 
     CardIdentifier? _cardId;
     bool? _serverCanPlay;
@@ -68,7 +71,6 @@ namespace Spelldawn.Game
     ObjectPosition? _releasePosition;
     Node? _supplementalInfo;
     Registry _registry = null!;
-    float? _arenaCardYOffset;
 
     [Serializable]
     public sealed class Icon
@@ -100,16 +102,6 @@ namespace Spelldawn.Game
     public Node? SupplementalInfo => _supplementalInfo;
 
     public ObjectDisplay ContainedObjects => Errors.CheckNotNull(_containedObjectsDisplay);
-
-    void Awake()
-    {
-      // Minor hack: we want to shift the image down to be centered within the card in the arena, so we record
-      // the image position when the card is first rendered to restore it later.
-      if (_arenaCardYOffset == null && _arenaCard.localPosition.y > 0)
-      {
-        _arenaCardYOffset = _arenaCard.localPosition.y;
-      }
-    }
 
     public Sequence? Render(
       Registry registry,
@@ -219,8 +211,7 @@ namespace Spelldawn.Game
         _arenaFrame.gameObject.SetActive(false);
         _cardShadow.SetActive(true);
         _arenaShadow.SetActive(false);
-        _arenaCard.localPosition = new Vector3(0, _arenaCardYOffset ?? 0, 0);
-        // _arenaCard.localPosition = new Vector3(0, Errors.CheckNotNull(_arenaCardYOffset), 0);
+        _arenaCard.localPosition = new Vector3(0, _arenaCardYOffset, 0);
       }
 
       UpdateIcons(null, GameContext.IsArenaContext());

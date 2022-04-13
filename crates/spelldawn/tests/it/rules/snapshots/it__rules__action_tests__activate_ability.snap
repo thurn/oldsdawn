@@ -12,6 +12,18 @@ command_list:
             action_tracker: 1
         current_priority: User
         raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C45
+            revealed_to_viewer: true
+            is_face_up: true
+            card_icons: 
+                arena_icon: "9"
+            owning_player: User
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionItem { item_location: Right }
+        create_animation: Unspecified
 channel_response: 
     CreateOrUpdateCard: 
         card: 
@@ -49,3 +61,15 @@ channel_response:
             action_tracker: 1
         current_priority: Opponent
         raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C45
+            revealed_to_viewer: true
+            is_face_up: true
+            card_icons: 
+                arena_icon: "9"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionItem { item_location: Right }
+        create_animation: Unspecified

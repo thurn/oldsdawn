@@ -54,9 +54,16 @@ pub fn always<T>(_: &GameState, _: Scope, _: T) -> bool {
     true
 }
 
-/// RequirementFn that this delegate's card is currently in play
-pub fn in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
-    game.card(scope.card_id()).position().in_play()
+/// RequirementFn that this delegate's card is currently face up & in play
+pub fn face_up_in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
+    let card = game.card(scope.card_id());
+    card.is_face_up() && card.position().in_play()
+}
+
+/// RequirementFn that this delegate's card is currently face down & in play
+pub fn face_down_in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
+    let card = game.card(scope.card_id());
+    card.is_face_down() && card.position().in_play()
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their
@@ -95,21 +102,21 @@ pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     }
 }
 
-/// An ability which triggers at dawn if a card is in play
+/// An ability which triggers at dawn if a card is face up in play
 pub fn at_dawn(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::Dawn(EventDelegate { requirement: in_play, mutation })],
+        delegates: vec![Delegate::Dawn(EventDelegate { requirement: face_up_in_play, mutation })],
     }
 }
 
-/// An ability which triggers at dusk if a card is in play
+/// An ability which triggers at dusk if a card is face up in play
 pub fn at_dusk(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::Dusk(EventDelegate { requirement: in_play, mutation })],
+        delegates: vec![Delegate::Dusk(EventDelegate { requirement: face_up_in_play, mutation })],
     }
 }
 

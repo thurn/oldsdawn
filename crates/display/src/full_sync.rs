@@ -335,6 +335,14 @@ fn card_icons(
         });
     }
 
+    if card.data.stored_mana > 0 {
+        icons.arena_icon = Some(CardIcon {
+            background: Some(assets::card_icon(CardIconType::Mana)),
+            text: Some(card.data.stored_mana.to_string()),
+            background_scale: assets::background_scale(CardIconType::Mana),
+        });
+    }
+
     if revealed {
         icons.top_left_icon = queries::mana_cost(game, card.id).map(|mana| CardIcon {
             background: Some(assets::card_icon(CardIconType::Mana)),

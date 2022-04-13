@@ -64,6 +64,7 @@ pub enum Keyword {
     Dusk,
     Score,
     Combat,
+    Unveil,
     Store(u32),
     Take(u32),
     DealDamage(u32, DamageType),

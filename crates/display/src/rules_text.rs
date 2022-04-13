@@ -118,7 +118,8 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 Keyword::Dusk => "<b>\u{f0e7}Dusk:</b>".to_string(),
                 Keyword::Score => "<b>\u{f0e7}Score:</b>".to_string(),
                 Keyword::Combat => "<b>\u{f0e7}Combat:</b>".to_string(),
-                Keyword::Store(n) => format!("<b>Store {}\u{f06d}</b>", n),
+                Keyword::Unveil => "<b>Unveil</b>".to_string(),
+                Keyword::Store(n) => format!("<b>Store</b> {}\u{f06d}", n),
                 Keyword::Take(n) => format!("Take {}\u{f06d}", n),
                 Keyword::DealDamage(amount, damage_type) => format!(
                     "Deal {} {} damage.",
@@ -207,6 +208,9 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
                 output.push(
                     "<b>Combat:</b> Triggers if this minion is not defeated in combat.".to_string(),
                 );
+            }
+            KeywordKind::Unveil => {
+                output.push("<b>Unveil:</b> Pay cost and turn face up (if able)".to_string());
             }
             KeywordKind::Store => {
                 output.push(

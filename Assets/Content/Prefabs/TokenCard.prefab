@@ -1567,6 +1567,7 @@ MonoBehaviour:
   _initialDragRotation: {x: 0, y: 0, z: 0, w: 0}
   _previousParent: {fileID: 0}
   _containedObjectsDisplay: {fileID: 0}
+  _arenaCardYOffset: 0.78
 --- !u!210 &6859622998180740047
 SortingGroup:
   m_ObjectHideFlags: 0

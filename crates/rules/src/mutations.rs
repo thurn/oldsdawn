@@ -341,6 +341,29 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
     }
 }
 
+/// Attempt to pay a card's cost and turn it face up. Has no effect if the card
+/// is not in play, already face up, or if the cost cannot be paid.
+///
+/// Returns true if the card was unveiled.
+pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
+    if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
+        match queries::mana_cost(game, card_id) {
+            None => {
+                turn_face_up(game, card_id);
+                true
+            }
+            Some(cost) if cost <= game.player(card_id.side).mana => {
+                spend_mana(game, card_id.side, cost);
+                turn_face_up(game, card_id);
+                true
+            }
+            _ => false,
+        }
+    } else {
+        false
+    }
+}
+
 /// Starts the turn for the `next_side` player.
 fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
     game.data.phase = GamePhase::Play(CurrentTurn { side: next_side, turn_number });
