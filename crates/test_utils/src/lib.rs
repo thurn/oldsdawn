@@ -35,7 +35,7 @@ use data::primitives::{
 };
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{DrawCardAction, GainManaAction, LevelUpRoomAction, RoomIdentifier};
+use protos::spelldawn::{LevelUpRoomAction, RoomIdentifier, SpendActionPointAction};
 
 use crate::client::TestSession;
 use crate::fake_database::FakeDatabase;
@@ -247,20 +247,10 @@ fn set_discard_pile(game: &mut GameState, side: Side, discard: Option<CardName>)
     }
 }
 
-pub fn gain_mana_until_turn_over(session: &mut TestSession, side: Side) -> ManaValue {
-    let id = session.player_id_for_side(side);
-    let mut result = 0;
-    while session.player(id).this_player.actions() > 0 {
-        session.perform(Action::GainMana(GainManaAction {}), id);
-        result += 1;
-    }
-    result
-}
-
-pub fn draw_cards_until_turn_over(session: &mut TestSession, side: Side) {
+pub fn spend_actions_until_turn_over(session: &mut TestSession, side: Side) {
     let id = session.player_id_for_side(side);
     while session.player(id).this_player.actions() > 0 {
-        session.perform(Action::DrawCard(DrawCardAction {}), id);
+        session.perform(Action::SpendActionPoint(SpendActionPointAction {}), id);
     }
 }
 
@@ -284,7 +274,7 @@ pub fn level_up_room(session: &mut TestSession, times: u32) {
         }
 
         assert!(session.dawn());
-        gain_mana_until_turn_over(session, Side::Champion);
+        spend_actions_until_turn_over(session, Side::Champion);
         assert!(session.dusk());
     }
 }
@@ -297,7 +287,7 @@ pub fn level_up_room(session: &mut TestSession, times: u32) {
 ///
 /// NOTE: This causes the Champion player to draw a card for their turn!
 pub fn fire_minion_combat_abilities(session: &mut TestSession) {
-    gain_mana_until_turn_over(session, Side::Overlord);
+    spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
     session.initiate_raid(ROOM_ID);
     session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
@@ -305,6 +295,7 @@ pub fn fire_minion_combat_abilities(session: &mut TestSession) {
 }
 
 /// Must be invoked during the Champion turn. Performs the following actions:
+///
 /// - Ends the Champion turn
 /// - Selects a test minion with 5 health and an 'end raid' ability matching the
 ///   provided `faction`
@@ -314,12 +305,14 @@ pub fn fire_minion_combat_abilities(session: &mut TestSession) {
 /// - Activates the room
 /// - Clicks on the button with text matching `name` in order to fire weapon
 ///   abilities.
+///
+/// NOTE: This causes both players to draw cards for their turns!
 pub fn fire_weapon_combat_abilities(
     session: &mut TestSession,
     faction: Faction,
     name: &'static str,
-) -> ManaValue {
-    let mana = gain_mana_until_turn_over(session, Side::Champion);
+) {
+    spend_actions_until_turn_over(session, Side::Champion);
     assert!(session.dusk());
     let minion_name = match faction {
         Faction::Prismatic => panic!("Unsupported"),
@@ -328,12 +321,11 @@ pub fn fire_weapon_combat_abilities(
         Faction::Infernal => CardName::TestInfernalMinion,
     };
     session.play_from_hand(minion_name);
-    gain_mana_until_turn_over(session, Side::Overlord);
+    spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
     session.initiate_raid(ROOM_ID);
     session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
     session.click_on(session.player_id_for_side(Side::Champion), name);
-    mana
 }
 
 /// Asserts that the display names of the provided vector of [CardName]s are

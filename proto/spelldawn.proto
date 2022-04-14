@@ -847,13 +847,15 @@ message CreateNewGameAction {
     bool use_debug_id = 4;
 }
 
-/*
-* Possible game actions taken by the user.
-*
-* Actions have an associated 'optimistic' behavior to display while waiting
-* for a server response. The client should not send multiple actions at the
-* same time -- interaction should be disabled while an action is pending.
-*/
+// Action to spend an action point with no other effect, typically used for
+// tests
+message SpendActionPointAction {}
+
+// Possible game actions taken by the user.
+//
+// Actions have an associated 'optimistic' behavior to display while waiting
+// for a server response. The client should not send multiple actions at the
+// same time -- interaction should be disabled while an action is pending.
 message GameAction {
     oneof action {
         StandardAction standard_action = 1;
@@ -864,6 +866,7 @@ message GameAction {
         PlayCardAction play_card = 6;
         LevelUpRoomAction level_up_room = 7;
         InitiateRaidAction initiate_raid = 8;
+        SpendActionPointAction spend_action_point = 9;
     }
 }
 

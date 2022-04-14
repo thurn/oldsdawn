@@ -318,9 +318,9 @@ fn activate_ability_take_all_mana() {
         );
         taken += MANA_TAKEN;
 
-        draw_cards_until_turn_over(&mut g, Side::Champion);
+        spend_actions_until_turn_over(&mut g, Side::Champion);
         assert!(g.dusk());
-        draw_cards_until_turn_over(&mut g, Side::Overlord);
+        spend_actions_until_turn_over(&mut g, Side::Overlord);
         assert!(g.dawn());
     }
 
@@ -357,7 +357,7 @@ fn triggered_ability_cannot_unveil() {
     g.play_from_hand(CardName::TestTriggeredAbilityTakeManaAtDusk);
     assert!(g.dawn());
     assert_eq!(0, g.user.this_player.mana());
-    gain_mana_until_turn_over(&mut g, Side::Champion);
+    spend_actions_until_turn_over(&mut g, Side::Champion);
     assert!(g.dusk());
     assert_eq!(0, g.user.this_player.mana());
     assert_eq!(0, g.opponent.other_player.mana());
@@ -370,10 +370,10 @@ fn triggered_ability_take_all_mana() {
     let mut taken = 0;
     while taken < MANA_STORED {
         assert!(g.dawn());
-        gain_mana_until_turn_over(&mut g, Side::Champion);
+        spend_actions_until_turn_over(&mut g, Side::Champion);
         assert!(g.dusk());
         taken += MANA_TAKEN;
-        draw_cards_until_turn_over(&mut g, Side::Overlord);
+        spend_actions_until_turn_over(&mut g, Side::Overlord);
     }
 
     assert_eq!(STARTING_MANA - UNVEIL_COST + MANA_STORED, g.user.this_player.mana());

@@ -226,6 +226,17 @@ pub fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: Room
     Ok(())
 }
 
+pub fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()> {
+    ensure!(
+        queries::in_main_phase(game, user_side),
+        "Cannot spend action point for {:?}",
+        user_side
+    );
+    mutations::spend_action_points(game, user_side, 1);
+    mutations::check_end_turn(game, user_side);
+    Ok(())
+}
+
 /// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
 pub fn handle_prompt_action(
     game: &mut GameState,

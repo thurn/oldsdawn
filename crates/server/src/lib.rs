@@ -211,6 +211,11 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
                 )
             })
         }
+        Action::SpendActionPoint(_) => {
+            handle_action(database, player_id, game_id, |game, user_side| {
+                actions::spend_action_point_action(game, user_side)
+            })
+        }
     }?;
 
     let commands = response.command_list.commands.iter().map(command_name).collect::<Vec<_>>();

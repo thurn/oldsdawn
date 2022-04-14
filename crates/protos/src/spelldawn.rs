@@ -806,7 +806,10 @@ pub struct CreateNewGameAction {
     #[prost(bool, tag = "4")]
     pub use_debug_id: bool,
 }
-///
+/// Action to spend an action point with no other effect, typically used for
+/// tests
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SpendActionPointAction {}
 /// Possible game actions taken by the user.
 ///
 /// Actions have an associated 'optimistic' behavior to display while waiting
@@ -814,7 +817,7 @@ pub struct CreateNewGameAction {
 /// same time -- interaction should be disabled while an action is pending.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameAction {
-    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7, 8")]
+    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
     pub action: ::core::option::Option<game_action::Action>,
 }
 /// Nested message and enum types in `GameAction`.
@@ -837,6 +840,8 @@ pub mod game_action {
         LevelUpRoom(super::LevelUpRoomAction),
         #[prost(message, tag = "8")]
         InitiateRaid(super::InitiateRaidAction),
+        #[prost(message, tag = "9")]
+        SpendActionPoint(super::SpendActionPointAction),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

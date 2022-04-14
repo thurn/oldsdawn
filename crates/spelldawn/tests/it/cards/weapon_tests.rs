@@ -21,11 +21,8 @@ use test_utils::*;
 fn greataxe() {
     let mut g = new_game(Side::Champion, Args::default());
     g.play_from_hand(CardName::Greataxe);
-    let gained_mana = fire_weapon_combat_abilities(&mut g, Faction::Infernal, "Greataxe");
-    assert_eq!(
-        STARTING_MANA + gained_mana - 3 /* greataxe cost */ - 1, /* single boost */
-        g.me().mana()
-    );
+    fire_weapon_combat_abilities(&mut g, Faction::Infernal, "Greataxe");
+    assert_eq!(STARTING_MANA - 3 /* cost */ - 1 /* single boost */, g.me().mana());
     assert!(g.user.data.raid_active());
     assert!(g.user.interface.controls().has_text("End Raid"));
 }

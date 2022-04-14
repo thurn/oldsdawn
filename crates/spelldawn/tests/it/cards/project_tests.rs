@@ -20,11 +20,11 @@ use test_utils::*;
 fn gold_mine() {
     let mut g = new_game(Side::Overlord, Args::default());
     let id = g.play_from_hand(CardName::GoldMine);
-    let mana_gained = gain_mana_until_turn_over(&mut g, Side::Overlord);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
     assert!(g.dawn());
-    assert_eq!(STARTING_MANA + mana_gained, g.me().mana());
-    gain_mana_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(STARTING_MANA, g.me().mana());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
     assert!(g.dusk());
-    assert_eq!(STARTING_MANA + mana_gained - 4 /* cost */ + 3 /* taken */, g.me().mana());
+    assert_eq!(STARTING_MANA - 4 /* cost */ + 3 /* taken */, g.me().mana());
     assert_eq!("9", g.user.get_card(id).arena_icon());
 }
