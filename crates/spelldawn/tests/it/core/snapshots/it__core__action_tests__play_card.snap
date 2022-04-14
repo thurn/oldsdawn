@@ -1,0 +1,76 @@
+---
+source: crates/spelldawn/tests/it/core/action_tests.rs
+assertion_line: 100
+expression: "Summary::run(&response)"
+---
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Champion
+            mana: 9
+            action_tracker: 2
+        current_priority: User
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C45
+            revealed_to_viewer: true
+            is_face_up: true
+            owning_player: User
+            revealed_card: 
+                targeting: 
+                    can_play: false
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionDiscardPile { owner: User }
+        create_animation: Unspecified
+    MoveGameObjects: 
+        id: C45
+        position: 
+            sorting_key: 2
+            position: ObjectPositionDiscardPile { owner: User }
+channel_response: 
+    UpdateGameView: 
+        opponent: 
+            side: Champion
+            mana: 9
+            action_tracker: 2
+        current_priority: Opponent
+        raid_active: false
+    MoveGameObjects: 
+        id: C45
+        position: 
+            sorting_key: 0
+            position: ObjectPositionStaging
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C45
+            revealed_to_viewer: true
+            is_face_up: true
+            card_icons: 
+                top_left_icon: "5"
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Arcane Recovery"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionDiscardPile { owner: Opponent }
+        create_animation: Unspecified
+    Delay: 1500
+    MoveGameObjects: 
+        id: C45
+        position: 
+            sorting_key: 2
+            position: ObjectPositionDiscardPile { owner: Opponent }

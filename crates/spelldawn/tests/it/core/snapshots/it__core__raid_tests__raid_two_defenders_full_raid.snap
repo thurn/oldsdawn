@@ -1,0 +1,74 @@
+---
+source: crates/spelldawn/tests/it/core/raid_tests.rs
+assertion_line: 667
+expression: "Summary::summarize(&response)"
+---
+
+command_list: 
+    SetMusic: 
+        music_state: Silent
+    PlaySound: 
+        sound: "<AudioClipAddress>"
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 10
+            position: ObjectPositionScoreAnimation
+    PlayEffect: 
+        effect: "<EffectAddress>"
+        position: O1
+        duration: 700
+        sound: "<AudioClipAddress>"
+    PlayEffect: 
+        effect: "<EffectAddress>"
+        position: O1
+        duration: 300
+        sound: "<AudioClipAddress>"
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 10
+            position: ObjectPositionIdentity { owner: User }
+    UpdateGameView: 
+        user: 
+            side: Champion
+            score: 1
+        current_priority: User
+        raid_active: true
+    RenderInterface: 
+    panels: 
+        main_controls: 
+            node: 
+                text: "End Raid"
+        card_anchor_nodes: 
+channel_response: 
+    SetMusic: 
+        music_state: Silent
+    PlaySound: 
+        sound: "<AudioClipAddress>"
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 10
+            position: ObjectPositionScoreAnimation
+    PlayEffect: 
+        effect: "<EffectAddress>"
+        position: O1
+        duration: 700
+        sound: "<AudioClipAddress>"
+    PlayEffect: 
+        effect: "<EffectAddress>"
+        position: O1
+        duration: 300
+        sound: "<AudioClipAddress>"
+    MoveGameObjects: 
+        id: O1
+        position: 
+            sorting_key: 10
+            position: ObjectPositionIdentity { owner: Opponent }
+    UpdateGameView: 
+        opponent: 
+            side: Champion
+            score: 1
+        current_priority: Opponent
+        raid_active: true

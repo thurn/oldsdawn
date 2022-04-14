@@ -15,4 +15,3 @@
 mod action_tests;
 mod create_game_tests;
 mod raid_tests;
-mod spell_tests;

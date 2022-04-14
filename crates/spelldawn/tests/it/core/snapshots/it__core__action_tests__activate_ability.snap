@@ -1,0 +1,75 @@
+---
+source: crates/spelldawn/tests/it/core/action_tests.rs
+assertion_line: 296
+expression: "Summary::run(&response)"
+---
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Champion
+            mana: 1000
+            action_tracker: 1
+        current_priority: User
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C45
+            revealed_to_viewer: true
+            is_face_up: true
+            card_icons: 
+                arena_icon: "8"
+            owning_player: User
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionItem { item_location: Right }
+        create_animation: Unspecified
+channel_response: 
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C45[1]
+            revealed_to_viewer: true
+            is_face_up: false
+            owning_player: Opponent
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Use Test Activated Ability Take Mana"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 2
+                    position: ObjectPositionIntoCard { card_id: Some(CardIdentifier { side: Champion, index: 45, ability_id: None }) }
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionStaging
+        create_animation: FromParentCard
+    Delay: 1500
+    MoveGameObjects: 
+        id: C45[1]
+        position: 
+            sorting_key: 0
+            position: ObjectPositionIntoCard { card_id: Some(CardIdentifier { side: Champion, index: 45, ability_id: None }) }
+    DestroyCard: 
+        card_id: C45[1]
+    UpdateGameView: 
+        opponent: 
+            side: Champion
+            mana: 1000
+            action_tracker: 1
+        current_priority: Opponent
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C45
+            revealed_to_viewer: true
+            is_face_up: true
+            card_icons: 
+                arena_icon: "8"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 2
+            position: ObjectPositionItem { item_location: Right }
+        create_animation: Unspecified

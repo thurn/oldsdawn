@@ -1,0 +1,299 @@
+---
+source: crates/spelldawn/tests/it/core/create_game_tests.rs
+assertion_line: 69
+expression: "Summary::run(&response)"
+---
+
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            player_info: 
+                name: "Test Overlord Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 0
+            action_tracker: 0
+            score: 0
+        opponent: 
+            side: Champion
+            player_info: 
+                name: "Test Champion Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 0
+            action_tracker: 0
+            score: 0
+        current_priority: Unspecified
+        raid_active: false
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O0
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Identity"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 0
+            position: ObjectPositionIdentity { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O1
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 6
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O2
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 7
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O3
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 8
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O4
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 9
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O5
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 10
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C0
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Champion Identity"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 0
+            position: ObjectPositionIdentity { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C1
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 16
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C2
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 17
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C3
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 18
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C4
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 19
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C5
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 20
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    RunInParallel: 
+        MoveGameObjects: 
+            id: O1
+            position: 
+                sorting_key: 6
+                position: ObjectPositionBrowser
+        MoveGameObjects: 
+            id: O2
+            position: 
+                sorting_key: 7
+                position: ObjectPositionBrowser
+        MoveGameObjects: 
+            id: O3
+            position: 
+                sorting_key: 8
+                position: ObjectPositionBrowser
+        MoveGameObjects: 
+            id: O4
+            position: 
+                sorting_key: 9
+                position: ObjectPositionBrowser
+        MoveGameObjects: 
+            id: O5
+            position: 
+                sorting_key: 10
+                position: ObjectPositionBrowser
+    RenderInterface: 
+    panels: 
+        main_controls: 
+            node: 
+                text: "Keep"
+                text: "Mulligan"
+        card_anchor_nodes: 
+    RenderInterface: 
+    panels: "<DebugPanel>"
