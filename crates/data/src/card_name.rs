@@ -33,9 +33,18 @@ pub enum CardName {
     /// Scheme requiring 3 levels to score 1 point
     TestScheme31,
     /// Minion with 5 health, 3 mana cost, and an "end the raid" ability.
-    TestMinionAlpha,
+    TestMinionEndRaid,
     /// Minion with 5 health, 1 mana cost, and a "deal 1 damage" ability.
-    TestMinionBeta,
+    TestMinionDealDamage,
+    /// Minion with the 'infernal' faction, MINION_HEALTH health, and an 'end
+    /// raid' ability.
+    TestInfernalMinion,
+    /// Minion with the 'abyssal' faction, MINION_HEALTH health, and an 'end
+    /// raid' ability.
+    TestAbyssalMinion,
+    /// Minion with the 'mortal' faction, MINION_HEALTH health, and an 'end
+    /// raid' ability.
+    TestMortalMinion,
     /// Weapon with 2 attack and no boost.
     TestWeapon2Attack,
     /// Weapon with 2 attack and a '1 mana: +2 attack' boost.

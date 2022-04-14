@@ -14,7 +14,9 @@
 
 use data::card_definition::{AttackBoost, CardConfig, CardDefinition, Cost, SchemePoints};
 use data::card_name::CardName;
-use data::primitives::{CardType, ColdDamage, Faction, ManaValue, Rarity, School, Side};
+use data::primitives::{
+    CardType, ColdDamage, Faction, HealthValue, ManaValue, Rarity, School, Side,
+};
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
@@ -24,6 +26,7 @@ pub const ARTIFACT_COST: ManaValue = 1;
 pub const UNVEIL_COST: ManaValue = 3;
 pub const MANA_STORED: ManaValue = 10;
 pub const MANA_TAKEN: ManaValue = 2;
+pub const MINION_HEALTH: HealthValue = 5;
 
 pub fn initialize() {}
 
@@ -92,14 +95,14 @@ pub fn test_scheme_31() -> CardDefinition {
 }
 
 #[distributed_slice(DEFINITIONS)]
-pub fn test_minion_alpha() -> CardDefinition {
+pub fn test_minion_end_raid() -> CardDefinition {
     CardDefinition {
-        name: CardName::TestMinionAlpha,
+        name: CardName::TestMinionEndRaid,
         cost: cost(3),
         abilities: vec![abilities::end_raid()],
         card_type: CardType::Minion,
         config: CardConfig {
-            stats: health(5),
+            stats: health(MINION_HEALTH),
             faction: Some(Faction::Infernal),
             ..CardConfig::default()
         },
@@ -108,18 +111,57 @@ pub fn test_minion_alpha() -> CardDefinition {
 }
 
 #[distributed_slice(DEFINITIONS)]
-pub fn test_minion_beta() -> CardDefinition {
+pub fn test_minion_deal_damage() -> CardDefinition {
     CardDefinition {
-        name: CardName::TestMinionBeta,
+        name: CardName::TestMinionDealDamage,
         cost: cost(1),
         abilities: vec![abilities::deal_damage::<ColdDamage, 1>()],
         card_type: CardType::Minion,
         config: CardConfig {
-            stats: health(5),
+            stats: health(MINION_HEALTH),
             faction: Some(Faction::Infernal),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_minion_infernal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestInfernalMinion,
+        config: CardConfig {
+            stats: health(MINION_HEALTH),
+            faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
+        ..test_minion_end_raid()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_minion_abyssal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestAbyssalMinion,
+        config: CardConfig {
+            stats: health(MINION_HEALTH),
+            faction: Some(Faction::Abyssal),
+            ..CardConfig::default()
+        },
+        ..test_minion_end_raid()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_minion_mortal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestMortalMinion,
+        config: CardConfig {
+            stats: health(MINION_HEALTH),
+            faction: Some(Faction::Mortal),
+            ..CardConfig::default()
+        },
+        ..test_minion_end_raid()
     }
 }
 

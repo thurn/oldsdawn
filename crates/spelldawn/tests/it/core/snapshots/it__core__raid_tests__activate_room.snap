@@ -48,7 +48,7 @@ channel_response:
                 title_background: "<SpriteAddress>"
                 jewel: "<SpriteAddress>"
                 image: "<SpriteAddress>"
-                title: "Test Minion Alpha"
+                title: "Test Minion End Raid"
                 rules_text: "<RulesText>"
                 targeting: 
                 valid_rooms: 

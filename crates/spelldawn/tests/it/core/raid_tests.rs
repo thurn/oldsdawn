@@ -32,7 +32,7 @@ fn initiate_raid() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon3Attack12Boost3Cost,
     );
     let response = g.perform_action(
@@ -82,7 +82,7 @@ fn activate_room() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
@@ -122,7 +122,7 @@ fn activate_room_weapon_2() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon2Attack,
     );
     g.perform(
@@ -140,7 +140,7 @@ fn activate_room_weapon_2_12() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon2Attack12Boost,
     );
     g.perform(
@@ -159,7 +159,7 @@ fn activate_room_weapon_4_12() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon4Attack12Boost,
     );
     g.perform(
@@ -178,7 +178,7 @@ fn activate_room_weapon_5() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon5Attack,
     );
     g.perform(
@@ -197,7 +197,7 @@ fn use_weapon() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
@@ -243,7 +243,7 @@ fn fire_combat_ability() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
@@ -290,7 +290,7 @@ fn score_scheme_card() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon3Attack12Boost3Cost,
     );
     g.perform(
@@ -329,7 +329,7 @@ fn complete_raid() {
     let (mut g, ids) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionAlpha,
+        CardName::TestMinionEndRaid,
         CardName::TestWeapon3Attack12Boost3Cost,
     );
     // Gain mana to spend an action point. Should be Overlord turn after this raid.
@@ -374,7 +374,7 @@ fn no_activate() {
     );
 
     g.play_from_hand(CardName::TestScheme31);
-    g.play_from_hand(CardName::TestMinionAlpha);
+    g.play_from_hand(CardName::TestMinionEndRaid);
 
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(ROOM_ID);
@@ -398,7 +398,7 @@ fn raid_vault() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -418,7 +418,7 @@ fn raid_sanctum() {
     );
 
     g.add_to_hand(CardName::TestScheme31);
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Sanctum);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Sanctum);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Sanctum);
     g.click_on(g.opponent_id(), "Activate");
@@ -442,7 +442,7 @@ fn raid_crypts() {
     );
 
     g.add_to_hand(CardName::TestScheme31);
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Crypts);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Crypts);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Crypts);
     g.click_on(g.opponent_id(), "Activate");
@@ -465,7 +465,7 @@ fn raid_vault_twice() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -534,7 +534,7 @@ fn raid_no_occupants() {
         Args { turn: Some(Side::Overlord), actions: 1, ..Args::default() },
     );
 
-    g.play_from_hand(CardName::TestMinionAlpha);
+    g.play_from_hand(CardName::TestMinionEndRaid);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(ROOM_ID);
     g.click_on(g.opponent_id(), "Activate");
@@ -570,8 +570,8 @@ fn raid_two_defenders() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -595,8 +595,8 @@ fn raid_two_defenders_advance() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -620,8 +620,8 @@ fn raid_two_defenders_retreat() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -653,8 +653,8 @@ fn raid_two_defenders_full_raid() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -680,8 +680,8 @@ fn raid_two_defenders_cannot_afford_second() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionBeta, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionAlpha, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -699,7 +699,7 @@ fn raid_add_defender() {
         Args { turn: Some(Side::Overlord), actions: 2, ..Args::default() },
     );
 
-    g.play_from_hand(CardName::TestMinionAlpha);
+    g.play_from_hand(CardName::TestMinionEndRaid);
     g.play_from_hand(CardName::TestScheme31);
     assert!(g.dawn());
 
@@ -720,7 +720,7 @@ fn raid_add_defender() {
 
     // Opponent Turn
     assert!(g.dusk());
-    g.play_from_hand(CardName::TestMinionBeta);
+    g.play_from_hand(CardName::TestMinionDealDamage);
     g.play_from_hand(CardName::TestScheme31);
     g.perform(Action::GainMana(GainManaAction {}), g.opponent_id());
 

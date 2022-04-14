@@ -31,7 +31,7 @@ use data::card_state::{CardPosition, CardPositionKind};
 use data::deck::Deck;
 use data::game::{CurrentTurn, GameConfiguration, GamePhase, GameState, RaidData, RaidPhase};
 use data::primitives::{
-    ActionCount, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
+    ActionCount, Faction, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
 };
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
@@ -247,7 +247,7 @@ fn set_discard_pile(game: &mut GameState, side: Side, discard: Option<CardName>)
     }
 }
 
-pub fn gain_mana_until_turn_over(session: &mut TestSession, side: Side) -> u32 {
+pub fn gain_mana_until_turn_over(session: &mut TestSession, side: Side) -> ManaValue {
     let id = session.player_id_for_side(side);
     let mut result = 0;
     while session.player(id).this_player.actions() > 0 {
@@ -289,16 +289,51 @@ pub fn level_up_room(session: &mut TestSession, times: u32) {
     }
 }
 
-/// Ends the Overlord turn, initiates a raid on the [ROOM_ID] room, activates
-/// the room, and then continues to trigger a minion combat ability.
+/// Must be invoked during the Overlord turn. Performs the following actions:
+///  - Ends the Overlord turn
+///  - Initiates a raid on the [ROOM_ID] room
+///  - Activates the room
+///  - Picks 'Continue' to trigger a minion combat ability.
 ///
 /// NOTE: This causes the Champion player to draw a card for their turn!
-pub fn end_turn_initiate_raid_fire_combat_abilities(session: &mut TestSession) {
+pub fn fire_minion_combat_abilities(session: &mut TestSession) {
     gain_mana_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
     session.initiate_raid(ROOM_ID);
     session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
     session.click_on(session.player_id_for_side(Side::Champion), "Continue");
+}
+
+/// Must be invoked during the Champion turn. Performs the following actions:
+/// - Ends the Champion turn
+/// - Selects a test minion with 5 health and an 'end raid' ability matching the
+///   provided `faction`
+/// - Plays the selected minion in the [ROOM_ID] room.
+/// - Ends the Overlord turn.
+/// - Initiates a raid on the [ROOM_ID] room.
+/// - Activates the room
+/// - Clicks on the button with text matching `name` in order to fire weapon
+///   abilities.
+pub fn fire_weapon_combat_abilities(
+    session: &mut TestSession,
+    faction: Faction,
+    name: &'static str,
+) -> ManaValue {
+    let mana = gain_mana_until_turn_over(session, Side::Champion);
+    assert!(session.dusk());
+    let minion_name = match faction {
+        Faction::Prismatic => panic!("Unsupported"),
+        Faction::Mortal => CardName::TestMortalMinion,
+        Faction::Abyssal => CardName::TestAbyssalMinion,
+        Faction::Infernal => CardName::TestInfernalMinion,
+    };
+    session.play_from_hand(minion_name);
+    gain_mana_until_turn_over(session, Side::Overlord);
+    assert!(session.dawn());
+    session.initiate_raid(ROOM_ID);
+    session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
+    session.click_on(session.player_id_for_side(Side::Champion), name);
+    mana
 }
 
 /// Asserts that the display names of the provided vector of [CardName]s are
