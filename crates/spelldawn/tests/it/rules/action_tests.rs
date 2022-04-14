@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use cards::test_cards::{ARTIFACT_COST, MANA_STORED, MANA_TAKEN, UNVEIL_COST};
 use data::card_name::CardName;
 use data::game::RaidPhase;
 use data::primitives::Side;
 use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
+use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, CardTarget, ClientRoomLocation, DrawCardAction, GainManaAction, GameMessageType,
-    LevelUpRoomAction, PlayCardAction, PlayerName,
+    LevelUpRoomAction, ObjectPositionDiscardPile, PlayCardAction, PlayerName,
 };
 use test_utils::summarize::Summary;
 use test_utils::*;
@@ -273,8 +275,8 @@ fn switch_turn() {
 
 #[test]
 fn activate_ability() {
-    let mut g = new_game(Side::Champion, Args { turn_actions: 3, mana: 5, ..Args::default() });
-    g.play_from_hand(CardName::TestActivatedAbilityTake1Mana);
+    let mut g = new_game(Side::Champion, Args { turn_actions: 3, ..Args::default() });
+    g.play_from_hand(CardName::TestActivatedAbilityTakeMana);
     let ability_card_id = g
         .user
         .cards
@@ -283,7 +285,7 @@ fn activate_ability() {
         .expect("ability card")
         .id();
 
-    assert_eq!(4, g.me().mana());
+    assert_eq!(STARTING_MANA - ARTIFACT_COST, g.me().mana());
     assert_eq!(2, g.me().actions());
 
     let response = g.perform_action(
@@ -292,6 +294,96 @@ fn activate_ability() {
     );
 
     assert_snapshot!(Summary::run(&response));
-    assert_eq!(5, g.me().mana());
+    assert_eq!(STARTING_MANA - ARTIFACT_COST + MANA_TAKEN, g.me().mana());
     assert_eq!(1, g.me().actions());
+}
+
+#[test]
+fn activate_ability_take_all_mana() {
+    let mut g = new_game(Side::Champion, Args { turn_actions: 3, ..Args::default() });
+    let (_, id) = g.play_from_hand(CardName::TestActivatedAbilityTakeMana);
+    let ability_card_id = g
+        .user
+        .cards
+        .cards_in_hand(PlayerName::User)
+        .find(|c| c.id().ability_id.is_some())
+        .expect("ability card")
+        .id();
+
+    let mut taken = 0;
+    while taken < MANA_STORED {
+        g.perform(
+            Action::PlayCard(PlayCardAction { card_id: Some(ability_card_id), target: None }),
+            g.user_id(),
+        );
+        taken += MANA_TAKEN;
+
+        draw_cards_until_turn_over(&mut g, Side::Champion);
+        assert!(g.dusk());
+        draw_cards_until_turn_over(&mut g, Side::Overlord);
+        assert!(g.dawn());
+    }
+
+    assert_eq!(STARTING_MANA - ARTIFACT_COST + MANA_STORED, g.user.this_player.mana());
+    assert_eq!(STARTING_MANA - ARTIFACT_COST + MANA_STORED, g.opponent.other_player.mana());
+    assert_eq!(
+        Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::User.into() }),
+        g.user.cards.get(id).position()
+    );
+    assert_eq!(
+        Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::Opponent.into() }),
+        g.opponent.cards.get(id).position()
+    );
+}
+
+#[test]
+fn triggered_ability() {
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 1, ..Args::default() });
+    g.play_from_hand(CardName::TestTriggeredAbilityTakeManaAtDusk);
+    assert!(g.dawn());
+    assert_eq!(STARTING_MANA, g.user.this_player.mana());
+    g.perform(Action::GainMana(GainManaAction {}), g.opponent_id());
+    g.perform(Action::GainMana(GainManaAction {}), g.opponent_id());
+    let response = g.perform_action(Action::GainMana(GainManaAction {}), g.opponent_id());
+    assert!(g.dusk());
+    assert_snapshot!(Summary::run(&response));
+    assert_eq!(STARTING_MANA - UNVEIL_COST + MANA_TAKEN, g.user.this_player.mana());
+    assert_eq!(STARTING_MANA - UNVEIL_COST + MANA_TAKEN, g.opponent.other_player.mana());
+}
+
+#[test]
+fn triggered_ability_cannot_unveil() {
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 1, mana: 0, ..Args::default() });
+    g.play_from_hand(CardName::TestTriggeredAbilityTakeManaAtDusk);
+    assert!(g.dawn());
+    assert_eq!(0, g.user.this_player.mana());
+    gain_mana_until_turn_over(&mut g, Side::Champion);
+    assert!(g.dusk());
+    assert_eq!(0, g.user.this_player.mana());
+    assert_eq!(0, g.opponent.other_player.mana());
+}
+
+#[test]
+fn triggered_ability_take_all_mana() {
+    let mut g = new_game(Side::Overlord, Args { turn_actions: 1, ..Args::default() });
+    let (_, id) = g.play_from_hand(CardName::TestTriggeredAbilityTakeManaAtDusk);
+    let mut taken = 0;
+    while taken < MANA_STORED {
+        assert!(g.dawn());
+        gain_mana_until_turn_over(&mut g, Side::Champion);
+        assert!(g.dusk());
+        taken += MANA_TAKEN;
+        draw_cards_until_turn_over(&mut g, Side::Overlord);
+    }
+
+    assert_eq!(STARTING_MANA - UNVEIL_COST + MANA_STORED, g.user.this_player.mana());
+    assert_eq!(STARTING_MANA - UNVEIL_COST + MANA_STORED, g.opponent.other_player.mana());
+    assert_eq!(
+        Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::User.into() }),
+        g.user.cards.get(id).position()
+    );
+    assert_eq!(
+        Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::Opponent.into() }),
+        g.opponent.cards.get(id).position()
+    );
 }

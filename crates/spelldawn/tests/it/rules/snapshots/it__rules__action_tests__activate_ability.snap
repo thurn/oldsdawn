@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/rules/action_tests.rs
-assertion_line: 294
+assertion_line: 296
 expression: "Summary::run(&response)"
 ---
 
@@ -8,7 +8,7 @@ command_list:
     UpdateGameView: 
         user: 
             side: Champion
-            mana: 5
+            mana: 1000
             action_tracker: 1
         current_priority: User
         raid_active: false
@@ -18,7 +18,7 @@ command_list:
             revealed_to_viewer: true
             is_face_up: true
             card_icons: 
-                arena_icon: "9"
+                arena_icon: "8"
             owning_player: User
         create_position: 
             sorting_key: 2
@@ -35,7 +35,7 @@ channel_response:
                 card_frame: "<SpriteAddress>"
                 title_background: "<SpriteAddress>"
                 image: "<SpriteAddress>"
-                title: "Use Test Activated Ability Take 1 Mana"
+                title: "Use Test Activated Ability Take Mana"
                 rules_text: "<RulesText>"
                 targeting: 
                     can_play: false
@@ -57,7 +57,7 @@ channel_response:
     UpdateGameView: 
         opponent: 
             side: Champion
-            mana: 5
+            mana: 1000
             action_tracker: 1
         current_priority: Opponent
         raid_active: false
@@ -67,7 +67,7 @@ channel_response:
             revealed_to_viewer: true
             is_face_up: true
             card_icons: 
-                arena_icon: "9"
+                arena_icon: "8"
             owning_player: Opponent
         create_position: 
             sorting_key: 2

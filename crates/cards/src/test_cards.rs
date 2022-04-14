@@ -14,10 +14,16 @@
 
 use data::card_definition::{AttackBoost, CardConfig, CardDefinition, Cost, SchemePoints};
 use data::card_name::CardName;
-use data::primitives::{CardType, ColdDamage, Faction, Rarity, School, Side};
+use data::primitives::{CardType, ColdDamage, Faction, ManaValue, Rarity, School, Side};
+use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::{abilities, DEFINITIONS};
+use rules::{abilities, mutations, text, DEFINITIONS};
+
+pub const ARTIFACT_COST: ManaValue = 1;
+pub const UNVEIL_COST: ManaValue = 3;
+pub const MANA_STORED: ManaValue = 10;
+pub const MANA_TAKEN: ManaValue = 2;
 
 pub fn initialize() {}
 
@@ -190,11 +196,31 @@ pub fn test_weapon_5_attack() -> CardDefinition {
 #[distributed_slice(DEFINITIONS)]
 pub fn activated_ability_take_mana() -> CardDefinition {
     CardDefinition {
-        name: CardName::TestActivatedAbilityTake1Mana,
-        cost: cost(1),
+        name: CardName::TestActivatedAbilityTakeMana,
+        cost: cost(ARTIFACT_COST),
         card_type: CardType::Artifact,
-        abilities: vec![abilities::store_mana::<10>(), abilities::take_mana::<1>(cost(0))],
+        abilities: vec![
+            abilities::store_mana::<MANA_STORED>(),
+            abilities::activated_take_mana::<MANA_TAKEN>(cost(0)),
+        ],
         config: CardConfig::default(),
         ..test_champion_spell()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn triggered_ability_take_mana() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestTriggeredAbilityTakeManaAtDusk,
+        cost: cost(UNVEIL_COST),
+        card_type: CardType::Project,
+        abilities: vec![
+            abilities::unveil_at_dusk_then_store::<MANA_STORED>(),
+            at_dusk(text![Keyword::Dusk, Keyword::Take(MANA_TAKEN)], |g, s, _| {
+                mutations::take_stored_mana(g, s.card_id(), MANA_TAKEN);
+            }),
+        ],
+        config: CardConfig::default(),
+        ..test_overlord_spell()
     }
 }

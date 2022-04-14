@@ -149,7 +149,7 @@ impl TestSession {
             },
         )?;
 
-        let (opponent_id, local, remote) = self.get_player(player_id);
+        let (opponent_id, local, remote) = self.opponent_local_remote(player_id);
         for command in &response.command_list.commands {
             local.handle_command(command.command.as_ref().expect("Empty command"));
         }
@@ -264,7 +264,7 @@ impl TestSession {
     /// Locate a button containing the provided `text` in the provided player's
     /// main controls and invoke its registered action.
     pub fn click_on(&mut self, player_id: PlayerId, text: &'static str) -> GameResponse {
-        let (_, player, _) = self.get_player(player_id);
+        let (_, player, _) = self.opponent_local_remote(player_id);
         let handlers = player.interface.controls().find_handlers(text);
         let action = handlers.expect("Button not found").on_click.expect("OnClick not found");
         self.perform_action(action.action.expect("Action"), player_id).expect("Server Error")
@@ -284,7 +284,10 @@ impl TestSession {
 
     /// Returns a triple of (opponent_id, local_client, remote_client) for the
     /// provided player ID
-    fn get_player(&mut self, player_id: PlayerId) -> (PlayerId, &mut TestClient, &mut TestClient) {
+    fn opponent_local_remote(
+        &mut self,
+        player_id: PlayerId,
+    ) -> (PlayerId, &mut TestClient, &mut TestClient) {
         match () {
             _ if player_id == self.user.id => {
                 (self.opponent.id, &mut self.user, &mut self.opponent)
@@ -296,7 +299,15 @@ impl TestSession {
         }
     }
 
-    fn player_id_for_side(&self, side: Side) -> PlayerId {
+    pub fn player(&self, player_id: PlayerId) -> &TestClient {
+        match () {
+            _ if player_id == self.user.id => &self.user,
+            _ if player_id == self.opponent.id => &self.opponent,
+            _ => panic!("Unknown player id: {:?}", player_id),
+        }
+    }
+
+    pub fn player_id_for_side(&self, side: Side) -> PlayerId {
         if self.database.game().player(side).id == self.user.id {
             self.user.id
         } else if self.database.game().player(side).id == self.opponent.id {

@@ -14,14 +14,13 @@
 
 //! Card definitions for the Project card type
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TriggerIndicator};
+use data::card_definition::{CardConfig, CardDefinition};
 use data::card_name::CardName;
-use data::delegates::{Delegate, EventDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::{mutations, text, DEFINITIONS};
+use rules::{abilities, mutations, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -36,18 +35,7 @@ pub fn gold_mine() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            Ability {
-                text: text![Keyword::Unveil, "this project at dusk, then", Keyword::Store(12)],
-                ability_type: AbilityType::Standard(TriggerIndicator::Silent),
-                delegates: vec![Delegate::Dusk(EventDelegate {
-                    requirement: face_down_in_play,
-                    mutation: |g, s, _| {
-                        if mutations::unveil_card(g, s.card_id()) {
-                            g.card_mut(s.card_id()).data.stored_mana = 12;
-                        }
-                    },
-                })],
-            },
+            abilities::unveil_at_dusk_then_store::<12>(),
             at_dusk(text![Keyword::Dusk, Keyword::Take(3)], |g, s, _| {
                 mutations::take_stored_mana(g, s.card_id(), 3);
             }),

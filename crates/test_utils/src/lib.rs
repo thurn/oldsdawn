@@ -34,7 +34,8 @@ use data::primitives::{
     ActionCount, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
 };
 use maplit::hashmap;
-use protos::spelldawn::RoomIdentifier;
+use protos::spelldawn::game_action::Action;
+use protos::spelldawn::{DrawCardAction, GainManaAction, RoomIdentifier};
 
 use crate::client::TestSession;
 use crate::fake_database::FakeDatabase;
@@ -220,6 +221,20 @@ fn set_discard_pile(game: &mut GameState, side: Side, discard: Option<CardName>)
         client::overwrite_card(game, target_id, discard);
         game.move_card(target_id, CardPosition::DiscardPile(side));
         game.card_mut(target_id).turn_face_down();
+    }
+}
+
+pub fn gain_mana_until_turn_over(session: &mut TestSession, side: Side) {
+    let id = session.player_id_for_side(side);
+    while session.player(id).this_player.actions() > 0 {
+        session.perform(Action::GainMana(GainManaAction {}), id);
+    }
+}
+
+pub fn draw_cards_until_turn_over(session: &mut TestSession, side: Side) {
+    let id = session.player_id_for_side(side);
+    while session.player(id).this_player.actions() > 0 {
+        session.perform(Action::DrawCard(DrawCardAction {}), id);
     }
 }
 

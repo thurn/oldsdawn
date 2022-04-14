@@ -33,7 +33,10 @@ pub fn lodestone() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![abilities::store_mana::<12>(), abilities::take_mana::<2>(cost(0))],
+        abilities: vec![
+            abilities::store_mana::<12>(),
+            abilities::activated_take_mana::<2>(cost(0)),
+        ],
         config: CardConfig::default(),
     }
 }

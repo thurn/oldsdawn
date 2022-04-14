@@ -48,7 +48,10 @@ pub enum CardName {
     TestWeapon5Attack,
     /// Artifact which stores mana on play, with the activated ability to take
     /// mana from it
-    TestActivatedAbilityTake1Mana,
+    TestActivatedAbilityTakeMana,
+    /// Project which stores mana on unveil, with a triggered ability to take
+    /// mana at dusk.
+    TestTriggeredAbilityTakeManaAtDusk,
 
     ArcaneRecovery,
     Greataxe,
