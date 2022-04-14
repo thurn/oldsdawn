@@ -14,15 +14,17 @@
 
 use data::card_name::CardName;
 use data::primitives::Side;
-use protos::spelldawn::PlayerName;
 use test_utils::*;
 
 #[test]
-fn ice_dragon() {
-    let mut g = new_game(Side::Overlord, Args { opponent_hand_size: 5, ..Args::default() });
-    g.play_from_hand(CardName::IceDragon);
-    end_turn_initiate_raid_fire_combat_abilities(&mut g);
-    assert!(!g.user.data.raid_active());
-    assert_eq!(1, g.user.cards.discard_pile(PlayerName::Opponent).len());
-    assert_eq!(5, g.user.cards.hand(PlayerName::Opponent).len()); // Card is drawn for turn!
+fn gold_mine() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    let id = g.play_from_hand(CardName::GoldMine);
+    let mana_gained = gain_mana_until_turn_over(&mut g, Side::Overlord);
+    assert!(g.dawn());
+    assert_eq!(STARTING_MANA + mana_gained, g.me().mana());
+    gain_mana_until_turn_over(&mut g, Side::Champion);
+    assert!(g.dusk());
+    assert_eq!(STARTING_MANA + mana_gained - 4 /* cost */ + 3 /* taken */, g.me().mana());
+    assert_eq!("9", g.user.get_card(id).arena_icon());
 }

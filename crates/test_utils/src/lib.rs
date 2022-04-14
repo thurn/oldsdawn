@@ -35,7 +35,7 @@ use data::primitives::{
 };
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{DrawCardAction, GainManaAction, RoomIdentifier};
+use protos::spelldawn::{DrawCardAction, GainManaAction, LevelUpRoomAction, RoomIdentifier};
 
 use crate::client::TestSession;
 use crate::fake_database::FakeDatabase;
@@ -247,11 +247,14 @@ fn set_discard_pile(game: &mut GameState, side: Side, discard: Option<CardName>)
     }
 }
 
-pub fn gain_mana_until_turn_over(session: &mut TestSession, side: Side) {
+pub fn gain_mana_until_turn_over(session: &mut TestSession, side: Side) -> u32 {
     let id = session.player_id_for_side(side);
+    let mut result = 0;
     while session.player(id).this_player.actions() > 0 {
         session.perform(Action::GainMana(GainManaAction {}), id);
+        result += 1;
     }
+    result
 }
 
 pub fn draw_cards_until_turn_over(session: &mut TestSession, side: Side) {
@@ -261,11 +264,36 @@ pub fn draw_cards_until_turn_over(session: &mut TestSession, side: Side) {
     }
 }
 
+/// Levels up the [CLIENT_ROOM_ID] room a specified number of `times`. If this
+/// requires multiple turns, spends the Champion turns gaining mana.
+pub fn level_up_room(session: &mut TestSession, times: u32) {
+    let mut levels = 0;
+    let overlord_id = session.player_id_for_side(Side::Overlord);
+
+    loop {
+        while session.player(overlord_id).this_player.actions() > 0 {
+            session.perform(
+                Action::LevelUpRoom(LevelUpRoomAction { room_id: CLIENT_ROOM_ID.into() }),
+                overlord_id,
+            );
+            levels += 1;
+
+            if levels == times {
+                return;
+            }
+        }
+
+        assert!(session.dawn());
+        gain_mana_until_turn_over(session, Side::Champion);
+        assert!(session.dusk());
+    }
+}
+
 /// Ends the Overlord turn, initiates a raid on the [ROOM_ID] room, activates
 /// the room, and then continues to trigger a minion combat ability.
 ///
 /// NOTE: This causes the Champion player to draw a card for their turn!
-pub fn end_turn_initiate_raid_fire_minion(session: &mut TestSession) {
+pub fn end_turn_initiate_raid_fire_combat_abilities(session: &mut TestSession) {
     gain_mana_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
     session.initiate_raid(ROOM_ID);

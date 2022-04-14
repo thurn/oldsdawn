@@ -14,4 +14,6 @@
 
 mod artifact_tests;
 mod minion_tests;
+mod project_tests;
+mod scheme_tests;
 mod spell_tests;

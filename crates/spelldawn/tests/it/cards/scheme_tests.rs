@@ -14,15 +14,19 @@
 
 use data::card_name::CardName;
 use data::primitives::Side;
-use protos::spelldawn::PlayerName;
+use protos::spelldawn::object_position::Position;
+use protos::spelldawn::{ObjectPositionIdentity, PlayerName};
 use test_utils::*;
 
 #[test]
-fn ice_dragon() {
-    let mut g = new_game(Side::Overlord, Args { opponent_hand_size: 5, ..Args::default() });
-    g.play_from_hand(CardName::IceDragon);
-    end_turn_initiate_raid_fire_combat_abilities(&mut g);
-    assert!(!g.user.data.raid_active());
-    assert_eq!(1, g.user.cards.discard_pile(PlayerName::Opponent).len());
-    assert_eq!(5, g.user.cards.hand(PlayerName::Opponent).len()); // Card is drawn for turn!
+fn dungeon_annex() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    let id = g.play_from_hand(CardName::DungeonAnnex);
+    level_up_room(&mut g, 4);
+    assert_eq!(g.me().score(), 2);
+    assert_eq!(STARTING_MANA - 4 /* level cost */ + 7 /* gained */, g.me().mana());
+    assert_eq!(
+        g.user.get_card(id).position(),
+        Position::Identity(ObjectPositionIdentity { owner: PlayerName::User.into() })
+    );
 }
