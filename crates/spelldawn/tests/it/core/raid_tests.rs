@@ -668,6 +668,25 @@ fn raid_two_defenders_full_raid() {
 }
 
 #[test]
+fn raid_deal_damage_game_over() {
+    let mut g = new_game(Side::Overlord, Args { ..Args::default() });
+    // Two 'deal 1 damage' defenders are needed because the Champion draws a card
+    // for turn
+    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    assert!(g.dawn());
+
+    g.initiate_raid(RoomId::Vault);
+    g.click_on(g.user_id(), "Activate");
+    g.click_on(g.opponent_id(), "Continue");
+    g.click_on(g.opponent_id(), "Advance");
+    g.click_on(g.opponent_id(), "Continue");
+
+    assert!(g.is_victory_for_player(Side::Overlord));
+}
+
+#[test]
 fn raid_two_defenders_cannot_afford_second() {
     let mut g = new_game(
         Side::Champion,

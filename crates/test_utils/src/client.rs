@@ -276,12 +276,24 @@ impl TestSession {
         self.user.data.last_message() == GameMessageType::Dusk
     }
 
+    /// Returns true if the last-received Game Messages indicated the `winner`
+    /// player won the game
+    pub fn is_victory_for_player(&self, winner: Side) -> bool {
+        self.player_for_side(winner).data.last_message() == GameMessageType::Victory
+            && self.player_for_side(winner.opponent()).data.last_message()
+                == GameMessageType::Defeat
+    }
+
     pub fn player(&self, player_id: PlayerId) -> &TestClient {
         match () {
             _ if player_id == self.user.id => &self.user,
             _ if player_id == self.opponent.id => &self.opponent,
             _ => panic!("Unknown player id: {:?}", player_id),
         }
+    }
+
+    pub fn player_for_side(&self, side: Side) -> &TestClient {
+        self.player(self.player_id_for_side(side))
     }
 
     pub fn player_id_for_side(&self, side: Side) -> PlayerId {

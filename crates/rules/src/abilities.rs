@@ -17,9 +17,10 @@
 use data::card_definition::{Ability, AbilityType, Cost, TriggerIndicator};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
-use data::game::GameState;
+use data::game::{GameOverData, GamePhase, GameState};
 use data::primitives::{AttackValue, CardId, DamageTypeTrait, ManaValue, Side};
 use data::text::{AbilityText, Keyword, TextToken};
+use data::updates::GameUpdate;
 
 use crate::card_text::text;
 use crate::helpers::*;
@@ -84,6 +85,7 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost) -> Ability {
 /// discarded.
 pub fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&mut GameState)) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
+        eprintln!("Discarding: {:?}", card_id);
         mutations::move_card(game, card_id, CardPosition::DiscardPile(side));
     } else {
         on_empty(game);
@@ -97,7 +99,8 @@ pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
     combat(text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())], |g, _, _| {
         for _ in 0..N {
             discard_random_card(g, Side::Champion, |g| {
-                panic!("Game Over {:?} with {:?} damage", g.id, N)
+                g.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
+                g.updates.push(GameUpdate::GameOver(Side::Overlord));
             });
         }
     })
