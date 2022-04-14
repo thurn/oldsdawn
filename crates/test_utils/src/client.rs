@@ -228,18 +228,14 @@ impl TestSession {
     /// playing the card is returned, along with its [CardIdentifier].
     ///
     /// Panics if the server returns an error for playing this card.
-    pub fn play_from_hand(&mut self, card_name: CardName) -> (GameResponse, CardIdentifier) {
+    pub fn play_from_hand(&mut self, card_name: CardName) -> CardIdentifier {
         self.play_in_room(card_name, crate::ROOM_ID)
     }
 
     /// Equivalent method to [Self::play_from_hand] which explicitly specifies
     /// the target room to use if this is a minion, project, scheme, or
     /// upgrade card.
-    pub fn play_in_room(
-        &mut self,
-        card_name: CardName,
-        room_id: RoomId,
-    ) -> (GameResponse, CardIdentifier) {
+    pub fn play_in_room(&mut self, card_name: CardName, room_id: RoomId) -> CardIdentifier {
         let card_id = self.add_to_hand(card_name);
 
         let target = match rules::get(card_name).card_type {
@@ -251,14 +247,12 @@ impl TestSession {
             _ => None,
         };
 
-        let response = self
-            .perform_action(
-                Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
-                self.database.game().player(side_for_card_name(card_name)).id,
-            )
-            .expect("Server error playing card");
+        self.perform(
+            Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
+            self.database.game().player(side_for_card_name(card_name)).id,
+        );
 
-        (response, card_id)
+        card_id
     }
 
     /// Locate a button containing the provided `text` in the provided player's
@@ -282,23 +276,6 @@ impl TestSession {
         self.user.data.last_message() == GameMessageType::Dusk
     }
 
-    /// Returns a triple of (opponent_id, local_client, remote_client) for the
-    /// provided player ID
-    fn opponent_local_remote(
-        &mut self,
-        player_id: PlayerId,
-    ) -> (PlayerId, &mut TestClient, &mut TestClient) {
-        match () {
-            _ if player_id == self.user.id => {
-                (self.opponent.id, &mut self.user, &mut self.opponent)
-            }
-            _ if player_id == self.opponent.id => {
-                (self.user.id, &mut self.opponent, &mut self.user)
-            }
-            _ => panic!("Unknown user id: {:?}", player_id),
-        }
-    }
-
     pub fn player(&self, player_id: PlayerId) -> &TestClient {
         match () {
             _ if player_id == self.user.id => &self.user,
@@ -314,6 +291,34 @@ impl TestSession {
             self.opponent.id
         } else {
             panic!("Cannot find PlayerId for side {:?}", side)
+        }
+    }
+
+    /// Activates an ability of a card owned by the user
+    pub fn activate_ability(&mut self, card_id: CardIdentifier, index: u32) {
+        self.perform(
+            Action::PlayCard(PlayCardAction {
+                card_id: Some(CardIdentifier { ability_id: Some(index), ..card_id }),
+                target: None,
+            }),
+            self.user_id(),
+        );
+    }
+
+    /// Returns a triple of (opponent_id, local_client, remote_client) for the
+    /// provided player ID
+    fn opponent_local_remote(
+        &mut self,
+        player_id: PlayerId,
+    ) -> (PlayerId, &mut TestClient, &mut TestClient) {
+        match () {
+            _ if player_id == self.user.id => {
+                (self.opponent.id, &mut self.user, &mut self.opponent)
+            }
+            _ if player_id == self.opponent.id => {
+                (self.user.id, &mut self.opponent, &mut self.user)
+            }
+            _ => panic!("Unknown user id: {:?}", player_id),
         }
     }
 }
@@ -354,6 +359,10 @@ impl TestClient {
             interface: ClientInterface::default(),
             cards: ClientCards::default(),
         }
+    }
+
+    pub fn get_card(&self, id: CardIdentifier) -> &ClientCard {
+        self.cards.get(id)
     }
 
     fn handle_command(&mut self, command: &Command) {
@@ -698,6 +707,7 @@ pub struct ClientCard {
     revealed_to_me: Option<bool>,
     is_face_up: Option<bool>,
     can_play: Option<bool>,
+    arena_icon: Option<String>,
 }
 
 impl ClientCard {
@@ -734,6 +744,10 @@ impl ClientCard {
         self.can_play.expect("can_play")
     }
 
+    pub fn arena_icon(&self) -> String {
+        self.arena_icon.clone().expect("arena_icon")
+    }
+
     fn new(command: &CreateOrUpdateCardCommand) -> Self {
         let mut result = Self { position: command.create_position.clone(), ..Self::default() };
         result.update(command.card.as_ref().expect("No CardView found"));
@@ -746,6 +760,14 @@ impl ClientCard {
         self.is_face_up = Some(view.is_face_up);
         if let Some(revealed) = &view.revealed_card {
             self.update_revealed_card(revealed);
+        }
+
+        fn extract_arena_icon(view: &CardView) -> Option<&String> {
+            view.card_icons.as_ref()?.arena_icon.as_ref()?.text.as_ref()
+        }
+
+        if let Some(icon) = extract_arena_icon(view) {
+            self.arena_icon = Some(icon.clone());
         }
     }
 

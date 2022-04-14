@@ -226,7 +226,7 @@ fn level_up_room() {
 #[test]
 fn score_overlord_card() {
     let mut g = new_game(Side::Overlord, Args { mana: 10, turn_actions: 5, ..Args::default() });
-    let (_, scheme_id) = g.play_from_hand(CardName::TestScheme31);
+    let scheme_id = g.play_from_hand(CardName::TestScheme31);
     let level_up = Action::LevelUpRoom(LevelUpRoomAction { room_id: CLIENT_ROOM_ID.into() });
     g.perform(level_up.clone(), g.user_id());
     g.perform(level_up.clone(), g.user_id());
@@ -301,7 +301,7 @@ fn activate_ability() {
 #[test]
 fn activate_ability_take_all_mana() {
     let mut g = new_game(Side::Champion, Args { turn_actions: 3, ..Args::default() });
-    let (_, id) = g.play_from_hand(CardName::TestActivatedAbilityTakeMana);
+    let id = g.play_from_hand(CardName::TestActivatedAbilityTakeMana);
     let ability_card_id = g
         .user
         .cards
@@ -366,7 +366,7 @@ fn triggered_ability_cannot_unveil() {
 #[test]
 fn triggered_ability_take_all_mana() {
     let mut g = new_game(Side::Overlord, Args { turn_actions: 1, ..Args::default() });
-    let (_, id) = g.play_from_hand(CardName::TestTriggeredAbilityTakeManaAtDusk);
+    let id = g.play_from_hand(CardName::TestTriggeredAbilityTakeManaAtDusk);
     let mut taken = 0;
     while taken < MANA_STORED {
         assert!(g.dawn());

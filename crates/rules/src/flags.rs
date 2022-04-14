@@ -16,6 +16,7 @@
 //! action can currently be taken
 
 use data::actions::EncounterAction;
+use data::card_definition::AbilityType;
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     CanActivateAbilityQuery, CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery,
@@ -62,10 +63,20 @@ pub fn can_take_activate_ability_action(
     side: Side,
     ability_id: AbilityId,
 ) -> bool {
+    let card = game.card(ability_id.card_id);
+    let cost = match &crate::get(card.name)
+        .abilities
+        .get(ability_id.index.value())
+        .map(|a| &a.ability_type)
+    {
+        Some(AbilityType::Activated(cost)) => cost,
+        _ => return false,
+    };
+
     let mut can_activate = queries::in_main_phase(game, side)
         && side == ability_id.card_id.side
-        && game.card(ability_id.card_id).position().in_play();
-    // TODO: Check action cost
+        && card.position().in_play()
+        && cost.actions <= game.player(side).actions;
 
     if let Some(cost) = queries::ability_mana_cost(game, ability_id) {
         can_activate &= cost <= game.player(side).mana;

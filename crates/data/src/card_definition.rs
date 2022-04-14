@@ -148,6 +148,8 @@ pub struct CardDefinition {
 }
 
 impl CardDefinition {
+    /// Returns the ability at the given index. Panics if no ability with this
+    /// index exists.
     pub fn ability(&self, index: AbilityIndex) -> &Ability {
         &self.abilities[index.value()]
     }

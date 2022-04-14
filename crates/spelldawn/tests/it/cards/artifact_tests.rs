@@ -12,5 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod artifact_tests;
-mod spell_tests;
+use data::card_name::CardName;
+use data::primitives::Side;
+use test_utils::*;
+
+#[test]
+pub fn lodestone() {
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.play_from_hand(CardName::Lodestone);
+    assert_eq!("12", g.user.get_card(id).arena_icon());
+    g.activate_ability(id, 1);
+    assert_eq!(STARTING_MANA - 1 + 2, g.me().mana());
+    assert_eq!(1, g.me().actions());
+    assert_eq!("10", g.user.get_card(id).arena_icon());
+}

@@ -44,9 +44,9 @@ pub fn simple_game(
         user_side,
         Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },
     );
-    let (_, scheme_id) = game.play_from_hand(scheme);
-    let (_, minion_id) = game.play_from_hand(minion);
-    let (_, weapon_id) = game.play_from_hand(weapon);
+    let scheme_id = game.play_from_hand(scheme);
+    let minion_id = game.play_from_hand(minion);
+    let weapon_id = game.play_from_hand(weapon);
 
     (game, SimpleIds { scheme_id, minion_id, weapon_id })
 }
