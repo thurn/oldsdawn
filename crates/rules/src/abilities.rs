@@ -14,7 +14,7 @@
 
 //! Helpers for defining common card abilities
 
-use data::card_definition::{Ability, AbilityType, Cost};
+use data::card_definition::{Ability, AbilityType, Cost, TriggerIndicator};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
 use data::game::GameState;
@@ -51,7 +51,7 @@ pub fn encounter_boost() -> Ability {
 pub fn store_mana<const N: ManaValue>() -> Ability {
     Ability {
         text: text![Keyword::Play, Keyword::Store(N)],
-        ability_type: AbilityType::Standard,
+        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![
             Delegate::PlayCard(EventDelegate::new(this_card, |g, _s, card_id| {
                 g.card_mut(card_id).data.stored_mana = N;

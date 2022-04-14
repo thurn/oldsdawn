@@ -78,11 +78,21 @@ pub struct CardStats {
     pub can_level_up: bool,
 }
 
+/// Describes how ability being triggered should be communicated in the UI
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+pub enum TriggerIndicator {
+    /// Display a visual alert that an ability has triggered.
+    Alert,
+
+    /// Apply ability's effects without a visual effect
+    Silent,
+}
+
 /// Possible types of ability
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub enum AbilityType {
     /// Standard abilities function at all times without requiring activation.
-    Standard,
+    Standard(TriggerIndicator),
 
     /// Encounter abilities can be activated by the Champion during a raid
     /// encounter, typically in order to increase a Weapon's attack.

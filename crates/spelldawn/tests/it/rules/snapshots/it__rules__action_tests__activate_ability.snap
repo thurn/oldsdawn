@@ -46,7 +46,7 @@ channel_response:
             sorting_key: 2
             position: ObjectPositionStaging
         create_animation: FromParentCard
-    Delay: 1000
+    Delay: 1500
     MoveGameObjects: 
         id: C45[1]
         position: 

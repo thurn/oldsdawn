@@ -126,6 +126,23 @@ impl ResponseBuilder {
         self.moves.push((update_type, id, position));
     }
 
+    /// Immediately move a GameObject to a new position
+    pub fn move_object_immediate(
+        &mut self,
+        update_type: UpdateType,
+        id: Id,
+        position: ObjectPosition,
+    ) {
+        self.push(
+            update_type,
+            Command::MoveGameObjects(MoveGameObjectsCommand {
+                ids: vec![GameObjectIdentifier { id: Some(id) }],
+                position: Some(position),
+                disable_animation: !self.options.contains(ResponseOptions::ANIMATE),
+            }),
+        );
+    }
+
     /// Equivalent method to [Self::move_object] which takes an
     /// `Option<ObjectPosition>`.
     pub fn move_object_optional(

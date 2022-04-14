@@ -17,9 +17,11 @@
 
 use std::fmt::Debug;
 
+use data::card_definition::{AbilityType, TriggerIndicator};
 use data::delegates::{EventData, QueryData, Scope};
 use data::game::GameState;
 use data::primitives::AbilityId;
+use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
 /// Called when a game event occurs, invokes each registered
@@ -30,13 +32,21 @@ pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, even
     for card_id in game.all_card_ids() {
         let definition = crate::get(game.card(card_id).name);
         for (index, ability) in definition.abilities.iter().enumerate() {
-            let scope = Scope::new(AbilityId::new(card_id, index));
+            let ability_id = AbilityId::new(card_id, index);
+            let scope = Scope::new(ability_id);
             for delegate in &ability.delegates {
                 if let Some(functions) = E::get(delegate) {
                     let data = event.data();
                     if (functions.requirement)(game, scope, data) {
                         info!(?event, ?scope, "invoke_event");
-                        (functions.mutation)(game, scope, data)
+                        (functions.mutation)(game, scope, data);
+
+                        if matches!(
+                            ability.ability_type,
+                            AbilityType::Standard(TriggerIndicator::Alert)
+                        ) {
+                            game.updates.push(GameUpdate::AbilityTriggered(ability_id));
+                        }
                     }
                 }
             }

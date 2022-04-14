@@ -91,6 +91,9 @@ pub fn populate_card_update_types(
         }
         GameUpdate::RevealToOpponent(card_id) => {
             if game.data.raid.is_none() && user_side != game.card(*card_id).side() {
+                // Kind of a hack: reveal_card only adds animations for the opponent when no
+                // raid is active.
+                // TODO: Update this logic to be less magical
                 types.insert(*card_id, UpdateType::Reveal);
             }
         }
@@ -139,6 +142,7 @@ pub fn render(
                 show_ability_fired(commands, game, *ability_id)
             }
         }
+        GameUpdate::AbilityTriggered(ability_id) => show_ability_fired(commands, game, *ability_id),
         GameUpdate::GameOver(side) => game_over(commands, game, *side),
         _ => todo!("Implement {:?}", update),
     }
@@ -338,12 +342,15 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
                 CardCreationStrategy::SnapToCurrentPosition,
             ),
         );
-        commands.push(UpdateType::Reveal, delay(1500));
-        commands.move_object_optional(
-            UpdateType::Reveal,
-            Id::CardId(adapters::adapt_card_id(card.id)),
-            full_sync::adapt_position(card, commands.user_side),
-        );
+
+        if let Some(position) = full_sync::adapt_position(card, commands.user_side) {
+            commands.push(UpdateType::Reveal, delay(1500));
+            commands.move_object_immediate(
+                UpdateType::Reveal,
+                Id::CardId(adapters::adapt_card_id(card.id)),
+                position,
+            );
+        }
     }
 }
 
@@ -555,7 +562,7 @@ fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_
             disable_flip_animation: true,
         }),
     );
-    commands.push(UpdateType::Animation, delay(1000));
+    commands.push(UpdateType::Animation, delay(1500));
 
     commands.push(
         UpdateType::Animation,

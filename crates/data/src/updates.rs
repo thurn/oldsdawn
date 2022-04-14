@@ -82,6 +82,9 @@ pub enum GameUpdate {
     /// The game has ended and the indicated player has won
     GameOver(Side),
     MoveToZone(CardId),
+    /// A card's ability has been triggered -- typically used for abilities
+    /// configured to alert when fired via `TriggerIndicator::Alert`.
+    AbilityTriggered(AbilityId),
 
     /// Indicates that a player's turn has started
     StartTurn(Side),

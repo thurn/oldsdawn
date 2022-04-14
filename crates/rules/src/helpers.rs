@@ -15,7 +15,9 @@
 //! Helpers for defining card behaviors. This file is intended be be used via
 //! wildcard import in card definition files.
 
-use data::card_definition::{Ability, AbilityType, AttackBoost, CardStats, Cost, SchemePoints};
+use data::card_definition::{
+    Ability, AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
+};
 use data::delegates::{Delegate, EventDelegate, MutationFn, Scope};
 use data::game::GameState;
 use data::primitives::{
@@ -88,7 +90,7 @@ pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> boo
 pub fn on_cast(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
-        ability_type: AbilityType::Standard,
+        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![Delegate::CastCard(EventDelegate { requirement: this_card, mutation })],
     }
 }
@@ -97,7 +99,7 @@ pub fn on_cast(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
 pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
-        ability_type: AbilityType::Standard,
+        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![Delegate::PlayCard(EventDelegate { requirement: this_card, mutation })],
     }
 }
@@ -106,7 +108,7 @@ pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
 pub fn at_dawn(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
     Ability {
         text: rules,
-        ability_type: AbilityType::Standard,
+        ability_type: AbilityType::Standard(TriggerIndicator::Alert),
         delegates: vec![Delegate::Dawn(EventDelegate { requirement: face_up_in_play, mutation })],
     }
 }
@@ -115,7 +117,7 @@ pub fn at_dawn(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability 
 pub fn at_dusk(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
     Ability {
         text: rules,
-        ability_type: AbilityType::Standard,
+        ability_type: AbilityType::Standard(TriggerIndicator::Alert),
         delegates: vec![Delegate::Dusk(EventDelegate { requirement: face_up_in_play, mutation })],
     }
 }
@@ -124,7 +126,7 @@ pub fn at_dusk(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability 
 pub fn combat(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
-        ability_type: AbilityType::Standard,
+        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![Delegate::MinionCombatAbility(EventDelegate {
             requirement: this_card,
             mutation,
@@ -136,7 +138,7 @@ pub fn combat(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
 pub fn on_overlord_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
     Ability {
         text: rules,
-        ability_type: AbilityType::Standard,
+        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![Delegate::OverlordScoreCard(EventDelegate {
             requirement: this_card,
             mutation,

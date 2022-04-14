@@ -14,7 +14,7 @@
 
 //! Card definitions for the Project card type
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition};
+use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TriggerIndicator};
 use data::card_name::CardName;
 use data::delegates::{Delegate, EventDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
@@ -38,7 +38,7 @@ pub fn gold_mine() -> CardDefinition {
         abilities: vec![
             Ability {
                 text: text![Keyword::Unveil, "this project at dusk, then", Keyword::Store(12)],
-                ability_type: AbilityType::Standard,
+                ability_type: AbilityType::Standard(TriggerIndicator::Silent),
                 delegates: vec![Delegate::Dusk(EventDelegate {
                     requirement: face_down_in_play,
                     mutation: |g, s, _| {
