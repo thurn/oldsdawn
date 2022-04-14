@@ -370,7 +370,7 @@ fn complete_raid() {
 fn no_activate() {
     let mut g = new_game(
         Side::Champion,
-        Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },
+        Args { turn: Some(Side::Overlord), actions: 2, ..Args::default() },
     );
 
     g.play_from_hand(CardName::TestScheme31);
@@ -392,7 +392,7 @@ fn raid_vault() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 1,
+            actions: 1,
             opponent_deck_top: Some(CardName::TestScheme31),
             ..Args::default()
         },
@@ -414,7 +414,7 @@ fn raid_vault() {
 fn raid_sanctum() {
     let mut g = new_game(
         Side::Champion,
-        Args { turn: Some(Side::Overlord), turn_actions: 1, ..Args::default() },
+        Args { turn: Some(Side::Overlord), actions: 1, ..Args::default() },
     );
 
     g.add_to_hand(CardName::TestScheme31);
@@ -435,7 +435,7 @@ fn raid_crypts() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 1,
+            actions: 1,
             opponent_discard: Some(CardName::TestScheme31),
             ..Args::default()
         },
@@ -459,7 +459,7 @@ fn raid_vault_twice() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 1,
+            actions: 1,
             opponent_deck_top: Some(CardName::TestScheme31),
             ..Args::default()
         },
@@ -501,7 +501,7 @@ fn raid_vault_twice() {
 fn raid_no_defenders() {
     let mut g = new_game(
         Side::Champion,
-        Args { turn: Some(Side::Overlord), turn_actions: 1, ..Args::default() },
+        Args { turn: Some(Side::Overlord), actions: 1, ..Args::default() },
     );
 
     g.play_from_hand(CardName::TestScheme31);
@@ -531,7 +531,7 @@ fn raid_vault_no_defenders() {
 fn raid_no_occupants() {
     let mut g = new_game(
         Side::Champion,
-        Args { turn: Some(Side::Overlord), turn_actions: 1, ..Args::default() },
+        Args { turn: Some(Side::Overlord), actions: 1, ..Args::default() },
     );
 
     g.play_from_hand(CardName::TestMinionAlpha);
@@ -564,7 +564,7 @@ fn raid_two_defenders() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 2,
+            actions: 2,
             opponent_deck_top: Some(CardName::TestScheme31),
             ..Args::default()
         },
@@ -589,7 +589,7 @@ fn raid_two_defenders_advance() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 2,
+            actions: 2,
             opponent_deck_top: Some(CardName::TestScheme31),
             ..Args::default()
         },
@@ -614,7 +614,7 @@ fn raid_two_defenders_retreat() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 2,
+            actions: 2,
             opponent_deck_top: Some(CardName::TestScheme31),
             ..Args::default()
         },
@@ -647,7 +647,7 @@ fn raid_two_defenders_full_raid() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 2,
+            actions: 2,
             opponent_deck_top: Some(CardName::TestScheme31),
             ..Args::default()
         },
@@ -673,7 +673,7 @@ fn raid_two_defenders_cannot_afford_second() {
         Side::Champion,
         Args {
             turn: Some(Side::Overlord),
-            turn_actions: 2,
+            actions: 2,
             opponent_deck_top: Some(CardName::TestScheme31),
             opponent_mana: 1,
             ..Args::default()
@@ -696,7 +696,7 @@ fn raid_two_defenders_cannot_afford_second() {
 fn raid_add_defender() {
     let mut g = new_game(
         Side::Champion,
-        Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },
+        Args { turn: Some(Side::Overlord), actions: 2, ..Args::default() },
     );
 
     g.play_from_hand(CardName::TestMinionAlpha);

@@ -357,7 +357,7 @@ impl TestClient {
             this_player: ClientPlayer::new(PlayerName::User),
             other_player: ClientPlayer::new(PlayerName::Opponent),
             interface: ClientInterface::default(),
-            cards: ClientCards::default(),
+            cards: ClientCards { player_id: id, card_map: HashMap::default() },
         }
     }
 
@@ -602,8 +602,9 @@ impl HasText for Vec<&Node> {
 }
 
 /// Simulated card state in an ongoing [TestSession]
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct ClientCards {
+    pub player_id: PlayerId,
     pub card_map: HashMap<CardIdentifier, ClientCard>,
 }
 

@@ -85,12 +85,11 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
     if !args.resolve_mulligans {
         let turn_side = args.turn.unwrap_or(user_side);
         game.data.phase = GamePhase::Play(CurrentTurn { side: turn_side, turn_number: 0 });
-
         game.player_mut(user_side).mana = args.mana;
         game.player_mut(user_side).score = args.score;
         game.player_mut(user_side.opponent()).mana = args.opponent_mana;
         game.player_mut(user_side.opponent()).score = args.opponent_score;
-        game.player_mut(turn_side).actions = args.turn_actions;
+        game.player_mut(turn_side).actions = args.actions;
 
         set_deck_top(&mut game, user_side, args.deck_top);
         set_deck_top(&mut game, user_side.opponent(), args.opponent_deck_top);
@@ -114,12 +113,26 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
         overlord_deck: None,
         champion_deck: None,
     };
-    let mut game = TestSession::new(database, user_id, opponent_id);
-    if args.connect {
-        game.connect(user_id, Some(game_id)).expect("Connection failed");
-        game.connect(opponent_id, Some(game_id)).expect("Connection failed");
+
+    let mut session = TestSession::new(database, user_id, opponent_id);
+    let (user_hand_card, opponent_hand_card) = if user_side == Side::Overlord {
+        (CardName::TestOverlordSpell, CardName::TestChampionSpell)
+    } else {
+        (CardName::TestChampionSpell, CardName::TestOverlordSpell)
+    };
+
+    for _ in 0..args.hand_size {
+        session.add_to_hand(user_hand_card);
     }
-    game
+    for _ in 0..args.opponent_hand_size {
+        session.add_to_hand(opponent_hand_card);
+    }
+
+    if args.connect {
+        session.connect(user_id, Some(game_id)).expect("Connection failed");
+        session.connect(opponent_id, Some(game_id)).expect("Connection failed");
+    }
+    session
 }
 
 pub fn generate_ids() -> (GameId, PlayerId, PlayerId) {
@@ -139,11 +152,19 @@ pub struct Args {
     /// ([STARTING_MANA]).
     pub opponent_mana: ManaValue,
     /// Actions available for the `turn` player. Defaults to 3.
-    pub turn_actions: ActionCount,
+    pub actions: ActionCount,
     /// Score for the `user_side` player. Defaults to 0.
     pub score: PointsValue,
     /// Score for the opponent of the `user_side` player. Defaults to 0.
     pub opponent_score: PointsValue,
+    /// Starting size for the `user_side` player's hand, draw from the top of
+    /// their deck. Hand will consist entirely of 'test spell' cards.
+    /// Defaults to 0.
+    pub hand_size: u64,
+    /// Starting size for the opponent player's hand, draw from the top of their
+    /// deck. Hand will consist entirely of 'test spell' cards. Defaults to
+    /// 0.
+    pub opponent_hand_size: u64,
     /// Card to be inserted into the `user_side` player's deck as the next draw.
     ///
     /// This card will be drawn when drawing randomly from the deck (as long as
@@ -176,9 +197,11 @@ impl Default for Args {
             turn: None,
             mana: STARTING_MANA,
             opponent_mana: STARTING_MANA,
-            turn_actions: 3,
+            actions: 3,
             score: 0,
             opponent_score: 0,
+            hand_size: 0,
+            opponent_hand_size: 0,
             deck_top: None,
             opponent_deck_top: None,
             discard: None,
@@ -236,6 +259,18 @@ pub fn draw_cards_until_turn_over(session: &mut TestSession, side: Side) {
     while session.player(id).this_player.actions() > 0 {
         session.perform(Action::DrawCard(DrawCardAction {}), id);
     }
+}
+
+/// Ends the Overlord turn, initiates a raid on the [ROOM_ID] room, activates
+/// the room, and then continues to trigger a minion combat ability.
+///
+/// NOTE: This causes the Champion player to draw a card for their turn!
+pub fn end_turn_initiate_raid_fire_minion(session: &mut TestSession) {
+    gain_mana_until_turn_over(session, Side::Overlord);
+    assert!(session.dawn());
+    session.initiate_raid(ROOM_ID);
+    session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
+    session.click_on(session.player_id_for_side(Side::Champion), "Continue");
 }
 
 /// Asserts that the display names of the provided vector of [CardName]s are

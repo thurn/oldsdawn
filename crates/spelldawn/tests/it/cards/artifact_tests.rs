@@ -17,7 +17,7 @@ use data::primitives::Side;
 use test_utils::*;
 
 #[test]
-pub fn lodestone() {
+fn lodestone() {
     let mut g = new_game(Side::Champion, Args::default());
     let id = g.play_from_hand(CardName::Lodestone);
     assert_eq!("12", g.user.get_card(id).arena_icon());

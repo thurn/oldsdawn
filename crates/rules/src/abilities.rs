@@ -97,7 +97,7 @@ pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
     combat(text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())], |g, _, _| {
         for _ in 0..N {
             discard_random_card(g, Side::Champion, |g| {
-                panic!("Game Over {:?} with {:?}", g.id, TDamage::damage_type())
+                panic!("Game Over {:?} with {:?} damage", g.id, N)
             });
         }
     })

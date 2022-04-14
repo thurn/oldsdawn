@@ -40,10 +40,8 @@ pub fn simple_game(
     minion: CardName,
     weapon: CardName,
 ) -> (TestSession, SimpleIds) {
-    let mut game = new_game(
-        user_side,
-        Args { turn: Some(Side::Overlord), turn_actions: 2, ..Args::default() },
-    );
+    let mut game =
+        new_game(user_side, Args { turn: Some(Side::Overlord), actions: 2, ..Args::default() });
     let scheme_id = game.play_from_hand(scheme);
     let minion_id = game.play_from_hand(minion);
     let weapon_id = game.play_from_hand(weapon);
