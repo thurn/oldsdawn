@@ -21,6 +21,8 @@
 //! *after* performing their mutation to inform other systems that game state
 //! has changed.
 
+use std::cmp;
+
 use data::actions::{Prompt, PromptAction};
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
@@ -176,15 +178,20 @@ pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) {
 }
 
 /// Takes *up to* `maximum` stored mana from a card and gives it to the player
-/// who owns this card.
+/// who owns this card. If no mana remains, the card is moved to its owner's
+/// discard pile.
 #[instrument(skip(game))]
 pub fn take_stored_mana(game: &mut GameState, card_id: CardId, maximum: ManaValue) {
     info!(?card_id, ?maximum, "take_stored_mana");
     let available = game.card(card_id).data.stored_mana;
-    let taken = std::cmp::min(available, maximum);
+    let taken = cmp::min(available, maximum);
     game.card_mut(card_id).data.stored_mana -= taken;
     gain_mana(game, card_id.side, taken);
     dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
+
+    if game.card(card_id).data.stored_mana == 0 {
+        move_card(game, card_id, CardPosition::DiscardPile(card_id.side));
+    }
 }
 
 /// Overwrites the value of [CardData::boost_count] to match the provided
