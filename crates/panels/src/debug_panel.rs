@@ -16,7 +16,7 @@
 //! development. Typically these options should not be available to production
 //! users.
 
-use data::actions::{DebugAction, UserAction};
+use data::game_actions::{DebugAction, UserAction};
 use data::primitives::Side;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_command::Command;
@@ -47,15 +47,15 @@ pub fn render() -> Node {
             children: vec![
                 debug_button(
                     "New Game (O)",
-                    UserAction::DebugAction(DebugAction::NewGame(Side::Overlord)),
+                    UserAction::Debug(DebugAction::NewGame(Side::Overlord)),
                 ),
                 debug_button(
                     "New Game (C)",
-                    UserAction::DebugAction(DebugAction::NewGame(Side::Champion)),
+                    UserAction::Debug(DebugAction::NewGame(Side::Champion)),
                 ),
-                debug_button("Join Game", UserAction::DebugAction(DebugAction::JoinGame)),
-                debug_button("Reset", UserAction::DebugAction(DebugAction::ResetGame)),
-                debug_button("Fetch UI", UserAction::DebugAction(DebugAction::FetchStandardPanels)),
+                debug_button("Join Game", UserAction::Debug(DebugAction::JoinGame)),
+                debug_button("Reset", UserAction::Debug(DebugAction::ResetGame)),
+                debug_button("Fetch UI", UserAction::Debug(DebugAction::FetchStandardPanels)),
                 client_debug_button(
                     "Show Logs",
                     vec![
@@ -70,38 +70,38 @@ pub fn render() -> Node {
                 ),
                 debug_button(
                     format!("+10{}", icons::MANA),
-                    UserAction::DebugAction(DebugAction::AddMana(10)),
+                    UserAction::Debug(DebugAction::AddMana(10)),
                 ),
                 debug_button(
                     format!("+{}", icons::ACTION),
-                    UserAction::DebugAction(DebugAction::AddActionPoints(1)),
+                    UserAction::Debug(DebugAction::AddActionPoints(1)),
                 ),
-                debug_button("+ Point", UserAction::DebugAction(DebugAction::AddScore(1))),
-                debug_button("Turn", UserAction::DebugAction(DebugAction::SwitchTurn)),
-                debug_button("Flip View", UserAction::DebugAction(DebugAction::FlipViewpoint)),
+                debug_button("+ Point", UserAction::Debug(DebugAction::AddScore(1))),
+                debug_button("Turn", UserAction::Debug(DebugAction::SwitchTurn)),
+                debug_button("Flip View", UserAction::Debug(DebugAction::FlipViewpoint)),
                 debug_button(
                     format!("{} 1", icons::SAVE),
-                    UserAction::DebugAction(DebugAction::SaveState(1)),
+                    UserAction::Debug(DebugAction::SaveState(1)),
                 ),
                 debug_button(
                     format!("{} 1", icons::RESTORE),
-                    UserAction::DebugAction(DebugAction::LoadState(1)),
+                    UserAction::Debug(DebugAction::LoadState(1)),
                 ),
                 debug_button(
                     format!("{} 2", icons::SAVE),
-                    UserAction::DebugAction(DebugAction::SaveState(2)),
+                    UserAction::Debug(DebugAction::SaveState(2)),
                 ),
                 debug_button(
                     format!("{} 2", icons::RESTORE),
-                    UserAction::DebugAction(DebugAction::LoadState(2)),
+                    UserAction::Debug(DebugAction::LoadState(2)),
                 ),
                 debug_button(
                     format!("{} 3", icons::SAVE),
-                    UserAction::DebugAction(DebugAction::SaveState(3)),
+                    UserAction::Debug(DebugAction::SaveState(3)),
                 ),
                 debug_button(
                     format!("{} 3", icons::RESTORE),
-                    UserAction::DebugAction(DebugAction::LoadState(3)),
+                    UserAction::Debug(DebugAction::LoadState(3)),
                 ),
             ],
             ..Row::default()

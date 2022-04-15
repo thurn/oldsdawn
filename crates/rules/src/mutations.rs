@@ -23,7 +23,6 @@
 
 use std::cmp;
 
-use data::actions::{Prompt, PromptAction};
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
@@ -31,6 +30,7 @@ use data::delegates::{
     PlayCardEvent, RaidEndEvent, Scope, StoredManaTakenEvent,
 };
 use data::game::{CurrentTurn, GameOverData, GamePhase, GameState, MulliganDecision};
+use data::game_actions::{Prompt, PromptAction};
 use data::primitives::{
     ActionCount, BoostData, CardId, ManaValue, PointsValue, RoomId, RoomLocation, Side, TurnNumber,
 };

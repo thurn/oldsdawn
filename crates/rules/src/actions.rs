@@ -13,29 +13,50 @@
 // limitations under the License.
 
 //! Contains functions for responding to user-initiated game actions received
-//! from the client.
+//! from the client. The `handle_user_action` function is the primary
+//! entry-point into the rules engine.
 //!
 //! By convention, functions in this module are responsible for validating the
 //! legality of requests and returning [Result] accordingly. Beyond this point,
 //! game functions typically assume the game is in a valid state and will panic
 //! if that is not true.
 
-//! Defines handling for the basic top-level game actions a player can take.
-
-use anyhow::{anyhow, bail, ensure, Context, Result};
-use data::actions::PromptAction;
+use anyhow::{bail, ensure, Context, Result};
 use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
 use data::delegates::{ActivateAbilityEvent, CastCardEvent, PayCardCostsEvent};
 use data::game::{GamePhase, GameState, MulliganDecision};
+use data::game_actions::{CardTarget, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
+use crate::raid_actions::initiate_raid_action;
 use crate::{dispatch, flags, mutations, queries, raid_actions};
 
+/// Top level dispatch function responsible for mutating [GameState] in response
+/// to all [UserAction]s
+pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAction) -> Result<()> {
+    match action {
+        UserAction::Debug(_) => bail!("Rules engine does not handle debug actions!"),
+        UserAction::PromptResponse(prompt_action) => {
+            handle_prompt_action(game, user_side, prompt_action)
+        }
+        UserAction::GainMana => gain_mana_action(game, user_side),
+        UserAction::DrawCard => draw_card_action(game, user_side),
+        UserAction::PlayCard(card_id, target) => play_card_action(game, user_side, card_id, target),
+        UserAction::ActivateAbility(ability_id, _target) => {
+            // TODO: Handle ability targets
+            activate_ability_action(game, user_side, ability_id)
+        }
+        UserAction::InitiateRaid(room_id) => initiate_raid_action(game, user_side, room_id),
+        UserAction::LevelUpRoom(room_id) => level_up_room_action(game, user_side, room_id),
+        UserAction::SpendActionPoint => spend_action_point_action(game, user_side),
+    }
+}
+
 /// Handles a choice to keep or mulligan an opening hand
-pub fn handle_mulligan_decision(
+fn handle_mulligan_decision(
     game: &mut GameState,
     user_side: Side,
     decision: MulliganDecision,
@@ -76,7 +97,7 @@ pub fn handle_mulligan_decision(
 /// The basic game action to draw a card during your turn by spending one
 /// action.
 #[instrument(skip(game))]
-pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
+fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
     info!(?user_side, "draw_card_action");
     ensure!(
         flags::can_take_draw_card_action(game, user_side),
@@ -89,36 +110,16 @@ pub fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
     Ok(())
 }
 
-/// Possible targets for the 'play card' action. Note that many types of targets
-/// are *not* selected in the original PlayCard action request but are instead
-/// selected via a follow-up prompt, and thus are not represented here.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
-pub enum PlayCardTarget {
-    None,
-    Room(RoomId),
-}
-
-impl PlayCardTarget {
-    /// Gets the RoomId targeted by a player, or returns an error if no target
-    /// was provided.
-    pub fn room_id(&self) -> Result<RoomId> {
-        match self {
-            PlayCardTarget::Room(room_id) => Ok(*room_id),
-            _ => Err(anyhow!("Expected a RoomId to be provided but got {:?}", self)),
-        }
-    }
-}
-
 /// The basic game action to play a card during your turn. Spends the resource
 /// cost for a card, resolves its effects, and then moves it to the appropriate
 /// new [CardPosition]. Spell, Weapon, and Artifact cards are immediately
 /// revealed when played.
 #[instrument(skip(game))]
-pub fn play_card_action(
+fn play_card_action(
     game: &mut GameState,
     user_side: Side,
     card_id: CardId,
-    target: PlayCardTarget,
+    target: CardTarget,
 ) -> Result<()> {
     info!(?user_side, ?card_id, ?target, "play_card_action");
     ensure!(
@@ -165,7 +166,7 @@ pub fn play_card_action(
 
 /// The basic game action to activate an ability of a card in play.
 #[instrument(skip(game))]
-pub fn activate_ability_action(
+fn activate_ability_action(
     game: &mut GameState,
     user_side: Side,
     ability_id: AbilityId,
@@ -196,7 +197,7 @@ pub fn activate_ability_action(
 /// The basic game action to gain 1 mana during your turn by spending one
 /// action.
 #[instrument(skip(game))]
-pub fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
+fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     info!(?user_side, "gain_mana_action");
     ensure!(
         flags::can_take_gain_mana_action(game, user_side),
@@ -209,7 +210,7 @@ pub fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     Ok(())
 }
 
-pub fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) -> Result<()> {
+fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) -> Result<()> {
     info!(?user_side, "level_up_room_action");
     ensure!(
         flags::can_level_up_room(game, user_side, room_id),
@@ -226,7 +227,7 @@ pub fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: Room
     Ok(())
 }
 
-pub fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()> {
+fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()> {
     ensure!(
         queries::in_main_phase(game, user_side),
         "Cannot spend action point for {:?}",
@@ -238,11 +239,7 @@ pub fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Resul
 }
 
 /// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
-pub fn handle_prompt_action(
-    game: &mut GameState,
-    user_side: Side,
-    action: PromptAction,
-) -> Result<()> {
+fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAction) -> Result<()> {
     ensure!(
         matches!(
             &game.player(user_side).prompt,

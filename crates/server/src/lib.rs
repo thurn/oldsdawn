@@ -16,8 +16,9 @@
 
 use anyhow::{bail, ensure, Context, Result};
 use dashmap::DashMap;
-use data::actions::UserAction;
 use data::game::{GameConfiguration, GameState};
+use data::game_actions;
+use data::game_actions::UserAction;
 use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::UpdateTracker;
 use data::with_error::WithError;
@@ -32,8 +33,7 @@ use protos::spelldawn::{
     CreateNewGameAction, GameCommand, GameIdentifier, GameRequest, PlayerSide, RoomIdentifier,
     StandardAction,
 };
-use rules::actions::PlayCardTarget;
-use rules::{actions, mutations, raid_actions};
+use rules::{actions, mutations};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
@@ -171,50 +171,29 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
             )?)]))
         }
         Action::CreateNewGame(create_game) => create_new_game(database, player_id, create_game),
-        Action::DrawCard(_) => {
-            handle_action(database, player_id, game_id, actions::draw_card_action)
-        }
+        Action::DrawCard(_) => handle_action(database, player_id, game_id, UserAction::DrawCard),
         Action::PlayCard(action) => {
-            handle_action(database, player_id, game_id, |game, user_side| {
-                match adapters::to_server_card_id(action.card_id)? {
-                    ServerCardId::CardId(card_id) => actions::play_card_action(
-                        game,
-                        user_side,
-                        card_id,
-                        card_target(&action.target),
-                    ),
-                    ServerCardId::AbilityId(ability_id) => {
-                        actions::activate_ability_action(game, user_side, ability_id)
-                    }
+            let action = match adapters::to_server_card_id(action.card_id)? {
+                ServerCardId::CardId(card_id) => {
+                    UserAction::PlayCard(card_id, card_target(&action.target))
                 }
-            })
+                ServerCardId::AbilityId(ability_id) => {
+                    UserAction::ActivateAbility(ability_id, card_target(&action.target))
+                }
+            };
+            handle_action(database, player_id, game_id, action)
         }
-        Action::GainMana(_) => {
-            handle_action(database, player_id, game_id, actions::gain_mana_action)
-        }
+        Action::GainMana(_) => handle_action(database, player_id, game_id, UserAction::GainMana),
         Action::InitiateRaid(action) => {
-            handle_action(database, player_id, game_id, |game, user_side| {
-                raid_actions::initiate_raid_action(
-                    game,
-                    user_side,
-                    to_server_room_id(RoomIdentifier::from_i32(action.room_id))
-                        .with_context(|| format!("Invalid room ID: {:?}", action.room_id))?,
-                )
-            })
+            let room_id = adapters::to_server_room_id(action.room_id)?;
+            handle_action(database, player_id, game_id, UserAction::InitiateRaid(room_id))
         }
         Action::LevelUpRoom(level_up) => {
-            handle_action(database, player_id, game_id, |game, user_side| {
-                actions::level_up_room_action(
-                    game,
-                    user_side,
-                    adapters::to_server_room_id(level_up.room_id)?,
-                )
-            })
+            let room_id = adapters::to_server_room_id(level_up.room_id)?;
+            handle_action(database, player_id, game_id, UserAction::LevelUpRoom(room_id))
         }
         Action::SpendActionPoint(_) => {
-            handle_action(database, player_id, game_id, |game, user_side| {
-                actions::spend_action_point_action(game, user_side)
-            })
+            handle_action(database, player_id, game_id, UserAction::SpendActionPoint)
         }
     }?;
 
@@ -290,7 +269,7 @@ fn create_new_game(
 /// provided `function` to mutate its state. Converts the resulting [GameState]
 /// into a series of client updates for both players in the form of a
 /// [GameResponse] and then writes the new game state back to the database.
-fn handle_action(
+pub fn handle_custom_action(
     database: &mut impl Database,
     player_id: PlayerId,
     game_id: Option<GameId>,
@@ -309,6 +288,21 @@ fn handle_action(
     Ok(GameResponse { command_list: command_list(user_result), channel_response })
 }
 
+/// Queries the [GameState] for a game from the [Database] and then invokes the
+/// `handle_user_action` function to apply the result. Converts the resulting
+/// [GameState] into a series of client updates for both players in the form of
+/// a [GameResponse] and then writes the new game state back to the database.
+fn handle_action(
+    database: &mut impl Database,
+    player_id: PlayerId,
+    game_id: Option<GameId>,
+    action: UserAction,
+) -> Result<GameResponse> {
+    handle_custom_action(database, player_id, game_id, |game, user_side| {
+        actions::handle_user_action(game, user_side, action)
+    })
+}
+
 /// Parses the serialized payload in a [StandardAction] and dispatches to the
 /// correct handler.
 fn handle_standard_action(
@@ -321,14 +315,10 @@ fn handle_standard_action(
     let action: UserAction = bincode::deserialize(&standard_action.payload)
         .with_error(|| "Failed to deserialize action payload")?;
     match action {
-        UserAction::DebugAction(debug_action) => {
+        UserAction::Debug(debug_action) => {
             debug::handle_debug_action(database, player_id, game_id, debug_action)
         }
-        UserAction::PromptAction(prompt_action) => {
-            handle_action(database, player_id, game_id, |game, user_side| {
-                actions::handle_prompt_action(game, user_side, prompt_action)
-            })
-        }
+        _ => handle_action(database, player_id, game_id, action),
     }
 }
 
@@ -379,12 +369,12 @@ pub fn command_name(command: &GameCommand) -> &'static str {
     })
 }
 
-fn card_target(target: &Option<CardTarget>) -> PlayCardTarget {
-    target.as_ref().map_or(PlayCardTarget::None, |t| {
-        t.card_target.as_ref().map_or(PlayCardTarget::None, |t2| match t2 {
+fn card_target(target: &Option<CardTarget>) -> game_actions::CardTarget {
+    target.as_ref().map_or(game_actions::CardTarget::None, |t| {
+        t.card_target.as_ref().map_or(game_actions::CardTarget::None, |t2| match t2 {
             card_target::CardTarget::RoomId(room_id) => {
                 to_server_room_id(RoomIdentifier::from_i32(*room_id))
-                    .map_or(PlayCardTarget::None, PlayCardTarget::Room)
+                    .map_or(game_actions::CardTarget::None, game_actions::CardTarget::Room)
             }
         })
     })

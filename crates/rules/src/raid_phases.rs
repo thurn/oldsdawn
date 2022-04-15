@@ -17,11 +17,11 @@
 use std::iter;
 
 use anyhow::Result;
-use data::actions::{
-    ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
-};
 use data::card_state::CardPosition;
 use data::game::{GameState, RaidPhase};
+use data::game_actions::{
+    ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
+};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::with_error::WithError;
 use rand::seq::IteratorRandom;

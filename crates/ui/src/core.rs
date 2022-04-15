@@ -17,7 +17,7 @@
 //! despite the fact that they are infallible, since all of the higher-level
 //! APIs exclusively consume [Option] types.
 
-use data::actions::UserAction;
+use data::game_actions::UserAction;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     game_action, BorderColor, BorderRadius, BorderWidth, CommandList, Dimension, DimensionGroup,

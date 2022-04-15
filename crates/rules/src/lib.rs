@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! All game rules, card definitions, and associated helpers
+//! All primary game rules, responses to user actions, and associated helpers
 
 use std::collections::HashMap;
 

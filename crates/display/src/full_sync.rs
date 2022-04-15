@@ -19,6 +19,7 @@ use std::collections::BTreeMap;
 use data::card_definition::{AbilityType, CardDefinition};
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
+use data::game_actions::CardTarget;
 use data::primitives::{
     AbilityId, AbilityIndex, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side, Sprite,
 };
@@ -40,7 +41,6 @@ use protos::spelldawn::{
     CardIdentifier, CardPrefab, NoTargeting, ObjectPositionBrowser, ObjectPositionIntoCard,
     RulesText,
 };
-use rules::actions::PlayCardTarget;
 use rules::{flags, queries};
 
 use crate::assets::CardIconType;
@@ -577,7 +577,7 @@ fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTa
                     game,
                     user_side,
                     card.id,
-                    PlayCardTarget::None,
+                    CardTarget::None,
                 ),
             })),
             CardType::Minion | CardType::Project | CardType::Scheme => {
@@ -588,7 +588,7 @@ fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTa
                                 game,
                                 user_side,
                                 card.id,
-                                PlayCardTarget::Room(*room_id),
+                                CardTarget::Room(*room_id),
                             )
                         })
                         .map(|room_id| adapters::adapt_room_id(room_id).into())

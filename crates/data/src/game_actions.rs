@@ -14,10 +14,11 @@
 
 //! User interface actions
 
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::game::MulliganDecision;
-use crate::primitives::{ActionCount, CardId, ManaValue, PointsValue, Side};
+use crate::primitives::{AbilityId, ActionCount, CardId, ManaValue, PointsValue, RoomId, Side};
 
 #[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomActivationAction {
@@ -91,8 +92,36 @@ pub enum DebugAction {
     LoadState(u64),
 }
 
+/// Possible targets for the 'play card' action. Note that many types of targets
+/// are *not* selected in the original PlayCard action request but are instead
+/// selected via a follow-up prompt, and thus are not represented here.
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum CardTarget {
+    None,
+    Room(RoomId),
+}
+
+impl CardTarget {
+    /// Gets the RoomId targeted by a player, or returns an error if no target
+    /// was provided.
+    pub fn room_id(&self) -> Result<RoomId> {
+        match self {
+            CardTarget::Room(room_id) => Ok(*room_id),
+            _ => Err(anyhow!("Expected a RoomId to be provided but got {:?}", self)),
+        }
+    }
+}
+
+/// All possible actions a player can take during a game.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum UserAction {
-    DebugAction(DebugAction),
-    PromptAction(PromptAction),
+    Debug(DebugAction),
+    PromptResponse(PromptAction),
+    GainMana,
+    DrawCard,
+    PlayCard(CardId, CardTarget),
+    ActivateAbility(AbilityId, CardTarget),
+    InitiateRaid(RoomId),
+    LevelUpRoom(RoomId),
+    SpendActionPoint,
 }

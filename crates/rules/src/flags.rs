@@ -15,7 +15,6 @@
 //! Functions to query boolean game information, typically whether some game
 //! action can currently be taken
 
-use data::actions::EncounterAction;
 use data::card_definition::AbilityType;
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
@@ -24,9 +23,9 @@ use data::delegates::{
     CardEncounter, Flag,
 };
 use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
+use data::game_actions::{CardTarget, EncounterAction};
 use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
 
-use crate::actions::PlayCardTarget;
 use crate::{dispatch, queries};
 
 /// Returns whether a player can currently make a mulligan decision
@@ -42,7 +41,7 @@ pub fn can_take_play_card_action(
     game: &GameState,
     side: Side,
     card_id: CardId,
-    target: PlayCardTarget,
+    target: CardTarget,
 ) -> bool {
     let mut can_play = queries::in_main_phase(game, side)
         && side == card_id.side
@@ -86,7 +85,7 @@ pub fn can_take_activate_ability_action(
         .into()
 }
 
-fn is_valid_target(game: &GameState, card_id: CardId, target: PlayCardTarget) -> bool {
+fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> bool {
     fn room_can_add(game: &GameState, room_id: RoomId, card_types: Vec<CardType>) -> bool {
         !room_id.is_inner_room()
             && !game
@@ -96,11 +95,11 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: PlayCardTarget) ->
 
     match crate::get(game.card(card_id).name).card_type {
         CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Sorcery => {
-            target == PlayCardTarget::None
+            target == CardTarget::None
         }
-        CardType::Minion => matches!(target, PlayCardTarget::Room(_)),
+        CardType::Minion => matches!(target, CardTarget::Room(_)),
         CardType::Project | CardType::Scheme => {
-            matches!(target, PlayCardTarget::Room(room_id)
+            matches!(target, CardTarget::Room(room_id) 
                 if room_can_add(game, room_id, vec![CardType::Project, CardType::Scheme]))
         }
         CardType::Identity => false,

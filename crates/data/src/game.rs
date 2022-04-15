@@ -21,9 +21,9 @@ use enum_kinds::EnumKind;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
-use crate::actions::Prompt;
 use crate::card_state::{CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
+use crate::game_actions::Prompt;
 use crate::primitives::{
     ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId, RoomId,
     RoomLocation, Side, TurnNumber,

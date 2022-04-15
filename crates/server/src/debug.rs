@@ -15,10 +15,10 @@
 use std::collections::HashMap;
 
 use anyhow::{bail, Context, Result};
-use data::actions::DebugAction;
 use data::deck::Deck;
 use data::delegates::{DawnEvent, DuskEvent};
 use data::game::GameState;
+use data::game_actions::DebugAction;
 use data::primitives::{GameId, PlayerId, Side};
 use data::updates::GameUpdate;
 use display::{adapters, render};
@@ -102,37 +102,40 @@ pub fn handle_debug_action(
             )?)]))
         }
         DebugAction::AddMana(amount) => {
-            crate::handle_action(database, player_id, game_id, |game, user_side| {
+            crate::handle_custom_action(database, player_id, game_id, |game, user_side| {
                 game.player_mut(user_side).mana += amount;
                 Ok(())
             })
         }
         DebugAction::AddActionPoints(amount) => {
-            crate::handle_action(database, player_id, game_id, |game, user_side| {
+            crate::handle_custom_action(database, player_id, game_id, |game, user_side| {
                 game.player_mut(user_side).actions += amount;
                 Ok(())
             })
         }
         DebugAction::AddScore(amount) => {
-            crate::handle_action(database, player_id, game_id, |game, user_side| {
+            crate::handle_custom_action(database, player_id, game_id, |game, user_side| {
                 game.player_mut(user_side).score += amount;
                 Ok(())
             })
         }
-        DebugAction::SwitchTurn => crate::handle_action(database, player_id, game_id, |game, _| {
-            game.player_mut(game.current_turn()?.side).actions = 0;
-            let new_turn = game.current_turn()?.side.opponent();
-            game.current_turn_mut()?.side = new_turn;
-            if new_turn == Side::Overlord {
-                game.current_turn_mut()?.turn_number += 1;
-                dispatch::invoke_event(game, DuskEvent(game.current_turn()?.turn_number));
-            } else {
-                dispatch::invoke_event(game, DawnEvent(game.current_turn()?.turn_number));
-            }
-            game.player_mut(new_turn).actions = queries::start_of_turn_action_count(game, new_turn);
-            game.updates.push(GameUpdate::StartTurn(new_turn));
-            Ok(())
-        }),
+        DebugAction::SwitchTurn => {
+            crate::handle_custom_action(database, player_id, game_id, |game, _| {
+                game.player_mut(game.current_turn()?.side).actions = 0;
+                let new_turn = game.current_turn()?.side.opponent();
+                game.current_turn_mut()?.side = new_turn;
+                if new_turn == Side::Overlord {
+                    game.current_turn_mut()?.turn_number += 1;
+                    dispatch::invoke_event(game, DuskEvent(game.current_turn()?.turn_number));
+                } else {
+                    dispatch::invoke_event(game, DawnEvent(game.current_turn()?.turn_number));
+                }
+                game.player_mut(new_turn).actions =
+                    queries::start_of_turn_action_count(game, new_turn);
+                game.updates.push(GameUpdate::StartTurn(new_turn));
+                Ok(())
+            })
+        }
         DebugAction::FlipViewpoint => {
             render::on_disconnect(player_id);
             Ok(GameResponse::from_commands(vec![

@@ -14,13 +14,13 @@
 
 //! Data types used to represent game state
 
-pub mod actions;
 pub mod card_definition;
 pub mod card_name;
 pub mod card_state;
 pub mod deck;
 pub mod delegates;
 pub mod game;
+pub mod game_actions;
 pub mod primitives;
 pub mod special_effects;
 pub mod text;

@@ -15,10 +15,10 @@
 //! Handling for raid-related user actions.
 
 use anyhow::{bail, ensure, Context, Result};
-use data::actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidBeginEvent};
 use data::game::{GameState, RaidData, RaidPhase};
+use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::primitives::{CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use tracing::{info, instrument};

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use data::actions::{
+use data::game::{GameState, MulliganDecision};
+use data::game_actions::{
     ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
     UserAction,
 };
-use data::game::{GameState, MulliganDecision};
 use data::primitives::CardId;
 use protos::spelldawn::{
     AnchorCorner, CardAnchor, CardAnchorNode, CardNodeAnchorPosition, FlexAlign, FlexJustify,
@@ -235,7 +235,7 @@ impl Component for ResponseButton {
             label: self.label,
             variant: if self.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
             action: self.action.and_then(|a| {
-                action(Some(UserAction::PromptAction(a)), Some(ui::clear_main_controls_command()))
+                action(Some(UserAction::PromptResponse(a)), Some(ui::clear_main_controls_command()))
             }),
             lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },
             style: FlexStyle {
