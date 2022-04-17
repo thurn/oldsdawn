@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 692
+assertion_line: 714
 expression: "Summary::summarize(&response)"
 ---
 
@@ -33,7 +33,7 @@ command_list:
         user: 
             side: Champion
             score: 1
-        current_priority: User
+            can_take_action: true
         raid_active: true
     RenderInterface: 
     panels: 
@@ -70,5 +70,5 @@ channel_response:
         opponent: 
             side: Champion
             score: 1
-        current_priority: Opponent
+            can_take_action: true
         raid_active: true

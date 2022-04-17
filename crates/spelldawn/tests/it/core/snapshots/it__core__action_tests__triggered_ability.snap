@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 349
+assertion_line: 351
 expression: "Summary::run(&response)"
 ---
 
@@ -29,11 +29,12 @@ command_list:
             valid_rooms_to_visit: 
             mana: 1002
             action_tracker: 0
+            can_take_action: false
         opponent: 
             side: Overlord
             mana: 998
             action_tracker: 3
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     CreateOrUpdateCard: 
         card: 
@@ -148,13 +149,14 @@ channel_response:
             side: Overlord
             mana: 998
             action_tracker: 3
+            can_take_action: true
         opponent: 
             side: Champion
             player_info: 
             valid_rooms_to_visit: 
             mana: 1002
             action_tracker: 0
-        current_priority: User
+            can_take_action: false
         raid_active: false
     CreateOrUpdateCard: 
         card: 

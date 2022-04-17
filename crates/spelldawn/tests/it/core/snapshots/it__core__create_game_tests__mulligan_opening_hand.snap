@@ -218,6 +218,11 @@ command_list:
             position: 
                 sorting_key: 35
                 position: ObjectPositionHand { owner: User }
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            can_take_action: false
+        raid_active: false
     RenderInterface: 
     panels: 
         main_controls: 
@@ -347,3 +352,8 @@ channel_response:
             position: 
                 sorting_key: 35
                 position: ObjectPositionHand { owner: Opponent }
+    UpdateGameView: 
+        opponent: 
+            side: Overlord
+            can_take_action: false
+        raid_active: false

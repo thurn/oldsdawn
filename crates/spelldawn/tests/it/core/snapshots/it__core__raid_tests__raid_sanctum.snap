@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 429
+assertion_line: 432
 expression: "Summary::summarize(&response)"
 ---
 
@@ -15,7 +15,7 @@ command_list:
         user: 
             side: Champion
             mana: 995
-        current_priority: User
+            can_take_action: true
         raid_active: true
     CreateOrUpdateCard: 
         card: 
@@ -85,7 +85,7 @@ channel_response:
         opponent: 
             side: Champion
             mana: 995
-        current_priority: Opponent
+            can_take_action: true
         raid_active: true
     RunInParallel: 
         MoveGameObjects: 

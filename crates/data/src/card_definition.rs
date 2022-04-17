@@ -15,13 +15,17 @@
 //! Data structures for defining card rules -- the parts of a card which do not
 //! vary from game to game.
 
+#![allow(clippy::use_self)] // Required to use EnumKind
+
 use std::fmt::Debug;
+
+use enum_kinds::EnumKind;
 
 use crate::card_name::CardName;
 use crate::delegates::Delegate;
 use crate::primitives::{
-    AbilityIndex, ActionCount, AttackValue, CardSubtype, CardType, Faction, HealthValue,
-    LevelValue, ManaValue, PointsValue, Rarity, School, ShieldValue, Side, Sprite,
+    AbilityId, AbilityIndex, ActionCount, AttackValue, CardId, CardSubtype, CardType, Faction,
+    HealthValue, LevelValue, ManaValue, PointsValue, Rarity, School, ShieldValue, Side, Sprite,
 };
 use crate::special_effects::{Projectile, TimedEffect};
 use crate::text::AbilityText;
@@ -89,7 +93,8 @@ pub enum TriggerIndicator {
 }
 
 /// Possible types of ability
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, EnumKind)]
+#[enum_kind(AbilityTypeKind)]
 pub enum AbilityType {
     /// Standard abilities function at all times without requiring activation.
     Standard(TriggerIndicator),
@@ -152,5 +157,9 @@ impl CardDefinition {
     /// index exists.
     pub fn ability(&self, index: AbilityIndex) -> &Ability {
         &self.abilities[index.value()]
+    }
+
+    pub fn ability_ids(&self, card_id: CardId) -> impl Iterator<Item = AbilityId> {
+        (0..self.abilities.len()).map(move |i| AbilityId::new(card_id, i))
     }
 }

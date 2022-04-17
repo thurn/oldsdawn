@@ -201,11 +201,6 @@ namespace Spelldawn.Services
 
       _registry.CardService.SetCardBacks(game.User?.PlayerInfo?.CardBack, game.Opponent?.PlayerInfo?.CardBack);
 
-      if (game.CurrentPriority != PlayerName.Unspecified)
-      {
-        _registry.ActionService.CurrentPriority = game.CurrentPriority;
-      }
-
       if (game.User != null)
       {
         if (game.User.Side != PlayerSide.Unspecified)
@@ -249,6 +244,11 @@ namespace Spelldawn.Services
       if (playerView.ActionTracker != null)
       {
         _registry.ActionDisplayForPlayer(playerName).RenderActionTrackerView(playerView.ActionTracker);
+      }
+
+      if (playerView.CanTakeAction)
+      {
+        _registry.ActionService.CurrentPriority = playerName;
       }
     }
 

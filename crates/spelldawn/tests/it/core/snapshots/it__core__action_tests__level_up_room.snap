@@ -15,7 +15,7 @@ command_list:
             side: Overlord
             mana: 9
             action_tracker: 1
-        current_priority: User
+            can_take_action: true
         raid_active: false
     CreateOrUpdateCard: 
         card: 
@@ -45,7 +45,7 @@ channel_response:
             side: Overlord
             mana: 9
             action_tracker: 1
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     CreateOrUpdateCard: 
         card: 

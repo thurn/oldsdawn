@@ -20,13 +20,32 @@ use data::delegates::{
     ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery,
     VaultAccessCountQuery,
 };
-use data::game::{GamePhase, GameState};
+use data::game::{GamePhase, GameState, RaidPhase};
+use data::game_actions::CardTargetKind;
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostCount, CardId, HealthValue, ManaValue, ShieldValue,
-    Side,
+    AbilityId, ActionCount, AttackValue, BoostCount, CardId, CardType, HealthValue, ManaValue,
+    ShieldValue, Side,
 };
 
 use crate::dispatch;
+
+/// Returns true if the indicated player currently has a legal game action
+/// available to them.
+pub fn can_take_action(game: &GameState, side: Side) -> bool {
+    let turn = match &game.data.phase {
+        GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
+        GamePhase::Play(turn) => turn,
+        GamePhase::GameOver(_) => return false,
+    };
+
+    match &game.data.raid {
+        Some(raid) => match raid.phase {
+            RaidPhase::Activation => side == Side::Overlord,
+            _ => side == Side::Champion,
+        },
+        None => side == turn.side,
+    }
+}
 
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: CardId) -> &CardStats {
@@ -153,4 +172,12 @@ pub fn vault_access_count(game: &GameState) -> usize {
 pub fn sanctum_access_count(game: &GameState) -> usize {
     let raid_id = game.data.raid.as_ref().expect("Active Raid").raid_id;
     dispatch::perform_query(game, SanctumAccessCountQuery(raid_id), 1)
+}
+
+/// Looks up what type of target a given card requires
+pub fn card_target_kind(game: &GameState, card_id: CardId) -> CardTargetKind {
+    match crate::get(game.card(card_id).name).card_type {
+        CardType::Minion | CardType::Project | CardType::Scheme => CardTargetKind::Room,
+        _ => CardTargetKind::None,
+    }
 }

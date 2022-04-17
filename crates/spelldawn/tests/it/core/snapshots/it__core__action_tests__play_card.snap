@@ -10,7 +10,7 @@ command_list:
             side: Champion
             mana: 9
             action_tracker: 2
-        current_priority: User
+            can_take_action: true
         raid_active: false
     CreateOrUpdateCard: 
         card: 
@@ -36,7 +36,7 @@ channel_response:
             side: Champion
             mana: 9
             action_tracker: 2
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     MoveGameObjects: 
         id: C45

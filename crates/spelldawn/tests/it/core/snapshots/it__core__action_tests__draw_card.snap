@@ -37,7 +37,7 @@ command_list:
         user: 
             side: Overlord
             action_tracker: 2
-        current_priority: User
+            can_take_action: true
         raid_active: false
 channel_response: 
     CreateOrUpdateCard: 
@@ -61,5 +61,5 @@ channel_response:
         opponent: 
             side: Overlord
             action_tracker: 2
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false

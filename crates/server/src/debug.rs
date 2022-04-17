@@ -62,7 +62,7 @@ pub fn handle_debug_action(
                     })),
                 }],
             },
-            channel_response: None,
+            opponent_response: None,
         }),
         DebugAction::JoinGame => Ok(GameResponse {
             command_list: CommandList {
@@ -73,7 +73,7 @@ pub fn handle_debug_action(
                     })),
                 }],
             },
-            channel_response: None,
+            opponent_response: None,
         }),
         DebugAction::ResetGame => {
             let game = load_game(database, game_id)?;
@@ -90,7 +90,7 @@ pub fn handle_debug_action(
             };
             Ok(GameResponse {
                 command_list: commands.clone(),
-                channel_response: Some((
+                opponent_response: Some((
                     if player_id == game.overlord.id { game.champion.id } else { game.overlord.id },
                     commands,
                 )),

@@ -16,6 +16,7 @@ expression: "Summary::run(&response)"
             mana: 999
             action_tracker: 3
             score: 0
+            can_take_action: true
         opponent: 
             side: Champion
             player_info: 
@@ -27,7 +28,7 @@ expression: "Summary::run(&response)"
             mana: 999
             action_tracker: 0
             score: 0
-        current_priority: User
+            can_take_action: false
         raid_active: false
     CreateOrUpdateCard: 
         card: 

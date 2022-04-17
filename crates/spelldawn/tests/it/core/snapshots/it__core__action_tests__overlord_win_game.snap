@@ -42,7 +42,7 @@ command_list:
             mana: 7
             action_tracker: 1
             score: 7
-        current_priority: Unspecified
+            can_take_action: false
         raid_active: false
     Delay: 500
     SetGameObjectsEnabled: 
@@ -136,7 +136,7 @@ channel_response:
             mana: 7
             action_tracker: 1
             score: 7
-        current_priority: Unspecified
+            can_take_action: false
         raid_active: false
     Delay: 1500
     Delay: 500

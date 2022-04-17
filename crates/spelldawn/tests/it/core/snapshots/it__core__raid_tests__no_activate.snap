@@ -1,12 +1,17 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 386
+assertion_line: 389
 expression: "Summary::summarize(&response)"
 ---
 
 command_list: 
     UpdateGameView: 
-        current_priority: Opponent
+        user: 
+            side: Overlord
+            can_take_action: false
+        opponent: 
+            side: Champion
+            can_take_action: true
         raid_active: true
     RunInParallel: 
         MoveGameObjects: 
@@ -32,7 +37,12 @@ command_list:
         card_anchor_nodes: 
 channel_response: 
     UpdateGameView: 
-        current_priority: User
+        user: 
+            side: Champion
+            can_take_action: true
+        opponent: 
+            side: Overlord
+            can_take_action: false
         raid_active: true
     CreateOrUpdateCard: 
         card: 

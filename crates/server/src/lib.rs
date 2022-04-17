@@ -14,8 +14,11 @@
 
 //! Top-level server response handling
 
+use std::time::Duration;
+
 use anyhow::{bail, ensure, Context, Result};
 use dashmap::DashMap;
+use data::agent_definition::AgentData;
 use data::game::{GameConfiguration, GameState};
 use data::game_actions;
 use data::game_actions::UserAction;
@@ -33,9 +36,11 @@ use protos::spelldawn::{
     CreateNewGameAction, GameCommand, GameIdentifier, GameRequest, PlayerSide, RoomIdentifier,
     StandardAction,
 };
-use rules::{actions, mutations};
+use rules::{actions, mutations, queries};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
+use tokio::task;
+use tokio::time::sleep;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
@@ -97,10 +102,10 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        let mut database = SledDatabase;
-        match handle_request(&mut database, request.get_ref()) {
+        let mut db = SledDatabase {};
+        match handle_request(&mut db, request.get_ref()) {
             Ok(response) => {
-                if let Some((player_id, commands)) = response.channel_response {
+                if let Some((player_id, commands)) = response.opponent_response {
                     if let Some(channel) = CHANNELS.get(&player_id) {
                         if channel.send(Ok(commands)).await.is_err() {
                             // This returns SendError if the client is disconnected, which isn't a
@@ -109,6 +114,8 @@ impl Spelldawn for GameService {
                         }
                     }
                 }
+
+                warn!("Responding");
                 Ok(Response::new(response.command_list))
             }
             Err(error) => {
@@ -127,8 +134,8 @@ impl Spelldawn for GameService {
 pub struct GameResponse {
     /// Response to send to the user who made the initial game request.
     pub command_list: CommandList,
-    /// Response to send to another user, e.g. to update opponent state.
-    pub channel_response: Option<(PlayerId, CommandList)>,
+    /// Response to send to update opponent state.
+    pub opponent_response: Option<(PlayerId, CommandList)>,
 }
 
 impl GameResponse {
@@ -140,7 +147,7 @@ impl GameResponse {
                     .map(|c| GameCommand { command: Some(c) })
                     .collect(),
             },
-            channel_response: None,
+            opponent_response: None,
         }
     }
 }
@@ -261,14 +268,32 @@ fn create_new_game(
 
     Ok(GameResponse {
         command_list: commands.clone(),
-        channel_response: Some((opponent_id, commands)),
+        opponent_response: Some((opponent_id, commands)),
     })
 }
 
 /// Queries the [GameState] for a game from the [Database] and then invokes the
-/// provided `function` to mutate its state. Converts the resulting [GameState]
-/// into a series of client updates for both players in the form of a
-/// [GameResponse] and then writes the new game state back to the database.
+/// [actions::handle_user_action] function to apply the provided [UserAction].
+///
+/// Converts the resulting [GameState] into a series of client updates for both
+/// players in the form of a [GameResponse] and then writes the new game state
+/// back to the database
+///
+/// Schedules an AI Agent response if one is required for the current game
+/// state.
+fn handle_action(
+    database: &mut impl Database,
+    player_id: PlayerId,
+    game_id: Option<GameId>,
+    action: UserAction,
+) -> Result<GameResponse> {
+    handle_custom_action(database, player_id, game_id, |game, user_side| {
+        actions::handle_user_action(game, user_side, action)
+    })
+}
+
+/// Custom version of `handle_action` which accepts a function allowing
+/// arbitrary mutation of the [GameState].
 pub fn handle_custom_action(
     database: &mut impl Database,
     player_id: PlayerId,
@@ -285,21 +310,20 @@ pub fn handle_custom_action(
     let channel_response =
         Some((opponent_id, command_list(render::render_updates(&game, user_side.opponent()))));
     database.write_game(&game)?;
-    Ok(GameResponse { command_list: command_list(user_result), channel_response })
-}
 
-/// Queries the [GameState] for a game from the [Database] and then invokes the
-/// `handle_user_action` function to apply the result. Converts the resulting
-/// [GameState] into a series of client updates for both players in the form of
-/// a [GameResponse] and then writes the new game state back to the database.
-fn handle_action(
-    database: &mut impl Database,
-    player_id: PlayerId,
-    game_id: Option<GameId>,
-    action: UserAction,
-) -> Result<GameResponse> {
-    handle_custom_action(database, player_id, game_id, |game, user_side| {
-        actions::handle_user_action(game, user_side, action)
+    if let Some(agent) = game.player(Side::Overlord).agent {
+        if queries::can_take_action(&game, Side::Overlord) {
+            handle_agent_response(game, Side::Overlord, agent);
+        }
+    } else if let Some(agent) = game.player(Side::Champion).agent {
+        if queries::can_take_action(&game, Side::Champion) {
+            handle_agent_response(game, Side::Champion, agent);
+        }
+    }
+
+    Ok(GameResponse {
+        command_list: command_list(user_result),
+        opponent_response: channel_response,
     })
 }
 
@@ -320,6 +344,18 @@ fn handle_standard_action(
         }
         _ => handle_action(database, player_id, game_id, action),
     }
+}
+
+fn handle_agent_response(game: GameState, side: Side, agent_data: AgentData) {
+    task::spawn(async move {
+        sleep(Duration::from_millis(1000)).await;
+        let agent = agents::core::get_agent(agent_data.name);
+        let state_predictor = agents::core::get_game_state_predictor(agent_data.state_predictor);
+        let states = state_predictor(&game, side);
+        let _action = agent(states, side).expect("Error invoking AI Agent");
+        // let response = handle_action(database, game.player(side).id,
+        // Some(game.id), action);
+    });
 }
 
 /// Look up the state for a game which is expected to exist and assigns an

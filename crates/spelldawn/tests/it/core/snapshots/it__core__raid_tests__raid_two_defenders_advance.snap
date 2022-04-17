@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 608
+assertion_line: 611
 expression: "Summary::summarize(&response)"
 ---
 
@@ -9,7 +9,7 @@ command_list:
         opponent: 
             side: Overlord
             mana: 995
-        current_priority: User
+            can_take_action: false
         raid_active: true
     CreateOrUpdateCard: 
         card: 
@@ -48,7 +48,7 @@ channel_response:
         user: 
             side: Overlord
             mana: 995
-        current_priority: Opponent
+            can_take_action: false
         raid_active: true
     CreateOrUpdateCard: 
         card: 

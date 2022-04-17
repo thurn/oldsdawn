@@ -726,6 +726,9 @@ message PlayerView {
     ScoreView score = 3;
     ManaView mana = 4;
     ActionTrackerView action_tracker = 5;
+
+    // Whether this player is currently able to take a game action
+    bool can_take_action = 6;
 }
 
 message GameView {
@@ -733,12 +736,9 @@ message GameView {
     PlayerView user = 2;
     PlayerView opponent = 3;
 
-    // The player who is currently able to act.
-    PlayerName current_priority = 4;
-
     // Whether a raid is currently active. If true, the raid overlay will be
     // displayed, the raid music will be played, etc.
-    bool raid_active = 5;
+    bool raid_active = 4;
 }
 
 

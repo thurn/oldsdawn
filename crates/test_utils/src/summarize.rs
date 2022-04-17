@@ -237,7 +237,7 @@ impl Summarize for TimeValue {
 impl Summarize for GameResponse {
     fn summarize(self, summary: &mut Summary) {
         summary.child_node_indent("command_list", self.command_list, false);
-        if let Some((_, list)) = self.channel_response {
+        if let Some((_, list)) = self.opponent_response {
             summary.child_node_indent("channel_response", list, false);
         }
     }
@@ -375,7 +375,6 @@ impl Summarize for GameView {
     fn summarize(self, summary: &mut Summary) {
         summary.child("user", self.user);
         summary.child("opponent", self.opponent);
-        summary.child("current_priority", PlayerName::from_i32(self.current_priority));
         summary.child_node("raid_active", self.raid_active);
     }
 }
@@ -387,6 +386,7 @@ impl Summarize for PlayerView {
         summary.child("mana", self.mana);
         summary.child("action_tracker", self.action_tracker);
         summary.child("score", self.score);
+        summary.child_node("can_take_action", self.can_take_action);
     }
 }
 

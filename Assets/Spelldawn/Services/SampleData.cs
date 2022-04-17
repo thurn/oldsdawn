@@ -501,7 +501,6 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
         Opponent = Player(
           "Opponent",
           "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"),
-        CurrentPriority = PlayerName.User
       };
 
     static TimeValue TimeMs(uint ms) => new() { Milliseconds = ms };

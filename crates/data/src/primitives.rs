@@ -78,7 +78,9 @@ impl fmt::Debug for GameId {
 }
 
 /// The two players in a game: Overlord & Champion
-#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd)]
+#[derive(
+    PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd, IntoEnumIterator,
+)]
 pub enum Side {
     Overlord,
     Champion,

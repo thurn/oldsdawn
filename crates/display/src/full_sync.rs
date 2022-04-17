@@ -103,7 +103,6 @@ fn update_game_view(game: &GameState, user_side: Side) -> UpdateGameViewCommand 
             game_id: Some(adapters::adapt_game_id(game.id)),
             user: Some(player_view(game, user_side)),
             opponent: Some(player_view(game, user_side.opponent())),
-            current_priority: current_priority(game, user_side).into(),
             raid_active: game.data.raid.is_some(),
         }),
     }
@@ -134,27 +133,8 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
         score: Some(ScoreView { score: data.score }),
         mana: Some(ManaView { amount: data.mana }),
         action_tracker: Some(ActionTrackerView { available_action_count: data.actions }),
+        can_take_action: queries::can_take_action(game, side),
     }
-}
-
-/// Returns the [PlayerName] that currently has priority (is next to act) in
-/// this game
-fn current_priority(game: &GameState, user_side: Side) -> PlayerName {
-    let turn = match &game.data.phase {
-        GamePhase::Play(turn) => turn,
-        _ => return PlayerName::Unspecified,
-    };
-
-    adapters::to_player_name(
-        match &game.data.raid {
-            Some(raid) => match raid.phase {
-                RaidPhase::Activation => Side::Overlord,
-                _ => Side::Champion,
-            },
-            None => turn.side,
-        },
-        user_side,
-    )
 }
 
 /// Possible behavior when creating a card -- used to enable different 'appear'

@@ -9,7 +9,10 @@ command_list:
         user: 
             side: Overlord
             mana: 996
-        current_priority: Opponent
+            can_take_action: false
+        opponent: 
+            side: Champion
+            can_take_action: true
         raid_active: true
     CreateOrUpdateCard: 
         card: 
@@ -29,10 +32,13 @@ command_list:
         card_anchor_nodes: 
 channel_response: 
     UpdateGameView: 
+        user: 
+            side: Champion
+            can_take_action: true
         opponent: 
             side: Overlord
             mana: 996
-        current_priority: User
+            can_take_action: false
         raid_active: true
     CreateOrUpdateCard: 
         card: 

@@ -16,6 +16,7 @@ expression: "Summary::run(&r3)"
             mana: 999
             action_tracker: 0
             score: 0
+            can_take_action: false
         opponent: 
             side: Overlord
             player_info: 
@@ -27,7 +28,7 @@ expression: "Summary::run(&r3)"
             mana: 999
             action_tracker: 2
             score: 0
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     CreateOrUpdateCard: 
         card: 

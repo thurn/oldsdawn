@@ -40,8 +40,8 @@ fn initiate_raid() {
         g.user_id(),
     );
     assert_eq!(1, g.me().actions());
-    assert_eq!(PlayerName::Opponent, g.user.data.priority());
-    assert_eq!(PlayerName::User, g.opponent.data.priority());
+    assert!(g.user.other_player.can_take_action());
+    assert!(g.opponent.this_player.can_take_action());
     assert!(g.user.data.raid_active());
     assert!(g.opponent.data.raid_active());
 
@@ -95,8 +95,8 @@ fn activate_room() {
     assert_eq!(g.opponent.this_player.mana(), 996); // Minion costs 3 to summon
     assert!(g.user.cards.get(ids.minion_id).revealed_to_me());
     assert!(g.opponent.cards.get(ids.minion_id).revealed_to_me());
-    assert_eq!(PlayerName::User, g.user.data.priority());
-    assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
+    assert!(g.user.this_player.can_take_action());
+    assert!(g.opponent.other_player.can_take_action());
     assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("Test Weapon"));
     assert!(g.user.interface.controls().has_text("1\u{f06d}"));
@@ -211,8 +211,8 @@ fn use_weapon() {
     assert_eq!(g.opponent.other_player.mana(), 995); // Weapon costs 1 to use
     assert!(g.user.cards.get(ids.scheme_id).revealed_to_me());
     assert!(g.opponent.cards.get(ids.scheme_id).revealed_to_me());
-    assert_eq!(PlayerName::User, g.user.data.priority());
-    assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
+    assert!(g.user.this_player.can_take_action());
+    assert!(g.opponent.other_player.can_take_action());
     assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.card_anchor_nodes().has_text("Score!"));
     assert!(g.user.interface.controls().has_text("End Raid"));
@@ -256,8 +256,11 @@ fn fire_combat_ability() {
     assert_eq!(g.user.this_player.mana(), 996); // Mana is unchanged
     assert_eq!(g.opponent.other_player.mana(), 996);
     assert!(!g.user.cards.get(ids.scheme_id).revealed_to_me()); // Scheme is not revealed
-    assert_eq!(PlayerName::User, g.user.data.priority()); // Still Champion turn
-    assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
+
+    // Still Champion turn
+    assert!(g.user.this_player.can_take_action());
+    assert!(g.opponent.other_player.can_take_action());
+
     assert!(!g.user.data.raid_active()); // No raid active due to End Raid ability
     assert!(!g.opponent.data.raid_active());
 
@@ -303,8 +306,8 @@ fn score_scheme_card() {
 
     assert_eq!(g.user.this_player.score(), 1);
     assert_eq!(g.opponent.other_player.score(), 1);
-    assert_eq!(PlayerName::User, g.user.data.priority());
-    assert_eq!(PlayerName::Opponent, g.opponent.data.priority());
+    assert!(g.user.this_player.can_take_action());
+    assert!(g.opponent.other_player.can_take_action());
     assert!(g.user.data.raid_active()); // Raid still active
     assert!(g.opponent.data.raid_active());
     assert!(g.opponent.interface.controls().has_text("Waiting"));
@@ -345,8 +348,8 @@ fn complete_raid() {
 
     assert_eq!(g.user.this_player.score(), 1);
     assert_eq!(g.opponent.other_player.score(), 1);
-    assert_eq!(PlayerName::Opponent, g.user.data.priority());
-    assert_eq!(PlayerName::User, g.opponent.data.priority());
+    assert!(g.user.other_player.can_take_action());
+    assert!(g.opponent.this_player.can_take_action());
     assert_eq!(g.opponent.interface.main_controls_option(), None);
     assert_eq!(g.user.interface.main_controls_option(), None);
     assert!(!g.user.data.raid_active()); // Raid no longer active

@@ -177,11 +177,12 @@ command_list:
         user: 
             side: Champion
             mana: 5
+            can_take_action: false
         opponent: 
             side: Overlord
             mana: 5
             action_tracker: 3
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     RenderInterface: 
     panels: 
@@ -307,10 +308,11 @@ channel_response:
             side: Overlord
             mana: 5
             action_tracker: 3
+            can_take_action: true
         opponent: 
             side: Champion
             mana: 5
-        current_priority: User
+            can_take_action: false
         raid_active: false
     CreateOrUpdateCard: 
         card: 

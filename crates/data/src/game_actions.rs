@@ -14,7 +14,10 @@
 
 //! User interface actions
 
+#![allow(clippy::use_self)] // Required to use EnumKind
+
 use anyhow::{anyhow, Result};
+use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
 
 use crate::game::MulliganDecision;
@@ -95,7 +98,8 @@ pub enum DebugAction {
 /// Possible targets for the 'play card' action. Note that many types of targets
 /// are *not* selected in the original PlayCard action request but are instead
 /// selected via a follow-up prompt, and thus are not represented here.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, EnumKind)]
+#[enum_kind(CardTargetKind)]
 pub enum CardTarget {
     None,
     Room(RoomId),

@@ -12,18 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Data types used to represent game state
+//! Implementations of Agent
 
-pub mod agent_definition;
-pub mod card_definition;
-pub mod card_name;
-pub mod card_state;
-pub mod deck;
-pub mod delegates;
-pub mod game;
-pub mod game_actions;
-pub mod primitives;
-pub mod special_effects;
-pub mod text;
-pub mod updates;
-pub mod with_error;
+pub mod pick_first_action;

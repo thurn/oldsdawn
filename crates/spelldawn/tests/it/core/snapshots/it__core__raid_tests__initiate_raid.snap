@@ -11,7 +11,10 @@ command_list:
             player_info: 
             valid_rooms_to_visit: 
             action_tracker: 1
-        current_priority: Opponent
+            can_take_action: false
+        opponent: 
+            side: Overlord
+            can_take_action: true
         raid_active: true
     CreateOrUpdateCard: 
         card: 
@@ -55,12 +58,15 @@ channel_response:
         visit_type: InitiateRaid
     Delay: 500
     UpdateGameView: 
+        user: 
+            side: Overlord
+            can_take_action: true
         opponent: 
             side: Champion
             player_info: 
             valid_rooms_to_visit: 
             action_tracker: 1
-        current_priority: User
+            can_take_action: false
         raid_active: true
     RunInParallel: 
         MoveGameObjects: 

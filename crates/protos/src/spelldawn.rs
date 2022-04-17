@@ -676,6 +676,9 @@ pub struct PlayerView {
     pub mana: ::core::option::Option<ManaView>,
     #[prost(message, optional, tag = "5")]
     pub action_tracker: ::core::option::Option<ActionTrackerView>,
+    /// Whether this player is currently able to take a game action
+    #[prost(bool, tag = "6")]
+    pub can_take_action: bool,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameView {
@@ -685,12 +688,9 @@ pub struct GameView {
     pub user: ::core::option::Option<PlayerView>,
     #[prost(message, optional, tag = "3")]
     pub opponent: ::core::option::Option<PlayerView>,
-    /// The player who is currently able to act.
-    #[prost(enumeration = "PlayerName", tag = "4")]
-    pub current_priority: i32,
     /// Whether a raid is currently active. If true, the raid overlay will be
     /// displayed, the raid music will be played, etc.
-    #[prost(bool, tag = "5")]
+    #[prost(bool, tag = "4")]
     pub raid_active: bool,
 }
 // ============================================================================

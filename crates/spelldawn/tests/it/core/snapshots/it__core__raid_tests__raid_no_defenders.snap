@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 513
+assertion_line: 516
 expression: "Summary::summarize(&response)"
 ---
 
@@ -11,7 +11,7 @@ command_list:
             player_info: 
             valid_rooms_to_visit: 
             action_tracker: 2
-        current_priority: User
+            can_take_action: true
         raid_active: true
     CreateOrUpdateCard: 
         card: 
@@ -79,7 +79,7 @@ channel_response:
             player_info: 
             valid_rooms_to_visit: 
             action_tracker: 2
-        current_priority: Opponent
+            can_take_action: true
         raid_active: true
     MoveGameObjects: 
         id: O45

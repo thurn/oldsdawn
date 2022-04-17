@@ -21,6 +21,7 @@ use enum_kinds::EnumKind;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
+use crate::agent_definition::AgentData;
 use crate::card_state::{CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
 use crate::game_actions::Prompt;
@@ -39,6 +40,11 @@ pub struct PlayerState {
     pub mana: ManaValue,
     pub actions: ActionCount,
     pub score: PointsValue,
+
+    /// Optionally, an AI Agent for this player. If provided, this agent will be
+    /// used to determine game actions instead of prompting for UI input.
+    pub agent: Option<AgentData>,
+
     /// A choice this player is currently facing. Automatically cleared when
     /// a `PromptAction` response is received.
     pub prompt: Option<Prompt>,
@@ -47,7 +53,7 @@ pub struct PlayerState {
 impl PlayerState {
     /// Create an empty player state.
     pub fn new(id: PlayerId) -> Self {
-        Self { id, mana: 0, actions: 0, score: 0, prompt: None }
+        Self { id, agent: None, mana: 0, actions: 0, score: 0, prompt: None }
     }
 }
 

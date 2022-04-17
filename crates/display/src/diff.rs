@@ -88,7 +88,6 @@ fn diff_game_view(old: Option<&GameView>, new: Option<&GameView>) -> Option<Game
         game_id: new.game_id.clone(),
         user: diff_player_view(old.user.as_ref(), new.user.as_ref()),
         opponent: diff_player_view(old.opponent.as_ref(), new.opponent.as_ref()),
-        current_priority: new.current_priority,
         raid_active: new.raid_active,
     })
 }
@@ -100,6 +99,7 @@ fn diff_player_view(old: Option<&PlayerView>, new: Option<&PlayerView>) -> Optio
         score: diff_simple(&old.score, &new.score),
         mana: diff_simple(&old.mana, &new.mana),
         action_tracker: diff_simple(&old.action_tracker, &new.action_tracker),
+        can_take_action: new.can_take_action,
     })
 }
 

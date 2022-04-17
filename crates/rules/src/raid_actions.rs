@@ -177,7 +177,7 @@ pub fn destroy_card_action(game: &mut GameState, user_side: Side, card_id: CardI
 pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId) -> Result<()> {
     info!(?user_side, ?card_id, "raid_score_card_action");
     ensure!(
-        flags::can_score_card(game, user_side, card_id),
+        flags::can_score_card_when_accessed(game, user_side, card_id),
         "Cannot take score card action for {:?}",
         user_side
     );

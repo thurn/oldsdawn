@@ -269,8 +269,10 @@ fn switch_turn() {
     assert_eq!(0, g.opponent.other_player.actions());
     assert_eq!(3, g.user.other_player.actions());
     assert_eq!(3, g.opponent.this_player.actions());
-    assert_eq!(g.user.data.priority(), PlayerName::Opponent);
-    assert_eq!(g.opponent.data.priority(), PlayerName::User);
+    assert!(!g.user.this_player.can_take_action());
+    assert!(g.user.other_player.can_take_action());
+    assert!(g.opponent.this_player.can_take_action());
+    assert!(!g.opponent.other_player.can_take_action());
 }
 
 #[test]

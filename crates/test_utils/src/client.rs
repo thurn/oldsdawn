@@ -154,7 +154,7 @@ impl TestSession {
             local.handle_command(command.command.as_ref().expect("Empty command"));
         }
 
-        if let Some((channel_user_id, list)) = &response.channel_response {
+        if let Some((channel_user_id, list)) = &response.opponent_response {
             assert_eq!(*channel_user_id, opponent_id);
             for command in &list.commands {
                 remote.handle_command(command.command.as_ref().expect("Empty command"));
@@ -397,17 +397,12 @@ impl TestClient {
 /// Simulated game state in an ongoing [TestSession]
 #[derive(Clone, Default)]
 pub struct ClientGameData {
-    priority: Option<PlayerName>,
     raid_active: Option<bool>,
     object_positions: HashMap<GameObjectIdentifier, (u32, Position)>,
     last_message: Option<GameMessageType>,
 }
 
 impl ClientGameData {
-    pub fn priority(&self) -> PlayerName {
-        self.priority.unwrap()
-    }
-
     pub fn raid_active(&self) -> bool {
         self.raid_active.expect("raid_active")
     }
@@ -430,8 +425,6 @@ impl ClientGameData {
     fn update(&mut self, command: Command) {
         match command {
             Command::UpdateGameView(update_game) => {
-                self.priority =
-                    PlayerName::from_i32(update_game.game.as_ref().unwrap().current_priority);
                 self.raid_active = Some(update_game.game.as_ref().unwrap().raid_active);
             }
             Command::MoveGameObjects(move_objects) => {
@@ -456,11 +449,12 @@ pub struct ClientPlayer {
     mana: Option<ManaValue>,
     actions: Option<ActionCount>,
     score: Option<PointsValue>,
+    can_take_action: Option<bool>,
 }
 
 impl ClientPlayer {
     fn new(name: PlayerName) -> Self {
-        Self { name, mana: None, actions: None, score: None }
+        Self { name, mana: None, actions: None, score: None, can_take_action: None }
     }
 
     pub fn mana(&self) -> ManaValue {
@@ -473,6 +467,10 @@ impl ClientPlayer {
 
     pub fn score(&self) -> PointsValue {
         self.score.expect("Points")
+    }
+
+    pub fn can_take_action(&self) -> bool {
+        self.can_take_action.expect("can_take_action")
     }
 
     fn update(&mut self, command: Command) {
@@ -490,6 +488,7 @@ impl ClientPlayer {
             write_if_present(&mut self.mana, p.mana, |v| v.amount);
             write_if_present(&mut self.actions, p.action_tracker, |v| v.available_action_count);
             write_if_present(&mut self.score, p.score, |v| v.score);
+            self.can_take_action = Some(p.can_take_action);
         }
     }
 }

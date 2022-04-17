@@ -27,12 +27,13 @@ command_list:
             side: Overlord
             mana: 8
             action_tracker: 0
+            can_take_action: false
         opponent: 
             side: Champion
             player_info: 
             valid_rooms_to_visit: VaultSanctumCrypts
             action_tracker: 3
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     DisplayGameMessage: Dawn
 channel_response: 
@@ -69,10 +70,11 @@ channel_response:
             player_info: 
             valid_rooms_to_visit: VaultSanctumCrypts
             action_tracker: 3
+            can_take_action: true
         opponent: 
             side: Overlord
             mana: 8
             action_tracker: 0
-        current_priority: User
+            can_take_action: false
         raid_active: false
     DisplayGameMessage: Dawn

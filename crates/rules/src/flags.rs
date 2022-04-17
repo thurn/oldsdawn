@@ -99,7 +99,7 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> boo
         }
         CardType::Minion => matches!(target, CardTarget::Room(_)),
         CardType::Project | CardType::Scheme => {
-            matches!(target, CardTarget::Room(room_id) 
+            matches!(target, CardTarget::Room(room_id)
                 if room_can_add(game, room_id, vec![CardType::Project, CardType::Scheme]))
         }
         CardType::Identity => false,
@@ -248,8 +248,9 @@ pub fn can_take_raid_destroy_card_action(_game: &GameState, _side: Side, _card_i
     true
 }
 
-/// Can the provided player score the `card_id` card?
-pub fn can_score_card(game: &GameState, side: Side, card_id: CardId) -> bool {
+/// Can the provided player score the `card_id` card when accessed during a
+/// raid?
+pub fn can_score_card_when_accessed(game: &GameState, side: Side, card_id: CardId) -> bool {
     let raid = match &game.data.raid {
         Some(r) => r,
         None => return false,

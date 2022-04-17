@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 296
+assertion_line: 298
 expression: "Summary::run(&response)"
 ---
 
@@ -10,7 +10,7 @@ command_list:
             side: Champion
             mana: 1000
             action_tracker: 1
-        current_priority: User
+            can_take_action: true
         raid_active: false
     CreateOrUpdateCard: 
         card: 
@@ -59,7 +59,7 @@ channel_response:
             side: Champion
             mana: 1000
             action_tracker: 1
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     CreateOrUpdateCard: 
         card: 

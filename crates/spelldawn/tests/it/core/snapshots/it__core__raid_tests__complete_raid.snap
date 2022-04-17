@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 366
+assertion_line: 369
 expression: "Summary::summarize(&response)"
 ---
 
@@ -23,10 +23,13 @@ command_list:
             sorting_key: 11
             position: ObjectPositionHand { owner: Opponent }
     UpdateGameView: 
+        user: 
+            side: Champion
+            can_take_action: false
         opponent: 
             side: Overlord
             action_tracker: 3
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     RenderInterface: 
     panels: 
@@ -65,7 +68,10 @@ channel_response:
         user: 
             side: Overlord
             action_tracker: 3
-        current_priority: User
+            can_take_action: true
+        opponent: 
+            side: Champion
+            can_take_action: false
         raid_active: false
     RenderInterface: 
     panels: 

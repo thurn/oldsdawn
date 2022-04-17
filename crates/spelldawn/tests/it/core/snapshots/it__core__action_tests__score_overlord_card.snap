@@ -42,7 +42,7 @@ command_list:
             mana: 7
             action_tracker: 1
             score: 1
-        current_priority: User
+            can_take_action: true
         raid_active: false
 channel_response: 
     VisitRoom: 
@@ -112,6 +112,6 @@ channel_response:
             mana: 7
             action_tracker: 1
             score: 1
-        current_priority: Opponent
+            can_take_action: true
         raid_active: false
     Delay: 1500
