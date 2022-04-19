@@ -14,6 +14,7 @@
 
 //! Crate for operating the GRPC sever and handling top-level client requests.
 
+pub mod agent_response;
 pub mod database;
 pub mod debug;
 pub mod requests;

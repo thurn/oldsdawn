@@ -24,26 +24,23 @@ use data::updates::UpdateTracker;
 use data::with_error::WithError;
 use display::adapters::ServerCardId;
 use display::{adapters, render};
-use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
     card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand,
-    CreateNewGameAction, GameCommand, GameIdentifier, GameRequest, PlayerSide, RoomIdentifier,
-    StandardAction,
+    CreateNewGameAction, GameCommand, GameRequest, PlayerSide, RoomIdentifier, StandardAction,
 };
-use rules::{actions, mutations, queries};
+use rules::{actions, mutations};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
-use tokio::task;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
 
 use crate::database::{Database, SledDatabase};
-use crate::debug;
+use crate::{agent_response, debug};
 
 /// Stores active channels for each user.
 ///
@@ -63,7 +60,7 @@ impl Spelldawn for GameService {
         request: Request<ConnectRequest>,
     ) -> Result<Response<Self::ConnectStream>, Status> {
         let message = request.get_ref();
-        let game_id = to_server_game_id(&message.game_id);
+        let game_id = adapters::to_optional_server_game_id(&message.game_id);
         let player_id = match adapters::to_server_player_id(message.player_id) {
             Ok(player_id) => player_id,
             _ => return Err(Status::unauthenticated("PlayerId is required")),
@@ -101,7 +98,8 @@ impl Spelldawn for GameService {
         match handle_request(&mut db, request.get_ref()) {
             Ok(response) => {
                 send_player_response(response.opponent_response).await;
-                check_for_agent_response(db, request.get_ref()).expect("AI Agent Error");
+                agent_response::check_for_agent_response(db, request.get_ref())
+                    .expect("AI Agent Error");
                 Ok(Response::new(response.command_list))
             }
             Err(error) => {
@@ -141,7 +139,7 @@ impl GameResponse {
 /// Processes an incoming client request and returns a [GameResponse] describing
 /// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
-    let game_id = to_server_game_id(&request.game_id);
+    let game_id = adapters::to_optional_server_game_id(&request.game_id);
     let player_id = adapters::to_server_player_id(request.player_id)?;
     let game_action = request
         .action
@@ -267,7 +265,7 @@ fn create_new_game(
 ///
 /// Schedules an AI Agent response if one is required for the current game
 /// state.
-fn handle_action(
+pub fn handle_action(
     database: &mut impl Database,
     player_id: PlayerId,
     game_id: Option<GameId>,
@@ -286,6 +284,8 @@ pub fn handle_custom_action(
     game_id: Option<GameId>,
     function: impl Fn(&mut GameState, Side) -> Result<()>,
 ) -> Result<GameResponse> {
+    // TODO: Acquire some kind of lock to prevent concurrent updates from
+    // overwriting the game
     let mut game = find_game(database, game_id)?;
     let user_side = user_side(player_id, &game)?;
     function(&mut game, user_side)?;
@@ -303,53 +303,9 @@ pub fn handle_custom_action(
     })
 }
 
-pub fn check_for_agent_response(mut database: SledDatabase, request: &GameRequest) -> Result<()> {
-    if let Some(game_id) = to_server_game_id(&request.game_id) {
-        if database.has_game(game_id)? {
-            task::spawn(async move {
-                loop {
-                    let mut took_action = false;
-                    let game = database.game(game_id).expect("game");
-                    for side in Side::into_enum_iter() {
-                        if let Some(agent_data) = game.player(side).agent {
-                            if queries::can_take_action(&game, side) {
-                                took_action = true;
-                                let agent = ai::core::get_agent(agent_data.name);
-                                let state_predictor =
-                                    ai::core::get_game_state_predictor(agent_data.state_predictor);
-                                let action = agent(state_predictor(&game, side), side)
-                                    .expect("Error invoking AI Agent");
-                                let response = handle_action(
-                                    &mut database,
-                                    game.player(side).id,
-                                    Some(game_id),
-                                    action,
-                                )
-                                .expect("Error handling GameAction");
-                                send_player_response(response.opponent_response).await;
-                                send_player_response(Some((
-                                    game.player(side).id,
-                                    response.command_list,
-                                )))
-                                .await
-                            }
-                        }
-                    }
-
-                    if !took_action {
-                        break;
-                    }
-                }
-            });
-        }
-    }
-
-    Ok(())
-}
-
 /// Sends a game response to a given player, if they are connected to the
 /// server.
-async fn send_player_response(response: Option<(PlayerId, CommandList)>) {
+pub async fn send_player_response(response: Option<(PlayerId, CommandList)>) {
     if let Some((player_id, commands)) = response {
         if let Some(channel) = CHANNELS.get(&player_id) {
             if channel.send(Ok(commands)).await.is_err() {
@@ -455,10 +411,6 @@ fn command_list(commands: Vec<Command>) -> CommandList {
     CommandList {
         commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
     }
-}
-
-fn to_server_game_id(game_id: &Option<GameIdentifier>) -> Option<GameId> {
-    game_id.as_ref().map(|g| GameId::new(g.value))
 }
 
 fn to_server_room_id(room_id: Option<RoomIdentifier>) -> Option<RoomId> {

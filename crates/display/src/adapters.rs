@@ -26,6 +26,10 @@ pub fn adapt_game_id(game_id: GameId) -> GameIdentifier {
     GameIdentifier { value: game_id.value }
 }
 
+pub fn to_optional_server_game_id(game_id: &Option<GameIdentifier>) -> Option<GameId> {
+    game_id.as_ref().map(|g| GameId::new(g.value))
+}
+
 /// Converts a [Side] into a [PlayerName] based on which viewer we are rendering
 /// this update for.
 pub fn to_player_name(side: Side, user_side: Side) -> PlayerName {
