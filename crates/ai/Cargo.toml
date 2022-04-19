@@ -1,5 +1,5 @@
 [package]
-name = "agents"
+name = "ai"
 version = "0.0.0"
 description = "Contains different implementations of Game AI"
 license = "Apache-2.0"

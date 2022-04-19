@@ -3,7 +3,16 @@
 version = 3
 
 [[package]]
-name = "agents"
+name = "aho-corasick"
+version = "0.7.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e37cfd5e7657ada45f742d6e99ca5788580b5c529dc78faf11ece6dc702656f"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
+name = "ai"
 version = "0.0.0"
 dependencies = [
  "anyhow",
@@ -15,15 +24,6 @@ dependencies = [
  "rand",
  "rules",
  "serde",
-]
-
-[[package]]
-name = "aho-corasick"
-version = "0.7.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e37cfd5e7657ada45f742d6e99ca5788580b5c529dc78faf11ece6dc702656f"
-dependencies = [
- "memchr",
 ]
 
 [[package]]
@@ -1054,7 +1054,7 @@ dependencies = [
 name = "server"
 version = "0.0.0"
 dependencies = [
- "agents",
+ "ai",
  "anyhow",
  "bincode",
  "dashmap",
@@ -1132,7 +1132,7 @@ dependencies = [
 name = "spelldawn"
 version = "0.0.0"
 dependencies = [
- "agents",
+ "ai",
  "anyhow",
  "bincode",
  "cards",

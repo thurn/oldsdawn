@@ -316,10 +316,9 @@ pub fn check_for_agent_response(mut database: SledDatabase, request: &GameReques
                         if let Some(agent_data) = game.player(side).agent {
                             if queries::can_take_action(&game, side) {
                                 took_action = true;
-                                let agent = agents::core::get_agent(agent_data.name);
-                                let state_predictor = agents::core::get_game_state_predictor(
-                                    agent_data.state_predictor,
-                                );
+                                let agent = ai::core::get_agent(agent_data.name);
+                                let state_predictor =
+                                    ai::core::get_game_state_predictor(agent_data.state_predictor);
                                 let action = agent(state_predictor(&game, side), side)
                                     .expect("Error invoking AI Agent");
                                 let response = handle_action(

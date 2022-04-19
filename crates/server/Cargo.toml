@@ -24,7 +24,7 @@ tokio-stream = "0.1.8"
 tonic = "0.6.1"
 tracing = { version = "0.1.29" }
 
-agents = { path = "../agents", version = "0.0.0" }
+ai = { path = "../ai", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
 panels = { path = "../panels", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
