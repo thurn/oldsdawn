@@ -39,7 +39,7 @@ use protos::spelldawn::{
     ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
     PlayerView, RevealedCardView, RoomTargeting,
 };
-use server::GameResponse;
+use server::requests::GameResponse;
 
 use crate::fake_database::FakeDatabase;
 
@@ -105,7 +105,7 @@ impl TestSession {
     /// be sent to the client when connected. If a new game is created, its
     /// ID will be 0.
     pub fn connect(&mut self, user_id: PlayerId, game_id: Option<GameId>) -> Result<CommandList> {
-        let result = server::handle_connect(&mut self.database, user_id, game_id)?;
+        let result = server::requests::handle_connect(&mut self.database, user_id, game_id)?;
         let to_update = match () {
             _ if user_id == self.user.id => &mut self.user,
             _ if user_id == self.opponent.id => &mut self.opponent,
@@ -140,7 +140,7 @@ impl TestSession {
         player_id: PlayerId,
         game_id: Option<GameIdentifier>,
     ) -> Result<GameResponse> {
-        let response = server::handle_request(
+        let response = server::requests::handle_request(
             &mut self.database,
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),

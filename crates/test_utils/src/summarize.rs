@@ -37,7 +37,7 @@ use protos::spelldawn::{
     SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
     UpdateGameViewCommand, VisitRoomCommand,
 };
-use server::GameResponse;
+use server::requests::GameResponse;
 
 pub trait Summarize {
     fn summarize(self, summary: &mut Summary);

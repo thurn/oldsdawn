@@ -33,7 +33,9 @@ use protos::spelldawn::{
 };
 use rules::{dispatch, mutations, queries};
 
-use crate::{Database, GameResponse};
+use crate::database::Database;
+use crate::requests;
+use crate::requests::GameResponse;
 
 pub fn handle_debug_action(
     database: &mut impl Database,
@@ -103,25 +105,25 @@ pub fn handle_debug_action(
             )?)]))
         }
         DebugAction::AddMana(amount) => {
-            crate::handle_custom_action(database, player_id, game_id, |game, user_side| {
+            requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
                 game.player_mut(user_side).mana += amount;
                 Ok(())
             })
         }
         DebugAction::AddActionPoints(amount) => {
-            crate::handle_custom_action(database, player_id, game_id, |game, user_side| {
+            requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
                 game.player_mut(user_side).actions += amount;
                 Ok(())
             })
         }
         DebugAction::AddScore(amount) => {
-            crate::handle_custom_action(database, player_id, game_id, |game, user_side| {
+            requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
                 game.player_mut(user_side).score += amount;
                 Ok(())
             })
         }
         DebugAction::SwitchTurn => {
-            crate::handle_custom_action(database, player_id, game_id, |game, _| {
+            requests::handle_custom_action(database, player_id, game_id, |game, _| {
                 game.player_mut(game.current_turn()?.side).actions = 0;
                 let new_turn = game.current_turn()?.side.opponent();
                 game.current_turn_mut()?.side = new_turn;
@@ -166,7 +168,7 @@ pub fn handle_debug_action(
             })]))
         }
         DebugAction::SetAgent(side, state_predictor, agent) => {
-            crate::handle_custom_action(database, player_id, game_id, |game, _user_side| {
+            requests::handle_custom_action(database, player_id, game_id, |game, _user_side| {
                 game.player_mut(side).agent = Some(AgentData { name: agent, state_predictor });
                 Ok(())
             })

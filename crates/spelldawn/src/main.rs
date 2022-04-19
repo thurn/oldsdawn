@@ -15,7 +15,7 @@
 //! Spelldawn: An asymmetric trading card game
 
 use protos::spelldawn::spelldawn_server::SpelldawnServer;
-use server::GameService;
+use server::requests::GameService;
 use tonic::transport::Server;
 use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
