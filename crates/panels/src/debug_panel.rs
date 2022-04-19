@@ -16,6 +16,7 @@
 //! development. Typically these options should not be available to production
 //! users.
 
+use data::agent_definition::{AgentName, GameStatePredictorName};
 use data::game_actions::{DebugAction, UserAction};
 use data::primitives::Side;
 use protos::spelldawn::client_debug_command::DebugCommand;
@@ -79,6 +80,22 @@ pub fn render() -> Node {
                 debug_button("+ Point", UserAction::Debug(DebugAction::AddScore(1))),
                 debug_button("Turn", UserAction::Debug(DebugAction::SwitchTurn)),
                 debug_button("Flip View", UserAction::Debug(DebugAction::FlipViewpoint)),
+                debug_button(
+                    ">OverlordAI",
+                    UserAction::Debug(DebugAction::SetAgent(
+                        Side::Overlord,
+                        GameStatePredictorName::Omniscient,
+                        AgentName::PickFirstAction,
+                    )),
+                ),
+                debug_button(
+                    ">ChampionAI",
+                    UserAction::Debug(DebugAction::SetAgent(
+                        Side::Overlord,
+                        GameStatePredictorName::Omniscient,
+                        AgentName::PickFirstAction,
+                    )),
+                ),
                 debug_button(
                     format!("{} 1", icons::SAVE),
                     UserAction::Debug(DebugAction::SaveState(1)),

@@ -15,6 +15,7 @@
 use std::collections::HashMap;
 
 use anyhow::{bail, Context, Result};
+use data::agent_definition::AgentData;
 use data::deck::Deck;
 use data::delegates::{DawnEvent, DuskEvent};
 use data::game::GameState;
@@ -163,6 +164,12 @@ pub fn handle_debug_action(
                 scene_name: "Labyrinth".to_string(),
                 mode: SceneLoadMode::Single.into(),
             })]))
+        }
+        DebugAction::SetAgent(side, state_predictor, agent) => {
+            crate::handle_custom_action(database, player_id, game_id, |game, _user_side| {
+                game.player_mut(side).agent = Some(AgentData { name: agent, state_predictor });
+                Ok(())
+            })
         }
     }
 }

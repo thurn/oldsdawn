@@ -1132,6 +1132,7 @@ dependencies = [
 name = "spelldawn"
 version = "0.0.0"
 dependencies = [
+ "agents",
  "anyhow",
  "bincode",
  "cards",

@@ -18,8 +18,16 @@ use data::agent_definition::{AgentName, GameStatePredictorName};
 use linkme::distributed_slice;
 use types::{Agent, GameStatePredictor};
 
+use crate::agents::pick_first_action;
+use crate::predictors::omniscient;
+
 pub mod legal_actions;
 pub mod types;
+
+pub fn initialize() {
+    pick_first_action::initialize();
+    omniscient::initialize();
+}
 
 pub type AgentPair = (AgentName, Agent);
 
@@ -29,7 +37,11 @@ pub static AGENTS: [AgentPair] = [..];
 /// Looks up the definition for an [AgentName]. Panics if no such agent is
 /// defined.
 pub fn get_agent(name: AgentName) -> Agent {
-    AGENTS.iter().find(|(n, _)| name == *n).expect("Agent not found").1
+    AGENTS
+        .iter()
+        .find(|(n, _)| name == *n)
+        .unwrap_or_else(|| panic!("Agent not found: {:?}", name))
+        .1
 }
 
 pub type GameStatePredictorPair = (GameStatePredictorName, GameStatePredictor);
@@ -40,5 +52,9 @@ pub static GAME_STATE_PREDICTORS: [GameStatePredictorPair] = [..];
 /// Looks up the definition for a [GameStatePredictorName]. Panics if no such
 /// predictor is defined.
 pub fn get_game_state_predictor(name: GameStatePredictorName) -> GameStatePredictor {
-    GAME_STATE_PREDICTORS.iter().find(|(n, _)| name == *n).expect("GameStatePredictor not found").1
+    GAME_STATE_PREDICTORS
+        .iter()
+        .find(|(n, _)| name == *n)
+        .unwrap_or_else(|| panic!("Predictor not found: {:?}", name))
+        .1
 }

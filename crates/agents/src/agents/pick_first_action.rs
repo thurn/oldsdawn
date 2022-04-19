@@ -26,6 +26,8 @@ use linkme::distributed_slice;
 use crate::core::types::StatePredictionIterator;
 use crate::core::{legal_actions, AgentPair, AGENTS};
 
+pub fn initialize() {}
+
 #[distributed_slice(AGENTS)]
 static AGENT: AgentPair = (AgentName::PickFirstAction, pick_first_action);
 

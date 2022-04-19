@@ -14,11 +14,8 @@
 
 //! Top-level server response handling
 
-use std::time::Duration;
-
 use anyhow::{bail, ensure, Context, Result};
 use dashmap::DashMap;
-use data::agent_definition::AgentData;
 use data::game::{GameConfiguration, GameState};
 use data::game_actions;
 use data::game_actions::UserAction;
@@ -27,6 +24,7 @@ use data::updates::UpdateTracker;
 use data::with_error::WithError;
 use display::adapters::ServerCardId;
 use display::{adapters, render};
+use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -40,7 +38,6 @@ use rules::{actions, mutations, queries};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio::task;
-use tokio::time::sleep;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
@@ -105,17 +102,8 @@ impl Spelldawn for GameService {
         let mut db = SledDatabase {};
         match handle_request(&mut db, request.get_ref()) {
             Ok(response) => {
-                if let Some((player_id, commands)) = response.opponent_response {
-                    if let Some(channel) = CHANNELS.get(&player_id) {
-                        if channel.send(Ok(commands)).await.is_err() {
-                            // This returns SendError if the client is disconnected, which isn't a
-                            // huge problem. Hopefully they will reconnect again in the future.
-                            info!(?player_id, "client_is_disconnected");
-                        }
-                    }
-                }
-
-                warn!("Responding");
+                send_player_response(response.opponent_response).await;
+                check_for_agent_response(db, request.get_ref()).expect("AI Agent Error");
                 Ok(Response::new(response.command_list))
             }
             Err(error) => {
@@ -311,20 +299,69 @@ pub fn handle_custom_action(
         Some((opponent_id, command_list(render::render_updates(&game, user_side.opponent()))));
     database.write_game(&game)?;
 
-    if let Some(agent) = game.player(Side::Overlord).agent {
-        if queries::can_take_action(&game, Side::Overlord) {
-            handle_agent_response(game, Side::Overlord, agent);
-        }
-    } else if let Some(agent) = game.player(Side::Champion).agent {
-        if queries::can_take_action(&game, Side::Champion) {
-            handle_agent_response(game, Side::Champion, agent);
-        }
-    }
-
     Ok(GameResponse {
         command_list: command_list(user_result),
         opponent_response: channel_response,
     })
+}
+
+pub fn check_for_agent_response(mut database: SledDatabase, request: &GameRequest) -> Result<()> {
+    if let Some(game_id) = to_server_game_id(&request.game_id) {
+        if database.has_game(game_id)? {
+            task::spawn(async move {
+                loop {
+                    let mut took_action = false;
+                    let game = database.game(game_id).expect("game");
+                    for side in Side::into_enum_iter() {
+                        if let Some(agent_data) = game.player(side).agent {
+                            if queries::can_take_action(&game, side) {
+                                took_action = true;
+                                let agent = agents::core::get_agent(agent_data.name);
+                                let state_predictor = agents::core::get_game_state_predictor(
+                                    agent_data.state_predictor,
+                                );
+                                let action = agent(state_predictor(&game, side), side)
+                                    .expect("Error invoking AI Agent");
+                                let response = handle_action(
+                                    &mut database,
+                                    game.player(side).id,
+                                    Some(game_id),
+                                    action,
+                                )
+                                .expect("Error handling GameAction");
+                                send_player_response(response.opponent_response).await;
+                                send_player_response(Some((
+                                    game.player(side).id,
+                                    response.command_list,
+                                )))
+                                .await
+                            }
+                        }
+                    }
+
+                    if !took_action {
+                        break;
+                    }
+                }
+            });
+        }
+    }
+
+    Ok(())
+}
+
+/// Sends a game response to a given player, if they are connected to the
+/// server.
+async fn send_player_response(response: Option<(PlayerId, CommandList)>) {
+    if let Some((player_id, commands)) = response {
+        if let Some(channel) = CHANNELS.get(&player_id) {
+            if channel.send(Ok(commands)).await.is_err() {
+                // This returns SendError if the client is disconnected, which isn't a
+                // huge problem. Hopefully they will reconnect again in the future.
+                info!(?player_id, "client_is_disconnected");
+            }
+        }
+    }
 }
 
 /// Parses the serialized payload in a [StandardAction] and dispatches to the
@@ -346,17 +383,18 @@ fn handle_standard_action(
     }
 }
 
-fn handle_agent_response(game: GameState, side: Side, agent_data: AgentData) {
-    task::spawn(async move {
-        sleep(Duration::from_millis(1000)).await;
-        let agent = agents::core::get_agent(agent_data.name);
-        let state_predictor = agents::core::get_game_state_predictor(agent_data.state_predictor);
-        let states = state_predictor(&game, side);
-        let _action = agent(states, side).expect("Error invoking AI Agent");
-        // let response = handle_action(database, game.player(side).id,
-        // Some(game.id), action);
-    });
-}
+// fn handle_agent_response(game: GameState, side: Side, agent_data: AgentData)
+// {     task::spawn(async move {
+//         sleep(Duration::from_millis(1000)).await;
+//         let agent = agents::core::get_agent(agent_data.name);
+//         let state_predictor =
+// agents::core::get_game_state_predictor(agent_data.state_predictor);
+//         let states = state_predictor(&game, side);
+//         let _action = agent(states, side).expect("Error invoking AI Agent");
+//         // let response = handle_action(database, game.player(side).id,
+//         // Some(game.id), action);
+//     });
+// }
 
 /// Look up the state for a game which is expected to exist and assigns an
 /// [UpdateTracker] to it for the duration of this request.

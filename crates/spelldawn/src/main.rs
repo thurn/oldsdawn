@@ -25,6 +25,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    agents::core::initialize();
     let found_cards = cards::initialize();
     let fmt_layer = fmt::Layer::default().pretty().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(fmt_layer).init();

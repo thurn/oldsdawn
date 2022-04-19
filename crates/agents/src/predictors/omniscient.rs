@@ -23,6 +23,8 @@ use linkme::distributed_slice;
 use crate::core::types::{StatePrediction, StatePredictionIterator};
 use crate::core::{GameStatePredictorPair, GAME_STATE_PREDICTORS};
 
+pub fn initialize() {}
+
 #[distributed_slice(GAME_STATE_PREDICTORS)]
 static PREDICTOR: GameStatePredictorPair = (GameStatePredictorName::Omniscient, omniscient);
 
