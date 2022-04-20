@@ -91,7 +91,7 @@ pub fn render() -> Node {
                 debug_button(
                     ">ChampionAI",
                     UserAction::Debug(DebugAction::SetAgent(
-                        Side::Overlord,
+                        Side::Champion,
                         GameStatePredictorName::Omniscient,
                         AgentName::PickFirstAction,
                     )),

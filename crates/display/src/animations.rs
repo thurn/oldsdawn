@@ -379,6 +379,17 @@ fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
         );
         commands.push(UpdateType::Animation, delay(500));
     }
+
+    commands.move_object(
+        UpdateType::Animation,
+        Id::Identity(commands.adapt_player_name(Side::Champion)),
+        ObjectPosition {
+            sorting_key: 0,
+            position: Some(Position::IdentityContainer(ObjectPositionIdentityContainer {
+                owner: commands.adapt_player_name(Side::Champion),
+            })),
+        },
+    )
 }
 
 fn level_up_room(commands: &mut ResponseBuilder, target: RoomId) {
