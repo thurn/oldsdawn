@@ -28,6 +28,7 @@ pub enum GameStatePredictorName {
 #[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub enum AgentName {
     PickFirstAction,
+    AlphaBeta,
 }
 
 /// Primary configuration for an AI Agent. See the 'agents' crate for more

@@ -12,9 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Contains different implementations of Game AI
-
-pub mod agents;
-pub mod core;
-pub mod heuristics;
-pub mod predictors;
+pub mod game_state_evaluator;

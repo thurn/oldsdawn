@@ -85,7 +85,7 @@ pub fn render() -> Node {
                     UserAction::Debug(DebugAction::SetAgent(
                         Side::Overlord,
                         GameStatePredictorName::Omniscient,
-                        AgentName::PickFirstAction,
+                        AgentName::AlphaBeta,
                     )),
                 ),
                 debug_button(
@@ -93,7 +93,7 @@ pub fn render() -> Node {
                     UserAction::Debug(DebugAction::SetAgent(
                         Side::Champion,
                         GameStatePredictorName::Omniscient,
-                        AgentName::PickFirstAction,
+                        AgentName::AlphaBeta,
                     )),
                 ),
                 debug_button(

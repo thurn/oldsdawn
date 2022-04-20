@@ -18,6 +18,7 @@ use anyhow::Result;
 use data::game::GameState;
 use data::game_actions::UserAction;
 use data::primitives::Side;
+use ordered_float::NotNan;
 
 #[derive(Debug, Clone)]
 pub struct StatePrediction {
@@ -33,3 +34,8 @@ pub type GameStatePredictor = fn(&GameState, Side) -> StatePredictionIterator;
 // It is an error for an agent to be invoked if there is no legal game action
 // available.
 pub type Agent = fn(StatePredictionIterator, Side) -> Result<UserAction>;
+
+/// Wraps a float in a [NotNan]. Panics if the input is `NaN`.
+pub fn notnan(value: f64) -> NotNan<f64> {
+    NotNan::new(value).unwrap()
+}

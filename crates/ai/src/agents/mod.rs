@@ -14,4 +14,5 @@
 
 //! Implementations of Agent
 
+pub mod alpha_beta;
 pub mod pick_first_action;

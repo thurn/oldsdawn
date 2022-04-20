@@ -27,7 +27,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     ai::core::initialize();
     let found_cards = cards::initialize();
-    let fmt_layer = fmt::Layer::default().pretty().with_filter(LevelFilter::INFO);
+    let fmt_layer = fmt::Layer::default().pretty().with_filter(LevelFilter::WARN);
     tracing_subscriber::registry().with(fmt_layer).init();
 
     let address = "0.0.0.0:50052".parse().expect("valid address");
