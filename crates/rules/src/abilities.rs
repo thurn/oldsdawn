@@ -85,7 +85,6 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost) -> Ability {
 /// discarded.
 pub fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&mut GameState)) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
-        eprintln!("Discarding: {:?}", card_id);
         mutations::move_card(game, card_id, CardPosition::DiscardPile(side));
     } else {
         on_empty(game);

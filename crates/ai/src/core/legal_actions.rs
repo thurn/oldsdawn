@@ -44,8 +44,8 @@ pub fn evaluate<'a>(game: &'a GameState, side: Side) -> Box<dyn Iterator<Item = 
                         .map(UserAction::LevelUpRoom),
                 )
                 .chain(game.hand(side).flat_map(move |c| legal_card_actions(game, side, c.id)))
-                .chain(iter::once(UserAction::GainMana))
-                .chain(iter::once(UserAction::DrawCard)),
+                .chain(flags::can_take_draw_card_action(game, side).then(|| UserAction::DrawCard))
+                .chain(flags::can_take_gain_mana_action(game, side).then(|| UserAction::GainMana)),
         )
     } else {
         Box::new(iter::empty())

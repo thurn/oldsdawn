@@ -13,11 +13,16 @@ name = "spelldawn"
 path = "src/main.rs"
 test = false
 
+[[bench]]
+name = "benchmark"
+harness = false
+
 [dependencies]
 anyhow = "1.0.51"
 bincode = "1.3.3"
 maplit = "1.0.2"
 once_cell = "1.8.0"
+linkme = "0.2.10"
 prost = "0.9.0"
 prost-types = "0.9.0"
 serde = { version = "1.0.132", features = ["derive"] }
@@ -43,3 +48,4 @@ test_utils = { path = "../test_utils", version = "0.0.0" }
 insta = "1.9.0"
 rusty-hook = "0.11.2"
 maplit = "1.0.2"
+criterion = "0.3"

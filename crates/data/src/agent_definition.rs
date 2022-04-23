@@ -18,17 +18,18 @@ use serde::{Deserialize, Serialize};
 
 /// Identifies different possible Game State Predictors. See the 'agents' crate
 /// for more information.
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum GameStatePredictorName {
     Omniscient,
 }
 
 /// Identifies different possible Agents. See the 'agents' crate for more
 /// information.
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum AgentName {
     PickFirstAction,
     AlphaBeta,
+    MonteCarlo,
 }
 
 /// Primary configuration for an AI Agent. See the 'agents' crate for more

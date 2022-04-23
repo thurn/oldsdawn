@@ -115,7 +115,7 @@ pub struct GameConfiguration {
 }
 
 /// Mulligan decision a player made for their opening hand
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum MulliganDecision {
     /// The player has decided to keep their initial hand of 5 cards
     Keep,

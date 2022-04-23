@@ -24,19 +24,19 @@ use crate::agent_definition::{AgentName, GameStatePredictorName};
 use crate::game::MulliganDecision;
 use crate::primitives::{AbilityId, ActionCount, CardId, ManaValue, PointsValue, RoomId, Side};
 
-#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomActivationAction {
     Activate,
     Pass,
 }
-#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum EncounterAction {
     /// (source_id, target_id)
     UseWeaponAbility(CardId, CardId),
     NoWeapon,
 }
 
-#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum ContinueAction {
     Advance,
     Retreat,
@@ -51,7 +51,7 @@ pub enum PromptContext {
 /// An action which can be taken in the user interface, typically embedded
 /// inside the `GameAction::StandardAction` protobuf message type when sent to
 /// the client.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum PromptAction {
     /// Action to keep or mulligan opening hand
     MulliganDecision(MulliganDecision),
@@ -81,7 +81,7 @@ pub struct Prompt {
 
 /// Actions that can be taken from the debug panel, should not be exposed in
 /// production.
-#[derive(Eq, PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum DebugAction {
     NewGame(Side),
     JoinGame,
@@ -119,7 +119,7 @@ impl CardTarget {
 }
 
 /// All possible actions a player can take during a game.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum UserAction {
     Debug(DebugAction),
     PromptResponse(PromptAction),

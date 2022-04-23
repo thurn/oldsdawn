@@ -129,13 +129,20 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 }
 
 /// Helper function to draw `count` cards from the top of a player's deck and
-/// place them into their hand.
+/// place them into their hand. If there are insufficient cards available, the
+/// `side` player loses the game.
 ///
-/// Cards are set as revealed to the `side` player. If `push_updates` is true,
-/// [GameUpdate] values will be appended for each draw. Returns a vector of the
+/// Cards are set as revealed to the `side` player. Returns a vector of the
 /// newly-drawn [CardId]s.
 pub fn draw_cards(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
     let card_ids = realize_top_of_deck(game, side, count);
+
+    if card_ids.len() != count {
+        game.data.phase = GamePhase::GameOver(GameOverData { winner: side.opponent() });
+        game.updates.push(GameUpdate::GameOver(Side::Overlord));
+        return vec![];
+    }
+
     for card_id in &card_ids {
         set_revealed_to(game, *card_id, side, true);
         move_card(game, *card_id, CardPosition::Hand(side))
@@ -266,7 +273,7 @@ pub fn check_start_game(game: &mut GameState) {
     }
 }
 
-/// Returns a list of `count` cards from the top of the `side` player's
+/// Returns a list of *up to* `count` cards from the top of the `side` player's
 /// deck, in sorting-key order (later indices are are closer to the top
 /// of the deck).
 ///
@@ -292,7 +299,6 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Ve
         shuffled
     };
     let card_ids = result.into_iter().map(|c| c.id).collect::<Vec<_>>();
-    assert_eq!(card_ids.len(), count);
 
     for card_id in &card_ids {
         move_card(game, *card_id, CardPosition::DeckTop(side));

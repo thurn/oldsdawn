@@ -15,4 +15,5 @@
 //! Implementations of Agent
 
 pub mod alpha_beta;
+pub mod monte_carlo;
 pub mod pick_first_action;

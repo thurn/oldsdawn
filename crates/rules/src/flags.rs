@@ -240,8 +240,8 @@ pub fn can_take_continue_action(game: &GameState, side: Side) -> bool {
 }
 
 /// Can the Champion player destroy the accessed card `card_id`?
-pub fn can_destroy_accessed_card(game: &GameState, card_id: CardId) -> bool {
-    game.player(Side::Champion).mana <= queries::shield(game, card_id)
+pub fn can_destroy_accessed_card(_game: &GameState, _card_id: CardId) -> bool {
+    false
 }
 
 pub fn can_take_raid_destroy_card_action(_game: &GameState, _side: Side, _card_id: CardId) -> bool {

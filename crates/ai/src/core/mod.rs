@@ -18,7 +18,7 @@ use data::agent_definition::{AgentName, GameStatePredictorName};
 use linkme::distributed_slice;
 use types::{Agent, GameStatePredictor};
 
-use crate::agents::{alpha_beta, pick_first_action};
+use crate::agents::{alpha_beta, monte_carlo, pick_first_action};
 use crate::predictors::omniscient;
 
 pub mod legal_actions;
@@ -28,6 +28,7 @@ pub fn initialize() {
     pick_first_action::initialize();
     alpha_beta::initialize();
     omniscient::initialize();
+    monte_carlo::initialize();
 }
 
 pub type AgentPair = (AgentName, Agent);
