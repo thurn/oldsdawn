@@ -113,6 +113,12 @@ clippy-fix:
 snapshots:
     cargo insta review
 
+benchmark:
+    # The 'inventory' and 'linkme' crates have both been semi-broken since august 2021,
+    # this works around those issues.
+    # See https://github.com/dtolnay/inventory/issues/32
+    RUSTFLAGS="-C codegen-units=1" cargo criterion -p spelldawn
+
 # Checks documentation lints, haven't figured out how to do this with a single command
 check-docs:
     #!/usr/bin/env sh

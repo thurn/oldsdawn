@@ -20,11 +20,11 @@ use data::game::{GameConfiguration, GameState, MulliganDecision};
 use data::game_actions::{PromptAction, UserAction};
 use data::primitives::{GameId, PlayerId, Side};
 use maplit::hashmap;
-use rules::{actions, mutations, DEFINITIONS};
+use rules::{actions, mutations};
 
 fn new_game() -> GameState {
     let count = cards::initialize();
-    println!("Found {:?} cards for {:?}", count, DEFINITIONS.len());
+    println!("Found {:?} cards", count);
 
     let mut game = GameState::new(
         GameId::new(0),
@@ -67,7 +67,7 @@ fn new_game() -> GameState {
 
 pub fn uct_search(c: &mut Criterion) {
     let game = new_game();
-    c.bench_function("uct search", |b| {
+    c.bench_function("uct_search", |b| {
         b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 100))
     });
 }
