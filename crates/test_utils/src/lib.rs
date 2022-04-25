@@ -36,6 +36,7 @@ use data::primitives::{
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::{LevelUpRoomAction, RoomIdentifier, SpendActionPointAction};
+use rules::dispatch;
 
 use crate::client::TestSession;
 use crate::fake_database::FakeDatabase;
@@ -81,6 +82,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
         },
         GameConfiguration { deterministic: true, ..GameConfiguration::default() },
     );
+    dispatch::populate_delegate_cache(&mut game);
 
     if !args.resolve_mulligans {
         let turn_side = args.turn.unwrap_or(user_side);

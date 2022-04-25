@@ -39,6 +39,7 @@ use protos::spelldawn::{
     ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
     PlayerView, RevealedCardView, RoomTargeting,
 };
+use rules::dispatch;
 use server::requests::GameResponse;
 
 use crate::fake_database::FakeDatabase;
@@ -342,6 +343,10 @@ pub fn overwrite_card(game: &mut GameState, card_id: CardId, card_name: CardName
     let mut state = CardState::new(card_id, card_name, false);
     state.set_position(card.sorting_key, card.position());
     *game.card_mut(card_id) = state;
+
+    // Our delegate cache logic assumes the set of card names in a game will not
+    // change while the game is in progress, so we need to delete the cache.
+    dispatch::populate_delegate_cache(game);
 }
 
 pub fn side_for_card_name(name: CardName) -> Side {

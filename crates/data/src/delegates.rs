@@ -60,6 +60,7 @@
 
 #![allow(clippy::use_self)] // Required to use EnumKind
 
+use std::collections::HashMap;
 use std::fmt;
 use std::fmt::Formatter;
 
@@ -228,8 +229,8 @@ impl CardEncounter {
 /// automatically gets an associated struct value generated for it by the
 /// [DelegateEnum] macro -- see module-level documentation for an example of
 /// what this code looks like.
-#[derive(EnumKind, DelegateEnum)]
-#[enum_kind(DelegateKind)]
+#[derive(EnumKind, DelegateEnum, Clone)]
+#[enum_kind(DelegateKind, derive(Hash))]
 pub enum Delegate {
     /// The Champion's turn begins
     Dawn(EventDelegate<TurnNumber>),
@@ -323,9 +324,44 @@ pub enum Delegate {
     SanctumAccessCount(QueryDelegate<RaidId, usize>),
 }
 
+impl Delegate {
+    pub fn kind(&self) -> DelegateKind {
+        self.into()
+    }
+}
+
 impl fmt::Debug for Delegate {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "Delegate::{:?}", DelegateKind::from(self))
+    }
+}
+
+/// Contains the state needed to invoke a delegate within the context of a
+/// specific game.
+#[derive(Clone, Debug)]
+pub struct DelegateContext {
+    pub delegate: Delegate,
+    pub scope: Scope,
+    /// Should a UI alert be displayed when this delegate fires?
+    pub trigger_alert: bool,
+}
+
+/// Caches delegates in a given game for faster lookup
+#[derive(Clone, Debug, Default)]
+pub struct DelegateCache {
+    pub lookup: HashMap<DelegateKind, Vec<DelegateContext>>,
+}
+
+impl DelegateCache {
+    pub fn delegate_count(&self, kind: DelegateKind) -> usize {
+        self.lookup.get(&kind).map_or(0, Vec::len)
+    }
+
+    /// Gets the [DelegateContext] for a given [DelegateKind] and index.
+    ///
+    /// Panics if no such delegate exists.
+    pub fn get(&self, kind: DelegateKind, index: usize) -> &DelegateContext {
+        &self.lookup.get(&kind).expect("Delegate")[index]
     }
 }
 
@@ -335,9 +371,11 @@ pub trait EventData<T: fmt::Debug>: fmt::Debug {
     /// Get the underlying data for this event
     fn data(&self) -> T;
 
+    fn kind(&self) -> DelegateKind;
+
     /// Return the wrapped [EventDelegate] if the provided [Delegate] is of the
     /// matching type.
-    fn get(delegate: &Delegate) -> Option<EventDelegate<T>>;
+    fn extract(delegate: &Delegate) -> Option<EventDelegate<T>>;
 }
 
 /// Functions implemented by a Query struct, automatically implemented by
@@ -346,7 +384,9 @@ pub trait QueryData<TData: fmt::Debug, TResult: fmt::Debug>: fmt::Debug {
     /// Get the underlying data for this query
     fn data(&self) -> TData;
 
+    fn kind(&self) -> DelegateKind;
+
     /// Return the wrapped [QueryDelegate] if the provided [Delegate] is of the
     /// matching type.
-    fn get(delegate: &Delegate) -> Option<QueryDelegate<TData, TResult>>;
+    fn extract(delegate: &Delegate) -> Option<QueryDelegate<TData, TResult>>;
 }

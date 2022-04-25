@@ -24,6 +24,7 @@ use serde::{Deserialize, Serialize};
 use crate::agent_definition::AgentData;
 use crate::card_state::{CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
+use crate::delegates::DelegateCache;
 use crate::game_actions::Prompt;
 use crate::primitives::{
     ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId, RoomId,
@@ -211,6 +212,10 @@ pub struct GameState {
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::next_sorting_key] and [Self::move_card].
     next_sorting_key: u32,
+    /// Optional lookup table for delegates present on cards in this game in
+    /// order to improve performance
+    #[serde(skip)]
+    pub delegate_cache: DelegateCache,
 }
 
 impl GameState {
@@ -239,6 +244,7 @@ impl GameState {
             },
             updates: UpdateTracker::new(!config.simulation),
             next_sorting_key: 1,
+            delegate_cache: DelegateCache::default(),
         }
     }
 

@@ -206,6 +206,7 @@ fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<(
         },
         current_game.data.config,
     );
+    dispatch::populate_delegate_cache(&mut new_game);
     mutations::deal_opening_hands(&mut new_game);
     database.write_game(&new_game)?;
     Ok(())

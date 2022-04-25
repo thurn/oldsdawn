@@ -32,7 +32,7 @@ use protos::spelldawn::{
     card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand,
     CreateNewGameAction, GameCommand, GameRequest, PlayerSide, RoomIdentifier, StandardAction,
 };
-use rules::{actions, mutations};
+use rules::{actions, dispatch, mutations};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
@@ -243,6 +243,7 @@ fn create_new_game(
         GameConfiguration { deterministic: action.deterministic, ..GameConfiguration::default() },
     );
 
+    dispatch::populate_delegate_cache(&mut game);
     mutations::deal_opening_hands(&mut game);
     database.write_game(&game)?;
     let commands = command_list(vec![Command::ConnectToGame(ConnectToGameCommand {

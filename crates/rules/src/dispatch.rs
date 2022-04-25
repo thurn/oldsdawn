@@ -15,41 +15,56 @@
 //! Core functions of the Delegate system. See the module-level comment in
 //! `delegates.rs` for more information about this system.
 
+use std::collections::HashMap;
 use std::fmt::Debug;
 
 use data::card_definition::{AbilityType, TriggerIndicator};
-use data::delegates::{EventData, QueryData, Scope};
+use data::delegates::{DelegateCache, DelegateContext, EventData, QueryData, Scope};
 use data::game::GameState;
 use data::primitives::AbilityId;
 use data::updates::GameUpdate;
-use tracing::{info, instrument};
+use tracing::instrument;
 
-/// Called when a game event occurs, invokes each registered
-/// [data::delegates::Delegate] for this event to mutate the [GameState]
-/// appropriately.
-#[instrument(skip(game))]
-pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, event: E) {
+/// Adds a [DelegateCache] for this game in order to improve lookup performance.
+pub fn populate_delegate_cache(game: &mut GameState) {
+    let mut result = HashMap::new();
     for card_id in game.all_card_ids() {
         let definition = crate::get(game.card(card_id).name);
         for (index, ability) in definition.abilities.iter().enumerate() {
             let ability_id = AbilityId::new(card_id, index);
             let scope = Scope::new(ability_id);
             for delegate in &ability.delegates {
-                if let Some(functions) = E::get(delegate) {
-                    let data = event.data();
-                    if (functions.requirement)(game, scope, data) {
-                        info!(?event, ?scope, "invoke_event");
-                        (functions.mutation)(game, scope, data);
-
-                        if matches!(
-                            ability.ability_type,
-                            AbilityType::Standard(TriggerIndicator::Alert)
-                        ) {
-                            game.updates.push(GameUpdate::AbilityTriggered(ability_id));
-                        }
-                    }
-                }
+                result.entry(delegate.kind()).or_insert_with(Vec::new).push(DelegateContext {
+                    delegate: delegate.clone(),
+                    scope,
+                    trigger_alert: matches!(
+                        ability.ability_type,
+                        AbilityType::Standard(TriggerIndicator::Alert)
+                    ),
+                });
             }
+        }
+    }
+
+    game.delegate_cache = DelegateCache { lookup: result };
+}
+
+/// Called when a game event occurs, invokes each registered
+/// [data::delegates::Delegate] for this event to mutate the [GameState]
+/// appropriately.
+#[instrument(skip(game))]
+pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, event: E) {
+    let count = game.delegate_cache.delegate_count(event.kind());
+    for i in 0..count {
+        let delegate_context = game.delegate_cache.get(event.kind(), i);
+        let scope = delegate_context.scope;
+        let functions = E::extract(&delegate_context.delegate).expect("delegate");
+        let data = event.data();
+        if (functions.requirement)(game, scope, data) {
+            if delegate_context.trigger_alert {
+                game.updates.push(GameUpdate::AbilityTriggered(scope.ability_id()));
+            }
+            (functions.mutation)(game, scope, data);
         }
     }
 }
@@ -64,19 +79,14 @@ pub fn perform_query<D: Copy + Debug, R: Debug, E: QueryData<D, R>>(
     initial_value: R,
 ) -> R {
     let mut result = initial_value;
-    for card_id in game.all_card_ids() {
-        let definition = crate::get(game.card(card_id).name);
-        for (index, ability) in definition.abilities.iter().enumerate() {
-            let scope = Scope::new(AbilityId::new(card_id, index));
-            for delegate in &ability.delegates {
-                if let Some(functions) = E::get(delegate) {
-                    let data = query.data();
-                    if (functions.requirement)(game, scope, data) {
-                        info!(?query, ?scope, "perform_query");
-                        result = (functions.transformation)(game, scope, data, result);
-                    }
-                }
-            }
+    let count = game.delegate_cache.delegate_count(query.kind());
+    for i in 0..count {
+        let delegate_context = game.delegate_cache.get(query.kind(), i);
+        let scope = delegate_context.scope;
+        let functions = E::extract(&delegate_context.delegate).expect("delegate");
+        let data = query.data();
+        if (functions.requirement)(game, scope, data) {
+            result = (functions.transformation)(game, scope, data, result);
         }
     }
     result

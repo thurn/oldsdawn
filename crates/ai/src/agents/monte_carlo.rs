@@ -238,9 +238,9 @@ fn best_child(
 ///   𝐫𝐞𝐭𝐮𝐫𝐧 reward for state s
 /// ```
 fn default_policy(mut game: GameState, side: Side) -> RewardValue {
-    for _ in 0..500 {
+    for _ in 0..60 {
         if let GamePhase::GameOver(data) = game.data.phase {
-            return notnan(if data.winner == side { 1.0 } else { -1.0 });
+            return notnan(if data.winner == side { 10.0 } else { -10.0 });
         }
 
         let side = current_priority(&game);
@@ -249,7 +249,7 @@ fn default_policy(mut game: GameState, side: Side) -> RewardValue {
         actions::handle_user_action(&mut game, side, action).expect("Error handling action");
     }
 
-    panic!("No winner after 500 moves");
+    notnan(f64::from(game.player(side).score) - f64::from(game.player(side.opponent()).score))
 }
 
 /// Once a playout is completed, the backpropagation step walks back up the

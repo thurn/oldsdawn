@@ -20,7 +20,7 @@ use data::game::{GameConfiguration, GameState, MulliganDecision};
 use data::game_actions::{PromptAction, UserAction};
 use data::primitives::{GameId, PlayerId, Side};
 use maplit::hashmap;
-use rules::{actions, mutations};
+use rules::{actions, dispatch, mutations};
 
 fn new_game() -> GameState {
     let count = cards::initialize();
@@ -48,6 +48,7 @@ fn new_game() -> GameState {
         },
         GameConfiguration { deterministic: false, simulation: true },
     );
+    dispatch::populate_delegate_cache(&mut game);
     mutations::deal_opening_hands(&mut game);
     actions::handle_user_action(
         &mut game,
@@ -68,7 +69,7 @@ fn new_game() -> GameState {
 pub fn uct_search(c: &mut Criterion) {
     let game = new_game();
     c.bench_function("uct_search", |b| {
-        b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 100))
+        b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 1000))
     });
 }
 

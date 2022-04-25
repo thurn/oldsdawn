@@ -141,7 +141,11 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
                 self.0
             }
 
-            fn get(delegate: &Delegate) -> #return_value {
+            fn kind(&self) -> DelegateKind {
+                DelegateKind::#name
+            }
+
+            fn extract(delegate: &Delegate) -> #return_value {
                 match delegate {
                     Delegate::#name(d) => Some(*d),
                     _ => None,
