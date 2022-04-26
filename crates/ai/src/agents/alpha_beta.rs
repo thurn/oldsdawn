@@ -36,7 +36,7 @@ static AGENT: AgentPair = (AgentName::AlphaBeta, execute);
 /// Implementation of fail-hard alpha/beta pruning
 /// See <https://en.wikipedia.org/wiki/Alpha-beta_pruning>
 pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
-    run_search(&states.next().with_error(|| "Expected game state")?.state, side, 4)
+    run_search(&states.next().with_error(|| "Expected game state")?.state, side, 5)
 }
 
 pub fn run_search(game: &GameState, side: Side, depth: u32) -> Result<UserAction> {

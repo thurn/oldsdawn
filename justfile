@@ -1,6 +1,7 @@
 code-review: git-status check-format build clippy test check-docs
 
 clean:
+    rm -f target/.rustc_info.json
     cargo clean
     mkdir target
     xattr -w com.dropbox.ignored 1 target
