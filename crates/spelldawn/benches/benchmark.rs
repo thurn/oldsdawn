@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ai::agents::monte_carlo;
+use ai::agents::{alpha_beta, monte_carlo};
 use criterion::{criterion_group, criterion_main, Criterion};
 use data::card_name::CardName;
 use data::deck::Deck;
@@ -66,6 +66,9 @@ fn new_game() -> GameState {
     game
 }
 
+criterion_group!(benches, uct_search, alpha_beta_search);
+criterion_main!(benches);
+
 pub fn uct_search(c: &mut Criterion) {
     let game = new_game();
     c.bench_function("uct_search", |b| {
@@ -73,5 +76,9 @@ pub fn uct_search(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, uct_search);
-criterion_main!(benches);
+pub fn alpha_beta_search(c: &mut Criterion) {
+    let game = new_game();
+    c.bench_function("alpha_beta_search", |b| {
+        b.iter(|| alpha_beta::run_search(&game, Side::Overlord, 4).unwrap())
+    });
+}

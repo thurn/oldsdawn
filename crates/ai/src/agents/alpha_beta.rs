@@ -36,10 +36,13 @@ static AGENT: AgentPair = (AgentName::AlphaBeta, execute);
 /// Implementation of fail-hard alpha/beta pruning
 /// See <https://en.wikipedia.org/wiki/Alpha-beta_pruning>
 pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
-    let game = states.next().with_error(|| "Expected game state")?.state;
+    run_search(&states.next().with_error(|| "Expected game state")?.state, side, 4)
+}
+
+pub fn run_search(game: &GameState, side: Side, depth: u32) -> Result<UserAction> {
     let mut best_score = notnan(-f64::INFINITY);
     let mut best_action = None;
-    for action in legal_actions::evaluate(&game, side) {
+    for action in legal_actions::evaluate(game, side) {
         // I worry about the performance of .clone() here, but so far it's never shown
         // up in profiling as an issue compared to the cost of
         // `handle_user_action`.
@@ -49,7 +52,7 @@ pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAc
             &child,
             side,
             standard_evaluator,
-            2,
+            depth,
             notnan(-f64::INFINITY),
             notnan(f64::INFINITY),
         )?;
