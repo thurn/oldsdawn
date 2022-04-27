@@ -27,6 +27,7 @@ name = "ai"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "cards",
  "data",
  "enum-iterator",
  "enum-kinds",
@@ -160,6 +161,8 @@ version = "0.0.0"
 dependencies = [
  "data",
  "linkme",
+ "maplit",
+ "once_cell",
  "rules",
 ]
 

@@ -15,6 +15,7 @@
 //! Contains the definitions for all cards in the game.
 
 pub mod artifacts;
+pub mod decklists;
 pub mod minions;
 pub mod projects;
 pub mod schemes;

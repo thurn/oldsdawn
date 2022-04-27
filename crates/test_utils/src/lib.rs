@@ -86,7 +86,8 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
 
     if !args.resolve_mulligans {
         let turn_side = args.turn.unwrap_or(user_side);
-        game.data.phase = GamePhase::Play(CurrentTurn { side: turn_side, turn_number: 0 });
+        game.data.phase = GamePhase::Play;
+        game.data.turn = CurrentTurn { side: turn_side, turn_number: 0 };
         game.player_mut(user_side).mana = args.mana;
         game.player_mut(user_side).score = args.score;
         game.player_mut(user_side.opponent()).mana = args.opponent_mana;

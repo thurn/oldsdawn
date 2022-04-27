@@ -16,7 +16,7 @@
 
 #![allow(clippy::use_self)] // Required to use EnumKind
 
-use anyhow::{bail, Result};
+use anyhow::Result;
 use enum_kinds::EnumKind;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
@@ -165,7 +165,7 @@ pub struct GameOverData {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GamePhase {
     ResolveMulligans(MulliganData),
-    Play(CurrentTurn),
+    Play,
     GameOver(GameOverData),
 }
 
@@ -175,6 +175,8 @@ pub enum GamePhase {
 pub struct GameData {
     /// Current [GamePhase].
     pub phase: GamePhase,
+    /// Identifies current game turn
+    pub turn: CurrentTurn,
     /// Data about an ongoing raid, if any
     pub raid: Option<RaidData>,
     /// Counter to create unique IDs for raids within this game
@@ -238,6 +240,7 @@ impl GameState {
             champion: PlayerState::new(champion_deck.owner_id),
             data: GameData {
                 phase: GamePhase::ResolveMulligans(MulliganData::default()),
+                turn: CurrentTurn { side: Side::Overlord, turn_number: 0 },
                 raid: None,
                 next_raid_id: 1,
                 config,
@@ -424,22 +427,6 @@ impl GameState {
     /// Mutable version of [Self::raid].
     pub fn raid_mut(&mut self) -> Result<&mut RaidData> {
         self.data.raid.as_mut().with_error(|| "Expected Raid")
-    }
-
-    /// Helper to get the [CurrentTurn] of a game when it is expected to exist.
-    pub fn current_turn(&self) -> Result<&CurrentTurn> {
-        match &self.data.phase {
-            GamePhase::Play(turn) => Ok(turn),
-            _ => bail!("Game is not currently active"),
-        }
-    }
-
-    /// Mutable version of [Self::current_turn]
-    pub fn current_turn_mut(&mut self) -> Result<&mut CurrentTurn> {
-        match &mut self.data.phase {
-            GamePhase::Play(turn) => Ok(turn),
-            _ => bail!("Game is not currently active"),
-        }
     }
 
     /// Create card states for a deck

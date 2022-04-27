@@ -382,7 +382,7 @@ fn position_overrides(game: &GameState, user_side: Side) -> BTreeMap<Id, ObjectP
         GamePhase::ResolveMulligans(mulligans) => {
             opening_hand_position_overrides(game, user_side, mulligans)
         }
-        GamePhase::Play(_) => game.data.raid.as_ref().map_or_else(BTreeMap::new, |raid| {
+        GamePhase::Play => game.data.raid.as_ref().map_or_else(BTreeMap::new, |raid| {
             if raid.phase == RaidPhase::Access {
                 raid_access_position_overrides(game, user_side, raid)
             } else {

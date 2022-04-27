@@ -310,10 +310,11 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Ve
 /// Invoked after taking a game action to check if the turn should be switched
 /// for the provided player.
 pub fn check_end_turn(game: &mut GameState, side: Side) {
-    let turn = match &game.data.phase {
-        GamePhase::Play(turn) => turn,
-        _ => return,
-    };
+    if !matches!(game.data.phase, GamePhase::Play) {
+        return;
+    }
+
+    let turn = &game.data.turn;
 
     if turn.side == side && game.player(side).actions == 0 {
         let turn_number = match side {
@@ -379,7 +380,8 @@ pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
 
 /// Starts the turn for the `next_side` player.
 fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
-    game.data.phase = GamePhase::Play(CurrentTurn { side: next_side, turn_number });
+    game.data.phase = GamePhase::Play;
+    game.data.turn = CurrentTurn { side: next_side, turn_number };
 
     info!(?next_side, "start_player_turn");
     if next_side == Side::Overlord {

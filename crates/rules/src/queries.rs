@@ -32,10 +32,10 @@ use crate::dispatch;
 /// Returns true if the indicated player currently has a legal game action
 /// available to them.
 pub fn can_take_action(game: &GameState, side: Side) -> bool {
-    let turn = match &game.data.phase {
+    match &game.data.phase {
         GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
-        GamePhase::Play(turn) => turn,
         GamePhase::GameOver(_) => return false,
+        _ => {}
     };
 
     match &game.data.raid {
@@ -43,7 +43,7 @@ pub fn can_take_action(game: &GameState, side: Side) -> bool {
             RaidPhase::Activation => side == Side::Overlord,
             _ => side == Side::Champion,
         },
-        None => side == turn.side,
+        None => side == game.data.turn.side,
     }
 }
 
@@ -148,7 +148,8 @@ pub fn cost_to_defeat_target(
 /// with no pending prompt responses, and thus can take a primary game action.
 pub fn in_main_phase(game: &GameState, side: Side) -> bool {
     game.player(side).actions > 0
-        && matches!(&game.data.phase, GamePhase::Play(current_turn) if current_turn.side == side)
+        && matches!(&game.data.phase, GamePhase::Play)
+        && game.data.turn.side == side
         && game.data.raid.is_none()
         && game.overlord.prompt.is_none()
         && game.champion.prompt.is_none()

@@ -30,6 +30,9 @@ fix: git-status fix-lints fmt fix-clippy
 
 fix-amend: git-status fix-lints git-amend1 fmt git-amend2 fix-clippy git-amend3
 
+tournament:
+    cargo run --bin tournament
+
 clippy:
     cargo clippy --workspace --exclude "protos" -- \
         -D warnings \

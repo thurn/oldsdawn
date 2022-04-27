@@ -172,15 +172,11 @@ fn expand(
     source: NodeIndex,
     action: UserAction,
 ) -> NodeIndex {
+    let side = current_priority(game);
     // Instead of selecting an untried action here, we pass in the one we found in
     // `tree_policy` to avoid redundancy.
-    actions::handle_user_action(game, current_priority(game), action)
-        .expect("Error handling action");
-    let target = graph.add_node(SearchNode {
-        side: current_priority(game),
-        total_reward: notnan(0.0),
-        visit_count: 0,
-    });
+    actions::handle_user_action(game, side, action).expect("Error handling action");
+    let target = graph.add_node(SearchNode { side, total_reward: notnan(0.0), visit_count: 0 });
     graph.add_edge(source, target, SearchEdge { action });
     target
 }
