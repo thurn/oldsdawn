@@ -68,6 +68,7 @@ pub enum CardName {
     GoldMine,
     IceDragon,
     DungeonAnnex,
+    Meditation,
 }
 
 impl CardName {

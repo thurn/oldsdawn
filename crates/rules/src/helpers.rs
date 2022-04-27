@@ -21,7 +21,8 @@ use data::card_definition::{
 use data::delegates::{Delegate, EventDelegate, MutationFn, Scope};
 use data::game::GameState;
 use data::primitives::{
-    AbilityId, AttackValue, BoostData, CardId, HealthValue, ManaValue, Sprite, TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, Sprite,
+    TurnNumber,
 };
 use data::text::{AbilityText, NumericOperator, TextToken};
 
@@ -35,6 +36,14 @@ pub fn add_number(number: impl Into<u32>) -> TextToken {
 
 pub fn mana(value: ManaValue) -> TextToken {
     TextToken::Mana(value)
+}
+
+pub fn actions(value: ActionCount) -> TextToken {
+    TextToken::Actions(value)
+}
+
+pub fn reminder(text: &'static str) -> TextToken {
+    TextToken::Reminder(text.to_string())
 }
 
 pub fn scheme_cost() -> Cost {

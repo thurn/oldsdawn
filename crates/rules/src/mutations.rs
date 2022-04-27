@@ -165,6 +165,14 @@ pub fn spend_mana(game: &mut GameState, side: Side, amount: ManaValue) {
     game.player_mut(side).mana -= amount;
 }
 
+/// Lose action points if a player has more than 0.
+#[instrument(skip(game))]
+pub fn lose_action_point_if_able(game: &mut GameState, side: Side, amount: ActionCount) {
+    if game.player(side).actions > 0 {
+        spend_action_points(game, side, amount)
+    }
+}
+
 /// Spends a player's action points.
 ///
 /// Panics if sufficient action points are not available.

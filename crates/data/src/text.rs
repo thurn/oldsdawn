@@ -49,6 +49,7 @@ pub enum TextToken {
     Mana(ManaValue),
     Actions(ActionCount),
     Keyword(Keyword),
+    Reminder(String),
     Cost(Vec<Self>),
 }
 

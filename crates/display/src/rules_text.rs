@@ -133,11 +133,13 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 ),
                 Keyword::EndRaid => "End the raid.".to_string(),
             },
+            TextToken::Reminder(text) => format!("<i>{}</i>", text),
             TextToken::Cost(cost) => format!("{}: ", process_text_tokens(cost)),
         })
     }
 
-    result.join(" ")
+    let string = result.join(" ");
+    string.replace(" .", ".") // Don't have periods exist on their own as tokens
 }
 
 fn card_type_line(definition: &CardDefinition) -> String {

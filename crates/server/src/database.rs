@@ -23,6 +23,7 @@ use data::primitives::{GameId, PlayerId, Side};
 use data::with_error::WithError;
 use maplit::hashmap;
 use once_cell::sync::Lazy;
+use rules::dispatch;
 use sled::{Db, Tree};
 
 static DATABASE: Lazy<Db> = Lazy::new(|| sled::open("db").expect("Unable to open database"));
@@ -59,8 +60,10 @@ impl Database for SledDatabase {
             .get(id.key())
             .with_error(|| format!("Error reading  game: {:?}", id))?
             .with_error(|| format!("Game not found: {:?}", id))?;
-        bincode::deserialize(content.as_ref())
-            .with_error(|| format!("Error deserializing game {:?}", id))
+        let mut game = bincode::deserialize(content.as_ref())
+            .with_error(|| format!("Error deserializing game {:?}", id))?;
+        dispatch::populate_delegate_cache(&mut game);
+        Ok(game)
     }
 
     fn write_game(&mut self, game: &GameState) -> Result<()> {
@@ -80,7 +83,7 @@ impl Database for SledDatabase {
                 cards: hashmap! {
                     CardName::Lodestone => 15,
                     CardName::Greataxe => 15,
-                    CardName::ArcaneRecovery => 15,
+                    CardName::Meditation => 15,
                 },
             }
         } else {

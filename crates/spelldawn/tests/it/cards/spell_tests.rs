@@ -23,3 +23,15 @@ fn arcane_recovery() {
     assert_eq!(9, g.me().mana());
     assert_eq!(9, g.opponent.other_player.mana())
 }
+
+#[test]
+fn meditation() {
+    let mut g = new_game(Side::Champion, Args { mana: 5, ..Args::default() });
+    assert_eq!(3, g.me().actions());
+    g.play_from_hand(CardName::Meditation);
+    assert_eq!(9, g.me().mana());
+    assert_eq!(1, g.me().actions());
+    g.play_from_hand(CardName::Meditation);
+    assert_eq!(13, g.me().mana());
+    assert!(g.dusk());
+}

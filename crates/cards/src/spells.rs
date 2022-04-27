@@ -29,7 +29,7 @@ pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
         name: CardName::ArcaneRecovery,
         cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_24"),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
         card_type: CardType::Spell,
         side: Side::Champion,
         school: School::Time,
@@ -37,6 +37,27 @@ pub fn arcane_recovery() -> CardDefinition {
         abilities: vec![on_cast(text!("Gain", mana(9)), |g, s, _| {
             mutations::gain_mana(g, s.side(), 9)
         })],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn meditation() -> CardDefinition {
+    CardDefinition {
+        name: CardName::Meditation,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_24"),
+        card_type: CardType::Spell,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![on_cast(
+            text!("Gain", mana(5), ".", "Lose", actions(1), reminder("(if able).")),
+            |g, s, _| {
+                mutations::gain_mana(g, s.side(), 5);
+                mutations::lose_action_point_if_able(g, s.side(), 1);
+            },
+        )],
         config: CardConfig::default(),
     }
 }
