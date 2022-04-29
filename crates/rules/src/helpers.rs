@@ -46,13 +46,13 @@ pub fn reminder(text: &'static str) -> TextToken {
     TextToken::Reminder(text.to_string())
 }
 
-pub fn scheme_cost() -> Cost {
+pub fn cost_1_action() -> Cost {
     Cost { mana: None, actions: 1 }
 }
 
 /// Provides the cost for a card, with 1 action point required
 pub fn cost(mana: ManaValue) -> Cost {
-    Cost { mana: if mana == 0 { None } else { Some(mana) }, actions: 1 }
+    Cost { mana: Some(mana), actions: 1 }
 }
 
 /// Provides an image for a card

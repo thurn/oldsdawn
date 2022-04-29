@@ -290,6 +290,7 @@ pub fn level_up_room(session: &mut TestSession, times: u32) {
 ///
 /// NOTE: This causes the Champion player to draw a card for their turn!
 pub fn fire_minion_combat_abilities(session: &mut TestSession) {
+    session.play_from_hand(CardName::TestScheme31);
     spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
     session.initiate_raid(ROOM_ID);
@@ -317,6 +318,7 @@ pub fn fire_weapon_combat_abilities(
 ) {
     spend_actions_until_turn_over(session, Side::Champion);
     assert!(session.dusk());
+    session.play_from_hand(CardName::TestScheme31);
     let minion_name = match faction {
         Faction::Prismatic => panic!("Unsupported"),
         Faction::Mortal => CardName::TestMortalMinion,

@@ -539,14 +539,11 @@ fn raid_no_occupants() {
 
     g.play_from_hand(CardName::TestMinionEndRaid);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
-    g.initiate_raid(ROOM_ID);
-    g.click_on(g.opponent_id(), "Activate");
-    let response = g.click_on(g.user_id(), "Test Weapon");
-
-    // End Raid should be the only option
-    assert!(g.user.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
-    assert_snapshot!(Summary::summarize(&response));
+    let result = g.perform_action(
+        Action::InitiateRaid(InitiateRaidAction { room_id: CLIENT_ROOM_ID.into() }),
+        g.user_id(),
+    );
+    assert_error(result);
 }
 
 #[test]

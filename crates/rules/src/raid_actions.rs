@@ -34,12 +34,16 @@ pub fn initiate_raid_action(
 ) -> Result<()> {
     info!(?user_side, "initiate_raid_action");
     ensure!(
-        flags::can_initiate_raid(game, user_side, target_room),
+        flags::can_take_initiate_raid_action(game, user_side, target_room),
         "Cannot initiate raid for {:?}",
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
+    initiate_raid(game, target_room)
+}
 
+/// Initiates a raid on the indicated `target_room`.
+pub fn initiate_raid(game: &mut GameState, target_room: RoomId) -> Result<()> {
     let raid_id = RaidId(game.data.next_raid_id);
     let raid = RaidData {
         target: target_room,
@@ -61,7 +65,6 @@ pub fn initiate_raid_action(
     raid_phases::set_raid_phase(game, phase)?;
     dispatch::invoke_event(game, RaidBeginEvent(raid_id));
     game.updates.push(GameUpdate::InitiateRaid(target_room));
-
     Ok(())
 }
 

@@ -23,16 +23,16 @@ use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::play_effect_position::EffectPosition;
 use protos::spelldawn::{
-    game_object_identifier, node_type, ActionTrackerView, AnchorCorner, AudioClipAddress,
-    CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons, CardIdentifier,
-    CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
+    game_object_identifier, node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom,
+    AudioClipAddress, CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons,
+    CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
     CreateOrUpdateCardCommand, DelayCommand, DestroyCardCommand, DisplayGameMessageCommand,
     DisplayRewardsCommand, EffectAddress, FireProjectileCommand, GameCommand, GameMessageType,
     GameObjectIdentifier, GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand,
     ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MusicState, NoTargeting,
     Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand, PlayEffectPosition,
-    PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide, PlayerView, ProjectileAddress,
-    RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomTargeting, RoomVisitType,
+    PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide, PlayerView,
+    ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomVisitType,
     RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand,
     SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
     UpdateGameViewCommand, VisitRoomCommand,
@@ -519,7 +519,16 @@ impl Summarize for Targeting {
             Targeting::NoTargeting(NoTargeting { can_play }) => {
                 summary.child_node("can_play", can_play)
             }
-            Targeting::RoomTargeting(RoomTargeting { valid_rooms }) => {
+            Targeting::PlayInRoom(PlayInRoom { valid_rooms }) => {
+                summary.children(
+                    "valid_rooms",
+                    valid_rooms
+                        .iter()
+                        .map(|i| RoomIdentifier::from_i32(*i).expect("RoomIdentifier"))
+                        .collect(),
+                );
+            }
+            Targeting::ArrowTargetRoom(ArrowTargetRoom { valid_rooms, .. }) => {
                 summary.children(
                     "valid_rooms",
                     valid_rooms

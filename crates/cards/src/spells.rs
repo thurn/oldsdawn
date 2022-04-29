@@ -14,9 +14,9 @@
 
 //! Card definitions for the Spell card type & Champion player
 
-use data::card_definition::{CardConfig, CardDefinition};
+use data::card_definition::{CardConfig, CardDefinition, CustomTargeting};
 use data::card_name::CardName;
-use data::primitives::{CardType, Rarity, School, Side};
+use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
@@ -59,5 +59,25 @@ pub fn meditation() -> CardDefinition {
             },
         )],
         config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn coup_de_grace() -> CardDefinition {
+    CardDefinition {
+        name: CardName::CoupDeGrace,
+        cost: cost(0),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_26"),
+        card_type: CardType::Spell,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![],
+        config: CardConfig {
+            custom_targeting: Some(CustomTargeting::TargetRoom(|r| {
+                r == RoomId::Sanctum || r == RoomId::Vault
+            })),
+            ..CardConfig::default()
+        },
     }
 }

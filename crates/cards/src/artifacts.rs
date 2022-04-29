@@ -35,7 +35,7 @@ pub fn lodestone() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![
             abilities::store_mana::<12>(),
-            abilities::activated_take_mana::<2>(cost(0)),
+            abilities::activated_take_mana::<2>(cost_1_action()),
         ],
         config: CardConfig::default(),
     }

@@ -213,7 +213,7 @@ fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
 fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) -> Result<()> {
     info!(?user_side, "level_up_room_action");
     ensure!(
-        flags::can_level_up_room(game, user_side, room_id),
+        flags::can_take_level_up_room_action(game, user_side, room_id),
         "Cannot level up room for {:?}",
         user_side
     );

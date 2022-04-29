@@ -28,6 +28,7 @@ namespace Spelldawn.Services
   public sealed class CardService : MonoBehaviour
   {
     [SerializeField] Registry _registry = null!;
+    [SerializeField] BoxCollider _playCardArea = null!;
     [SerializeField] Card _cardPrefab = null!;
     [SerializeField] Card _tokenCardPrefab = null!;
     [SerializeField] ObjectDisplay _infoZoomLeft = null!;
@@ -37,8 +38,9 @@ namespace Spelldawn.Services
     SpriteAddress _userCardBack = null!;
     SpriteAddress _opponentCardBack = null!;
 
+    readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
     readonly Dictionary<CardIdentifier, Card> _cards = new();
-
+    
     public bool CurrentlyDragging { get; set; }
 
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)
@@ -157,6 +159,22 @@ namespace Spelldawn.Services
       card.Render(_registry, cardView, gameContext, animate: animate);
       _cards[Errors.CheckNotNull(cardView.CardId)] = card;
       return card;
+    }
+
+    public bool IsMouseOverPlayCardArea()
+    {
+      var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
+      var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
+      for (var i = 0; i < hits; ++i)
+      {
+        var hit = _raycastHitsTempBuffer[i];
+        if (hit.collider == _playCardArea)
+        {
+          return true;
+        }
+      }
+
+      return false;
     }
 
     public void DisplayInfoZoom(Vector3 worldMousePosition, Card card)

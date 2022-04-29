@@ -507,15 +507,25 @@ message NoTargeting {
 }
 
 // This card should prompt for a room to be played into.
-message RoomTargeting {
+message PlayInRoom {
     // The card can be played if at least one identifier is present here
     repeated RoomIdentifier valid_rooms = 1;
+}
+
+// The card should show an arrow to select a room to target
+message ArrowTargetRoom {
+    // The card can be played if at least one identifier is present here
+    repeated RoomIdentifier valid_rooms = 1;
+
+    // Which arrow to show
+    TargetingArrow arrow = 2;
 }
 
 message CardTargeting {
     oneof targeting {
         NoTargeting no_targeting = 1;
-        RoomTargeting room_targeting = 2;
+        PlayInRoom play_in_room = 2;
+        ArrowTargetRoom arrow_target_room = 3;
     }
 }
 

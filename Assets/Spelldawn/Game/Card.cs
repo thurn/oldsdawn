@@ -26,7 +26,7 @@ using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class Card : Displayable
+  public sealed class Card : Displayable, ArrowService.IArrowDelegate
   {
     public const float CardScale = 1.5f;
 
@@ -71,6 +71,7 @@ namespace Spelldawn.Game
     ObjectPosition? _releasePosition;
     Node? _supplementalInfo;
     Registry _registry = null!;
+    ArrowService.Type? _arrowOnDrag;
 
     [Serializable]
     public sealed class Icon
@@ -262,13 +263,22 @@ namespace Spelldawn.Game
       var rotation = Quaternion.Slerp(_initialDragRotation, Quaternion.Euler(280, 0, 0), t);
       transform.rotation = rotation;
 
-      if (distanceDragged > 0.5f)
+      if (distanceDragged > 0.25f)
       {
         _registry.CardService.ClearInfoZoom();
+      }
 
+      if (_registry.CardService.IsMouseOverPlayCardArea())
+      {
         if (_validRoomTargets != null)
         {
           _registry.ArenaService.ShowRoomSelectorForMousePosition(_validRoomTargets);
+        }
+
+        if (_arrowOnDrag is {} arrow)
+        {
+          gameObject.SetActive(false);
+          _registry.ArrowService.ShowArrow(arrow, _registry.IdentityCardForPlayer(PlayerName.User).transform, this);
         }
       }
       else
@@ -279,6 +289,13 @@ namespace Spelldawn.Game
 
     public override void MouseUp()
     {
+      if (_arrowOnDrag != null)
+      {
+        // GameObject will be disabled when arrow is being shown 
+        gameObject.SetActive(true);
+        _registry.ArrowService.HideArrows();
+      }
+      
       _registry.CardService.ClearInfoZoom();
 
       if (!_registry.CardService.CurrentlyDragging)
@@ -333,8 +350,7 @@ namespace Spelldawn.Game
 
       if (_validRoomTargets == null)
       {
-        var distance = _dragStartPosition.z - WorldMousePosition(_registry, _dragStartScreenZ).z;
-        return distance < 3.5f;
+        return !_registry.CardService.IsMouseOverPlayCardArea();
       }
       else
       {
@@ -393,15 +409,30 @@ namespace Spelldawn.Game
         gameObject.name = revealed.Title.Text;
       }
 
+      _validRoomTargets = null;
+      _serverCanPlay = false;
+      _arrowOnDrag = null;
+      
       switch (revealed.Targeting?.TargetingCase)
       {
         case CardTargeting.TargetingOneofCase.NoTargeting:
           _validRoomTargets = null;
           _serverCanPlay = revealed.Targeting.NoTargeting.CanPlay;
           break;
-        case CardTargeting.TargetingOneofCase.RoomTargeting:
-          _validRoomTargets = revealed.Targeting.RoomTargeting.ValidRooms.ToHashSet();
+        case CardTargeting.TargetingOneofCase.PlayInRoom:
+          _validRoomTargets = revealed.Targeting.PlayInRoom.ValidRooms.ToHashSet();
           _serverCanPlay = _validRoomTargets.Count > 0;
+          break;
+        case CardTargeting.TargetingOneofCase.ArrowTargetRoom:
+          _validRoomTargets = revealed.Targeting.ArrowTargetRoom.ValidRooms.ToHashSet();
+          _serverCanPlay = _validRoomTargets.Count > 0;
+          _arrowOnDrag = revealed.Targeting.ArrowTargetRoom.Arrow switch
+          {
+            TargetingArrow.Red => ArrowService.Type.Red,
+            TargetingArrow.Blue => ArrowService.Type.Blue,
+            TargetingArrow.Green => ArrowService.Type.Green,
+            _ => null
+          };
           break;
         default:
           _validRoomTargets = null;
@@ -494,6 +525,19 @@ namespace Spelldawn.Game
       }
 
       _title.text = title;
+    }
+
+    public void OnArrowMoved(Vector3 position)
+    {
+      if (!_registry.CardService.IsMouseOverPlayCardArea())
+      {
+        _registry.ArrowService.HideArrows();
+        gameObject.SetActive(true);
+      }
+    }
+
+    public void OnArrowReleased(Vector3 position)
+    {
     }
   }
 }

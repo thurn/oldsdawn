@@ -36,11 +36,13 @@ pub fn evaluate<'a>(game: &'a GameState, side: Side) -> Box<dyn Iterator<Item = 
     if queries::in_main_phase(game, side) {
         Box::new(
             RoomId::into_enum_iter()
-                .filter(move |room_id| flags::can_initiate_raid(game, side, *room_id))
+                .filter(move |room_id| flags::can_take_initiate_raid_action(game, side, *room_id))
                 .map(UserAction::InitiateRaid)
                 .chain(
                     RoomId::into_enum_iter()
-                        .filter(move |room_id| flags::can_level_up_room(game, side, *room_id))
+                        .filter(move |room_id| {
+                            flags::can_take_level_up_room_action(game, side, *room_id)
+                        })
                         .map(UserAction::LevelUpRoom),
                 )
                 .chain(game.hand(side).flat_map(move |c| legal_card_actions(game, side, c.id)))

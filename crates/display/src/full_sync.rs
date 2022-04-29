@@ -16,7 +16,7 @@
 
 use std::collections::BTreeMap;
 
-use data::card_definition::{AbilityType, CardDefinition};
+use data::card_definition::{AbilityType, CardDefinition, CustomTargeting};
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::game_actions::CardTarget;
@@ -33,13 +33,13 @@ use protos::spelldawn::{
     CardView, ClientItemLocation, ClientRoomLocation, CreateOrUpdateCardCommand, GameIdentifier,
     GameView, ManaView, ObjectPosition, ObjectPositionDeck, ObjectPositionDiscardPile,
     ObjectPositionHand, ObjectPositionIdentity, ObjectPositionItem, ObjectPositionRaid,
-    ObjectPositionRoom, ObjectPositionStaging, PlayerInfo, PlayerName, PlayerView,
-    RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomTargeting, ScoreView,
-    SpriteAddress, UpdateGameViewCommand,
+    ObjectPositionRoom, ObjectPositionStaging, PlayInRoom, PlayerInfo, PlayerName, PlayerView,
+    RenderInterfaceCommand, RevealedCardView, RoomIdentifier, ScoreView, SpriteAddress,
+    UpdateGameViewCommand,
 };
 use protos::spelldawn::{
-    CardIdentifier, CardPrefab, NoTargeting, ObjectPositionBrowser, ObjectPositionIntoCard,
-    RulesText,
+    ArrowTargetRoom, CardIdentifier, CardPrefab, NoTargeting, ObjectPositionBrowser,
+    ObjectPositionIntoCard, RulesText, TargetingArrow,
 };
 use rules::{flags, queries};
 
@@ -120,11 +120,11 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
             portrait_frame: Some(assets::identity_card_frame(side)),
             valid_rooms_to_visit: match side {
                 Side::Overlord => RoomId::into_enum_iter()
-                    .filter(|room_id| flags::can_level_up_room(game, side, *room_id))
+                    .filter(|room_id| flags::can_take_level_up_room_action(game, side, *room_id))
                     .map(|room_id| adapters::adapt_room_id(room_id).into())
                     .collect(),
                 Side::Champion => RoomId::into_enum_iter()
-                    .filter(|room_id| flags::can_initiate_raid(game, side, *room_id))
+                    .filter(|room_id| flags::can_take_initiate_raid_action(game, side, *room_id))
                     .map(|room_id| adapters::adapt_room_id(room_id).into())
                     .collect(),
             },
@@ -546,6 +546,31 @@ pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPositio
 
 /// Builds a description of the standard [CardTargeting] behavior of a card
 fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTargeting {
+    let valid_rooms = || {
+        RoomId::into_enum_iter()
+            .filter(|room_id| {
+                flags::can_take_play_card_action(
+                    game,
+                    user_side,
+                    card.id,
+                    CardTarget::Room(*room_id),
+                )
+            })
+            .map(|room_id| adapters::adapt_room_id(room_id).into())
+            .collect()
+    };
+
+    if let Some(custom_targeting) = &rules::get(card.name).config.custom_targeting {
+        return match custom_targeting {
+            CustomTargeting::TargetRoom(_) => CardTargeting {
+                targeting: Some(Targeting::ArrowTargetRoom(ArrowTargetRoom {
+                    valid_rooms: valid_rooms(),
+                    arrow: TargetingArrow::Red.into(),
+                })),
+            },
+        };
+    }
+
     CardTargeting {
         targeting: match rules::get(card.name).card_type {
             CardType::Sorcery
@@ -561,19 +586,7 @@ fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTa
                 ),
             })),
             CardType::Minion | CardType::Project | CardType::Scheme => {
-                Some(Targeting::RoomTargeting(RoomTargeting {
-                    valid_rooms: RoomId::into_enum_iter()
-                        .filter(|room_id| {
-                            flags::can_take_play_card_action(
-                                game,
-                                user_side,
-                                card.id,
-                                CardTarget::Room(*room_id),
-                            )
-                        })
-                        .map(|room_id| adapters::adapt_room_id(room_id).into())
-                        .collect(),
-                }))
+                Some(Targeting::PlayInRoom(PlayInRoom { valid_rooms: valid_rooms() }))
             }
         },
     }

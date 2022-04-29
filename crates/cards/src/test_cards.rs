@@ -84,7 +84,7 @@ pub fn test_champion_spell() -> CardDefinition {
 pub fn test_scheme_31() -> CardDefinition {
     CardDefinition {
         name: CardName::TestScheme31,
-        cost: scheme_cost(),
+        cost: cost_1_action(),
         card_type: CardType::Scheme,
         config: CardConfig {
             stats: scheme_points(SchemePoints { level_requirement: 3, points: 1 }),
@@ -243,7 +243,7 @@ pub fn activated_ability_take_mana() -> CardDefinition {
         card_type: CardType::Artifact,
         abilities: vec![
             abilities::store_mana::<MANA_STORED>(),
-            abilities::activated_take_mana::<MANA_TAKEN>(cost(0)),
+            abilities::activated_take_mana::<MANA_TAKEN>(cost_1_action()),
         ],
         config: CardConfig::default(),
         ..test_champion_spell()

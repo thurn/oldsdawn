@@ -417,14 +417,24 @@ pub struct NoTargeting {
 }
 /// This card should prompt for a room to be played into.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct RoomTargeting {
+pub struct PlayInRoom {
     /// The card can be played if at least one identifier is present here
     #[prost(enumeration = "RoomIdentifier", repeated, tag = "1")]
     pub valid_rooms: ::prost::alloc::vec::Vec<i32>,
 }
+/// The card should show an arrow to select a room to target
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ArrowTargetRoom {
+    /// The card can be played if at least one identifier is present here
+    #[prost(enumeration = "RoomIdentifier", repeated, tag = "1")]
+    pub valid_rooms: ::prost::alloc::vec::Vec<i32>,
+    /// Which arrow to show
+    #[prost(enumeration = "TargetingArrow", tag = "2")]
+    pub arrow: i32,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardTargeting {
-    #[prost(oneof = "card_targeting::Targeting", tags = "1, 2")]
+    #[prost(oneof = "card_targeting::Targeting", tags = "1, 2, 3")]
     pub targeting: ::core::option::Option<card_targeting::Targeting>,
 }
 /// Nested message and enum types in `CardTargeting`.
@@ -434,7 +444,9 @@ pub mod card_targeting {
         #[prost(message, tag = "1")]
         NoTargeting(super::NoTargeting),
         #[prost(message, tag = "2")]
-        RoomTargeting(super::RoomTargeting),
+        PlayInRoom(super::PlayInRoom),
+        #[prost(message, tag = "3")]
+        ArrowTargetRoom(super::ArrowTargetRoom),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

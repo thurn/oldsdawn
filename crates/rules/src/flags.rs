@@ -15,7 +15,7 @@
 //! Functions to query boolean game information, typically whether some game
 //! action can currently be taken
 
-use data::card_definition::AbilityType;
+use data::card_definition::{AbilityType, CustomTargeting};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     CanActivateAbilityQuery, CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery,
@@ -93,7 +93,19 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> boo
                 .any(|card| card_types.contains(&crate::get(card.name).card_type))
     }
 
-    match crate::get(game.card(card_id).name).card_type {
+    let definition = crate::get(game.card(card_id).name);
+    if let Some(targeting) = &definition.config.custom_targeting {
+        let room_id = match target {
+            CardTarget::Room(room_id) => room_id,
+            _ => return false,
+        };
+
+        return match targeting {
+            CustomTargeting::TargetRoom(predicate) => predicate(room_id),
+        };
+    }
+
+    match definition.card_type {
         CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Sorcery => {
             target == CardTarget::None
         }
@@ -131,10 +143,8 @@ pub fn can_take_gain_mana_action(game: &GameState, side: Side) -> bool {
 
 /// Returns whether the indicated player can currently take the basic game
 /// action to initiate a raid on the target [RoomId].
-pub fn can_initiate_raid(game: &GameState, side: Side, target: RoomId) -> bool {
-    let non_empty = target.is_inner_room()
-        || game.occupants(target).next().is_some()
-        || game.defenders_alphabetical(target).next().is_some();
+pub fn can_take_initiate_raid_action(game: &GameState, side: Side, target: RoomId) -> bool {
+    let non_empty = target.is_inner_room() || game.occupants(target).next().is_some();
     let can_initiate = non_empty
         && side == Side::Champion
         && game.data.raid.is_none()
@@ -144,7 +154,7 @@ pub fn can_initiate_raid(game: &GameState, side: Side, target: RoomId) -> bool {
 
 /// Returns whether the indicated player can currently take the basic game
 /// action to level up a room
-pub fn can_level_up_room(game: &GameState, side: Side, room_id: RoomId) -> bool {
+pub fn can_take_level_up_room_action(game: &GameState, side: Side, room_id: RoomId) -> bool {
     let has_level_card = game
         .occupants(room_id)
         .chain(game.defenders_alphabetical(room_id))

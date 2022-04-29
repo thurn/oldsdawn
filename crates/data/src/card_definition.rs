@@ -25,7 +25,8 @@ use crate::card_name::CardName;
 use crate::delegates::Delegate;
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, AttackValue, CardId, CardSubtype, CardType, Faction,
-    HealthValue, LevelValue, ManaValue, PointsValue, Rarity, School, ShieldValue, Side, Sprite,
+    HealthValue, LevelValue, ManaValue, PointsValue, Rarity, RoomId, School, ShieldValue, Side,
+    Sprite,
 };
 use crate::special_effects::{Projectile, TimedEffect};
 use crate::text::AbilityText;
@@ -125,6 +126,17 @@ pub struct SpecialEffects {
     pub additional_hit: Option<TimedEffect>,
 }
 
+pub type RoomPredicate = fn(RoomId) -> bool;
+
+/// Allows cards to provide special targeting behavior beyond what is normal for
+/// their [CardType].
+#[derive(Debug)]
+pub enum CustomTargeting {
+    /// Target a specific room when played. Only rooms for which the provided
+    /// [RoomPredicate] returns true are considered valid targets.
+    TargetRoom(RoomPredicate),
+}
+
 /// Individual card configuration; properties which are not universal for all
 /// cards
 #[derive(Debug, Default)]
@@ -132,13 +144,14 @@ pub struct CardConfig {
     pub stats: CardStats,
     pub faction: Option<Faction>,
     pub subtypes: Vec<CardSubtype>,
+    pub custom_targeting: Option<CustomTargeting>,
     pub special_effects: SpecialEffects,
 }
 
 /// The fundamental object defining the behavior of a given card in Spelldawn
 ///
-/// This struct's top-level fields should be universal properties which apply to
-/// every card
+/// This struct's top-level fields should be universal properties which need to
+/// be set by every card
 #[derive(Debug)]
 pub struct CardDefinition {
     pub name: CardName,

@@ -32,12 +32,12 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    card_target, game_object_identifier, node_type, CardAnchorNode, CardIdentifier, CardTarget,
-    CardView, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
-    GameAction, GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest,
-    InitiateRaidAction, NoTargeting, Node, NodeType, ObjectPosition, ObjectPositionBrowser,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayerName,
-    PlayerView, RevealedCardView, RoomTargeting,
+    card_target, game_object_identifier, node_type, ArrowTargetRoom, CardAnchorNode,
+    CardIdentifier, CardTarget, CardView, ClientRoomLocation, CommandList,
+    CreateOrUpdateCardCommand, EventHandlers, GameAction, GameIdentifier, GameMessageType,
+    GameObjectIdentifier, GameRequest, InitiateRaidAction, NoTargeting, Node, NodeType,
+    ObjectPosition, ObjectPositionBrowser, ObjectPositionDiscardPile, ObjectPositionHand,
+    ObjectPositionRoom, PlayCardAction, PlayInRoom, PlayerName, PlayerView, RevealedCardView,
 };
 use rules::dispatch;
 use server::requests::GameResponse;
@@ -799,7 +799,10 @@ impl ClientCard {
                 .expect("targeting")
             {
                 Targeting::NoTargeting(NoTargeting { can_play }) => *can_play,
-                Targeting::RoomTargeting(RoomTargeting { valid_rooms }) => valid_rooms.is_empty(),
+                Targeting::PlayInRoom(PlayInRoom { valid_rooms }) => !valid_rooms.is_empty(),
+                Targeting::ArrowTargetRoom(ArrowTargetRoom { valid_rooms, .. }) => {
+                    !valid_rooms.is_empty()
+                }
             },
         );
 

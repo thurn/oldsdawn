@@ -542,7 +542,7 @@ When you use this item, remove a <sprite name=""dot""> or sacrifice it
     {
       var roomTarget = new CardTargeting
       {
-        RoomTargeting = new RoomTargeting()
+        PlayInRoom = new PlayInRoom()
       };
 
       var roomPos = new ObjectPosition
