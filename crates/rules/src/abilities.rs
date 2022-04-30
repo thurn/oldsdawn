@@ -54,8 +54,8 @@ pub fn store_mana<const N: ManaValue>() -> Ability {
         text: text![Keyword::Play, Keyword::Store(N)],
         ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![
-            Delegate::PlayCard(EventDelegate::new(this_card, |g, _s, card_id| {
-                g.card_mut(card_id).data.stored_mana = N;
+            Delegate::CastCard(EventDelegate::new(this_card, |g, _s, played| {
+                g.card_mut(played.card_id).data.stored_mana = N;
             })),
             Delegate::StoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
                 if g.card(card_id).data.stored_mana == 0 {

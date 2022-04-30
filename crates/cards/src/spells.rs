@@ -20,7 +20,7 @@ use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
-use rules::{mutations, DEFINITIONS};
+use rules::{mutations, raid_actions, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -72,7 +72,15 @@ pub fn coup_de_grace() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![],
+        abilities: vec![on_cast(
+            text!(
+                "Raid the Sanctum or Vault, accessing 1 additional card.",
+                "If successful, draw a card."
+            ),
+            |g, _, play_card| {
+                raid_actions::initiate_raid(g, play_card.target.room_id().unwrap()).unwrap()
+            },
+        )],
         config: CardConfig {
             custom_targeting: Some(CustomTargeting::TargetRoom(|r| {
                 r == RoomId::Sanctum || r == RoomId::Vault

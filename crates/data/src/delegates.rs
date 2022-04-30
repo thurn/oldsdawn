@@ -74,6 +74,7 @@ use crate::card_definition::Cost;
 #[allow(unused)] // Used in rustdocs
 use crate::card_state::{CardData, CardPosition};
 use crate::game::GameState;
+use crate::game_actions::CardTarget;
 use crate::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
     RaidId, ShieldValue, Side, TurnNumber,
@@ -202,6 +203,19 @@ impl From<Flag> for bool {
 
 /// Event data for when a card is moved
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct CardPlayed {
+    pub card_id: CardId,
+    pub target: CardTarget,
+}
+
+impl From<CardPlayed> for CardId {
+    fn from(played: CardPlayed) -> Self {
+        played.card_id
+    }
+}
+
+/// Event data for when a card is moved
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardMoved {
     /// Position before the move
     pub old_position: CardPosition,
@@ -242,9 +256,7 @@ pub enum Delegate {
     /// additional costs deducted.
     PayCardCosts(EventDelegate<CardId>),
     /// A card has been played via the Play action and has had its costs paid
-    CastCard(EventDelegate<CardId>),
-    /// A card is moved from a non-arena position to an arena position
-    PlayCard(EventDelegate<CardId>),
+    CastCard(EventDelegate<CardPlayed>),
     /// A card ability with a cost is activated
     ActivateAbility(EventDelegate<AbilityId>),
     /// A card is moved to a new position

@@ -18,7 +18,7 @@
 use data::card_definition::{
     Ability, AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
 };
-use data::delegates::{Delegate, EventDelegate, MutationFn, Scope};
+use data::delegates::{CardPlayed, Delegate, EventDelegate, MutationFn, Scope};
 use data::game::GameState;
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, Sprite,
@@ -96,20 +96,11 @@ pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> boo
 }
 
 /// An ability which triggers when a card is cast
-pub fn on_cast(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
+pub fn on_cast(rules: AbilityText, mutation: MutationFn<CardPlayed>) -> Ability {
     Ability {
         text: rules,
         ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![Delegate::CastCard(EventDelegate { requirement: this_card, mutation })],
-    }
-}
-
-/// An ability which triggers when a card is played
-pub fn on_play(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
-    Ability {
-        text: rules,
-        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
-        delegates: vec![Delegate::PlayCard(EventDelegate { requirement: this_card, mutation })],
     }
 }
 

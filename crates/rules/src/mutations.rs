@@ -27,7 +27,7 @@ use std::cmp;
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
-    PlayCardEvent, RaidEndEvent, Scope, StoredManaTakenEvent,
+    RaidEndEvent, Scope, StoredManaTakenEvent,
 };
 use data::game::{CurrentTurn, GameOverData, GamePhase, GameState, MulliganDecision};
 use data::game_actions::{Prompt, PromptAction};
@@ -59,10 +59,6 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
     if old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, DrawCardEvent(card_id));
         game.updates.push(GameUpdate::DrawCard(card_id));
-    }
-
-    if !old_position.in_play() && new_position.in_play() {
-        dispatch::invoke_event(game, PlayCardEvent(card_id));
     }
 
     if new_position.kind() == CardPositionKind::DeckUnknown {

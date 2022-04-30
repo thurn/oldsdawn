@@ -24,7 +24,7 @@
 use anyhow::{bail, ensure, Context, Result};
 use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
-use data::delegates::{ActivateAbilityEvent, CastCardEvent, PayCardCostsEvent};
+use data::delegates::{ActivateAbilityEvent, CardPlayed, CastCardEvent, PayCardCostsEvent};
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
@@ -141,7 +141,7 @@ fn play_card_action(
 
     mutations::spend_action_points(game, user_side, definition.cost.actions);
     dispatch::invoke_event(game, PayCardCostsEvent(card_id));
-    dispatch::invoke_event(game, CastCardEvent(card_id));
+    dispatch::invoke_event(game, CastCardEvent(CardPlayed { card_id, target }));
 
     let new_position = match definition.card_type {
         CardType::Spell | CardType::Sorcery => CardPosition::DiscardPile(user_side),
