@@ -16,15 +16,21 @@
 //! wildcard import in card definition files.
 
 use data::card_definition::{
-    Ability, AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
+    AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
 };
-use data::delegates::{CardPlayed, Delegate, EventDelegate, MutationFn, Scope};
+use data::delegates::{
+    CardPlayed, Delegate, EventDelegate, MutationFn, RaidEnded, RequirementFn, Scope,
+};
 use data::game::GameState;
+use data::game_actions::CardTarget;
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, Sprite,
+    AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, RaidId, Sprite,
     TurnNumber,
 };
-use data::text::{AbilityText, NumericOperator, TextToken};
+use data::text::{NumericOperator, TextToken};
+use data::utils;
+
+use crate::raid_actions;
 
 pub fn number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::None, number.into())
@@ -95,55 +101,54 @@ pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> boo
     scope.card_id() == boost_data.card_id
 }
 
-/// An ability which triggers when a card is cast
-pub fn on_cast(rules: AbilityText, mutation: MutationFn<CardPlayed>) -> Ability {
-    Ability {
-        text: rules,
-        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
-        delegates: vec![Delegate::CastCard(EventDelegate { requirement: this_card, mutation })],
-    }
+/// Checks if the provided `raid_id` matches the stored [RaidId] for this
+/// `scope`.
+pub fn matching_raid(game: &GameState, scope: Scope, raid_id: impl Into<RaidId>) -> bool {
+    utils::is_true(|| Some(game.ability_state(scope)?.raid_id? == raid_id.into()))
 }
 
-/// An ability which triggers at dawn if a card is face up in play
-pub fn at_dawn(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
-    Ability {
-        text: rules,
-        ability_type: AbilityType::Standard(TriggerIndicator::Alert),
-        delegates: vec![Delegate::Dawn(EventDelegate { requirement: face_up_in_play, mutation })],
-    }
+/// Returns a standard [AbilityType] which does not notify the user when
+/// triggered
+pub fn silent() -> AbilityType {
+    AbilityType::Standard(TriggerIndicator::Silent)
 }
 
-/// An ability which triggers at dusk if a card is face up in play
-pub fn at_dusk(rules: AbilityText, mutation: MutationFn<TurnNumber>) -> Ability {
-    Ability {
-        text: rules,
-        ability_type: AbilityType::Standard(TriggerIndicator::Alert),
-        delegates: vec![Delegate::Dusk(EventDelegate { requirement: face_up_in_play, mutation })],
-    }
+/// Returns a standard [AbilityType] which notifies the user when triggered
+pub fn alert() -> AbilityType {
+    AbilityType::Standard(TriggerIndicator::Alert)
 }
 
-/// A minion combat ability
-pub fn combat(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
-    Ability {
-        text: rules,
-        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
-        delegates: vec![Delegate::MinionCombatAbility(EventDelegate {
-            requirement: this_card,
-            mutation,
-        })],
-    }
+/// A delegate which triggers when a card is cast
+pub fn on_cast(mutation: MutationFn<CardPlayed>) -> Delegate {
+    Delegate::CastCard(EventDelegate { requirement: this_card, mutation })
 }
 
-/// An ability when a card is scored
-pub fn on_overlord_score(rules: AbilityText, mutation: MutationFn<CardId>) -> Ability {
-    Ability {
-        text: rules,
-        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
-        delegates: vec![Delegate::OverlordScoreCard(EventDelegate {
-            requirement: this_card,
-            mutation,
-        })],
-    }
+/// A delegate which triggers at dawn if a card is face up in play
+pub fn at_dawn(mutation: MutationFn<TurnNumber>) -> Delegate {
+    Delegate::Dawn(EventDelegate { requirement: face_up_in_play, mutation })
+}
+
+/// A delegate which triggers at dusk if a card is face up in play
+pub fn at_dusk(mutation: MutationFn<TurnNumber>) -> Delegate {
+    Delegate::Dusk(EventDelegate { requirement: face_up_in_play, mutation })
+}
+
+/// A minion combat delegate
+pub fn combat(mutation: MutationFn<CardId>) -> Delegate {
+    Delegate::MinionCombatAbility(EventDelegate { requirement: this_card, mutation })
+}
+
+/// A delegate when a card is scored
+pub fn on_overlord_score(mutation: MutationFn<CardId>) -> Delegate {
+    Delegate::OverlordScoreCard(EventDelegate { requirement: this_card, mutation })
+}
+
+/// A delegate which fires when a raid ends
+pub fn on_raid_ended(
+    requirement: RequirementFn<RaidEnded>,
+    mutation: MutationFn<RaidEnded>,
+) -> Delegate {
+    Delegate::RaidEnd(EventDelegate { requirement, mutation })
 }
 
 /// Helper to create a [CardStats] with the given base [AttackValue]
@@ -166,4 +171,11 @@ pub fn health(health: HealthValue) -> CardStats {
 /// a card which can be leveled up.
 pub fn scheme_points(points: SchemePoints) -> CardStats {
     CardStats { scheme_points: Some(points), can_level_up: true, ..CardStats::default() }
+}
+
+/// Initiates a raid on the `target` room and stores the raid ID as ability
+/// state
+pub fn initiate_raid(game: &mut GameState, scope: Scope, target: CardTarget) {
+    let raid_id = raid_actions::initiate_raid(game, target.room_id().unwrap()).unwrap();
+    game.ability_state_mut(scope).raid_id = Some(raid_id);
 }

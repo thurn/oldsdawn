@@ -14,7 +14,7 @@
 
 //! Card definitions for the Scheme card type
 
-use data::card_definition::{CardConfig, CardDefinition, SchemePoints};
+use data::card_definition::{Ability, CardConfig, CardDefinition, SchemePoints};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
@@ -35,9 +35,13 @@ pub fn dungeon_annex() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_overlord_score(text![Keyword::Score, "Gain", mana(7)], |g, s, _| {
-            mutations::gain_mana(g, s.side(), 7);
-        })],
+        abilities: vec![Ability {
+            text: text![Keyword::Score, "Gain", mana(7)],
+            ability_type: silent(),
+            delegates: vec![on_overlord_score(|g, s, _| {
+                mutations::gain_mana(g, s.side(), 7);
+            })],
+        }],
         config: CardConfig {
             stats: scheme_points(SchemePoints { level_requirement: 4, points: 2 }),
             ..CardConfig::default()

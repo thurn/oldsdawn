@@ -16,7 +16,7 @@
 
 use data::card_definition::{Ability, AbilityType, Cost, TriggerIndicator};
 use data::card_state::CardPosition;
-use data::delegates::{Delegate, EventDelegate, QueryDelegate, Scope};
+use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope};
 use data::game::{GameOverData, GamePhase, GameState};
 use data::primitives::{AttackValue, CardId, DamageTypeTrait, ManaValue, Side};
 use data::text::{AbilityText, Keyword, TextToken};
@@ -95,21 +95,29 @@ pub fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&
 /// combat, causing them to discard `N` random cards and lose the game if they
 /// cannot.
 pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
-    combat(text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())], |g, _, _| {
-        for _ in 0..N {
-            discard_random_card(g, Side::Champion, |g| {
-                g.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
-                g.updates.push(GameUpdate::GameOver(Side::Overlord));
-            });
-        }
-    })
+    Ability {
+        text: text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())],
+        ability_type: silent(),
+        delegates: vec![combat(|g, _, _| {
+            for _ in 0..N {
+                discard_random_card(g, Side::Champion, |g| {
+                    g.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
+                    g.updates.push(GameUpdate::GameOver(Side::Overlord));
+                });
+            }
+        })],
+    }
 }
 
-/// Minion combat ability which ends the current raid.
+/// Minion combat ability which ends the current raid in failure.
 pub fn end_raid() -> Ability {
-    combat(text![Keyword::Combat, Keyword::EndRaid], |g, _, _| {
-        mutations::end_raid(g);
-    })
+    Ability {
+        text: text![Keyword::Combat, Keyword::EndRaid],
+        ability_type: silent(),
+        delegates: vec![combat(|g, _, _| {
+            mutations::end_raid(g, RaidOutcome::Failure);
+        })],
+    }
 }
 
 /// Applies this card's `attack_boost` stat a number of times equal to its

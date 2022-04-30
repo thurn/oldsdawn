@@ -238,6 +238,26 @@ impl CardEncounter {
     }
 }
 
+/// Result of a raid
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub enum RaidOutcome {
+    Success,
+    Failure,
+}
+
+/// Event data when a raid is completed
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct RaidEnded {
+    pub raid_id: RaidId,
+    pub outcome: RaidOutcome,
+}
+
+impl From<RaidEnded> for RaidId {
+    fn from(me: RaidEnded) -> Self {
+        me.raid_id
+    }
+}
+
 /// The core of the delegate pattern, used to identify which event or which
 /// query this delegate wishes to respond to. Each enum variant here
 /// automatically gets an associated struct value generated for it by the
@@ -281,7 +301,7 @@ pub enum Delegate {
     /// whether the encounter was successful.
     EncounterEnd(EventDelegate<RaidId>),
     /// A Raid is completed, either successfully or unsuccessfully.
-    RaidEnd(EventDelegate<RaidId>),
+    RaidEnd(EventDelegate<RaidEnded>),
     /// Stored mana is taken from a card
     StoredManaTaken(EventDelegate<CardId>),
 

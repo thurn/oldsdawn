@@ -16,19 +16,21 @@
 
 #![allow(clippy::use_self)] // Required to use EnumKind
 
+use std::collections::HashMap;
+
 use anyhow::Result;
 use enum_kinds::EnumKind;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::agent_definition::AgentData;
-use crate::card_state::{CardPosition, CardPositionKind, CardState};
+use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
-use crate::delegates::DelegateCache;
+use crate::delegates::{DelegateCache, Scope};
 use crate::game_actions::Prompt;
 use crate::primitives::{
-    ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId, RoomId,
-    RoomLocation, Side, TurnNumber,
+    AbilityId, ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId,
+    RoomId, RoomLocation, Side, TurnNumber,
 };
 use crate::updates::UpdateTracker;
 use crate::with_error::WithError;
@@ -211,6 +213,8 @@ pub struct GameState {
     pub overlord: PlayerState,
     /// State for the champion player
     pub champion: PlayerState,
+    /// State for abilities of cards in this game
+    pub ability_state: HashMap<AbilityId, AbilityState>,
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::next_sorting_key] and [Self::move_card].
     next_sorting_key: u32,
@@ -234,10 +238,6 @@ impl GameState {
     ) -> Self {
         Self {
             id,
-            overlord_cards: Self::make_deck(&overlord_deck, Side::Overlord),
-            champion_cards: Self::make_deck(&champion_deck, Side::Champion),
-            overlord: PlayerState::new(overlord_deck.owner_id),
-            champion: PlayerState::new(champion_deck.owner_id),
             data: GameData {
                 phase: GamePhase::ResolveMulligans(MulliganData::default()),
                 turn: CurrentTurn { side: Side::Overlord, turn_number: 0 },
@@ -245,6 +245,11 @@ impl GameState {
                 next_raid_id: 1,
                 config,
             },
+            overlord_cards: Self::make_deck(&overlord_deck, Side::Overlord),
+            champion_cards: Self::make_deck(&champion_deck, Side::Champion),
+            overlord: PlayerState::new(overlord_deck.owner_id),
+            champion: PlayerState::new(champion_deck.owner_id),
+            ability_state: HashMap::new(),
             updates: UpdateTracker::new(!config.simulation),
             next_sorting_key: 1,
             delegate_cache: DelegateCache::default(),
@@ -427,6 +432,17 @@ impl GameState {
     /// Mutable version of [Self::raid].
     pub fn raid_mut(&mut self) -> Result<&mut RaidData> {
         self.data.raid.as_mut().with_error(|| "Expected Raid")
+    }
+
+    /// Retrieves the [AbilityState] for a [Scope]
+    pub fn ability_state(&self, scope: Scope) -> Option<&AbilityState> {
+        self.ability_state.get(&scope.ability_id())
+    }
+
+    /// Returns a mutable [AbilityState] for a [Scope], creating a new one if
+    /// one has not previously been set
+    pub fn ability_state_mut(&mut self, scope: Scope) -> &mut AbilityState {
+        self.ability_state.entry(scope.ability_id()).or_insert_with(AbilityState::default)
     }
 
     /// Create card states for a deck

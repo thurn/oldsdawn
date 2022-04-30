@@ -27,7 +27,7 @@ use std::cmp;
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
-    RaidEndEvent, Scope, StoredManaTakenEvent,
+    RaidEndEvent, RaidEnded, RaidOutcome, Scope, StoredManaTakenEvent,
 };
 use data::game::{CurrentTurn, GameOverData, GamePhase, GameState, MulliganDecision};
 use data::game_actions::{Prompt, PromptAction};
@@ -234,11 +234,11 @@ pub fn clear_prompt(game: &mut GameState, side: Side) {
 
 /// Ends the current raid. Panics if no raid is currently active.
 #[instrument(skip(game))]
-pub fn end_raid(game: &mut GameState) {
+pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) {
     info!("end_raid");
-    let raid = game.raid().expect("Active raid").raid_id;
+    let raid_id = game.raid().expect("Active raid").raid_id;
     game.data.raid = None;
-    dispatch::invoke_event(game, RaidEndEvent(raid));
+    dispatch::invoke_event(game, RaidEndEvent(RaidEnded { raid_id, outcome }));
     check_end_turn(game, Side::Champion)
 }
 

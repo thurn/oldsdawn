@@ -14,13 +14,14 @@
 
 //! Card definitions for the Spell card type & Champion player
 
-use data::card_definition::{CardConfig, CardDefinition, CustomTargeting};
+use data::card_definition::{Ability, CardConfig, CardDefinition, CustomTargeting};
 use data::card_name::CardName;
+use data::delegates::RaidOutcome;
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
-use rules::{mutations, raid_actions, DEFINITIONS};
+use rules::{mutations, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -34,9 +35,11 @@ pub fn arcane_recovery() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_cast(text!("Gain", mana(9)), |g, s, _| {
-            mutations::gain_mana(g, s.side(), 9)
-        })],
+        abilities: vec![Ability {
+            text: text!("Gain", mana(9)),
+            ability_type: silent(),
+            delegates: vec![on_cast(|g, s, _| mutations::gain_mana(g, s.side(), 9))],
+        }],
         config: CardConfig::default(),
     }
 }
@@ -51,13 +54,14 @@ pub fn meditation() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_cast(
-            text!("Gain", mana(5), ".", "Lose", actions(1), reminder("(if able).")),
-            |g, s, _| {
+        abilities: vec![Ability {
+            text: text!("Gain", mana(5), ".", "Lose", actions(1), reminder("(if able).")),
+            ability_type: silent(),
+            delegates: vec![on_cast(|g, s, _| {
                 mutations::gain_mana(g, s.side(), 5);
                 mutations::lose_action_point_if_able(g, s.side(), 1);
-            },
-        )],
+            })],
+        }],
         config: CardConfig::default(),
     }
 }
@@ -72,15 +76,21 @@ pub fn coup_de_grace() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![on_cast(
-            text!(
+        abilities: vec![Ability {
+            text: text!(
                 "Raid the Sanctum or Vault, accessing 1 additional card.",
                 "If successful, draw a card."
             ),
-            |g, _, play_card| {
-                raid_actions::initiate_raid(g, play_card.target.room_id().unwrap()).unwrap()
-            },
-        )],
+            ability_type: silent(),
+            delegates: vec![
+                on_cast(|g, s, play_card| initiate_raid(g, s, play_card.target)),
+                on_raid_ended(matching_raid, |g, s, raid_ended| {
+                    if raid_ended.outcome == RaidOutcome::Success {
+                        mutations::draw_cards(g, s.side(), 1);
+                    }
+                }),
+            ],
+        }],
         config: CardConfig {
             custom_targeting: Some(CustomTargeting::TargetRoom(|r| {
                 r == RoomId::Sanctum || r == RoomId::Vault

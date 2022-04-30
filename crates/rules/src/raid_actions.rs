@@ -16,14 +16,15 @@
 
 use anyhow::{bail, ensure, Context, Result};
 use data::card_state::{CardPosition, CardState};
-use data::delegates::{ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidBeginEvent};
+use data::delegates::{
+    ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidBeginEvent, RaidOutcome,
+};
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::primitives::{CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use tracing::{info, instrument};
 
-use crate::mutations::end_raid;
 use crate::{dispatch, flags, mutations, queries, raid_phases};
 
 #[instrument(skip(game))]
@@ -39,11 +40,12 @@ pub fn initiate_raid_action(
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    initiate_raid(game, target_room)
+    initiate_raid(game, target_room)?;
+    Ok(())
 }
 
-/// Initiates a raid on the indicated `target_room`.
-pub fn initiate_raid(game: &mut GameState, target_room: RoomId) -> Result<()> {
+/// Initiates a raid on the indicated `target_room`. Returns the [RaidId].
+pub fn initiate_raid(game: &mut GameState, target_room: RoomId) -> Result<RaidId> {
     let raid_id = RaidId(game.data.next_raid_id);
     let raid = RaidData {
         target: target_room,
@@ -65,7 +67,7 @@ pub fn initiate_raid(game: &mut GameState, target_room: RoomId) -> Result<()> {
     raid_phases::set_raid_phase(game, phase)?;
     dispatch::invoke_event(game, RaidBeginEvent(raid_id));
     game.updates.push(GameUpdate::InitiateRaid(target_room));
-    Ok(())
+    Ok(raid_id)
 }
 
 #[instrument(skip(game))]
@@ -159,7 +161,7 @@ pub fn continue_action(
             raid_phases::set_raid_phase(game, RaidPhase::Encounter(encounter_number))
         }
         ContinueAction::Retreat => {
-            end_raid(game);
+            mutations::end_raid(game, RaidOutcome::Failure);
             Ok(())
         }
     }
@@ -208,7 +210,7 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
         user_side
     );
 
-    mutations::end_raid(game);
+    mutations::end_raid(game, RaidOutcome::Success);
     Ok(())
 }
 

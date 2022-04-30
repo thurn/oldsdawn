@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use data::card_definition::{AttackBoost, CardConfig, CardDefinition, Cost, SchemePoints};
+use data::card_definition::{Ability, AttackBoost, CardConfig, CardDefinition, Cost, SchemePoints};
 use data::card_name::CardName;
 use data::primitives::{
     CardType, ColdDamage, Faction, HealthValue, ManaValue, Rarity, School, Side,
@@ -258,9 +258,13 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
         card_type: CardType::Project,
         abilities: vec![
             abilities::unveil_at_dusk_then_store::<MANA_STORED>(),
-            at_dusk(text![Keyword::Dusk, Keyword::Take(MANA_TAKEN)], |g, s, _| {
-                mutations::take_stored_mana(g, s.card_id(), MANA_TAKEN);
-            }),
+            Ability {
+                text: text![Keyword::Dusk, Keyword::Take(MANA_TAKEN)],
+                ability_type: alert(),
+                delegates: vec![at_dusk(|g, s, _| {
+                    mutations::take_stored_mana(g, s.card_id(), MANA_TAKEN);
+                })],
+            },
         ],
         config: CardConfig::default(),
         ..test_overlord_spell()

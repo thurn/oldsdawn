@@ -17,16 +17,20 @@
 #![allow(clippy::use_self)] // Required to use EnumKind
 
 use std::cmp::Ordering;
-use std::collections::BTreeMap;
 
 use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
 
 use crate::card_name::CardName;
 use crate::primitives::{
-    AbilityIndex, BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RoomId, RoomLocation,
-    Side,
+    BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RaidId, RoomId, RoomLocation, Side,
 };
+
+/// State for an ability within a game
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct AbilityState {
+    pub raid_id: Option<RaidId>,
+}
 
 /// Identifies the location of a card during an active game
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind, Serialize, Deserialize)]
@@ -95,10 +99,6 @@ impl CardPosition {
     }
 }
 
-/// Stores the state of a specific ability of a card
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
-pub struct AbilityState {}
-
 /// Optional card state, properties which are not universal
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CardData {
@@ -109,8 +109,6 @@ pub struct CardData {
     pub boost_count: BoostCount,
     /// How much mana is stored in this card?
     pub stored_mana: ManaValue,
-    /// State for this card's abilities
-    pub ability_state: BTreeMap<AbilityIndex, AbilityState>,
     /// Is this card face-up?
     is_face_up: bool,
     /// Is this card revealed to the [CardId.side] user?
