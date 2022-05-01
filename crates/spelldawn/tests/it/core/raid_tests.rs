@@ -401,7 +401,7 @@ fn raid_vault() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -421,7 +421,7 @@ fn raid_sanctum() {
     );
 
     g.add_to_hand(CardName::TestScheme31);
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Sanctum);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Sanctum);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Sanctum);
     g.click_on(g.opponent_id(), "Activate");
@@ -445,7 +445,7 @@ fn raid_crypts() {
     );
 
     g.add_to_hand(CardName::TestScheme31);
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Crypts);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Crypts);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Crypts);
     g.click_on(g.opponent_id(), "Activate");
@@ -468,7 +468,7 @@ fn raid_vault_twice() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -570,8 +570,8 @@ fn raid_two_defenders() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -595,8 +595,8 @@ fn raid_two_defenders_advance() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -620,8 +620,8 @@ fn raid_two_defenders_retreat() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -653,8 +653,8 @@ fn raid_two_defenders_full_raid() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
@@ -672,8 +672,8 @@ fn raid_deal_damage_game_over() {
     let mut g = new_game(Side::Overlord, Args { ..Args::default() });
     // Two 'deal 1 damage' defenders are needed because the Champion draws a card
     // for turn
-    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
     spend_actions_until_turn_over(&mut g, Side::Overlord);
     assert!(g.dawn());
 
@@ -699,8 +699,8 @@ fn raid_two_defenders_cannot_afford_second() {
         },
     );
 
-    g.play_in_room(CardName::TestMinionDealDamage, RoomId::Vault);
-    g.play_in_room(CardName::TestMinionEndRaid, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
+    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");

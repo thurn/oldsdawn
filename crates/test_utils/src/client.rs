@@ -43,6 +43,7 @@ use rules::dispatch;
 use server::requests::GameResponse;
 
 use crate::fake_database::FakeDatabase;
+use crate::ROOM_ID;
 
 /// A helper for interacting with a database and server calls during testing.
 ///
@@ -230,23 +231,32 @@ impl TestSession {
     ///
     /// Panics if the server returns an error for playing this card.
     pub fn play_from_hand(&mut self, card_name: CardName) -> CardIdentifier {
-        self.play_in_room(card_name, crate::ROOM_ID)
+        self.play_internal(
+            card_name,
+            match rules::get(card_name).card_type {
+                CardType::Minion | CardType::Project | CardType::Scheme => Some(ROOM_ID),
+                _ => None,
+            },
+        )
     }
 
-    /// Equivalent method to [Self::play_from_hand] which explicitly specifies
-    /// the target room to use if this is a minion, project, scheme, or
-    /// upgrade card.
-    pub fn play_in_room(&mut self, card_name: CardName, room_id: RoomId) -> CardIdentifier {
-        let card_id = self.add_to_hand(card_name);
+    /// Equivalent method to [Self::play_from_hand] which specifies
+    /// a target room to use.
+    pub fn play_with_target_room(
+        &mut self,
+        card_name: CardName,
+        room_id: RoomId,
+    ) -> CardIdentifier {
+        self.play_internal(card_name, Some(room_id))
+    }
 
-        let target = match rules::get(card_name).card_type {
-            CardType::Minion | CardType::Project | CardType::Scheme => Some(CardTarget {
-                card_target: Some(card_target::CardTarget::RoomId(
-                    adapters::adapt_room_id(room_id).into(),
-                )),
-            }),
-            _ => None,
-        };
+    fn play_internal(&mut self, card_name: CardName, room_id: Option<RoomId>) -> CardIdentifier {
+        let card_id = self.add_to_hand(card_name);
+        let target = room_id.map(|room_id| CardTarget {
+            card_target: Some(card_target::CardTarget::RoomId(
+                adapters::adapt_room_id(room_id).into(),
+            )),
+        });
 
         self.perform(
             Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),

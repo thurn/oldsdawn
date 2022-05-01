@@ -13,7 +13,9 @@
 // limitations under the License.
 
 use data::card_name::CardName;
-use data::primitives::Side;
+use data::primitives::{RoomId, Side};
+use protos::spelldawn::object_position::Position;
+use protos::spelldawn::{ObjectPositionBrowser, PlayerName};
 use test_utils::*;
 
 #[test]
@@ -34,4 +36,22 @@ fn meditation() {
     g.play_from_hand(CardName::Meditation);
     assert_eq!(13, g.me().mana());
     assert!(g.dusk());
+}
+
+#[test]
+fn coup_de_grace() {
+    let mut g = new_game(Side::Champion, Args::default());
+    g.play_with_target_room(CardName::CoupDeGrace, RoomId::Vault);
+    assert!(g.user.data.raid_active());
+    assert_eq!(2, g.user.cards.in_position(Position::Browser(ObjectPositionBrowser {})).count());
+    assert_eq!(0, g.user.cards.hand(PlayerName::User).len());
+    g.click_on(g.user_id(), "End Raid");
+    assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
+}
+
+#[test]
+#[should_panic]
+fn coup_de_grace_invalid_room() {
+    let mut g = new_game(Side::Champion, Args::default());
+    g.play_with_target_room(CardName::CoupDeGrace, ROOM_ID);
 }
