@@ -25,7 +25,8 @@ use data::primitives::{AbilityId, CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use tracing::{info, instrument};
 
-use crate::{dispatch, flags, mutations, queries, raid_phases};
+use crate::mana::ManaType;
+use crate::{dispatch, flags, mana, mutations, queries, raid_phases};
 
 #[instrument(skip(game))]
 pub fn initiate_raid_action(
@@ -121,7 +122,7 @@ pub fn encounter_action(
                 queries::cost_to_defeat_target(game, source_id, target_id).with_context(|| {
                     format!("{:?} cannot defeat target: {:?}", source_id, target_id)
                 })?;
-            mutations::spend_mana(game, user_side, cost);
+            mana::spend(game, user_side, ManaType::UseWeaponAbility(source_id), cost);
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(source_id),
                 target: InteractionObjectId::CardId(target_id),

@@ -21,7 +21,7 @@ use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
-use rules::{mutations, DEFINITIONS};
+use rules::{mana, mutations, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -38,7 +38,7 @@ pub fn arcane_recovery() -> CardDefinition {
         abilities: vec![Ability {
             text: text!("Gain", mana(9)),
             ability_type: silent(),
-            delegates: vec![on_cast(|g, s, _| mutations::gain_mana(g, s.side(), 9))],
+            delegates: vec![on_cast(|g, s, _| mana::gain(g, s.side(), 9))],
         }],
         config: CardConfig::default(),
     }
@@ -58,7 +58,7 @@ pub fn meditation() -> CardDefinition {
             text: text!("Gain", mana(5), ".", "Lose", actions(1), reminder("(if able).")),
             ability_type: silent(),
             delegates: vec![on_cast(|g, s, _| {
-                mutations::gain_mana(g, s.side(), 5);
+                mana::gain(g, s.side(), 5);
                 mutations::lose_action_point_if_able(g, s.side(), 1);
             })],
         }],

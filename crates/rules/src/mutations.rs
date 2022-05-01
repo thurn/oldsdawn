@@ -38,7 +38,8 @@ use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
-use crate::{dispatch, queries};
+use crate::mana::ManaType;
+use crate::{dispatch, mana, queries};
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events
@@ -146,21 +147,6 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Vec<CardId> {
     card_ids
 }
 
-/// Give mana to the indicated player.
-#[instrument(skip(game))]
-pub fn gain_mana(game: &mut GameState, side: Side, amount: ManaValue) {
-    info!(?side, ?amount, "gain_mana");
-    game.player_mut(side).mana += amount;
-}
-
-/// Spends a player's mana. Panics if sufficient mana is not available
-/// [instrument(skip(game))]
-pub fn spend_mana(game: &mut GameState, side: Side, amount: ManaValue) {
-    info!(?side, ?amount, "spend_mana");
-    assert!(game.player(side).mana >= amount, "Insufficient mana available");
-    game.player_mut(side).mana -= amount;
-}
-
 /// Lose action points if a player has more than 0.
 #[instrument(skip(game))]
 pub fn lose_action_point_if_able(game: &mut GameState, side: Side, amount: ActionCount) {
@@ -197,7 +183,7 @@ pub fn take_stored_mana(game: &mut GameState, card_id: CardId, maximum: ManaValu
     let available = game.card(card_id).data.stored_mana;
     let taken = cmp::min(available, maximum);
     game.card_mut(card_id).data.stored_mana -= taken;
-    gain_mana(game, card_id.side, taken);
+    mana::gain(game, card_id.side, taken);
     dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
 
     if game.card(card_id).data.stored_mana == 0 {
@@ -269,8 +255,8 @@ pub fn check_start_game(game: &mut GameState) {
         GamePhase::ResolveMulligans(mulligans)
             if mulligans.overlord.is_some() && mulligans.champion.is_some() =>
         {
-            game.overlord.mana = 5;
-            game.champion.mana = 5;
+            mana::set(game, Side::Overlord, 5);
+            mana::set(game, Side::Champion, 5);
             start_turn(game, Side::Overlord, 1);
         }
         _ => {}
@@ -371,8 +357,8 @@ pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
                 turn_face_up(game, card_id);
                 true
             }
-            Some(cost) if cost <= game.player(card_id.side).mana => {
-                spend_mana(game, card_id.side, cost);
+            Some(cost) if cost <= mana::get(game, card_id.side, ManaType::PayForCard(card_id)) => {
+                mana::spend(game, card_id.side, ManaType::PayForCard(card_id), cost);
                 turn_face_up(game, card_id);
                 true
             }

@@ -31,8 +31,9 @@ use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLo
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
+use crate::mana::ManaType;
 use crate::raid_actions::initiate_raid_action;
-use crate::{dispatch, flags, mutations, queries, raid_actions};
+use crate::{dispatch, flags, mana, mutations, queries, raid_actions};
 
 /// Top level dispatch function responsible for mutating [GameState] in response
 /// to all [UserAction]s
@@ -132,11 +133,8 @@ fn play_card_action(
     let enters_face_up = flags::enters_play_face_up(game, card_id);
 
     if enters_face_up {
-        mutations::spend_mana(
-            game,
-            user_side,
-            queries::mana_cost(game, card_id).with_context(|| "Card has no mana cost")?,
-        );
+        let amount = queries::mana_cost(game, card_id).with_context(|| "Card has no mana cost")?;
+        mana::spend(game, user_side, ManaType::PayForCard(card_id), amount);
     }
 
     mutations::spend_action_points(game, user_side, definition.cost.actions);
@@ -184,7 +182,7 @@ fn activate_ability_action(
     {
         mutations::spend_action_points(game, user_side, cost.actions);
         if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
-            mutations::spend_mana(game, user_side, mana);
+            mana::spend(game, user_side, ManaType::ActivateAbility(ability_id), mana);
         }
     }
 
@@ -205,7 +203,7 @@ fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    mutations::gain_mana(game, user_side, 1);
+    mana::gain(game, user_side, 1);
     mutations::check_end_turn(game, user_side);
     Ok(())
 }
@@ -218,7 +216,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    mutations::spend_mana(game, user_side, 1);
+    mana::spend(game, user_side, ManaType::LevelUpRoom(room_id), 1);
     mutations::level_up_room(game, room_id);
 
     mutations::check_end_turn(game, user_side);

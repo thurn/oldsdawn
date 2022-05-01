@@ -21,7 +21,7 @@ use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
-use rules::{mutations, DEFINITIONS};
+use rules::{mana, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -39,7 +39,7 @@ pub fn dungeon_annex() -> CardDefinition {
             text: text![Keyword::Score, "Gain", mana(7)],
             ability_type: silent(),
             delegates: vec![on_overlord_score(|g, s, _| {
-                mutations::gain_mana(g, s.side(), 7);
+                mana::gain(g, s.side(), 7);
             })],
         }],
         config: CardConfig {

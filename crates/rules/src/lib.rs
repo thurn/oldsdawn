@@ -29,6 +29,7 @@ pub mod card_text;
 pub mod dispatch;
 pub mod flags;
 pub mod helpers;
+pub mod mana;
 pub mod mutations;
 pub mod queries;
 pub mod raid_actions;

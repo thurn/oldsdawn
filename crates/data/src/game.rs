@@ -35,12 +35,25 @@ use crate::primitives::{
 use crate::updates::UpdateTracker;
 use crate::with_error::WithError;
 
+/// Mana to be spent only during the `raid_id` raid
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SpecificRaidMana {
+    pub raid_id: RaidId,
+    pub mana: ManaValue,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct ManaState {
+    pub base_mana: ManaValue,
+    pub specific_raid_mana: Option<SpecificRaidMana>,
+}
+
 /// State of a player within a game, containing their score and available
 /// resources
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerState {
     pub id: PlayerId,
-    pub mana: ManaValue,
+    pub mana_state: ManaState,
     pub actions: ActionCount,
     pub score: PointsValue,
 
@@ -56,7 +69,14 @@ pub struct PlayerState {
 impl PlayerState {
     /// Create an empty player state.
     pub fn new(id: PlayerId) -> Self {
-        Self { id, agent: None, mana: 0, actions: 0, score: 0, prompt: None }
+        Self {
+            id,
+            agent: None,
+            mana_state: ManaState::default(),
+            actions: 0,
+            score: 0,
+            prompt: None,
+        }
     }
 }
 

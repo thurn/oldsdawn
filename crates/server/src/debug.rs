@@ -31,7 +31,7 @@ use protos::spelldawn::{
     GameCommand, GameIdentifier, LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode,
     SetPlayerIdentifierCommand,
 };
-use rules::{dispatch, mutations, queries};
+use rules::{dispatch, mana, mutations, queries};
 
 use crate::database::Database;
 use crate::requests;
@@ -106,7 +106,7 @@ pub fn handle_debug_action(
         }
         DebugAction::AddMana(amount) => {
             requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
-                game.player_mut(user_side).mana += amount;
+                mana::gain(game, user_side, amount);
                 Ok(())
             })
         }

@@ -41,7 +41,8 @@ use protos::spelldawn::{
     ArrowTargetRoom, CardIdentifier, CardPrefab, NoTargeting, ObjectPositionBrowser,
     ObjectPositionIntoCard, RulesText, TargetingArrow,
 };
-use rules::{flags, queries};
+use rules::mana::ManaType;
+use rules::{flags, mana, queries};
 
 use crate::assets::CardIconType;
 use crate::response_builder::ResponseOptions;
@@ -111,7 +112,6 @@ fn update_game_view(game: &GameState, user_side: Side) -> UpdateGameViewCommand 
 /// Builds a [PlayerView] for a given player
 fn player_view(game: &GameState, side: Side) -> PlayerView {
     let identity = game.identity(side);
-    let data = game.player(side);
     PlayerView {
         side: adapters::adapt_side(side).into(),
         player_info: Some(PlayerInfo {
@@ -130,9 +130,11 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
             },
             card_back: Some(assets::card_back(rules::get(identity.name).school)),
         }),
-        score: Some(ScoreView { score: data.score }),
-        mana: Some(ManaView { amount: data.mana }),
-        action_tracker: Some(ActionTrackerView { available_action_count: data.actions }),
+        score: Some(ScoreView { score: game.player(side).score }),
+        mana: Some(ManaView { amount: mana::get(game, side, ManaType::BaseForDisplay) }),
+        action_tracker: Some(ActionTrackerView {
+            available_action_count: game.player(side).actions,
+        }),
         can_take_action: queries::can_take_action(game, side),
     }
 }

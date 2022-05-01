@@ -36,7 +36,7 @@ use data::primitives::{
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::{LevelUpRoomAction, RoomIdentifier, SpendActionPointAction};
-use rules::dispatch;
+use rules::{dispatch, mana};
 
 use crate::client::TestSession;
 use crate::fake_database::FakeDatabase;
@@ -88,9 +88,9 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
         let turn_side = args.turn.unwrap_or(user_side);
         game.data.phase = GamePhase::Play;
         game.data.turn = CurrentTurn { side: turn_side, turn_number: 0 };
-        game.player_mut(user_side).mana = args.mana;
+        mana::set(&mut game, user_side, args.mana);
         game.player_mut(user_side).score = args.score;
-        game.player_mut(user_side.opponent()).mana = args.opponent_mana;
+        mana::set(&mut game, user_side.opponent(), args.opponent_mana);
         game.player_mut(user_side.opponent()).score = args.opponent_score;
         game.player_mut(turn_side).actions = args.actions;
 

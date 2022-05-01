@@ -27,7 +27,8 @@ use data::with_error::WithError;
 use rand::seq::IteratorRandom;
 use rand::thread_rng;
 
-use crate::{flags, mutations, queries};
+use crate::mana::ManaType;
+use crate::{flags, mana, mutations, queries};
 
 /// Updates the [RaidPhase] for the ongoing raid in the provided `game` and
 /// invokes callbacks as appropriate.
@@ -45,7 +46,7 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
             if can_summon_defender(game, defender_index) {
                 let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
                 let cost = queries::mana_cost(game, defender_id).with_error(|| "Expected cost")?;
-                mutations::spend_mana(game, Side::Overlord, cost);
+                mana::spend(game, Side::Overlord, ManaType::PayForCard(defender_id), cost);
                 mutations::turn_face_up(game, defender_id);
             }
         }
@@ -69,7 +70,7 @@ pub fn can_summon_defender(game: &GameState, defender_index: usize) -> bool {
         && game.card(defender_id).is_face_down()
         && matches!(queries::mana_cost(game, defender_id),
             Some(cost)
-            if cost <= game.player(Side::Overlord).mana
+            if cost <= mana::get(game, Side::Overlord, ManaType::PayForCard(defender_id))
         )
 }
 
