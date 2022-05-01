@@ -21,7 +21,7 @@ use data::delegates::{
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
-use data::primitives::{CardId, RaidId, RoomId, Side};
+use data::primitives::{AbilityId, CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use tracing::{info, instrument};
 
@@ -40,12 +40,19 @@ pub fn initiate_raid_action(
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    initiate_raid(game, target_room)?;
+    initiate_raid(game, target_room, None /* store_in_ability */)?;
     Ok(())
 }
 
-/// Initiates a raid on the indicated `target_room`. Returns the [RaidId].
-pub fn initiate_raid(game: &mut GameState, target_room: RoomId) -> Result<RaidId> {
+/// Initiates a raid on the indicated `target_room`.
+///
+/// If `store_in_ability` is provided, the resulting [RaidId] is stored under
+/// the ability state of the provided ability.
+pub fn initiate_raid(
+    game: &mut GameState,
+    target_room: RoomId,
+    store_in_ability: Option<AbilityId>,
+) -> Result<()> {
     let raid_id = RaidId(game.data.next_raid_id);
     let raid = RaidData {
         target: target_room,
@@ -57,6 +64,9 @@ pub fn initiate_raid(game: &mut GameState, target_room: RoomId) -> Result<RaidId
 
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
+    if let Some(ability_id) = store_in_ability {
+        game.ability_state_mut(ability_id).raid_id = Some(raid_id);
+    }
 
     let phase = if game.defenders_alphabetical(target_room).any(CardState::is_face_down) {
         RaidPhase::Activation
@@ -67,7 +77,7 @@ pub fn initiate_raid(game: &mut GameState, target_room: RoomId) -> Result<RaidId
     raid_phases::set_raid_phase(game, phase)?;
     dispatch::invoke_event(game, RaidBeginEvent(raid_id));
     game.updates.push(GameUpdate::InitiateRaid(target_room));
-    Ok(raid_id)
+    Ok(())
 }
 
 #[instrument(skip(game))]

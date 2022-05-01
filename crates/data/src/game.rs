@@ -441,8 +441,8 @@ impl GameState {
 
     /// Returns a mutable [AbilityState] for a [Scope], creating a new one if
     /// one has not previously been set
-    pub fn ability_state_mut(&mut self, scope: Scope) -> &mut AbilityState {
-        self.ability_state.entry(scope.ability_id()).or_insert_with(AbilityState::default)
+    pub fn ability_state_mut(&mut self, ability_id: AbilityId) -> &mut AbilityState {
+        self.ability_state.entry(ability_id).or_insert_with(AbilityState::default)
     }
 
     /// Create card states for a deck

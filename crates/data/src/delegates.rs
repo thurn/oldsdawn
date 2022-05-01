@@ -350,10 +350,10 @@ pub enum Delegate {
     StartOfTurnActions(QueryDelegate<Side, ActionCount>),
     /// Gets the number of cards the Champion player can access from the Vault
     /// during this raid
-    VaultAccessCount(QueryDelegate<RaidId, usize>),
+    VaultAccessCount(QueryDelegate<RaidId, u32>),
     /// Gets the number of cards the Champion player can access from the Sanctum
     /// during this raid
-    SanctumAccessCount(QueryDelegate<RaidId, usize>),
+    SanctumAccessCount(QueryDelegate<RaidId, u32>),
 }
 
 impl Delegate {

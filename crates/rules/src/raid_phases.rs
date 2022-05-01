@@ -85,9 +85,11 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
         RoomId::Sanctum => {
             let count = queries::sanctum_access_count(game);
             if game.data.config.deterministic {
-                game.hand(Side::Overlord).map(|c| c.id).take(count).collect()
+                game.hand(Side::Overlord).map(|c| c.id).take(count as usize).collect()
             } else {
-                game.hand(Side::Overlord).map(|c| c.id).choose_multiple(&mut thread_rng(), count)
+                game.hand(Side::Overlord)
+                    .map(|c| c.id)
+                    .choose_multiple(&mut thread_rng(), count as usize)
             }
         }
         RoomId::Crypts => game

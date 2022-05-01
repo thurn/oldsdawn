@@ -19,7 +19,7 @@ use data::card_definition::{
     AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
 };
 use data::delegates::{
-    CardPlayed, Delegate, EventDelegate, MutationFn, RaidEnded, RequirementFn, Scope,
+    CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded, RequirementFn, Scope,
 };
 use data::game::GameState;
 use data::game_actions::CardTarget;
@@ -101,8 +101,8 @@ pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> boo
     scope.card_id() == boost_data.card_id
 }
 
-/// Checks if the provided `raid_id` matches the stored [RaidId] for this
-/// `scope`.
+/// A RequirementFn which checks if the provided `raid_id` matches the stored
+/// [RaidId] for this `scope`.
 pub fn matching_raid(game: &GameState, scope: Scope, raid_id: impl Into<RaidId>) -> bool {
     utils::is_true(|| Some(game.ability_state(scope)?.raid_id? == raid_id.into()))
 }
@@ -151,6 +151,23 @@ pub fn on_raid_ended(
     Delegate::RaidEnd(EventDelegate { requirement, mutation })
 }
 
+pub fn add_vault_access<const N: u32>(requirement: RequirementFn<RaidId>) -> Delegate {
+    Delegate::VaultAccessCount(QueryDelegate {
+        requirement,
+        transformation: |_, _, _, current| {
+            println!("Adding {:?} to {:?}", N, current);
+            current + N
+        },
+    })
+}
+
+pub fn add_sanctum_access<const N: u32>(requirement: RequirementFn<RaidId>) -> Delegate {
+    Delegate::SanctumAccessCount(QueryDelegate {
+        requirement,
+        transformation: |_, _, _, current| current + N,
+    })
+}
+
 /// Helper to create a [CardStats] with the given base [AttackValue]
 pub fn base_attack(base_attack: AttackValue) -> CardStats {
     CardStats { base_attack: Some(base_attack), ..CardStats::default() }
@@ -176,6 +193,5 @@ pub fn scheme_points(points: SchemePoints) -> CardStats {
 /// Initiates a raid on the `target` room and stores the raid ID as ability
 /// state
 pub fn initiate_raid(game: &mut GameState, scope: Scope, target: CardTarget) {
-    let raid_id = raid_actions::initiate_raid(game, target.room_id().unwrap()).unwrap();
-    game.ability_state_mut(scope).raid_id = Some(raid_id);
+    raid_actions::initiate_raid(game, target.room_id().unwrap(), Some(scope.ability_id())).unwrap();
 }

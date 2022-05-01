@@ -84,6 +84,8 @@ pub fn coup_de_grace() -> CardDefinition {
             ability_type: silent(),
             delegates: vec![
                 on_cast(|g, s, play_card| initiate_raid(g, s, play_card.target)),
+                add_vault_access::<1>(matching_raid),
+                add_sanctum_access::<1>(matching_raid),
                 on_raid_ended(matching_raid, |g, s, raid_ended| {
                     if raid_ended.outcome == RaidOutcome::Success {
                         mutations::draw_cards(g, s.side(), 1);

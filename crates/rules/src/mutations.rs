@@ -130,10 +130,10 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 ///
 /// Cards are set as revealed to the `side` player. Returns a vector of the
 /// newly-drawn [CardId]s.
-pub fn draw_cards(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
+pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Vec<CardId> {
     let card_ids = realize_top_of_deck(game, side, count);
 
-    if card_ids.len() != count {
+    if card_ids.len() != count as usize {
         game.data.phase = GamePhase::GameOver(GameOverData { winner: side.opponent() });
         game.updates.push(GameUpdate::GameOver(Side::Overlord));
         return vec![];
@@ -287,7 +287,8 @@ pub fn check_start_game(game: &mut GameState) {
 /// subsequent calls to this function will see the same results.
 ///
 /// Does not change the 'revealed' state of cards.
-pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: usize) -> Vec<CardId> {
+pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Vec<CardId> {
+    let count = count as usize; //don't run this on 16 bit processors please :)
     let mut cards = game.card_list_for_position(side, CardPosition::DeckTop(side));
     let result = if count <= cards.len() {
         cards[0..count].to_vec()

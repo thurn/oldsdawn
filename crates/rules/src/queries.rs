@@ -163,14 +163,14 @@ pub fn start_of_turn_action_count(game: &GameState, side: Side) -> ActionCount {
 
 /// Look up the number of cards the Champion player can access from the Vault
 /// during the current raid
-pub fn vault_access_count(game: &GameState) -> usize {
+pub fn vault_access_count(game: &GameState) -> u32 {
     let raid_id = game.data.raid.as_ref().expect("Active Raid").raid_id;
     dispatch::perform_query(game, VaultAccessCountQuery(raid_id), 1)
 }
 
 /// Look up the number of cards the Champion player can access from the Sanctum
 /// during the current raid
-pub fn sanctum_access_count(game: &GameState) -> usize {
+pub fn sanctum_access_count(game: &GameState) -> u32 {
     let raid_id = game.data.raid.as_ref().expect("Active Raid").raid_id;
     dispatch::perform_query(game, SanctumAccessCountQuery(raid_id), 1)
 }
