@@ -57,10 +57,7 @@ namespace Spelldawn.Services
 
     [SerializeField] MusicService _musicService = null!;
     public MusicService MusicService => _musicService;
-
-    public SampleData SampleData => _sampleData;
-    [SerializeField] SampleData _sampleData = null!;
-
+    
     [SerializeField] ArrowService _arrowService = null!;
     public ArrowService ArrowService => _arrowService;
 

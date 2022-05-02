@@ -42,9 +42,14 @@ pub struct SpecificRaidMana {
     pub mana: ManaValue,
 }
 
+/// Stores a player's mana, both a general-purpose pool and various
+/// restricted-purpose pools.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ManaState {
+    /// General mana, can be used for any purpose.
     pub base_mana: ManaValue,
+
+    /// Mana which can be used only during a specific raid.
     pub specific_raid_mana: Option<SpecificRaidMana>,
 }
 
@@ -84,6 +89,8 @@ impl PlayerState {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, EnumKind)]
 #[enum_kind(RaidPhaseKind)]
 pub enum RaidPhase {
+    /// Raid has been created but does not have a phase yet
+    Begin,
     /// The raid has started and the Overlord is deciding whether to activate
     /// the target room.
     Activation,

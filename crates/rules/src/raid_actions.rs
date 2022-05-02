@@ -21,11 +21,11 @@ use data::delegates::{
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
-use data::primitives::{AbilityId, CardId, RaidId, RoomId, Side};
+use data::primitives::{CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use tracing::{info, instrument};
 
-use crate::mana::ManaType;
+use crate::mana::ManaPurpose;
 use crate::{dispatch, flags, mana, mutations, queries, raid_phases};
 
 #[instrument(skip(game))]
@@ -41,33 +41,31 @@ pub fn initiate_raid_action(
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    initiate_raid(game, target_room, None /* store_in_ability */)?;
+    initiate_raid(game, target_room, |_, _| {})?;
     Ok(())
 }
 
 /// Initiates a raid on the indicated `target_room`.
 ///
-/// If `store_in_ability` is provided, the resulting [RaidId] is stored under
-/// the ability state of the provided ability.
+/// The `on_begin` function is invoked with the [RaidId] once the raid is
+/// created, but before a [RaidPhase] is selected.
 pub fn initiate_raid(
     game: &mut GameState,
     target_room: RoomId,
-    store_in_ability: Option<AbilityId>,
+    on_begin: impl Fn(&mut GameState, RaidId),
 ) -> Result<()> {
     let raid_id = RaidId(game.data.next_raid_id);
     let raid = RaidData {
         target: target_room,
         raid_id,
-        phase: RaidPhase::Activation,
+        phase: RaidPhase::Begin,
         room_active: false,
         accessed: vec![],
     };
 
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
-    if let Some(ability_id) = store_in_ability {
-        game.ability_state_mut(ability_id).raid_id = Some(raid_id);
-    }
+    on_begin(game, raid_id);
 
     let phase = if game.defenders_alphabetical(target_room).any(CardState::is_face_down) {
         RaidPhase::Activation
@@ -122,7 +120,7 @@ pub fn encounter_action(
                 queries::cost_to_defeat_target(game, source_id, target_id).with_context(|| {
                     format!("{:?} cannot defeat target: {:?}", source_id, target_id)
                 })?;
-            mana::spend(game, user_side, ManaType::UseWeaponAbility(source_id), cost);
+            mana::spend(game, user_side, ManaPurpose::UseWeaponAbility(source_id), cost);
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(source_id),
                 target: InteractionObjectId::CardId(target_id),

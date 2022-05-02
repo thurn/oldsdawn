@@ -21,7 +21,7 @@ use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
-use rules::{mana, mutations, DEFINITIONS};
+use rules::{flags, mana, mutations, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -94,8 +94,37 @@ pub fn coup_de_grace() -> CardDefinition {
             ],
         }],
         config: CardConfig {
-            custom_targeting: Some(CustomTargeting::TargetRoom(|r| {
-                r == RoomId::Sanctum || r == RoomId::Vault
+            custom_targeting: Some(CustomTargeting::TargetRoom(|game, room_id| {
+                flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
+                    && (room_id == RoomId::Sanctum || room_id == RoomId::Vault)
+            })),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn charged_strike() -> CardDefinition {
+    CardDefinition {
+        name: CardName::ChargedStrike,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_27"),
+        card_type: CardType::Spell,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text!("Initiate a raid.", "Gain", mana(5), "to spend during that raid."),
+            ability_type: silent(),
+            delegates: vec![on_cast(|g, s, play_card| {
+                initiate_raid_with_callback(g, s, play_card.target, |game, raid_id| {
+                    mana::add_raid_specific_mana(game, s.side(), raid_id, 5);
+                })
+            })],
+        }],
+        config: CardConfig {
+            custom_targeting: Some(CustomTargeting::TargetRoom(|game, room_id| {
+                flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
             })),
             ..CardConfig::default()
         },

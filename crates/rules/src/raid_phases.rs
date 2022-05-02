@@ -27,7 +27,7 @@ use data::with_error::WithError;
 use rand::seq::IteratorRandom;
 use rand::thread_rng;
 
-use crate::mana::ManaType;
+use crate::mana::ManaPurpose;
 use crate::{flags, mana, mutations, queries};
 
 /// Updates the [RaidPhase] for the ongoing raid in the provided `game` and
@@ -41,12 +41,13 @@ pub fn set_raid_phase(game: &mut GameState, phase: RaidPhase) -> Result<()> {
 /// `game`.
 fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
     match game.raid()?.phase {
+        RaidPhase::Begin => {}
         RaidPhase::Activation => {}
         RaidPhase::Encounter(defender_index) => {
             if can_summon_defender(game, defender_index) {
                 let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
                 let cost = queries::mana_cost(game, defender_id).with_error(|| "Expected cost")?;
-                mana::spend(game, Side::Overlord, ManaType::PayForCard(defender_id), cost);
+                mana::spend(game, Side::Overlord, ManaPurpose::PayForCard(defender_id), cost);
                 mutations::turn_face_up(game, defender_id);
             }
         }
@@ -70,7 +71,7 @@ pub fn can_summon_defender(game: &GameState, defender_index: usize) -> bool {
         && game.card(defender_id).is_face_down()
         && matches!(queries::mana_cost(game, defender_id),
             Some(cost)
-            if cost <= mana::get(game, Side::Overlord, ManaType::PayForCard(defender_id))
+            if cost <= mana::get(game, Side::Overlord, ManaPurpose::PayForCard(defender_id))
         )
 }
 
@@ -114,6 +115,7 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
 /// 'waiting' indicator.
 pub fn set_raid_prompt(game: &mut GameState) -> Result<()> {
     let (active_player, prompt) = match game.raid()?.phase {
+        RaidPhase::Begin => return Ok(()),
         RaidPhase::Activation => (Side::Overlord, build_activation_prompt()),
         RaidPhase::Encounter(defender) => (Side::Champion, build_encounter_prompt(game, defender)?),
         RaidPhase::Continue(_) => (Side::Champion, build_continue_prompt()),

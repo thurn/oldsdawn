@@ -31,7 +31,7 @@ use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLo
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
-use crate::mana::ManaType;
+use crate::mana::ManaPurpose;
 use crate::raid_actions::initiate_raid_action;
 use crate::{dispatch, flags, mana, mutations, queries, raid_actions};
 
@@ -134,7 +134,7 @@ fn play_card_action(
 
     if enters_face_up {
         let amount = queries::mana_cost(game, card_id).with_context(|| "Card has no mana cost")?;
-        mana::spend(game, user_side, ManaType::PayForCard(card_id), amount);
+        mana::spend(game, user_side, ManaPurpose::PayForCard(card_id), amount);
     }
 
     mutations::spend_action_points(game, user_side, definition.cost.actions);
@@ -182,7 +182,7 @@ fn activate_ability_action(
     {
         mutations::spend_action_points(game, user_side, cost.actions);
         if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
-            mana::spend(game, user_side, ManaType::ActivateAbility(ability_id), mana);
+            mana::spend(game, user_side, ManaPurpose::ActivateAbility(ability_id), mana);
         }
     }
 
@@ -216,7 +216,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    mana::spend(game, user_side, ManaType::LevelUpRoom(room_id), 1);
+    mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1);
     mutations::level_up_room(game, room_id);
 
     mutations::check_end_turn(game, user_side);

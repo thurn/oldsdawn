@@ -650,7 +650,10 @@ pub struct PlayerInfo {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ManaView {
     #[prost(uint32, tag = "1")]
-    pub amount: u32,
+    pub base_mana: u32,
+    /// Additional mana with custom use restrictions.
+    #[prost(uint32, tag = "2")]
+    pub bonus_mana: u32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ScoreView {

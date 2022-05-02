@@ -38,7 +38,7 @@ use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
-use crate::mana::ManaType;
+use crate::mana::ManaPurpose;
 use crate::{dispatch, mana, queries};
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
@@ -357,8 +357,10 @@ pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
                 turn_face_up(game, card_id);
                 true
             }
-            Some(cost) if cost <= mana::get(game, card_id.side, ManaType::PayForCard(card_id)) => {
-                mana::spend(game, card_id.side, ManaType::PayForCard(card_id), cost);
+            Some(cost)
+                if cost <= mana::get(game, card_id.side, ManaPurpose::PayForCard(card_id)) =>
+            {
+                mana::spend(game, card_id.side, ManaPurpose::PayForCard(card_id), cost);
                 turn_face_up(game, card_id);
                 true
             }

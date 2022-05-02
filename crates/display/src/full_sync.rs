@@ -41,7 +41,7 @@ use protos::spelldawn::{
     ArrowTargetRoom, CardIdentifier, CardPrefab, NoTargeting, ObjectPositionBrowser,
     ObjectPositionIntoCard, RulesText, TargetingArrow,
 };
-use rules::mana::ManaType;
+use rules::mana::ManaPurpose;
 use rules::{flags, mana, queries};
 
 use crate::assets::CardIconType;
@@ -131,7 +131,10 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
             card_back: Some(assets::card_back(rules::get(identity.name).school)),
         }),
         score: Some(ScoreView { score: game.player(side).score }),
-        mana: Some(ManaView { amount: mana::get(game, side, ManaType::BaseForDisplay) }),
+        mana: Some(ManaView {
+            base_mana: mana::get(game, side, ManaPurpose::BaseForDisplay),
+            bonus_mana: mana::get(game, side, ManaPurpose::BonusForDisplay),
+        }),
         action_tracker: Some(ActionTrackerView {
             available_action_count: game.player(side).actions,
         }),
@@ -446,6 +449,7 @@ fn raid_position_overrides(
 
     let defenders = game.defender_list(raid.target);
     let included = match raid.phase {
+        RaidPhase::Begin => return BTreeMap::new(),
         RaidPhase::Activation => &defenders,
         RaidPhase::Encounter(i) => &defenders[..=i],
         RaidPhase::Continue(i) => &defenders[..=i],

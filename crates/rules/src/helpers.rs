@@ -191,7 +191,24 @@ pub fn scheme_points(points: SchemePoints) -> CardStats {
 }
 
 /// Initiates a raid on the `target` room and stores the raid ID as ability
-/// state
+/// state.
 pub fn initiate_raid(game: &mut GameState, scope: Scope, target: CardTarget) {
-    raid_actions::initiate_raid(game, target.room_id().unwrap(), Some(scope.ability_id())).unwrap();
+    initiate_raid_with_callback(game, scope, target, |_, _| {});
+}
+
+/// Initiates a raid on the `target` room and stores the raid ID as ability
+/// state.
+///
+/// Invokes `on_begin` as soon as a [RaidId] is available.
+pub fn initiate_raid_with_callback(
+    game: &mut GameState,
+    scope: Scope,
+    target: CardTarget,
+    on_begin: impl Fn(&mut GameState, RaidId),
+) {
+    raid_actions::initiate_raid(game, target.room_id().expect("Room Target"), |game, raid_id| {
+        game.ability_state_mut(scope.ability_id()).raid_id = Some(raid_id);
+        on_begin(game, raid_id);
+    })
+    .expect("Error initiating raid");
 }

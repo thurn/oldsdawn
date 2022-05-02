@@ -462,6 +462,7 @@ impl ClientGameData {
 pub struct ClientPlayer {
     name: PlayerName,
     mana: Option<ManaValue>,
+    bonus_mana: Option<ManaValue>,
     actions: Option<ActionCount>,
     score: Option<PointsValue>,
     can_take_action: Option<bool>,
@@ -469,11 +470,22 @@ pub struct ClientPlayer {
 
 impl ClientPlayer {
     fn new(name: PlayerName) -> Self {
-        Self { name, mana: None, actions: None, score: None, can_take_action: None }
+        Self {
+            name,
+            mana: None,
+            bonus_mana: None,
+            actions: None,
+            score: None,
+            can_take_action: None,
+        }
     }
 
     pub fn mana(&self) -> ManaValue {
         self.mana.expect("Mana")
+    }
+
+    pub fn bonus_mana(&self) -> ManaValue {
+        self.bonus_mana.expect("BonusMana")
     }
 
     pub fn actions(&self) -> ActionCount {
@@ -500,9 +512,10 @@ impl ClientPlayer {
 
     fn update_with_player(&mut self, player: Option<PlayerView>) {
         if let Some(p) = player {
-            write_if_present(&mut self.mana, p.mana, |v| v.amount);
-            write_if_present(&mut self.actions, p.action_tracker, |v| v.available_action_count);
-            write_if_present(&mut self.score, p.score, |v| v.score);
+            write_if_present(&mut self.mana, &p.mana, |v| v.base_mana);
+            write_if_present(&mut self.bonus_mana, &p.mana, |v| v.bonus_mana);
+            write_if_present(&mut self.actions, &p.action_tracker, |v| v.available_action_count);
+            write_if_present(&mut self.score, &p.score, |v| v.score);
             self.can_take_action = Some(p.can_take_action);
         }
     }
@@ -828,7 +841,7 @@ impl PartialOrd for ClientCard {
     }
 }
 
-fn write_if_present<T, U>(value: &mut Option<T>, option: Option<U>, map: impl Fn(U) -> T) {
+fn write_if_present<T, U>(value: &mut Option<T>, option: &Option<U>, map: impl Fn(&U) -> T) {
     if let Some(v) = option {
         *value = Some(map(v));
     }

@@ -70,6 +70,7 @@ pub enum CardName {
     DungeonAnnex,
     Meditation,
     CoupDeGrace,
+    ChargedStrike,
 }
 
 impl CardName {

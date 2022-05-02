@@ -29,7 +29,9 @@ namespace Spelldawn.Game
     [SerializeField] GameObject _pressEffect = null!;
     [SerializeField] GameObject _changeEffect = null!;
     [SerializeField] TextMeshPro _manaText = null!;
+    [SerializeField] TextMeshPro _bonusManaText = null!;
     [SerializeField] uint _currentMana = 5;
+    [SerializeField] uint _currentBonusMana = 0;
 
     public uint CurrentMana => _currentMana;
 
@@ -38,7 +40,8 @@ namespace Spelldawn.Game
 
     public void RenderManaDisplay(ManaView manaView)
     {
-      SetMana(manaView.Amount);
+      SetMana(manaView.BaseMana);
+      SetBonusMana(manaView.BonusMana);
     }
 
     public void GainMana(uint amount)
@@ -66,6 +69,22 @@ namespace Spelldawn.Game
       _manaText.text = "" + _currentMana;
     }
 
+    void SetBonusMana(uint bonusMana)
+    {
+      Errors.CheckNonNegative(bonusMana);
+
+      if (bonusMana != _currentBonusMana)
+      {
+        _changeEffect.SetActive(false);
+        _changeEffect.SetActive(true);
+      }
+
+      _currentBonusMana = bonusMana;
+      
+      _bonusManaText.gameObject.SetActive(bonusMana > 0);
+      _bonusManaText.text = "" + _currentBonusMana;
+    }    
+    
     void OnMouseDown()
     {
       if (Clickable)

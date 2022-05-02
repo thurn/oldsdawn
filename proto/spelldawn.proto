@@ -704,12 +704,15 @@ message PlayerInfo {
     SpriteAddress portrait_frame = 3;
     repeated RoomIdentifier valid_rooms_to_visit = 4;
 
-    /* Card back asset to use for this player's cards. */
+    // Card back asset to use for this player's cards.
     SpriteAddress card_back = 5;
 }
 
 message ManaView {
-    uint32 amount = 1;
+    uint32 base_mana = 1;
+
+    // Additional mana with custom use restrictions.
+    uint32 bonus_mana = 2;
 }
 
 message ScoreView {

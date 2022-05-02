@@ -26,7 +26,7 @@ use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
 use data::game_actions::{CardTarget, EncounterAction};
 use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
 
-use crate::mana::ManaType;
+use crate::mana::ManaPurpose;
 use crate::{dispatch, mana, queries};
 
 /// Returns whether a player can currently make a mulligan decision
@@ -52,7 +52,7 @@ pub fn can_take_play_card_action(
 
     if enters_play_face_up(game, card_id) {
         can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
-                             if cost <= mana::get(game, side, ManaType::PayForCard(card_id)));
+                             if cost <= mana::get(game, side, ManaPurpose::PayForCard(card_id)));
     }
 
     dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
@@ -79,7 +79,7 @@ pub fn can_take_activate_ability_action(
         && cost.actions <= game.player(side).actions;
 
     if let Some(cost) = queries::ability_mana_cost(game, ability_id) {
-        can_activate &= cost <= mana::get(game, side, ManaType::ActivateAbility(ability_id));
+        can_activate &= cost <= mana::get(game, side, ManaPurpose::ActivateAbility(ability_id));
     }
 
     dispatch::perform_query(game, CanActivateAbilityQuery(ability_id), Flag::new(can_activate))
@@ -102,7 +102,7 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> boo
         };
 
         return match targeting {
-            CustomTargeting::TargetRoom(predicate) => predicate(room_id),
+            CustomTargeting::TargetRoom(predicate) => predicate(game, room_id),
         };
     }
 
@@ -162,7 +162,7 @@ pub fn can_take_level_up_room_action(game: &GameState, side: Side, room_id: Room
         .any(|card| crate::get(card.name).config.stats.can_level_up);
     let can_level_up = has_level_card
         && side == Side::Overlord
-        && mana::get(game, side, ManaType::LevelUpRoom(room_id)) > 0
+        && mana::get(game, side, ManaPurpose::LevelUpRoom(room_id)) > 0
         && queries::in_main_phase(game, side);
     dispatch::perform_query(game, CanLevelUpRoomQuery(side), Flag::new(can_level_up)).into()
 }
@@ -208,7 +208,7 @@ pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bo
         && matches!(
             queries::cost_to_defeat_target(game, source, target),
             Some(cost)
-            if cost <= mana::get(game, source.side, ManaType::PayForCard(source))
+            if cost <= mana::get(game, source.side, ManaPurpose::PayForCard(source))
         );
 
     dispatch::perform_query(

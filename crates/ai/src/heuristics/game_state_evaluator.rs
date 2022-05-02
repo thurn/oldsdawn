@@ -16,7 +16,7 @@ use data::game::GameState;
 use data::primitives::Side;
 use ordered_float::NotNan;
 use rules::mana;
-use rules::mana::ManaType;
+use rules::mana::ManaPurpose;
 
 use crate::core::types::notnan;
 
@@ -55,8 +55,8 @@ pub fn run(game: &GameState, side: Side, weights: HeuristicWeights) -> NotNan<f6
     result += weights.points_difference
         * (f64::from(game.player(side).score) - f64::from(game.player(side.opponent()).score));
     result += weights.mana_difference
-        * (f64::from(mana::get(game, side, ManaType::AllSources))
-            - f64::from(mana::get(game, side.opponent(), ManaType::AllSources)));
+        * (f64::from(mana::get(game, side, ManaPurpose::AllSources))
+            - f64::from(mana::get(game, side.opponent(), ManaPurpose::AllSources)));
     if weights.cards_in_hand != 0.0 {
         result += weights.cards_in_hand * game.hand(side).count() as f64;
     }

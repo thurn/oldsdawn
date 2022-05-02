@@ -46,7 +46,6 @@ namespace Spelldawn.Services
 
     readonly Queue<GameAction> _actionQueue = new();
 
-    [SerializeField] bool _fakeActionResponse;
     [SerializeField] Registry _registry = null!;
     [SerializeField] PlayerName _currentPriority;
     [SerializeField] bool _currentlyHandlingAction;
@@ -59,10 +58,7 @@ namespace Spelldawn.Services
 
     public void Connect()
     {
-      if (!_fakeActionResponse)
-      {
-        ConnectToServer();
-      }
+      ConnectToServer();
     }
 
     public void HandleAction(GameAction action)
@@ -243,13 +239,7 @@ namespace Spelldawn.Services
       }
 
       // Send to server
-      if (_fakeActionResponse)
-      {
-        yield return _registry.SampleData.FakeActionResponse(action);
-      }
-      else
-      {
-        var request = new GameRequest
+      var request = new GameRequest
         {
           Action = action,
           GameId = _registry.GameService.CurrentGameId,
@@ -259,9 +249,8 @@ namespace Spelldawn.Services
         var task = _client.PerformActionAsync(request).GetAwaiter();
         yield return new WaitUntil(() => task.IsCompleted);
         yield return _registry.CommandService.HandleCommands(task.GetResult());
-      }
 
-      _currentlyHandlingAction = false;
+        _currentlyHandlingAction = false;
     }
 
     IEnumerator ApplyOptimisticResponse(GameAction action)

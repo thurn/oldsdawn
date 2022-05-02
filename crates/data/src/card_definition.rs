@@ -17,12 +17,13 @@
 
 #![allow(clippy::use_self)] // Required to use EnumKind
 
-use std::fmt::Debug;
+use std::fmt::{Debug, Formatter};
 
 use enum_kinds::EnumKind;
 
 use crate::card_name::CardName;
 use crate::delegates::Delegate;
+use crate::game::GameState;
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, AttackValue, CardId, CardSubtype, CardType, Faction,
     HealthValue, LevelValue, ManaValue, PointsValue, Rarity, RoomId, School, ShieldValue, Side,
@@ -126,15 +127,23 @@ pub struct SpecialEffects {
     pub additional_hit: Option<TimedEffect>,
 }
 
-pub type RoomPredicate = fn(RoomId) -> bool;
+pub type RoomPredicate = fn(&GameState, RoomId) -> bool;
 
 /// Allows cards to provide special targeting behavior beyond what is normal for
 /// their [CardType].
-#[derive(Debug)]
+#[derive(EnumKind)]
+#[enum_kind(CustomTargetingKind)]
 pub enum CustomTargeting {
     /// Target a specific room when played. Only rooms for which the provided
     /// [RoomPredicate] returns true are considered valid targets.
     TargetRoom(RoomPredicate),
+}
+
+impl Debug for CustomTargeting {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let kind: CustomTargetingKind = self.into();
+        write!(f, "{:?}", kind)
+    }
 }
 
 /// Individual card configuration; properties which are not universal for all

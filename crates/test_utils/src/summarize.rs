@@ -408,7 +408,10 @@ impl Summarize for PlayerInfo {
 
 impl Summarize for ManaView {
     fn summarize(self, summary: &mut Summary) {
-        summary.primitive(self.amount);
+        summary.primitive(self.base_mana);
+        if self.bonus_mana > 0 {
+            summary.child_node("bonus_mana", self.bonus_mana);
+        }
     }
 }
 
