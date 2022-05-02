@@ -27,6 +27,7 @@ pub const UNVEIL_COST: ManaValue = 3;
 pub const MANA_STORED: ManaValue = 10;
 pub const MANA_TAKEN: ManaValue = 2;
 pub const MINION_HEALTH: HealthValue = 5;
+pub const TEST_FACTION: Faction = Faction::Infernal;
 
 pub fn initialize() {}
 
@@ -103,7 +104,7 @@ pub fn test_minion_end_raid() -> CardDefinition {
         card_type: CardType::Minion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
@@ -119,7 +120,7 @@ pub fn test_minion_deal_damage() -> CardDefinition {
         card_type: CardType::Minion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
@@ -132,7 +133,7 @@ pub fn test_minion_infernal() -> CardDefinition {
         name: CardName::TestInfernalMinion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_minion_end_raid()
@@ -173,7 +174,7 @@ pub fn test_weapon_2_attack() -> CardDefinition {
         card_type: CardType::Weapon,
         config: CardConfig {
             stats: base_attack(2),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_champion_spell()
@@ -187,7 +188,7 @@ pub fn test_weapon_2_attack_12_boost() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(2, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -201,7 +202,7 @@ pub fn test_weapon_3_attack_12_boost() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -215,7 +216,7 @@ pub fn test_weapon_4_attack_12_boost() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(4, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -228,7 +229,7 @@ pub fn test_weapon_5_attack() -> CardDefinition {
         name: CardName::TestWeapon5Attack,
         config: CardConfig {
             stats: base_attack(5),
-            faction: Some(Faction::Infernal),
+            faction: Some(TEST_FACTION),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()

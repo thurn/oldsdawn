@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use cards::test_cards::TEST_FACTION;
 use data::card_name::CardName;
-use data::primitives::{RoomId, Side};
+use data::primitives::{Faction, RoomId, Side};
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{ObjectPositionBrowser, PlayerName};
 use test_utils::*;
@@ -54,4 +55,22 @@ fn coup_de_grace() {
 fn coup_de_grace_invalid_room() {
     let mut g = new_game(Side::Champion, Args::default());
     g.play_with_target_room(CardName::CoupDeGrace, ROOM_ID);
+}
+
+#[test]
+fn charged_strike() {
+    let mut g = new_game(Side::Champion, Args::default());
+    setup_raid_target(&mut g, TEST_FACTION);
+    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    assert_eq!(STARTING_MANA - 3, g.me().mana());
+    g.play_with_target_room(CardName::ChargedStrike, ROOM_ID);
+    assert!(g.user.data.raid_active());
+    assert_eq!(STARTING_MANA - 4, g.me().mana());
+    assert_eq!(5, g.user.this_player.bonus_mana());
+    assert_eq!(5, g.opponent.other_player.bonus_mana());
+    click_on_activate(&mut g);
+    g.click_on(g.user_id(), "Test Weapon");
+    assert_eq!(STARTING_MANA - 4, g.me().mana());
+    assert_eq!(4, g.user.this_player.bonus_mana());
+    assert_eq!(4, g.opponent.other_player.bonus_mana());
 }

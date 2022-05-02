@@ -301,21 +301,14 @@ pub fn fire_minion_combat_abilities(session: &mut TestSession) {
 /// Must be invoked during the Champion turn. Performs the following actions:
 ///
 /// - Ends the Champion turn
+/// - Plays a 3-1 scheme in the [ROOM_ID] room.
 /// - Selects a test minion with 5 health and an 'end raid' ability matching the
 ///   provided `faction`
 /// - Plays the selected minion in the [ROOM_ID] room.
 /// - Ends the Overlord turn.
-/// - Initiates a raid on the [ROOM_ID] room.
-/// - Activates the room
-/// - Clicks on the button with text matching `name` in order to fire weapon
-///   abilities.
 ///
-/// NOTE: This causes both players to draw cards for their turns!
-pub fn fire_weapon_combat_abilities(
-    session: &mut TestSession,
-    faction: Faction,
-    name: &'static str,
-) {
+/// WARNING: This causes both players to draw cards for their turns!
+pub fn setup_raid_target(session: &mut TestSession, faction: Faction) {
     spend_actions_until_turn_over(session, Side::Champion);
     assert!(session.dusk());
     session.play_from_hand(CardName::TestScheme31);
@@ -328,8 +321,29 @@ pub fn fire_weapon_combat_abilities(
     session.play_from_hand(minion_name);
     spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
-    session.initiate_raid(ROOM_ID);
+}
+
+pub fn click_on_activate(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
+}
+
+/// Must be invoked during the Champion turn. Performs the following actions:
+///
+/// - Performs all actions described in [setup_raid_target].
+/// - Initiates a raid on the [ROOM_ID] room.
+/// - Activates the room
+/// - Clicks on the button with text matching `name` in order to fire weapon
+///   abilities.
+///
+/// WARNING: This causes both players to draw cards for their turns!
+pub fn fire_weapon_combat_abilities(
+    session: &mut TestSession,
+    faction: Faction,
+    name: &'static str,
+) {
+    setup_raid_target(session, faction);
+    session.initiate_raid(ROOM_ID);
+    click_on_activate(session);
     session.click_on(session.player_id_for_side(Side::Champion), name);
 }
 
