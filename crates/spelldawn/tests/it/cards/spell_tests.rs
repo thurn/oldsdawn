@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use cards::test_cards::{MINION_COST, MINION_HEALTH, TEST_FACTION};
+use cards::test_cards::{MINION_COST, TEST_FACTION};
 use data::card_name::CardName;
-use data::primitives::{Faction, RoomId, Side};
+use data::primitives::{RoomId, Side};
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{ObjectPositionBrowser, PlayerName};
 use test_utils::*;
@@ -83,4 +83,16 @@ fn stealth_mission() {
     assert_eq!(STARTING_MANA, g.opponent.this_player.mana());
     click_on_activate(&mut g);
     assert_eq!(STARTING_MANA - MINION_COST - 3, g.opponent.this_player.mana());
+}
+
+#[test]
+fn preparation() {
+    let mut g = new_game(Side::Champion, Args { mana: 5, ..Args::default() });
+    assert_eq!(3, g.me().actions());
+    g.play_from_hand(CardName::Preparation);
+    assert_eq!(4, g.user.cards.hand(PlayerName::User).len());
+    assert_eq!(1, g.me().actions());
+    g.play_from_hand(CardName::Preparation);
+    assert_eq!(8, g.user.cards.hand(PlayerName::User).len());
+    assert!(g.dusk());
 }

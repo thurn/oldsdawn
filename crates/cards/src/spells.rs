@@ -173,3 +173,25 @@ pub fn stealth_mission() -> CardDefinition {
         },
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn preparation() -> CardDefinition {
+    CardDefinition {
+        name: CardName::Preparation,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_29"),
+        card_type: CardType::Spell,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text!("Draw 4 cards.", "Lose", actions(1), reminder("(if able).")),
+            ability_type: silent(),
+            delegates: vec![on_cast(|g, s, _| {
+                mutations::draw_cards(g, s.side(), 4);
+                mutations::lose_action_point_if_able(g, s.side(), 1);
+            })],
+        }],
+        config: CardConfig::default(),
+    }
+}

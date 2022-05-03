@@ -72,6 +72,7 @@ pub enum CardName {
     CoupDeGrace,
     ChargedStrike,
     StealthMission,
+    Preparation,
 }
 
 impl CardName {
