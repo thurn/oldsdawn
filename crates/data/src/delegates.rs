@@ -301,6 +301,8 @@ pub enum Delegate {
     /// whether the encounter was successful.
     EncounterEnd(EventDelegate<RaidId>),
     /// A Raid is completed, either successfully or unsuccessfully.
+    ///
+    /// Note that this is invoked before `game.data.raid` is cleared.
     RaidEnd(EventDelegate<RaidEnded>),
     /// Stored mana is taken from a card
     StoredManaTaken(EventDelegate<CardId>),

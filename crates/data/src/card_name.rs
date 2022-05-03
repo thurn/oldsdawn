@@ -71,6 +71,7 @@ pub enum CardName {
     Meditation,
     CoupDeGrace,
     ChargedStrike,
+    StealthMission,
 }
 
 impl CardName {

@@ -22,6 +22,7 @@ use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::{abilities, mutations, text, DEFINITIONS};
 
+pub const MINION_COST: ManaValue = 3;
 pub const ARTIFACT_COST: ManaValue = 1;
 pub const UNVEIL_COST: ManaValue = 3;
 pub const MANA_STORED: ManaValue = 10;
@@ -99,7 +100,7 @@ pub fn test_scheme_31() -> CardDefinition {
 pub fn test_minion_end_raid() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionEndRaid,
-        cost: cost(3),
+        cost: cost(MINION_COST),
         abilities: vec![abilities::end_raid()],
         card_type: CardType::Minion,
         config: CardConfig {

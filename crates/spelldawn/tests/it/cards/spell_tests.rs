@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use cards::test_cards::TEST_FACTION;
+use cards::test_cards::{MINION_COST, MINION_HEALTH, TEST_FACTION};
 use data::card_name::CardName;
 use data::primitives::{Faction, RoomId, Side};
 use protos::spelldawn::object_position::Position;
@@ -73,4 +73,14 @@ fn charged_strike() {
     assert_eq!(STARTING_MANA - 4, g.me().mana());
     assert_eq!(4, g.user.this_player.bonus_mana());
     assert_eq!(4, g.opponent.other_player.bonus_mana());
+}
+
+#[test]
+fn stealth_mission() {
+    let mut g = new_game(Side::Champion, Args::default());
+    setup_raid_target(&mut g, TEST_FACTION);
+    g.play_with_target_room(CardName::StealthMission, ROOM_ID);
+    assert_eq!(STARTING_MANA, g.opponent.this_player.mana());
+    click_on_activate(&mut g);
+    assert_eq!(STARTING_MANA - MINION_COST - 3, g.opponent.this_player.mana());
 }

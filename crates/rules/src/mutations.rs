@@ -223,8 +223,8 @@ pub fn clear_prompt(game: &mut GameState, side: Side) {
 pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) {
     info!("end_raid");
     let raid_id = game.raid().expect("Active raid").raid_id;
-    game.data.raid = None;
     dispatch::invoke_event(game, RaidEndEvent(RaidEnded { raid_id, outcome }));
+    game.data.raid = None;
     check_end_turn(game, Side::Champion)
 }
 

@@ -16,7 +16,7 @@
 
 use data::card_definition::{Ability, CardConfig, CardDefinition, CustomTargeting};
 use data::card_name::CardName;
-use data::delegates::RaidOutcome;
+use data::delegates::{Delegate, QueryDelegate, RaidOutcome};
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
 use rules::card_text::text;
@@ -121,6 +121,49 @@ pub fn charged_strike() -> CardDefinition {
                     mana::add_raid_specific_mana(game, s.side(), raid_id, 5);
                 })
             })],
+        }],
+        config: CardConfig {
+            custom_targeting: Some(CustomTargeting::TargetRoom(|game, room_id| {
+                flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
+            })),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn stealth_mission() -> CardDefinition {
+    CardDefinition {
+        name: CardName::StealthMission,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_28"),
+        card_type: CardType::Spell,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text!(
+                "Initiate a raid.",
+                "During that raid, summon costs are increased by",
+                mana(3),
+                "."
+            ),
+            ability_type: silent(),
+            delegates: vec![
+                on_cast(|g, s, play_card| {
+                    initiate_raid(g, s, play_card.target);
+                }),
+                Delegate::ManaCost(QueryDelegate {
+                    requirement: matching_raid,
+                    transformation: |g, _s, card_id, current| {
+                        if rules::card_definition(g, card_id).card_type == CardType::Minion {
+                            current.map(|current| current + 3)
+                        } else {
+                            current
+                        }
+                    },
+                }),
+            ],
         }],
         config: CardConfig {
             custom_targeting: Some(CustomTargeting::TargetRoom(|game, room_id| {

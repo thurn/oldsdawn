@@ -52,7 +52,12 @@ pub fn stats(game: &GameState, card_id: CardId) -> &CardStats {
     &crate::get(game.card(card_id).name).config.stats
 }
 
-/// Returns the mana cost for a given card, if any
+/// Returns the mana cost for a given card.
+///
+/// - For minions, this is the summon cost.
+/// - For projects, this is the unveil cost.
+/// - For spells, artifacts, and weapons this is the casting cost.
+/// - Schemes do not have a mana cost
 pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
     dispatch::perform_query(
         game,

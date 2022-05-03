@@ -101,10 +101,10 @@ pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> boo
     scope.card_id() == boost_data.card_id
 }
 
-/// A RequirementFn which checks if the provided `raid_id` matches the stored
+/// A RequirementFn which checks if the current `raid_id` matches the stored
 /// [RaidId] for this `scope`.
-pub fn matching_raid(game: &GameState, scope: Scope, raid_id: impl Into<RaidId>) -> bool {
-    utils::is_true(|| Some(game.ability_state(scope)?.raid_id? == raid_id.into()))
+pub fn matching_raid<T>(game: &GameState, scope: Scope, _: T) -> bool {
+    utils::is_true(|| Some(game.ability_state(scope)?.raid_id? == game.data.raid.as_ref()?.raid_id))
 }
 
 /// Returns a standard [AbilityType] which does not notify the user when
