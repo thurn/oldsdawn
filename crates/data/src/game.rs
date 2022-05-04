@@ -26,7 +26,7 @@ use serde::{Deserialize, Serialize};
 use crate::agent_definition::AgentData;
 use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
-use crate::delegates::{DelegateCache, Scope};
+use crate::delegates::DelegateCache;
 use crate::game_actions::Prompt;
 use crate::primitives::{
     AbilityId, ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId,
@@ -175,8 +175,8 @@ impl MulliganData {
 }
 
 /// Identifies the player whose turn it is
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CurrentTurn {
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+pub struct TurnData {
     /// Current player whose turn it is
     pub side: Side,
     /// Turn number for that player
@@ -205,7 +205,7 @@ pub struct GameData {
     /// Current [GamePhase].
     pub phase: GamePhase,
     /// Identifies current game turn
-    pub turn: CurrentTurn,
+    pub turn: TurnData,
     /// Data about an ongoing raid, if any
     pub raid: Option<RaidData>,
     /// Counter to create unique IDs for raids within this game
@@ -267,7 +267,7 @@ impl GameState {
             id,
             data: GameData {
                 phase: GamePhase::ResolveMulligans(MulliganData::default()),
-                turn: CurrentTurn { side: Side::Overlord, turn_number: 0 },
+                turn: TurnData { side: Side::Overlord, turn_number: 0 },
                 raid: None,
                 next_raid_id: 1,
                 config,
@@ -461,13 +461,13 @@ impl GameState {
         self.data.raid.as_mut().with_error(|| "Expected Raid")
     }
 
-    /// Retrieves the [AbilityState] for a [Scope]
-    pub fn ability_state(&self, scope: Scope) -> Option<&AbilityState> {
-        self.ability_state.get(&scope.ability_id())
+    /// Retrieves the [AbilityState] for an [AbilityId]
+    pub fn ability_state(&self, ability_id: AbilityId) -> Option<&AbilityState> {
+        self.ability_state.get(&ability_id)
     }
 
-    /// Returns a mutable [AbilityState] for a [Scope], creating a new one if
-    /// one has not previously been set
+    /// Returns a mutable [AbilityState] for an [AbilityId], creating a new one
+    /// if one has not previously been set
     pub fn ability_state_mut(&mut self, ability_id: AbilityId) -> &mut AbilityState {
         self.ability_state.entry(ability_id).or_insert_with(AbilityState::default)
     }

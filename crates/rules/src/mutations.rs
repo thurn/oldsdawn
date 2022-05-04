@@ -29,7 +29,7 @@ use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
     RaidEndEvent, RaidEnded, RaidOutcome, Scope, StoredManaTakenEvent,
 };
-use data::game::{CurrentTurn, GameOverData, GamePhase, GameState, MulliganDecision};
+use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
 use data::game_actions::{Prompt, PromptAction};
 use data::primitives::{
     ActionCount, BoostData, CardId, ManaValue, PointsValue, RoomId, RoomLocation, Side, TurnNumber,
@@ -374,7 +374,7 @@ pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
 /// Starts the turn for the `next_side` player.
 fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
     game.data.phase = GamePhase::Play;
-    game.data.turn = CurrentTurn { side: next_side, turn_number };
+    game.data.turn = TurnData { side: next_side, turn_number };
 
     info!(?next_side, "start_player_turn");
     if next_side == Side::Overlord {

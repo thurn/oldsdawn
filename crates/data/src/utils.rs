@@ -17,3 +17,9 @@
 pub fn is_true(function: impl FnOnce() -> Option<bool>) -> bool {
     function().unwrap_or(false)
 }
+
+/// Helper function to run a closure and return `true` if the result is
+/// `None` or `Some(false)`.
+pub fn is_false(function: impl FnOnce() -> Option<bool>) -> bool {
+    !is_true(function)
+}

@@ -104,7 +104,9 @@ pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> boo
 /// A RequirementFn which checks if the current `raid_id` matches the stored
 /// [RaidId] for this `scope`.
 pub fn matching_raid<T>(game: &GameState, scope: Scope, _: T) -> bool {
-    utils::is_true(|| Some(game.ability_state(scope)?.raid_id? == game.data.raid.as_ref()?.raid_id))
+    utils::is_true(|| {
+        Some(game.ability_state(scope.ability_id())?.raid_id? == game.data.raid.as_ref()?.raid_id)
+    })
 }
 
 /// Returns a standard [AbilityType] which does not notify the user when
@@ -141,6 +143,14 @@ pub fn combat(mutation: MutationFn<CardId>) -> Delegate {
 /// A delegate when a card is scored
 pub fn on_overlord_score(mutation: MutationFn<CardId>) -> Delegate {
     Delegate::OverlordScoreCard(EventDelegate { requirement: this_card, mutation })
+}
+
+/// Delegate which fires when the 'access' phase of a raid begins.
+pub fn on_raid_access_start(
+    requirement: RequirementFn<RaidId>,
+    mutation: MutationFn<RaidId>,
+) -> Delegate {
+    Delegate::RaidAccessStart(EventDelegate { requirement, mutation })
 }
 
 /// A delegate which fires when a raid ends
@@ -211,4 +221,19 @@ pub fn initiate_raid_with_callback(
         on_begin(game, raid_id);
     })
     .expect("Error initiating raid");
+}
+
+/// Invokes `function` at most once per turn.
+///
+/// Stores ability state to track the last-invoked turn number
+pub fn once_per_turn<T>(game: &mut GameState, scope: Scope, data: T, function: MutationFn<T>) {
+    if utils::is_false(|| Some(game.ability_state(scope.ability_id())?.turn? == game.data.turn)) {
+        game.ability_state_mut(scope.ability_id()).turn = Some(game.data.turn);
+        function(game, scope, data)
+    }
+}
+
+/// Helper to store the provided [RaidId] as ability state for this [Scope].
+pub fn store_raid_id(game: &mut GameState, scope: Scope, raid_id: RaidId) {
+    game.ability_state_mut(scope.ability_id()).raid_id = Some(raid_id);
 }

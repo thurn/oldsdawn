@@ -300,6 +300,9 @@ pub enum Delegate {
     /// A minion finishes being encountered during a raid. Invokes regardless of
     /// whether the encounter was successful.
     EncounterEnd(EventDelegate<RaidId>),
+    /// Minion encounters have been completed for a raid and the Access phase is
+    /// about to start. The set of accessed cards has not yet been selected.
+    RaidAccessStart(EventDelegate<RaidId>),
     /// A Raid is completed, either successfully or unsuccessfully.
     ///
     /// Note that this is invoked before `game.data.raid` is cleared.

@@ -14,10 +14,11 @@
 
 //! Card definitions for the Weapon card type
 
-use data::card_definition::{CardConfig, CardDefinition};
+use data::card_definition::{Ability, CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use linkme::distributed_slice;
+use rules::card_text::text;
 use rules::helpers::*;
 use rules::{abilities, DEFINITIONS};
 
@@ -37,6 +38,32 @@ pub fn lodestone() -> CardDefinition {
             abilities::store_mana::<12>(),
             abilities::activated_take_mana::<2>(cost_1_action()),
         ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn sanctum_passage() -> CardDefinition {
+    CardDefinition {
+        name: CardName::SanctumPassage,
+        cost: cost(2),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_77"),
+        card_type: CardType::Artifact,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text!(
+                "The first time each turn you access the Sanctum, access 1 additional card."
+            ),
+            ability_type: silent(),
+            delegates: vec![
+                on_raid_access_start(face_up_in_play, |g, s, raid_id| {
+                    once_per_turn(g, s, raid_id, store_raid_id);
+                }),
+                add_sanctum_access::<1>(matching_raid),
+            ],
+        }],
         config: CardConfig::default(),
     }
 }

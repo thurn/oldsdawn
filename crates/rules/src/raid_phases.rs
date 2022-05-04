@@ -18,6 +18,7 @@ use std::iter;
 
 use anyhow::Result;
 use data::card_state::CardPosition;
+use data::delegates::RaidAccessStartEvent;
 use data::game::{GameState, RaidPhase};
 use data::game_actions::{
     ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
@@ -28,7 +29,7 @@ use rand::seq::IteratorRandom;
 use rand::thread_rng;
 
 use crate::mana::ManaPurpose;
-use crate::{flags, mana, mutations, queries};
+use crate::{dispatch, flags, mana, mutations, queries};
 
 /// Updates the [RaidPhase] for the ongoing raid in the provided `game` and
 /// invokes callbacks as appropriate.
@@ -53,6 +54,7 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
         }
         RaidPhase::Continue(_) => {}
         RaidPhase::Access => {
+            dispatch::invoke_event(game, RaidAccessStartEvent(game.raid()?.raid_id));
             game.raid_mut()?.accessed = accessed_cards(game)?;
         }
     }

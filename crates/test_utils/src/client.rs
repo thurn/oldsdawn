@@ -573,8 +573,11 @@ pub trait HasText {
     fn find_text(&self, path: &mut Vec<Node>, text: &'static str);
 
     /// Finds the path to the provided `text` via [Self::find_text] and then
-    /// searches up the path for a registered [EventHandlers].
+    /// searches up the path for registered [EventHandlers].
     fn find_handlers(&self, text: &'static str) -> Option<EventHandlers>;
+
+    /// Returns all text contained within this tree
+    fn get_text(&self) -> Vec<String>;
 }
 
 impl HasText for Node {
@@ -610,6 +613,19 @@ impl HasText for Node {
         nodes.reverse();
         nodes.iter().find_map(|node| node.event_handlers.clone())
     }
+
+    fn get_text(&self) -> Vec<String> {
+        let mut result = vec![];
+        if let Some(NodeType { node_type: Some(node_type::NodeType::Text(s)) }) = &self.node_type {
+            result.push(s.label.clone())
+        }
+
+        for child in &self.children {
+            result.extend(child.get_text());
+        }
+
+        result
+    }
 }
 
 impl HasText for Vec<&Node> {
@@ -637,6 +653,14 @@ impl HasText for Vec<&Node> {
             }
         }
         None
+    }
+
+    fn get_text(&self) -> Vec<String> {
+        let mut result = vec![];
+        for node in self {
+            result.extend(node.get_text());
+        }
+        result
     }
 }
 

@@ -29,7 +29,7 @@ use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardPositionKind};
 use data::deck::Deck;
-use data::game::{CurrentTurn, GameConfiguration, GamePhase, GameState, RaidData, RaidPhase};
+use data::game::{GameConfiguration, GamePhase, GameState, RaidData, RaidPhase, TurnData};
 use data::primitives::{
     ActionCount, Faction, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
 };
@@ -87,7 +87,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
     if !args.resolve_mulligans {
         let turn_side = args.turn.unwrap_or(user_side);
         game.data.phase = GamePhase::Play;
-        game.data.turn = CurrentTurn { side: turn_side, turn_number: 0 };
+        game.data.turn = TurnData { side: turn_side, turn_number: 0 };
         mana::set(&mut game, user_side, args.mana);
         game.player_mut(user_side).score = args.score;
         mana::set(&mut game, user_side.opponent(), args.opponent_mana);
@@ -325,6 +325,10 @@ pub fn setup_raid_target(session: &mut TestSession, faction: Faction) {
 
 pub fn click_on_activate(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
+}
+
+pub fn click_on_end_raid(session: &mut TestSession) {
+    session.click_on(session.player_id_for_side(Side::Champion), "End Raid");
 }
 
 /// Must be invoked during the Champion turn. Performs the following actions:

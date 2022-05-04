@@ -13,7 +13,8 @@
 // limitations under the License.
 
 use data::card_name::CardName;
-use data::primitives::Side;
+use data::primitives::{RoomId, Side};
+use test_utils::client::HasText;
 use test_utils::*;
 
 #[test]
@@ -25,4 +26,21 @@ fn lodestone() {
     assert_eq!(STARTING_MANA - 1 + 2, g.me().mana());
     assert_eq!(1, g.me().actions());
     assert_eq!("10", g.user.get_card(id).arena_icon());
+}
+
+#[test]
+fn sanctum_passage() {
+    let mut g = new_game(Side::Champion, Args::default());
+    g.add_to_hand(CardName::TestScheme31);
+    g.add_to_hand(CardName::TestScheme31);
+
+    g.play_from_hand(CardName::SanctumPassage);
+    g.initiate_raid(RoomId::Sanctum);
+    assert_eq!(2, g.user.interface.card_anchor_nodes().len());
+    assert_eq!(vec!["Score!"], g.user.interface.card_anchor_nodes()[0].get_text());
+    assert_eq!(vec!["Score!"], g.user.interface.card_anchor_nodes()[1].get_text());
+    click_on_end_raid(&mut g);
+    g.initiate_raid(RoomId::Sanctum);
+    assert_eq!(1, g.user.interface.card_anchor_nodes().len());
+    assert_eq!(vec!["Score!"], g.user.interface.card_anchor_nodes()[0].get_text());
 }
