@@ -40,11 +40,11 @@ pub fn add_number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::Add, number.into())
 }
 
-pub fn mana(value: ManaValue) -> TextToken {
+pub fn mana_text(value: ManaValue) -> TextToken {
     TextToken::Mana(value)
 }
 
-pub fn actions(value: ActionCount) -> TextToken {
+pub fn actions_text(value: ActionCount) -> TextToken {
     TextToken::Actions(value)
 }
 
@@ -52,11 +52,13 @@ pub fn reminder(text: &'static str) -> TextToken {
     TextToken::Reminder(text.to_string())
 }
 
-pub fn cost_1_action() -> Cost {
-    Cost { mana: None, actions: 1 }
+/// A [Cost] which requires no mana and `actions` action points.
+pub fn actions(actions: ActionCount) -> Cost {
+    Cost { mana: None, actions }
 }
 
-/// Provides the cost for a card, with 1 action point required
+/// Provides the cost for a card, with 1 action point required and `mana` mana
+/// points
 pub fn cost(mana: ManaValue) -> Cost {
     Cost { mana: Some(mana), actions: 1 }
 }
@@ -125,6 +127,11 @@ pub fn on_cast(mutation: MutationFn<CardPlayed>) -> Delegate {
     Delegate::CastCard(EventDelegate { requirement: this_card, mutation })
 }
 
+/// A [Delegate] which triggers when an ability is activated
+pub fn on_activated(mutation: MutationFn<AbilityId>) -> Delegate {
+    Delegate::ActivateAbility(EventDelegate { requirement: this_ability, mutation })
+}
+
 /// A delegate which triggers at dawn if a card is face up in play
 pub fn at_dawn(mutation: MutationFn<TurnNumber>) -> Delegate {
     Delegate::Dawn(EventDelegate { requirement: face_up_in_play, mutation })
@@ -159,6 +166,22 @@ pub fn on_raid_ended(
     mutation: MutationFn<RaidEnded>,
 ) -> Delegate {
     Delegate::RaidEnd(EventDelegate { requirement, mutation })
+}
+
+/// A delegate which fires when a raid ends in success
+pub fn on_raid_success(
+    requirement: RequirementFn<RaidId>,
+    mutation: MutationFn<RaidId>,
+) -> Delegate {
+    Delegate::RaidSuccess(EventDelegate { requirement, mutation })
+}
+
+/// A delegate which fires when a raid ends in failure
+pub fn on_raid_failure(
+    requirement: RequirementFn<RaidId>,
+    mutation: MutationFn<RaidId>,
+) -> Delegate {
+    Delegate::RaidFailure(EventDelegate { requirement, mutation })
 }
 
 pub fn add_vault_access<const N: u32>(requirement: RequirementFn<RaidId>) -> Delegate {
@@ -234,6 +257,12 @@ pub fn once_per_turn<T>(game: &mut GameState, scope: Scope, data: T, function: M
 }
 
 /// Helper to store the provided [RaidId] as ability state for this [Scope].
-pub fn store_raid_id(game: &mut GameState, scope: Scope, raid_id: RaidId) {
+pub fn save_raid_id(game: &mut GameState, scope: Scope, raid_id: RaidId) {
     game.ability_state_mut(scope.ability_id()).raid_id = Some(raid_id);
+}
+
+/// Add `amount` to the stored mana in a card. Returns the new stored amount.
+pub fn add_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue) -> ManaValue {
+    game.card_mut(card_id).data.stored_mana += amount;
+    game.card(card_id).data.stored_mana
 }

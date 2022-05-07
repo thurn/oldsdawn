@@ -24,6 +24,7 @@ use data::updates::GameUpdate;
 
 use crate::card_text::text;
 use crate::helpers::*;
+use crate::mutations::OnEmpty;
 use crate::{mutations, queries};
 
 /// The standard weapon ability; applies an attack boost for the duration of a
@@ -49,7 +50,7 @@ pub fn encounter_boost() -> Ability {
 
 /// Store `N` mana in this card when played. Move it to the discard pile when
 /// the stored mana is depleted.
-pub fn store_mana<const N: ManaValue>() -> Ability {
+pub fn store_mana_on_play<const N: ManaValue>() -> Ability {
     Ability {
         text: text![Keyword::Play, Keyword::Store(N)],
         ability_type: AbilityType::Standard(TriggerIndicator::Silent),
@@ -74,7 +75,7 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost) -> Ability {
         delegates: vec![Delegate::ActivateAbility(EventDelegate::new(
             this_ability,
             |g, _s, ability_id| {
-                mutations::take_stored_mana(g, ability_id.card_id, N);
+                mutations::take_stored_mana(g, ability_id.card_id, N, OnEmpty::MoveToDiscard);
             },
         ))],
     }

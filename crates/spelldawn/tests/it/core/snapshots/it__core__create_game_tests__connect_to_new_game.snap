@@ -36,6 +36,8 @@ expression: "Summary::run(&response)"
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
             revealed_card: 
@@ -61,6 +63,8 @@ expression: "Summary::run(&response)"
             is_face_up: false
             card_icons: 
                 top_left_icon: "1"
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
             revealed_card: 
@@ -86,6 +90,8 @@ expression: "Summary::run(&response)"
             is_face_up: false
             card_icons: 
                 top_left_icon: "1"
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
             revealed_card: 
@@ -111,6 +117,8 @@ expression: "Summary::run(&response)"
             is_face_up: false
             card_icons: 
                 top_left_icon: "1"
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
             revealed_card: 
@@ -136,6 +144,8 @@ expression: "Summary::run(&response)"
             is_face_up: false
             card_icons: 
                 top_left_icon: "1"
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
             revealed_card: 
@@ -161,6 +171,8 @@ expression: "Summary::run(&response)"
             is_face_up: false
             card_icons: 
                 top_left_icon: "1"
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
             revealed_card: 
@@ -185,6 +197,8 @@ expression: "Summary::run(&response)"
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
             revealed_card: 
@@ -209,6 +223,11 @@ expression: "Summary::run(&response)"
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
         create_position: 
@@ -221,6 +240,11 @@ expression: "Summary::run(&response)"
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
         create_position: 
@@ -233,6 +257,11 @@ expression: "Summary::run(&response)"
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
         create_position: 
@@ -245,6 +274,11 @@ expression: "Summary::run(&response)"
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
         create_position: 
@@ -257,6 +291,11 @@ expression: "Summary::run(&response)"
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
         create_position: 

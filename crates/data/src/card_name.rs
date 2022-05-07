@@ -74,6 +74,7 @@ pub enum CardName {
     StealthMission,
     Preparation,
     SanctumPassage,
+    Accumulator,
 }
 
 impl CardName {

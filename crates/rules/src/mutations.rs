@@ -27,7 +27,8 @@ use std::cmp;
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
-    RaidEndEvent, RaidEnded, RaidOutcome, Scope, StoredManaTakenEvent,
+    RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome, RaidSuccessEvent, Scope,
+    StoredManaTakenEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
 use data::game_actions::{Prompt, PromptAction};
@@ -71,6 +72,10 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
         || new_position.kind() == CardPositionKind::ArenaItem
     {
         game.updates.push(GameUpdate::MoveToZone(card_id));
+    }
+
+    if !new_position.in_play() {
+        clear_counters(game, card_id);
     }
 }
 
@@ -174,11 +179,22 @@ pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) {
     }
 }
 
+#[derive(Debug, Eq, PartialEq)]
+pub enum OnEmpty {
+    MoveToDiscard,
+    Ignore,
+}
+
 /// Takes *up to* `maximum` stored mana from a card and gives it to the player
 /// who owns this card. If no mana remains, the card is moved to its owner's
 /// discard pile.
 #[instrument(skip(game))]
-pub fn take_stored_mana(game: &mut GameState, card_id: CardId, maximum: ManaValue) {
+pub fn take_stored_mana(
+    game: &mut GameState,
+    card_id: CardId,
+    maximum: ManaValue,
+    on_empty: OnEmpty,
+) {
     info!(?card_id, ?maximum, "take_stored_mana");
     let available = game.card(card_id).data.stored_mana;
     let taken = cmp::min(available, maximum);
@@ -186,7 +202,7 @@ pub fn take_stored_mana(game: &mut GameState, card_id: CardId, maximum: ManaValu
     mana::gain(game, card_id.side, taken);
     dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
 
-    if game.card(card_id).data.stored_mana == 0 {
+    if on_empty == OnEmpty::MoveToDiscard && game.card(card_id).data.stored_mana == 0 {
         move_card(game, card_id, CardPosition::DiscardPile(card_id.side));
     }
 }
@@ -223,6 +239,10 @@ pub fn clear_prompt(game: &mut GameState, side: Side) {
 pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) {
     info!("end_raid");
     let raid_id = game.raid().expect("Active raid").raid_id;
+    match outcome {
+        RaidOutcome::Success => dispatch::invoke_event(game, RaidSuccessEvent(raid_id)),
+        RaidOutcome::Failure => dispatch::invoke_event(game, RaidFailureEvent(raid_id)),
+    }
     dispatch::invoke_event(game, RaidEndEvent(RaidEnded { raid_id, outcome }));
     game.data.raid = None;
     check_end_turn(game, Side::Champion)
@@ -386,4 +406,13 @@ fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
     game.updates.push(GameUpdate::StartTurn(next_side));
 
     draw_cards(game, next_side, 1);
+}
+
+/// Clears card state which is specific to a card being in play.
+///
+/// Automatically invoked by [move_card] when a card moves to a non-play zone.
+pub fn clear_counters(game: &mut GameState, card_id: CardId) {
+    game.card_mut(card_id).data.card_level = 0;
+    game.card_mut(card_id).data.stored_mana = 0;
+    game.card_mut(card_id).data.boost_count = 0;
 }

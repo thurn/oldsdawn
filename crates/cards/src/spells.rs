@@ -36,7 +36,7 @@ pub fn arcane_recovery() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![Ability {
-            text: text!("Gain", mana(9)),
+            text: text!("Gain", mana_text(9)),
             ability_type: silent(),
             delegates: vec![on_cast(|g, s, _| mana::gain(g, s.side(), 9))],
         }],
@@ -55,7 +55,7 @@ pub fn meditation() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![Ability {
-            text: text!("Gain", mana(5), ".", "Lose", actions(1), reminder("(if able).")),
+            text: text!("Gain", mana_text(5), ".", "Lose", actions_text(1), reminder("(if able).")),
             ability_type: silent(),
             delegates: vec![on_cast(|g, s, _| {
                 mana::gain(g, s.side(), 5);
@@ -114,7 +114,7 @@ pub fn charged_strike() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![Ability {
-            text: text!("Initiate a raid.", "Gain", mana(5), "to spend during that raid."),
+            text: text!("Initiate a raid.", "Gain", mana_text(5), "to spend during that raid."),
             ability_type: silent(),
             delegates: vec![on_cast(|g, s, play_card| {
                 initiate_raid_with_callback(g, s, play_card.target, |game, raid_id| {
@@ -145,7 +145,7 @@ pub fn stealth_mission() -> CardDefinition {
             text: text!(
                 "Initiate a raid.",
                 "During that raid, summon costs are increased by",
-                mana(3),
+                mana_text(3),
                 "."
             ),
             ability_type: silent(),
@@ -185,7 +185,7 @@ pub fn preparation() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![Ability {
-            text: text!("Draw 4 cards.", "Lose", actions(1), reminder("(if able).")),
+            text: text!("Draw 4 cards.", "Lose", actions_text(1), reminder("(if able).")),
             ability_type: silent(),
             delegates: vec![on_cast(|g, s, _| {
                 mutations::draw_cards(g, s.side(), 4);

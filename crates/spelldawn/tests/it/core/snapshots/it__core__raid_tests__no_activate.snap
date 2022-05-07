@@ -49,6 +49,7 @@ channel_response:
             card_id: O45
             revealed_to_viewer: true
             is_face_up: false
+            card_icons: 
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"

@@ -44,3 +44,14 @@ fn sanctum_passage() {
     assert_eq!(1, g.user.interface.card_anchor_nodes().len());
     assert_eq!(vec!["Score!"], g.user.interface.card_anchor_nodes()[0].get_text());
 }
+
+#[test]
+fn accumulator() {
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.play_from_hand(CardName::Accumulator);
+    g.initiate_raid(RoomId::Crypts);
+    click_on_end_raid(&mut g);
+    assert_eq!("1", g.user.get_card(id).arena_icon());
+    g.activate_ability(id, 1);
+    assert_eq!(STARTING_MANA + 2 - 3 /* card cost */, g.me().mana())
+}

@@ -375,14 +375,22 @@ pub mod game_object_identifier {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardIcon {
+    ///*
+    /// Whether to show this icon.
+    ///
+    /// This is needed to help the client differentiate between a null icon,
+    /// which it interprets as "don't change anything" and a icon which should
+    /// explicitly be removed.
+    #[prost(bool, tag = "1")]
+    pub enabled: bool,
     /// Background for the icon.
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag = "2")]
     pub background: ::core::option::Option<SpriteAddress>,
     /// Text to display on the icon.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag = "3")]
     pub text: ::core::option::Option<::prost::alloc::string::String>,
     /// Scale multiplier for the background image.
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "4")]
     pub background_scale: ::core::option::Option<f32>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

@@ -23,6 +23,7 @@ use data::text::{AbilityText, Keyword, KeywordKind, NumericOperator, TextToken};
 use protos::spelldawn::{Node, RulesText};
 use ui::card_info::SupplementalCardInfo;
 use ui::core::Component;
+use ui::icons;
 
 /// Primary function which turns the current state of a card into its client
 /// [RulesText] representation
@@ -119,6 +120,7 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 Keyword::Score => "<b>\u{f0e7}Score:</b>".to_string(),
                 Keyword::Combat => "<b>\u{f0e7}Combat:</b>".to_string(),
                 Keyword::Unveil => "<b>Unveil</b>".to_string(),
+                Keyword::SuccessfulRaid => "<b>\u{f0e7}Successful Raid:</b>".to_string(),
                 Keyword::Store(n) => format!("<b>Store</b> {}\u{f06d}", n),
                 Keyword::Take(n) => format!("Take {}\u{f06d}", n),
                 Keyword::DealDamage(amount, damage_type) => format!(
@@ -139,7 +141,8 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
     }
 
     let string = result.join(" ");
-    string.replace(" .", ".") // Don't have periods exist on their own as tokens
+    string.replace(" .", ".").replace(" ,", ",") // Don't have punctuation exist
+                                                 // on its own
 }
 
 fn card_type_line(definition: &CardDefinition) -> String {
@@ -214,10 +217,17 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
             KeywordKind::Unveil => {
                 output.push("<b>Unveil:</b> Pay cost and turn face up (if able)".to_string());
             }
-            KeywordKind::Store => {
+            KeywordKind::SuccessfulRaid => {
                 output.push(
-                    "<b>Store:</b> Place \u{f06d} on this card, discard when empty.".to_string(),
+                    "<b>Successful Raid:</b> Triggers after the access phase of a raid."
+                        .to_string(),
                 );
+            }
+            KeywordKind::Store => {
+                output.push(format!(
+                    "<b>Store:</b> Place {} on this card to take later.",
+                    icons::MANA
+                ));
             }
             KeywordKind::DealDamage => {
                 output.push(

@@ -28,7 +28,7 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     ClientDebugCommand, CommandList, ConnectToGameCommand, CreateNewGameAction, GameAction,
-    GameCommand, GameIdentifier, LoadSceneCommand, PanelAddress, PlayerIdentifier, SceneLoadMode,
+    GameCommand, GameIdentifier, LoadSceneCommand, PanelAddress, SceneLoadMode,
     SetPlayerIdentifierCommand,
 };
 use rules::{dispatch, mana, mutations, queries};
@@ -143,7 +143,9 @@ pub fn handle_debug_action(
             render::on_disconnect(player_id);
             Ok(GameResponse::from_commands(vec![
                 Command::SetPlayerId(SetPlayerIdentifierCommand {
-                    id: Some(opponent_player_id(database, player_id, game_id)?),
+                    id: Some(adapters::adapt_player_id(opponent_player_id(
+                        database, player_id, game_id,
+                    )?)),
                 }),
                 Command::LoadScene(LoadSceneCommand {
                     scene_name: "Labyrinth".to_string(),
@@ -216,12 +218,12 @@ fn opponent_player_id(
     database: &mut impl Database,
     player_id: PlayerId,
     game_id: Option<GameId>,
-) -> Result<PlayerIdentifier> {
+) -> Result<PlayerId> {
     let game = load_game(database, game_id)?;
     if player_id == game.overlord.id {
-        Ok(adapters::adapt_player_id(game.champion.id))
+        Ok(game.champion.id)
     } else if player_id == game.champion.id {
-        Ok(adapters::adapt_player_id(game.overlord.id))
+        Ok(game.overlord.id)
     } else {
         bail!("ID must be present in game")
     }

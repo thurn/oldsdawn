@@ -50,6 +50,8 @@ channel_response:
             is_face_up: true
             card_icons: 
                 top_left_icon: "5"
+                top_right_icon: 
+                arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: Opponent
             revealed_card: 

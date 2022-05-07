@@ -48,8 +48,12 @@ use crate::{agent_response, debug};
 static CHANNELS: Lazy<DashMap<PlayerId, Sender<Result<CommandList, Status>>>> =
     Lazy::new(DashMap::new);
 
+pub type ResponseInterceptor = fn(&CommandList);
+
 /// Struct which implements our GRPC service
-pub struct GameService {}
+pub struct GameService {
+    pub response_interceptor: Option<ResponseInterceptor>,
+}
 
 #[tonic::async_trait]
 impl Spelldawn for GameService {
@@ -97,6 +101,10 @@ impl Spelldawn for GameService {
         let mut db = SledDatabase {};
         match handle_request(&mut db, request.get_ref()) {
             Ok(response) => {
+                if let Some(interceptor) = self.response_interceptor {
+                    interceptor(&response.command_list);
+                }
+
                 send_player_response(response.opponent_response).await;
                 agent_response::check_for_agent_response(db, request.get_ref())
                     .expect("AI Agent Error");
@@ -189,6 +197,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     }?;
 
     let commands = response.command_list.commands.iter().map(command_name).collect::<Vec<_>>();
+
     info!(?player_id, ?commands, "sending_response");
 
     Ok(response)

@@ -32,8 +32,7 @@ namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
   {
-    // static readonly string ServerAddress = "http://localhost:50052";
-    static readonly string ServerAddress = "http://192.168.0.186:50052";
+    static readonly string ServerAddress = "http://localhost:50052";
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 

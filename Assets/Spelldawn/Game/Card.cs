@@ -501,6 +501,15 @@ namespace Spelldawn.Game
 
     void SetCardIcon(Icon icon, CardIcon? cardIcon, bool show)
     {
+      var iconContainer = icon.Background.transform.parent;
+      if (cardIcon?.Enabled == false)
+      {
+        // Check for an explicit 'false' enabled state to differentiate null ("don't change anything") from
+        // "hide this icon".
+        iconContainer.gameObject.SetActive(false);
+        return;
+      }
+      
       _registry.AssetService.AssignSprite(icon.Background, cardIcon?.Background);
 
       if (cardIcon?.BackgroundScale is { } scale)
@@ -513,7 +522,6 @@ namespace Spelldawn.Game
         icon.Text.text = cardIcon.Text;
       }
 
-      var iconContainer = icon.Background.transform.parent;
       iconContainer.gameObject.SetActive(show);
     }
 

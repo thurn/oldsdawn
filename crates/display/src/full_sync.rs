@@ -242,6 +242,7 @@ pub fn ability_card_view(
         is_face_up: false,
         card_icons: mana_cost.map(|mana| CardIcons {
             top_left_icon: Some(CardIcon {
+                enabled: true,
                 background: Some(assets::card_icon(CardIconType::Mana)),
                 text: Some(mana.to_string()),
                 background_scale: assets::background_scale(CardIconType::Mana),
@@ -310,10 +311,19 @@ fn card_icons(
     definition: &CardDefinition,
     revealed: bool,
 ) -> CardIcons {
-    let mut icons = CardIcons::default();
+    // We always explicitly send values for CardIcons in order to ensure icons are
+    // removed when no longer required.
+    let mut icons = CardIcons {
+        top_left_icon: Some(CardIcon::default()),
+        top_right_icon: Some(CardIcon::default()),
+        bottom_right_icon: Some(CardIcon::default()),
+        bottom_left_icon: Some(CardIcon::default()),
+        arena_icon: Some(CardIcon::default()),
+    };
 
     if card.data.card_level > 0 {
         icons.arena_icon = Some(CardIcon {
+            enabled: true,
             background: Some(assets::card_icon(CardIconType::LevelCounter)),
             text: Some(card.data.card_level.to_string()),
             background_scale: assets::background_scale(CardIconType::LevelCounter),
@@ -322,6 +332,7 @@ fn card_icons(
 
     if card.data.stored_mana > 0 {
         icons.arena_icon = Some(CardIcon {
+            enabled: true,
             background: Some(assets::card_icon(CardIconType::Mana)),
             text: Some(card.data.stored_mana.to_string()),
             background_scale: assets::background_scale(CardIconType::Mana),
@@ -330,11 +341,13 @@ fn card_icons(
 
     if revealed {
         icons.top_left_icon = queries::mana_cost(game, card.id).map(|mana| CardIcon {
+            enabled: true,
             background: Some(assets::card_icon(CardIconType::Mana)),
             text: Some(mana.to_string()),
             background_scale: assets::background_scale(CardIconType::Mana),
         });
         icons.bottom_left_icon = definition.config.stats.shield.map(|_| CardIcon {
+            enabled: true,
             background: Some(assets::card_icon(CardIconType::Shield)),
             text: Some(queries::shield(game, card.id).to_string()),
             background_scale: assets::background_scale(CardIconType::Shield),
@@ -344,12 +357,14 @@ fn card_icons(
             .stats
             .base_attack
             .map(|_| CardIcon {
+                enabled: true,
                 background: Some(assets::card_icon(CardIconType::Attack)),
                 text: Some(queries::attack(game, card.id).to_string()),
                 background_scale: assets::background_scale(CardIconType::Attack),
             })
             .or_else(|| {
                 definition.config.stats.health.map(|_| CardIcon {
+                    enabled: true,
                     background: Some(assets::card_icon(CardIconType::Health)),
                     text: Some(queries::health(game, card.id).to_string()),
                     background_scale: assets::background_scale(CardIconType::Health),

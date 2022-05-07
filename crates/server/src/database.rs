@@ -83,7 +83,7 @@ impl Database for SledDatabase {
                 cards: hashmap! {
                     CardName::Lodestone => 15,
                     CardName::Greataxe => 15,
-                    CardName::SanctumPassage => 15,
+                    CardName::Accumulator => 15,
                 },
             }
         } else {

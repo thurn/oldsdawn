@@ -29,14 +29,14 @@ pub fn initialize() {}
 pub fn dungeon_annex() -> CardDefinition {
     CardDefinition {
         name: CardName::DungeonAnnex,
-        cost: cost_1_action(),
+        cost: actions(1),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
         card_type: CardType::Scheme,
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![Ability {
-            text: text![Keyword::Score, "Gain", mana(7)],
+            text: text![Keyword::Score, "Gain", mana_text(7)],
             ability_type: silent(),
             delegates: vec![on_overlord_score(|g, s, _| {
                 mana::gain(g, s.side(), 7);

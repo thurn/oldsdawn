@@ -5,6 +5,11 @@ expression: "Summary::run(&response)"
 ---
 
 command_list: 
+    MoveGameObjects: 
+        id: C45[1]
+        position: 
+            sorting_key: 2
+            position: ObjectPositionHand { owner: User }
     UpdateGameView: 
         user: 
             side: Champion

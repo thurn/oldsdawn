@@ -20,6 +20,7 @@ use data::primitives::{
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
+use rules::mutations::OnEmpty;
 use rules::{abilities, mutations, text, DEFINITIONS};
 
 pub const MINION_COST: ManaValue = 3;
@@ -86,7 +87,7 @@ pub fn test_champion_spell() -> CardDefinition {
 pub fn test_scheme_31() -> CardDefinition {
     CardDefinition {
         name: CardName::TestScheme31,
-        cost: cost_1_action(),
+        cost: actions(1),
         card_type: CardType::Scheme,
         config: CardConfig {
             stats: scheme_points(SchemePoints { level_requirement: 3, points: 1 }),
@@ -244,8 +245,8 @@ pub fn activated_ability_take_mana() -> CardDefinition {
         cost: cost(ARTIFACT_COST),
         card_type: CardType::Artifact,
         abilities: vec![
-            abilities::store_mana::<MANA_STORED>(),
-            abilities::activated_take_mana::<MANA_TAKEN>(cost_1_action()),
+            abilities::store_mana_on_play::<MANA_STORED>(),
+            abilities::activated_take_mana::<MANA_TAKEN>(actions(1)),
         ],
         config: CardConfig::default(),
         ..test_champion_spell()
@@ -264,7 +265,7 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
                 text: text![Keyword::Dusk, Keyword::Take(MANA_TAKEN)],
                 ability_type: alert(),
                 delegates: vec![at_dusk(|g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), MANA_TAKEN);
+                    mutations::take_stored_mana(g, s.card_id(), MANA_TAKEN, OnEmpty::MoveToDiscard);
                 })],
             },
         ],

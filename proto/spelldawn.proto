@@ -469,12 +469,20 @@ enum RoomIdentifier {
 
 
 message CardIcon {
+    /**
+     * Whether to show this icon.
+     *
+     * This is needed to help the client differentiate between a null icon,
+     * which it interprets as "don't change anything" and a icon which should
+     * explicitly be removed.
+     */
+    bool enabled = 1;
     /* Background for the icon. */
-    SpriteAddress background = 1;
+    SpriteAddress background = 2;
     /* Text to display on the icon. */
-    google.protobuf.StringValue text = 2;
+    google.protobuf.StringValue text = 3;
     /* Scale multiplier for the background image. */
-    google.protobuf.FloatValue background_scale = 3;
+    google.protobuf.FloatValue background_scale = 4;
 }
 
 message CardIcons {
