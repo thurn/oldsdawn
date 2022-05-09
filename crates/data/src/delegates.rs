@@ -77,7 +77,7 @@ use crate::game::GameState;
 use crate::game_actions::CardTarget;
 use crate::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
-    RaidId, ShieldValue, Side, TurnNumber,
+    RaidId, RoomId, ShieldValue, Side, TurnNumber,
 };
 
 /// Identifies the context for a given request to a delegate: which player,
@@ -263,6 +263,13 @@ impl CardEncounter {
     }
 }
 
+/// Event data when a raid is initiated
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct RaidStart {
+    pub raid_id: RaidId,
+    pub target: RoomId,
+}
+
 /// Result of a raid
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum RaidOutcome {
@@ -311,7 +318,7 @@ pub enum Delegate {
     /// A card is scored by the Champion
     ChampionScoreCard(EventDelegate<CardId>),
     /// A Raid is initiated
-    RaidBegin(EventDelegate<RaidId>),
+    RaidStart(EventDelegate<RaidStart>),
     /// A minion is encountered during a raid
     EncounterBegin(EventDelegate<RaidId>),
     /// A weapon boost is activated for a given card

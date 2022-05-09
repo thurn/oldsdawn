@@ -91,7 +91,7 @@ pub fn can_take_activate_ability_action(
         _ => return false,
     };
 
-    if !matching_targeting(game, target_requirement, target) {
+    if !matching_targeting(game, target_requirement, ability_id, target) {
         return false;
     }
 
@@ -118,7 +118,7 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> boo
 
     let definition = crate::get(game.card(card_id).name);
     if let Some(targeting) = &definition.config.custom_targeting {
-        return matching_targeting(game, targeting, target);
+        return matching_targeting(game, targeting, card_id, target);
     }
 
     match definition.card_type {
@@ -136,15 +136,16 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> boo
 
 /// Returns true if the targeting requirement in `requirement` matches the
 /// target in `target`.
-fn matching_targeting(
+fn matching_targeting<T>(
     game: &GameState,
-    requirement: &TargetRequirement,
+    requirement: &TargetRequirement<T>,
+    data: T,
     target: CardTarget,
 ) -> bool {
     match (requirement, target) {
         (TargetRequirement::None, CardTarget::None) => true,
         (TargetRequirement::TargetRoom(predicate), CardTarget::Room(room_id)) => {
-            predicate(game, room_id)
+            predicate(game, data, room_id)
         }
         _ => false,
     }

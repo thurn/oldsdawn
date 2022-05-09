@@ -231,7 +231,7 @@ pub fn ability_card_view(
     game: &GameState,
     ability_id: AbilityId,
     user_side: Side,
-    target_requirement: Option<&TargetRequirement>,
+    target_requirement: Option<&TargetRequirement<AbilityId>>,
 ) -> CardView {
     let card = game.card(ability_id.card_id);
     let identifier = adapters::adapt_ability_id(ability_id);
@@ -284,8 +284,8 @@ pub fn ability_card_view(
     }
 }
 
-fn build_targeting(
-    requirement: &TargetRequirement,
+fn build_targeting<T>(
+    requirement: &TargetRequirement<T>,
     can_play: impl Fn(CardTarget) -> bool,
 ) -> CardTargeting {
     CardTargeting {

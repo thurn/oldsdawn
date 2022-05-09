@@ -17,7 +17,7 @@
 use anyhow::{bail, ensure, Context, Result};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
-    ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidBeginEvent, RaidOutcome,
+    ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidOutcome, RaidStart, RaidStartEvent,
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
@@ -74,7 +74,7 @@ pub fn initiate_raid(
     };
 
     raid_phases::set_raid_phase(game, phase)?;
-    dispatch::invoke_event(game, RaidBeginEvent(raid_id));
+    dispatch::invoke_event(game, RaidStartEvent(RaidStart { raid_id, target: target_room }));
     game.updates.push(GameUpdate::InitiateRaid(target_room));
     Ok(())
 }

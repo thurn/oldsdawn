@@ -35,7 +35,9 @@ use data::primitives::{
 };
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{LevelUpRoomAction, RoomIdentifier, SpendActionPointAction};
+use protos::spelldawn::{
+    CardIdentifier, LevelUpRoomAction, RoomIdentifier, SpendActionPointAction,
+};
 use rules::{dispatch, mana};
 
 use crate::client::TestSession;
@@ -366,4 +368,10 @@ pub fn assert_ok<T: Debug, E: Debug>(result: &Result<T, E>) {
 /// Asserts that a [Result] is an error
 pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
     assert!(result.is_err(), "Expected an error, got {:?}", result)
+}
+
+/// Creates a [CardIdentifier] representing the ability with the provided
+/// `index` of this `card_id`.
+pub fn ability_id(card_id: CardIdentifier, ability: u32) -> CardIdentifier {
+    CardIdentifier { ability_id: Some(ability), ..card_id }
 }

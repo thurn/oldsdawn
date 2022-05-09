@@ -205,7 +205,7 @@ pub enum School {
 }
 
 /// The possible Rooms in which the Overlord player may play their cards.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug, Serialize, Deserialize, IntoEnumIterator)]
 pub enum RoomId {
     /// The Overlord's deck
     Vault,

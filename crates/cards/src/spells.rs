@@ -92,7 +92,7 @@ pub fn coup_de_grace() -> CardDefinition {
             ],
         }],
         config: CardConfig {
-            custom_targeting: Some(TargetRequirement::TargetRoom(|game, room_id| {
+            custom_targeting: Some(TargetRequirement::TargetRoom(|game, _, room_id| {
                 flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
                     && (room_id == RoomId::Sanctum || room_id == RoomId::Vault)
             })),
@@ -121,7 +121,7 @@ pub fn charged_strike() -> CardDefinition {
             })],
         }],
         config: CardConfig {
-            custom_targeting: Some(TargetRequirement::TargetRoom(|game, room_id| {
+            custom_targeting: Some(TargetRequirement::TargetRoom(|game, _, room_id| {
                 flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
             })),
             ..CardConfig::default()
@@ -164,7 +164,7 @@ pub fn stealth_mission() -> CardDefinition {
             ],
         }],
         config: CardConfig {
-            custom_targeting: Some(TargetRequirement::TargetRoom(|game, room_id| {
+            custom_targeting: Some(TargetRequirement::TargetRoom(|game, _, room_id| {
                 flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
             })),
             ..CardConfig::default()

@@ -18,6 +18,7 @@ use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, Ta
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
+use data::utils;
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
@@ -121,10 +122,27 @@ fn mystic_portal() -> CardDefinition {
                     "If successful,",
                     Keyword::Take(Sentence::Internal, 3)
                 ),
-                ability_type: AbilityType::Activated(actions(1), target_inner_room()),
+                ability_type: AbilityType::Activated(
+                    actions(1),
+                    TargetRequirement::TargetRoom(|g, ability_id, room_id| {
+                        is_inner_room(room_id)
+                            && utils::is_false(|| {
+                                Some(
+                                    *g.ability_state(ability_id)?.room_turns.get(&room_id)?
+                                        == g.data.turn,
+                                )
+                            })
+                    }),
+                ),
                 delegates: vec![
                     on_activated(|g, s, activated| {
                         initiate_raid(g, s, activated.target);
+                    }),
+                    on_raid_start(face_up_in_play, |g, s, raid_start| {
+                        let turn = g.data.turn;
+                        g.ability_state_mut(s.ability_id())
+                            .room_turns
+                            .insert(raid_start.target, turn);
                     }),
                     on_raid_success(matching_raid, |g, s, _| {
                         mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard)

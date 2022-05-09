@@ -32,12 +32,12 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    card_target, game_object_identifier, node_type, ArrowTargetRoom, CardAnchorNode,
-    CardIdentifier, CardTarget, CardView, ClientRoomLocation, CommandList,
-    CreateOrUpdateCardCommand, EventHandlers, GameAction, GameIdentifier, GameMessageType,
-    GameObjectIdentifier, GameRequest, InitiateRaidAction, NoTargeting, Node, NodeType,
-    ObjectPosition, ObjectPositionBrowser, ObjectPositionDiscardPile, ObjectPositionHand,
-    ObjectPositionRoom, PlayCardAction, PlayInRoom, PlayerName, PlayerView, RevealedCardView,
+    card_target, node_type, ArrowTargetRoom, CardAnchorNode, CardIdentifier, CardTarget, CardView,
+    ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers, GameAction,
+    GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest, InitiateRaidAction,
+    NoTargeting, Node, NodeType, ObjectPosition, ObjectPositionBrowser, ObjectPositionDiscardPile,
+    ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayInRoom, PlayerName, PlayerView,
+    RevealedCardView, RoomIdentifier,
 };
 use rules::dispatch;
 use server::requests::GameResponse;
@@ -319,10 +319,33 @@ impl TestSession {
 
     /// Activates an ability of a card owned by the user
     pub fn activate_ability(&mut self, card_id: CardIdentifier, index: u32) {
+        self.activate_ability_impl(card_id, index, None)
+    }
+
+    /// Activates an ability of a card with a target room
+    pub fn activate_ability_with_target(
+        &mut self,
+        card_id: CardIdentifier,
+        index: u32,
+        target: RoomId,
+    ) {
+        self.activate_ability_impl(card_id, index, Some(target))
+    }
+
+    fn activate_ability_impl(
+        &mut self,
+        card_id: CardIdentifier,
+        index: u32,
+        target: Option<RoomId>,
+    ) {
         self.perform(
             Action::PlayCard(PlayCardAction {
                 card_id: Some(CardIdentifier { ability_id: Some(index), ..card_id }),
-                target: None,
+                target: target.map(|room_id| CardTarget {
+                    card_target: Some(card_target::CardTarget::RoomId(
+                        adapters::adapt_room_id(room_id).into(),
+                    )),
+                }),
             }),
             self.user_id(),
         );
@@ -673,7 +696,7 @@ pub struct ClientCards {
 
 impl ClientCards {
     pub fn get(&self, card_id: CardIdentifier) -> &ClientCard {
-        self.card_map.get(&card_id).expect("Card not found")
+        self.card_map.get(&card_id).unwrap_or_else(|| panic!("Card not found: {:?}", card_id))
     }
 
     /// Returns a vec containing the titles of all of the cards in the provided
@@ -742,7 +765,7 @@ impl ClientCards {
             Command::MoveGameObjects(move_objects) => {
                 let position = move_objects.clone().position.expect("ObjectPosition");
                 for id in move_objects.ids {
-                    if let game_object_identifier::Id::CardId(identifier) = id.id.expect("ID") {
+                    if let Id::CardId(identifier) = id.id.expect("ID") {
                         assert!(
                             self.card_map.contains_key(&identifier),
                             "Card not found (not created/already destroyed?) for {:?} -> {:?}",
@@ -771,6 +794,7 @@ pub struct ClientCard {
     revealed_to_me: Option<bool>,
     is_face_up: Option<bool>,
     can_play: Option<bool>,
+    valid_rooms: Option<Vec<RoomIdentifier>>,
     arena_icon: Option<String>,
 }
 
@@ -808,6 +832,10 @@ impl ClientCard {
         self.can_play.expect("can_play")
     }
 
+    pub fn valid_rooms(&self) -> Vec<RoomIdentifier> {
+        self.valid_rooms.as_ref().expect("valid_rooms").clone()
+    }
+
     pub fn arena_icon(&self) -> String {
         self.arena_icon.clone().expect("arena_icon")
     }
@@ -836,17 +864,24 @@ impl ClientCard {
     }
 
     fn update_revealed_card(&mut self, revealed: &RevealedCardView) {
-        self.can_play = {
+        let targets = {
             || {
                 Some(match revealed.targeting.as_ref()?.targeting.as_ref()? {
-                    Targeting::NoTargeting(NoTargeting { can_play }) => *can_play,
-                    Targeting::PlayInRoom(PlayInRoom { valid_rooms }) => !valid_rooms.is_empty(),
+                    Targeting::NoTargeting(NoTargeting { can_play }) => (*can_play, vec![]),
+                    Targeting::PlayInRoom(PlayInRoom { valid_rooms }) => {
+                        (!valid_rooms.is_empty(), valid_rooms.clone())
+                    }
                     Targeting::ArrowTargetRoom(ArrowTargetRoom { valid_rooms, .. }) => {
-                        !valid_rooms.is_empty()
+                        (!valid_rooms.is_empty(), valid_rooms.clone())
                     }
                 })
             }
         }();
+        if let Some((can_play, valid_rooms)) = targets {
+            self.can_play = Some(can_play);
+            self.valid_rooms =
+                Some(valid_rooms.iter().map(|i| RoomIdentifier::from_i32(*i).unwrap()).collect())
+        }
 
         if let Some(title) = revealed.clone().title.map(|title| title.text) {
             self.title = Some(title);

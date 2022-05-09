@@ -14,6 +14,7 @@
 
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
+use protos::spelldawn::RoomIdentifier;
 use test_utils::client::HasText;
 use test_utils::*;
 
@@ -47,11 +48,42 @@ fn sanctum_passage() {
 
 #[test]
 fn accumulator() {
+    let card_cost = 3;
     let mut g = new_game(Side::Champion, Args::default());
     let id = g.play_from_hand(CardName::Accumulator);
     g.initiate_raid(RoomId::Crypts);
     click_on_end_raid(&mut g);
     assert_eq!("1", g.user.get_card(id).arena_icon());
     g.activate_ability(id, 1);
-    assert_eq!(STARTING_MANA + 2 - 3 /* card cost */, g.me().mana())
+    assert_eq!(STARTING_MANA + 2 - card_cost, g.me().mana())
+}
+
+#[test]
+fn mystic_portal() {
+    let card_cost = 5;
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.play_from_hand(CardName::MysticPortal);
+    assert_eq!("12", g.user.get_card(id).arena_icon());
+    assert_eq!(
+        vec![RoomIdentifier::Vault, RoomIdentifier::Sanctum, RoomIdentifier::Crypts],
+        g.user.cards.get(ability_id(id, 1)).valid_rooms()
+    );
+    g.activate_ability_with_target(id, 1, RoomId::Crypts);
+    click_on_end_raid(&mut g);
+    assert_eq!(STARTING_MANA + 3 - card_cost, g.me().mana());
+    assert_eq!("9", g.user.get_card(id).arena_icon());
+    assert_eq!(
+        vec![RoomIdentifier::Vault, RoomIdentifier::Sanctum],
+        g.user.cards.get(ability_id(id, 1)).valid_rooms()
+    );
+}
+
+#[test]
+#[should_panic]
+fn mystic_portal_repeat_panic() {
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.play_from_hand(CardName::MysticPortal);
+    g.activate_ability_with_target(id, 1, RoomId::Crypts);
+    click_on_end_raid(&mut g);
+    g.activate_ability_with_target(id, 1, RoomId::Crypts);
 }

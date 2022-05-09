@@ -16,11 +16,11 @@
 //! wildcard import in card definition files.
 
 use data::card_definition::{
-    AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TargetRequirement, TriggerIndicator,
+    AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
 };
 use data::delegates::{
     AbilityActivated, CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded,
-    RequirementFn, Scope,
+    RaidStart, RequirementFn, Scope,
 };
 use data::game::GameState;
 use data::game_actions::CardTarget;
@@ -112,11 +112,9 @@ pub fn matching_raid<T>(game: &GameState, scope: Scope, _: T) -> bool {
     })
 }
 
-/// a RoomPredicate checking if a room is an inner room
-pub fn target_inner_room() -> TargetRequirement {
-    TargetRequirement::TargetRoom(|_, room_id| {
-        room_id == RoomId::Vault || room_id == RoomId::Sanctum || room_id == RoomId::Crypts
-    })
+/// Predicate checking if a room is an inner room
+pub fn is_inner_room(room_id: RoomId) -> bool {
+    room_id == RoomId::Vault || room_id == RoomId::Sanctum || room_id == RoomId::Crypts
 }
 
 /// Returns a standard [AbilityType] which does not notify the user when
@@ -158,6 +156,14 @@ pub fn combat(mutation: MutationFn<CardId>) -> Delegate {
 /// A delegate when a card is scored
 pub fn on_overlord_score(mutation: MutationFn<CardId>) -> Delegate {
     Delegate::OverlordScoreCard(EventDelegate { requirement: this_card, mutation })
+}
+
+/// A delegate which fires when a raid ends in success
+pub fn on_raid_start(
+    requirement: RequirementFn<RaidStart>,
+    mutation: MutationFn<RaidStart>,
+) -> Delegate {
+    Delegate::RaidStart(EventDelegate { requirement, mutation })
 }
 
 /// Delegate which fires when the 'access' phase of a raid begins.

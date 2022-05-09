@@ -84,20 +84,20 @@ pub struct CardStats {
     pub can_level_up: bool,
 }
 
-pub type RoomPredicate = fn(&GameState, RoomId) -> bool;
+pub type RoomPredicate<T> = fn(&GameState, T, RoomId) -> bool;
 
 /// Allows cards and abilities to provide special targeting behavior.
 #[derive(Clone, EnumKind)]
 #[enum_kind(TargetRequirementKind)]
-pub enum TargetRequirement {
+pub enum TargetRequirement<T> {
     /// No target required
     None,
     /// Target a specific room when played. Only rooms for which the provided
     /// [RoomPredicate] returns true are considered valid targets.
-    TargetRoom(RoomPredicate),
+    TargetRoom(RoomPredicate<T>),
 }
 
-impl Debug for TargetRequirement {
+impl<T> Debug for TargetRequirement<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let kind: TargetRequirementKind = self.into();
         write!(f, "{:?}", kind)
@@ -126,7 +126,7 @@ pub enum AbilityType {
     Encounter,
 
     /// Activated abilities have an associated cost in order to be used.
-    Activated(Cost, TargetRequirement),
+    Activated(Cost, TargetRequirement<AbilityId>),
 }
 
 /// Abilities are the unit of action in Spelldawn. Their behavior is provided by
@@ -154,7 +154,7 @@ pub struct CardConfig {
     pub stats: CardStats,
     pub faction: Option<Faction>,
     pub subtypes: Vec<CardSubtype>,
-    pub custom_targeting: Option<TargetRequirement>,
+    pub custom_targeting: Option<TargetRequirement<CardId>>,
     pub special_effects: SpecialEffects,
 }
 

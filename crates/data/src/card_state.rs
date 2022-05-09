@@ -17,6 +17,7 @@
 #![allow(clippy::use_self)] // Required to use EnumKind
 
 use std::cmp::Ordering;
+use std::collections::HashMap;
 
 use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
@@ -32,6 +33,7 @@ use crate::primitives::{
 pub struct AbilityState {
     pub raid_id: Option<RaidId>,
     pub turn: Option<TurnData>,
+    pub room_turns: HashMap<RoomId, TurnData>,
 }
 
 /// Identifies the location of a card during an active game
