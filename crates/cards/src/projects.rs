@@ -17,7 +17,7 @@
 use data::card_definition::{Ability, CardConfig, CardDefinition};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
-use data::text::Keyword;
+use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::OnEmpty;
@@ -38,7 +38,7 @@ pub fn gold_mine() -> CardDefinition {
         abilities: vec![
             abilities::unveil_at_dusk_then_store::<12>(),
             Ability {
-                text: text![Keyword::Dusk, Keyword::Take(3)],
+                text: text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
                 ability_type: alert(),
                 delegates: vec![at_dusk(|g, s, _| {
                     mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard);

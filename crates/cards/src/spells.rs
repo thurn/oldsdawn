@@ -14,9 +14,9 @@
 
 //! Card definitions for the Spell card type & Champion player
 
-use data::card_definition::{Ability, CardConfig, CardDefinition, CustomTargeting};
+use data::card_definition::{Ability, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
-use data::delegates::{Delegate, QueryDelegate, RaidOutcome};
+use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
 use rules::card_text::text;
@@ -86,15 +86,13 @@ pub fn coup_de_grace() -> CardDefinition {
                 on_cast(|g, s, play_card| initiate_raid(g, s, play_card.target)),
                 add_vault_access::<1>(matching_raid),
                 add_sanctum_access::<1>(matching_raid),
-                on_raid_ended(matching_raid, |g, s, raid_ended| {
-                    if raid_ended.outcome == RaidOutcome::Success {
-                        mutations::draw_cards(g, s.side(), 1);
-                    }
+                on_raid_success(matching_raid, |g, s, _| {
+                    mutations::draw_cards(g, s.side(), 1);
                 }),
             ],
         }],
         config: CardConfig {
-            custom_targeting: Some(CustomTargeting::TargetRoom(|game, room_id| {
+            custom_targeting: Some(TargetRequirement::TargetRoom(|game, room_id| {
                 flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
                     && (room_id == RoomId::Sanctum || room_id == RoomId::Vault)
             })),
@@ -123,7 +121,7 @@ pub fn charged_strike() -> CardDefinition {
             })],
         }],
         config: CardConfig {
-            custom_targeting: Some(CustomTargeting::TargetRoom(|game, room_id| {
+            custom_targeting: Some(TargetRequirement::TargetRoom(|game, room_id| {
                 flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
             })),
             ..CardConfig::default()
@@ -166,7 +164,7 @@ pub fn stealth_mission() -> CardDefinition {
             ],
         }],
         config: CardConfig {
-            custom_targeting: Some(CustomTargeting::TargetRoom(|game, room_id| {
+            custom_targeting: Some(TargetRequirement::TargetRoom(|game, room_id| {
                 flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
             })),
             ..CardConfig::default()

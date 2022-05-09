@@ -836,22 +836,17 @@ impl ClientCard {
     }
 
     fn update_revealed_card(&mut self, revealed: &RevealedCardView) {
-        self.can_play = Some(
-            match revealed
-                .targeting
-                .as_ref()
-                .expect("targeting")
-                .targeting
-                .as_ref()
-                .expect("targeting")
-            {
-                Targeting::NoTargeting(NoTargeting { can_play }) => *can_play,
-                Targeting::PlayInRoom(PlayInRoom { valid_rooms }) => !valid_rooms.is_empty(),
-                Targeting::ArrowTargetRoom(ArrowTargetRoom { valid_rooms, .. }) => {
-                    !valid_rooms.is_empty()
-                }
-            },
-        );
+        self.can_play = {
+            || {
+                Some(match revealed.targeting.as_ref()?.targeting.as_ref()? {
+                    Targeting::NoTargeting(NoTargeting { can_play }) => *can_play,
+                    Targeting::PlayInRoom(PlayInRoom { valid_rooms }) => !valid_rooms.is_empty(),
+                    Targeting::ArrowTargetRoom(ArrowTargetRoom { valid_rooms, .. }) => {
+                        !valid_rooms.is_empty()
+                    }
+                })
+            }
+        }();
 
         if let Some(title) = revealed.clone().title.map(|title| title.text) {
             self.title = Some(title);

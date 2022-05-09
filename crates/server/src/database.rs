@@ -81,9 +81,9 @@ impl Database for SledDatabase {
                 owner_id: player_id,
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
-                    CardName::Lodestone => 15,
-                    CardName::Greataxe => 15,
+                    CardName::CoupDeGrace => 15,
                     CardName::Accumulator => 15,
+                    CardName::MysticPortal => 15,
                 },
             }
         } else {

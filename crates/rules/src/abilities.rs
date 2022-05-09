@@ -14,12 +14,12 @@
 
 //! Helpers for defining common card abilities
 
-use data::card_definition::{Ability, AbilityType, Cost, TriggerIndicator};
+use data::card_definition::{Ability, AbilityType, Cost, TargetRequirement, TriggerIndicator};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope};
 use data::game::{GameOverData, GamePhase, GameState};
 use data::primitives::{AttackValue, CardId, DamageTypeTrait, ManaValue, Side};
-use data::text::{AbilityText, Keyword, TextToken};
+use data::text::{AbilityText, Keyword, Sentence, TextToken};
 use data::updates::GameUpdate;
 
 use crate::card_text::text;
@@ -70,12 +70,12 @@ pub fn store_mana_on_play<const N: ManaValue>() -> Ability {
 /// Activated ability to take `N` stored mana from this card by paying a
 pub fn activated_take_mana<const N: ManaValue>(cost: Cost) -> Ability {
     Ability {
-        text: text![Keyword::Take(N)],
-        ability_type: AbilityType::Activated(cost),
+        text: text![Keyword::Take(Sentence::Start, N)],
+        ability_type: AbilityType::Activated(cost, TargetRequirement::None),
         delegates: vec![Delegate::ActivateAbility(EventDelegate::new(
             this_ability,
-            |g, _s, ability_id| {
-                mutations::take_stored_mana(g, ability_id.card_id, N, OnEmpty::MoveToDiscard);
+            |g, _s, activated| {
+                mutations::take_stored_mana(g, activated.card_id(), N, OnEmpty::MoveToDiscard);
             },
         ))],
     }

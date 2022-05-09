@@ -56,6 +56,13 @@ pub enum TextToken {
 /// A function which produces rules text
 pub type TextFn = fn(&GameState, Scope) -> Vec<TextToken>;
 
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+/// Location of a keyword within a sentence, used to determine capitalization
+pub enum Sentence {
+    Start,
+    Internal,
+}
+
 /// Identifies a keyword or concept which appears in rules text
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind)]
 #[enum_kind(KeywordKind, derive(Ord, PartialOrd))]
@@ -68,8 +75,9 @@ pub enum Keyword {
     Unveil,
     SuccessfulRaid,
     Store(u32),
-    Take(u32),
+    Take(Sentence, u32),
     DealDamage(u32, DamageType),
+    InnerRoom(Sentence),
     EndRaid,
 }
 

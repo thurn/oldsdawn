@@ -16,16 +16,17 @@
 //! wildcard import in card definition files.
 
 use data::card_definition::{
-    AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
+    AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TargetRequirement, TriggerIndicator,
 };
 use data::delegates::{
-    CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded, RequirementFn, Scope,
+    AbilityActivated, CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded,
+    RequirementFn, Scope,
 };
 use data::game::GameState;
 use data::game_actions::CardTarget;
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, RaidId, Sprite,
-    TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, RaidId, RoomId,
+    Sprite, TurnNumber,
 };
 use data::text::{NumericOperator, TextToken};
 use data::utils;
@@ -111,6 +112,13 @@ pub fn matching_raid<T>(game: &GameState, scope: Scope, _: T) -> bool {
     })
 }
 
+/// a RoomPredicate checking if a room is an inner room
+pub fn target_inner_room() -> TargetRequirement {
+    TargetRequirement::TargetRoom(|_, room_id| {
+        room_id == RoomId::Vault || room_id == RoomId::Sanctum || room_id == RoomId::Crypts
+    })
+}
+
 /// Returns a standard [AbilityType] which does not notify the user when
 /// triggered
 pub fn silent() -> AbilityType {
@@ -128,7 +136,7 @@ pub fn on_cast(mutation: MutationFn<CardPlayed>) -> Delegate {
 }
 
 /// A [Delegate] which triggers when an ability is activated
-pub fn on_activated(mutation: MutationFn<AbilityId>) -> Delegate {
+pub fn on_activated(mutation: MutationFn<AbilityActivated>) -> Delegate {
     Delegate::ActivateAbility(EventDelegate { requirement: this_ability, mutation })
 }
 

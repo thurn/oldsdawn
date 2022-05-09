@@ -87,7 +87,7 @@ fn legal_card_actions(
 
     let activate_abilities =
         rules::card_definition(game, card_id).ability_ids(card_id).filter_map(move |ability_id| {
-            if flags::can_take_activate_ability_action(game, side, ability_id) {
+            if flags::can_take_activate_ability_action(game, side, ability_id, CardTarget::None) {
                 // TODO: Handle targeted abilities
                 Some(UserAction::ActivateAbility(ability_id, CardTarget::None))
             } else {

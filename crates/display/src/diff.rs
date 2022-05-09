@@ -16,13 +16,14 @@
 
 use std::collections::BTreeMap;
 
+use anyhow::Result;
 use data::game::GameState;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     CardIcon, CardIcons, CardView, CreateOrUpdateCardCommand, GameView, ObjectPosition,
-    ObjectPositionDeckContainer, ObjectPositionDiscardPileContainer,
+    ObjectPositionDeckContainer, ObjectPositionDiscardPileContainer, ObjectPositionHand,
     ObjectPositionIdentityContainer, PlayerInfo, PlayerName, PlayerView, RevealedCardView,
     UpdateGameViewCommand,
 };
@@ -66,6 +67,11 @@ pub fn execute(
         old.map(|old| &old.position_overrides),
         &new.position_overrides,
     );
+
+    // Always send ability card positions. Ability cards are moved into their owning
+    // card when played, but the diff algorithm doesn't know about this happening.
+    // So we need to return them to hand if they are still playable.
+    add_ability_card_positions(commands, game, new).expect("Ability position error");
 
     commands.apply_parallel_moves();
 
@@ -284,6 +290,32 @@ fn move_to_position(
     };
 
     commands.move_object(UpdateType::General, id, new_position);
+}
+
+fn add_ability_card_positions(
+    commands: &mut ResponseBuilder,
+    game: &GameState,
+    sync: &FullSync,
+) -> Result<()> {
+    for card_id in sync.cards.keys() {
+        if card_id.ability_id.is_some() {
+            commands.move_object(
+                UpdateType::Animation,
+                Id::CardId(*card_id),
+                ObjectPosition {
+                    // TODO: Store this information with card response
+                    sorting_key: game
+                        .card(adapters::to_server_card_id(Some(*card_id))?.as_ability_id()?.card_id)
+                        .sorting_key,
+                    position: Some(Position::Hand(ObjectPositionHand {
+                        owner: PlayerName::User.into(),
+                    })),
+                },
+            );
+        }
+    }
+
+    Ok(())
 }
 
 /// Diffs two values. If the values are equal, returns None, otherwise invokes

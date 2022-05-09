@@ -44,7 +44,6 @@ use protos::spelldawn::{
     ObjectPositionScoreAnimation, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand,
     SetGameObjectsEnabledCommand, SetMusicCommand,
 };
-use rules::flags;
 
 use crate::full_sync::CardCreationStrategy;
 use crate::response_builder::{CardUpdateTypes, ResponseBuilder, UpdateType};
@@ -140,12 +139,7 @@ pub fn render(
         }
         GameUpdate::AbilityActivated(ability_id) => {
             if ability_id.card_id.side == commands.user_side {
-                if flags::can_take_activate_ability_action(game, commands.user_side, *ability_id) {
-                    // Ability cards are moved into their owning card when played, but the diff
-                    // algorithm doesn't know about this happening. So we need
-                    // to return them to hand if they are still playable.
-                    move_ability_to_hand(commands, game, *ability_id);
-                }
+                // move_ability_to_hand(commands, game, *ability_id);
             } else {
                 show_ability_fired(commands, game, *ability_id)
             }
@@ -559,25 +553,6 @@ fn destroy_card(commands: &mut ResponseBuilder, update_type: UpdateType, card_id
     );
 }
 
-/// Moves an ability card to its owner's hand, e.g. to return it after it has
-/// been played.
-fn move_ability_to_hand(commands: &mut ResponseBuilder, game: &GameState, ability_id: AbilityId) {
-    let identifier = adapters::adapt_ability_id(ability_id);
-    commands.push(
-        UpdateType::Animation,
-        Command::MoveGameObjects(MoveGameObjectsCommand {
-            ids: vec![GameObjectIdentifier { id: Some(Id::CardId(identifier)) }],
-            position: Some(ObjectPosition {
-                sorting_key: game.card(ability_id.card_id).sorting_key,
-                position: Some(Position::Hand(ObjectPositionHand {
-                    owner: commands.adapt_player_name(ability_id.card_id.side),
-                })),
-            }),
-            disable_animation: false,
-        }),
-    );
-}
-
 /// Animates a token card appearing, representing an ability being activated or
 /// triggered.
 fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_id: AbilityId) {
@@ -586,7 +561,7 @@ fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_
         game,
         ability_id,
         commands.user_side,
-        false, /* check_can_play */
+        None, /* target_requirement */
     );
     commands.push(
         UpdateType::Animation,

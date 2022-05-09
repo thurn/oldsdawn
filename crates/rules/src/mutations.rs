@@ -327,7 +327,7 @@ pub fn check_end_turn(game: &mut GameState, side: Side) {
 
     let turn = &game.data.turn;
 
-    if turn.side == side && game.player(side).actions == 0 {
+    if turn.side == side && game.player(side).actions == 0 && game.data.raid.is_none() {
         let turn_number = match side {
             Side::Overlord => turn.turn_number,
             Side::Champion => turn.turn_number + 1,

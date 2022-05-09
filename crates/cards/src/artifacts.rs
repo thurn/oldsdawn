@@ -14,10 +14,10 @@
 
 //! Card definitions for the Weapon card type
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition};
+use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
-use data::text::Keyword;
+use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
@@ -90,11 +90,46 @@ pub fn accumulator() -> CardDefinition {
             },
             Ability {
                 text: text!(Keyword::Store(1), ", then take all stored mana."),
-                ability_type: AbilityType::Activated(actions(1)),
-                delegates: vec![on_activated(|g, s, ability_id| {
+                ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
+                delegates: vec![on_activated(|g, s, activated| {
                     let mana = add_stored_mana(g, s.card_id(), 1);
-                    mutations::take_stored_mana(g, ability_id.card_id, mana, OnEmpty::Ignore);
+                    mutations::take_stored_mana(g, activated.card_id(), mana, OnEmpty::Ignore);
                 })],
+            },
+        ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+fn mystic_portal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::MysticPortal,
+        cost: cost(5),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75"),
+        card_type: CardType::Artifact,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            abilities::store_mana_on_play::<12>(),
+            Ability {
+                text: text!(
+                    "Raid an",
+                    Keyword::InnerRoom(Sentence::Internal),
+                    "you have not raided this turn.",
+                    "If successful,",
+                    Keyword::Take(Sentence::Internal, 3)
+                ),
+                ability_type: AbilityType::Activated(actions(1), target_inner_room()),
+                delegates: vec![
+                    on_activated(|g, s, activated| {
+                        initiate_raid(g, s, activated.target);
+                    }),
+                    on_raid_success(matching_raid, |g, s, _| {
+                        mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard)
+                    }),
+                ],
             },
         ],
         config: CardConfig::default(),

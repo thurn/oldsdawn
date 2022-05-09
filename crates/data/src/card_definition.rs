@@ -84,6 +84,26 @@ pub struct CardStats {
     pub can_level_up: bool,
 }
 
+pub type RoomPredicate = fn(&GameState, RoomId) -> bool;
+
+/// Allows cards and abilities to provide special targeting behavior.
+#[derive(Clone, EnumKind)]
+#[enum_kind(TargetRequirementKind)]
+pub enum TargetRequirement {
+    /// No target required
+    None,
+    /// Target a specific room when played. Only rooms for which the provided
+    /// [RoomPredicate] returns true are considered valid targets.
+    TargetRoom(RoomPredicate),
+}
+
+impl Debug for TargetRequirement {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let kind: TargetRequirementKind = self.into();
+        write!(f, "{:?}", kind)
+    }
+}
+
 /// Describes how ability being triggered should be communicated in the UI
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
 pub enum TriggerIndicator {
@@ -95,7 +115,7 @@ pub enum TriggerIndicator {
 }
 
 /// Possible types of ability
-#[derive(PartialEq, Eq, Hash, Debug, Clone, EnumKind)]
+#[derive(Debug, Clone, EnumKind)]
 #[enum_kind(AbilityTypeKind)]
 pub enum AbilityType {
     /// Standard abilities function at all times without requiring activation.
@@ -106,7 +126,7 @@ pub enum AbilityType {
     Encounter,
 
     /// Activated abilities have an associated cost in order to be used.
-    Activated(Cost),
+    Activated(Cost, TargetRequirement),
 }
 
 /// Abilities are the unit of action in Spelldawn. Their behavior is provided by
@@ -127,25 +147,6 @@ pub struct SpecialEffects {
     pub additional_hit: Option<TimedEffect>,
 }
 
-pub type RoomPredicate = fn(&GameState, RoomId) -> bool;
-
-/// Allows cards to provide special targeting behavior beyond what is normal for
-/// their [CardType].
-#[derive(EnumKind)]
-#[enum_kind(CustomTargetingKind)]
-pub enum CustomTargeting {
-    /// Target a specific room when played. Only rooms for which the provided
-    /// [RoomPredicate] returns true are considered valid targets.
-    TargetRoom(RoomPredicate),
-}
-
-impl Debug for CustomTargeting {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let kind: CustomTargetingKind = self.into();
-        write!(f, "{:?}", kind)
-    }
-}
-
 /// Individual card configuration; properties which are not universal for all
 /// cards
 #[derive(Debug, Default)]
@@ -153,7 +154,7 @@ pub struct CardConfig {
     pub stats: CardStats,
     pub faction: Option<Faction>,
     pub subtypes: Vec<CardSubtype>,
-    pub custom_targeting: Option<CustomTargeting>,
+    pub custom_targeting: Option<TargetRequirement>,
     pub special_effects: SpecialEffects,
 }
 

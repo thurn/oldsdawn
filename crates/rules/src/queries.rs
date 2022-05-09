@@ -68,7 +68,7 @@ pub fn mana_cost(game: &GameState, card_id: CardId) -> Option<ManaValue> {
 
 /// Returns the mana cost for a given ability, if any
 pub fn ability_mana_cost(game: &GameState, ability_id: AbilityId) -> Option<ManaValue> {
-    let cost = if let AbilityType::Activated(cost) =
+    let cost = if let AbilityType::Activated(cost, _) =
         &crate::get(game.card(ability_id.card_id).name).ability(ability_id.index).ability_type
     {
         cost.mana

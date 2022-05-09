@@ -16,7 +16,7 @@
 
 use std::collections::BTreeMap;
 
-use data::card_definition::{AbilityType, CardDefinition, CustomTargeting};
+use data::card_definition::{AbilityType, CardDefinition, TargetRequirement};
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::game_actions::CardTarget;
@@ -191,7 +191,7 @@ fn create_ability_cards(
 ) -> Vec<(CardIdentifier, CreateOrUpdateCardCommand)> {
     let mut result = vec![];
     for (ability_index, ability) in rules::get(card.name).abilities.iter().enumerate() {
-        if let AbilityType::Activated(_cost) = &ability.ability_type {
+        if let AbilityType::Activated(_, target_requirement) = &ability.ability_type {
             let identifier = adapters::adapt_ability_card_id(card.id, AbilityIndex(ability_index));
             result.push((
                 identifier,
@@ -200,7 +200,7 @@ fn create_ability_cards(
                         game,
                         AbilityId::new(card.id, ability_index),
                         user_side,
-                        true, /* check_can_play */
+                        Some(target_requirement),
                     )),
                     create_position: Some(ObjectPosition {
                         sorting_key: card.sorting_key,
@@ -223,18 +223,22 @@ fn create_ability_cards(
 }
 
 /// Creates a `CardView` representing an ability of a provided `card`.
+///
+/// If a `target_requirement` is provided, the `targeting:` logic for this view
+/// is populated. Otherwise it is left empty and the resulting card cannot be
+/// played.
 pub fn ability_card_view(
     game: &GameState,
     ability_id: AbilityId,
     user_side: Side,
-    check_can_play: bool,
+    target_requirement: Option<&TargetRequirement>,
 ) -> CardView {
     let card = game.card(ability_id.card_id);
     let identifier = adapters::adapt_ability_id(ability_id);
     let definition = rules::get(card.name);
     let ability = rules::get(card.name).ability(ability_id.index);
     let mana_cost =
-        if let AbilityType::Activated(cost) = &ability.ability_type { cost.mana } else { None };
+        if let AbilityType::Activated(cost, _) = &ability.ability_type { cost.mana } else { None };
     CardView {
         card_id: Some(identifier),
         prefab: CardPrefab::TokenCard.into(),
@@ -260,14 +264,10 @@ pub fn ability_card_view(
             rules_text: Some(RulesText {
                 text: rules_text::ability_text(game, ability_id, ability),
             }),
-            targeting: Some(CardTargeting {
-                targeting: Some(Targeting::NoTargeting(NoTargeting {
-                    can_play: if check_can_play {
-                        flags::can_take_activate_ability_action(game, user_side, ability_id)
-                    } else {
-                        false
-                    },
-                })),
+            targeting: target_requirement.map(|target_requirement| {
+                build_targeting(target_requirement, |target| {
+                    flags::can_take_activate_ability_action(game, card.side(), ability_id, target)
+                })
             }),
             on_release_position: Some(ObjectPosition {
                 sorting_key: card.sorting_key,
@@ -280,6 +280,26 @@ pub fn ability_card_view(
                 card,
                 Some(ability_id.index),
             )),
+        }),
+    }
+}
+
+fn build_targeting(
+    requirement: &TargetRequirement,
+    can_play: impl Fn(CardTarget) -> bool,
+) -> CardTargeting {
+    CardTargeting {
+        targeting: Some(match requirement {
+            TargetRequirement::None => {
+                Targeting::NoTargeting(NoTargeting { can_play: can_play(CardTarget::None) })
+            }
+            TargetRequirement::TargetRoom(_) => Targeting::ArrowTargetRoom(ArrowTargetRoom {
+                valid_rooms: RoomId::into_enum_iter()
+                    .filter(|room_id| can_play(CardTarget::Room(*room_id)))
+                    .map(|room_id| adapters::adapt_room_id(room_id).into())
+                    .collect(),
+                arrow: TargetingArrow::Red.into(),
+            }),
         }),
     }
 }
@@ -567,6 +587,7 @@ pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPositio
 
 /// Builds a description of the standard [CardTargeting] behavior of a card
 fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTargeting {
+    // TODO: Use build_targeting() here
     let valid_rooms = || {
         RoomId::into_enum_iter()
             .filter(|room_id| {
@@ -582,13 +603,16 @@ fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTa
     };
 
     if let Some(custom_targeting) = &rules::get(card.name).config.custom_targeting {
-        return match custom_targeting {
-            CustomTargeting::TargetRoom(_) => CardTargeting {
-                targeting: Some(Targeting::ArrowTargetRoom(ArrowTargetRoom {
-                    valid_rooms: valid_rooms(),
-                    arrow: TargetingArrow::Red.into(),
-                })),
-            },
+        match custom_targeting {
+            TargetRequirement::TargetRoom(_) => {
+                return CardTargeting {
+                    targeting: Some(Targeting::ArrowTargetRoom(ArrowTargetRoom {
+                        valid_rooms: valid_rooms(),
+                        arrow: TargetingArrow::Red.into(),
+                    })),
+                }
+            }
+            TargetRequirement::None => {}
         };
     }
 

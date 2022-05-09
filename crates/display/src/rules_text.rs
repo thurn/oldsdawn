@@ -19,7 +19,7 @@ use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
 use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, DamageType, Faction};
-use data::text::{AbilityText, Keyword, KeywordKind, NumericOperator, TextToken};
+use data::text::{AbilityText, Keyword, KeywordKind, NumericOperator, Sentence, TextToken};
 use protos::spelldawn::{Node, RulesText};
 use ui::card_info::SupplementalCardInfo;
 use ui::core::Component;
@@ -31,7 +31,7 @@ pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) ->
     let mut lines = vec![];
     for (index, ability) in definition.abilities.iter().enumerate() {
         let mut line = String::new();
-        if let AbilityType::Activated(cost) = &ability.ability_type {
+        if let AbilityType::Activated(cost, _) = &ability.ability_type {
             line.push_str(&cost_string(cost));
         }
 
@@ -111,8 +111,8 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 },
                 number
             ),
-            TextToken::Mana(mana) => format!("{}\u{f06d}", mana),
-            TextToken::Actions(mana) => format!("{}\u{f254}", mana),
+            TextToken::Mana(mana) => format!("{}{}", mana, icons::MANA),
+            TextToken::Actions(actions) => format!("{}{}", actions, icons::ACTION),
             TextToken::Keyword(keyword) => match keyword {
                 Keyword::Play => "<b>\u{f0e7}Play:</b>".to_string(),
                 Keyword::Dawn => "<b>\u{f0e7}Dawn:</b>".to_string(),
@@ -121,8 +121,19 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 Keyword::Combat => "<b>\u{f0e7}Combat:</b>".to_string(),
                 Keyword::Unveil => "<b>Unveil</b>".to_string(),
                 Keyword::SuccessfulRaid => "<b>\u{f0e7}Successful Raid:</b>".to_string(),
-                Keyword::Store(n) => format!("<b>Store</b> {}\u{f06d}", n),
-                Keyword::Take(n) => format!("Take {}\u{f06d}", n),
+                Keyword::Store(n) => {
+                    format!("<b>Store</b>{}{}\u{f06d}", icons::NON_BREAKING_SPACE, n)
+                }
+                Keyword::Take(sentence_position, n) => format!(
+                    "{}{}{}{}",
+                    match sentence_position {
+                        Sentence::Start => "Take",
+                        Sentence::Internal => "take",
+                    },
+                    icons::NON_BREAKING_SPACE,
+                    n,
+                    icons::MANA
+                ),
                 Keyword::DealDamage(amount, damage_type) => format!(
                     "Deal {} {} damage.",
                     amount,
@@ -133,6 +144,11 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                         DamageType::Cold => "cold",
                     }
                 ),
+                Keyword::InnerRoom(sentence_position) => match sentence_position {
+                    Sentence::Start => "Inner room",
+                    Sentence::Internal => "inner room",
+                }
+                .to_string(),
                 Keyword::EndRaid => "End the raid.".to_string(),
             },
             TextToken::Reminder(text) => format!("<i>{}</i>", text),
@@ -233,6 +249,9 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
                 output.push(
                     "<b>Damage:</b> Causes the Champion to discard cards at random.".to_string(),
                 );
+            }
+            KeywordKind::InnerRoom => {
+                output.push("<b>Inner Room:</b> The Sanctum, Vault or Crypts.".to_string())
             }
             _ => {}
         };

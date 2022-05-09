@@ -126,6 +126,15 @@ impl ServerCardId {
             ServerCardId::AbilityId(_) => bail!("Expected CardId"),
         }
     }
+
+    // Helper for when it is an error for the value to not be a
+    // `ServerCardId::AbilityId`.
+    pub fn as_ability_id(self) -> Result<AbilityId> {
+        match self {
+            ServerCardId::AbilityId(ability_id) => Ok(ability_id),
+            ServerCardId::CardId(_) => bail!("Expected CardId"),
+        }
+    }
 }
 
 /// Converts a client [CardIdentifier] into a server [CardId] or [AbilityId].

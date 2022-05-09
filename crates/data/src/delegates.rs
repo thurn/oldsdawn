@@ -201,7 +201,7 @@ impl From<Flag> for bool {
     }
 }
 
-/// Event data for when a card is moved
+/// Event data for when a card is played
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub struct CardPlayed {
     pub card_id: CardId,
@@ -211,6 +211,31 @@ pub struct CardPlayed {
 impl From<CardPlayed> for CardId {
     fn from(played: CardPlayed) -> Self {
         played.card_id
+    }
+}
+
+/// Event data for when an ability is activated
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct AbilityActivated {
+    pub ability_id: AbilityId,
+    pub target: CardTarget,
+}
+
+impl AbilityActivated {
+    pub fn card_id(&self) -> CardId {
+        self.ability_id.card_id
+    }
+}
+
+impl From<AbilityActivated> for CardId {
+    fn from(activated: AbilityActivated) -> Self {
+        activated.ability_id.card_id
+    }
+}
+
+impl From<AbilityActivated> for AbilityId {
+    fn from(activated: AbilityActivated) -> Self {
+        activated.ability_id
     }
 }
 
@@ -278,7 +303,7 @@ pub enum Delegate {
     /// A card has been played via the Play action and has had its costs paid
     CastCard(EventDelegate<CardPlayed>),
     /// A card ability with a cost is activated
-    ActivateAbility(EventDelegate<AbilityId>),
+    ActivateAbility(EventDelegate<AbilityActivated>),
     /// A card is moved to a new position
     MoveCard(EventDelegate<CardMoved>),
     /// A card is scored by the Overlord

@@ -15,7 +15,7 @@
 //! Functions to query boolean game information, typically whether some game
 //! action can currently be taken
 
-use data::card_definition::{AbilityType, CustomTargeting};
+use data::card_definition::{AbilityType, TargetRequirement};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     CanActivateAbilityQuery, CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery,
@@ -25,6 +25,7 @@ use data::delegates::{
 use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
 use data::game_actions::{CardTarget, EncounterAction};
 use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
+use enum_iterator::IntoEnumIterator;
 
 use crate::mana::ManaPurpose;
 use crate::{dispatch, mana, queries};
@@ -58,20 +59,41 @@ pub fn can_take_play_card_action(
     dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
 }
 
-pub fn can_take_activate_ability_action(
+pub fn activated_ability_has_valid_targets(
     game: &GameState,
     side: Side,
     ability_id: AbilityId,
 ) -> bool {
+    match &crate::ability_definition(game, ability_id).ability_type {
+        AbilityType::Activated(_, requirement) => match requirement {
+            TargetRequirement::None => {
+                can_take_activate_ability_action(game, side, ability_id, CardTarget::None)
+            }
+            TargetRequirement::TargetRoom(_) => RoomId::into_enum_iter().any(|room_id| {
+                can_take_activate_ability_action(game, side, ability_id, CardTarget::Room(room_id))
+            }),
+        },
+        _ => false,
+    }
+}
+
+pub fn can_take_activate_ability_action(
+    game: &GameState,
+    side: Side,
+    ability_id: AbilityId,
+    target: CardTarget,
+) -> bool {
     let card = game.card(ability_id.card_id);
-    let cost = match &crate::get(card.name)
-        .abilities
-        .get(ability_id.index.value())
-        .map(|a| &a.ability_type)
+
+    let (cost, target_requirement) = match &crate::ability_definition(game, ability_id).ability_type
     {
-        Some(AbilityType::Activated(cost)) => cost,
+        AbilityType::Activated(cost, target_requirement) => (cost, target_requirement),
         _ => return false,
     };
+
+    if !matching_targeting(game, target_requirement, target) {
+        return false;
+    }
 
     let mut can_activate = queries::in_main_phase(game, side)
         && side == ability_id.card_id.side
@@ -96,14 +118,7 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> boo
 
     let definition = crate::get(game.card(card_id).name);
     if let Some(targeting) = &definition.config.custom_targeting {
-        let room_id = match target {
-            CardTarget::Room(room_id) => room_id,
-            _ => return false,
-        };
-
-        return match targeting {
-            CustomTargeting::TargetRoom(predicate) => predicate(game, room_id),
-        };
+        return matching_targeting(game, targeting, target);
     }
 
     match definition.card_type {
@@ -116,6 +131,22 @@ fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> boo
                 if room_can_add(game, room_id, vec![CardType::Project, CardType::Scheme]))
         }
         CardType::Identity => false,
+    }
+}
+
+/// Returns true if the targeting requirement in `requirement` matches the
+/// target in `target`.
+fn matching_targeting(
+    game: &GameState,
+    requirement: &TargetRequirement,
+    target: CardTarget,
+) -> bool {
+    match (requirement, target) {
+        (TargetRequirement::None, CardTarget::None) => true,
+        (TargetRequirement::TargetRoom(predicate), CardTarget::Room(room_id)) => {
+            predicate(game, room_id)
+        }
+        _ => false,
     }
 }
 

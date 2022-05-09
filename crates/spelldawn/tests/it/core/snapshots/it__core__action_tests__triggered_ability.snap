@@ -104,8 +104,6 @@ command_list:
                 image: "<SpriteAddress>"
                 title: "Use Test Triggered Ability Take Mana At Dusk"
                 rules_text: "<RulesText>"
-                targeting: 
-                    can_play: false
                 on_release_position: 
                     sorting_key: 2
                     position: ObjectPositionIntoCard { card_id: Some(CardIdentifier { side: Overlord, index: 45, ability_id: None }) }
@@ -190,8 +188,6 @@ channel_response:
                 image: "<SpriteAddress>"
                 title: "Use Test Triggered Ability Take Mana At Dusk"
                 rules_text: "<RulesText>"
-                targeting: 
-                    can_play: false
                 on_release_position: 
                     sorting_key: 2
                     position: ObjectPositionIntoCard { card_id: Some(CardIdentifier { side: Overlord, index: 45, ability_id: None }) }

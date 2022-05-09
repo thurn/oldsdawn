@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+pub const NON_BREAKING_SPACE: &str = "\u{00a0}";
 pub const MANA: &str = "\u{f06d}";
 pub const CLOSE: &str = "\u{f00d}";
 pub const ACTION: &str = "\u{f254}";
+pub const TRIGGER: &str = "\u{f0e7}";
 pub const SAVE: &str = "\u{f0c7}";
 pub const RESTORE: &str = "\u{f019}";

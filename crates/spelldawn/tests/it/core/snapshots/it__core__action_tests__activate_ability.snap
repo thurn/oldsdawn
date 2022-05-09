@@ -5,11 +5,6 @@ expression: "Summary::run(&response)"
 ---
 
 command_list: 
-    MoveGameObjects: 
-        id: C45[1]
-        position: 
-            sorting_key: 2
-            position: ObjectPositionHand { owner: User }
     UpdateGameView: 
         user: 
             side: Champion
@@ -29,6 +24,11 @@ command_list:
             sorting_key: 2
             position: ObjectPositionItem { item_location: Right }
         create_animation: Unspecified
+    MoveGameObjects: 
+        id: C45[1]
+        position: 
+            sorting_key: 2
+            position: ObjectPositionHand { owner: User }
 channel_response: 
     CreateOrUpdateCard: 
         card: 
@@ -42,8 +42,6 @@ channel_response:
                 image: "<SpriteAddress>"
                 title: "Use Test Activated Ability Take Mana"
                 rules_text: "<RulesText>"
-                targeting: 
-                    can_play: false
                 on_release_position: 
                     sorting_key: 2
                     position: ObjectPositionIntoCard { card_id: Some(CardIdentifier { side: Champion, index: 45, ability_id: None }) }

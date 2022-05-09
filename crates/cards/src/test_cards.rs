@@ -17,7 +17,7 @@ use data::card_name::CardName;
 use data::primitives::{
     CardType, ColdDamage, Faction, HealthValue, ManaValue, Rarity, School, Side,
 };
-use data::text::Keyword;
+use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::OnEmpty;
@@ -262,7 +262,7 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
         abilities: vec![
             abilities::unveil_at_dusk_then_store::<MANA_STORED>(),
             Ability {
-                text: text![Keyword::Dusk, Keyword::Take(MANA_TAKEN)],
+                text: text![Keyword::Dusk, Keyword::Take(Sentence::Start, MANA_TAKEN)],
                 ability_type: alert(),
                 delegates: vec![at_dusk(|g, s, _| {
                     mutations::take_stored_mana(g, s.card_id(), MANA_TAKEN, OnEmpty::MoveToDiscard);

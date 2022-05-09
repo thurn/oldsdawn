@@ -16,10 +16,10 @@
 
 use std::collections::HashMap;
 
-use data::card_definition::CardDefinition;
+use data::card_definition::{Ability, CardDefinition};
 use data::card_name::CardName;
 use data::game::GameState;
-use data::primitives::CardId;
+use data::primitives::{AbilityId, CardId};
 use linkme::distributed_slice;
 use once_cell::sync::Lazy;
 
@@ -55,4 +55,8 @@ pub fn get(name: CardName) -> &'static CardDefinition {
 
 pub fn card_definition(game: &GameState, card_id: CardId) -> &'static CardDefinition {
     get(game.card(card_id).name)
+}
+
+pub fn ability_definition(game: &GameState, ability_id: AbilityId) -> &'static Ability {
+    card_definition(game, ability_id.card_id).ability(ability_id.index)
 }
