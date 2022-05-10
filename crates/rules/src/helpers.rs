@@ -158,7 +158,7 @@ pub fn on_overlord_score(mutation: MutationFn<CardId>) -> Delegate {
     Delegate::OverlordScoreCard(EventDelegate { requirement: this_card, mutation })
 }
 
-/// A delegate which fires when a raid ends in success
+/// Delegate which fires when a raid starts
 pub fn on_raid_start(
     requirement: RequirementFn<RaidStart>,
     mutation: MutationFn<RaidStart>,

@@ -79,6 +79,20 @@ fn mystic_portal() {
 }
 
 #[test]
+fn mystic_portal_play_after_raid() {
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.add_to_hand(CardName::MysticPortal);
+    g.initiate_raid(RoomId::Sanctum);
+    click_on_end_raid(&mut g);
+    g.play_card(id, g.user_id(), None);
+    assert_eq!("12", g.user.get_card(id).arena_icon());
+    assert_eq!(
+        vec![RoomIdentifier::Vault, RoomIdentifier::Crypts],
+        g.user.cards.get(ability_id(id, 1)).valid_rooms()
+    );
+}
+
+#[test]
 #[should_panic]
 fn mystic_portal_repeat_panic() {
     let mut g = new_game(Side::Champion, Args::default());

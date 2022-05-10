@@ -258,12 +258,26 @@ impl TestSession {
             )),
         });
 
-        self.perform(
-            Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
+        self.play_card(
+            card_id,
             self.database.game().player(side_for_card_name(card_name)).id,
+            target,
         );
 
         card_id
+    }
+
+    /// Helpers to take the [PlayCardAction] with a given card ID.
+    pub fn play_card(
+        &mut self,
+        card_id: CardIdentifier,
+        player_id: PlayerId,
+        target: Option<CardTarget>,
+    ) {
+        self.perform(
+            Action::PlayCard(PlayCardAction { card_id: Some(card_id), target }),
+            player_id,
+        );
     }
 
     /// Locate a button containing the provided `text` in the provided player's

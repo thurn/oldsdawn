@@ -138,7 +138,7 @@ fn mystic_portal() -> CardDefinition {
                     on_activated(|g, s, activated| {
                         initiate_raid(g, s, activated.target);
                     }),
-                    on_raid_start(face_up_in_play, |g, s, raid_start| {
+                    on_raid_start(always, |g, s, raid_start| {
                         let turn = g.data.turn;
                         g.ability_state_mut(s.ability_id())
                             .room_turns
