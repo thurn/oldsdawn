@@ -15,9 +15,7 @@
 //! Helpers for defining card behaviors. This file is intended be be used via
 //! wildcard import in card definition files.
 
-use data::card_definition::{
-    AbilityType, AttackBoost, CardStats, Cost, SchemePoints, TriggerIndicator,
-};
+use data::card_definition::{AttackBoost, CardStats, Cost, SchemePoints};
 use data::delegates::{
     AbilityActivated, CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded,
     RaidStart, RequirementFn, Scope,
@@ -29,6 +27,7 @@ use data::primitives::{
     Sprite, TurnNumber,
 };
 use data::text::{NumericOperator, TextToken};
+use data::updates::GameUpdate;
 use data::utils;
 
 use crate::raid_actions;
@@ -117,15 +116,17 @@ pub fn is_inner_room(room_id: RoomId) -> bool {
     room_id == RoomId::Vault || room_id == RoomId::Sanctum || room_id == RoomId::Crypts
 }
 
-/// Returns a standard [AbilityType] which does not notify the user when
-/// triggered
-pub fn silent() -> AbilityType {
-    AbilityType::Standard(TriggerIndicator::Silent)
+/// Pushes a [GameUpdate] indicating the ability represented by [Scope] should
+/// have a trigger animation shown in the UI.
+pub fn alert(game: &mut GameState, scope: &Scope) {
+    game.updates.push(GameUpdate::AbilityTriggered(scope.ability_id()));
 }
 
-/// Returns a standard [AbilityType] which notifies the user when triggered
-pub fn alert() -> AbilityType {
-    AbilityType::Standard(TriggerIndicator::Alert)
+/// Invokes [alert] if the provided `number` is not zero.
+pub fn alert_if_nonzero(game: &mut GameState, scope: &Scope, number: u32) {
+    if number > 0 {
+        alert(game, scope);
+    }
 }
 
 /// A delegate which triggers when a card is cast

@@ -415,8 +415,6 @@ impl fmt::Debug for Delegate {
 pub struct DelegateContext {
     pub delegate: Delegate,
     pub scope: Scope,
-    /// Should a UI alert be displayed when this delegate fires?
-    pub trigger_alert: bool,
 }
 
 /// Caches delegates in a given game for faster lookup

@@ -18,11 +18,9 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-use data::card_definition::{AbilityType, TriggerIndicator};
 use data::delegates::{DelegateCache, DelegateContext, EventData, QueryData, Scope};
 use data::game::GameState;
 use data::primitives::AbilityId;
-use data::updates::GameUpdate;
 use tracing::instrument;
 
 /// Adds a [DelegateCache] for this game in order to improve lookup performance.
@@ -34,14 +32,10 @@ pub fn populate_delegate_cache(game: &mut GameState) {
             let ability_id = AbilityId::new(card_id, index);
             let scope = Scope::new(ability_id);
             for delegate in &ability.delegates {
-                result.entry(delegate.kind()).or_insert_with(Vec::new).push(DelegateContext {
-                    delegate: delegate.clone(),
-                    scope,
-                    trigger_alert: matches!(
-                        ability.ability_type,
-                        AbilityType::Standard(TriggerIndicator::Alert)
-                    ),
-                });
+                result
+                    .entry(delegate.kind())
+                    .or_insert_with(Vec::new)
+                    .push(DelegateContext { delegate: delegate.clone(), scope });
             }
         }
     }
@@ -61,9 +55,6 @@ pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, even
         let functions = E::extract(&delegate_context.delegate).expect("delegate");
         let data = event.data();
         if (functions.requirement)(game, scope, data) {
-            if delegate_context.trigger_alert {
-                game.updates.push(GameUpdate::AbilityTriggered(scope.ability_id()));
-            }
             (functions.mutation)(game, scope, data);
         }
     }

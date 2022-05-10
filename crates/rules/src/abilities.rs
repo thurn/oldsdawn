@@ -14,7 +14,7 @@
 
 //! Helpers for defining common card abilities
 
-use data::card_definition::{Ability, AbilityType, Cost, TargetRequirement, TriggerIndicator};
+use data::card_definition::{Ability, AbilityType, Cost, TargetRequirement};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope};
 use data::game::{GameOverData, GamePhase, GameState};
@@ -53,7 +53,7 @@ pub fn encounter_boost() -> Ability {
 pub fn store_mana_on_play<const N: ManaValue>() -> Ability {
     Ability {
         text: text![Keyword::Play, Keyword::Store(Sentence::Start, N)],
-        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
+        ability_type: AbilityType::Standard,
         delegates: vec![
             Delegate::CastCard(EventDelegate::new(this_card, |g, _s, played| {
                 g.card_mut(played.card_id).data.stored_mana = N;
@@ -98,7 +98,7 @@ pub fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&
 pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
     Ability {
         text: text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())],
-        ability_type: silent(),
+        ability_type: AbilityType::Standard,
         delegates: vec![combat(|g, _, _| {
             for _ in 0..N {
                 discard_random_card(g, Side::Champion, |g| {
@@ -114,7 +114,7 @@ pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
 pub fn end_raid() -> Ability {
     Ability {
         text: text![Keyword::Combat, Keyword::EndRaid],
-        ability_type: silent(),
+        ability_type: AbilityType::Standard,
         delegates: vec![combat(|g, _, _| {
             mutations::end_raid(g, RaidOutcome::Failure);
         })],
@@ -143,7 +143,7 @@ pub fn unveil_at_dusk_then_store<const N: ManaValue>() -> Ability {
             "this project at dusk, then",
             Keyword::Store(Sentence::Internal, N)
         ],
-        ability_type: AbilityType::Standard(TriggerIndicator::Silent),
+        ability_type: AbilityType::Standard,
         delegates: vec![Delegate::Dusk(EventDelegate {
             requirement: face_down_in_play,
             mutation: |g, s, _| {

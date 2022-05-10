@@ -186,15 +186,17 @@ pub enum OnEmpty {
 }
 
 /// Takes *up to* `maximum` stored mana from a card and gives it to the player
-/// who owns this card. If no mana remains, the card is moved to its owner's
-/// discard pile.
+/// who owns this card. Returns the amount of mana taken.
+///
+/// If no mana remains, the card is moved to its owner's discard pile if
+/// `OnEmpty::MoveToDiscard` is specified.
 #[instrument(skip(game))]
 pub fn take_stored_mana(
     game: &mut GameState,
     card_id: CardId,
     maximum: ManaValue,
     on_empty: OnEmpty,
-) {
+) -> ManaValue {
     info!(?card_id, ?maximum, "take_stored_mana");
     let available = game.card(card_id).data.stored_mana;
     let taken = cmp::min(available, maximum);
@@ -205,6 +207,8 @@ pub fn take_stored_mana(
     if on_empty == OnEmpty::MoveToDiscard && game.card(card_id).data.stored_mana == 0 {
         move_card(game, card_id, CardPosition::DiscardPile(card_id.side));
     }
+
+    taken
 }
 
 /// Overwrites the value of [CardData::boost_count] to match the provided

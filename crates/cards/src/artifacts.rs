@@ -59,7 +59,7 @@ pub fn sanctum_passage() -> CardDefinition {
             text: text!(
                 "The first time each turn you access the Sanctum, access 1 additional card."
             ),
-            ability_type: silent(),
+            ability_type: AbilityType::Standard,
             delegates: vec![
                 on_raid_access_start(face_up_in_play, |g, s, raid_id| {
                     once_per_turn(g, s, raid_id, save_raid_id);
@@ -84,9 +84,10 @@ pub fn accumulator() -> CardDefinition {
         abilities: vec![
             Ability {
                 text: text!(Keyword::SuccessfulRaid, Keyword::Store(Sentence::Start, 1)),
-                ability_type: alert(),
+                ability_type: AbilityType::Standard,
                 delegates: vec![on_raid_success(face_up_in_play, |g, s, _| {
                     add_stored_mana(g, s.card_id(), 1);
+                    alert(g, &s);
                 })],
             },
             Ability {
@@ -145,7 +146,7 @@ fn mystic_portal() -> CardDefinition {
                             .insert(raid_start.target, turn);
                     }),
                     on_raid_success(matching_raid, |g, s, _| {
-                        mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard)
+                        mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard);
                     }),
                 ],
             },
@@ -167,9 +168,10 @@ pub fn storage_crystal() -> CardDefinition {
         abilities: vec![
             Ability {
                 text: text![Keyword::Dawn, Keyword::Take(Sentence::Start, 1)],
-                ability_type: alert(),
+                ability_type: AbilityType::Standard,
                 delegates: vec![at_dawn(|g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), 1, OnEmpty::Ignore);
+                    let taken = mutations::take_stored_mana(g, s.card_id(), 1, OnEmpty::Ignore);
+                    alert_if_nonzero(g, &s, taken);
                 })],
             },
             Ability {

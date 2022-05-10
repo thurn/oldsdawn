@@ -14,7 +14,7 @@
 
 //! Card definitions for the Spell card type & Champion player
 
-use data::card_definition::{Ability, CardConfig, CardDefinition, TargetRequirement};
+use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
@@ -37,7 +37,7 @@ pub fn arcane_recovery() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text!("Gain", mana_text(9)),
-            ability_type: silent(),
+            ability_type: AbilityType::Standard,
             delegates: vec![on_cast(|g, s, _| mana::gain(g, s.side(), 9))],
         }],
         config: CardConfig::default(),
@@ -56,7 +56,7 @@ pub fn meditation() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text!("Gain", mana_text(5), ".", "Lose", actions_text(1), reminder("(if able).")),
-            ability_type: silent(),
+            ability_type: AbilityType::Standard,
             delegates: vec![on_cast(|g, s, _| {
                 mana::gain(g, s.side(), 5);
                 mutations::lose_action_point_if_able(g, s.side(), 1);
@@ -81,7 +81,7 @@ pub fn coup_de_grace() -> CardDefinition {
                 "Raid the Sanctum or Vault, accessing 1 additional card.",
                 "If successful, draw a card."
             ),
-            ability_type: silent(),
+            ability_type: AbilityType::Standard,
             delegates: vec![
                 on_cast(|g, s, play_card| initiate_raid(g, s, play_card.target)),
                 add_vault_access::<1>(matching_raid),
@@ -113,7 +113,7 @@ pub fn charged_strike() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text!("Initiate a raid.", "Gain", mana_text(5), "to spend during that raid."),
-            ability_type: silent(),
+            ability_type: AbilityType::Standard,
             delegates: vec![on_cast(|g, s, play_card| {
                 initiate_raid_with_callback(g, s, play_card.target, |game, raid_id| {
                     mana::add_raid_specific_mana(game, s.side(), raid_id, 5);
@@ -146,7 +146,7 @@ pub fn stealth_mission() -> CardDefinition {
                 mana_text(3),
                 "."
             ),
-            ability_type: silent(),
+            ability_type: AbilityType::Standard,
             delegates: vec![
                 on_cast(|g, s, play_card| {
                     initiate_raid(g, s, play_card.target);
@@ -184,7 +184,7 @@ pub fn preparation() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text!("Draw 4 cards.", "Lose", actions_text(1), reminder("(if able).")),
-            ability_type: silent(),
+            ability_type: AbilityType::Standard,
             delegates: vec![on_cast(|g, s, _| {
                 mutations::draw_cards(g, s.side(), 4);
                 mutations::lose_action_point_if_able(g, s.side(), 1);
