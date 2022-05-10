@@ -52,7 +52,7 @@ pub fn encounter_boost() -> Ability {
 /// the stored mana is depleted.
 pub fn store_mana_on_play<const N: ManaValue>() -> Ability {
     Ability {
-        text: text![Keyword::Play, Keyword::Store(N)],
+        text: text![Keyword::Play, Keyword::Store(Sentence::Start, N)],
         ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![
             Delegate::CastCard(EventDelegate::new(this_card, |g, _s, played| {
@@ -138,7 +138,11 @@ fn add_boost(
 /// it.
 pub fn unveil_at_dusk_then_store<const N: ManaValue>() -> Ability {
     Ability {
-        text: text![Keyword::Unveil, "this project at dusk, then", Keyword::Store(N)],
+        text: text![
+            Keyword::Unveil,
+            "this project at dusk, then",
+            Keyword::Store(Sentence::Internal, N)
+        ],
         ability_type: AbilityType::Standard(TriggerIndicator::Silent),
         delegates: vec![Delegate::Dusk(EventDelegate {
             requirement: face_down_in_play,

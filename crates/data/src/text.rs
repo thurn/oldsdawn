@@ -74,7 +74,7 @@ pub enum Keyword {
     Combat,
     Unveil,
     SuccessfulRaid,
-    Store(u32),
+    Store(Sentence, u32),
     Take(Sentence, u32),
     DealDamage(u32, DamageType),
     InnerRoom(Sentence),

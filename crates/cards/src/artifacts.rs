@@ -83,14 +83,14 @@ pub fn accumulator() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![
             Ability {
-                text: text!(Keyword::SuccessfulRaid, Keyword::Store(1)),
+                text: text!(Keyword::SuccessfulRaid, Keyword::Store(Sentence::Start, 1)),
                 ability_type: alert(),
                 delegates: vec![on_raid_success(face_up_in_play, |g, s, _| {
                     add_stored_mana(g, s.card_id(), 1);
                 })],
             },
             Ability {
-                text: text!(Keyword::Store(1), ", then take all stored mana."),
+                text: text!(Keyword::Store(Sentence::Start, 1), ", then take all stored mana."),
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
                 delegates: vec![on_activated(|g, s, activated| {
                     let mana = add_stored_mana(g, s.card_id(), 1);
@@ -148,6 +148,36 @@ fn mystic_portal() -> CardDefinition {
                         mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard)
                     }),
                 ],
+            },
+        ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn storage_crystal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::StorageCrystal,
+        cost: cost(0),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74"),
+        card_type: CardType::Artifact,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            Ability {
+                text: text![Keyword::Dawn, Keyword::Take(Sentence::Start, 1)],
+                ability_type: alert(),
+                delegates: vec![at_dawn(|g, s, _| {
+                    mutations::take_stored_mana(g, s.card_id(), 1, OnEmpty::Ignore);
+                })],
+            },
+            Ability {
+                text: text![Keyword::Store(Sentence::Start, 3)],
+                ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
+                delegates: vec![on_activated(|g, s, _| {
+                    add_stored_mana(g, s.card_id(), 3);
+                })],
             },
         ],
         config: CardConfig::default(),

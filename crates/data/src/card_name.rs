@@ -76,6 +76,7 @@ pub enum CardName {
     SanctumPassage,
     Accumulator,
     MysticPortal,
+    StorageCrystal,
 }
 
 impl CardName {

@@ -121,8 +121,16 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 Keyword::Combat => "<b>\u{f0e7}Combat:</b>".to_string(),
                 Keyword::Unveil => "<b>Unveil</b>".to_string(),
                 Keyword::SuccessfulRaid => "<b>\u{f0e7}Successful Raid:</b>".to_string(),
-                Keyword::Store(n) => {
-                    format!("<b>Store</b>{}{}\u{f06d}", icons::NON_BREAKING_SPACE, n)
+                Keyword::Store(sentence_position, n) => {
+                    format!(
+                        "<b>{}</b>{}{}\u{f06d}",
+                        match sentence_position {
+                            Sentence::Start => "Store",
+                            Sentence::Internal => "store",
+                        },
+                        icons::NON_BREAKING_SPACE,
+                        n
+                    )
                 }
                 Keyword::Take(sentence_position, n) => format!(
                     "{}{}{}{}",
