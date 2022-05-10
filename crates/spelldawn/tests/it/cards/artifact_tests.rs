@@ -101,3 +101,24 @@ fn mystic_portal_repeat_panic() {
     click_on_end_raid(&mut g);
     g.activate_ability_with_target(id, 1, RoomId::Crypts);
 }
+
+#[test]
+fn storage_crystal() {
+    let card_cost = 0;
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.play_from_hand(CardName::StorageCrystal);
+    g.activate_ability(id, 1);
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    assert!(g.dawn());
+    assert_eq!(STARTING_MANA - card_cost + 1, g.me().mana());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    assert_eq!(STARTING_MANA - card_cost + 2, g.me().mana());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    assert_eq!(STARTING_MANA - card_cost + 3, g.me().mana());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    assert_eq!(STARTING_MANA - card_cost + 3, g.me().mana());
+}
