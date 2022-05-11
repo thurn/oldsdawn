@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use data::card_definition::{
-    Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, Cost, SchemePoints,
+    Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, SchemePoints,
 };
 use data::card_name::CardName;
 use data::primitives::{
@@ -39,7 +39,7 @@ pub fn initialize() {}
 pub fn test_overlord_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestOverlordIdentity,
-        cost: Cost { mana: None, actions: 0 },
+        cost: identity_cost(),
         image: sprite("Enixion/Fantasy Art Pack 2/Resized/3"),
         card_type: CardType::Identity,
         side: Side::Overlord,
@@ -54,7 +54,7 @@ pub fn test_overlord_identity() -> CardDefinition {
 pub fn test_champion_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestChampionIdentity,
-        cost: Cost { mana: None, actions: 0 },
+        cost: identity_cost(),
         image: sprite("Enixion/Fantasy Art Pack 2/Resized/2"),
         card_type: CardType::Identity,
         side: Side::Champion,
@@ -89,7 +89,7 @@ pub fn test_champion_spell() -> CardDefinition {
 pub fn test_scheme_31() -> CardDefinition {
     CardDefinition {
         name: CardName::TestScheme31,
-        cost: actions(1),
+        cost: scheme_cost(),
         card_type: CardType::Scheme,
         config: CardConfig {
             stats: scheme_points(SchemePoints { level_requirement: 3, points: 1 }),

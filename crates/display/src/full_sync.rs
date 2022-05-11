@@ -192,13 +192,18 @@ fn create_ability_cards(
     let mut result = vec![];
     for (ability_index, ability) in rules::get(card.name).abilities.iter().enumerate() {
         if let AbilityType::Activated(_, target_requirement) = &ability.ability_type {
+            let ability_id = AbilityId::new(card.id, ability_index);
+            if !flags::activated_ability_has_valid_targets(game, user_side, ability_id) {
+                continue;
+            }
+
             let identifier = adapters::adapt_ability_card_id(card.id, AbilityIndex(ability_index));
             result.push((
                 identifier,
                 CreateOrUpdateCardCommand {
                     card: Some(ability_card_view(
                         game,
-                        AbilityId::new(card.id, ability_index),
+                        ability_id,
                         user_side,
                         Some(target_requirement),
                     )),

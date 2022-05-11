@@ -48,35 +48,22 @@ pub fn can_take_play_card_action(
     let mut can_play = queries::in_main_phase(game, side)
         && side == card_id.side
         && game.card(card_id).position() == CardPosition::Hand(side)
-        && is_valid_target(game, card_id, target);
-    // TODO: Check action cost
+        && is_valid_target(game, card_id, target)
+        && queries::action_cost(game, card_id) <= game.player(side).actions;
 
     if enters_play_face_up(game, card_id) {
         can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
                              if cost <= mana::get(game, side, ManaPurpose::PayForCard(card_id)));
+        if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
+            can_play &= (custom_cost.can_pay)(game, card_id);
+        }
     }
 
     dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
 }
 
-pub fn activated_ability_has_valid_targets(
-    game: &GameState,
-    side: Side,
-    ability_id: AbilityId,
-) -> bool {
-    match &crate::ability_definition(game, ability_id).ability_type {
-        AbilityType::Activated(_, requirement) => match requirement {
-            TargetRequirement::None => {
-                can_take_activate_ability_action(game, side, ability_id, CardTarget::None)
-            }
-            TargetRequirement::TargetRoom(_) => RoomId::into_enum_iter().any(|room_id| {
-                can_take_activate_ability_action(game, side, ability_id, CardTarget::Room(room_id))
-            }),
-        },
-        _ => false,
-    }
-}
-
+/// Whether the `ability_id` ability can currently be activated with the
+/// provided `target`.
 pub fn can_take_activate_ability_action(
     game: &GameState,
     side: Side,
@@ -100,12 +87,36 @@ pub fn can_take_activate_ability_action(
         && card.position().in_play()
         && cost.actions <= game.player(side).actions;
 
+    if let Some(custom_cost) = &cost.custom_cost {
+        can_activate &= (custom_cost.can_pay)(game, ability_id);
+    }
+
     if let Some(cost) = queries::ability_mana_cost(game, ability_id) {
         can_activate &= cost <= mana::get(game, side, ManaPurpose::ActivateAbility(ability_id));
     }
 
     dispatch::perform_query(game, CanActivateAbilityQuery(ability_id), Flag::new(can_activate))
         .into()
+}
+
+/// Returns true if the `ability_id` ability could be activated with a valid
+/// target.
+pub fn activated_ability_has_valid_targets(
+    game: &GameState,
+    side: Side,
+    ability_id: AbilityId,
+) -> bool {
+    match &crate::ability_definition(game, ability_id).ability_type {
+        AbilityType::Activated(_, requirement) => match requirement {
+            TargetRequirement::None => {
+                can_take_activate_ability_action(game, side, ability_id, CardTarget::None)
+            }
+            TargetRequirement::TargetRoom(_) => RoomId::into_enum_iter().any(|room_id| {
+                can_take_activate_ability_action(game, side, ability_id, CardTarget::Room(room_id))
+            }),
+        },
+        _ => false,
+    }
 }
 
 fn is_valid_target(game: &GameState, card_id: CardId, target: CardTarget) -> bool {
@@ -152,11 +163,11 @@ fn matching_targeting<T>(
 }
 
 /// Returns true if the indicated card should enter play in the face up state
-/// and is expected to pay its mana cost immediately.
+/// and is expected to pay its costs immediately.
 pub fn enters_play_face_up(game: &GameState, card_id: CardId) -> bool {
-    matches!(
+    !matches!(
         crate::get(game.card(card_id).name).card_type,
-        CardType::Spell | CardType::Weapon | CardType::Artifact | CardType::Identity
+        CardType::Minion | CardType::Scheme | CardType::Project
     )
 }
 

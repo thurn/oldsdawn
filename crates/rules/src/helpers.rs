@@ -15,7 +15,7 @@
 //! Helpers for defining card behaviors. This file is intended be be used via
 //! wildcard import in card definition files.
 
-use data::card_definition::{AttackBoost, CardStats, Cost, SchemePoints};
+use data::card_definition::{AttackBoost, CardStats, Cost, CustomCost, SchemePoints};
 use data::delegates::{
     AbilityActivated, CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded,
     RaidStart, RequirementFn, Scope,
@@ -53,14 +53,38 @@ pub fn reminder(text: &'static str) -> TextToken {
 }
 
 /// A [Cost] which requires no mana and `actions` action points.
-pub fn actions(actions: ActionCount) -> Cost {
-    Cost { mana: None, actions }
+pub fn actions(actions: ActionCount) -> Cost<AbilityId> {
+    Cost { mana: None, actions, custom_cost: None }
 }
 
 /// Provides the cost for a card, with 1 action point required and `mana` mana
 /// points
-pub fn cost(mana: ManaValue) -> Cost {
-    Cost { mana: Some(mana), actions: 1 }
+pub fn cost(mana: ManaValue) -> Cost<CardId> {
+    Cost { mana: Some(mana), actions: 1, custom_cost: None }
+}
+
+/// [Cost] for an identity card
+pub fn identity_cost() -> Cost<CardId> {
+    Cost::default()
+}
+
+/// [Cost] for a scheme card
+pub fn scheme_cost() -> Cost<CardId> {
+    Cost { mana: None, actions: 1, custom_cost: None }
+}
+
+/// A [CustomCost] which allows an ability to be activated once per turn.
+///
+/// Stores turn data in ability state. Never returns `None`.
+pub fn once_per_turn_ability() -> Option<CustomCost<AbilityId>> {
+    Some(CustomCost {
+        can_pay: |game, ability_id| {
+            utils::is_false(|| Some(game.ability_state(ability_id)?.turn? == game.data.turn))
+        },
+        pay: |game, ability_id| {
+            game.ability_state_mut(ability_id).turn = Some(game.data.turn);
+        },
+    })
 }
 
 /// Provides an image for a card

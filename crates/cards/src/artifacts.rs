@@ -14,7 +14,9 @@
 
 //! Card definitions for the Weapon card type
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
+use data::card_definition::{
+    Ability, AbilityType, CardConfig, CardDefinition, Cost, TargetRequirement,
+};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
@@ -179,6 +181,37 @@ pub fn storage_crystal() -> CardDefinition {
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
                 delegates: vec![on_activated(|g, s, _| {
                     add_stored_mana(g, s.card_id(), 3);
+                })],
+            },
+        ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn magical_resonator() -> CardDefinition {
+    CardDefinition {
+        name: CardName::MagicalResonator,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73"),
+        card_type: CardType::Artifact,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            abilities::store_mana_on_play::<9>(),
+            Ability {
+                text: text![
+                    Keyword::Take(Sentence::Start, 3),
+                    ".",
+                    "Use this ability only once per turn."
+                ],
+                ability_type: AbilityType::Activated(
+                    Cost { mana: None, actions: 1, custom_cost: once_per_turn_ability() },
+                    TargetRequirement::None,
+                ),
+                delegates: vec![on_activated(|g, _s, activated| {
+                    mutations::take_stored_mana(g, activated.card_id(), 3, OnEmpty::MoveToDiscard);
                 })],
             },
         ],

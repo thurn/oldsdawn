@@ -136,6 +136,9 @@ fn play_card_action(
     if enters_face_up {
         let amount = queries::mana_cost(game, card_id).with_context(|| "Card has no mana cost")?;
         mana::spend(game, user_side, ManaPurpose::PayForCard(card_id), amount);
+        if let Some(custom_cost) = &definition.cost.custom_cost {
+            (custom_cost.pay)(game, card_id);
+        }
     }
 
     mutations::spend_action_points(game, user_side, definition.cost.actions);
@@ -186,6 +189,12 @@ fn activate_ability_action(
         if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
             mana::spend(game, user_side, ManaPurpose::ActivateAbility(ability_id), mana);
         }
+
+        if let Some(custom_cost) = &cost.custom_cost {
+            (custom_cost.pay)(game, ability_id);
+        }
+    } else {
+        bail!("Ability is not an activated ability");
     }
 
     dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }));

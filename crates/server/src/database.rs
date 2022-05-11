@@ -82,7 +82,7 @@ impl Database for SledDatabase {
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
                     CardName::StorageCrystal => 15,
-                    CardName::Accumulator => 15,
+                    CardName::MagicalResonator => 15,
                     CardName::MysticPortal => 15,
                 },
             }
