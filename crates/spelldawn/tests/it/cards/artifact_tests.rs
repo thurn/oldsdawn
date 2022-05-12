@@ -14,7 +14,8 @@
 
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
-use protos::spelldawn::RoomIdentifier;
+use protos::spelldawn::game_action::Action;
+use protos::spelldawn::{DrawCardAction, PlayerName, RoomIdentifier};
 use test_utils::client::HasText;
 use test_utils::*;
 
@@ -140,4 +141,15 @@ fn magical_resonator_cannot_activate_twice() {
     let id = g.play_from_hand(CardName::MagicalResonator);
     g.activate_ability(id, 1);
     g.activate_ability(id, 1);
+}
+
+#[test]
+fn dark_grimoire() {
+    let mut g = new_game(Side::Champion, Args::default());
+    g.play_from_hand(CardName::DarkGrimoire);
+    assert_eq!(0, g.user.cards.hand(PlayerName::User).len());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    assert_eq!(2, g.user.cards.hand(PlayerName::User).len());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    assert_eq!(3, g.user.cards.hand(PlayerName::User).len());
 }

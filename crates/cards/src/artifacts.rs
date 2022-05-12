@@ -18,6 +18,7 @@ use data::card_definition::{
     Ability, AbilityType, CardConfig, CardDefinition, Cost, TargetRequirement,
 };
 use data::card_name::CardName;
+use data::delegates::{Delegate, EventDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use data::utils;
@@ -215,6 +216,34 @@ pub fn magical_resonator() -> CardDefinition {
                 })],
             },
         ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn dark_grimoire() -> CardDefinition {
+    CardDefinition {
+        name: CardName::DarkGrimoire,
+        cost: cost(3),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72"),
+        card_type: CardType::Artifact,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text![
+                "The first time each turn you take the 'draw card' action, draw another card."
+            ],
+            ability_type: AbilityType::Standard,
+            delegates: vec![Delegate::DrawCardAction(EventDelegate {
+                requirement: face_up_in_play,
+                mutation: |g, s, _| {
+                    once_per_turn(g, s, (), |g, s, _| {
+                        mutations::draw_cards(g, s.side(), 1);
+                    })
+                },
+            })],
+        }],
         config: CardConfig::default(),
     }
 }

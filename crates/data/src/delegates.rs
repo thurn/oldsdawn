@@ -304,6 +304,8 @@ pub enum Delegate {
     Dusk(EventDelegate<TurnNumber>),
     /// A card is moved from a Deck position to a Hand position
     DrawCard(EventDelegate<CardId>),
+    /// A user takes the explicit 'draw card' game action
+    DrawCardAction(EventDelegate<CardId>),
     /// A card has been selected to play via the Play action and should have
     /// additional costs deducted.
     PayCardCosts(EventDelegate<CardId>),

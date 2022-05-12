@@ -81,7 +81,7 @@ impl Database for SledDatabase {
                 owner_id: player_id,
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
-                    CardName::StorageCrystal => 15,
+                    CardName::DarkGrimoire => 15,
                     CardName::MagicalResonator => 15,
                     CardName::MysticPortal => 15,
                 },

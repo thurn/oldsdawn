@@ -78,6 +78,7 @@ pub enum CardName {
     MysticPortal,
     StorageCrystal,
     MagicalResonator,
+    DarkGrimoire,
 }
 
 impl CardName {

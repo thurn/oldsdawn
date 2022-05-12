@@ -25,7 +25,8 @@ use anyhow::{bail, ensure, Context, Result};
 use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
 use data::delegates::{
-    AbilityActivated, ActivateAbilityEvent, CardPlayed, CastCardEvent, PayCardCostsEvent,
+    AbilityActivated, ActivateAbilityEvent, CardPlayed, CastCardEvent, DrawCardActionEvent,
+    PayCardCostsEvent,
 };
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, PromptAction, UserAction};
@@ -107,7 +108,11 @@ fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    mutations::draw_cards(game, user_side, 1);
+    let cards = mutations::draw_cards(game, user_side, 1);
+    if let Some(card_id) = cards.get(0) {
+        dispatch::invoke_event(game, DrawCardActionEvent(*card_id));
+    }
+
     mutations::check_end_turn(game, user_side);
     Ok(())
 }
