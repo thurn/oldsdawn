@@ -376,6 +376,14 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
 /// Returns true if the card was unveiled.
 pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
     if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
+        if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
+            if (custom_cost.can_pay)(game, card_id) {
+                (custom_cost.pay)(game, card_id);
+            } else {
+                return false;
+            }
+        }
+
         match queries::mana_cost(game, card_id) {
             None => {
                 turn_face_up(game, card_id);

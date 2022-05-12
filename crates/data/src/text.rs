@@ -112,8 +112,8 @@ impl From<Keyword> for TextToken {
     }
 }
 
-impl From<Cost> for TextToken {
-    fn from(cost: Cost) -> Self {
+impl<T> From<Cost<T>> for TextToken {
+    fn from(cost: Cost<T>) -> Self {
         let mut result = vec![];
         if let Some(mana) = cost.mana {
             result.push(Self::Mana(mana))

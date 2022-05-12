@@ -29,7 +29,7 @@ pub fn initialize() {}
 pub fn dungeon_annex() -> CardDefinition {
     CardDefinition {
         name: CardName::DungeonAnnex,
-        cost: actions(1),
+        cost: scheme_cost(),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
         card_type: CardType::Scheme,
         side: Side::Overlord,

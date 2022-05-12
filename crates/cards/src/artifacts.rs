@@ -14,7 +14,9 @@
 
 //! Card definitions for the Weapon card type
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
+use data::card_definition::{
+    Ability, AbilityType, CardConfig, CardDefinition, Cost, TargetRequirement,
+};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
@@ -204,7 +206,10 @@ pub fn magical_resonator() -> CardDefinition {
                     ".",
                     "Use this ability only once per turn."
                 ],
-                ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
+                ability_type: AbilityType::Activated(
+                    Cost { mana: None, actions: 1, custom_cost: once_per_turn_ability() },
+                    TargetRequirement::None,
+                ),
                 delegates: vec![on_activated(|g, _s, activated| {
                     mutations::take_stored_mana(g, activated.card_id(), 3, OnEmpty::MoveToDiscard);
                 })],

@@ -122,3 +122,22 @@ fn storage_crystal() {
     spend_actions_until_turn_over(&mut g, Side::Overlord);
     assert_eq!(STARTING_MANA - card_cost + 3, g.me().mana());
 }
+
+#[test]
+fn magical_resonator() {
+    let card_cost = 1;
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.play_from_hand(CardName::MagicalResonator);
+    g.activate_ability(id, 1);
+    assert_eq!(STARTING_MANA - card_cost + 3, g.me().mana());
+    assert_eq!("6", g.user.get_card(id).arena_icon());
+}
+
+#[test]
+#[should_panic]
+fn magical_resonator_cannot_activate_twice() {
+    let mut g = new_game(Side::Champion, Args::default());
+    let id = g.play_from_hand(CardName::MagicalResonator);
+    g.activate_ability(id, 1);
+    g.activate_ability(id, 1);
+}

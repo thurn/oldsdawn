@@ -18,7 +18,7 @@ use data::card_definition::{Ability, AbilityType, Cost, TargetRequirement};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope};
 use data::game::{GameOverData, GamePhase, GameState};
-use data::primitives::{AttackValue, CardId, DamageTypeTrait, ManaValue, Side};
+use data::primitives::{AbilityId, AttackValue, CardId, DamageTypeTrait, ManaValue, Side};
 use data::text::{AbilityText, Keyword, Sentence, TextToken};
 use data::updates::GameUpdate;
 
@@ -67,8 +67,8 @@ pub fn store_mana_on_play<const N: ManaValue>() -> Ability {
     }
 }
 
-/// Activated ability to take `N` stored mana from this card by paying a
-pub fn activated_take_mana<const N: ManaValue>(cost: Cost) -> Ability {
+/// Activated ability to take `N` stored mana from this card by paying a cost
+pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability {
     Ability {
         text: text![Keyword::Take(Sentence::Start, N)],
         ability_type: AbilityType::Activated(cost, TargetRequirement::None),

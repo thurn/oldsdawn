@@ -32,7 +32,7 @@ pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) ->
     for (index, ability) in definition.abilities.iter().enumerate() {
         let mut line = String::new();
         if let AbilityType::Activated(cost, _) = &ability.ability_type {
-            line.push_str(&cost_string(cost));
+            line.push_str(&ability_cost_string(cost));
         }
 
         line.push_str(&ability_text(game, AbilityId::new(card.id, index), ability));
@@ -84,16 +84,16 @@ pub fn build_supplemental_info(
     SupplementalCardInfo { info: result }.render()
 }
 
-fn cost_string(cost: &Cost) -> String {
-    let mut actions = "\u{f254}".repeat(cost.actions as usize);
+fn ability_cost_string(cost: &Cost<AbilityId>) -> String {
+    let mut actions = icons::ACTION.repeat(cost.actions as usize);
 
     if let Some(mana) = cost.mana {
         if mana > 0 {
-            actions.push_str(&format!(",{}\u{f06d}", mana));
+            actions.push_str(&format!(",{}{}", mana, icons::MANA));
         }
     }
 
-    actions.push_str(" \u{f30b} ");
+    actions.push_str(&format!(" {} ", icons::ARROW));
     actions
 }
 

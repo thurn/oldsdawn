@@ -49,6 +49,11 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
                 let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
                 let cost = queries::mana_cost(game, defender_id).with_error(|| "Expected cost")?;
                 mana::spend(game, Side::Overlord, ManaPurpose::PayForCard(defender_id), cost);
+                if let Some(custom_cost) =
+                    &crate::card_definition(game, defender_id).cost.custom_cost
+                {
+                    (custom_cost.pay)(game, defender_id);
+                }
                 mutations::turn_face_up(game, defender_id);
             }
         }
@@ -69,12 +74,17 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
 pub fn can_summon_defender(game: &GameState, defender_index: usize) -> bool {
     let raid = game.raid().expect("Active Raid");
     let defender_id = find_defender(game, raid.target, defender_index).expect("Defender");
-    raid.room_active
-        && game.card(defender_id).is_face_down()
-        && matches!(queries::mana_cost(game, defender_id),
-            Some(cost)
-            if cost <= mana::get(game, Side::Overlord, ManaPurpose::PayForCard(defender_id))
-        )
+    let mut can_summon = raid.room_active && game.card(defender_id).is_face_down();
+
+    if let Some(cost) = queries::mana_cost(game, defender_id) {
+        can_summon &= cost <= mana::get(game, Side::Overlord, ManaPurpose::PayForCard(defender_id))
+    }
+
+    if let Some(custom_cost) = &crate::card_definition(game, defender_id).cost.custom_cost {
+        can_summon &= (custom_cost.can_pay)(game, defender_id);
+    }
+
+    can_summon
 }
 
 /// Returns a vector of the cards accessed for the current raid target, mutating

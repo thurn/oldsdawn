@@ -17,6 +17,7 @@
 
 #![allow(clippy::use_self)] // Required to use EnumKind
 
+use std::fmt;
 use std::fmt::{Debug, Formatter};
 
 use enum_kinds::EnumKind;
@@ -32,18 +33,44 @@ use crate::primitives::{
 use crate::special_effects::{Projectile, TimedEffect};
 use crate::text::AbilityText;
 
+/// A cost represented by custom functions.
+///
+/// For cards that enter face-up, this cost is expected to be played
+/// immediately. Otherwise, the cost is paid at the time of reveal. Custom costs
+/// are not automatically reflected in rules text, so the implementor should add
+/// them manually. Constraints on how a card or ability can be played (such as
+/// "activate only once per turn" or "play only if you control a mortal minion")
+/// are also represented as costs.
+#[derive(Clone)]
+pub struct CustomCost<T> {
+    /// Whether this cost can currently be paid
+    pub can_pay: fn(&GameState, T) -> bool,
+    /// Mutate the game to pay this cost. May panic if `can_pay` would return
+    /// false.
+    pub pay: fn(&mut GameState, T),
+}
+
+impl<T> Debug for CustomCost<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "CustomCost")
+    }
+}
+
 /// Cost to play a card or activate an ability
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
-pub struct Cost {
+#[derive(Debug, Clone)]
+pub struct Cost<T> {
     /// Cost in mana
     pub mana: Option<ManaValue>,
     /// Cost in action points
     pub actions: ActionCount,
+    /// A custom cost or requirement to play this card/activate this ability.
+    /// See [CustomCost].
+    pub custom_cost: Option<CustomCost<T>>,
 }
 
-impl Default for Cost {
+impl<T> Default for Cost<T> {
     fn default() -> Self {
-        Self { mana: None, actions: 1 }
+        Self { mana: None, actions: 1, custom_cost: None }
     }
 }
 
@@ -116,7 +143,7 @@ pub enum AbilityType {
     Encounter,
 
     /// Activated abilities have an associated cost in order to be used.
-    Activated(Cost, TargetRequirement<AbilityId>),
+    Activated(Cost<AbilityId>, TargetRequirement<AbilityId>),
 }
 
 /// Abilities are the unit of action in Spelldawn. Their behavior is provided by
@@ -155,7 +182,7 @@ pub struct CardConfig {
 #[derive(Debug)]
 pub struct CardDefinition {
     pub name: CardName,
-    pub cost: Cost,
+    pub cost: Cost<CardId>,
     pub image: Sprite,
     pub card_type: CardType,
     pub side: Side,
