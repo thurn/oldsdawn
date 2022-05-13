@@ -100,3 +100,26 @@ pub fn marauders_axe() -> CardDefinition {
         },
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn keen_halberd() -> CardDefinition {
+    CardDefinition {
+        name: CardName::KeenHalberd,
+        cost: cost(3),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
+        card_type: CardType::Weapon,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![abilities::encounter_boost()],
+        config: CardConfig {
+            stats: attack(3, AttackBoost { cost: 2, bonus: 1 }),
+            faction: Some(Faction::Infernal),
+            special_effects: SpecialEffects {
+                projectile: Some(Projectile::Hovl(2)),
+                ..SpecialEffects::default()
+            },
+            ..CardConfig::default()
+        },
+    }
+}

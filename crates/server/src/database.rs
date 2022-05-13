@@ -83,7 +83,7 @@ impl Database for SledDatabase {
                 cards: hashmap! {
                     CardName::DarkGrimoire => 15,
                     CardName::MaraudersAxe => 15,
-                    CardName::MysticPortal => 15,
+                    CardName::KeenHalberd => 15,
                 },
             }
         } else {
@@ -101,5 +101,5 @@ impl Database for SledDatabase {
 }
 
 fn games() -> Result<Tree> {
-    DATABASE.open_tree("games").with_error(|| "Error opening the 'games table")
+    DATABASE.open_tree("games").with_error(|| "Error opening the 'games' table")
 }

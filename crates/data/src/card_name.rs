@@ -80,6 +80,7 @@ pub enum CardName {
     MagicalResonator,
     DarkGrimoire,
     MaraudersAxe,
+    KeenHalberd,
 }
 
 impl CardName {
