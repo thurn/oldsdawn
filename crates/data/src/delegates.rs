@@ -115,6 +115,12 @@ impl fmt::Debug for Scope {
     }
 }
 
+impl From<Scope> for AbilityId {
+    fn from(scope: Scope) -> Self {
+        scope.ability_id
+    }
+}
+
 /// Predicate to determine whether a delegate should run, taking contextual
 /// information `T`.
 pub type RequirementFn<T> = fn(&GameState, Scope, T) -> bool;

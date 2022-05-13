@@ -290,14 +290,19 @@ pub fn initiate_raid_with_callback(
 /// Stores ability state to track the last-invoked turn number
 pub fn once_per_turn<T>(game: &mut GameState, scope: Scope, data: T, function: MutationFn<T>) {
     if utils::is_false(|| Some(game.ability_state(scope.ability_id())?.turn? == game.data.turn)) {
-        game.ability_state_mut(scope.ability_id()).turn = Some(game.data.turn);
+        save_turn(game, scope);
         function(game, scope, data)
     }
 }
 
+/// Stores the current turn as ability state for the provided `ability_id`.
+pub fn save_turn(game: &mut GameState, ability_id: impl Into<AbilityId>) {
+    game.ability_state_mut(ability_id.into()).turn = Some(game.data.turn);
+}
+
 /// Helper to store the provided [RaidId] as ability state for this [Scope].
-pub fn save_raid_id(game: &mut GameState, scope: Scope, raid_id: RaidId) {
-    game.ability_state_mut(scope.ability_id()).raid_id = Some(raid_id);
+pub fn save_raid_id(game: &mut GameState, ability_id: impl Into<AbilityId>, raid_id: RaidId) {
+    game.ability_state_mut(ability_id.into()).raid_id = Some(raid_id);
 }
 
 /// Add `amount` to the stored mana in a card. Returns the new stored amount.

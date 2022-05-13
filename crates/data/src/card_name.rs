@@ -79,12 +79,16 @@ pub enum CardName {
     StorageCrystal,
     MagicalResonator,
     DarkGrimoire,
+    MaraudersAxe,
 }
 
 impl CardName {
     /// Returns the user-visible name for this card
     pub fn displayed_name(&self) -> String {
-        format!("{}", self).from_case(Case::Pascal).to_case(Case::Title)
+        match self {
+            Self::MaraudersAxe => "Marauder's Axe".to_string(),
+            _ => format!("{}", self).from_case(Case::Pascal).to_case(Case::Title),
+        }
     }
 
     /// Returns true if this card is a test blank

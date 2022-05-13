@@ -462,14 +462,14 @@ impl GameState {
     }
 
     /// Retrieves the [AbilityState] for an [AbilityId]
-    pub fn ability_state(&self, ability_id: AbilityId) -> Option<&AbilityState> {
-        self.ability_state.get(&ability_id)
+    pub fn ability_state(&self, ability_id: impl Into<AbilityId>) -> Option<&AbilityState> {
+        self.ability_state.get(&ability_id.into())
     }
 
     /// Returns a mutable [AbilityState] for an [AbilityId], creating a new one
     /// if one has not previously been set
-    pub fn ability_state_mut(&mut self, ability_id: AbilityId) -> &mut AbilityState {
-        self.ability_state.entry(ability_id).or_insert_with(AbilityState::default)
+    pub fn ability_state_mut(&mut self, ability_id: impl Into<AbilityId>) -> &mut AbilityState {
+        self.ability_state.entry(ability_id.into()).or_insert_with(AbilityState::default)
     }
 
     /// Create card states for a deck

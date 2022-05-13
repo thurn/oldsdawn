@@ -14,13 +14,18 @@
 
 //! Card definitions for the Weapon card type
 
-use data::card_definition::{AttackBoost, CardConfig, CardDefinition, SpecialEffects};
+use data::card_definition::{
+    Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, SpecialEffects,
+};
 use data::card_name::CardName;
+use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Faction, Rarity, School, Side};
 use data::special_effects::{Projectile, TimedEffect};
+use data::text::Keyword;
+use data::utils;
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::{abilities, DEFINITIONS};
+use rules::{abilities, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -41,6 +46,55 @@ pub fn greataxe() -> CardDefinition {
             special_effects: SpecialEffects {
                 projectile: Some(Projectile::Hovl(8)),
                 additional_hit: Some(TimedEffect::HovlSwordSlash(1)),
+            },
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn marauders_axe() -> CardDefinition {
+    CardDefinition {
+        name: CardName::MaraudersAxe,
+        cost: cost(5),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_43"),
+        card_type: CardType::Weapon,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            Ability {
+                text: text![
+                    Keyword::SuccessfulRaid,
+                    "This weapon costs",
+                    mana_text(2),
+                    "less to play this turn."
+                ],
+                ability_type: AbilityType::Standard,
+                delegates: vec![
+                    on_raid_success(always, |g, s, _| {
+                        save_turn(g, s);
+                    }),
+                    Delegate::ManaCost(QueryDelegate {
+                        requirement: this_card,
+                        transformation: |g, s, _, value| {
+                            if utils::is_true(|| Some(g.ability_state(s)?.turn? == g.data.turn)) {
+                                value.map(|v| v.saturating_sub(2))
+                            } else {
+                                value
+                            }
+                        },
+                    }),
+                ],
+            },
+            abilities::encounter_boost(),
+        ],
+        config: CardConfig {
+            stats: attack(2, AttackBoost { cost: 2, bonus: 3 }),
+            faction: Some(Faction::Infernal),
+            special_effects: SpecialEffects {
+                projectile: Some(Projectile::Hovl(1)),
+                ..SpecialEffects::default()
             },
             ..CardConfig::default()
         },

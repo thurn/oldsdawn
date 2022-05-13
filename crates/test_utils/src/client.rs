@@ -809,6 +809,7 @@ pub struct ClientCard {
     is_face_up: Option<bool>,
     can_play: Option<bool>,
     valid_rooms: Option<Vec<RoomIdentifier>>,
+    top_left_icon: Option<String>,
     arena_icon: Option<String>,
 }
 
@@ -850,6 +851,10 @@ impl ClientCard {
         self.valid_rooms.as_ref().expect("valid_rooms").clone()
     }
 
+    pub fn top_left_icon(&self) -> String {
+        self.top_left_icon.clone().expect("top_left_icon")
+    }
+
     pub fn arena_icon(&self) -> String {
         self.arena_icon.clone().expect("arena_icon")
     }
@@ -866,6 +871,14 @@ impl ClientCard {
         self.is_face_up = Some(view.is_face_up);
         if let Some(revealed) = &view.revealed_card {
             self.update_revealed_card(revealed);
+        }
+
+        fn extract_top_left_icon(view: &CardView) -> Option<&String> {
+            view.card_icons.as_ref()?.top_left_icon.as_ref()?.text.as_ref()
+        }
+
+        if let Some(icon) = extract_top_left_icon(view) {
+            self.top_left_icon = Some(icon.clone());
         }
 
         fn extract_arena_icon(view: &CardView) -> Option<&String> {
