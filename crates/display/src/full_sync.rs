@@ -371,12 +371,6 @@ fn card_icons(
             text: Some(mana.to_string()),
             background_scale: assets::background_scale(CardIconType::Mana),
         });
-        icons.bottom_left_icon = definition.config.stats.shield.map(|_| CardIcon {
-            enabled: true,
-            background: Some(assets::card_icon(CardIconType::Shield)),
-            text: Some(queries::shield(game, card.id).to_string()),
-            background_scale: assets::background_scale(CardIconType::Shield),
-        });
         icons.bottom_right_icon = definition
             .config
             .stats

@@ -39,6 +39,7 @@ command_list:
             card_icons: 
                 top_left_icon: "1"
                 top_right_icon: 
+                bottom_left_icon: 
                 arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -66,6 +67,7 @@ command_list:
             card_icons: 
                 top_left_icon: "1"
                 top_right_icon: 
+                bottom_left_icon: 
                 arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -93,6 +95,7 @@ command_list:
             card_icons: 
                 top_left_icon: "1"
                 top_right_icon: 
+                bottom_left_icon: 
                 arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -120,6 +123,7 @@ command_list:
             card_icons: 
                 top_left_icon: "1"
                 top_right_icon: 
+                bottom_left_icon: 
                 arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User
@@ -147,6 +151,7 @@ command_list:
             card_icons: 
                 top_left_icon: "1"
                 top_right_icon: 
+                bottom_left_icon: 
                 arena_icon: 
             arena_frame: "<SpriteAddress>"
             owning_player: User

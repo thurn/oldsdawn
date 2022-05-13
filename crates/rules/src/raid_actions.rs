@@ -120,7 +120,7 @@ pub fn encounter_action(
                 queries::cost_to_defeat_target(game, source_id, target_id).with_context(|| {
                     format!("{:?} cannot defeat target: {:?}", source_id, target_id)
                 })?;
-            mana::spend(game, user_side, ManaPurpose::UseWeaponAbility(source_id), cost);
+            mana::spend(game, user_side, ManaPurpose::UseWeapon(source_id), cost);
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(source_id),
                 target: InteractionObjectId::CardId(target_id),

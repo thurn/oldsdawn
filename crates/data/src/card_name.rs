@@ -34,6 +34,8 @@ pub enum CardName {
     TestScheme31,
     /// Minion with 5 health, 3 mana cost, and an "end the raid" ability.
     TestMinionEndRaid,
+    /// Equivalent to `TestMinionEndRaid` with 1 shield point.
+    TestMinionShield1,
     /// Minion with 5 health, 1 mana cost, and a "deal 1 damage" ability.
     TestMinionDealDamage,
     /// Minion with the 'infernal' faction, MINION_HEALTH health, and an 'end

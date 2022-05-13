@@ -39,6 +39,13 @@ pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) ->
 
         lines.push(line);
     }
+
+    // Shield used to be an icon, but I've changed it to just normal rules text to
+    // reduce complexity.
+    if let Some(shield) = definition.config.stats.shield {
+        lines.push(process_text_tokens(&[TextToken::Keyword(Keyword::Shield(shield))]));
+    }
+
     RulesText { text: lines.join("\n") }
 }
 
@@ -80,6 +87,11 @@ pub fn build_supplemental_info(
             }
         };
     }
+
+    if definition.config.stats.shield.is_some() {
+        keywords.push(KeywordKind::Shield);
+    }
+
     process_keywords(&mut keywords, &mut result);
     SupplementalCardInfo { info: result }.render()
 }
@@ -158,6 +170,7 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 }
                 .to_string(),
                 Keyword::EndRaid => "End the raid.".to_string(),
+                Keyword::Shield(shield) => format!("<b>Shield</b> {}{}", shield, icons::MANA),
             },
             TextToken::Reminder(text) => format!("<i>{}</i>", text),
             TextToken::Cost(cost) => format!("{}: ", process_text_tokens(cost)),
@@ -260,6 +273,9 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
             }
             KeywordKind::InnerRoom => {
                 output.push("<b>Inner Room:</b> The Sanctum, Vault or Crypts.".to_string())
+            }
+            KeywordKind::Shield => {
+                output.push("<b>Shield:</b> Additional cost to target this minion.".to_string())
             }
             _ => {}
         };

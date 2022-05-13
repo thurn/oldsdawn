@@ -26,6 +26,7 @@ use rules::mutations::OnEmpty;
 use rules::{abilities, mutations, text, DEFINITIONS};
 
 pub const MINION_COST: ManaValue = 3;
+pub const WEAPON_COST: ManaValue = 3;
 pub const ARTIFACT_COST: ManaValue = 1;
 pub const UNVEIL_COST: ManaValue = 3;
 pub const MANA_STORED: ManaValue = 10;
@@ -116,6 +117,22 @@ pub fn test_minion_end_raid() -> CardDefinition {
 }
 
 #[distributed_slice(DEFINITIONS)]
+pub fn test_minion_shield_1() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestMinionShield1,
+        cost: cost(MINION_COST),
+        abilities: vec![abilities::end_raid()],
+        card_type: CardType::Minion,
+        config: CardConfig {
+            stats: health_and_shield(MINION_HEALTH, 1),
+            faction: Some(TEST_FACTION),
+            ..CardConfig::default()
+        },
+        ..test_overlord_spell()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_deal_damage() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionDealDamage,
@@ -174,7 +191,7 @@ pub fn test_minion_mortal() -> CardDefinition {
 pub fn test_weapon_2_attack() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeapon2Attack,
-        cost: cost(3),
+        cost: cost(WEAPON_COST),
         card_type: CardType::Weapon,
         config: CardConfig {
             stats: base_attack(2),

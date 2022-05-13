@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use cards::test_cards::WEAPON_COST;
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
 use insta::assert_snapshot;
@@ -236,6 +237,21 @@ fn use_weapon() {
     );
 
     assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn minion_with_shield() {
+    let (mut g, _) = test_games::simple_game(
+        Side::Champion,
+        CardName::TestScheme31,
+        CardName::TestMinionShield1,
+        CardName::TestWeapon5Attack,
+    );
+    g.initiate_raid(ROOM_ID);
+    g.click_on(g.opponent_id(), "Activate");
+    assert_eq!(g.user.this_player.mana(), STARTING_MANA - WEAPON_COST);
+    g.click_on(g.user_id(), "Test Weapon");
+    assert_eq!(g.user.this_player.mana(), STARTING_MANA - WEAPON_COST - 1);
 }
 
 #[test]

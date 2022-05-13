@@ -35,7 +35,7 @@ pub fn ice_dragon() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![abilities::deal_damage::<ColdDamage, 1>(), abilities::end_raid()],
         config: CardConfig {
-            stats: health(5),
+            stats: health_and_shield(5, 1),
             faction: Some(Faction::Infernal),
             ..CardConfig::default()
         },

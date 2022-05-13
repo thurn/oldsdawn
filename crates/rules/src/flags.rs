@@ -241,9 +241,9 @@ pub fn can_encounter_target(game: &GameState, source: CardId, target: CardId) ->
     .into()
 }
 
-/// Can the `source` card defeat the `target` card in an encounter by dealing
-/// enough damage to equal its health (potentially after paying mana & applying
-/// boosts), or via some other game mechanism?
+/// Can the `source` card defeat the `target` card in an encounter by paying its
+/// shield cost and dealing enough damage to equal its health (potentially after
+/// paying mana & applying boosts), or via some other game mechanism?
 ///
 /// This requires [can_encounter_target] to be true.
 pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bool {
@@ -251,7 +251,7 @@ pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bo
         && matches!(
             queries::cost_to_defeat_target(game, source, target),
             Some(cost)
-            if cost <= mana::get(game, source.side, ManaPurpose::PayForCard(source))
+            if cost <= mana::get(game, source.side, ManaPurpose::UseWeapon(source))
         );
 
     dispatch::perform_query(

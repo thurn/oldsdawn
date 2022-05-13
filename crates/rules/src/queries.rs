@@ -122,7 +122,8 @@ pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
 
 /// Returns the amount of mana the owner of `card_id` would need to spend to
 /// raise its [AttackValue] to the provided `target` by activating boosts or
-/// by using other innate abilities.
+/// by using other innate abilities, plus the amount of mana required to pay
+/// the shield cost of `target`.
 ///
 /// - Returns 0 if this card can already defeat the target.
 /// - Returns None if it is impossible for this card to defeat the target.
@@ -133,7 +134,8 @@ pub fn cost_to_defeat_target(
 ) -> Option<ManaValue> {
     let target = health(game, target_id);
     let current = attack(game, card_id);
-    if current >= target {
+
+    let result = if current >= target {
         Some(0)
     } else if let Some(boost) = crate::card_definition(game, card_id).config.stats.attack_boost {
         assert!(boost.bonus > 0);
@@ -146,7 +148,9 @@ pub fn cost_to_defeat_target(
         Some((add + (increase / boost.bonus)) * boost.cost)
     } else {
         None
-    }
+    };
+
+    result.map(|r| r + shield(game, target_id))
 }
 
 /// Returns true if the provided `side` player is currently in their Main phase
