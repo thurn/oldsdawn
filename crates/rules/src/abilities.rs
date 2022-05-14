@@ -24,7 +24,7 @@ use data::updates::GameUpdate;
 
 use crate::card_text::text;
 use crate::helpers::*;
-use crate::mutations::OnEmpty;
+use crate::mutations::OnZeroStored;
 use crate::{mutations, queries};
 
 /// The standard weapon ability; applies an attack boost for the duration of a
@@ -75,7 +75,7 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability
         delegates: vec![Delegate::ActivateAbility(EventDelegate::new(
             this_ability,
             |g, _s, activated| {
-                mutations::take_stored_mana(g, activated.card_id(), N, OnEmpty::MoveToDiscard);
+                mutations::take_stored_mana(g, activated.card_id(), N, OnZeroStored::Sacrifice);
             },
         ))],
     }

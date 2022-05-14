@@ -22,7 +22,7 @@ use data::primitives::{
 use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::mutations::OnEmpty;
+use rules::mutations::OnZeroStored;
 use rules::{abilities, mutations, text, DEFINITIONS};
 
 pub const MINION_COST: ManaValue = 3;
@@ -308,7 +308,12 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
                 text: text![Keyword::Dusk, Keyword::Take(Sentence::Start, MANA_TAKEN)],
                 ability_type: AbilityType::Standard,
                 delegates: vec![at_dusk(|g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), MANA_TAKEN, OnEmpty::MoveToDiscard);
+                    mutations::take_stored_mana(
+                        g,
+                        s.card_id(),
+                        MANA_TAKEN,
+                        OnZeroStored::Sacrifice,
+                    );
                     alert(g, &s);
                 })],
             },

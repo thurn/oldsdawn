@@ -15,10 +15,12 @@
 //! Helpers for defining card behaviors. This file is intended be be used via
 //! wildcard import in card definition files.
 
-use data::card_definition::{AttackBoost, CardStats, Cost, CustomCost, SchemePoints};
+use data::card_definition::{
+    AttackBoost, CardStats, Cost, CustomCost, SchemePoints, SpecialEffects,
+};
 use data::delegates::{
     AbilityActivated, CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded,
-    RaidStart, RequirementFn, Scope,
+    RaidStart, RequirementFn, Scope, UsedWeapon,
 };
 use data::game::GameState;
 use data::game_actions::CardTarget;
@@ -26,6 +28,7 @@ use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, RaidId, RoomId,
     Sprite, TurnNumber,
 };
+use data::special_effects::Projectile;
 use data::text::{NumericOperator, TextToken};
 use data::updates::GameUpdate;
 use data::utils;
@@ -191,6 +194,14 @@ pub fn on_raid_start(
     Delegate::RaidStart(EventDelegate { requirement, mutation })
 }
 
+/// Delegate which fires when a weapon is used
+pub fn on_weapon_used(
+    requirement: RequirementFn<UsedWeapon>,
+    mutation: MutationFn<UsedWeapon>,
+) -> Delegate {
+    Delegate::UsedWeapon(EventDelegate { requirement, mutation })
+}
+
 /// Delegate which fires when the 'access' phase of a raid begins.
 pub fn on_raid_access_start(
     requirement: RequirementFn<RaidId>,
@@ -199,7 +210,7 @@ pub fn on_raid_access_start(
     Delegate::RaidAccessStart(EventDelegate { requirement, mutation })
 }
 
-/// A delegate which fires when a raid ends
+/// A delegate which fires when a raid ends in any way (except the game ending).
 pub fn on_raid_ended(
     requirement: RequirementFn<RaidEnded>,
     mutation: MutationFn<RaidEnded>,
@@ -309,4 +320,9 @@ pub fn save_raid_id(game: &mut GameState, ability_id: impl Into<AbilityId>, raid
 pub fn add_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue) -> ManaValue {
     game.card_mut(card_id).data.stored_mana += amount;
     game.card(card_id).data.stored_mana
+}
+
+/// Creates a [SpecialEffects] to fire a given [Projectile].
+pub fn projectile(projectile: Projectile) -> SpecialEffects {
+    SpecialEffects { projectile: Some(projectile), additional_hit: None }
 }

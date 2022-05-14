@@ -25,7 +25,7 @@ use data::utils;
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
-use rules::mutations::OnEmpty;
+use rules::mutations::OnZeroStored;
 use rules::{abilities, mutations, DEFINITIONS};
 
 pub fn initialize() {}
@@ -98,7 +98,7 @@ pub fn accumulator() -> CardDefinition {
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
                 delegates: vec![on_activated(|g, s, activated| {
                     let mana = add_stored_mana(g, s.card_id(), 1);
-                    mutations::take_stored_mana(g, activated.card_id(), mana, OnEmpty::Ignore);
+                    mutations::take_stored_mana(g, activated.card_id(), mana, OnZeroStored::Ignore);
                 })],
             },
         ],
@@ -149,7 +149,7 @@ fn mystic_portal() -> CardDefinition {
                             .insert(raid_start.target, turn);
                     }),
                     on_raid_success(matching_raid, |g, s, _| {
-                        mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard);
+                        mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
                     }),
                 ],
             },
@@ -173,7 +173,8 @@ pub fn storage_crystal() -> CardDefinition {
                 text: text![Keyword::Dawn, Keyword::Take(Sentence::Start, 1)],
                 ability_type: AbilityType::Standard,
                 delegates: vec![at_dawn(|g, s, _| {
-                    let taken = mutations::take_stored_mana(g, s.card_id(), 1, OnEmpty::Ignore);
+                    let taken =
+                        mutations::take_stored_mana(g, s.card_id(), 1, OnZeroStored::Ignore);
                     alert_if_nonzero(g, &s, taken);
                 })],
             },
@@ -212,7 +213,7 @@ pub fn magical_resonator() -> CardDefinition {
                     TargetRequirement::None,
                 ),
                 delegates: vec![on_activated(|g, _s, activated| {
-                    mutations::take_stored_mana(g, activated.card_id(), 3, OnEmpty::MoveToDiscard);
+                    mutations::take_stored_mana(g, activated.card_id(), 3, OnZeroStored::Sacrifice);
                 })],
             },
         ],

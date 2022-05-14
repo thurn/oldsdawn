@@ -20,7 +20,7 @@ use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::mutations::OnEmpty;
+use rules::mutations::OnZeroStored;
 use rules::{abilities, mutations, text, DEFINITIONS};
 
 pub fn initialize() {}
@@ -41,7 +41,7 @@ pub fn gold_mine() -> CardDefinition {
                 text: text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
                 ability_type: AbilityType::Standard,
                 delegates: vec![at_dusk(|g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), 3, OnEmpty::MoveToDiscard);
+                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
                     alert(g, &s);
                 })],
             },

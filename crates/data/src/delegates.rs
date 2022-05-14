@@ -276,6 +276,15 @@ pub struct RaidStart {
     pub target: RoomId,
 }
 
+/// Event data when a weapon is used
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct UsedWeapon {
+    pub raid_id: RaidId,
+    pub weapon_id: CardId,
+    pub target_id: CardId,
+    pub mana_spent: ManaValue,
+}
+
 /// Result of a raid
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum RaidOutcome {
@@ -331,6 +340,8 @@ pub enum Delegate {
     EncounterBegin(EventDelegate<RaidId>),
     /// A weapon boost is activated for a given card
     ActivateBoost(EventDelegate<BoostData>),
+    /// A weapon has been used to defeat a minion
+    UsedWeapon(EventDelegate<UsedWeapon>),
     /// A minion is defeated during an encounter by dealing damage to it equal
     /// to its health
     MinionDefeated(EventDelegate<CardId>),

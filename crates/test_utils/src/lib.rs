@@ -331,6 +331,10 @@ pub fn click_on_activate(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
 }
 
+pub fn click_on_score(session: &mut TestSession) {
+    session.click_on(session.player_id_for_side(Side::Champion), "Score");
+}
+
 pub fn click_on_end_raid(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Champion), "End Raid");
 }

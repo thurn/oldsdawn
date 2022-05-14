@@ -18,6 +18,7 @@ use anyhow::{bail, ensure, Context, Result};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidOutcome, RaidStart, RaidStartEvent,
+    UsedWeapon, UsedWeaponEvent,
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
@@ -121,6 +122,15 @@ pub fn encounter_action(
                     format!("{:?} cannot defeat target: {:?}", source_id, target_id)
                 })?;
             mana::spend(game, user_side, ManaPurpose::UseWeapon(source_id), cost);
+            dispatch::invoke_event(
+                game,
+                UsedWeaponEvent(UsedWeapon {
+                    raid_id: game.raid()?.raid_id,
+                    weapon_id: source_id,
+                    target_id,
+                    mana_spent: cost,
+                }),
+            );
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(source_id),
                 target: InteractionObjectId::CardId(target_id),

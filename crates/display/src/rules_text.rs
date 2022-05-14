@@ -178,8 +178,12 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 }
                 .to_string(),
                 Keyword::EndRaid => "End the raid.".to_string(),
-                Keyword::Shield(shield) => format!("<b>Shield</b> {}", shield),
-                Keyword::Breach(breach) => format!("<b>Breach</b> {}", breach),
+                Keyword::Shield(shield) => {
+                    format!("<b>Shield</b>{}{}", icons::NON_BREAKING_SPACE, shield)
+                }
+                Keyword::Breach(breach) => {
+                    format!("<b>Breach</b>{}{}", icons::NON_BREAKING_SPACE, breach)
+                }
             },
             TextToken::Reminder(text) => format!("<i>{}</i>", text),
             TextToken::Cost(cost) => format!("{}: ", process_text_tokens(cost)),

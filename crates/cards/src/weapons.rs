@@ -25,6 +25,7 @@ use data::text::Keyword;
 use data::utils;
 use linkme::distributed_slice;
 use rules::helpers::*;
+use rules::mutations::sacrifice_card;
 use rules::{abilities, text, DEFINITIONS};
 
 pub fn initialize() {}
@@ -92,10 +93,7 @@ pub fn marauders_axe() -> CardDefinition {
         config: CardConfig {
             stats: attack(2, AttackBoost { cost: 2, bonus: 3 }),
             faction: Some(Faction::Infernal),
-            special_effects: SpecialEffects {
-                projectile: Some(Projectile::Hovl(1)),
-                ..SpecialEffects::default()
-            },
+            special_effects: projectile(Projectile::Hovl(1)),
             ..CardConfig::default()
         },
     }
@@ -120,10 +118,43 @@ pub fn keen_halberd() -> CardDefinition {
                 ..CardStats::default()
             },
             faction: Some(Faction::Abyssal),
-            special_effects: SpecialEffects {
-                projectile: Some(Projectile::Hovl(2)),
-                ..SpecialEffects::default()
+            special_effects: projectile(Projectile::Hovl(2)),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn ethereal_blade() -> CardDefinition {
+    CardDefinition {
+        name: CardName::EtherealBlade,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
+        card_type: CardType::Weapon,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            abilities::encounter_boost(),
+            Ability {
+                text: text!["When you use this weapon, sacrifice it at the end of the raid."],
+                ability_type: AbilityType::Standard,
+                delegates: vec![
+                    on_weapon_used(
+                        |_g, s, used_weapon| used_weapon.weapon_id == s.card_id(),
+                        |g, s, used_weapon| save_raid_id(g, s, used_weapon.raid_id),
+                    ),
+                    on_raid_ended(matching_raid, |g, s, _| {
+                        sacrifice_card(g, s.card_id());
+                        alert(g, &s);
+                    }),
+                ],
             },
+        ],
+        config: CardConfig {
+            stats: attack(1, AttackBoost { cost: 1, bonus: 1 }),
+            faction: Some(Faction::Prismatic),
+            special_effects: projectile(Projectile::Hovl(3)),
             ..CardConfig::default()
         },
     }

@@ -33,11 +33,11 @@ use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, node_type, ArrowTargetRoom, CardAnchorNode, CardIdentifier, CardTarget, CardView,
-    ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers, GameAction,
-    GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest, InitiateRaidAction,
-    NoTargeting, Node, NodeType, ObjectPosition, ObjectPositionBrowser, ObjectPositionDiscardPile,
-    ObjectPositionHand, ObjectPositionRoom, PlayCardAction, PlayInRoom, PlayerName, PlayerView,
-    RevealedCardView, RoomIdentifier,
+    ClientItemLocation, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
+    GameAction, GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest,
+    InitiateRaidAction, NoTargeting, Node, NodeType, ObjectPosition, ObjectPositionBrowser,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionItem, ObjectPositionRoom,
+    PlayCardAction, PlayInRoom, PlayerName, PlayerView, RevealedCardView, RoomIdentifier,
 };
 use rules::dispatch;
 use server::requests::GameResponse;
@@ -730,6 +730,20 @@ impl ClientCards {
     pub fn discard_pile(&self, player: PlayerName) -> Vec<String> {
         self.names_in_position(Position::DiscardPile(ObjectPositionDiscardPile {
             owner: player.into(),
+        }))
+    }
+
+    /// Returns left items in play
+    pub fn left_items(&self) -> Vec<String> {
+        self.names_in_position(Position::Item(ObjectPositionItem {
+            item_location: ClientItemLocation::Left.into(),
+        }))
+    }
+
+    /// Returns left items in play
+    pub fn right_items(&self) -> Vec<String> {
+        self.names_in_position(Position::Item(ObjectPositionItem {
+            item_location: ClientItemLocation::Right.into(),
         }))
     }
 

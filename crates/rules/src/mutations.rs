@@ -86,6 +86,12 @@ pub fn move_cards(game: &mut GameState, cards: &[CardId], to_position: CardPosit
     }
 }
 
+/// Move a card to the discard pile. This should specifically be used when a
+/// player's *own* effect causes their card to be discarded.
+pub fn sacrifice_card(game: &mut GameState, card_id: CardId) {
+    move_card(game, card_id, CardPosition::DiscardPile(card_id.side));
+}
+
 // Shuffles the provided `cards` into the `side` player's deck, clearing their
 // revealed state for both players.
 pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) {
@@ -179,9 +185,10 @@ pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) {
     }
 }
 
+/// Behavior when a card has no stored mana remaining after [take_stored_mana].
 #[derive(Debug, Eq, PartialEq)]
-pub enum OnEmpty {
-    MoveToDiscard,
+pub enum OnZeroStored {
+    Sacrifice,
     Ignore,
 }
 
@@ -195,7 +202,7 @@ pub fn take_stored_mana(
     game: &mut GameState,
     card_id: CardId,
     maximum: ManaValue,
-    on_empty: OnEmpty,
+    on_zero_stored: OnZeroStored,
 ) -> ManaValue {
     info!(?card_id, ?maximum, "take_stored_mana");
     let available = game.card(card_id).data.stored_mana;
@@ -204,8 +211,8 @@ pub fn take_stored_mana(
     mana::gain(game, card_id.side, taken);
     dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
 
-    if on_empty == OnEmpty::MoveToDiscard && game.card(card_id).data.stored_mana == 0 {
-        move_card(game, card_id, CardPosition::DiscardPile(card_id.side));
+    if on_zero_stored == OnZeroStored::Sacrifice && game.card(card_id).data.stored_mana == 0 {
+        sacrifice_card(game, card_id);
     }
 
     taken
