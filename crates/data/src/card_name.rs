@@ -86,6 +86,7 @@ pub enum CardName {
     MaraudersAxe,
     KeenHalberd,
     EtherealBlade,
+    BowOfTheAlliance,
 }
 
 impl CardName {

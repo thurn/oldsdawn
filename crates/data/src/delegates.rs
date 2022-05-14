@@ -67,6 +67,7 @@ use std::fmt::Formatter;
 use enum_kinds::EnumKind;
 use macros::DelegateEnum;
 
+use crate::card_definition::AttackBoost;
 #[allow(unused)] // Used in rustdocs
 use crate::card_definition::CardStats;
 #[allow(unused)] // Used in rustdocs
@@ -406,6 +407,9 @@ pub enum Delegate {
     /// Queries the current breach value of a card. Invoked with
     /// [CardStats::breach] or 0.
     BreachValue(QueryDelegate<CardId, BreachValue>),
+    /// Gets the current [AttackBoost] of a card. Invoked with
+    /// [CardStats::attack_boost] if one is present.
+    AttackBoost(QueryDelegate<CardId, AttackBoost>),
     /// Get the current boost count of a card. Invoked with the value of
     /// [CardData::boost_count].
     BoostCount(QueryDelegate<CardId, BoostCount>),

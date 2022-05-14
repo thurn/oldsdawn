@@ -301,6 +301,12 @@ pub struct BoostData {
     pub count: u32,
 }
 
+impl From<BoostData> for CardId {
+    fn from(data: BoostData) -> Self {
+        data.card_id
+    }
+}
+
 /// Possible tags for minion damage
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum DamageType {

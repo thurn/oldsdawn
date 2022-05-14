@@ -82,7 +82,7 @@ impl Database for SledDatabase {
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
                     CardName::EtherealBlade => 15,
-                    CardName::MaraudersAxe => 15,
+                    CardName::BowOfTheAlliance => 15,
                     CardName::KeenHalberd => 15,
                 },
             }
@@ -92,7 +92,7 @@ impl Database for SledDatabase {
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
                     CardName::DungeonAnnex => 15,
-                    CardName::IceDragon => 15,
+                    CardName::TestMortalMinion => 15,
                     CardName::GoldMine => 15
                 },
             }

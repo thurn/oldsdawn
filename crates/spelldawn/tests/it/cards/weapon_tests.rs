@@ -72,3 +72,13 @@ fn ethereal_blade() {
     assert_eq!(1, g.user.cards.discard_pile(PlayerName::User).len());
     assert_eq!(0, g.user.cards.left_items().len());
 }
+
+#[test]
+fn bow_of_the_alliance() {
+    let (card_cost, activation_cost) = (3, 1);
+    let mut g = new_game(Side::Champion, Args::default());
+    g.play_from_hand(CardName::BowOfTheAlliance);
+    g.play_from_hand(CardName::BowOfTheAlliance);
+    fire_weapon_combat_abilities(&mut g, Faction::Mortal, "Bow Of The Alliance");
+    assert_eq!(STARTING_MANA - (2 * card_cost) - (2 * activation_cost), g.me().mana());
+}

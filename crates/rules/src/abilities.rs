@@ -32,7 +32,7 @@ use crate::{mutations, queries};
 pub fn encounter_boost() -> Ability {
     Ability {
         text: AbilityText::TextFn(|g, s| {
-            let boost = queries::stats(g, s.card_id()).attack_boost.expect("attack_boost");
+            let boost = queries::attack_boost(g, s.card_id()).expect("attack_boost");
             vec![
                 cost(boost.cost).into(),
                 add_number(boost.bonus),
@@ -41,7 +41,7 @@ pub fn encounter_boost() -> Ability {
         }),
         ability_type: AbilityType::Encounter,
         delegates: vec![
-            Delegate::ActivateBoost(EventDelegate::new(this_boost, mutations::write_boost)),
+            Delegate::ActivateBoost(EventDelegate::new(this_card, mutations::write_boost)),
             Delegate::AttackValue(QueryDelegate::new(this_card, add_boost)),
             Delegate::EncounterEnd(EventDelegate::new(always, mutations::clear_boost)),
         ],
@@ -84,7 +84,7 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability
 /// Discard a random card from the hand of the `side` player, if there are any
 /// cards present. Invokes the `on_empty` function if a card cannot be
 /// discarded.
-pub fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&mut GameState)) {
+fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&mut GameState)) {
     if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
         mutations::move_card(game, card_id, CardPosition::DiscardPile(side));
     } else {
@@ -130,7 +130,7 @@ fn add_boost(
     current: AttackValue,
 ) -> AttackValue {
     let boost_count = queries::boost_count(game, card_id);
-    let bonus = queries::stats(game, card_id).attack_boost.expect("Expected boost").bonus;
+    let bonus = queries::attack_boost(game, card_id).expect("Expected boost").bonus;
     current + (boost_count * bonus)
 }
 

@@ -159,3 +159,36 @@ pub fn ethereal_blade() -> CardDefinition {
         },
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn bow_of_the_alliance() -> CardDefinition {
+    CardDefinition {
+        name: CardName::BowOfTheAlliance,
+        cost: cost(3),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_46"),
+        card_type: CardType::Weapon,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            abilities::encounter_boost(),
+            Ability {
+                text: text!["+1 attack per weapon you control"],
+                ability_type: AbilityType::Standard,
+                delegates: vec![Delegate::AttackBoost(QueryDelegate {
+                    requirement: this_card,
+                    transformation: |g, _s, _, boost| AttackBoost {
+                        bonus: g.weapons().count() as u32,
+                        ..boost
+                    },
+                })],
+            },
+        ],
+        config: CardConfig {
+            stats: attack(1, AttackBoost { cost: 1, bonus: 0 }),
+            faction: Some(Faction::Mortal),
+            special_effects: projectile(Projectile::Hovl(4)),
+            ..CardConfig::default()
+        },
+    }
+}

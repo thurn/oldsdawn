@@ -14,10 +14,10 @@
 
 //! Core functions for querying the current state of a game
 
-use data::card_definition::{AbilityType, CardStats};
+use data::card_definition::{AbilityType, AttackBoost, CardStats};
 use data::delegates::{
-    AbilityManaCostQuery, ActionCostQuery, AttackValueQuery, BoostCountQuery, BreachValueQuery,
-    HealthValueQuery, ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery,
+    AbilityManaCostQuery, ActionCostQuery, AttackBoostQuery, AttackValueQuery, BoostCountQuery,
+    BreachValueQuery, HealthValueQuery, ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery,
     StartOfTurnActionsQuery, VaultAccessCountQuery,
 };
 use data::game::{GamePhase, GameState, RaidPhase};
@@ -124,6 +124,15 @@ pub fn breach(game: &GameState, card_id: CardId) -> BreachValue {
     )
 }
 
+/// Returns the boost cost for a given card, if any
+pub fn attack_boost(game: &GameState, card_id: CardId) -> Option<AttackBoost> {
+    crate::card_definition(game, card_id)
+        .config
+        .stats
+        .attack_boost
+        .map(|boost| dispatch::perform_query(game, AttackBoostQuery(card_id), boost))
+}
+
 /// Returns the [BoostCount] for a given card.
 pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
     dispatch::perform_query(game, BoostCountQuery(card_id), game.card(card_id).data.boost_count)
@@ -146,15 +155,18 @@ pub fn cost_to_defeat_target(
 
     let result = if current >= target {
         Some(0)
-    } else if let Some(boost) = crate::card_definition(game, card_id).config.stats.attack_boost {
-        assert!(boost.bonus > 0);
-        let increase = target - current;
-        // If the boost does not evenly divide into the target, we need to apply it an
-        // additional time.
-        let add = if (increase % boost.bonus) == 0 { 0 } else { 1 };
+    } else if let Some(boost) = attack_boost(game, card_id) {
+        if boost.bonus == 0 {
+            None
+        } else {
+            let increase = target - current;
+            // If the boost does not evenly divide into the target, we need to apply it an
+            // additional time.
+            let add = if (increase % boost.bonus) == 0 { 0 } else { 1 };
 
-        #[allow(clippy::integer_division)] // Deliberate integer truncation
-        Some((add + (increase / boost.bonus)) * boost.cost)
+            #[allow(clippy::integer_division)] // Deliberate integer truncation
+            Some((add + (increase / boost.bonus)) * boost.cost)
+        }
     } else {
         None
     };

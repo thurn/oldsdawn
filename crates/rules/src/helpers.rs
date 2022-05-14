@@ -25,8 +25,8 @@ use data::delegates::{
 use data::game::GameState;
 use data::game_actions::CardTarget;
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, RaidId, RoomId,
-    Sprite, TurnNumber,
+    AbilityId, ActionCount, AttackValue, CardId, HealthValue, ManaValue, RaidId, RoomId, Sprite,
+    TurnNumber,
 };
 use data::special_effects::Projectile;
 use data::text::{NumericOperator, TextToken};
@@ -122,12 +122,6 @@ pub fn this_card(_game: &GameState, scope: Scope, card_id: impl Into<CardId>) ->
 /// own ability.
 pub fn this_ability(_game: &GameState, scope: Scope, ability_id: impl Into<AbilityId>) -> bool {
     scope.ability_id() == ability_id.into()
-}
-
-/// A RequirementFn which restricts delegates to only listen to [BoostData]
-/// events matching their card.
-pub fn this_boost(_game: &GameState, scope: Scope, boost_data: BoostData) -> bool {
-    scope.card_id() == boost_data.card_id
 }
 
 /// A RequirementFn which checks if the current `raid_id` matches the stored
