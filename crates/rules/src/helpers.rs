@@ -24,7 +24,7 @@ use data::game::GameState;
 use data::game_actions::CardTarget;
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostData, CardId, HealthValue, ManaValue, RaidId, RoomId,
-    ShieldValue, Sprite, TurnNumber,
+    Sprite, TurnNumber,
 };
 use data::text::{NumericOperator, TextToken};
 use data::updates::GameUpdate;
@@ -254,11 +254,6 @@ pub fn attack(base_attack: AttackValue, boost: AttackBoost) -> CardStats {
 /// Helper to create a [CardStats] with the given [HealthValue]
 pub fn health(health: HealthValue) -> CardStats {
     CardStats { health: Some(health), ..CardStats::default() }
-}
-
-/// Creates a [CardStats] with a `health` and `shield` value.
-pub fn health_and_shield(health: HealthValue, shield: ShieldValue) -> CardStats {
-    CardStats { health: Some(health), shield: Some(shield), ..CardStats::default() }
 }
 
 /// Helper to create a [CardStats] with the given [SchemePoints] and mark it as

@@ -16,15 +16,15 @@
 
 use data::card_definition::{AbilityType, CardStats};
 use data::delegates::{
-    AbilityManaCostQuery, ActionCostQuery, AttackValueQuery, BoostCountQuery, HealthValueQuery,
-    ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery,
-    VaultAccessCountQuery,
+    AbilityManaCostQuery, ActionCostQuery, AttackValueQuery, BoostCountQuery, BreachValueQuery,
+    HealthValueQuery, ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery,
+    StartOfTurnActionsQuery, VaultAccessCountQuery,
 };
 use data::game::{GamePhase, GameState, RaidPhase};
 use data::game_actions::CardTargetKind;
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostCount, CardId, CardType, HealthValue, ManaValue,
-    ShieldValue, Side,
+    AbilityId, ActionCount, AttackValue, BoostCount, BreachValue, CardId, CardType, HealthValue,
+    ManaValue, ShieldValue, Side,
 };
 
 use crate::dispatch;
@@ -115,6 +115,15 @@ pub fn shield(game: &GameState, card_id: CardId) -> ShieldValue {
     )
 }
 
+/// Returns the breach value for a given card, or 0 by default.
+pub fn breach(game: &GameState, card_id: CardId) -> BreachValue {
+    dispatch::perform_query(
+        game,
+        BreachValueQuery(card_id),
+        stats(game, card_id).breach.unwrap_or(0),
+    )
+}
+
 /// Returns the [BoostCount] for a given card.
 pub fn boost_count(game: &GameState, card_id: CardId) -> BoostCount {
     dispatch::perform_query(game, BoostCountQuery(card_id), game.card(card_id).data.boost_count)
@@ -150,7 +159,7 @@ pub fn cost_to_defeat_target(
         None
     };
 
-    result.map(|r| r + shield(game, target_id))
+    result.map(|r| r + (shield(game, target_id).saturating_sub(breach(game, card_id))))
 }
 
 /// Returns true if the provided `side` player is currently in their Main phase

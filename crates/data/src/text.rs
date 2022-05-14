@@ -22,7 +22,7 @@ use enum_kinds::EnumKind;
 use crate::card_definition::Cost;
 use crate::delegates::Scope;
 use crate::game::GameState;
-use crate::primitives::{ActionCount, DamageType, ManaValue, ShieldValue};
+use crate::primitives::{ActionCount, BreachValue, DamageType, ManaValue, ShieldValue};
 
 /// Text describing what an ability does. Can be a function (if text is dynamic)
 /// or a vector of [TextToken]s.
@@ -80,6 +80,7 @@ pub enum Keyword {
     InnerRoom(Sentence),
     EndRaid,
     Shield(ShieldValue),
+    Breach(BreachValue),
 }
 
 impl Keyword {

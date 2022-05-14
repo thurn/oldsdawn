@@ -76,8 +76,8 @@ use crate::card_state::{CardData, CardPosition};
 use crate::game::GameState;
 use crate::game_actions::CardTarget;
 use crate::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, CardId, HealthValue, ManaValue,
-    RaidId, RoomId, ShieldValue, Side, TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, BreachValue, CardId, HealthValue,
+    ManaValue, RaidId, RoomId, ShieldValue, Side, TurnNumber,
 };
 
 /// Identifies the context for a given request to a delegate: which player,
@@ -392,6 +392,9 @@ pub enum Delegate {
     /// Query the current shield value of a card. Invoked with
     /// [CardStats::shield] or 0.
     ShieldValue(QueryDelegate<CardId, ShieldValue>),
+    /// Queries the current breach value of a card. Invoked with
+    /// [CardStats::breach] or 0.
+    BreachValue(QueryDelegate<CardId, BreachValue>),
     /// Get the current boost count of a card. Invoked with the value of
     /// [CardData::boost_count].
     BoostCount(QueryDelegate<CardId, BoostCount>),

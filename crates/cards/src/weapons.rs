@@ -15,7 +15,7 @@
 //! Card definitions for the Weapon card type
 
 use data::card_definition::{
-    Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, SpecialEffects,
+    Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, CardStats, SpecialEffects,
 };
 use data::card_name::CardName;
 use data::delegates::{Delegate, QueryDelegate};
@@ -113,8 +113,13 @@ pub fn keen_halberd() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
-            stats: attack(3, AttackBoost { cost: 2, bonus: 1 }),
-            faction: Some(Faction::Infernal),
+            stats: CardStats {
+                base_attack: Some(3),
+                attack_boost: Some(AttackBoost { cost: 2, bonus: 1 }),
+                breach: Some(1),
+                ..CardStats::default()
+            },
+            faction: Some(Faction::Abyssal),
             special_effects: SpecialEffects {
                 projectile: Some(Projectile::Hovl(2)),
                 ..SpecialEffects::default()

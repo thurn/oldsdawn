@@ -41,3 +41,18 @@ fn marauders_axe() {
     g.play_card(id, g.user_id(), None);
     assert_eq!(STARTING_MANA - card_cost + 2, g.me().mana());
 }
+
+#[test]
+fn keen_halberd() {
+    let (card_cost, activation_cost) = (3, 2);
+    let mut g = new_game(Side::Champion, Args::default());
+    g.play_from_hand(CardName::KeenHalberd);
+    setup_raid_target(&mut g, CardName::TestMinionShield2Abyssal);
+    g.initiate_raid(ROOM_ID);
+    click_on_activate(&mut g);
+    g.click_on(g.user_id(), "Keen Halberd");
+    assert_eq!(
+        STARTING_MANA - card_cost - (2 * activation_cost) - 1, /* remaining shield */
+        g.me().mana()
+    );
+}

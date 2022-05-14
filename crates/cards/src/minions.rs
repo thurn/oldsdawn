@@ -14,7 +14,7 @@
 
 //! Card definitions for the Minion card type
 
-use data::card_definition::{CardConfig, CardDefinition};
+use data::card_definition::{CardConfig, CardDefinition, CardStats};
 use data::card_name::CardName;
 use data::primitives::{CardType, ColdDamage, Faction, Rarity, School, Side};
 use linkme::distributed_slice;
@@ -35,7 +35,7 @@ pub fn ice_dragon() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![abilities::deal_damage::<ColdDamage, 1>(), abilities::end_raid()],
         config: CardConfig {
-            stats: health_and_shield(5, 1),
+            stats: CardStats { health: Some(5), shield: Some(1), ..CardStats::default() },
             faction: Some(Faction::Infernal),
             ..CardConfig::default()
         },

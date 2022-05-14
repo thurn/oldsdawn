@@ -28,6 +28,7 @@ pub type PointsValue = u32;
 pub type HealthValue = u32;
 pub type AttackValue = u32;
 pub type ShieldValue = u32;
+pub type BreachValue = u32;
 pub type BoostCount = u32;
 pub type LevelValue = u32;
 
@@ -248,8 +249,14 @@ pub enum ItemLocation {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Faction {
     Prismatic,
+
+    /// Code Gate/Decoder
     Mortal,
+
+    /// Barrier/Fracter
     Abyssal,
+
+    /// Sentry/Killer
     Infernal,
 }
 

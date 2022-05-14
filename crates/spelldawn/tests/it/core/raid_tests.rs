@@ -244,7 +244,7 @@ fn minion_with_shield() {
     let (mut g, _) = test_games::simple_game(
         Side::Champion,
         CardName::TestScheme31,
-        CardName::TestMinionShield1,
+        CardName::TestMinionShield1Infernal,
         CardName::TestWeapon5Attack,
     );
     g.initiate_raid(ROOM_ID);

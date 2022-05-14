@@ -300,27 +300,29 @@ pub fn fire_minion_combat_abilities(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Champion), "Continue");
 }
 
-/// Must be invoked during the Champion turn. Performs the following actions:
-///
-/// - Ends the Champion turn
-/// - Plays a 3-1 scheme in the [ROOM_ID] room.
-/// - Selects a test minion with 5 health and an 'end raid' ability matching the
-///   provided `faction`
-/// - Plays the selected minion in the [ROOM_ID] room.
-/// - Ends the Overlord turn.
-///
-/// WARNING: This causes both players to draw cards for their turns!
-pub fn setup_raid_target(session: &mut TestSession, faction: Faction) {
-    spend_actions_until_turn_over(session, Side::Champion);
-    assert!(session.dusk());
-    session.play_from_hand(CardName::TestScheme31);
-    let minion_name = match faction {
+pub fn minion_for_faction(faction: Faction) -> CardName {
+    match faction {
         Faction::Prismatic => panic!("Unsupported"),
         Faction::Mortal => CardName::TestMortalMinion,
         Faction::Abyssal => CardName::TestAbyssalMinion,
         Faction::Infernal => CardName::TestInfernalMinion,
-    };
-    session.play_from_hand(minion_name);
+    }
+}
+
+/// Must be invoked during the Champion turn. Performs the following actions:
+///
+/// - Ends the Champion turn
+/// - Plays a 3-1 scheme in the [ROOM_ID] room.
+/// - Plays the provided `card_name` minion into that room.
+/// - Plays the selected minion in the [ROOM_ID] room.
+/// - Ends the Overlord turn.
+///
+/// WARNING: This causes both players to draw cards for their turns!
+pub fn setup_raid_target(session: &mut TestSession, card_name: CardName) {
+    spend_actions_until_turn_over(session, Side::Champion);
+    assert!(session.dusk());
+    session.play_from_hand(CardName::TestScheme31);
+    session.play_from_hand(card_name);
     spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
 }
@@ -347,7 +349,7 @@ pub fn fire_weapon_combat_abilities(
     faction: Faction,
     name: &'static str,
 ) {
-    setup_raid_target(session, faction);
+    setup_raid_target(session, minion_for_faction(faction));
     session.initiate_raid(ROOM_ID);
     click_on_activate(session);
     session.click_on(session.player_id_for_side(Side::Champion), name);

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use data::card_definition::{
-    Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, SchemePoints,
+    Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, CardStats, SchemePoints,
 };
 use data::card_name::CardName;
 use data::primitives::{
@@ -119,13 +119,37 @@ pub fn test_minion_end_raid() -> CardDefinition {
 #[distributed_slice(DEFINITIONS)]
 pub fn test_minion_shield_1() -> CardDefinition {
     CardDefinition {
-        name: CardName::TestMinionShield1,
+        name: CardName::TestMinionShield1Infernal,
         cost: cost(MINION_COST),
         abilities: vec![abilities::end_raid()],
         card_type: CardType::Minion,
         config: CardConfig {
-            stats: health_and_shield(MINION_HEALTH, 1),
+            stats: CardStats {
+                health: Some(MINION_HEALTH),
+                shield: Some(1),
+                ..CardStats::default()
+            },
             faction: Some(TEST_FACTION),
+            ..CardConfig::default()
+        },
+        ..test_overlord_spell()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_minion_shield_2_abyssal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestMinionShield2Abyssal,
+        cost: cost(MINION_COST),
+        abilities: vec![abilities::end_raid()],
+        card_type: CardType::Minion,
+        config: CardConfig {
+            stats: CardStats {
+                health: Some(MINION_HEALTH),
+                shield: Some(2),
+                ..CardStats::default()
+            },
+            faction: Some(Faction::Abyssal),
             ..CardConfig::default()
         },
         ..test_overlord_spell()

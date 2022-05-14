@@ -26,9 +26,9 @@ use crate::card_name::CardName;
 use crate::delegates::Delegate;
 use crate::game::GameState;
 use crate::primitives::{
-    AbilityId, AbilityIndex, ActionCount, AttackValue, CardId, CardSubtype, CardType, Faction,
-    HealthValue, LevelValue, ManaValue, PointsValue, Rarity, RoomId, School, ShieldValue, Side,
-    Sprite,
+    AbilityId, AbilityIndex, ActionCount, AttackValue, BreachValue, CardId, CardSubtype, CardType,
+    Faction, HealthValue, LevelValue, ManaValue, PointsValue, Rarity, RoomId, School, ShieldValue,
+    Side, Sprite,
 };
 use crate::special_effects::{Projectile, TimedEffect};
 use crate::text::AbilityText;
@@ -100,6 +100,8 @@ pub struct CardStats {
     pub health: Option<HealthValue>,
     /// Mana cost required in order to interact with this card
     pub shield: Option<ShieldValue>,
+    /// Allows a weapon to bypass some amount of shield points.
+    pub breach: Option<BreachValue>,
     /// Base damage dealt by this card during an encounter
     pub base_attack: Option<AttackValue>,
     /// An increase in base attack damage for a fixed cost which an ability can
