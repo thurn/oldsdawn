@@ -260,7 +260,9 @@ pub fn spend_actions_until_turn_over(session: &mut TestSession, side: Side) {
 }
 
 /// Levels up the [CLIENT_ROOM_ID] room a specified number of `times`. If this
-/// requires multiple turns, spends the Champion turns gaining mana.
+/// requires multiple turns, spends the Champion turns doing nothing.
+///
+/// NOTE that this may cause the Champion to draw cards for their turn.
 pub fn level_up_room(session: &mut TestSession, times: u32) {
     let mut levels = 0;
     let overlord_id = session.player_id_for_side(Side::Overlord);

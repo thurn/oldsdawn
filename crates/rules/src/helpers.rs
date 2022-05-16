@@ -139,12 +139,12 @@ pub fn is_inner_room(room_id: RoomId) -> bool {
 
 /// Pushes a [GameUpdate] indicating the ability represented by [Scope] should
 /// have a trigger animation shown in the UI.
-pub fn alert(game: &mut GameState, scope: &Scope) {
+pub fn alert(game: &mut GameState, scope: Scope) {
     game.updates.push(GameUpdate::AbilityTriggered(scope.ability_id()));
 }
 
 /// Invokes [alert] if the provided `number` is not zero.
-pub fn alert_if_nonzero(game: &mut GameState, scope: &Scope, number: u32) {
+pub fn alert_if_nonzero(game: &mut GameState, scope: Scope, number: u32) {
     if number > 0 {
         alert(game, scope);
     }

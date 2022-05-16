@@ -91,8 +91,8 @@ impl Database for SledDatabase {
                 owner_id: player_id,
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
-                    CardName::DungeonAnnex => 15,
-                    CardName::TestMortalMinion => 15,
+                    CardName::ActivateReinforcements => 15,
+                    CardName::IceDragon => 15,
                     CardName::GoldMine => 15
                 },
             }

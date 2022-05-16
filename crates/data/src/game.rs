@@ -421,6 +421,13 @@ impl GameState {
         self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
     }
 
+    /// All overlord defenders in play, whether face-up or face-down.
+    pub fn minions(&self) -> impl Iterator<Item = &CardState> {
+        self.cards(Side::Overlord)
+            .iter()
+            .filter(move |c| matches!(c.position(), CardPosition::Room(_, RoomLocation::Defender)))
+    }
+
     /// Champion cards which have been played as weapons, in alphabetical order
     pub fn weapons(&self) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Champion, CardPosition::ArenaItem(ItemLocation::Weapons))

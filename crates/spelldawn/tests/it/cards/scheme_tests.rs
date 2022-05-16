@@ -30,3 +30,19 @@ fn dungeon_annex() {
         Position::Identity(ObjectPositionIdentity { owner: PlayerName::User.into() })
     );
 }
+
+#[test]
+fn activate_reinforcements() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    let id = g.play_from_hand(CardName::ActivateReinforcements);
+    let minion = g.play_from_hand(CardName::TestMinionEndRaid);
+    assert!(!g.user.get_card(minion).is_face_up());
+    level_up_room(&mut g, 5);
+    assert_eq!(g.me().score(), 3);
+    assert!(g.user.get_card(minion).is_face_up());
+    assert_eq!(STARTING_MANA - 5, g.me().mana());
+    assert_eq!(
+        g.user.get_card(id).position(),
+        Position::Identity(ObjectPositionIdentity { owner: PlayerName::User.into() })
+    );
+}

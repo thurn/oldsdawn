@@ -15,6 +15,7 @@
 //! Core functions for querying the current state of a game
 
 use data::card_definition::{AbilityType, AttackBoost, CardStats};
+use data::card_state::CardState;
 use data::delegates::{
     AbilityManaCostQuery, ActionCostQuery, AttackBoostQuery, AttackValueQuery, BoostCountQuery,
     BreachValueQuery, HealthValueQuery, ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery,
@@ -26,6 +27,7 @@ use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BreachValue, CardId, CardType, HealthValue,
     ManaValue, ShieldValue, Side,
 };
+use rand::prelude::IteratorRandom;
 
 use crate::dispatch;
 
@@ -211,4 +213,21 @@ pub fn card_target_kind(game: &GameState, card_id: CardId) -> CardTargetKind {
         CardType::Minion | CardType::Project | CardType::Scheme => CardTargetKind::Room,
         _ => CardTargetKind::None,
     }
+}
+
+/// Returns the highest mana cost card among those in the provided
+/// `card_iterator`, breaking ties at random, or None if there is no such card.
+pub fn highest_cost<'a>(
+    game: &GameState,
+    card_iterator: impl Iterator<Item = &'a CardState>,
+) -> Option<CardId> {
+    let cards = card_iterator.collect::<Vec<_>>();
+    let max = cards.iter().filter_map(|c| crate::get(c.name).cost.mana).max();
+    let mut filtered = cards.into_iter().filter(|c| crate::get(c.name).cost.mana == max);
+    if game.data.config.deterministic {
+        filtered.next()
+    } else {
+        filtered.choose(&mut rand::thread_rng())
+    }
+    .map(|c| c.id)
 }

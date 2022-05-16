@@ -286,6 +286,19 @@ pub struct UsedWeapon {
     pub mana_spent: ManaValue,
 }
 
+/// Event data when a card is scored
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub struct ScoreCard {
+    pub player: Side,
+    pub card_id: CardId,
+}
+
+impl From<ScoreCard> for CardId {
+    fn from(this: ScoreCard) -> Self {
+        this.card_id
+    }
+}
+
 /// Result of a raid
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
 pub enum RaidOutcome {
@@ -329,12 +342,16 @@ pub enum Delegate {
     CastCard(EventDelegate<CardPlayed>),
     /// A card ability with a cost is activated
     ActivateAbility(EventDelegate<AbilityActivated>),
+    /// A minion card is turned face up.
+    SummonMinion(EventDelegate<CardId>),
     /// A card is moved to a new position
     MoveCard(EventDelegate<CardMoved>),
     /// A card is scored by the Overlord
     OverlordScoreCard(EventDelegate<CardId>),
     /// A card is scored by the Champion
     ChampionScoreCard(EventDelegate<CardId>),
+    /// Either player scores a card
+    ScoreCard(EventDelegate<ScoreCard>),
     /// A Raid is initiated
     RaidStart(EventDelegate<RaidStart>),
     /// A minion is encountered during a raid

@@ -16,12 +16,14 @@
 
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, SchemePoints};
 use data::card_name::CardName;
+use data::delegates::{Delegate, EventDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::card_text::text;
 use rules::helpers::*;
-use rules::{mana, DEFINITIONS};
+use rules::mutations::SummonMinion;
+use rules::{mana, mutations, queries, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -44,6 +46,41 @@ pub fn dungeon_annex() -> CardDefinition {
         }],
         config: CardConfig {
             stats: scheme_points(SchemePoints { level_requirement: 4, points: 2 }),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn activate_reinforcements() -> CardDefinition {
+    CardDefinition {
+        name: CardName::ActivateReinforcements,
+        cost: scheme_cost(),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_15"),
+        card_type: CardType::Scheme,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text![
+                "When this scheme is scored by either player,",
+                "summon the highest cost face-down minion for free"
+            ],
+            ability_type: AbilityType::Standard,
+            delegates: vec![Delegate::ScoreCard(EventDelegate {
+                requirement: this_card,
+                mutation: |g, s, _| {
+                    if let Some(minion_id) =
+                        queries::highest_cost(g, g.minions().filter(|c| c.is_face_down()))
+                    {
+                        mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts);
+                        alert(g, s);
+                    }
+                },
+            })],
+        }],
+        config: CardConfig {
+            stats: scheme_points(SchemePoints { level_requirement: 5, points: 3 }),
             ..CardConfig::default()
         },
     }

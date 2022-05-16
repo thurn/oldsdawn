@@ -314,7 +314,7 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
                         MANA_TAKEN,
                         OnZeroStored::Sacrifice,
                     );
-                    alert(g, &s);
+                    alert(g, s);
                 })],
             },
         ],

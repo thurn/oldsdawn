@@ -27,8 +27,8 @@ use std::cmp;
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
-    RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome, RaidSuccessEvent, Scope,
-    StoredManaTakenEvent,
+    RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome, RaidSuccessEvent, Scope, ScoreCard,
+    ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
 use data::game_actions::{Prompt, PromptAction};
@@ -372,6 +372,7 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
         turn_face_up(game, card_id);
         move_card(game, card_id, CardPosition::Scored(Side::Overlord));
         dispatch::invoke_event(game, OverlordScoreCardEvent(card_id));
+        dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Overlord, card_id }));
         game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
         score_points(game, Side::Overlord, scheme_points.points);
     }
@@ -430,8 +431,35 @@ fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
 /// Clears card state which is specific to a card being in play.
 ///
 /// Automatically invoked by [move_card] when a card moves to a non-play zone.
-pub fn clear_counters(game: &mut GameState, card_id: CardId) {
+fn clear_counters(game: &mut GameState, card_id: CardId) {
     game.card_mut(card_id).data.card_level = 0;
     game.card_mut(card_id).data.stored_mana = 0;
     game.card_mut(card_id).data.boost_count = 0;
+}
+
+/// Options when invoking [summon_minion]
+#[derive(Eq, PartialEq, Debug)]
+pub enum SummonMinion {
+    PayCosts,
+    IgnoreCosts,
+}
+
+/// Turn a minion card in play face up, paying its costs based on the
+/// [SummonMinion] value provided.
+///
+/// Panics if the indicated card is already face-up.
+pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion) {
+    assert!(game.card(card_id).is_face_down());
+    if costs == SummonMinion::PayCosts {
+        if let Some(cost) = queries::mana_cost(game, card_id) {
+            mana::spend(game, Side::Overlord, ManaPurpose::PayForCard(card_id), cost);
+        }
+
+        if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
+            (custom_cost.pay)(game, card_id);
+        }
+    }
+
+    dispatch::invoke_event(game, SummonMinionEvent(card_id));
+    turn_face_up(game, card_id);
 }

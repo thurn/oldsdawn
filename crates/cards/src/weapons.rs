@@ -146,7 +146,7 @@ pub fn ethereal_blade() -> CardDefinition {
                     ),
                     on_raid_ended(matching_raid, |g, s, _| {
                         sacrifice_card(g, s.card_id());
-                        alert(g, &s);
+                        alert(g, s);
                     }),
                 ],
             },

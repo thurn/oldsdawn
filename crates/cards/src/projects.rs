@@ -42,7 +42,7 @@ pub fn gold_mine() -> CardDefinition {
                 ability_type: AbilityType::Standard,
                 delegates: vec![at_dusk(|g, s, _| {
                     mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
-                    alert(g, &s);
+                    alert(g, s);
                 })],
             },
         ],

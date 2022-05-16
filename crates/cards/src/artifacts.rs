@@ -90,7 +90,7 @@ pub fn accumulator() -> CardDefinition {
                 ability_type: AbilityType::Standard,
                 delegates: vec![on_raid_success(face_up_in_play, |g, s, _| {
                     add_stored_mana(g, s.card_id(), 1);
-                    alert(g, &s);
+                    alert(g, s);
                 })],
             },
             Ability {
@@ -175,7 +175,7 @@ pub fn storage_crystal() -> CardDefinition {
                 delegates: vec![at_dawn(|g, s, _| {
                     let taken =
                         mutations::take_stored_mana(g, s.card_id(), 1, OnZeroStored::Ignore);
-                    alert_if_nonzero(g, &s, taken);
+                    alert_if_nonzero(g, s, taken);
                 })],
             },
             Ability {

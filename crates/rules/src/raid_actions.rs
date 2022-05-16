@@ -18,7 +18,7 @@ use anyhow::{bail, ensure, Context, Result};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidOutcome, RaidStart, RaidStartEvent,
-    UsedWeapon, UsedWeaponEvent,
+    ScoreCard, ScoreCardEvent, UsedWeapon, UsedWeaponEvent,
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
@@ -215,6 +215,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
     raid_phases::set_raid_prompt(game)?;
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id));
+    dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }));
     game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
     mutations::score_points(game, Side::Champion, scheme_points.points);
     Ok(())

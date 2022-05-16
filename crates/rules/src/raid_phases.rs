@@ -29,6 +29,7 @@ use rand::seq::IteratorRandom;
 use rand::thread_rng;
 
 use crate::mana::ManaPurpose;
+use crate::mutations::SummonMinion;
 use crate::{dispatch, flags, mana, mutations, queries};
 
 /// Updates the [RaidPhase] for the ongoing raid in the provided `game` and
@@ -47,14 +48,7 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
         RaidPhase::Encounter(defender_index) => {
             if can_summon_defender(game, defender_index) {
                 let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
-                let cost = queries::mana_cost(game, defender_id).with_error(|| "Expected cost")?;
-                mana::spend(game, Side::Overlord, ManaPurpose::PayForCard(defender_id), cost);
-                if let Some(custom_cost) =
-                    &crate::card_definition(game, defender_id).cost.custom_cost
-                {
-                    (custom_cost.pay)(game, defender_id);
-                }
-                mutations::turn_face_up(game, defender_id);
+                mutations::summon_minion(game, defender_id, SummonMinion::PayCosts);
             }
         }
         RaidPhase::Continue(_) => {}
