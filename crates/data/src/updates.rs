@@ -85,6 +85,8 @@ pub enum GameUpdate {
     /// A card's ability has been triggered -- typically used for abilities
     /// configured to alert when fired via `TriggerIndicator::Alert`.
     AbilityTriggered(AbilityId),
+    /// A player discarded the provided number of cards to hand size
+    DiscardToHandSize(Side, u32),
 
     /// Indicates that a player's turn has started
     StartTurn(Side),

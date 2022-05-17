@@ -280,7 +280,7 @@ pub fn can_take_raid_encounter_action(
 
     if let EncounterAction::UseWeaponAbility(source_id, target_id) = action {
         can_continue
-            && defenders[encounter_position].id == target_id
+            && defenders[encounter_position] == target_id
             && can_defeat_target(game, source_id, target_id)
     } else {
         can_continue

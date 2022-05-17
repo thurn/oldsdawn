@@ -311,7 +311,7 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Vec<
         cards[0..count].to_vec()
     } else {
         let remaining = count - cards.len();
-        let unknown = game.cards_in_position(side, CardPosition::DeckUnknown(side));
+        let unknown = game.cards_in_position(side, CardPosition::DeckUnknown(side)).map(|c| c.id);
         let mut shuffled = if game.data.config.deterministic {
             unknown.take(remaining).collect()
         } else {
@@ -320,13 +320,12 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Vec<
         shuffled.append(&mut cards);
         shuffled
     };
-    let card_ids = result.into_iter().map(|c| c.id).collect::<Vec<_>>();
 
-    for card_id in &card_ids {
+    for card_id in &result {
         move_card(game, *card_id, CardPosition::DeckTop(side));
     }
 
-    card_ids
+    result
 }
 
 /// Invoked after taking a game action to check if the turn should be switched
@@ -341,15 +340,13 @@ pub fn check_end_turn(game: &mut GameState) {
 
     if game.player(side).actions == 0 && game.data.raid.is_none() {
         let max_hand_size = game.player(side).maximum_hand_size as usize;
-        let hand = game
-            .card_list_for_position(side, CardPosition::Hand(side))
-            .iter()
-            .map(|c| c.id)
-            .collect::<Vec<_>>();
+        let hand = game.card_list_for_position(side, CardPosition::Hand(side));
         if hand.len() > max_hand_size {
-            for card_id in hand.iter().take(hand.len() - max_hand_size) {
+            let count = hand.len() - max_hand_size;
+            for card_id in hand.iter().take(count) {
                 move_card(game, *card_id, CardPosition::DiscardPile(side));
             }
+            game.updates.push(GameUpdate::DiscardToHandSize(side, count as u32));
         }
 
         let turn_number = match side {

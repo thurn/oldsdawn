@@ -385,10 +385,10 @@ impl GameState {
     }
 
     /// Cards owned by a player in a given position, in sorting-key order
-    pub fn card_list_for_position(&self, side: Side, position: CardPosition) -> Vec<&CardState> {
+    pub fn card_list_for_position(&self, side: Side, position: CardPosition) -> Vec<CardId> {
         let mut result = self.cards_in_position(side, position).collect::<Vec<_>>();
         result.sort();
-        result
+        result.iter().map(|c| c.id).collect()
     }
 
     /// Cards in a player's hand, in alphabetical order
@@ -413,7 +413,7 @@ impl GameState {
 
     /// Overlord cards defending a given room, in sorting-key order (higher
     /// array indices are closer to the front of the room).
-    pub fn defender_list(&self, room_id: RoomId) -> Vec<&CardState> {
+    pub fn defender_list(&self, room_id: RoomId) -> Vec<CardId> {
         self.card_list_for_position(
             Side::Overlord,
             CardPosition::Room(room_id, RoomLocation::Defender),

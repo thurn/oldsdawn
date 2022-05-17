@@ -146,21 +146,22 @@ pub fn render(
         }
         GameUpdate::AbilityTriggered(ability_id) => show_ability_fired(commands, game, *ability_id),
         GameUpdate::GameOver(side) => game_over(commands, game, *side),
+        GameUpdate::DiscardToHandSize(_, _) => {}
         _ => todo!("Implement {:?}", update),
     }
 }
 
 fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
     let hand = game.card_list_for_position(side, CardPosition::Hand(side));
-    for card in hand {
+    for card_id in hand {
         commands.push(
             UpdateType::Animation,
             Command::CreateOrUpdateCard(full_sync::create_or_update_card(
                 game,
-                game.card(card.id),
+                game.card(card_id),
                 commands.user_side,
                 CardCreationStrategy::CreateAtPosition(ObjectPosition {
-                    sorting_key: card.sorting_key,
+                    sorting_key: game.card(card_id).sorting_key,
                     position: Some(Position::Deck(ObjectPositionDeck {
                         owner: adapters::to_player_name(side, commands.user_side).into(),
                     })),
@@ -172,9 +173,9 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
             commands.push(
                 UpdateType::Animation,
                 Command::MoveGameObjects(MoveGameObjectsCommand {
-                    ids: vec![adapters::card_id_to_object_id(card.id)],
+                    ids: vec![adapters::card_id_to_object_id(card_id)],
                     position: Some(ObjectPosition {
-                        sorting_key: card.sorting_key,
+                        sorting_key: game.card(card_id).sorting_key,
                         position: Some(Position::Browser(ObjectPositionBrowser {})),
                     }),
                     disable_animation: false,
@@ -184,7 +185,7 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
 
         commands.move_card(
             UpdateType::Animation,
-            card,
+            game.card(card_id),
             Position::Hand(ObjectPositionHand {
                 owner: adapters::to_player_name(side, commands.user_side).into(),
             }),

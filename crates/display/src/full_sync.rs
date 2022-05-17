@@ -489,7 +489,7 @@ fn raid_position_overrides(
         RaidPhase::Continue(i) => &defenders[..=i],
         RaidPhase::Access => &[],
     };
-    result.extend(included.iter().map(|card| Id::CardId(adapters::adapt_card_id(card.id))));
+    result.extend(included.iter().map(|card_id| Id::CardId(adapters::adapt_card_id(*card_id))));
 
     result.push(Id::Identity(adapters::to_player_name(Side::Champion, user_side).into()));
 

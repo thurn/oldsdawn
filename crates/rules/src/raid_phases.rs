@@ -100,11 +100,9 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
                     .choose_multiple(&mut thread_rng(), count as usize)
             }
         }
-        RoomId::Crypts => game
-            .card_list_for_position(Side::Overlord, CardPosition::DiscardPile(Side::Overlord))
-            .iter()
-            .map(|c| c.id)
-            .collect(),
+        RoomId::Crypts => {
+            game.card_list_for_position(Side::Overlord, CardPosition::DiscardPile(Side::Overlord))
+        }
         _ => game.occupants(target).map(|c| c.id).collect(),
     };
 
@@ -201,5 +199,5 @@ fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAct
 /// Finds the defending [CardId] at the given `index` position in the indicated
 /// `room_id`.
 pub fn find_defender(game: &GameState, room_id: RoomId, index: usize) -> Result<CardId> {
-    Ok(game.defender_list(room_id).get(index).with_error(|| "Defender Not Found")?.id)
+    Ok(*game.defender_list(room_id).get(index).with_error(|| "Defender Not Found")?)
 }
