@@ -113,7 +113,7 @@ fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
         dispatch::invoke_event(game, DrawCardActionEvent(*card_id));
     }
 
-    mutations::check_end_turn(game, user_side);
+    mutations::check_end_turn(game);
     Ok(())
 }
 
@@ -167,7 +167,7 @@ fn play_card_action(
 
     mutations::move_card(game, card_id, new_position);
 
-    mutations::check_end_turn(game, user_side);
+    mutations::check_end_turn(game);
     Ok(())
 }
 
@@ -204,7 +204,7 @@ fn activate_ability_action(
 
     dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }));
     game.updates.push(GameUpdate::AbilityActivated(ability_id));
-    mutations::check_end_turn(game, user_side);
+    mutations::check_end_turn(game);
     Ok(())
 }
 
@@ -220,7 +220,7 @@ fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     );
     mutations::spend_action_points(game, user_side, 1);
     mana::gain(game, user_side, 1);
-    mutations::check_end_turn(game, user_side);
+    mutations::check_end_turn(game);
     Ok(())
 }
 
@@ -235,7 +235,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
     mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1);
     mutations::level_up_room(game, room_id);
 
-    mutations::check_end_turn(game, user_side);
+    mutations::check_end_turn(game);
     game.updates.push(GameUpdate::LevelUpRoom(room_id));
 
     Ok(())
@@ -248,7 +248,7 @@ fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    mutations::check_end_turn(game, user_side);
+    mutations::check_end_turn(game);
     Ok(())
 }
 

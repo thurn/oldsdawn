@@ -93,6 +93,6 @@ fn preparation() {
     assert_eq!(4, g.user.cards.hand(PlayerName::User).len());
     assert_eq!(1, g.me().actions());
     g.play_from_hand(CardName::Preparation);
-    assert_eq!(8, g.user.cards.hand(PlayerName::User).len());
+    assert_eq!(7, g.user.cards.hand(PlayerName::User).len()); // One discarded to hand size
     assert!(g.dusk());
 }

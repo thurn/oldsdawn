@@ -90,6 +90,26 @@ fn cannot_draw_during_raid() {
 }
 
 #[test]
+fn maximum_hand_size() {
+    let mut g = new_game(
+        Side::Overlord,
+        Args { deck_top: Some(CardName::TestMinionEndRaid), ..Args::default() },
+    );
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(4, g.user.cards.hand(PlayerName::User).len());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(8, g.user.cards.hand(PlayerName::User).len());
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    assert_eq!(vec!["Test Minion End Raid"], g.user.cards.discard_pile(PlayerName::User));
+}
+
+#[test]
 fn play_card() {
     let mut g = new_game(Side::Champion, Args { actions: 3, mana: 5, ..Args::default() });
     let card_id = g.add_to_hand(CardName::ArcaneRecovery);

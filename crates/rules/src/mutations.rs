@@ -256,7 +256,7 @@ pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) {
     }
     dispatch::invoke_event(game, RaidEndEvent(RaidEnded { raid_id, outcome }));
     game.data.raid = None;
-    check_end_turn(game, Side::Champion)
+    check_end_turn(game)
 }
 
 /// Deals initial hands to both players and prompts for mulligan decisions.
@@ -331,14 +331,27 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Vec<
 
 /// Invoked after taking a game action to check if the turn should be switched
 /// for the provided player.
-pub fn check_end_turn(game: &mut GameState, side: Side) {
+pub fn check_end_turn(game: &mut GameState) {
     if !matches!(game.data.phase, GamePhase::Play) {
         return;
     }
 
-    let turn = &game.data.turn;
+    let turn = game.data.turn;
+    let side = turn.side;
 
-    if turn.side == side && game.player(side).actions == 0 && game.data.raid.is_none() {
+    if game.player(side).actions == 0 && game.data.raid.is_none() {
+        let max_hand_size = game.player(side).maximum_hand_size as usize;
+        let hand = game
+            .card_list_for_position(side, CardPosition::Hand(side))
+            .iter()
+            .map(|c| c.id)
+            .collect::<Vec<_>>();
+        if hand.len() > max_hand_size {
+            for card_id in hand.iter().take(hand.len() - max_hand_size) {
+                move_card(game, *card_id, CardPosition::DiscardPile(side));
+            }
+        }
+
         let turn_number = match side {
             Side::Overlord => turn.turn_number,
             Side::Champion => turn.turn_number + 1,
