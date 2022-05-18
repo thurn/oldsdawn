@@ -61,9 +61,6 @@ pub struct PlayerState {
     pub mana_state: ManaState,
     pub actions: ActionCount,
     pub score: PointsValue,
-    /// Maximum number of cards this user can have in hand at the end of their
-    /// turn.
-    pub maximum_hand_size: u32,
 
     /// Optionally, an AI Agent for this player. If provided, this agent will be
     /// used to determine game actions instead of prompting for UI input.
@@ -83,7 +80,6 @@ impl PlayerState {
             mana_state: ManaState::default(),
             actions: 0,
             score: 0,
-            maximum_hand_size: 7,
             prompt: None,
         }
     }

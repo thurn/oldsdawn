@@ -18,6 +18,7 @@
 use data::card_definition::{
     AttackBoost, CardStats, Cost, CustomCost, SchemePoints, SpecialEffects,
 };
+use data::card_state::CardPosition;
 use data::delegates::{
     AbilityActivated, CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded,
     RaidStart, RequirementFn, Scope, UsedWeapon,
@@ -110,6 +111,12 @@ pub fn face_up_in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
 pub fn face_down_in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
     let card = game.card(scope.card_id());
     card.is_face_down() && card.position().in_play()
+}
+
+/// RequirementFn that this delegate's card is currently in its owner's score
+/// pile
+pub fn scored_by_owner<T>(game: &GameState, scope: Scope, _: T) -> bool {
+    game.card(scope.card_id()).position() == CardPosition::Scored(scope.side())
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their

@@ -438,6 +438,9 @@ pub enum Delegate {
     /// Gets the number of cards the Champion player can access from the Sanctum
     /// during this raid
     SanctumAccessCount(QueryDelegate<RaidId, u32>),
+    /// Queries the maximum hand size of a player. Invoked with the default
+    /// maximum hand size.
+    MaximumHandSize(QueryDelegate<Side, u32>),
 }
 
 impl Delegate {

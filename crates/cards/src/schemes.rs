@@ -16,7 +16,7 @@
 
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, SchemePoints};
 use data::card_name::CardName;
-use data::delegates::{Delegate, EventDelegate};
+use data::delegates::{Delegate, EventDelegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
 use linkme::distributed_slice;
@@ -81,6 +81,42 @@ pub fn activate_reinforcements() -> CardDefinition {
         }],
         config: CardConfig {
             stats: scheme_points(SchemePoints { level_requirement: 5, points: 3 }),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn research_project() -> CardDefinition {
+    CardDefinition {
+        name: CardName::ResearchProject,
+        cost: scheme_cost(),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16"),
+        card_type: CardType::Scheme,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text![Keyword::Score, "Draw 2 cards.", "You get +2 maximum hand size."],
+            ability_type: AbilityType::Standard,
+            delegates: vec![
+                on_overlord_score(|g, s, _| {
+                    mutations::draw_cards(g, s.side(), 2);
+                }),
+                Delegate::MaximumHandSize(QueryDelegate {
+                    requirement: scored_by_owner,
+                    transformation: |_, s, side, current| {
+                        if s.side() == side {
+                            current + 2
+                        } else {
+                            current
+                        }
+                    },
+                }),
+            ],
+        }],
+        config: CardConfig {
+            stats: scheme_points(SchemePoints { level_requirement: 3, points: 1 }),
             ..CardConfig::default()
         },
     }

@@ -18,8 +18,8 @@ use data::card_definition::{AbilityType, AttackBoost, CardStats};
 use data::card_state::CardState;
 use data::delegates::{
     AbilityManaCostQuery, ActionCostQuery, AttackBoostQuery, AttackValueQuery, BoostCountQuery,
-    BreachValueQuery, HealthValueQuery, ManaCostQuery, SanctumAccessCountQuery, ShieldValueQuery,
-    StartOfTurnActionsQuery, VaultAccessCountQuery,
+    BreachValueQuery, HealthValueQuery, ManaCostQuery, MaximumHandSizeQuery,
+    SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery, VaultAccessCountQuery,
 };
 use data::game::{GamePhase, GameState, RaidPhase};
 use data::game_actions::CardTargetKind;
@@ -230,4 +230,9 @@ pub fn highest_cost<'a>(
         filtered.choose(&mut rand::thread_rng())
     }
     .map(|c| c.id)
+}
+
+/// Queries the maximum hand size for a player.
+pub fn maximum_hand_size(game: &GameState, side: Side) -> u32 {
+    dispatch::perform_query(game, MaximumHandSizeQuery(side), 7)
 }

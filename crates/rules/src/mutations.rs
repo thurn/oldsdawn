@@ -339,7 +339,7 @@ pub fn check_end_turn(game: &mut GameState) {
     let side = turn.side;
 
     if game.player(side).actions == 0 && game.data.raid.is_none() {
-        let max_hand_size = game.player(side).maximum_hand_size as usize;
+        let max_hand_size = queries::maximum_hand_size(game, side) as usize;
         let hand = game.card_list_for_position(side, CardPosition::Hand(side));
         if hand.len() > max_hand_size {
             let count = hand.len() - max_hand_size;

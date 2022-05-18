@@ -14,8 +14,9 @@
 
 use data::card_name::CardName;
 use data::primitives::Side;
+use protos::spelldawn::game_action::Action;
 use protos::spelldawn::object_position::Position;
-use protos::spelldawn::{ObjectPositionIdentity, PlayerName};
+use protos::spelldawn::{DrawCardAction, ObjectPositionIdentity, PlayerName};
 use test_utils::*;
 
 #[test]
@@ -45,4 +46,28 @@ fn activate_reinforcements() {
         g.user.get_card(id).position(),
         Position::Identity(ObjectPositionIdentity { owner: PlayerName::User.into() })
     );
+}
+
+#[test]
+fn research_project() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.play_from_hand(CardName::ResearchProject);
+    level_up_room(&mut g, 2);
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
+    level_up_room(&mut g, 1);
+    assert_eq!(3, g.user.cards.hand(PlayerName::User).len());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(6, g.user.cards.hand(PlayerName::User).len());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(10, g.user.cards.hand(PlayerName::User).len());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    g.perform(Action::DrawCard(DrawCardAction {}), g.user_id());
+    assert_eq!(9, g.user.cards.hand(PlayerName::User).len());
 }
