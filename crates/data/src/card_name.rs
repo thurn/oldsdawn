@@ -89,6 +89,7 @@ pub enum CardName {
     BowOfTheAlliance,
     ActivateReinforcements,
     ResearchProject,
+    Gemcarver,
 }
 
 impl CardName {

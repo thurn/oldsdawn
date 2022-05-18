@@ -148,7 +148,7 @@ pub fn unveil_at_dusk_then_store<const N: ManaValue>() -> Ability {
             requirement: face_down_in_play,
             mutation: |g, s, _| {
                 if mutations::unveil_card(g, s.card_id()) {
-                    g.card_mut(s.card_id()).data.stored_mana = N;
+                    add_stored_mana(g, s.card_id(), N);
                 }
             },
         })],

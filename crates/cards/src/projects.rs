@@ -30,7 +30,7 @@ pub fn gold_mine() -> CardDefinition {
     CardDefinition {
         name: CardName::GoldMine,
         cost: cost(4),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_43"),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_32"),
         card_type: CardType::Project,
         side: Side::Overlord,
         school: School::Time,
@@ -42,6 +42,39 @@ pub fn gold_mine() -> CardDefinition {
                 ability_type: AbilityType::Standard,
                 delegates: vec![at_dusk(|g, s, _| {
                     mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                    alert(g, s);
+                })],
+            },
+        ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn gemcarver() -> CardDefinition {
+    CardDefinition {
+        name: CardName::Gemcarver,
+        cost: cost(2),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_33"),
+        card_type: CardType::Project,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            abilities::unveil_at_dusk_then_store::<9>(),
+            Ability {
+                text: text![
+                    Keyword::Dusk,
+                    Keyword::Take(Sentence::Start, 3),
+                    ".",
+                    "When empty, draw a card."
+                ],
+                ability_type: AbilityType::Standard,
+                delegates: vec![at_dusk(|g, s, _| {
+                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                    if g.card(s.card_id()).data.stored_mana == 0 {
+                        mutations::draw_cards(g, s.side(), 1);
+                    }
                     alert(g, s);
                 })],
             },

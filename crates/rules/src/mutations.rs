@@ -40,7 +40,7 @@ use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
 use crate::mana::ManaPurpose;
-use crate::{dispatch, mana, queries};
+use crate::{constants, dispatch, mana, queries};
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events
@@ -270,9 +270,9 @@ pub fn deal_opening_hands(game: &mut GameState) {
             PromptAction::MulliganDecision(MulliganDecision::Mulligan),
         ],
     };
-    draw_cards(game, Side::Overlord, 5);
+    draw_cards(game, Side::Overlord, constants::STARTING_HAND_SIZE);
     set_prompt(game, Side::Overlord, prompt.clone());
-    draw_cards(game, Side::Champion, 5);
+    draw_cards(game, Side::Champion, constants::STARTING_HAND_SIZE);
     set_prompt(game, Side::Champion, prompt);
 }
 

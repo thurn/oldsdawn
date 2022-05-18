@@ -14,6 +14,7 @@
 
 use data::card_name::CardName;
 use data::primitives::Side;
+use protos::spelldawn::PlayerName;
 use test_utils::*;
 
 #[test]
@@ -27,4 +28,22 @@ fn gold_mine() {
     assert!(g.dusk());
     assert_eq!(STARTING_MANA - 4 /* cost */ + 3 /* taken */, g.me().mana());
     assert_eq!("9", g.user.get_card(id).arena_icon());
+}
+
+#[test]
+fn gemcarver() {
+    let (card_cost, taken) = (2, 3);
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.play_from_hand(CardName::Gemcarver);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(STARTING_MANA - card_cost + taken, g.me().mana());
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(STARTING_MANA - card_cost + taken * 2, g.me().mana());
+    assert_eq!(2, g.user.cards.hand(PlayerName::User).len());
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    spend_actions_until_turn_over(&mut g, Side::Champion);
+    assert_eq!(STARTING_MANA - card_cost + taken * 3, g.me().mana());
+    assert_eq!(4, g.user.cards.hand(PlayerName::User).len());
 }

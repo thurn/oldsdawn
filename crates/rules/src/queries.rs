@@ -29,7 +29,7 @@ use data::primitives::{
 };
 use rand::prelude::IteratorRandom;
 
-use crate::dispatch;
+use crate::{constants, dispatch};
 
 /// Returns true if the indicated player currently has a legal game action
 /// available to them.
@@ -234,5 +234,5 @@ pub fn highest_cost<'a>(
 
 /// Queries the maximum hand size for a player.
 pub fn maximum_hand_size(game: &GameState, side: Side) -> u32 {
-    dispatch::perform_query(game, MaximumHandSizeQuery(side), 7)
+    dispatch::perform_query(game, MaximumHandSizeQuery(side), constants::STARTING_MAXIMUM_HAND_SIZE)
 }
