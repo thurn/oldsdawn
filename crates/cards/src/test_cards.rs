@@ -303,7 +303,15 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
         cost: cost(UNVEIL_COST),
         card_type: CardType::Project,
         abilities: vec![
-            abilities::unveil_at_dusk_then_store::<MANA_STORED>(),
+            Ability {
+                text: text![
+                    Keyword::Unveil,
+                    "this project at Dusk, then",
+                    Keyword::Store(Sentence::Start, MANA_STORED)
+                ],
+                ability_type: AbilityType::Standard,
+                delegates: vec![unveil_at_dusk(), store_mana_on_unveil::<MANA_STORED>()],
+            },
             Ability {
                 text: text![Keyword::Dusk, Keyword::Take(Sentence::Start, MANA_TAKEN)],
                 ability_type: AbilityType::Standard,

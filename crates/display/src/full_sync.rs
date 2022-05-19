@@ -242,14 +242,15 @@ pub fn ability_card_view(
     let identifier = adapters::adapt_ability_id(ability_id);
     let definition = rules::get(card.name);
     let ability = rules::get(card.name).ability(ability_id.index);
-    let mana_cost =
-        if let AbilityType::Activated(cost, _) = &ability.ability_type { cost.mana } else { None };
-    CardView {
-        card_id: Some(identifier),
-        prefab: CardPrefab::TokenCard.into(),
-        revealed_to_viewer: true,
-        is_face_up: false,
-        card_icons: mana_cost.map(|mana| CardIcons {
+    let mana_cost = queries::ability_mana_cost(game, ability_id);
+    let icons = mana_cost.map_or(
+        CardIcons {
+            // We need to always explicitly send values for CardIcons in order to ensure icons
+            // are removed when no longer required.
+            top_left_icon: Some(CardIcon::default()),
+            ..CardIcons::default()
+        },
+        |mana| CardIcons {
             top_left_icon: Some(CardIcon {
                 enabled: true,
                 background: Some(assets::card_icon(CardIconType::Mana)),
@@ -257,7 +258,15 @@ pub fn ability_card_view(
                 background_scale: assets::background_scale(CardIconType::Mana),
             }),
             ..CardIcons::default()
-        }),
+        },
+    );
+
+    CardView {
+        card_id: Some(identifier),
+        prefab: CardPrefab::TokenCard.into(),
+        revealed_to_viewer: true,
+        is_face_up: false,
+        card_icons: Some(icons),
         arena_frame: None,
         owning_player: adapters::to_player_name(card.side(), user_side).into(),
         revealed_card: Some(RevealedCardView {

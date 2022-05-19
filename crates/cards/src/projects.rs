@@ -14,14 +14,15 @@
 
 //! Card definitions for the Project card type
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition};
+use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
+use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::mutations::OnZeroStored;
-use rules::{abilities, mutations, text, DEFINITIONS};
+use rules::mutations::{take_stored_mana, OnZeroStored};
+use rules::{mutations, queries, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -36,7 +37,11 @@ pub fn gold_mine() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            abilities::unveil_at_dusk_then_store::<12>(),
+            Ability {
+                text: text![Keyword::Unveil, "at Dusk, then", Keyword::Store(Sentence::Start, 12)],
+                ability_type: AbilityType::Standard,
+                delegates: vec![unveil_at_dusk(), store_mana_on_unveil::<12>()],
+            },
             Ability {
                 text: text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
                 ability_type: AbilityType::Standard,
@@ -61,7 +66,11 @@ pub fn gemcarver() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            abilities::unveil_at_dusk_then_store::<9>(),
+            Ability {
+                text: text![Keyword::Unveil, "at Dusk, then", Keyword::Store(Sentence::Start, 9)],
+                ability_type: AbilityType::Standard,
+                delegates: vec![unveil_at_dusk(), store_mana_on_unveil::<9>()],
+            },
             Ability {
                 text: text![
                     Keyword::Dusk,
@@ -77,6 +86,57 @@ pub fn gemcarver() -> CardDefinition {
                     }
                     alert(g, s);
                 })],
+            },
+        ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn coinery() -> CardDefinition {
+    CardDefinition {
+        name: CardName::Coinery,
+        cost: cost(2),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_33"),
+        card_type: CardType::Project,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            Ability {
+                text: text![
+                    Keyword::Unveil,
+                    "when activated, then",
+                    Keyword::Store(Sentence::Start, 15)
+                ],
+                ability_type: AbilityType::TextOnly,
+                delegates: vec![],
+            },
+            Ability {
+                text: text![Keyword::Take(Sentence::Start, 3)],
+                ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
+                delegates: vec![
+                    Delegate::CanActivateWhileFaceDown(QueryDelegate {
+                        requirement: this_ability,
+                        transformation: |_g, _, _, current| current.with_override(true),
+                    }),
+                    Delegate::AbilityManaCost(QueryDelegate {
+                        requirement: this_ability,
+                        transformation: |g, s, _, current| {
+                            if g.card(s.card_id()).is_face_up() {
+                                current
+                            } else {
+                                Some(current.unwrap_or(0) + queries::mana_cost(g, s.card_id())?)
+                            }
+                        },
+                    }),
+                    on_activated(|g, s, _| {
+                        if mutations::unveil_project_for_free(g, s.card_id()) {
+                            add_stored_mana(g, s.card_id(), 15);
+                        }
+                        take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                    }),
+                ],
             },
         ],
         config: CardConfig::default(),

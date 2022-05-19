@@ -191,7 +191,7 @@ impl Flag {
     }
 
     /// Incorporates an override into this flag, following the precedence rules
-    /// described above
+    /// described for [Flag] above.
     pub fn with_override(self, value: bool) -> Self {
         match self {
             Self::Default(_) => Self::Override(value),
@@ -342,6 +342,8 @@ pub enum Delegate {
     CastCard(EventDelegate<CardPlayed>),
     /// A card ability with a cost is activated
     ActivateAbility(EventDelegate<AbilityActivated>),
+    /// A project card is unveiled (turned face up by paying its cost)
+    UnveilProject(EventDelegate<CardId>),
     /// A minion card is turned face up.
     SummonMinion(EventDelegate<CardId>),
     /// A card is moved to a new position
@@ -393,6 +395,8 @@ pub enum Delegate {
     CanPlayCard(QueryDelegate<CardId, Flag>),
     /// Query whether a given ability can currently be activated.
     CanActivateAbility(QueryDelegate<AbilityId, Flag>),
+    /// Query whether an ability can be activated while its card is face-down
+    CanActivateWhileFaceDown(QueryDelegate<AbilityId, Flag>),
     /// Can the indicated player currently take the basic game action to
     /// initiate a raid?
     CanInitiateRaid(QueryDelegate<Side, Flag>),

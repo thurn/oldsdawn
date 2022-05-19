@@ -34,7 +34,7 @@ use data::text::{NumericOperator, TextToken};
 use data::updates::GameUpdate;
 use data::utils;
 
-use crate::raid_actions;
+use crate::{mutations, raid_actions};
 
 pub fn number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::None, number.into())
@@ -165,6 +165,10 @@ pub fn on_cast(mutation: MutationFn<CardPlayed>) -> Delegate {
 /// A [Delegate] which triggers when an ability is activated
 pub fn on_activated(mutation: MutationFn<AbilityActivated>) -> Delegate {
     Delegate::ActivateAbility(EventDelegate { requirement: this_ability, mutation })
+}
+
+pub fn when_unveiled(mutation: MutationFn<CardId>) -> Delegate {
+    Delegate::UnveilProject(EventDelegate { requirement: this_card, mutation })
 }
 
 /// A delegate which triggers at dawn if a card is face up in play
@@ -326,4 +330,21 @@ pub fn add_stored_mana(game: &mut GameState, card_id: CardId, amount: ManaValue)
 /// Creates a [SpecialEffects] to fire a given [Projectile].
 pub fn projectile(projectile: Projectile) -> SpecialEffects {
     SpecialEffects { projectile: Some(projectile), additional_hit: None }
+}
+
+/// Delegate to attempt to unveil a project each turn at Dusk.
+pub fn unveil_at_dusk() -> Delegate {
+    Delegate::Dusk(EventDelegate {
+        requirement: face_down_in_play,
+        mutation: |g, s, _| {
+            mutations::try_unveil_project(g, s.card_id());
+        },
+    })
+}
+
+/// Delegate to store mana in a card when it is unveiled
+pub fn store_mana_on_unveil<const N: u32>() -> Delegate {
+    when_unveiled(|g, s, _| {
+        add_stored_mana(g, s.card_id(), N);
+    })
 }

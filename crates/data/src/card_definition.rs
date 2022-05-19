@@ -56,7 +56,7 @@ impl<T> Debug for CustomCost<T> {
     }
 }
 
-/// Cost to play a card or activate an ability
+/// Cost to play, unveil, or summon a card, or activate an ability
 #[derive(Debug, Clone)]
 pub struct Cost<T> {
     /// Cost in mana
@@ -146,6 +146,9 @@ pub enum AbilityType {
 
     /// Activated abilities have an associated cost in order to be used.
     Activated(Cost<AbilityId>, TargetRequirement<AbilityId>),
+
+    /// Abilities which have no effect, but simply provide additional card text.
+    TextOnly,
 }
 
 /// Abilities are the unit of action in Spelldawn. Their behavior is provided by

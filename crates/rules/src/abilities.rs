@@ -72,12 +72,9 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability
     Ability {
         text: text![Keyword::Take(Sentence::Start, N)],
         ability_type: AbilityType::Activated(cost, TargetRequirement::None),
-        delegates: vec![Delegate::ActivateAbility(EventDelegate::new(
-            this_ability,
-            |g, _s, activated| {
-                mutations::take_stored_mana(g, activated.card_id(), N, OnZeroStored::Sacrifice);
-            },
-        ))],
+        delegates: vec![on_activated(|g, _s, activated| {
+            mutations::take_stored_mana(g, activated.card_id(), N, OnZeroStored::Sacrifice);
+        })],
     }
 }
 
@@ -132,25 +129,4 @@ fn add_boost(
     let boost_count = queries::boost_count(game, card_id);
     let bonus = queries::attack_boost(game, card_id).expect("Expected boost").bonus;
     current + (boost_count * bonus)
-}
-
-/// Ability to unveil a project at Dusk, then store a fixed amount of mana in
-/// it.
-pub fn unveil_at_dusk_then_store<const N: ManaValue>() -> Ability {
-    Ability {
-        text: text![
-            Keyword::Unveil,
-            "this project at dusk, then",
-            Keyword::Store(Sentence::Internal, N)
-        ],
-        ability_type: AbilityType::Standard,
-        delegates: vec![Delegate::Dusk(EventDelegate {
-            requirement: face_down_in_play,
-            mutation: |g, s, _| {
-                if mutations::unveil_card(g, s.card_id()) {
-                    add_stored_mana(g, s.card_id(), N);
-                }
-            },
-        })],
-    }
 }

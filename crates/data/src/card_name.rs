@@ -90,6 +90,7 @@ pub enum CardName {
     ActivateReinforcements,
     ResearchProject,
     Gemcarver,
+    Coinery,
 }
 
 impl CardName {

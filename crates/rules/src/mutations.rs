@@ -28,7 +28,7 @@ use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
     CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
     RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome, RaidSuccessEvent, Scope, ScoreCard,
-    ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
+    ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent, UnveilProjectEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
 use data::game_actions::{Prompt, PromptAction};
@@ -388,12 +388,12 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
     }
 }
 
-/// Attempt to pay a card's cost and turn it face up. Has no effect if the card
-/// is not in play, already face up, or if the cost cannot be paid.
+/// Attempt to pay a project's cost and turn it face up. Has no effect if the
+/// card is not in play, already face up, or if the cost cannot be paid.
 ///
 /// Returns true if the card was unveiled.
-pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
-    if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
+pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> bool {
+    let result = if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
         if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
             if (custom_cost.can_pay)(game, card_id) {
                 (custom_cost.pay)(game, card_id);
@@ -418,7 +418,27 @@ pub fn unveil_card(game: &mut GameState, card_id: CardId) -> bool {
         }
     } else {
         false
+    };
+
+    if result {
+        dispatch::invoke_event(game, UnveilProjectEvent(card_id));
     }
+    result
+}
+
+/// Equivalent function to [try_unveil_project] which ignores costs.
+pub fn unveil_project_for_free(game: &mut GameState, card_id: CardId) -> bool {
+    let result = if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
+        turn_face_up(game, card_id);
+        true
+    } else {
+        false
+    };
+
+    if result {
+        dispatch::invoke_event(game, UnveilProjectEvent(card_id));
+    }
+    result
 }
 
 /// Starts the turn for the `next_side` player.

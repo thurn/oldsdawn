@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 298
+assertion_line: 318
 expression: "Summary::run(&response)"
 ---
 
@@ -35,6 +35,8 @@ channel_response:
             card_id: C45[1]
             revealed_to_viewer: true
             is_face_up: false
+            card_icons: 
+                top_left_icon: 
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"

@@ -18,9 +18,9 @@
 use data::card_definition::{AbilityType, TargetRequirement};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
-    CanActivateAbilityQuery, CanDefeatTargetQuery, CanEncounterTargetQuery, CanInitiateRaidQuery,
-    CanLevelUpRoomQuery, CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery,
-    CardEncounter, Flag,
+    CanActivateAbilityQuery, CanActivateWhileFaceDownQuery, CanDefeatTargetQuery,
+    CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpRoomQuery, CanPlayCardQuery,
+    CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
 };
 use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
 use data::game_actions::{CardTarget, EncounterAction};
@@ -35,6 +35,17 @@ pub fn can_make_mulligan_decision(game: &GameState, side: Side) -> bool {
     matches!(
         &game.data.phase, GamePhase::ResolveMulligans(mulligan) if mulligan.decision(side).is_none()
     )
+}
+
+/// Returns true if the owner of the `card_id` card can current pay its cost.
+pub fn can_pay_card_cost(game: &GameState, card_id: CardId) -> bool {
+    let mut can_pay = matches!(queries::mana_cost(game, card_id), Some(cost)
+                             if cost <= mana::get(game, card_id.side, ManaPurpose::PayForCard(card_id)));
+    if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
+        can_pay &= (custom_cost.can_pay)(game, card_id);
+    }
+
+    can_pay
 }
 
 /// Returns whether a given card can currently be played via the basic game
@@ -52,14 +63,17 @@ pub fn can_take_play_card_action(
         && queries::action_cost(game, card_id) <= game.player(side).actions;
 
     if enters_play_face_up(game, card_id) {
-        can_play &= matches!(queries::mana_cost(game, card_id), Some(cost)
-                             if cost <= mana::get(game, side, ManaPurpose::PayForCard(card_id)));
-        if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
-            can_play &= (custom_cost.can_pay)(game, card_id);
-        }
+        can_play &= can_pay_card_cost(game, card_id);
     }
 
     dispatch::perform_query(game, CanPlayCardQuery(card_id), Flag::new(can_play)).into()
+}
+
+/// Whether the `ability_id` ability can be activated while its card is face
+/// down in play.
+pub fn can_activate_while_face_down(game: &GameState, ability_id: AbilityId) -> bool {
+    dispatch::perform_query(game, CanActivateWhileFaceDownQuery(ability_id), Flag::new(false))
+        .into()
 }
 
 /// Whether the `ability_id` ability can currently be activated with the
@@ -84,8 +98,9 @@ pub fn can_take_activate_ability_action(
 
     let mut can_activate = queries::in_main_phase(game, side)
         && side == ability_id.card_id.side
+        && cost.actions <= game.player(side).actions
         && card.position().in_play()
-        && cost.actions <= game.player(side).actions;
+        && (card.is_face_up() || can_activate_while_face_down(game, ability_id));
 
     if let Some(custom_cost) = &cost.custom_cost {
         can_activate &= (custom_cost.can_pay)(game, ability_id);

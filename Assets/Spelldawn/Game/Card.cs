@@ -520,9 +520,8 @@ namespace Spelldawn.Game
       if (cardIcon?.Text != null)
       {
         icon.Text.text = cardIcon.Text;
+        iconContainer.gameObject.SetActive(show);
       }
-
-      iconContainer.gameObject.SetActive(show);
     }
 
     void SetTitle(string? title)
