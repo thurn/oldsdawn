@@ -92,8 +92,8 @@ impl Database for SledDatabase {
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
                     CardName::PitTrap => 15,
-                    CardName::Coinery => 15,
-                    CardName::GoldMine => 15
+                    CardName::GatheringDark => 15,
+                    CardName::OverwhelmingPower => 15
                 },
             }
         })

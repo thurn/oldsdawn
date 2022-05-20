@@ -12,10 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod artifact_tests;
-mod champion_spell_tests;
-mod minion_tests;
-mod overlord_spell_tests;
-mod project_tests;
-mod scheme_tests;
-mod weapon_tests;
+use data::card_name::CardName;
+use data::primitives::Side;
+use test_utils::*;
+
+#[test]
+fn gathering_dark() {
+    let (cost, gained) = (5, 9);
+    let mut g = new_game(Side::Champion, Args::default());
+    g.play_from_hand(CardName::GatheringDark);
+    assert_eq!(STARTING_MANA - cost + gained, g.me().mana());
+}
+
+#[test]
+fn overwhelming_power() {
+    let (cost, gained) = (10, 15);
+    let mut g = new_game(Side::Champion, Args::default());
+    g.play_from_hand(CardName::OverwhelmingPower);
+    assert_eq!(STARTING_MANA - cost + gained, g.me().mana());
+}

@@ -92,6 +92,8 @@ pub enum CardName {
     Gemcarver,
     Coinery,
     PitTrap,
+    GatheringDark,
+    OverwhelmingPower,
 }
 
 impl CardName {

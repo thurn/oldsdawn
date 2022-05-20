@@ -18,6 +18,7 @@ pub mod artifacts;
 pub mod champion_spells;
 pub mod decklists;
 pub mod minions;
+pub mod overlord_spells;
 pub mod projects;
 pub mod schemes;
 pub mod test_cards;
@@ -34,6 +35,7 @@ pub fn initialize() -> usize {
     projects::initialize();
     schemes::initialize();
     champion_spells::initialize();
+    overlord_spells::initialize();
     test_cards::initialize();
     weapons::initialize();
 
