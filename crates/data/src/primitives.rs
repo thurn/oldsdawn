@@ -276,10 +276,10 @@ pub enum Rarity {
 /// Possible types of cards
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum CardType {
-    Spell,
+    ChampionSpell,
     Weapon,
     Artifact,
-    Sorcery,
+    OverlordSpell,
     Minion,
     Project,
     Scheme,

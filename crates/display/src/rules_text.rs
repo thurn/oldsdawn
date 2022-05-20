@@ -201,10 +201,10 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
 fn card_type_line(definition: &CardDefinition) -> String {
     let mut result = String::new();
     result.push_str(match definition.card_type {
-        CardType::Spell => "Spell",
+        CardType::ChampionSpell => "Spell",
         CardType::Weapon => "Weapon",
         CardType::Artifact => "Artifact",
-        CardType::Sorcery => "Sorcery",
+        CardType::OverlordSpell => "Spell",
         CardType::Minion => "Minion",
         CardType::Project => "Project",
         CardType::Scheme => "Scheme",

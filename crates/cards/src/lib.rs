@@ -15,11 +15,11 @@
 //! Contains the definitions for all cards in the game.
 
 pub mod artifacts;
+pub mod champion_spells;
 pub mod decklists;
 pub mod minions;
 pub mod projects;
 pub mod schemes;
-pub mod spells;
 pub mod test_cards;
 pub mod weapons;
 
@@ -33,7 +33,7 @@ pub fn initialize() -> usize {
     minions::initialize();
     projects::initialize();
     schemes::initialize();
-    spells::initialize();
+    champion_spells::initialize();
     test_cards::initialize();
     weapons::initialize();
 

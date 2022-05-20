@@ -626,8 +626,8 @@ fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTa
 
     CardTargeting {
         targeting: match rules::get(card.name).card_type {
-            CardType::Sorcery
-            | CardType::Spell
+            CardType::OverlordSpell
+            | CardType::ChampionSpell
             | CardType::Weapon
             | CardType::Artifact
             | CardType::Identity => Some(Targeting::NoTargeting(NoTargeting {
@@ -650,7 +650,7 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
     ObjectPosition {
         sorting_key: u32::MAX,
         position: Some(match definition.card_type {
-            CardType::Sorcery | CardType::Spell | CardType::Identity => {
+            CardType::OverlordSpell | CardType::ChampionSpell | CardType::Identity => {
                 Position::Staging(ObjectPositionStaging {})
             }
             CardType::Weapon => Position::Item(ObjectPositionItem {

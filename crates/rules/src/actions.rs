@@ -151,7 +151,7 @@ fn play_card_action(
     dispatch::invoke_event(game, CastCardEvent(CardPlayed { card_id, target }));
 
     let new_position = match definition.card_type {
-        CardType::Spell | CardType::Sorcery => CardPosition::DiscardPile(user_side),
+        CardType::ChampionSpell | CardType::OverlordSpell => CardPosition::DiscardPile(user_side),
         CardType::Weapon => CardPosition::ArenaItem(ItemLocation::Weapons),
         CardType::Artifact => CardPosition::ArenaItem(ItemLocation::Artifacts),
         CardType::Minion => CardPosition::Room(target.room_id()?, RoomLocation::Defender),

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 mod artifact_tests;
+mod champion_spell_tests;
 mod minion_tests;
 mod project_tests;
 mod scheme_tests;
-mod spell_tests;
 mod weapon_tests;

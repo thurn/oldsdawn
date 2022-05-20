@@ -71,7 +71,7 @@ pub fn test_overlord_spell() -> CardDefinition {
     CardDefinition {
         name: CardName::TestOverlordSpell,
         cost: cost(1),
-        card_type: CardType::Sorcery,
+        card_type: CardType::OverlordSpell,
         ..test_overlord_identity()
     }
 }
@@ -81,7 +81,7 @@ pub fn test_champion_spell() -> CardDefinition {
     CardDefinition {
         name: CardName::TestChampionSpell,
         cost: cost(1),
-        card_type: CardType::Spell,
+        card_type: CardType::ChampionSpell,
         ..test_champion_identity()
     }
 }
