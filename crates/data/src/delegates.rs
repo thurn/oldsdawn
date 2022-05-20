@@ -374,6 +374,9 @@ pub enum Delegate {
     /// Minion encounters have been completed for a raid and the Access phase is
     /// about to start. The set of accessed cards has not yet been selected.
     RaidAccessStart(EventDelegate<RaidId>),
+    /// The card with the provided `card_id` has been accessed during a raid (in
+    /// any zone), but not yet scored/acted on.
+    CardAccess(EventDelegate<CardId>),
     /// A Raid is completed, either successfully or unsuccessfully.
     ///
     /// Note that this is invoked before `game.data.raid` is cleared.
@@ -403,6 +406,11 @@ pub enum Delegate {
     /// Can the indicated player currently take the basic game action to level
     /// up a room?
     CanLevelUpRoom(QueryDelegate<Side, Flag>),
+    /// Can the indicated card be leveled up when the level up action is taken
+    /// for a room?
+    ///
+    /// Note that Scheme cards can be leveled up by default.
+    CanLevelUpCard(QueryDelegate<CardId, Flag>),
     /// Can the source card (typically a weapon) take an encounter action
     /// against the target card (typically a minion) during a raid?
     CanEncounterTarget(QueryDelegate<CardEncounter, Flag>),

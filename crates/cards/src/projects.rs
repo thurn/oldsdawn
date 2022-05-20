@@ -16,13 +16,12 @@
 
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
-use data::delegates::{Delegate, QueryDelegate};
-use data::primitives::{CardType, Rarity, School, Side};
+use data::primitives::{CardType, DamageType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::{take_stored_mana, OnZeroStored};
-use rules::{mutations, queries, text, DEFINITIONS};
+use rules::{abilities, mutations, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -103,33 +102,17 @@ pub fn coinery() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            Ability {
-                text: text![
-                    Keyword::Unveil,
-                    "when activated, then",
-                    Keyword::Store(Sentence::Start, 15)
-                ],
-                ability_type: AbilityType::TextOnly,
-                delegates: vec![],
-            },
+            text_only_ability(text![
+                Keyword::Unveil,
+                "when activated, then",
+                Keyword::Store(Sentence::Start, 15)
+            ]),
             Ability {
                 text: text![Keyword::Take(Sentence::Start, 3)],
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
                 delegates: vec![
-                    Delegate::CanActivateWhileFaceDown(QueryDelegate {
-                        requirement: this_ability,
-                        transformation: |_g, _, _, current| current.with_override(true),
-                    }),
-                    Delegate::AbilityManaCost(QueryDelegate {
-                        requirement: this_ability,
-                        transformation: |g, s, _, current| {
-                            if g.card(s.card_id()).is_face_up() {
-                                current
-                            } else {
-                                Some(current.unwrap_or(0) + queries::mana_cost(g, s.card_id())?)
-                            }
-                        },
-                    }),
+                    activate_while_face_down(),
+                    face_down_ability_cost(),
                     on_activated(|g, s, _| {
                         if mutations::unveil_project_for_free(g, s.card_id()) {
                             add_stored_mana(g, s.card_id(), 15);
@@ -137,6 +120,40 @@ pub fn coinery() -> CardDefinition {
                         take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
                     }),
                 ],
+            },
+        ],
+        config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn pit_trap() -> CardDefinition {
+    CardDefinition {
+        name: CardName::PitTrap,
+        cost: cost(2),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_34"),
+        card_type: CardType::Project,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            abilities::level_up(),
+            Ability {
+                text: text![
+                    Keyword::Trap,
+                    "If this card is in play, deal 2 damage plus 1 per level counter"
+                ],
+                ability_type: AbilityType::Standard,
+                delegates: vec![on_accessed(|g, s, _| {
+                    if g.card(s.card_id()).position().in_play() {
+                        mutations::deal_damage(
+                            g,
+                            DamageType::Physical,
+                            2 + g.card(s.card_id()).data.card_level,
+                        );
+                        alert(g, s);
+                    }
+                })],
             },
         ],
         config: CardConfig::default(),

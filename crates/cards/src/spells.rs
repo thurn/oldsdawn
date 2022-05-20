@@ -19,8 +19,8 @@ use data::card_name::CardName;
 use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
 use linkme::distributed_slice;
-use rules::card_text::text;
 use rules::helpers::*;
+use rules::text_macro::text;
 use rules::{flags, mana, mutations, DEFINITIONS};
 
 pub fn initialize() {}

@@ -25,7 +25,6 @@ use once_cell::sync::Lazy;
 
 pub mod abilities;
 pub mod actions;
-pub mod card_text;
 pub mod constants;
 pub mod dispatch;
 pub mod flags;
@@ -35,6 +34,7 @@ pub mod mutations;
 pub mod queries;
 pub mod raid_actions;
 pub mod raid_phases;
+pub mod text_macro;
 
 #[distributed_slice]
 pub static DEFINITIONS: [fn() -> CardDefinition] = [..];

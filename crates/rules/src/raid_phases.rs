@@ -18,7 +18,7 @@ use std::iter;
 
 use anyhow::Result;
 use data::card_state::CardPosition;
-use data::delegates::RaidAccessStartEvent;
+use data::delegates::{CardAccessEvent, RaidAccessStartEvent};
 use data::game::{GameState, RaidPhase};
 use data::game_actions::{
     ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
@@ -54,7 +54,11 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
         RaidPhase::Continue(_) => {}
         RaidPhase::Access => {
             dispatch::invoke_event(game, RaidAccessStartEvent(game.raid()?.raid_id));
-            game.raid_mut()?.accessed = accessed_cards(game)?;
+            let accessed = accessed_cards(game)?;
+            for card_id in &accessed {
+                dispatch::invoke_event(game, CardAccessEvent(*card_id));
+            }
+            game.raid_mut()?.accessed = accessed;
         }
     }
 
@@ -82,7 +86,8 @@ pub fn can_summon_defender(game: &GameState, defender_index: usize) -> bool {
 }
 
 /// Returns a vector of the cards accessed for the current raid target, mutating
-/// the [GameState] to store the results of random zone selections.
+/// the [GameState] to store the results of random zone selections and mark
+/// cards as revealed.
 fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
     let target = game.raid()?.target;
 

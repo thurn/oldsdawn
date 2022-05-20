@@ -109,8 +109,6 @@ pub struct CardStats {
     pub attack_boost: Option<AttackBoost>,
     /// Level Requirement & points for scoring this card
     pub scheme_points: Option<SchemePoints>,
-    /// Can this card gain levels from the 'level up room' action?
-    pub can_level_up: bool,
 }
 
 pub type RoomPredicate<T> = fn(&GameState, T, RoomId) -> bool;

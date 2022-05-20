@@ -81,6 +81,8 @@ pub enum Keyword {
     EndRaid,
     Shield(ShieldValue),
     Breach(BreachValue),
+    LevelUp,
+    Trap,
 }
 
 impl Keyword {

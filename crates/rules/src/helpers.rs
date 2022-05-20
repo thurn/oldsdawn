@@ -16,7 +16,7 @@
 //! wildcard import in card definition files.
 
 use data::card_definition::{
-    AttackBoost, CardStats, Cost, CustomCost, SchemePoints, SpecialEffects,
+    Ability, AbilityType, AttackBoost, CardStats, Cost, CustomCost, SchemePoints, SpecialEffects,
 };
 use data::card_state::CardPosition;
 use data::delegates::{
@@ -30,11 +30,11 @@ use data::primitives::{
     TurnNumber,
 };
 use data::special_effects::Projectile;
-use data::text::{NumericOperator, TextToken};
+use data::text::{AbilityText, NumericOperator, TextToken};
 use data::updates::GameUpdate;
 use data::utils;
 
-use crate::{mutations, raid_actions};
+use crate::{mutations, queries, raid_actions};
 
 pub fn number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::None, number.into())
@@ -54,6 +54,11 @@ pub fn actions_text(value: ActionCount) -> TextToken {
 
 pub fn reminder(text: &'static str) -> TextToken {
     TextToken::Reminder(text.to_string())
+}
+
+/// An ability which only exists to add text to a card.
+pub fn text_only_ability(text: AbilityText) -> Ability {
+    Ability { text, ability_type: AbilityType::TextOnly, delegates: vec![] }
 }
 
 /// A [Cost] which requires no mana and `actions` action points.
@@ -215,6 +220,11 @@ pub fn on_raid_access_start(
     Delegate::RaidAccessStart(EventDelegate { requirement, mutation })
 }
 
+/// Delegate which fires when its card is accessed
+pub fn on_accessed(mutation: MutationFn<CardId>) -> Delegate {
+    Delegate::CardAccess(EventDelegate { requirement: this_card, mutation })
+}
+
 /// A delegate which fires when a raid ends in any way (except the game ending).
 pub fn on_raid_ended(
     requirement: RequirementFn<RaidEnded>,
@@ -272,10 +282,9 @@ pub fn health(health: HealthValue) -> CardStats {
     CardStats { health: Some(health), ..CardStats::default() }
 }
 
-/// Helper to create a [CardStats] with the given [SchemePoints] and mark it as
-/// a card which can be leveled up.
+/// Helper to create a [CardStats] with the given [SchemePoints].
 pub fn scheme_points(points: SchemePoints) -> CardStats {
-    CardStats { scheme_points: Some(points), can_level_up: true, ..CardStats::default() }
+    CardStats { scheme_points: Some(points), ..CardStats::default() }
 }
 
 /// Initiates a raid on the `target` room and stores the raid ID as ability
@@ -346,5 +355,28 @@ pub fn unveil_at_dusk() -> Delegate {
 pub fn store_mana_on_unveil<const N: u32>() -> Delegate {
     when_unveiled(|g, s, _| {
         add_stored_mana(g, s.card_id(), N);
+    })
+}
+
+/// Marks an ability as possible to activate while its card is face-down
+pub fn activate_while_face_down() -> Delegate {
+    Delegate::CanActivateWhileFaceDown(QueryDelegate {
+        requirement: this_ability,
+        transformation: |_g, _, _, current| current.with_override(true),
+    })
+}
+
+/// Makes an ability's mana cost equal to the cost of its parent card while that
+/// card is face-down.
+pub fn face_down_ability_cost() -> Delegate {
+    Delegate::AbilityManaCost(QueryDelegate {
+        requirement: this_ability,
+        transformation: |g, s, _, current| {
+            if g.card(s.card_id()).is_face_up() {
+                current
+            } else {
+                Some(current.unwrap_or(0) + queries::mana_cost(g, s.card_id())?)
+            }
+        },
     })
 }

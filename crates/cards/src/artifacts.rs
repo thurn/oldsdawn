@@ -23,9 +23,9 @@ use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use data::utils;
 use linkme::distributed_slice;
-use rules::card_text::text;
 use rules::helpers::*;
 use rules::mutations::OnZeroStored;
+use rules::text_macro::text;
 use rules::{abilities, mutations, DEFINITIONS};
 
 pub fn initialize() {}

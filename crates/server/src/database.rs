@@ -91,7 +91,7 @@ impl Database for SledDatabase {
                 owner_id: player_id,
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
-                    CardName::ResearchProject => 15,
+                    CardName::PitTrap => 15,
                     CardName::Coinery => 15,
                     CardName::GoldMine => 15
                 },

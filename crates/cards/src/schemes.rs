@@ -20,9 +20,9 @@ use data::delegates::{Delegate, EventDelegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
 use linkme::distributed_slice;
-use rules::card_text::text;
 use rules::helpers::*;
 use rules::mutations::SummonMinion;
+use rules::text_macro::text;
 use rules::{mana, mutations, queries, DEFINITIONS};
 
 pub fn initialize() {}

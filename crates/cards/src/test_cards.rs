@@ -161,7 +161,7 @@ pub fn test_minion_deal_damage() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionDealDamage,
         cost: cost(1),
-        abilities: vec![abilities::deal_damage::<ColdDamage, 1>()],
+        abilities: vec![abilities::combat_deal_damage::<ColdDamage, 1>()],
         card_type: CardType::Minion,
         config: CardConfig {
             stats: health(MINION_HEALTH),

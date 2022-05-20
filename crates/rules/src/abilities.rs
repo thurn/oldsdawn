@@ -17,14 +17,13 @@
 use data::card_definition::{Ability, AbilityType, Cost, TargetRequirement};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope};
-use data::game::{GameOverData, GamePhase, GameState};
-use data::primitives::{AbilityId, AttackValue, CardId, DamageTypeTrait, ManaValue, Side};
+use data::game::GameState;
+use data::primitives::{AbilityId, AttackValue, CardId, DamageTypeTrait, ManaValue};
 use data::text::{AbilityText, Keyword, Sentence, TextToken};
-use data::updates::GameUpdate;
 
-use crate::card_text::text;
 use crate::helpers::*;
 use crate::mutations::OnZeroStored;
+use crate::text_macro::text;
 use crate::{mutations, queries};
 
 /// The standard weapon ability; applies an attack boost for the duration of a
@@ -78,31 +77,15 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability
     }
 }
 
-/// Discard a random card from the hand of the `side` player, if there are any
-/// cards present. Invokes the `on_empty` function if a card cannot be
-/// discarded.
-fn discard_random_card(game: &mut GameState, side: Side, on_empty: impl Fn(&mut GameState)) {
-    if let Some(card_id) = game.random_card(CardPosition::Hand(side)) {
-        mutations::move_card(game, card_id, CardPosition::DiscardPile(side));
-    } else {
-        on_empty(game);
-    }
-}
-
 /// Minion combat ability which deals damage to the Champion player during
 /// combat, causing them to discard `N` random cards and lose the game if they
 /// cannot.
-pub fn deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
+pub fn combat_deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
     Ability {
         text: text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())],
         ability_type: AbilityType::Standard,
         delegates: vec![combat(|g, _, _| {
-            for _ in 0..N {
-                discard_random_card(g, Side::Champion, |g| {
-                    g.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
-                    g.updates.push(GameUpdate::GameOver(Side::Overlord));
-                });
-            }
+            mutations::deal_damage(g, TDamage::damage_type(), N);
         })],
     }
 }
@@ -129,4 +112,16 @@ fn add_boost(
     let boost_count = queries::boost_count(game, card_id);
     let bonus = queries::attack_boost(game, card_id).expect("Expected boost").bonus;
     current + (boost_count * bonus)
+}
+
+/// An ability which allows a card to have level counters placed on it.
+pub fn level_up() -> Ability {
+    Ability {
+        text: text![Keyword::LevelUp],
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::CanLevelUpCard(QueryDelegate {
+            requirement: this_card,
+            transformation: |_g, _, _, current| current.with_override(true),
+        })],
+    }
 }

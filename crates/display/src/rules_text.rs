@@ -137,19 +137,20 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 Keyword::Play => "<b>\u{f0e7}Play:</b>".to_string(),
                 Keyword::Dawn => "<b>\u{f0e7}Dawn:</b>".to_string(),
                 Keyword::Dusk => "<b>\u{f0e7}Dusk:</b>".to_string(),
-                Keyword::Score => "<b>\u{f0e7}Score:</b>".to_string(),
-                Keyword::Combat => "<b>\u{f0e7}Combat:</b>".to_string(),
+                Keyword::Score => format!("<b>{}Score:</b>", icons::TRIGGER),
+                Keyword::Combat => format!("<b>{}Combat:</b>", icons::TRIGGER),
                 Keyword::Unveil => "<b>Unveil</b>".to_string(),
-                Keyword::SuccessfulRaid => "<b>\u{f0e7}Successful Raid:</b>".to_string(),
+                Keyword::SuccessfulRaid => format!("<b>{}Successful Raid:</b>", icons::TRIGGER),
                 Keyword::Store(sentence_position, n) => {
                     format!(
-                        "<b>{}</b>{}{}\u{f06d}",
+                        "<b>{}</b>{}{}{}",
                         match sentence_position {
                             Sentence::Start => "Store",
                             Sentence::Internal => "store",
                         },
                         icons::NON_BREAKING_SPACE,
-                        n
+                        n,
+                        icons::MANA
                     )
                 }
                 Keyword::Take(sentence_position, n) => format!(
@@ -184,6 +185,8 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 Keyword::Breach(breach) => {
                     format!("<b>Breach</b>{}{}", icons::NON_BREAKING_SPACE, breach)
                 }
+                Keyword::LevelUp => "<b>Level Up</b>".to_string(),
+                Keyword::Trap => format!("<b>{}Trap:</b>", icons::TRIGGER),
             },
             TextToken::Reminder(text) => format!("<i>{}</i>", text),
             TextToken::Cost(cost) => format!("{}: ", process_text_tokens(cost)),
@@ -292,6 +295,13 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
             }
             KeywordKind::Breach => output.push(
                 "<b>Breach:</b> Allows this weapon to bypass some amount of Shield.".to_string(),
+            ),
+            KeywordKind::LevelUp => output.push(
+                "<b>Level Up:</b> This card gets level counters when its room is leveled up."
+                    .to_string(),
+            ),
+            KeywordKind::Trap => output.push(
+                "<b>Trap:</b> Triggers when this card is accessed during a raid.".to_string(),
             ),
             _ => {}
         };

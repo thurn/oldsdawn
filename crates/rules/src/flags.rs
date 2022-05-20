@@ -19,8 +19,8 @@ use data::card_definition::{AbilityType, TargetRequirement};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     CanActivateAbilityQuery, CanActivateWhileFaceDownQuery, CanDefeatTargetQuery,
-    CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpRoomQuery, CanPlayCardQuery,
-    CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
+    CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpCardQuery, CanLevelUpRoomQuery,
+    CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
 };
 use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
 use data::game_actions::{CardTarget, EncounterAction};
@@ -217,12 +217,19 @@ pub fn can_take_level_up_room_action(game: &GameState, side: Side, room_id: Room
     let has_level_card = game
         .occupants(room_id)
         .chain(game.defenders_alphabetical(room_id))
-        .any(|card| crate::get(card.name).config.stats.can_level_up);
+        .any(|card| can_level_up_card(game, card.id));
     let can_level_up = has_level_card
         && side == Side::Overlord
         && mana::get(game, side, ManaPurpose::LevelUpRoom(room_id)) > 0
         && queries::in_main_phase(game, side);
     dispatch::perform_query(game, CanLevelUpRoomQuery(side), Flag::new(can_level_up)).into()
+}
+
+/// Whether the indicated card can be leveled up when the 'level up' action is
+/// taken for its room.
+pub fn can_level_up_card(game: &GameState, card_id: CardId) -> bool {
+    let can_level_up = crate::card_definition(game, card_id).card_type == CardType::Scheme;
+    dispatch::perform_query(game, CanLevelUpCardQuery(card_id), Flag::new(can_level_up)).into()
 }
 
 /// Whether a room can currently be activated

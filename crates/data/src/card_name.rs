@@ -91,6 +91,7 @@ pub enum CardName {
     ResearchProject,
     Gemcarver,
     Coinery,
+    PitTrap,
 }
 
 impl CardName {

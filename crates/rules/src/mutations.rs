@@ -33,14 +33,15 @@ use data::delegates::{
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
 use data::game_actions::{Prompt, PromptAction};
 use data::primitives::{
-    ActionCount, BoostData, CardId, ManaValue, PointsValue, RoomId, RoomLocation, Side, TurnNumber,
+    ActionCount, BoostData, CardId, DamageType, ManaValue, PointsValue, RoomId, RoomLocation, Side,
+    TurnNumber,
 };
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
 use crate::mana::ManaPurpose;
-use crate::{constants, dispatch, mana, queries};
+use crate::{constants, dispatch, flags, mana, queries};
 
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events
@@ -359,18 +360,24 @@ pub fn check_end_turn(game: &mut GameState) {
 }
 
 /// Increases the level of all `can_level_up` Overlord cards in a room by 1. If
-/// a card's level reaches its `level_requirement`, that card is immediately
-/// scored and moved to the Overlord score zone.
+/// a Scheme card's level reaches its `level_requirement`, that card is
+/// immediately scored and moved to the Overlord score zone.
 ///
 /// Does not spend mana/actions etc.
 pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
     let mut scored = vec![];
-    for occupant in game
-        .cards_in_position_mut(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
-        .filter(|card| crate::get(card.name).config.stats.can_level_up)
-    {
-        occupant.data.card_level += 1;
+    let occupants = game.card_list_for_position(
+        Side::Overlord,
+        CardPosition::Room(room_id, RoomLocation::Occupant),
+    );
+    let can_level = occupants
+        .iter()
+        .filter(|card_id| flags::can_level_up_card(game, **card_id))
+        .collect::<Vec<_>>();
 
+    for occupant_id in can_level {
+        game.card_mut(*occupant_id).data.card_level += 1;
+        let occupant = game.card(*occupant_id);
         if let Some(scheme_points) = crate::get(occupant.name).config.stats.scheme_points {
             if occupant.data.card_level >= scheme_points.level_requirement {
                 scored.push((occupant.id, scheme_points));
@@ -492,4 +499,17 @@ pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion)
 
     dispatch::invoke_event(game, SummonMinionEvent(card_id));
     turn_face_up(game, card_id);
+}
+
+/// Deals damage. Discards random card from the hand of the Champion player. If
+/// no cards remain, this player loses the game.
+pub fn deal_damage(game: &mut GameState, _: DamageType, amount: u32) {
+    for _ in 0..amount {
+        if let Some(card_id) = game.random_card(CardPosition::Hand(Side::Champion)) {
+            move_card(game, card_id, CardPosition::DiscardPile(Side::Champion));
+        } else {
+            game.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
+            game.updates.push(GameUpdate::GameOver(Side::Overlord));
+        }
+    }
 }
