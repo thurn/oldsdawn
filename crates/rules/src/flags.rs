@@ -233,6 +233,11 @@ pub fn can_level_up_card(game: &GameState, card_id: CardId) -> bool {
     dispatch::perform_query(game, CanLevelUpCardQuery(card_id), Flag::new(can_level_up)).into()
 }
 
+/// Whether the indicated card entered play this turn
+pub fn entered_play_this_turn(game: &GameState, card_id: CardId) -> bool {
+    game.card(card_id).data.last_entered_play == Some(game.data.turn)
+}
+
 /// Whether a room can currently be activated
 pub fn can_take_room_activation_action(game: &GameState, side: Side) -> bool {
     side == Side::Overlord

@@ -616,7 +616,12 @@ fn card_targeting(game: &GameState, card: &CardState, user_side: Side) -> CardTa
                 return CardTargeting {
                     targeting: Some(Targeting::ArrowTargetRoom(ArrowTargetRoom {
                         valid_rooms: valid_rooms(),
-                        arrow: TargetingArrow::Red.into(),
+                        arrow: if card.side() == Side::Overlord {
+                            TargetingArrow::Green
+                        } else {
+                            TargetingArrow::Red
+                        }
+                        .into(),
                     })),
                 }
             }

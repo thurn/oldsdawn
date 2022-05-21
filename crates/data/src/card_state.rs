@@ -113,6 +113,8 @@ pub struct CardData {
     pub boost_count: BoostCount,
     /// How much mana is stored in this card?
     pub stored_mana: ManaValue,
+    /// When was the last time this card entered the arena, if ever?
+    pub last_entered_play: Option<TurnData>,
     /// Is this card face-up?
     is_face_up: bool,
     /// Is this card revealed to the [CardId.side] user?

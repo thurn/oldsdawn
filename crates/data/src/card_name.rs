@@ -94,6 +94,7 @@ pub enum CardName {
     PitTrap,
     GatheringDark,
     OverwhelmingPower,
+    ForcedMarch,
 }
 
 impl CardName {

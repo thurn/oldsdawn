@@ -14,13 +14,13 @@
 
 //! Card definitions for the Spell card type & Overlord player
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition};
+use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::text_macro::text;
-use rules::{mana, DEFINITIONS};
+use rules::{flags, mana, mutations, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -31,7 +31,7 @@ pub fn gathering_dark() -> CardDefinition {
         cost: cost(5),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
         card_type: CardType::OverlordSpell,
-        side: Side::Champion,
+        side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![Ability {
@@ -50,7 +50,7 @@ pub fn overwhelming_power() -> CardDefinition {
         cost: cost(10),
         image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_46"),
         card_type: CardType::OverlordSpell,
-        side: Side::Champion,
+        side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![Ability {
@@ -59,5 +59,46 @@ pub fn overwhelming_power() -> CardDefinition {
             delegates: vec![on_cast(|g, s, _| mana::gain(g, s.side(), 15))],
         }],
         config: CardConfig::default(),
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn forced_march() -> CardDefinition {
+    CardDefinition {
+        name: CardName::ForcedMarch,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_47"),
+        card_type: CardType::OverlordSpell,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text!(
+                "Place 2 level counters on each card in target room which didn't enter play this turn"
+            ),
+            ability_type: AbilityType::Standard,
+            delegates: vec![on_cast(|g, _, played| {
+                let targets = g
+                    .defenders_and_occupants(played.target.room_id().expect("Room Target"))
+                    .filter(|card| {
+                        flags::can_level_up_card(g, card.id)
+                            && !flags::entered_play_this_turn(g, card.id)
+                    })
+                    .map(|card| card.id)
+                    .collect::<Vec<_>>();
+                for card_id in targets {
+                    mutations::add_level_counters(g, card_id, 2);
+                }
+            })],
+        }],
+        config: CardConfig {
+            custom_targeting: Some(TargetRequirement::TargetRoom(|game, _, room_id| {
+                game.defenders_and_occupants(room_id).any(|card| {
+                    flags::can_level_up_card(game, card.id)
+                        && !flags::entered_play_this_turn(game, card.id)
+                })
+            })),
+            ..CardConfig::default()
+        },
     }
 }

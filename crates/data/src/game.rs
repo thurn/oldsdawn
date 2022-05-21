@@ -175,7 +175,7 @@ impl MulliganData {
 }
 
 /// Identifies the player whose turn it is
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub struct TurnData {
     /// Current player whose turn it is
     pub side: Side,
@@ -419,6 +419,14 @@ impl GameState {
     /// Overlord cards in a given room (not defenders), in alphabetical order
     pub fn occupants(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
+    }
+
+    /// All Overlord cards located within a given room, defenders and occupants,
+    /// in alphabetical order.
+    pub fn defenders_and_occupants(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
+        self.cards(Side::Overlord)
+            .iter()
+            .filter(move |c| matches!(c.position(), CardPosition::Room(r, _) if r == room_id))
     }
 
     /// All overlord defenders in play, whether face-up or face-down.

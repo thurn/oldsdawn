@@ -26,9 +26,10 @@ use std::cmp;
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    CardMoved, DawnEvent, DrawCardEvent, DuskEvent, MoveCardEvent, OverlordScoreCardEvent,
-    RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome, RaidSuccessEvent, Scope, ScoreCard,
-    ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent, UnveilProjectEvent,
+    CardMoved, DawnEvent, DrawCardEvent, DuskEvent, EnterPlayEvent, MoveCardEvent,
+    OverlordScoreCardEvent, RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome,
+    RaidSuccessEvent, Scope, ScoreCard, ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
+    UnveilProjectEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
 use data::game_actions::{Prompt, PromptAction};
@@ -73,6 +74,11 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
         || new_position.kind() == CardPositionKind::ArenaItem
     {
         game.updates.push(GameUpdate::MoveToZone(card_id));
+    }
+
+    if !old_position.in_play() && new_position.in_play() {
+        game.card_mut(card_id).data.last_entered_play = Some(game.data.turn);
+        dispatch::invoke_event(game, EnterPlayEvent(card_id));
     }
 
     if !new_position.in_play() {
@@ -365,7 +371,6 @@ pub fn check_end_turn(game: &mut GameState) {
 ///
 /// Does not spend mana/actions etc.
 pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
-    let mut scored = vec![];
     let occupants = game.card_list_for_position(
         Side::Overlord,
         CardPosition::Room(room_id, RoomLocation::Occupant),
@@ -376,22 +381,32 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
         .collect::<Vec<_>>();
 
     for occupant_id in can_level {
-        game.card_mut(*occupant_id).data.card_level += 1;
-        let occupant = game.card(*occupant_id);
-        if let Some(scheme_points) = crate::get(occupant.name).config.stats.scheme_points {
-            if occupant.data.card_level >= scheme_points.level_requirement {
-                scored.push((occupant.id, scheme_points));
-            }
-        }
+        add_level_counters(game, *occupant_id, 1);
     }
+}
 
-    for (card_id, scheme_points) in scored {
-        turn_face_up(game, card_id);
-        move_card(game, card_id, CardPosition::Scored(Side::Overlord));
-        dispatch::invoke_event(game, OverlordScoreCardEvent(card_id));
-        dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Overlord, card_id }));
-        game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
-        score_points(game, Side::Overlord, scheme_points.points);
+/// Adds `amount` level counters to the provided card.
+///
+/// If the card has scheme points and the level requirement is met, the card is
+/// immediately scored and moved to the Overlord's score zone.
+///
+/// Panics if this card cannot be leveled up.
+pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) {
+    assert!(flags::can_level_up_card(game, card_id));
+    game.card_mut(card_id).data.card_level += amount;
+    let card = game.card(card_id);
+    if let Some(scheme_points) = crate::get(card.name).config.stats.scheme_points {
+        if card.data.card_level >= scheme_points.level_requirement {
+            turn_face_up(game, card_id);
+            move_card(game, card_id, CardPosition::Scored(Side::Overlord));
+            dispatch::invoke_event(game, OverlordScoreCardEvent(card_id));
+            dispatch::invoke_event(
+                game,
+                ScoreCardEvent(ScoreCard { player: Side::Overlord, card_id }),
+            );
+            game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
+            score_points(game, Side::Overlord, scheme_points.points);
+        }
     }
 }
 
