@@ -125,3 +125,16 @@ pub fn level_up() -> Ability {
         })],
     }
 }
+
+pub fn construct() -> Ability {
+    Ability {
+        text: text![Keyword::Construct],
+        ability_type: AbilityType::Standard,
+        delegates: vec![Delegate::MinionDefeated(EventDelegate {
+            requirement: this_card,
+            mutation: |g, s, _| {
+                mutations::move_card(g, s.card_id(), CardPosition::DiscardPile(s.side()));
+            },
+        })],
+    }
+}

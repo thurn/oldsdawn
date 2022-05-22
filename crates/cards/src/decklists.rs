@@ -15,7 +15,7 @@
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState, MulliganDecision};
-use data::game_actions::{PromptAction, UserAction};
+use data::game_actions::{GamePromptAction, UserAction};
 use data::primitives::{GameId, PlayerId, Side};
 use maplit::hashmap;
 use once_cell::sync::Lazy;
@@ -58,13 +58,13 @@ pub fn canonical_game() -> GameState {
     actions::handle_user_action(
         &mut game,
         Side::Overlord,
-        UserAction::PromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
+        UserAction::GamePromptResponse(GamePromptAction::MulliganDecision(MulliganDecision::Keep)),
     )
     .unwrap();
     actions::handle_user_action(
         &mut game,
         Side::Champion,
-        UserAction::PromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
+        UserAction::GamePromptResponse(GamePromptAction::MulliganDecision(MulliganDecision::Keep)),
     )
     .unwrap();
 

@@ -258,7 +258,9 @@ pub fn can_encounter_target(game: &GameState, source: CardId, target: CardId) ->
             crate::card_definition(game, target).config.faction
         ),
         (Some(source_faction), Some(target_faction))
-        if source_faction == Faction::Prismatic || source_faction == target_faction
+        if source_faction == Faction::Prismatic ||
+            target_faction == Faction::Construct ||
+            source_faction == target_faction
     );
 
     dispatch::perform_query(

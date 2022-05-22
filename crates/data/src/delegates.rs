@@ -360,7 +360,7 @@ pub enum Delegate {
     /// A Raid is initiated
     RaidStart(EventDelegate<RaidStart>),
     /// A minion is encountered during a raid
-    EncounterBegin(EventDelegate<RaidId>),
+    EncounterMinion(EventDelegate<CardId>),
     /// A weapon boost is activated for a given card
     ActivateBoost(EventDelegate<BoostData>),
     /// A weapon has been used to defeat a minion

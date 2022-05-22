@@ -150,6 +150,9 @@ pub fn title_background(faction: Option<Faction>) -> SpriteAddress {
                 Faction::Infernal => {
                     "LittleSweetDaemon/TCG_Card_Design/Animal_Card/Animal_Card_Face_Tape"
                 }
+                Faction::Construct => {
+                    "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape"
+                }
             }
             .to_string(),
         },
@@ -176,6 +179,7 @@ pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) ->
                 Faction::Mortal => "SpriteWay/Icons/Clean Frames/9048",
                 Faction::Abyssal => "SpriteWay/Icons/Clean Frames/9055",
                 Faction::Infernal => "SpriteWay/Icons/Clean Frames/9054",
+                Faction::Construct => "SpriteWay/Icons/Clean Frames/9020",
             }
             .to_string(),
         },

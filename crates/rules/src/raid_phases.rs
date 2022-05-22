@@ -18,10 +18,11 @@ use std::iter;
 
 use anyhow::Result;
 use data::card_state::CardPosition;
-use data::delegates::{CardAccessEvent, RaidAccessStartEvent};
+use data::delegates::{CardAccessEvent, EncounterMinionEvent, RaidAccessStartEvent};
 use data::game::{GameState, RaidPhase};
 use data::game_actions::{
-    ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
+    ContinueAction, EncounterAction, GamePrompt, GamePromptAction, GamePromptContext,
+    RoomActivationAction,
 };
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::with_error::WithError;
@@ -49,6 +50,7 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
             if can_summon_defender(game, defender_index) {
                 let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
                 mutations::summon_minion(game, defender_id, SummonMinion::PayCosts);
+                dispatch::invoke_event(game, EncounterMinionEvent(defender_id));
             }
         }
         RaidPhase::Continue(_) => {}
@@ -118,7 +120,7 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
     Ok(accessed)
 }
 
-/// Sets a UI [Prompt] for the current raid state of the provided `game`.
+/// Sets a UI [GamePrompt] for the current raid state of the provided `game`.
 ///
 /// Only one player at a time receives a prompt, while their opponent sees a
 /// 'waiting' indicator.
@@ -135,67 +137,67 @@ pub fn set_raid_prompt(game: &mut GameState) -> Result<()> {
     Ok(())
 }
 
-fn build_activation_prompt() -> Prompt {
-    Prompt {
-        context: Some(PromptContext::ActivateRoom),
+fn build_activation_prompt() -> GamePrompt {
+    GamePrompt {
+        context: Some(GamePromptContext::ActivateRoom),
         responses: vec![
-            PromptAction::ActivateRoomAction(RoomActivationAction::Activate),
-            PromptAction::ActivateRoomAction(RoomActivationAction::Pass),
+            GamePromptAction::ActivateRoomAction(RoomActivationAction::Activate),
+            GamePromptAction::ActivateRoomAction(RoomActivationAction::Pass),
         ],
     }
 }
 
-fn build_encounter_prompt(game: &GameState, defender: usize) -> Result<Prompt> {
+fn build_encounter_prompt(game: &GameState, defender: usize) -> Result<GamePrompt> {
     let defender_id = find_defender(game, game.raid()?.target, defender)?;
-    Ok(Prompt {
+    Ok(GamePrompt {
         context: None,
         responses: game
             .weapons()
             .filter(|weapon| flags::can_defeat_target(game, weapon.id, defender_id))
             .map(|weapon| {
-                PromptAction::EncounterAction(EncounterAction::UseWeaponAbility(
+                GamePromptAction::WeaponAction(EncounterAction::UseWeaponAbility(
                     weapon.id,
                     defender_id,
                 ))
             })
-            .chain(iter::once(PromptAction::EncounterAction(EncounterAction::NoWeapon)))
+            .chain(iter::once(GamePromptAction::WeaponAction(EncounterAction::NoWeapon)))
             .collect(),
     })
 }
 
-fn build_continue_prompt() -> Prompt {
-    Prompt {
-        context: Some(PromptContext::RaidAdvance),
+fn build_continue_prompt() -> GamePrompt {
+    GamePrompt {
+        context: Some(GamePromptContext::RaidAdvance),
         responses: vec![
-            PromptAction::ContinueAction(ContinueAction::Advance),
-            PromptAction::ContinueAction(ContinueAction::Retreat),
+            GamePromptAction::ContinueAction(ContinueAction::Advance),
+            GamePromptAction::ContinueAction(ContinueAction::Retreat),
         ],
     }
 }
 
-fn build_access_prompt(game: &GameState) -> Result<Prompt> {
-    Ok(Prompt {
+fn build_access_prompt(game: &GameState) -> Result<GamePrompt> {
+    Ok(GamePrompt {
         context: None,
         responses: game
             .raid()?
             .accessed
             .iter()
             .filter_map(|card_id| access_prompt_for_card(game, *card_id))
-            .chain(iter::once(PromptAction::EndRaid))
+            .chain(iter::once(GamePromptAction::EndRaid))
             .collect(),
     })
 }
 
 /// Returns a [PromptAction] for the Champion to access the provided `card_id`,
 /// if any action can be taken.
-fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAction> {
+fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<GamePromptAction> {
     let definition = crate::card_definition(game, card_id);
     match definition.card_type {
         CardType::Scheme if flags::can_score_card_when_accessed(game, Side::Champion, card_id) => {
-            Some(PromptAction::RaidScoreCard(card_id))
+            Some(GamePromptAction::RaidScoreCard(card_id))
         }
         CardType::Project if flags::can_destroy_accessed_card(game, card_id) => {
-            Some(PromptAction::RaidDestroyCard(card_id))
+            Some(GamePromptAction::RaidDestroyCard(card_id))
         }
         _ => None,
     }

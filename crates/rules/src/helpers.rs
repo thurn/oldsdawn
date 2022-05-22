@@ -186,6 +186,11 @@ pub fn at_dusk(mutation: MutationFn<TurnNumber>) -> Delegate {
     Delegate::Dusk(EventDelegate { requirement: face_up_in_play, mutation })
 }
 
+/// A minion delegate which triggers when it is encountered
+pub fn on_encountered(mutation: MutationFn<CardId>) -> Delegate {
+    Delegate::EncounterMinion(EventDelegate { requirement: this_card, mutation })
+}
+
 /// A minion combat delegate
 pub fn combat(mutation: MutationFn<CardId>) -> Delegate {
     Delegate::MinionCombatAbility(EventDelegate { requirement: this_card, mutation })

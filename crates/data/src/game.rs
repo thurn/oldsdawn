@@ -27,7 +27,7 @@ use crate::agent_definition::AgentData;
 use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
 use crate::delegates::DelegateCache;
-use crate::game_actions::Prompt;
+use crate::game_actions::{CardPrompt, GamePrompt};
 use crate::primitives::{
     AbilityId, ActionCount, CardId, GameId, ItemLocation, ManaValue, PlayerId, PointsValue, RaidId,
     RoomId, RoomLocation, Side, TurnNumber,
@@ -68,7 +68,11 @@ pub struct PlayerState {
 
     /// A choice this player is currently facing. Automatically cleared when
     /// a `PromptAction` response is received.
-    pub prompt: Option<Prompt>,
+    pub game_prompt: Option<GamePrompt>,
+
+    /// A choice this player is facing in resolving a card ability. Takes
+    /// precedence over the current `game_prompt`, if any.
+    pub card_prompt: Option<CardPrompt>,
 }
 
 impl PlayerState {
@@ -80,7 +84,8 @@ impl PlayerState {
             mana_state: ManaState::default(),
             actions: 0,
             score: 0,
-            prompt: None,
+            game_prompt: None,
+            card_prompt: None,
         }
     }
 }

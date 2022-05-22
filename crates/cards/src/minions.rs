@@ -14,12 +14,13 @@
 
 //! Card definitions for the Minion card type
 
-use data::card_definition::{CardConfig, CardDefinition, CardStats};
+use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, CardStats};
 use data::card_name::CardName;
 use data::primitives::{CardType, ColdDamage, Faction, Rarity, School, Side};
+use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::{abilities, DEFINITIONS};
+use rules::{abilities, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -37,6 +38,38 @@ pub fn ice_dragon() -> CardDefinition {
         config: CardConfig {
             stats: CardStats { health: Some(5), shield: Some(1), ..CardStats::default() },
             faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn time_golem() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TimeGolem,
+        cost: cost(2),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_14"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            abilities::construct(),
+            Ability {
+                text: text![
+                    Keyword::Encounter,
+                    "End the raid unless the Champion pays",
+                    mana_text(5),
+                    "or",
+                    actions_text(2)
+                ],
+                ability_type: AbilityType::Standard,
+                delegates: vec![on_encountered(|_g, _s, _| {})],
+            },
+        ],
+        config: CardConfig {
+            stats: health(3),
+            faction: Some(Faction::Construct),
             ..CardConfig::default()
         },
     }

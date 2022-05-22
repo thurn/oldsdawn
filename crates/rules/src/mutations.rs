@@ -32,7 +32,7 @@ use data::delegates::{
     UnveilProjectEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
-use data::game_actions::{Prompt, PromptAction};
+use data::game_actions::{GamePrompt, GamePromptAction};
 use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, ManaValue, PointsValue, RoomId, RoomLocation, Side,
     TurnNumber,
@@ -241,15 +241,19 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
 }
 
 /// Sets the current prompt for the `side` player to the provided
-/// [Prompt]. Panics if a prompt is already set for this player.
-pub fn set_prompt(game: &mut GameState, side: Side, prompt: Prompt) {
-    assert!(game.player(side).prompt.is_none(), "Player {:?} already has an active prompt", side);
-    game.player_mut(side).prompt = Some(prompt);
+/// [GamePrompt]. Panics if a prompt is already set for this player.
+pub fn set_prompt(game: &mut GameState, side: Side, prompt: GamePrompt) {
+    assert!(
+        game.player(side).game_prompt.is_none(),
+        "Player {:?} already has an active prompt",
+        side
+    );
+    game.player_mut(side).game_prompt = Some(prompt);
 }
 
 /// Clears shown prompt a player.
 pub fn clear_prompt(game: &mut GameState, side: Side) {
-    game.player_mut(side).prompt = None;
+    game.player_mut(side).game_prompt = None;
 }
 
 /// Ends the current raid. Panics if no raid is currently active.
@@ -270,11 +274,11 @@ pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) {
 #[instrument(skip(game))]
 pub fn deal_opening_hands(game: &mut GameState) {
     info!("deal_opening_hands");
-    let prompt = Prompt {
+    let prompt = GamePrompt {
         context: None,
         responses: vec![
-            PromptAction::MulliganDecision(MulliganDecision::Keep),
-            PromptAction::MulliganDecision(MulliganDecision::Mulligan),
+            GamePromptAction::MulliganDecision(MulliganDecision::Keep),
+            GamePromptAction::MulliganDecision(MulliganDecision::Mulligan),
         ],
     };
     draw_cards(game, Side::Overlord, constants::STARTING_HAND_SIZE);

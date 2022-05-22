@@ -139,6 +139,7 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 Keyword::Dusk => "<b>\u{f0e7}Dusk:</b>".to_string(),
                 Keyword::Score => format!("<b>{}Score:</b>", icons::TRIGGER),
                 Keyword::Combat => format!("<b>{}Combat:</b>", icons::TRIGGER),
+                Keyword::Encounter => format!("<b>{}Encounter:</b>", icons::TRIGGER),
                 Keyword::Unveil => "<b>Unveil</b>".to_string(),
                 Keyword::SuccessfulRaid => format!("<b>{}Successful Raid:</b>", icons::TRIGGER),
                 Keyword::Store(sentence_position, n) => {
@@ -187,6 +188,7 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 }
                 Keyword::LevelUp => "<b>Level Up</b>".to_string(),
                 Keyword::Trap => format!("<b>{}Trap:</b>", icons::TRIGGER),
+                Keyword::Construct => "<b>Construct</b>".to_string(),
             },
             TextToken::Reminder(text) => format!("<i>{}</i>", text),
             TextToken::Cost(cost) => format!("{}: ", process_text_tokens(cost)),
@@ -215,6 +217,7 @@ fn card_type_line(definition: &CardDefinition) -> String {
         result.push_str(" • ");
         result.push_str(match faction {
             Faction::Prismatic => "Prismatic",
+            Faction::Construct => "Construct",
             Faction::Mortal => "Mortal",
             Faction::Abyssal => "Abyssal",
             Faction::Infernal => "Infernal",
@@ -267,6 +270,12 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
                     "<b>Combat:</b> Triggers if this minion is not defeated in combat.".to_string(),
                 );
             }
+            KeywordKind::Encounter => {
+                output.push(
+                    "<b>Encounter:</b> Triggers when this minion is approached during a raid."
+                        .to_string(),
+                );
+            }
             KeywordKind::Unveil => {
                 output.push("<b>Unveil:</b> Pay cost and turn face up (if able)".to_string());
             }
@@ -302,6 +311,10 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
             ),
             KeywordKind::Trap => output.push(
                 "<b>Trap:</b> Triggers when this card is accessed during a raid.".to_string(),
+            ),
+            KeywordKind::Construct => output.push(
+                "<b>Construct:</b> Goes to discard pile when defeated. Damage with any weapon."
+                    .to_string(),
             ),
             _ => {}
         };

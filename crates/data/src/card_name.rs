@@ -95,6 +95,8 @@ pub enum CardName {
     GatheringDark,
     OverwhelmingPower,
     ForcedMarch,
+    RuneWall,
+    TimeGolem,
 }
 
 impl CardName {

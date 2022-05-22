@@ -43,7 +43,7 @@ pub enum ContinueAction {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub enum PromptContext {
+pub enum GamePromptContext {
     ActivateRoom,
     RaidAdvance,
 }
@@ -52,13 +52,13 @@ pub enum PromptContext {
 /// inside the `GameAction::StandardAction` protobuf message type when sent to
 /// the client.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
-pub enum PromptAction {
+pub enum GamePromptAction {
     /// Action to keep or mulligan opening hand
     MulliganDecision(MulliganDecision),
     /// Action for the Overlord to activate the room currently being raided
     ActivateRoomAction(RoomActivationAction),
     /// Champion action in response to a raid encounter
-    EncounterAction(EncounterAction),
+    WeaponAction(EncounterAction),
     /// Action to advance to the next encounter of a raid or retreat
     ContinueAction(ContinueAction),
     /// Action to target & destroy an accessed card
@@ -71,12 +71,22 @@ pub enum PromptAction {
 
 /// Presents a choice to a user, typically communicated via a series of buttons
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Prompt {
+pub struct GamePrompt {
     /// Identifies the context for this prompt, i.e. why it is being shown to
     /// the user
-    pub context: Option<PromptContext>,
+    pub context: Option<GamePromptContext>,
     /// Possible responses to this prompt
-    pub responses: Vec<PromptAction>,
+    pub responses: Vec<GamePromptAction>,
+}
+
+/// A choice which can be made as part of an ability of an individual card
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
+pub enum CardPromptAction {}
+
+/// A collection of choices when resolving a card ability.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CardPrompt {
+    pub responses: Vec<CardPromptAction>,
 }
 
 /// Actions that can be taken from the debug panel, should not be exposed in
@@ -122,7 +132,7 @@ impl CardTarget {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum UserAction {
     Debug(DebugAction),
-    PromptResponse(PromptAction),
+    GamePromptResponse(GamePromptAction),
     GainMana,
     DrawCard,
     PlayCard(CardId, CardTarget),

@@ -304,10 +304,10 @@ pub fn fire_minion_combat_abilities(session: &mut TestSession) {
 
 pub fn minion_for_faction(faction: Faction) -> CardName {
     match faction {
-        Faction::Prismatic => panic!("Unsupported"),
         Faction::Mortal => CardName::TestMortalMinion,
         Faction::Abyssal => CardName::TestAbyssalMinion,
         Faction::Infernal => CardName::TestInfernalMinion,
+        _ => panic!("Unsupported"),
     }
 }
 

@@ -22,7 +22,7 @@ use crate::prompts;
 /// Returns a [RenderInterfaceCommand] to render the interface state for the
 /// provided `game`.
 pub fn render(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
-    if game.overlord.prompt.is_some() || game.champion.prompt.is_some() {
+    if game.overlord.game_prompt.is_some() || game.champion.game_prompt.is_some() {
         render_prompt(game, user_side)
     } else {
         ui::clear_main_controls()
@@ -31,8 +31,8 @@ pub fn render(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
 
 /// Renders prompts for both players when one is present
 fn render_prompt(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
-    game.player(user_side).prompt.as_ref().map_or_else(
+    game.player(user_side).game_prompt.as_ref().map_or_else(
         || ui::main_controls(WaitingPrompt {}),
-        |prompt| prompts::action_prompt(game, prompt),
+        |prompt| prompts::game_action_prompt(game, prompt),
     )
 }

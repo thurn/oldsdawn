@@ -72,6 +72,7 @@ pub enum Keyword {
     Dusk,
     Score,
     Combat,
+    Encounter,
     Unveil,
     SuccessfulRaid,
     Store(Sentence, u32),
@@ -83,6 +84,7 @@ pub enum Keyword {
     Breach(BreachValue),
     LevelUp,
     Trap,
+    Construct,
 }
 
 impl Keyword {

@@ -14,8 +14,8 @@
 
 use data::game::{GameState, MulliganDecision};
 use data::game_actions::{
-    ContinueAction, EncounterAction, Prompt, PromptAction, PromptContext, RoomActivationAction,
-    UserAction,
+    ContinueAction, EncounterAction, GamePrompt, GamePromptAction, GamePromptContext,
+    RoomActivationAction, UserAction,
 };
 use data::primitives::CardId;
 use protos::spelldawn::{
@@ -29,7 +29,7 @@ use ui::{colors, font_sizes, fonts, icons};
 
 use crate::adapters;
 
-pub fn action_prompt(game: &GameState, prompt: &Prompt) -> RenderInterfaceCommand {
+pub fn game_action_prompt(game: &GameState, prompt: &GamePrompt) -> RenderInterfaceCommand {
     let mut main_controls = vec![];
     let mut card_anchor_nodes = vec![];
 
@@ -87,14 +87,14 @@ pub fn action_prompt(game: &GameState, prompt: &Prompt) -> RenderInterfaceComman
     }
 }
 
-/// Component to render a given [Prompt]
+/// Component to render a given [GamePrompt]
 #[derive(Debug, Clone)]
-pub struct ActionPrompt<'a> {
+pub struct GameActionPrompt<'a> {
     pub game: &'a GameState,
-    pub prompt: &'a Prompt,
+    pub prompt: &'a GamePrompt,
 }
 
-impl<'a> Component for ActionPrompt<'a> {
+impl<'a> Component for GameActionPrompt<'a> {
     fn render(self) -> Node {
         let mut children = vec![];
 
@@ -163,27 +163,27 @@ impl Component for PromptContainer {
     }
 }
 
-fn prompt_context(context: Option<PromptContext>) -> Option<String> {
+fn prompt_context(context: Option<GamePromptContext>) -> Option<String> {
     context.map(|context| match context {
-        PromptContext::ActivateRoom => "Raid:".to_string(),
-        PromptContext::RaidAdvance => "Continue?".to_string(),
+        GamePromptContext::ActivateRoom => "Raid:".to_string(),
+        GamePromptContext::RaidAdvance => "Continue?".to_string(),
     })
 }
 
-fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
+fn response_button(game: &GameState, response: GamePromptAction) -> ResponseButton {
     let button = match response {
-        PromptAction::MulliganDecision(mulligan) => mulligan_button(mulligan),
-        PromptAction::ActivateRoomAction(activate) => activate_button(activate),
-        PromptAction::EncounterAction(encounter_action) => {
+        GamePromptAction::MulliganDecision(mulligan) => mulligan_button(mulligan),
+        GamePromptAction::ActivateRoomAction(activate) => activate_button(activate),
+        GamePromptAction::WeaponAction(encounter_action) => {
             encounter_action_button(game, encounter_action)
         }
-        PromptAction::ContinueAction(advance_action) => advance_action_button(advance_action),
-        PromptAction::RaidScoreCard(card_id) => ResponseButton {
+        GamePromptAction::ContinueAction(advance_action) => advance_action_button(advance_action),
+        GamePromptAction::RaidScoreCard(card_id) => ResponseButton {
             label: "Score!".to_string(),
             anchor_to_card: Some(card_id),
             ..ResponseButton::default()
         },
-        PromptAction::RaidDestroyCard(card_id) => {
+        GamePromptAction::RaidDestroyCard(card_id) => {
             let cost = queries::shield(game, card_id);
             ResponseButton {
                 label: if cost == 0 {
@@ -195,7 +195,7 @@ fn response_button(game: &GameState, response: PromptAction) -> ResponseButton {
                 ..ResponseButton::default()
             }
         }
-        PromptAction::EndRaid => ResponseButton {
+        GamePromptAction::EndRaid => ResponseButton {
             label: "End Raid".to_string(),
             primary: false,
             shift_down: true,
@@ -212,7 +212,7 @@ struct ResponseButton {
     pub anchor_to_card: Option<CardId>,
     pub primary: bool,
     pub two_lines: bool,
-    pub action: Option<PromptAction>,
+    pub action: Option<GamePromptAction>,
     pub shift_down: bool,
 }
 
@@ -235,7 +235,10 @@ impl Component for ResponseButton {
             label: self.label,
             variant: if self.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
             action: self.action.and_then(|a| {
-                action(Some(UserAction::PromptResponse(a)), Some(ui::clear_main_controls_command()))
+                action(
+                    Some(UserAction::GamePromptResponse(a)),
+                    Some(ui::clear_main_controls_command()),
+                )
             }),
             lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },
             style: FlexStyle {

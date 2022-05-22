@@ -249,6 +249,7 @@ pub enum ItemLocation {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Faction {
     Prismatic,
+    Construct,
 
     /// Code Gate/Decoder
     Mortal,

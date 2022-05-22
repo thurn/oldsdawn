@@ -17,8 +17,8 @@
 use anyhow::{bail, ensure, Context, Result};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
-    ChampionScoreCardEvent, MinionCombatAbilityEvent, RaidOutcome, RaidStart, RaidStartEvent,
-    ScoreCard, ScoreCardEvent, UsedWeapon, UsedWeaponEvent,
+    ChampionScoreCardEvent, MinionCombatAbilityEvent, MinionDefeatedEvent, RaidOutcome, RaidStart,
+    RaidStartEvent, ScoreCard, ScoreCardEvent, UsedWeapon, UsedWeaponEvent,
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
@@ -131,6 +131,7 @@ pub fn encounter_action(
                     mana_spent: cost,
                 }),
             );
+            dispatch::invoke_event(game, MinionDefeatedEvent(target_id));
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(source_id),
                 target: InteractionObjectId::CardId(target_id),

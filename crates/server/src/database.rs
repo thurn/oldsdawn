@@ -93,7 +93,7 @@ impl Database for SledDatabase {
                 cards: hashmap! {
                     CardName::DungeonAnnex => 15,
                     CardName::GatheringDark => 15,
-                    CardName::ForcedMarch => 15
+                    CardName::TimeGolem => 15
                 },
             }
         })
