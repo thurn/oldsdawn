@@ -1454,6 +1454,7 @@ dependencies = [
  "tonic-web",
  "tracing",
  "tracing-subscriber",
+ "ui",
 ]
 
 [[package]]

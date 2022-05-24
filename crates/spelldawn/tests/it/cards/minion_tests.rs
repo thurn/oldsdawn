@@ -17,6 +17,7 @@ use data::primitives::Side;
 use protos::spelldawn::PlayerName;
 use test_utils::client::HasText;
 use test_utils::*;
+use ui::icons;
 
 #[test]
 fn ice_dragon() {
@@ -35,9 +36,9 @@ fn time_golem() {
     g.play_from_hand(CardName::TimeGolem);
     set_up_minion_combat(&mut g);
     assert!(g.opponent.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.controls().has_text("Pay 5"));
-    assert!(g.opponent.interface.controls().has_text("Pay 2"));
-    g.click_on(g.opponent_id(), "Pay 5");
+    assert!(g.opponent.interface.controls().has_text(format!("Pay 5{}", icons::MANA)));
+    assert!(g.opponent.interface.controls().has_text(format!("Pay 2{}", icons::ACTION)));
+    g.click_on(g.opponent_id(), format!("Pay 5{}", icons::MANA));
     assert!(g.opponent.interface.controls().has_text("Continue"));
     assert_eq!(STARTING_MANA - 5, g.opponent.this_player.mana());
 }
@@ -51,7 +52,7 @@ fn time_golem_defeat() {
     g.play_from_hand(CardName::TestWeapon5Attack);
     g.initiate_raid(ROOM_ID);
     click_on_activate(&mut g);
-    g.click_on(g.opponent_id(), "Pay 5");
+    g.click_on(g.opponent_id(), format!("Pay 5{}", icons::MANA));
     g.click_on(g.opponent_id(), "Test Weapon");
     assert_eq!(vec!["Time Golem"], g.user.cards.discard_pile(PlayerName::User));
 }
@@ -61,7 +62,7 @@ fn time_golem_pay_actions() {
     let mut g = new_game(Side::Overlord, Args::default());
     g.play_from_hand(CardName::TimeGolem);
     set_up_minion_combat(&mut g);
-    g.click_on(g.opponent_id(), "Pay 2");
+    g.click_on(g.opponent_id(), format!("Pay 2{}", icons::ACTION));
     assert_eq!(0, g.opponent.this_player.actions());
     click_on_continue(&mut g);
     click_on_score(&mut g);

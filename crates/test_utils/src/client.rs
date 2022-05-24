@@ -282,7 +282,7 @@ impl TestSession {
 
     /// Locate a button containing the provided `text` in the provided player's
     /// main controls and invoke its registered action.
-    pub fn click_on(&mut self, player_id: PlayerId, text: &'static str) -> GameResponse {
+    pub fn click_on(&mut self, player_id: PlayerId, text: impl Into<String>) -> GameResponse {
         let (_, player, _) = self.opponent_local_remote(player_id);
         let handlers = player.interface.controls().find_handlers(text);
         let action = handlers.expect("Button not found").on_click.expect("OnClick not found");
@@ -602,31 +602,32 @@ impl ClientInterface {
 pub trait HasText {
     /// Returns true if there are any text nodes contained within this tree
     /// which contain the provided string.    
-    fn has_text(&self, text: &'static str) -> bool;
+    fn has_text(&self, text: impl Into<String>) -> bool;
 
     /// Populates `path` with the series of nodes leading to the node which
     /// contains the provided text. Leaves `path` unchanged if no node
     /// containing this text is found.
-    fn find_text(&self, path: &mut Vec<Node>, text: &'static str);
+    fn find_text(&self, path: &mut Vec<Node>, text: impl Into<String>);
 
     /// Finds the path to the provided `text` via [Self::find_text] and then
     /// searches up the path for registered [EventHandlers].
-    fn find_handlers(&self, text: &'static str) -> Option<EventHandlers>;
+    fn find_handlers(&self, text: impl Into<String>) -> Option<EventHandlers>;
 
     /// Returns all text contained within this tree
     fn get_text(&self) -> Vec<String>;
 }
 
 impl HasText for Node {
-    fn has_text(&self, text: &'static str) -> bool {
+    fn has_text(&self, text: impl Into<String>) -> bool {
+        let string = text.into();
         if let Some(NodeType { node_type: Some(node_type::NodeType::Text(s)) }) = &self.node_type {
-            if s.label.contains(text) {
+            if s.label.contains(string.as_str()) {
                 return true;
             }
         }
 
         for child in &self.children {
-            if child.has_text(text) {
+            if child.has_text(string.as_str()) {
                 return true;
             }
         }
@@ -634,17 +635,18 @@ impl HasText for Node {
         false
     }
 
-    fn find_text(&self, path: &mut Vec<Node>, text: &'static str) {
-        if self.has_text(text) {
+    fn find_text(&self, path: &mut Vec<Node>, text: impl Into<String>) {
+        let string = text.into();
+        if self.has_text(string.as_str()) {
             path.push(self.clone());
         }
 
         for child in &self.children {
-            child.find_text(path, text);
+            child.find_text(path, string.as_str());
         }
     }
 
-    fn find_handlers(&self, text: &'static str) -> Option<EventHandlers> {
+    fn find_handlers(&self, text: impl Into<String>) -> Option<EventHandlers> {
         let mut nodes = vec![];
         self.find_text(&mut nodes, text);
         nodes.reverse();
@@ -666,26 +668,29 @@ impl HasText for Node {
 }
 
 impl HasText for Vec<&Node> {
-    fn has_text(&self, text: &'static str) -> bool {
+    fn has_text(&self, text: impl Into<String>) -> bool {
+        let string = text.into();
         for node in self {
-            if node.has_text(text) {
+            if node.has_text(string.as_str()) {
                 return true;
             }
         }
         false
     }
 
-    fn find_text(&self, path: &mut Vec<Node>, text: &'static str) {
+    fn find_text(&self, path: &mut Vec<Node>, text: impl Into<String>) {
+        let string = text.into();
         for node in self {
-            if node.has_text(text) {
-                return node.find_text(path, text);
+            if node.has_text(string.as_str()) {
+                return node.find_text(path, string.as_str());
             }
         }
     }
 
-    fn find_handlers(&self, text: &'static str) -> Option<EventHandlers> {
+    fn find_handlers(&self, text: impl Into<String>) -> Option<EventHandlers> {
+        let string = text.into();
         for node in self {
-            if let Some(handlers) = node.find_handlers(text) {
+            if let Some(handlers) = node.find_handlers(string.as_str()) {
                 return Some(handlers);
             }
         }
