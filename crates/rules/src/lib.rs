@@ -25,6 +25,7 @@ use once_cell::sync::Lazy;
 
 pub mod abilities;
 pub mod actions;
+pub mod card_prompt;
 pub mod constants;
 pub mod dispatch;
 pub mod flags;

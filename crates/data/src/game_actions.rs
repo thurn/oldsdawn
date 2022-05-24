@@ -43,16 +43,29 @@ pub enum ContinueAction {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub enum GamePromptContext {
+pub enum PromptContext {
     ActivateRoom,
     RaidAdvance,
+}
+
+/// A choice which can be made as part of an ability of an individual card
+///
+/// Maybe switch this to a trait someday?
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
+pub enum CardPromptAction {
+    /// A player loses mana
+    LoseMana(Side, ManaValue),
+    /// A player loses action points
+    LoseActions(Side, ActionCount),
+    /// End the current raid in failure.
+    EndRaid,
 }
 
 /// An action which can be taken in the user interface, typically embedded
 /// inside the `GameAction::StandardAction` protobuf message type when sent to
 /// the client.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
-pub enum GamePromptAction {
+pub enum PromptAction {
     /// Action to keep or mulligan opening hand
     MulliganDecision(MulliganDecision),
     /// Action for the Overlord to activate the room currently being raided
@@ -67,6 +80,8 @@ pub enum GamePromptAction {
     RaidScoreCard(CardId),
     /// Action to end a raid after the access phase
     EndRaid,
+    /// Action to take as part of a card ability
+    CardAction(CardPromptAction),
 }
 
 /// Presents a choice to a user, typically communicated via a series of buttons
@@ -74,19 +89,18 @@ pub enum GamePromptAction {
 pub struct GamePrompt {
     /// Identifies the context for this prompt, i.e. why it is being shown to
     /// the user
-    pub context: Option<GamePromptContext>,
+    pub context: Option<PromptContext>,
     /// Possible responses to this prompt
-    pub responses: Vec<GamePromptAction>,
+    pub responses: Vec<PromptAction>,
 }
 
-/// A choice which can be made as part of an ability of an individual card
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
-pub enum CardPromptAction {}
-
-/// A collection of choices when resolving a card ability.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CardPrompt {
-    pub responses: Vec<CardPromptAction>,
+impl GamePrompt {
+    pub fn card_actions(actions: Vec<CardPromptAction>) -> Self {
+        Self {
+            context: None,
+            responses: actions.into_iter().map(PromptAction::CardAction).collect(),
+        }
+    }
 }
 
 /// Actions that can be taken from the debug panel, should not be exposed in
@@ -132,7 +146,7 @@ impl CardTarget {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum UserAction {
     Debug(DebugAction),
-    GamePromptResponse(GamePromptAction),
+    GamePromptResponse(PromptAction),
     GainMana,
     DrawCard,
     PlayCard(CardId, CardTarget),

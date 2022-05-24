@@ -14,10 +14,10 @@
 
 use data::game::{GameState, MulliganDecision};
 use data::game_actions::{
-    ContinueAction, EncounterAction, GamePrompt, GamePromptAction, GamePromptContext,
+    CardPromptAction, ContinueAction, EncounterAction, GamePrompt, PromptAction, PromptContext,
     RoomActivationAction, UserAction,
 };
-use data::primitives::CardId;
+use data::primitives::{CardId, Side};
 use protos::spelldawn::{
     AnchorCorner, CardAnchor, CardAnchorNode, CardNodeAnchorPosition, FlexAlign, FlexJustify,
     FlexStyle, FlexWrap, InterfaceMainControls, Node, RenderInterfaceCommand,
@@ -29,7 +29,9 @@ use ui::{colors, font_sizes, fonts, icons};
 
 use crate::adapters;
 
-pub fn game_action_prompt(game: &GameState, prompt: &GamePrompt) -> RenderInterfaceCommand {
+/// Command to renders UI elements to display the provided [GamePrompt] for the
+/// `side` player.
+pub fn action_prompt(game: &GameState, side: Side, prompt: &GamePrompt) -> RenderInterfaceCommand {
     let mut main_controls = vec![];
     let mut card_anchor_nodes = vec![];
 
@@ -44,7 +46,7 @@ pub fn game_action_prompt(game: &GameState, prompt: &GamePrompt) -> RenderInterf
     }
 
     for response in &prompt.responses {
-        let button = response_button(game, *response);
+        let button = response_button(game, side, *response);
         if let Some(anchor_to_card) = button.anchor_to_card {
             card_anchor_nodes.push(CardAnchorNode {
                 card_id: Some(adapters::adapt_card_id(anchor_to_card)),
@@ -84,35 +86,6 @@ pub fn game_action_prompt(game: &GameState, prompt: &GamePrompt) -> RenderInterf
             node: Some(node(PromptContainer { name: "Prompt", children: main_controls })),
             card_anchor_nodes,
         }),
-    }
-}
-
-/// Component to render a given [GamePrompt]
-#[derive(Debug, Clone)]
-pub struct GameActionPrompt<'a> {
-    pub game: &'a GameState,
-    pub prompt: &'a GamePrompt,
-}
-
-impl<'a> Component for GameActionPrompt<'a> {
-    fn render(self) -> Node {
-        let mut children = vec![];
-
-        if let Some(label) = prompt_context(self.prompt.context) {
-            children.push(child(Text {
-                label,
-                color: colors::PROMPT_CONTEXT,
-                font_size: font_sizes::PROMPT_CONTEXT,
-                font: fonts::PROMPT_CONTEXT,
-                style: FlexStyle::default(),
-            }))
-        }
-
-        for response in &self.prompt.responses {
-            children.push(child(response_button(self.game, *response)))
-        }
-
-        node(PromptContainer { name: "Prompt", children })
     }
 }
 
@@ -163,46 +136,11 @@ impl Component for PromptContainer {
     }
 }
 
-fn prompt_context(context: Option<GamePromptContext>) -> Option<String> {
+fn prompt_context(context: Option<PromptContext>) -> Option<String> {
     context.map(|context| match context {
-        GamePromptContext::ActivateRoom => "Raid:".to_string(),
-        GamePromptContext::RaidAdvance => "Continue?".to_string(),
+        PromptContext::ActivateRoom => "Raid:".to_string(),
+        PromptContext::RaidAdvance => "Continue?".to_string(),
     })
-}
-
-fn response_button(game: &GameState, response: GamePromptAction) -> ResponseButton {
-    let button = match response {
-        GamePromptAction::MulliganDecision(mulligan) => mulligan_button(mulligan),
-        GamePromptAction::ActivateRoomAction(activate) => activate_button(activate),
-        GamePromptAction::WeaponAction(encounter_action) => {
-            encounter_action_button(game, encounter_action)
-        }
-        GamePromptAction::ContinueAction(advance_action) => advance_action_button(advance_action),
-        GamePromptAction::RaidScoreCard(card_id) => ResponseButton {
-            label: "Score!".to_string(),
-            anchor_to_card: Some(card_id),
-            ..ResponseButton::default()
-        },
-        GamePromptAction::RaidDestroyCard(card_id) => {
-            let cost = queries::shield(game, card_id);
-            ResponseButton {
-                label: if cost == 0 {
-                    "Raze".to_string()
-                } else {
-                    format!("{}{}: Raze", cost, icons::MANA)
-                },
-                anchor_to_card: Some(card_id),
-                ..ResponseButton::default()
-            }
-        }
-        GamePromptAction::EndRaid => ResponseButton {
-            label: "End Raid".to_string(),
-            primary: false,
-            shift_down: true,
-            ..ResponseButton::default()
-        },
-    };
-    ResponseButton { action: Some(response), ..button }
 }
 
 /// Component for rendering a single prompt response button
@@ -212,7 +150,7 @@ struct ResponseButton {
     pub anchor_to_card: Option<CardId>,
     pub primary: bool,
     pub two_lines: bool,
-    pub action: Option<GamePromptAction>,
+    pub action: Option<PromptAction>,
     pub shift_down: bool,
 }
 
@@ -252,6 +190,70 @@ impl Component for ResponseButton {
             },
             ..Button::default()
         })
+    }
+}
+
+fn response_button(game: &GameState, side: Side, response: PromptAction) -> ResponseButton {
+    let button = match response {
+        PromptAction::MulliganDecision(mulligan) => mulligan_button(mulligan),
+        PromptAction::ActivateRoomAction(activate) => activate_button(activate),
+        PromptAction::WeaponAction(encounter_action) => {
+            encounter_action_button(game, encounter_action)
+        }
+        PromptAction::ContinueAction(advance_action) => advance_action_button(advance_action),
+        PromptAction::RaidScoreCard(card_id) => ResponseButton {
+            label: "Score!".to_string(),
+            anchor_to_card: Some(card_id),
+            ..ResponseButton::default()
+        },
+        PromptAction::RaidDestroyCard(card_id) => {
+            let cost = queries::shield(game, card_id);
+            ResponseButton {
+                label: if cost == 0 {
+                    "Raze".to_string()
+                } else {
+                    format!("{}{}: Raze", cost, icons::MANA)
+                },
+                anchor_to_card: Some(card_id),
+                ..ResponseButton::default()
+            }
+        }
+        PromptAction::EndRaid => ResponseButton {
+            label: "End Raid".to_string(),
+            primary: false,
+            shift_down: true,
+            ..ResponseButton::default()
+        },
+        PromptAction::CardAction(action) => card_response_button(side, action),
+    };
+    ResponseButton { action: Some(response), ..button }
+}
+
+fn card_response_button(user_side: Side, action: CardPromptAction) -> ResponseButton {
+    fn lose_text(user_side: Side, target_side: Side) -> &'static str {
+        if user_side == target_side {
+            "Pay"
+        } else {
+            "Lose"
+        }
+    }
+
+    match action {
+        CardPromptAction::LoseMana(side, amount) => ResponseButton {
+            label: format!("{} {}{}", lose_text(user_side, side), amount, icons::MANA),
+            ..ResponseButton::default()
+        },
+        CardPromptAction::LoseActions(side, amount) => ResponseButton {
+            label: if amount > 1 {
+                format!("{} {}{}", lose_text(user_side, side), amount, icons::ACTION)
+            } else {
+                format!("{} {}", lose_text(user_side, side), icons::ACTION)
+            },
+            ..ResponseButton::default()
+        },
+        CardPromptAction::EndRaid => {
+            ResponseButton { label: "End Raid".to_string(), ..ResponseButton::default() }
+        }
     }
 }
 

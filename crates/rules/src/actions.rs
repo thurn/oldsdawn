@@ -29,14 +29,14 @@ use data::delegates::{
     PayCardCostsEvent,
 };
 use data::game::{GamePhase, GameState, MulliganDecision};
-use data::game_actions::{CardTarget, GamePromptAction, UserAction};
+use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
 use crate::mana::ManaPurpose;
 use crate::raid_actions::initiate_raid_action;
-use crate::{dispatch, flags, mana, mutations, queries, raid_actions};
+use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid_actions};
 
 /// Top level dispatch function responsible for mutating [GameState] in response
 /// to all [UserAction]s
@@ -253,40 +253,42 @@ fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()
 }
 
 /// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
-fn handle_prompt_action(
-    game: &mut GameState,
-    user_side: Side,
-    action: GamePromptAction,
-) -> Result<()> {
-    ensure!(
-        matches!(
-            &game.player(user_side).game_prompt,
-            Some(prompt) if prompt.responses.iter().any(|p| p == &action)
-        ),
-        "Unexpected action {:?} received",
-        action
-    );
-    mutations::clear_prompt(game, user_side);
+fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAction) -> Result<()> {
+    fn validate(prompt: &GamePrompt, action: &PromptAction) -> Result<()> {
+        ensure!(
+            prompt.responses.iter().any(|p| p == action),
+            "Unexpected action {:?} received",
+            action
+        );
+        Ok(())
+    }
+
+    if let Some(prompt) = &game.player(user_side).card_prompt {
+        validate(prompt, &action)?;
+        game.player_mut(user_side).card_prompt = None;
+    } else if let Some(prompt) = &game.player(user_side).game_prompt {
+        validate(prompt, &action)?;
+        game.player_mut(user_side).game_prompt = None;
+    } else {
+        bail!("Not expecting a prompt response");
+    }
 
     match action {
-        GamePromptAction::MulliganDecision(mulligan) => {
+        PromptAction::MulliganDecision(mulligan) => {
             handle_mulligan_decision(game, user_side, mulligan)
         }
-        GamePromptAction::ActivateRoomAction(data) => {
+        PromptAction::ActivateRoomAction(data) => {
             raid_actions::room_activation_action(game, user_side, data)
         }
-        GamePromptAction::WeaponAction(data) => {
-            raid_actions::encounter_action(game, user_side, data)
-        }
-        GamePromptAction::ContinueAction(data) => {
-            raid_actions::continue_action(game, user_side, data)
-        }
-        GamePromptAction::RaidDestroyCard(card_id) => {
+        PromptAction::WeaponAction(data) => raid_actions::encounter_action(game, user_side, data),
+        PromptAction::ContinueAction(data) => raid_actions::continue_action(game, user_side, data),
+        PromptAction::RaidDestroyCard(card_id) => {
             raid_actions::destroy_card_action(game, user_side, card_id)
         }
-        GamePromptAction::RaidScoreCard(card_id) => {
+        PromptAction::RaidScoreCard(card_id) => {
             raid_actions::score_card_action(game, user_side, card_id)
         }
-        GamePromptAction::EndRaid => raid_actions::raid_end_action(game, user_side),
+        PromptAction::EndRaid => raid_actions::raid_end_action(game, user_side),
+        PromptAction::CardAction(card_action) => card_prompt::handle(game, user_side, card_action),
     }
 }

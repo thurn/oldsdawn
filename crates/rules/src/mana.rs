@@ -28,6 +28,7 @@ pub enum ManaPurpose {
     UseWeapon(CardId),
     ActivateAbility(AbilityId),
     LevelUpRoom(RoomId),
+    PayForPrompt,
     AllSources,
 }
 

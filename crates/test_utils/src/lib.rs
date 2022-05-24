@@ -287,19 +287,18 @@ pub fn level_up_room(session: &mut TestSession, times: u32) {
 }
 
 /// Must be invoked during the Overlord turn. Performs the following actions:
+/// - Plays a test Scheme card
 ///  - Ends the Overlord turn
 ///  - Initiates a raid on the [ROOM_ID] room
 ///  - Activates the room
-///  - Picks 'Continue' to trigger a minion combat ability.
 ///
 /// NOTE: This causes the Champion player to draw a card for their turn!
-pub fn fire_minion_combat_abilities(session: &mut TestSession) {
+pub fn set_up_minion_combat(session: &mut TestSession) {
     session.play_from_hand(CardName::TestScheme31);
     spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
     session.initiate_raid(ROOM_ID);
-    session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
-    session.click_on(session.player_id_for_side(Side::Champion), "Continue");
+    click_on_activate(session);
 }
 
 pub fn minion_for_faction(faction: Faction) -> CardName {
@@ -331,6 +330,10 @@ pub fn setup_raid_target(session: &mut TestSession, card_name: CardName) {
 
 pub fn click_on_activate(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
+}
+
+pub fn click_on_continue(session: &mut TestSession) {
+    session.click_on(session.player_id_for_side(Side::Champion), "Continue");
 }
 
 pub fn click_on_score(session: &mut TestSession) {

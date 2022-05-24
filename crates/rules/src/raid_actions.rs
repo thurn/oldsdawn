@@ -237,7 +237,7 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
 
 /// Searches for the next defender to encounter during an ongoing raid with a
 /// position less than the provided index  (or any index if not provided). If an
-/// eligible defender is available with position < `index`, invokes
+/// eligible defender is available with position < `less_than`, invokes
 /// `constructor` with that position. Otherwise, returns `RaidPhase::Access`.
 ///
 /// An 'eligible' defender is either one which is face up, or one which *can* be

@@ -59,7 +59,7 @@ pub fn meditation() -> CardDefinition {
             ability_type: AbilityType::Standard,
             delegates: vec![on_cast(|g, s, _| {
                 mana::gain(g, s.side(), 5);
-                mutations::lose_action_point_if_able(g, s.side(), 1);
+                mutations::lose_action_points_if_able(g, s.side(), 1);
             })],
         }],
         config: CardConfig::default(),
@@ -187,7 +187,7 @@ pub fn preparation() -> CardDefinition {
             ability_type: AbilityType::Standard,
             delegates: vec![on_cast(|g, s, _| {
                 mutations::draw_cards(g, s.side(), 4);
-                mutations::lose_action_point_if_able(g, s.side(), 1);
+                mutations::lose_action_points_if_able(g, s.side(), 1);
             })],
         }],
         config: CardConfig::default(),

@@ -16,11 +16,14 @@
 
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, CardStats};
 use data::card_name::CardName;
+use data::game_actions::{CardPromptAction, GamePrompt};
 use data::primitives::{CardType, ColdDamage, Faction, Rarity, School, Side};
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::{abilities, text, DEFINITIONS};
+use rules::mana::ManaPurpose;
+use rules::mutations::SetPrompt;
+use rules::{abilities, mana, mutations, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -64,7 +67,21 @@ pub fn time_golem() -> CardDefinition {
                     actions_text(2)
                 ],
                 ability_type: AbilityType::Standard,
-                delegates: vec![on_encountered(|_g, _s, _| {})],
+                delegates: vec![on_encountered(|g, _s, _| {
+                    let mut responses = vec![CardPromptAction::EndRaid];
+                    if mana::get(g, Side::Champion, ManaPurpose::PayForPrompt) >= 5 {
+                        responses.push(CardPromptAction::LoseMana(Side::Champion, 5))
+                    }
+                    if g.champion.actions >= 2 {
+                        responses.push(CardPromptAction::LoseActions(Side::Champion, 2))
+                    }
+                    mutations::set_prompt(
+                        g,
+                        Side::Champion,
+                        SetPrompt::CardPrompt,
+                        GamePrompt::card_actions(responses),
+                    );
+                })],
             },
         ],
         config: CardConfig {

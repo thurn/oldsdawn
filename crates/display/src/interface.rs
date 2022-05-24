@@ -29,10 +29,13 @@ pub fn render(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
     }
 }
 
-/// Renders prompts for both players when one is present
-fn render_prompt(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
-    game.player(user_side).game_prompt.as_ref().map_or_else(
-        || ui::main_controls(WaitingPrompt {}),
-        |prompt| prompts::game_action_prompt(game, prompt),
-    )
+/// Renders prompt for a player when one is present
+fn render_prompt(game: &GameState, side: Side) -> RenderInterfaceCommand {
+    if let Some(prompt) = &game.player(side).card_prompt {
+        prompts::action_prompt(game, side, prompt)
+    } else if let Some(prompt) = &game.player(side).game_prompt {
+        prompts::action_prompt(game, side, prompt)
+    } else {
+        ui::main_controls(WaitingPrompt {})
+    }
 }

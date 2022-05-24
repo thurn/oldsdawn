@@ -32,7 +32,7 @@ use data::delegates::{
     UnveilProjectEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
-use data::game_actions::{GamePrompt, GamePromptAction};
+use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, ManaValue, PointsValue, RoomId, RoomLocation, Side,
     TurnNumber,
@@ -167,7 +167,7 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Vec<CardId> {
 
 /// Lose action points if a player has more than 0.
 #[instrument(skip(game))]
-pub fn lose_action_point_if_able(game: &mut GameState, side: Side, amount: ActionCount) {
+pub fn lose_action_points_if_able(game: &mut GameState, side: Side, amount: ActionCount) {
     if game.player(side).actions > 0 {
         spend_action_points(game, side, amount)
     }
@@ -240,20 +240,24 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
     game.card_mut(scope.card_id()).data.boost_count = 0;
 }
 
-/// Sets the current prompt for the `side` player to the provided
-/// [GamePrompt]. Panics if a prompt is already set for this player.
-pub fn set_prompt(game: &mut GameState, side: Side, prompt: GamePrompt) {
-    assert!(
-        game.player(side).game_prompt.is_none(),
-        "Player {:?} already has an active prompt",
-        side
-    );
-    game.player_mut(side).game_prompt = Some(prompt);
+pub enum SetPrompt {
+    GamePrompt,
+    CardPrompt,
 }
 
-/// Clears shown prompt a player.
-pub fn clear_prompt(game: &mut GameState, side: Side) {
-    game.player_mut(side).game_prompt = None;
+/// Sets the current prompt of the [SetPrompt] type for the `side` player.
+/// Panics if a prompt is already set for this player.
+pub fn set_prompt(game: &mut GameState, side: Side, set_prompt: SetPrompt, prompt: GamePrompt) {
+    match set_prompt {
+        SetPrompt::GamePrompt => {
+            assert!(game.player(side).game_prompt.is_none(), "Prompt already present");
+            game.player_mut(side).game_prompt = Some(prompt);
+        }
+        SetPrompt::CardPrompt => {
+            assert!(game.player(side).card_prompt.is_none(), "Prompt already present");
+            game.player_mut(side).card_prompt = Some(prompt);
+        }
+    }
 }
 
 /// Ends the current raid. Panics if no raid is currently active.
@@ -277,14 +281,14 @@ pub fn deal_opening_hands(game: &mut GameState) {
     let prompt = GamePrompt {
         context: None,
         responses: vec![
-            GamePromptAction::MulliganDecision(MulliganDecision::Keep),
-            GamePromptAction::MulliganDecision(MulliganDecision::Mulligan),
+            PromptAction::MulliganDecision(MulliganDecision::Keep),
+            PromptAction::MulliganDecision(MulliganDecision::Mulligan),
         ],
     };
     draw_cards(game, Side::Overlord, constants::STARTING_HAND_SIZE);
-    set_prompt(game, Side::Overlord, prompt.clone());
+    set_prompt(game, Side::Overlord, SetPrompt::GamePrompt, prompt.clone());
     draw_cards(game, Side::Champion, constants::STARTING_HAND_SIZE);
-    set_prompt(game, Side::Champion, prompt);
+    set_prompt(game, Side::Champion, SetPrompt::GamePrompt, prompt);
 }
 
 /// Invoked after a mulligan decision is received in order to check if the game
