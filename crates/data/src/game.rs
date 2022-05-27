@@ -350,10 +350,30 @@ impl GameState {
     }
 
     /// Moves a card to a new [CardPosition], updating its sorting key.
+    ///
+    /// eGenerally use `mutations::move_card` instead of calling this method
+    /// directly.
     pub fn move_card(&mut self, card_id: CardId, new_position: CardPosition) {
         let key = self.next_sorting_key();
-        let card = self.card_mut(card_id);
-        card.set_position(key, new_position);
+        self.card_mut(card_id).set_position(key, new_position);
+    }
+
+    /// Moves a card to a given `index` location within its [CardPosition],
+    /// shifting all elements after it to the right.
+    ///
+    /// Moves the card to the end of the list if `index` is out of bounds.
+    pub fn move_card_to_index(&mut self, card_id: CardId, mut index: usize) {
+        let mut cards = self.card_list_for_position(card_id.side, self.card(card_id).position());
+        if index > cards.len() - 1 {
+            index = cards.len() - 1;
+        }
+
+        cards.retain(|id| *id != card_id);
+        cards.insert(index, card_id);
+
+        for id in cards {
+            self.card_mut(id).sorting_key = self.next_sorting_key();
+        }
     }
 
     /// Return a random card in the provided `position`, or None if there are no
@@ -502,5 +522,76 @@ impl GameState {
         }));
 
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashSet;
+
+    use super::*;
+    use crate::card_name::CardName;
+    #[test]
+    fn insert_at_index() {
+        let (abyssal, infernal, mortal) = (
+            CardId::new(Side::Overlord, 0),
+            CardId::new(Side::Overlord, 1),
+            CardId::new(Side::Overlord, 2),
+        );
+        let mut g = test_game(
+            vec![
+                CardName::TestAbyssalMinion,
+                CardName::TestInfernalMinion,
+                CardName::TestMortalMinion,
+            ],
+            vec![],
+        );
+
+        fn hand(g: &GameState) -> Vec<CardId> {
+            g.card_list_for_position(Side::Overlord, CardPosition::Hand(Side::Overlord))
+        }
+
+        fn hand_key_count(g: &GameState) -> usize {
+            hand(g).iter().map(|id| g.card(*id).sorting_key).collect::<HashSet<_>>().len()
+        }
+
+        g.move_card(abyssal, CardPosition::Hand(Side::Overlord));
+        g.move_card(infernal, CardPosition::Hand(Side::Overlord));
+        g.move_card(mortal, CardPosition::Hand(Side::Overlord));
+        assert_eq!(3, hand_key_count(&g));
+        assert_eq!(vec![abyssal, infernal, mortal], hand(&g));
+
+        g.move_card_to_index(mortal, 0);
+        assert_eq!(3, hand_key_count(&g));
+        assert_eq!(vec![mortal, abyssal, infernal], hand(&g));
+
+        g.move_card_to_index(abyssal, 1);
+        assert_eq!(3, hand_key_count(&g));
+        assert_eq!(vec![mortal, abyssal, infernal], hand(&g));
+
+        g.move_card_to_index(abyssal, 2);
+        assert_eq!(3, hand_key_count(&g));
+        assert_eq!(vec![mortal, infernal, abyssal], hand(&g));
+
+        g.move_card_to_index(abyssal, usize::MAX);
+        assert_eq!(3, hand_key_count(&g));
+        assert_eq!(vec![mortal, infernal, abyssal], hand(&g));
+    }
+
+    fn test_game(overlord: Vec<CardName>, champion: Vec<CardName>) -> GameState {
+        GameState::new(
+            GameId::new(0),
+            Deck {
+                owner_id: PlayerId::new(0),
+                identity: CardName::TestOverlordIdentity,
+                cards: overlord.into_iter().map(|name| (name, 1)).collect(),
+            },
+            Deck {
+                owner_id: PlayerId::new(0),
+                identity: CardName::TestOverlordIdentity,
+                cards: champion.into_iter().map(|name| (name, 1)).collect(),
+            },
+            GameConfiguration { deterministic: true, ..GameConfiguration::default() },
+        )
     }
 }

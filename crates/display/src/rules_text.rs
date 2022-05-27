@@ -40,12 +40,6 @@ pub fn build(game: &GameState, card: &CardState, definition: &CardDefinition) ->
         lines.push(line);
     }
 
-    // Shield used to be an icon, but I've changed it to just normal rules text to
-    // reduce complexity.
-    if let Some(shield) = definition.config.stats.shield {
-        lines.push(process_text_tokens(&[TextToken::Keyword(Keyword::Shield(shield))]));
-    }
-
     if let Some(breach) = definition.config.stats.breach {
         lines.push(process_text_tokens(&[TextToken::Keyword(Keyword::Breach(breach))]));
     }
@@ -90,10 +84,6 @@ pub fn build_supplemental_info(
                 find_keywords(&tokens, &mut keywords)
             }
         };
-    }
-
-    if definition.config.stats.shield.is_some() {
-        keywords.push(KeywordKind::Shield);
     }
 
     if definition.config.stats.breach.is_some() {
@@ -180,9 +170,6 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                 }
                 .to_string(),
                 Keyword::EndRaid => "End the raid.".to_string(),
-                Keyword::Shield(shield) => {
-                    format!("<b>Shield</b>{}{}", icons::NON_BREAKING_SPACE, shield)
-                }
                 Keyword::Breach(breach) => {
                     format!("<b>Breach</b>{}{}", icons::NON_BREAKING_SPACE, breach)
                 }
@@ -298,9 +285,6 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
             }
             KeywordKind::InnerRoom => {
                 output.push("<b>Inner Room:</b> The Sanctum, Vault or Crypts.".to_string())
-            }
-            KeywordKind::Shield => {
-                output.push("<b>Shield:</b> Additional cost to target this minion.".to_string())
             }
             KeywordKind::Breach => output.push(
                 "<b>Breach:</b> Allows this weapon to bypass some amount of Shield.".to_string(),

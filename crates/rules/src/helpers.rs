@@ -24,17 +24,19 @@ use data::delegates::{
     RaidStart, RequirementFn, Scope, UsedWeapon,
 };
 use data::game::GameState;
-use data::game_actions::CardTarget;
+use data::game_actions::{CardPromptAction, CardTarget, GamePrompt};
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, CardId, HealthValue, ManaValue, RaidId, RoomId, Sprite,
-    TurnNumber,
+    AbilityId, ActionCount, AttackValue, CardId, HealthValue, ManaValue, RaidId, RoomId, Side,
+    Sprite, TurnNumber,
 };
 use data::special_effects::Projectile;
 use data::text::{AbilityText, NumericOperator, TextToken};
 use data::updates::GameUpdate;
 use data::utils;
 
-use crate::{mutations, queries, raid_actions};
+use crate::mana::ManaPurpose;
+use crate::mutations::SetPrompt;
+use crate::{mana, mutations, queries, raid_actions};
 
 pub fn number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::None, number.into())
@@ -384,4 +386,41 @@ pub fn face_down_ability_cost() -> Delegate {
             }
         },
     })
+}
+
+/// Sets the card prompt for the `side` player to show the provided non-`None`
+/// `actions`.
+pub fn set_card_prompt(game: &mut GameState, side: Side, actions: Vec<Option<CardPromptAction>>) {
+    mutations::set_prompt(
+        game,
+        side,
+        SetPrompt::CardPrompt,
+        GamePrompt::card_actions(actions.into_iter().flatten().collect()),
+    )
+}
+
+/// A [CardPromptAction] for the `side` player to lose mana
+pub fn lose_mana_prompt(
+    game: &GameState,
+    side: Side,
+    amount: ActionCount,
+) -> Option<CardPromptAction> {
+    if mana::get(game, side, ManaPurpose::PayForPrompt) >= amount {
+        Some(CardPromptAction::LoseMana(side, amount))
+    } else {
+        None
+    }
+}
+
+/// A [CardPromptAction] for the `side` player to lose action points.
+pub fn lose_actions_prompt(
+    game: &GameState,
+    side: Side,
+    amount: ActionCount,
+) -> Option<CardPromptAction> {
+    if game.player(side).actions >= amount {
+        Some(CardPromptAction::LoseActions(side, amount))
+    } else {
+        None
+    }
 }

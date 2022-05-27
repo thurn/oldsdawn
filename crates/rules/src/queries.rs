@@ -15,7 +15,7 @@
 //! Core functions for querying the current state of a game
 
 use data::card_definition::{AbilityType, AttackBoost, CardStats};
-use data::card_state::CardState;
+use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     AbilityManaCostQuery, ActionCostQuery, AttackBoostQuery, AttackValueQuery, BoostCountQuery,
     BreachValueQuery, HealthValueQuery, ManaCostQuery, MaximumHandSizeQuery,
@@ -25,9 +25,8 @@ use data::game::{GamePhase, GameState, RaidPhase};
 use data::game_actions::CardTargetKind;
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BreachValue, CardId, CardType, HealthValue,
-    ManaValue, ShieldValue, Side,
+    ManaValue, RoomId, RoomLocation, ShieldValue, Side,
 };
-use rand::prelude::IteratorRandom;
 
 use crate::{constants, dispatch};
 
@@ -216,23 +215,30 @@ pub fn card_target_kind(game: &GameState, card_id: CardId) -> CardTargetKind {
 }
 
 /// Returns the highest mana cost card among those in the provided
-/// `card_iterator`, breaking ties at random, or None if there is no such card.
-pub fn highest_cost<'a>(
-    game: &GameState,
-    card_iterator: impl Iterator<Item = &'a CardState>,
-) -> Option<CardId> {
+/// `card_iterator` (breaking ties based on sorting key), or None if there is no
+/// such card.
+pub fn highest_cost<'a>(card_iterator: impl Iterator<Item = &'a CardState>) -> Option<CardId> {
     let cards = card_iterator.collect::<Vec<_>>();
     let max = cards.iter().filter_map(|c| crate::get(c.name).cost.mana).max();
-    let mut filtered = cards.into_iter().filter(|c| crate::get(c.name).cost.mana == max);
-    if game.data.config.deterministic {
-        filtered.next()
-    } else {
-        filtered.choose(&mut rand::thread_rng())
-    }
-    .map(|c| c.id)
+    let mut filtered =
+        cards.into_iter().filter(|c| crate::get(c.name).cost.mana == max).collect::<Vec<_>>();
+    filtered.sort();
+    filtered.first().map(|c| c.id)
 }
 
 /// Queries the maximum hand size for a player.
 pub fn maximum_hand_size(game: &GameState, side: Side) -> u32 {
     dispatch::perform_query(game, MaximumHandSizeQuery(side), constants::STARTING_MAXIMUM_HAND_SIZE)
+}
+
+/// Locates a minion in play, returning its current room and index position
+/// within that room, if any.
+pub fn minion_position(game: &GameState, minion_id: CardId) -> Option<(RoomId, usize)> {
+    match game.card(minion_id).position() {
+        CardPosition::Room(room_id, location) if location == RoomLocation::Defender => {
+            let index = game.defender_list(room_id).iter().position(|cid| *cid == minion_id);
+            index.map(|i| (room_id, i))
+        }
+        _ => None,
+    }
 }

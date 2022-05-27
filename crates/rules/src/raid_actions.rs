@@ -110,10 +110,7 @@ pub fn encounter_action(
         user_side
     );
 
-    let encounter_number = match game.raid()?.phase {
-        RaidPhase::Encounter(n) => n,
-        _ => bail!("Expected Encounter phase"),
-    };
+    let mut encounter_number = get_encounter_number(game)?;
 
     match action {
         EncounterAction::UseWeaponAbility(source_id, target_id) => {
@@ -141,6 +138,7 @@ pub fn encounter_action(
             let target = game.raid()?.target;
             let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
             dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id));
+
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(defender_id),
                 target: InteractionObjectId::Identity(Side::Champion),
@@ -152,10 +150,20 @@ pub fn encounter_action(
         // Raid may have been ended by an ability.
         Ok(())
     } else {
+        // Minion abilities may change the current encounter position
+        encounter_number = get_encounter_number(game)?;
         raid_phases::set_raid_phase(
             game,
             next_encounter(game, Some(encounter_number), RaidPhase::Continue)?,
         )
+    }
+}
+
+/// Returns the current encounter index for a raid in the 'Encounter' phase.
+fn get_encounter_number(game: &GameState) -> Result<usize> {
+    match game.raid()?.phase {
+        RaidPhase::Encounter(n) => Ok(n),
+        _ => bail!("Expected Encounter phase"),
     }
 }
 

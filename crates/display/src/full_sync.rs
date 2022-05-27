@@ -398,6 +398,15 @@ fn card_icons(
                     background_scale: assets::background_scale(CardIconType::Health),
                 })
             });
+        let shield = queries::shield(game, card.id);
+        if shield > 0 {
+            icons.bottom_left_icon = Some(CardIcon {
+                enabled: true,
+                background: Some(assets::card_icon(CardIconType::Shield)),
+                text: Some(shield.to_string()),
+                background_scale: assets::background_scale(CardIconType::Shield),
+            });
+        }
     }
 
     icons

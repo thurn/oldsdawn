@@ -31,7 +31,7 @@ use data::delegates::{
     RaidSuccessEvent, Scope, ScoreCard, ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
     UnveilProjectEvent,
 };
-use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
+use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, RaidPhase, TurnData};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, ManaValue, PointsValue, RoomId, RoomLocation, Side,
@@ -535,4 +535,15 @@ pub fn deal_damage(game: &mut GameState, _: DamageType, amount: u32) {
             game.updates.push(GameUpdate::GameOver(Side::Overlord));
         }
     }
+}
+
+/// Mutates the phase of an ongoing raid to be encountering the `minion_id`
+/// minion.
+///
+/// Panics if no active raid is ongoing or if this minion is not in play.
+pub fn set_raid_encountering_minion(game: &mut GameState, minion_id: CardId) {
+    let (room_id, index) = queries::minion_position(game, minion_id).expect("position");
+    let raid = game.data.raid.as_mut().expect("raid");
+    raid.target = room_id;
+    raid.phase = RaidPhase::Encounter(index);
 }

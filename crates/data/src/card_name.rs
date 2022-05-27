@@ -97,6 +97,7 @@ pub enum CardName {
     ForcedMarch,
     RuneWall,
     TimeGolem,
+    TemporalVortex,
 }
 
 impl CardName {

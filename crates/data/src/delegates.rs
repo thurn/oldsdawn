@@ -49,7 +49,7 @@
 //!         self.0
 //!     }
 //!
-//!     fn get(delegate: &Delegate) -> Option<EventDelegate<TurnNumber>> {
+//!     fn extract(delegate: &Delegate) -> Option<EventDelegate<TurnNumber>> {
 //!         match delegate {
 //!             Delegate::OnDawn(d) => Some(*d),
 //!             _ => None,
@@ -75,7 +75,7 @@ use crate::card_definition::Cost;
 #[allow(unused)] // Used in rustdocs
 use crate::card_state::{CardData, CardPosition};
 use crate::game::GameState;
-use crate::game_actions::CardTarget;
+use crate::game_actions::{CardTarget, PromptAction};
 use crate::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BoostData, BreachValue, CardId, HealthValue,
     ManaValue, RaidId, RoomId, ShieldValue, Side, TurnNumber,
@@ -317,6 +317,16 @@ impl From<RaidEnded> for RaidId {
     fn from(me: RaidEnded) -> Self {
         me.raid_id
     }
+}
+
+/// Actions to show the Champion during combat in addition to their weapon
+/// actions
+#[derive(Clone, Debug)]
+pub struct MinionCombatPrompt {
+    /// Combat actions to show the Champion
+    pub actions: Vec<PromptAction>,
+    /// Whether to show the default continue/don't use a weapon option
+    pub include_no_action: bool,
 }
 
 /// The core of the delegate pattern, used to identify which event or which

@@ -16,14 +16,14 @@
 
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, CardStats};
 use data::card_name::CardName;
-use data::game_actions::{CardPromptAction, GamePrompt};
-use data::primitives::{CardType, ColdDamage, Faction, Rarity, School, Side};
+use data::card_state::CardPosition;
+use data::game_actions::CardPromptAction;
+use data::primitives::{CardType, ColdDamage, Faction, Rarity, RoomLocation, School, Side};
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::mana::ManaPurpose;
-use rules::mutations::SetPrompt;
-use rules::{abilities, mana, mutations, text, DEFINITIONS};
+use rules::mutations::SummonMinion;
+use rules::{abilities, mutations, queries, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -68,18 +68,14 @@ pub fn time_golem() -> CardDefinition {
                 ],
                 ability_type: AbilityType::Standard,
                 delegates: vec![on_encountered(|g, _s, _| {
-                    let mut responses = vec![CardPromptAction::EndRaid];
-                    if mana::get(g, Side::Champion, ManaPurpose::PayForPrompt) >= 5 {
-                        responses.push(CardPromptAction::LoseMana(Side::Champion, 5))
-                    }
-                    if g.champion.actions >= 2 {
-                        responses.push(CardPromptAction::LoseActions(Side::Champion, 2))
-                    }
-                    mutations::set_prompt(
+                    set_card_prompt(
                         g,
                         Side::Champion,
-                        SetPrompt::CardPrompt,
-                        GamePrompt::card_actions(responses),
+                        vec![
+                            Some(CardPromptAction::EndRaid),
+                            lose_mana_prompt(g, Side::Champion, 5),
+                            lose_actions_prompt(g, Side::Champion, 2),
+                        ],
                     );
                 })],
             },
@@ -87,6 +83,66 @@ pub fn time_golem() -> CardDefinition {
         config: CardConfig {
             stats: health(3),
             faction: Some(Faction::Construct),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn temporal_vortex() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TemporalVortex,
+        cost: cost(6),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_15"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            Ability {
+                text: text![
+                    Keyword::Combat,
+                    "End the raid unless the Champion pays",
+                    actions_text(2)
+                ],
+                ability_type: AbilityType::Standard,
+                delegates: vec![combat(|g, _, _| {
+                    set_card_prompt(
+                        g,
+                        Side::Champion,
+                        vec![
+                            Some(CardPromptAction::EndRaid),
+                            lose_actions_prompt(g, Side::Champion, 2),
+                        ],
+                    );
+                })],
+            },
+            Ability {
+                text: text![
+                    Keyword::Combat,
+                    "Summon a minion from the Sanctum or Crypts for free.",
+                ],
+                ability_type: AbilityType::Standard,
+                delegates: vec![combat(|g, s, _| {
+                    let cards = g.hand(Side::Overlord).chain(g.discard_pile(Side::Overlord));
+                    if let Some(minion_id) = queries::highest_cost(cards) {
+                        let (room_id, index) =
+                            queries::minion_position(g, s.card_id()).expect("position");
+                        mutations::move_card(
+                            g,
+                            minion_id,
+                            CardPosition::Room(room_id, RoomLocation::Defender),
+                        );
+                        g.move_card_to_index(minion_id, index);
+                        mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts);
+                        mutations::set_raid_encountering_minion(g, s.card_id());
+                    }
+                })],
+            },
+        ],
+        config: CardConfig {
+            stats: CardStats { health: Some(6), shield: Some(3), ..CardStats::default() },
+            faction: Some(Faction::Abyssal),
             ..CardConfig::default()
         },
     }

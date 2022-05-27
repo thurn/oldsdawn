@@ -250,14 +250,8 @@ pub enum ItemLocation {
 pub enum Faction {
     Prismatic,
     Construct,
-
-    /// Code Gate/Decoder
     Mortal,
-
-    /// Barrier/Fracter
     Abyssal,
-
-    /// Sentry/Killer
     Infernal,
 }
 
