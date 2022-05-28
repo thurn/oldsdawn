@@ -269,6 +269,48 @@ pub fn test_weapon_4_attack_12_boost() -> CardDefinition {
 }
 
 #[distributed_slice(DEFINITIONS)]
+pub fn test_weapon_abyssal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestWeaponAbyssal,
+        abilities: vec![abilities::encounter_boost()],
+        config: CardConfig {
+            stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
+            faction: Some(Faction::Abyssal),
+            ..CardConfig::default()
+        },
+        ..test_weapon_2_attack()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_weapon_infernal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestWeaponInfernal,
+        abilities: vec![abilities::encounter_boost()],
+        config: CardConfig {
+            stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
+            faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
+        ..test_weapon_2_attack()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_weapon_mortal() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestWeaponMortal,
+        abilities: vec![abilities::encounter_boost()],
+        config: CardConfig {
+            stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
+            faction: Some(Faction::Mortal),
+            ..CardConfig::default()
+        },
+        ..test_weapon_2_attack()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_5_attack() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeapon5Attack,

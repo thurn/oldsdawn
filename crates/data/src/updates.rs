@@ -72,6 +72,7 @@ pub enum GameUpdate {
     ChampionScoreCard(CardId, PointsValue),
     /// A card's ability has been activated
     AbilityActivated(AbilityId),
+    MoveToZoneDuringRaid(CardId),
 
     GeneralUpdate,
 

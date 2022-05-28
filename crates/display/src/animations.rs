@@ -134,6 +134,9 @@ pub fn render(
         GameUpdate::MoveToZone(card_id) => {
             move_card(commands, UpdateType::Utility, game.card(*card_id))
         }
+        GameUpdate::MoveToZoneDuringRaid(card_id) => {
+            move_card(commands, UpdateType::Utility, game.card(*card_id))
+        }
         GameUpdate::ShuffleIntoDeck(card_id) => {
             shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
         }

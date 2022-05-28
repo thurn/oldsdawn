@@ -14,7 +14,8 @@
 
 use data::card_name::CardName;
 use data::primitives::Side;
-use protos::spelldawn::PlayerName;
+use protos::spelldawn::object_position::Position;
+use protos::spelldawn::{ClientRoomLocation, ObjectPositionRaid, PlayerName};
 use test_utils::client::HasText;
 use test_utils::*;
 use ui::icons;
@@ -31,7 +32,7 @@ fn ice_dragon() {
 }
 
 #[test]
-fn time_golem() {
+fn time_golem_pay_mana() {
     let mut g = new_game(Side::Overlord, Args::default());
     g.play_from_hand(CardName::TimeGolem);
     set_up_minion_combat(&mut g);
@@ -78,4 +79,62 @@ fn time_golem_end_raid() {
     g.click_on(g.opponent_id(), "End Raid");
     assert_eq!(2, g.opponent.this_player.actions());
     assert!(!g.user.data.raid_active());
+}
+
+#[test]
+fn temporal_vortex_end_raid() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.add_to_hand(CardName::TestMinionEndRaid);
+    g.play_from_hand(CardName::TemporalVortex);
+    set_up_minion_combat(&mut g);
+    assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
+    g.click_on(g.opponent_id(), "End Raid");
+    assert!(!g.user.data.raid_active());
+    assert_eq!(
+        vec!["Temporal Vortex", "Test Minion End Raid"],
+        g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
+    );
+    assert_eq!(0, g.user.cards.hand(PlayerName::User).len());
+    assert_eq!(2, g.opponent.this_player.actions());
+}
+
+#[test]
+fn temporal_vortex_pay_actions() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.add_to_hand(CardName::TestMinionEndRaid);
+    g.play_from_hand(CardName::TemporalVortex);
+    set_up_minion_combat(&mut g);
+    g.click_on(g.opponent_id(), format!("Pay 2{}", icons::ACTION));
+    assert_eq!(0, g.opponent.this_player.actions());
+    assert!(g.user.data.raid_active());
+    assert_eq!(
+        vec!["Test Minion End Raid", "Test Scheme 31"],
+        g.user.cards.names_in_position(Position::Raid(ObjectPositionRaid {}))
+    );
+    assert_eq!(
+        vec!["Temporal Vortex"],
+        g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
+    );
+    assert_eq!(0, g.user.cards.hand(PlayerName::User).len());
+    assert!(g.opponent.interface.controls().has_text("Advance"));
+    assert!(g.opponent.interface.controls().has_text("Retreat"));
+}
+
+#[test]
+fn temporal_vortex_defeat() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.add_to_hand(CardName::TestMinionEndRaid);
+    g.play_from_hand(CardName::TemporalVortex);
+    g.play_from_hand(CardName::TestScheme31);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    g.play_from_hand(CardName::TestWeaponAbyssal);
+    g.initiate_raid(ROOM_ID);
+    click_on_activate(&mut g);
+    g.click_on(g.opponent_id(), "Test Weapon");
+    assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
+    assert_eq!(
+        vec!["Temporal Vortex"],
+        g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
+    );
+    assert!(g.opponent.interface.controls().has_text("Score"));
 }

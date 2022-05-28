@@ -59,6 +59,12 @@ pub enum CardName {
     TestWeapon4Attack12Boost,
     /// Weapon with 5 attack and no boost
     TestWeapon5Attack,
+    /// Abyssal weapon with 3 attack and a '1 mana: +2 attack' boost.
+    TestWeaponAbyssal,
+    /// Infernal weapon with 3 attack and a '1 mana: +2 attack' boost.
+    TestWeaponInfernal,
+    /// Mortal weapon with 3 attack and a '1 mana: +2 attack' boost.
+    TestWeaponMortal,
     /// Artifact which stores mana on play, with the activated ability to take
     /// mana from it
     TestActivatedAbilityTakeMana,

@@ -69,11 +69,15 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
         game.updates.push(GameUpdate::ShuffleIntoDeck(card_id));
     }
 
-    if new_position.kind() == CardPositionKind::Room && game.data.raid.is_none() {
-        // HACK: Don't append `MoveToZone` updates for rooms during raids, because it
-        // overwrites the raid position of the card. Need to make position sync work
-        // better.
-        game.updates.push(GameUpdate::MoveToZone(card_id));
+    if new_position.kind() == CardPositionKind::Room {
+        // HACK: Use an earlier `MoveToZone` update for rooms during raids, because it
+        // overwrites the raid position of the card.
+        // TODO: Make position sync less insane
+        if game.data.raid.is_some() {
+            game.updates.push(GameUpdate::MoveToZoneDuringRaid(card_id));
+        } else {
+            game.updates.push(GameUpdate::MoveToZone(card_id));
+        }
     }
 
     if new_position.in_discard_pile() || new_position.kind() == CardPositionKind::ArenaItem {

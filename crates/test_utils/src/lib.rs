@@ -336,6 +336,10 @@ pub fn click_on_continue(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Champion), "Continue");
 }
 
+pub fn click_on_advance(session: &mut TestSession) {
+    session.click_on(session.player_id_for_side(Side::Champion), "Advance");
+}
+
 pub fn click_on_score(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Champion), "Score");
 }
