@@ -21,7 +21,7 @@ use data::card_definition::{
 use data::card_state::CardPosition;
 use data::delegates::{
     AbilityActivated, CardPlayed, Delegate, EventDelegate, MutationFn, QueryDelegate, RaidEnded,
-    RaidStart, RequirementFn, Scope, UsedWeapon,
+    RaidStart, RequirementFn, Scope, TransformationFn, UsedWeapon,
 };
 use data::game::GameState;
 use data::game_actions::{CardPromptAction, CardTarget, GamePrompt};
@@ -191,6 +191,13 @@ pub fn at_dusk(mutation: MutationFn<TurnNumber>) -> Delegate {
 /// A minion delegate which triggers when it is encountered
 pub fn on_encountered(mutation: MutationFn<CardId>) -> Delegate {
     Delegate::EncounterMinion(EventDelegate { requirement: this_card, mutation })
+}
+
+/// Delegate to supply supplemental minion actions when encountered.
+pub fn minion_combat_actions(
+    transformation: TransformationFn<CardId, Vec<Option<CardPromptAction>>>,
+) -> Delegate {
+    Delegate::MinionCombatActions(QueryDelegate { requirement: this_card, transformation })
 }
 
 /// A minion combat delegate

@@ -93,7 +93,7 @@ impl Database for SledDatabase {
                 cards: hashmap! {
                     CardName::DungeonAnnex => 15,
                     CardName::TemporalVortex => 15,
-                    CardName::TimeGolem => 15
+                    CardName::IceDragon => 15
                 },
             }
         })

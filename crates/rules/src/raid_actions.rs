@@ -26,8 +26,9 @@ use data::primitives::{CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
 use tracing::{info, instrument};
 
+use crate::card_prompt::HandleCardPrompt;
 use crate::mana::ManaPurpose;
-use crate::{dispatch, flags, mana, mutations, queries, raid_phases};
+use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid_phases};
 
 #[instrument(skip(game))]
 pub fn initiate_raid_action(
@@ -111,7 +112,6 @@ pub fn encounter_action(
     );
 
     let mut encounter_number = get_encounter_number(game)?;
-
     match action {
         EncounterAction::UseWeaponAbility(source_id, target_id) => {
             let cost =
@@ -134,16 +134,19 @@ pub fn encounter_action(
                 target: InteractionObjectId::CardId(target_id),
             }))
         }
-        EncounterAction::NoWeapon => {
+        EncounterAction::NoWeapon | EncounterAction::CardAction(_) => {
             let target = game.raid()?.target;
             let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
             dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id));
-
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(defender_id),
                 target: InteractionObjectId::Identity(Side::Champion),
             }));
         }
+    }
+
+    if let EncounterAction::CardAction(card_action) = action {
+        card_prompt::handle(game, user_side, card_action, HandleCardPrompt::NoAction)?;
     }
 
     if game.data.raid.is_none() {

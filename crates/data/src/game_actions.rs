@@ -34,6 +34,9 @@ pub enum EncounterAction {
     /// (source_id, target_id)
     UseWeaponAbility(CardId, CardId),
     NoWeapon,
+    /// Custom card action, resolved and then treated equivalently to 'no
+    /// weapon'
+    CardAction(CardPromptAction),
 }
 
 #[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
@@ -71,7 +74,7 @@ pub enum PromptAction {
     /// Action for the Overlord to activate the room currently being raided
     ActivateRoomAction(RoomActivationAction),
     /// Champion action in response to a raid encounter
-    WeaponAction(EncounterAction),
+    EncounterAction(EncounterAction),
     /// Action to advance to the next encounter of a raid or retreat
     ContinueAction(ContinueAction),
     /// Action to target & destroy an accessed card

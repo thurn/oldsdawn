@@ -83,7 +83,7 @@ pub enum GameUpdate {
     GameOver(Side),
     MoveToZone(CardId),
     /// A card's ability has been triggered -- typically used for abilities
-    /// configured to alert when fired via `TriggerIndicator::Alert`.
+    /// configured to alert when fired via `alert()`.
     AbilityTriggered(AbilityId),
     /// A player discarded the provided number of cards to hand size
     DiscardToHandSize(Side, u32),

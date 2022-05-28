@@ -106,15 +106,8 @@ pub fn temporal_vortex() -> CardDefinition {
                     actions_text(2)
                 ],
                 ability_type: AbilityType::Standard,
-                delegates: vec![combat(|g, _, _| {
-                    set_card_prompt(
-                        g,
-                        Side::Champion,
-                        vec![
-                            Some(CardPromptAction::EndRaid),
-                            lose_actions_prompt(g, Side::Champion, 2),
-                        ],
-                    );
+                delegates: vec![minion_combat_actions(|g, _, _, _| {
+                    vec![Some(CardPromptAction::EndRaid), lose_actions_prompt(g, Side::Champion, 2)]
                 })],
             },
             Ability {

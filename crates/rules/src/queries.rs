@@ -247,9 +247,13 @@ pub fn minion_position(game: &GameState, minion_id: CardId) -> Option<(RoomId, u
 /// Actions to present when a minion is encountered in combat in addition to
 /// weapon abilities.
 pub fn minion_combat_actions(game: &GameState, minion_id: CardId) -> Vec<PromptAction> {
-    let result = dispatch::perform_query(game, MinionCombatActionsQuery(minion_id), vec![]);
+    let result = dispatch::perform_query(game, MinionCombatActionsQuery(minion_id), vec![])
+        .into_iter()
+        .flatten()
+        .map(|a| PromptAction::EncounterAction(EncounterAction::CardAction(a)))
+        .collect::<Vec<_>>();
     if result.is_empty() {
-        vec![PromptAction::WeaponAction(EncounterAction::NoWeapon)]
+        vec![PromptAction::EncounterAction(EncounterAction::NoWeapon)]
     } else {
         result
     }

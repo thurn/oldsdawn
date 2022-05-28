@@ -197,8 +197,8 @@ fn response_button(game: &GameState, side: Side, response: PromptAction) -> Resp
     let button = match response {
         PromptAction::MulliganDecision(mulligan) => mulligan_button(mulligan),
         PromptAction::ActivateRoomAction(activate) => activate_button(activate),
-        PromptAction::WeaponAction(encounter_action) => {
-            encounter_action_button(game, encounter_action)
+        PromptAction::EncounterAction(encounter_action) => {
+            encounter_action_button(game, side, encounter_action)
         }
         PromptAction::ContinueAction(advance_action) => advance_action_button(advance_action),
         PromptAction::RaidScoreCard(card_id) => ResponseButton {
@@ -283,7 +283,11 @@ fn activate_button(activate: RoomActivationAction) -> ResponseButton {
     }
 }
 
-fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) -> ResponseButton {
+fn encounter_action_button(
+    game: &GameState,
+    side: Side,
+    encounter_action: EncounterAction,
+) -> ResponseButton {
     match encounter_action {
         EncounterAction::UseWeaponAbility(source_id, target_id) => {
             let label = rules::card_definition(game, source_id).name.displayed_name();
@@ -306,6 +310,7 @@ fn encounter_action_button(game: &GameState, encounter_action: EncounterAction) 
             primary: false,
             ..ResponseButton::default()
         },
+        EncounterAction::CardAction(card_action) => card_response_button(side, card_action),
     }
 }
 

@@ -34,6 +34,7 @@ use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLo
 use data::updates::GameUpdate;
 use tracing::{info, instrument};
 
+use crate::card_prompt::HandleCardPrompt;
 use crate::mana::ManaPurpose;
 use crate::raid_actions::initiate_raid_action;
 use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid_actions};
@@ -280,7 +281,9 @@ fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAct
         PromptAction::ActivateRoomAction(data) => {
             raid_actions::room_activation_action(game, user_side, data)
         }
-        PromptAction::WeaponAction(data) => raid_actions::encounter_action(game, user_side, data),
+        PromptAction::EncounterAction(data) => {
+            raid_actions::encounter_action(game, user_side, data)
+        }
         PromptAction::ContinueAction(data) => raid_actions::continue_action(game, user_side, data),
         PromptAction::RaidDestroyCard(card_id) => {
             raid_actions::destroy_card_action(game, user_side, card_id)
@@ -289,6 +292,8 @@ fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAct
             raid_actions::score_card_action(game, user_side, card_id)
         }
         PromptAction::EndRaid => raid_actions::raid_end_action(game, user_side),
-        PromptAction::CardAction(card_action) => card_prompt::handle(game, user_side, card_action),
+        PromptAction::CardAction(card_action) => {
+            card_prompt::handle(game, user_side, card_action, HandleCardPrompt::ResetRaidPrompt)
+        }
     }
 }

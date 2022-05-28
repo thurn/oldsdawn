@@ -138,9 +138,7 @@ pub fn render(
             shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
         }
         GameUpdate::AbilityActivated(ability_id) => {
-            if ability_id.card_id.side == commands.user_side {
-                // move_ability_to_hand(commands, game, *ability_id);
-            } else {
+            if ability_id.card_id.side != commands.user_side {
                 show_ability_fired(commands, game, *ability_id)
             }
         }

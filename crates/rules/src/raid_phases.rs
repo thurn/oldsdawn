@@ -154,7 +154,7 @@ fn build_encounter_prompt(game: &GameState, defender: usize) -> Result<GamePromp
             .weapons()
             .filter(|weapon| flags::can_defeat_target(game, weapon.id, defender_id))
             .map(|weapon| {
-                PromptAction::WeaponAction(EncounterAction::UseWeaponAbility(
+                PromptAction::EncounterAction(EncounterAction::UseWeaponAbility(
                     weapon.id,
                     defender_id,
                 ))

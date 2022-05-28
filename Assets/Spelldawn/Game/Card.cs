@@ -406,7 +406,7 @@ namespace Spelldawn.Game
 
       if (revealed.Title?.Text != null)
       {
-        gameObject.name = revealed.Title.Text;
+        gameObject.name = revealed.Title.Text + IdString();
       }
 
       _validRoomTargets = null;
@@ -471,7 +471,7 @@ namespace Spelldawn.Game
     void RenderHiddenCard()
     {
       _isRevealed = false;
-      gameObject.name = "Hidden Card";
+      gameObject.name = "Hidden Card" + IdString();
       _cardBack.gameObject.SetActive(value: true);
       _cardFront.gameObject.SetActive(value: false);
     }
@@ -548,6 +548,23 @@ namespace Spelldawn.Game
 
     public void OnArrowReleased(Vector3 position)
     {
+    }
+
+    string IdString()
+    {
+      var side = _cardId?.Side switch
+      {
+        PlayerSide.Overlord => "O", PlayerSide.Champion => "O", _ => "??"
+      };
+
+      if (_cardId?.AbilityId != null)
+      {
+        return $" {side}{_cardId?.Index}[{_cardId?.AbilityId}]";
+      }
+      else
+      {
+        return $" {side}{_cardId?.Index}";
+      }
     }
   }
 }
