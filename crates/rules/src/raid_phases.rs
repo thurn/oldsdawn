@@ -159,7 +159,7 @@ fn build_encounter_prompt(game: &GameState, defender: usize) -> Result<GamePromp
                     defender_id,
                 ))
             })
-            .chain(iter::once(PromptAction::WeaponAction(EncounterAction::NoWeapon)))
+            .chain(queries::minion_combat_actions(game, defender_id))
             .collect(),
     })
 }

@@ -19,10 +19,11 @@ use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     AbilityManaCostQuery, ActionCostQuery, AttackBoostQuery, AttackValueQuery, BoostCountQuery,
     BreachValueQuery, HealthValueQuery, ManaCostQuery, MaximumHandSizeQuery,
-    SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery, VaultAccessCountQuery,
+    MinionCombatActionsQuery, SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery,
+    VaultAccessCountQuery,
 };
 use data::game::{GamePhase, GameState, RaidPhase};
-use data::game_actions::CardTargetKind;
+use data::game_actions::{CardTargetKind, EncounterAction, PromptAction};
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BreachValue, CardId, CardType, HealthValue,
     ManaValue, RoomId, RoomLocation, ShieldValue, Side,
@@ -240,5 +241,16 @@ pub fn minion_position(game: &GameState, minion_id: CardId) -> Option<(RoomId, u
             index.map(|i| (room_id, i))
         }
         _ => None,
+    }
+}
+
+/// Actions to present when a minion is encountered in combat in addition to
+/// weapon abilities.
+pub fn minion_combat_actions(game: &GameState, minion_id: CardId) -> Vec<PromptAction> {
+    let result = dispatch::perform_query(game, MinionCombatActionsQuery(minion_id), vec![]);
+    if result.is_empty() {
+        vec![PromptAction::WeaponAction(EncounterAction::NoWeapon)]
+    } else {
+        result
     }
 }

@@ -125,10 +125,10 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
     let data = &variant.data;
 
     let (trait_value, return_value) = if variant.delegate_type == DelegateType::Event {
-        (quote! {EventData<#data>}, quote! {Option<EventDelegate<#data>>})
+        (quote! {EventData<#data>}, quote! {Option<&EventDelegate<#data>>})
     } else {
         let output = variant.output.as_ref().unwrap();
-        (quote! {QueryData<#data, #output>}, quote! {Option<QueryDelegate<#data, #output>>})
+        (quote! {QueryData<#data, #output>}, quote! {Option<&QueryDelegate<#data, #output>>})
     };
 
     quote! {
@@ -147,7 +147,7 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
 
             fn extract(delegate: &Delegate) -> #return_value {
                 match delegate {
-                    Delegate::#name(d) => Some(*d),
+                    Delegate::#name(d) => Some(d),
                     _ => None,
                 }
             }

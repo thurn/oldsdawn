@@ -466,6 +466,10 @@ pub enum Delegate {
     /// Queries the maximum hand size of a player. Invoked with the default
     /// maximum hand size.
     MaximumHandSize(QueryDelegate<Side, u32>),
+    /// Actions to present when a minion is encountered in combat in addition to
+    /// weapon abilities. Invoked with the empty vector. If no actions are
+    /// returned, a default 'continue' action is shown.
+    MinionCombatActions(QueryDelegate<CardId, Vec<PromptAction>>),
 }
 
 impl Delegate {
@@ -517,7 +521,7 @@ pub trait EventData<T: fmt::Debug>: fmt::Debug {
 
     /// Return the wrapped [EventDelegate] if the provided [Delegate] is of the
     /// matching type.
-    fn extract(delegate: &Delegate) -> Option<EventDelegate<T>>;
+    fn extract(delegate: &Delegate) -> Option<&EventDelegate<T>>;
 }
 
 /// Functions implemented by a Query struct, automatically implemented by
@@ -530,5 +534,5 @@ pub trait QueryData<TData: fmt::Debug, TResult: fmt::Debug>: fmt::Debug {
 
     /// Return the wrapped [QueryDelegate] if the provided [Delegate] is of the
     /// matching type.
-    fn extract(delegate: &Delegate) -> Option<QueryDelegate<TData, TResult>>;
+    fn extract(delegate: &Delegate) -> Option<&QueryDelegate<TData, TResult>>;
 }
