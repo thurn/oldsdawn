@@ -12,22 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
+using Grpc.Net.Compression;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
+using CompressionLevel = System.IO.Compression.CompressionLevel;
 using Random = UnityEngine.Random;
-
-#nullable enable
-
 namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
@@ -40,7 +44,11 @@ namespace Spelldawn.Services
       ServerAddress, new GrpcChannelOptions
       {
         HttpHandler = new GrpcWebHandler(new HttpClientHandler()),
-        Credentials = ChannelCredentials.Insecure
+        Credentials = ChannelCredentials.Insecure,
+        CompressionProviders = new List<ICompressionProvider>
+        {
+          new GzipCompressionProvider(CompressionLevel.Optimal)
+        }
       }));
 
     readonly Queue<GameAction> _actionQueue = new();
@@ -338,4 +346,27 @@ namespace Spelldawn.Services
       _ => false
     };
   }
+  
+  /** You can use this type to log the size of server payloads before decompression. */
+  // ReSharper disable once UnusedType.Global
+  sealed class DebugGzipCompressionProvider : ICompressionProvider
+  {
+    readonly GzipCompressionProvider _wrappedProvider;
+    
+    public DebugGzipCompressionProvider(CompressionLevel defaultCompressionLevel)
+    {
+      _wrappedProvider = new GzipCompressionProvider(defaultCompressionLevel);
+    }
+
+    public Stream CreateCompressionStream(Stream stream, CompressionLevel? compressionLevel) =>
+      _wrappedProvider.CreateCompressionStream(stream, compressionLevel);
+
+    public Stream CreateDecompressionStream(Stream stream)
+    {
+      Debug.Log($">>> Decompressing: {stream.Length}");
+      return _wrappedProvider.CreateDecompressionStream(stream);
+    }
+
+    public string EncodingName => _wrappedProvider.EncodingName;
+  }  
 }

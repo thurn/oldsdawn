@@ -18,5 +18,5 @@ test = false
 prost = "0.9.0"
 prost-build = "0.9.0"
 prost-types = "0.9.0"
-tonic = "0.6.1"
-tonic-build = "0.6.0"
+tonic = {version = "0.6.1", features = ["compression"]}
+tonic-build = {version = "0.6.0", features = ["compression"]}

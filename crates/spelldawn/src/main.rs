@@ -31,11 +31,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::registry().with(fmt_layer).init();
 
     let address = "0.0.0.0:50052".parse().expect("valid address");
-    let service = tonic_web::config().enable(SpelldawnServer::new(GameService {
+    let server = SpelldawnServer::new(GameService {
         // To print responses:
         // response_interceptor: Some(|response| eprintln!("{}", Summary::summarize(response)))
         response_interceptor: None,
-    }));
+    })
+    .send_gzip()
+    .accept_gzip();
+    let service = tonic_web::config().enable(server);
 
     warn!("Discovered {} cards. Server listening on {}.", found_cards, address);
     Server::builder().accept_http1(true).add_service(service).serve(address).await?;
