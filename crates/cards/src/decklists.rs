@@ -26,9 +26,22 @@ pub static CANONICAL_OVERLORD: Lazy<Deck> = Lazy::new(|| Deck {
     owner_id: PlayerId::new(1),
     identity: CardName::TestOverlordIdentity,
     cards: hashmap! {
-        CardName::DungeonAnnex => 15,
-        CardName::IceDragon => 15,
-        CardName::GoldMine => 15
+        CardName::DungeonAnnex => 3,
+        CardName::ActivateReinforcements => 2,
+        CardName::ResearchProject => 2,
+        CardName::Gemcarver => 2,
+        CardName::Coinery => 2,
+        CardName::PitTrap => 2,
+        CardName::OverwhelmingPower => 2,
+        CardName::GatheringDark => 3,
+        CardName::ForcedMarch => 2,
+        CardName::TimeGolem => 1,
+        CardName::TemporalVortex => 2,
+        CardName::ShadowLurker => 3,
+        CardName::SphinxOfWintersBreath => 2,
+        CardName::BridgeTroll => 2,
+        CardName::Stormcaller => 2,
+        CardName::FireGoblin => 2
     },
 });
 
@@ -37,9 +50,22 @@ pub static CANONICAL_CHAMPION: Lazy<Deck> = Lazy::new(|| Deck {
     owner_id: PlayerId::new(2),
     identity: CardName::TestChampionIdentity,
     cards: hashmap! {
-        CardName::Lodestone => 15,
-        CardName::Greataxe => 15,
-        CardName::ArcaneRecovery => 15,
+        CardName::Meditation => 2,
+        CardName::CoupDeGrace => 3,
+        CardName::ChargedStrike => 2,
+        CardName::ArcaneRecovery => 3,
+        CardName::StealthMission => 2,
+        CardName::Preparation => 2,
+        CardName::SanctumPassage => 1,
+        CardName::Accumulator => 1,
+        CardName::MysticPortal => 1,
+        CardName::StorageCrystal => 2,
+        CardName::MagicalResonator => 2,
+        CardName::DarkGrimoire => 1,
+        CardName::MaraudersAxe => 2,
+        CardName::KeenHalberd => 2,
+        CardName::EtherealBlade => 2,
+        CardName::BowOfTheAlliance => 2
     },
 });
 

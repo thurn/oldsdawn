@@ -1352,6 +1352,7 @@ dependencies = [
  "ai",
  "anyhow",
  "bincode",
+ "cards",
  "dashmap",
  "data",
  "display",

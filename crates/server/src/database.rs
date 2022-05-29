@@ -16,6 +16,7 @@
 
 use anyhow::{Context, Result};
 use bincode;
+use cards::decklists;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::GameState;
@@ -77,25 +78,9 @@ impl Database for SledDatabase {
 
     fn deck(&self, player_id: PlayerId, side: Side) -> Result<Deck> {
         Ok(if side == Side::Champion {
-            Deck {
-                owner_id: player_id,
-                identity: CardName::TestChampionIdentity,
-                cards: hashmap! {
-                    CardName::CoupDeGrace => 15,
-                    CardName::SanctumPassage => 15,
-                    CardName::StorageCrystal => 15,
-                },
-            }
+            Deck { owner_id: player_id, ..decklists::CANONICAL_CHAMPION.clone() }
         } else {
-            Deck {
-                owner_id: player_id,
-                identity: CardName::TestOverlordIdentity,
-                cards: hashmap! {
-                    CardName::DungeonAnnex => 15,
-                    CardName::FireGoblin => 15,
-                    CardName::IceDragon => 15
-                },
-            }
+            Deck { owner_id: player_id, ..decklists::CANONICAL_OVERLORD.clone() }
         })
     }
 }
