@@ -63,6 +63,14 @@ pub enum Sentence {
     Internal,
 }
 
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+pub enum DamageWord {
+    DealStart,
+    DealInternal,
+    TakeStart,
+    TakeInternal,
+}
+
 /// Identifies a keyword or concept which appears in rules text
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind)]
 #[enum_kind(KeywordKind, derive(Ord, PartialOrd))]
@@ -77,7 +85,7 @@ pub enum Keyword {
     SuccessfulRaid,
     Store(Sentence, u32),
     Take(Sentence, u32),
-    DealDamage(u32, DamageType),
+    DealDamage(DamageWord, u32, DamageType),
     InnerRoom(Sentence),
     Breach(BreachValue),
     LevelUp,

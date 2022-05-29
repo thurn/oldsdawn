@@ -92,7 +92,7 @@ impl Database for SledDatabase {
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
                     CardName::DungeonAnnex => 15,
-                    CardName::BridgeTroll => 15,
+                    CardName::Stormcaller => 15,
                     CardName::IceDragon => 15
                 },
             }

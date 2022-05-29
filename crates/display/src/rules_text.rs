@@ -18,8 +18,10 @@ use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
 use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
-use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, DamageType, Faction};
-use data::text::{AbilityText, Keyword, KeywordKind, NumericOperator, Sentence, TextToken};
+use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, Faction};
+use data::text::{
+    AbilityText, DamageWord, Keyword, KeywordKind, NumericOperator, Sentence, TextToken,
+};
 use protos::spelldawn::{Node, RulesText};
 use ui::card_info::SupplementalCardInfo;
 use ui::core::Component;
@@ -154,15 +156,16 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                     n,
                     icons::MANA
                 ),
-                Keyword::DealDamage(amount, damage_type) => format!(
-                    "Deal {} {} damage.",
+                Keyword::DealDamage(word, amount, damage_type) => format!(
+                    "{} {} {}",
+                    match word {
+                        DamageWord::DealStart => "Deal",
+                        DamageWord::DealInternal => "deal",
+                        DamageWord::TakeStart => "Take",
+                        DamageWord::TakeInternal => "take",
+                    },
                     amount,
-                    match damage_type {
-                        DamageType::Physical => "physical",
-                        DamageType::Fire => "fire",
-                        DamageType::Lightning => "lightning",
-                        DamageType::Cold => "cold",
-                    }
+                    damage_type
                 ),
                 Keyword::InnerRoom(sentence_position) => match sentence_position {
                     Sentence::Start => "Inner room",
@@ -253,7 +256,8 @@ fn process_keywords(keywords: &mut Vec<KeywordKind>, output: &mut Vec<String>) {
             }
             KeywordKind::Combat => {
                 output.push(
-                    "<b>Combat:</b> Triggers if this minion is not defeated in combat.".to_string(),
+                    "<b>Combat:</b> Triggers if this minion is not defeated during a raid."
+                        .to_string(),
                 );
             }
             KeywordKind::Encounter => {

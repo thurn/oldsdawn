@@ -19,7 +19,7 @@ use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope};
 use data::game::GameState;
 use data::primitives::{AbilityId, AttackValue, CardId, DamageTypeTrait, ManaValue};
-use data::text::{AbilityText, Keyword, Sentence, TextToken};
+use data::text::{AbilityText, DamageWord, Keyword, Sentence, TextToken};
 
 use crate::helpers::*;
 use crate::mutations::OnZeroStored;
@@ -82,7 +82,11 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability
 /// cannot.
 pub fn combat_deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
     Ability {
-        text: text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())],
+        text: text![
+            Keyword::Combat,
+            Keyword::DealDamage(DamageWord::DealStart, N, TDamage::damage_type()),
+            "."
+        ],
         ability_type: AbilityType::Standard,
         delegates: vec![combat(|g, s, _| {
             mutations::deal_damage(g, s, TDamage::damage_type(), N);

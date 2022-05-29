@@ -22,7 +22,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::agent_definition::{AgentName, GameStatePredictorName};
 use crate::game::MulliganDecision;
-use crate::primitives::{AbilityId, ActionCount, CardId, ManaValue, PointsValue, RoomId, Side};
+use crate::primitives::{
+    AbilityId, ActionCount, CardId, DamageType, ManaValue, PointsValue, RoomId, Side,
+};
 
 #[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum RoomActivationAction {
@@ -62,6 +64,10 @@ pub enum CardPromptAction {
     LoseActions(Side, ActionCount),
     /// End the current raid in failure.
     EndRaid,
+    /// Deal damage to the Champion
+    TakeDamage(AbilityId, DamageType, u32),
+    /// Deal damage and end the current raid
+    TakeDamageEndRaid(AbilityId, DamageType, u32),
 }
 
 /// An action which can be taken in the user interface, typically embedded

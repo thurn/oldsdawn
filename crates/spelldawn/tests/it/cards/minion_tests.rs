@@ -207,3 +207,33 @@ fn bridge_troll_end_raid() {
     assert!(!g.user.data.raid_active());
     assert_eq!(0, g.opponent.this_player.mana());
 }
+
+#[test]
+fn stormcaller_take_2() {
+    let mut g = new_game(Side::Overlord, Args { opponent_hand_size: 5, ..Args::default() });
+    g.play_from_hand(CardName::Stormcaller);
+    set_up_minion_combat(&mut g);
+    g.click_on(g.opponent_id(), "Take 2");
+    assert!(!g.user.data.raid_active());
+    assert_eq!(2, g.opponent.cards.discard_pile(PlayerName::User).len());
+}
+
+#[test]
+fn stormcaller_take_4() {
+    let mut g = new_game(Side::Overlord, Args { opponent_hand_size: 5, ..Args::default() });
+    g.play_from_hand(CardName::Stormcaller);
+    set_up_minion_combat(&mut g);
+    g.click_on(g.opponent_id(), "Take 4");
+    assert!(g.user.data.raid_active());
+    assert_eq!(4, g.opponent.cards.discard_pile(PlayerName::User).len());
+}
+
+#[test]
+fn stormcaller_take_2_game_over() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.play_from_hand(CardName::Stormcaller);
+    set_up_minion_combat(&mut g);
+    assert!(!g.opponent.interface.controls().has_text("Take 4"));
+    g.click_on(g.opponent_id(), "Take 2");
+    assert!(g.is_victory_for_player(Side::Overlord));
+}

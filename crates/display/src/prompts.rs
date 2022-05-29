@@ -254,6 +254,13 @@ fn card_response_button(user_side: Side, action: CardPromptAction) -> ResponseBu
         CardPromptAction::EndRaid => {
             ResponseButton { label: "End Raid".to_string(), ..ResponseButton::default() }
         }
+        CardPromptAction::TakeDamage(_, _, amount) => {
+            ResponseButton { label: format!("Take {}", amount), ..ResponseButton::default() }
+        }
+        CardPromptAction::TakeDamageEndRaid(_, _, amount) => ResponseButton {
+            label: format!("End Raid, Take {}", amount),
+            ..ResponseButton::default()
+        },
     }
 }
 

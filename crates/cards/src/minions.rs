@@ -22,7 +22,7 @@ use data::game_actions::CardPromptAction;
 use data::primitives::{
     CardType, ColdDamage, DamageType, Faction, Rarity, RoomLocation, School, Side,
 };
-use data::text::Keyword;
+use data::text::{DamageWord, Keyword};
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mana::ManaPurpose;
@@ -189,7 +189,8 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
         abilities: vec![Ability {
             text: text![
                 Keyword::Combat,
-                Keyword::DealDamage(1, DamageType::Cold),
+                Keyword::DealDamage(DamageWord::DealStart, 1, DamageType::Cold),
+                ".",
                 "If a card with an odd mana cost is discarded, end the raid."
             ],
             ability_type: AbilityType::Standard,
@@ -249,6 +250,45 @@ pub fn bridge_troll() -> CardDefinition {
         config: CardConfig {
             stats: CardStats { health: Some(0), shield: Some(2), ..CardStats::default() },
             faction: Some(Faction::Mortal),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn stormcaller() -> CardDefinition {
+    CardDefinition {
+        name: CardName::Stormcaller,
+        cost: cost(4),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_19"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text![
+                Keyword::Combat,
+                "The Champion must end the raid and",
+                Keyword::DealDamage(DamageWord::TakeInternal, 2, DamageType::Lightning),
+                "or",
+                Keyword::DealDamage(DamageWord::TakeInternal, 4, DamageType::Lightning),
+                "."
+            ],
+            ability_type: AbilityType::Standard,
+            delegates: vec![minion_combat_actions(|g, s, _, _| {
+                vec![
+                    Some(CardPromptAction::TakeDamageEndRaid(
+                        s.ability_id(),
+                        DamageType::Lightning,
+                        2,
+                    )),
+                    take_damage_prompt(g, s.ability_id(), DamageType::Lightning, 4),
+                ]
+            })],
+        }],
+        config: CardConfig {
+            stats: CardStats { health: Some(3), shield: Some(2), ..CardStats::default() },
+            faction: Some(Faction::Infernal),
             ..CardConfig::default()
         },
     }

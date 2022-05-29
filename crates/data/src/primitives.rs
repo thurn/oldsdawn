@@ -17,6 +17,7 @@
 #![allow(clippy::copy_iterator)] // Suppress IntoEnumIterator warning
 
 use std::fmt;
+use std::fmt::{Display, Formatter};
 
 use enum_iterator::IntoEnumIterator;
 use serde::{Deserialize, Serialize};
@@ -337,6 +338,21 @@ pub enum DamageType {
     Fire,
     Lightning,
     Cold,
+}
+
+impl Display for DamageType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                DamageType::Physical => "physical damage",
+                DamageType::Fire => "fire damage",
+                DamageType::Lightning => "lightning damage",
+                DamageType::Cold => "cold damage",
+            }
+        )
+    }
 }
 
 pub trait DamageTypeTrait {

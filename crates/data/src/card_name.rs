@@ -111,6 +111,7 @@ pub enum CardName {
     ShadowLurker,
     SphinxOfWintersBreath,
     BridgeTroll,
+    Stormcaller,
 }
 
 impl CardName {

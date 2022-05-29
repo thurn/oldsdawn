@@ -46,6 +46,13 @@ pub fn handle(
         CardPromptAction::EndRaid => {
             mutations::end_raid(game, RaidOutcome::Failure);
         }
+        CardPromptAction::TakeDamage(ability_id, damage_type, amount) => {
+            mutations::deal_damage(game, ability_id, damage_type, amount);
+        }
+        CardPromptAction::TakeDamageEndRaid(ability_id, damage_type, amount) => {
+            mutations::deal_damage(game, ability_id, damage_type, amount);
+            mutations::end_raid(game, RaidOutcome::Failure);
+        }
     }
 
     // Rebuild the raid prompt, if any.
