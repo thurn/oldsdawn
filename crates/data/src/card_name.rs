@@ -112,6 +112,7 @@ pub enum CardName {
     SphinxOfWintersBreath,
     BridgeTroll,
     Stormcaller,
+    FireGoblin,
 }
 
 impl CardName {

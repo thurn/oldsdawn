@@ -293,3 +293,36 @@ pub fn stormcaller() -> CardDefinition {
         },
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn fire_goblin() -> CardDefinition {
+    CardDefinition {
+        name: CardName::FireGoblin,
+        cost: cost(1),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_20"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text![
+                Keyword::Combat,
+                Keyword::DealDamage(DamageWord::DealStart, 1, DamageType::Fire),
+                ".",
+                "Gain",
+                mana_text(1),
+                "."
+            ],
+            ability_type: AbilityType::Standard,
+            delegates: vec![combat(|g, s, _| {
+                mutations::deal_damage(g, s, DamageType::Fire, 1);
+                mana::gain(g, Side::Overlord, 1);
+            })],
+        }],
+        config: CardConfig {
+            stats: CardStats { health: Some(1), shield: Some(2), ..CardStats::default() },
+            faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
+    }
+}

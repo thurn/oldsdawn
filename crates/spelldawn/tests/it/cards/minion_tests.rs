@@ -237,3 +237,15 @@ fn stormcaller_take_2_game_over() {
     g.click_on(g.opponent_id(), "Take 2");
     assert!(g.is_victory_for_player(Side::Overlord));
 }
+
+#[test]
+fn fire_goblin() {
+    let (cost, gained) = (1, 1);
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.play_from_hand(CardName::FireGoblin);
+    set_up_minion_combat(&mut g);
+    assert_eq!(STARTING_MANA - cost, g.me().mana());
+    click_on_continue(&mut g);
+    assert_eq!(STARTING_MANA - cost + gained, g.me().mana());
+    assert_eq!(1, g.opponent.cards.discard_pile(PlayerName::User).len());
+}
