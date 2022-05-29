@@ -104,6 +104,7 @@ pub enum CardName {
     RuneWall,
     TimeGolem,
     TemporalVortex,
+    ShadowLurker,
 }
 
 impl CardName {

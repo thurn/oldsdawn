@@ -140,3 +140,34 @@ pub fn temporal_vortex() -> CardDefinition {
         },
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn shadow_lurker() -> CardDefinition {
+    CardDefinition {
+        name: CardName::ShadowLurker,
+        cost: cost(3),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            Ability {
+                text: text!["While this minion is in an outer room, it has +2 health"],
+                ability_type: AbilityType::Standard,
+                delegates: vec![on_calculate_health(|g, s, _, current| {
+                    match g.card(s.card_id()).position() {
+                        CardPosition::Room(room_id, _) if !is_inner_room(room_id) => current + 2,
+                        _ => current,
+                    }
+                })],
+            },
+            abilities::end_raid(),
+        ],
+        config: CardConfig {
+            stats: CardStats { health: Some(2), shield: Some(1), ..CardStats::default() },
+            faction: Some(Faction::Abyssal),
+            ..CardConfig::default()
+        },
+    }
+}

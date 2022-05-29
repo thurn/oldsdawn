@@ -294,9 +294,18 @@ pub fn level_up_room(session: &mut TestSession, times: u32) {
 ///
 /// NOTE: This causes the Champion player to draw a card for their turn!
 pub fn set_up_minion_combat(session: &mut TestSession) {
+    set_up_minion_combat_with_weapon(session, None);
+}
+
+/// Equivalent to [set_up_minion_combat] which plays a given Champion weapon
+/// before initiating the raid.
+pub fn set_up_minion_combat_with_weapon(session: &mut TestSession, weapon: Option<CardName>) {
     session.play_from_hand(CardName::TestScheme31);
     spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
+    if let Some(name) = weapon {
+        session.play_from_hand(name);
+    }
     session.initiate_raid(ROOM_ID);
     click_on_activate(session);
 }

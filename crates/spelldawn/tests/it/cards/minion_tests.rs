@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use data::card_name::CardName;
-use data::primitives::Side;
+use data::primitives::{RoomId, Side};
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{ClientRoomLocation, ObjectPositionRaid, PlayerName};
 use test_utils::client::HasText;
@@ -125,11 +125,7 @@ fn temporal_vortex_defeat() {
     let mut g = new_game(Side::Overlord, Args::default());
     g.add_to_hand(CardName::TestMinionEndRaid);
     g.play_from_hand(CardName::TemporalVortex);
-    g.play_from_hand(CardName::TestScheme31);
-    spend_actions_until_turn_over(&mut g, Side::Overlord);
-    g.play_from_hand(CardName::TestWeaponAbyssal);
-    g.initiate_raid(ROOM_ID);
-    click_on_activate(&mut g);
+    set_up_minion_combat_with_weapon(&mut g, Some(CardName::TestWeaponAbyssal));
     g.click_on(g.opponent_id(), "Test Weapon");
     assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
     assert_eq!(
@@ -137,4 +133,23 @@ fn temporal_vortex_defeat() {
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
     );
     assert!(g.opponent.interface.controls().has_text("Score"));
+}
+
+#[test]
+fn shadow_lurker_outer_room() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    let id = g.add_to_hand(CardName::ShadowLurker);
+    assert_eq!("2", g.user.get_card(id).bottom_right_icon());
+    let id = g.play_from_hand(CardName::ShadowLurker);
+    assert_eq!("4", g.user.get_card(id).bottom_right_icon());
+    set_up_minion_combat_with_weapon(&mut g, Some(CardName::TestWeaponAbyssal));
+    g.click_on(g.opponent_id(), "Test Weapon");
+    assert_eq!(STARTING_MANA - 5, g.opponent.this_player.mana());
+}
+
+#[test]
+fn shadow_lurker_inner_room() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    let id = g.play_with_target_room(CardName::ShadowLurker, RoomId::Sanctum);
+    assert_eq!("2", g.user.get_card(id).bottom_right_icon());
 }

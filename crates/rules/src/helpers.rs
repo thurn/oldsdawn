@@ -263,6 +263,11 @@ pub fn on_raid_failure(
     Delegate::RaidFailure(EventDelegate { requirement, mutation })
 }
 
+/// Delegate which transforms how a minion's health is calculated
+pub fn on_calculate_health(transformation: TransformationFn<CardId, HealthValue>) -> Delegate {
+    Delegate::HealthValue(QueryDelegate { requirement: this_card, transformation })
+}
+
 pub fn add_vault_access<const N: u32>(requirement: RequirementFn<RaidId>) -> Delegate {
     Delegate::VaultAccessCount(QueryDelegate {
         requirement,
