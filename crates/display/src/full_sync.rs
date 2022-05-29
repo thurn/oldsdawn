@@ -132,7 +132,7 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
         }),
         score: Some(ScoreView { score: game.player(side).score }),
         mana: Some(ManaView {
-            base_mana: mana::get(game, side, ManaPurpose::BaseForDisplay),
+            base_mana: mana::get(game, side, ManaPurpose::BaseMana),
             bonus_mana: mana::get(game, side, ManaPurpose::BonusForDisplay),
         }),
         action_tracker: Some(ActionTrackerView {

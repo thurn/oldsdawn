@@ -187,3 +187,23 @@ fn sphinx_of_winters_breath_discard_odd() {
     assert_eq!(vec!["Test 1 Cost Champion Spell"], g.opponent.cards.discard_pile(PlayerName::User));
     assert!(!g.user.data.raid_active());
 }
+
+#[test]
+fn bridge_troll_continue() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.play_from_hand(CardName::BridgeTroll);
+    set_up_minion_combat(&mut g);
+    click_on_continue(&mut g);
+    assert!(g.user.data.raid_active());
+    assert_eq!(STARTING_MANA - 3, g.opponent.this_player.mana());
+}
+
+#[test]
+fn bridge_troll_end_raid() {
+    let mut g = new_game(Side::Overlord, Args { opponent_mana: 2, ..Args::default() });
+    g.play_from_hand(CardName::BridgeTroll);
+    set_up_minion_combat(&mut g);
+    click_on_continue(&mut g);
+    assert!(!g.user.data.raid_active());
+    assert_eq!(0, g.opponent.this_player.mana());
+}

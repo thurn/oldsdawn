@@ -110,6 +110,7 @@ pub enum CardName {
     TemporalVortex,
     ShadowLurker,
     SphinxOfWintersBreath,
+    BridgeTroll,
 }
 
 impl CardName {

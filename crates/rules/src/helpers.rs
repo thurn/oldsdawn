@@ -417,7 +417,7 @@ pub fn lose_mana_prompt(
     side: Side,
     amount: ActionCount,
 ) -> Option<CardPromptAction> {
-    if mana::get(game, side, ManaPurpose::PayForPrompt) >= amount {
+    if mana::get(game, side, ManaPurpose::PayForTriggeredAbility) >= amount {
         Some(CardPromptAction::LoseMana(side, amount))
     } else {
         None

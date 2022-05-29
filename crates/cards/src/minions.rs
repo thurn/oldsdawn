@@ -25,8 +25,9 @@ use data::primitives::{
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
+use rules::mana::ManaPurpose;
 use rules::mutations::SummonMinion;
-use rules::{abilities, mutations, queries, text, DEFINITIONS};
+use rules::{abilities, mana, mutations, queries, text, DEFINITIONS};
 
 pub fn initialize() {}
 
@@ -211,6 +212,42 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
         }],
         config: CardConfig {
             stats: CardStats { health: Some(3), shield: Some(1), ..CardStats::default() },
+            faction: Some(Faction::Mortal),
+            ..CardConfig::default()
+        },
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn bridge_troll() -> CardDefinition {
+    CardDefinition {
+        name: CardName::BridgeTroll,
+        cost: cost(2),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_18"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text![
+                Keyword::Combat,
+                "The Champion loses",
+                mana_text(3),
+                ".",
+                "If they have",
+                mana_text(6),
+                "or less, end the raid."
+            ],
+            ability_type: AbilityType::Standard,
+            delegates: vec![combat(|g, _, _| {
+                mana::lose_upto(g, Side::Champion, ManaPurpose::PayForTriggeredAbility, 3);
+                if mana::get(g, Side::Champion, ManaPurpose::BaseMana) <= 6 {
+                    mutations::end_raid(g, RaidOutcome::Failure);
+                }
+            })],
+        }],
+        config: CardConfig {
+            stats: CardStats { health: Some(0), shield: Some(2), ..CardStats::default() },
             faction: Some(Faction::Mortal),
             ..CardConfig::default()
         },

@@ -37,7 +37,7 @@ pub fn handle(
 ) -> Result<()> {
     match action {
         CardPromptAction::LoseMana(side, amount) => {
-            mana::spend(game, side, ManaPurpose::PayForPrompt, amount);
+            mana::spend(game, side, ManaPurpose::PayForTriggeredAbility, amount);
         }
         CardPromptAction::LoseActions(side, amount) => {
             assert!(game.player(side).actions >= amount);

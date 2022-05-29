@@ -15,6 +15,8 @@
 //! Manages mana, especially logic around "spend this mana only on X"
 //! restrictions.
 
+use std::cmp;
+
 use data::game::{GameState, SpecificRaidMana};
 use data::primitives::{AbilityId, CardId, ManaValue, RaidId, RoomId, Side};
 
@@ -22,13 +24,13 @@ use data::primitives::{AbilityId, CardId, ManaValue, RaidId, RoomId, Side};
 /// queried or spent.
 #[derive(Debug, Clone, Copy)]
 pub enum ManaPurpose {
-    BaseForDisplay,
+    BaseMana,
     BonusForDisplay,
     PayForCard(CardId),
     UseWeapon(CardId),
     ActivateAbility(AbilityId),
     LevelUpRoom(RoomId),
-    PayForPrompt,
+    PayForTriggeredAbility,
     AllSources,
 }
 
@@ -47,7 +49,7 @@ pub fn get(game: &GameState, side: Side, purpose: ManaPurpose) -> ManaValue {
     }
 
     match purpose {
-        ManaPurpose::BaseForDisplay => base_mana,
+        ManaPurpose::BaseMana => base_mana,
         ManaPurpose::BonusForDisplay => result - base_mana,
         _ => result,
     }
@@ -77,15 +79,9 @@ pub fn spend(game: &mut GameState, side: Side, purpose: ManaPurpose, amount: Man
     game.player_mut(side).mana_state.base_mana -= to_spend;
 }
 
-fn try_spend(source: &mut ManaValue, amount: ManaValue) -> ManaValue {
-    if *source >= amount {
-        *source -= amount;
-        0
-    } else {
-        let result = amount - *source;
-        *source = 0;
-        result
-    }
+/// Causes a player to lose up to a given amount of mana.
+pub fn lose_upto(game: &mut GameState, side: Side, purpose: ManaPurpose, amount: ManaValue) {
+    spend(game, side, purpose, cmp::min(get(game, side, purpose), amount));
 }
 
 /// Adds the specified amount of base mana (no restrictions on use) for the
@@ -113,5 +109,16 @@ pub fn add_raid_specific_mana(
             game.player_mut(side).mana_state.specific_raid_mana =
                 Some(SpecificRaidMana { raid_id, mana: amount });
         }
+    }
+}
+
+fn try_spend(source: &mut ManaValue, amount: ManaValue) -> ManaValue {
+    if *source >= amount {
+        *source -= amount;
+        0
+    } else {
+        let result = amount - *source;
+        *source = 0;
+        result
     }
 }
