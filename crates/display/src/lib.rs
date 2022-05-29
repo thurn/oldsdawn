@@ -24,4 +24,5 @@ pub mod interface;
 pub mod prompts;
 pub mod render;
 pub mod response_builder;
+pub mod rexard_images;
 pub mod rules_text;

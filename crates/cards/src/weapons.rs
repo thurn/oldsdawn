@@ -23,6 +23,8 @@ use data::primitives::{CardType, Faction, Rarity, School, Side};
 use data::special_effects::{Projectile, TimedEffect};
 use data::text::Keyword;
 use data::utils;
+use display::rexard_images;
+use display::rexard_images::RexardWeaponType;
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::sacrifice_card;
@@ -58,7 +60,7 @@ pub fn marauders_axe() -> CardDefinition {
     CardDefinition {
         name: CardName::MaraudersAxe,
         cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_43"),
+        image: rexard_images::get_weapon(RexardWeaponType::Axes, "a_n_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
@@ -104,7 +106,7 @@ pub fn keen_halberd() -> CardDefinition {
     CardDefinition {
         name: CardName::KeenHalberd,
         cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
+        image: rexard_images::get_weapon(RexardWeaponType::Polearms, "sp_b_04"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
@@ -129,7 +131,7 @@ pub fn ethereal_blade() -> CardDefinition {
     CardDefinition {
         name: CardName::EtherealBlade,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
+        image: rexard_images::get_weapon(RexardWeaponType::Swords, "sv_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
@@ -165,7 +167,7 @@ pub fn bow_of_the_alliance() -> CardDefinition {
     CardDefinition {
         name: CardName::BowOfTheAlliance,
         cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_46"),
+        image: rexard_images::get_weapon(RexardWeaponType::Bows, "b_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,

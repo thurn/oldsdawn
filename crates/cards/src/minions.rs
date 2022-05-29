@@ -23,6 +23,8 @@ use data::primitives::{
     CardType, ColdDamage, DamageType, Faction, Rarity, RoomLocation, School, Side,
 };
 use data::text::{DamageWord, Keyword};
+use display::rexard_images;
+use display::rexard_images::RexardPack;
 use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mana::ManaPurpose;
@@ -55,7 +57,7 @@ pub fn time_golem() -> CardDefinition {
     CardDefinition {
         name: CardName::TimeGolem,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_14"),
+        image: rexard_images::get(RexardPack::MonstersAvatars, "10"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
@@ -96,7 +98,7 @@ pub fn temporal_vortex() -> CardDefinition {
     CardDefinition {
         name: CardName::TemporalVortex,
         cost: cost(6),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_15"),
+        image: rexard_images::get(RexardPack::MonstersAvatars, "87"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
@@ -140,7 +142,7 @@ pub fn shadow_lurker() -> CardDefinition {
     CardDefinition {
         name: CardName::ShadowLurker,
         cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16"),
+        image: rexard_images::get(RexardPack::MonstersAvatars, "80"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
@@ -168,7 +170,7 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
     CardDefinition {
         name: CardName::SphinxOfWintersBreath,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_17"),
+        image: rexard_images::get(RexardPack::MonstersAvatars, "17"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
@@ -211,7 +213,7 @@ pub fn bridge_troll() -> CardDefinition {
     CardDefinition {
         name: CardName::BridgeTroll,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_18"),
+        image: rexard_images::get(RexardPack::MonstersAvatars, "29"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
@@ -246,7 +248,7 @@ pub fn stormcaller() -> CardDefinition {
     CardDefinition {
         name: CardName::Stormcaller,
         cost: cost(4),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_19"),
+        image: rexard_images::get(RexardPack::MonstersAvatars, "53"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
@@ -284,7 +286,7 @@ pub fn fire_goblin() -> CardDefinition {
     CardDefinition {
         name: CardName::FireGoblin,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_20"),
+        image: rexard_images::get(RexardPack::MonstersAvatars, "70"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,

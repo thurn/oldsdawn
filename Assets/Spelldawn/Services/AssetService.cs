@@ -36,11 +36,16 @@ namespace Spelldawn.Services
       return (Sprite)_assets[address.Address];
     }
 
-    public void AssignSprite(SpriteRenderer spriteRenderer, SpriteAddress? address)
+    public void AssignSprite(SpriteRenderer spriteRenderer, SpriteAddress? address, float? referenceWidth = null)
     {
       if (address != null)
       {
-        spriteRenderer.sprite = GetSprite(address);
+        var sprite = GetSprite(address);
+        if (referenceWidth != null)
+        {
+          spriteRenderer.transform.localScale = (referenceWidth.Value / sprite.texture.width) * Vector3.one;
+        }
+        spriteRenderer.sprite = sprite;
       }
     }
 

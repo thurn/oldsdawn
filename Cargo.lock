@@ -160,6 +160,7 @@ name = "cards"
 version = "0.0.0"
 dependencies = [
  "data",
+ "display",
  "linkme",
  "maplit",
  "once_cell",
