@@ -84,8 +84,8 @@ pub fn combat_deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
     Ability {
         text: text![Keyword::Combat, Keyword::DealDamage(N, TDamage::damage_type())],
         ability_type: AbilityType::Standard,
-        delegates: vec![combat(|g, _, _| {
-            mutations::deal_damage(g, TDamage::damage_type(), N);
+        delegates: vec![combat(|g, s, _| {
+            mutations::deal_damage(g, s, TDamage::damage_type(), N);
         })],
     }
 }

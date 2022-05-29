@@ -71,6 +71,10 @@ pub enum CardName {
     /// Project which stores mana on unveil, with a triggered ability to take
     /// mana at dusk.
     TestTriggeredAbilityTakeManaAtDusk,
+    /// Champion spell with a mana cost of 0
+    Test0CostChampionSpell,
+    /// Champion spell with a mana cost of 1
+    Test1CostChampionSpell,
 
     ArcaneRecovery,
     Greataxe,

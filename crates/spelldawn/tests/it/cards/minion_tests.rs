@@ -125,7 +125,9 @@ fn temporal_vortex_defeat() {
     let mut g = new_game(Side::Overlord, Args::default());
     g.add_to_hand(CardName::TestMinionEndRaid);
     g.play_from_hand(CardName::TemporalVortex);
-    set_up_minion_combat_with_weapon(&mut g, Some(CardName::TestWeaponAbyssal));
+    set_up_minion_combat_with_action(&mut g, |g| {
+        g.play_from_hand(CardName::TestWeaponAbyssal);
+    });
     g.click_on(g.opponent_id(), "Test Weapon");
     assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
     assert_eq!(
@@ -142,7 +144,9 @@ fn shadow_lurker_outer_room() {
     assert_eq!("2", g.user.get_card(id).bottom_right_icon());
     let id = g.play_from_hand(CardName::ShadowLurker);
     assert_eq!("4", g.user.get_card(id).bottom_right_icon());
-    set_up_minion_combat_with_weapon(&mut g, Some(CardName::TestWeaponAbyssal));
+    set_up_minion_combat_with_action(&mut g, |g| {
+        g.play_from_hand(CardName::TestWeaponAbyssal);
+    });
     g.click_on(g.opponent_id(), "Test Weapon");
     assert_eq!(STARTING_MANA - 5, g.opponent.this_player.mana());
 }
@@ -152,4 +156,34 @@ fn shadow_lurker_inner_room() {
     let mut g = new_game(Side::Overlord, Args::default());
     let id = g.play_with_target_room(CardName::ShadowLurker, RoomId::Sanctum);
     assert_eq!("2", g.user.get_card(id).bottom_right_icon());
+}
+
+#[test]
+fn sphinx_of_winters_breath_discard_even() {
+    let mut g = new_game(
+        Side::Overlord,
+        Args { opponent_deck_top: Some(CardName::Test0CostChampionSpell), ..Args::default() },
+    );
+    g.play_from_hand(CardName::SphinxOfWintersBreath);
+    set_up_minion_combat_with_action(&mut g, |g| {
+        g.add_to_hand(CardName::Test0CostChampionSpell);
+    });
+    click_on_continue(&mut g);
+    assert_eq!(vec!["Test 0 Cost Champion Spell"], g.opponent.cards.discard_pile(PlayerName::User));
+    assert!(g.user.data.raid_active());
+}
+
+#[test]
+fn sphinx_of_winters_breath_discard_odd() {
+    let mut g = new_game(
+        Side::Overlord,
+        Args { opponent_deck_top: Some(CardName::Test1CostChampionSpell), ..Args::default() },
+    );
+    g.play_from_hand(CardName::SphinxOfWintersBreath);
+    set_up_minion_combat_with_action(&mut g, |g| {
+        g.add_to_hand(CardName::Test1CostChampionSpell);
+    });
+    click_on_continue(&mut g);
+    assert_eq!(vec!["Test 1 Cost Champion Spell"], g.opponent.cards.discard_pile(PlayerName::User));
+    assert!(!g.user.data.raid_active());
 }

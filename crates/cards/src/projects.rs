@@ -148,6 +148,7 @@ pub fn pit_trap() -> CardDefinition {
                     if g.card(s.card_id()).position().in_play() {
                         mutations::deal_damage(
                             g,
+                            s,
                             DamageType::Physical,
                             2 + g.card(s.card_id()).data.card_level,
                         );

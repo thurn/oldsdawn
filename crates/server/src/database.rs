@@ -81,9 +81,9 @@ impl Database for SledDatabase {
                 owner_id: player_id,
                 identity: CardName::TestChampionIdentity,
                 cards: hashmap! {
-                    CardName::EtherealBlade => 15,
-                    CardName::BowOfTheAlliance => 15,
-                    CardName::KeenHalberd => 15,
+                    CardName::CoupDeGrace => 15,
+                    CardName::SanctumPassage => 15,
+                    CardName::StorageCrystal => 15,
                 },
             }
         } else {
@@ -92,7 +92,7 @@ impl Database for SledDatabase {
                 identity: CardName::TestOverlordIdentity,
                 cards: hashmap! {
                     CardName::DungeonAnnex => 15,
-                    CardName::ShadowLurker => 15,
+                    CardName::SphinxOfWintersBreath => 15,
                     CardName::IceDragon => 15
                 },
             }

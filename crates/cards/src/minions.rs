@@ -17,8 +17,11 @@
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, CardStats};
 use data::card_name::CardName;
 use data::card_state::CardPosition;
+use data::delegates::{Delegate, EventDelegate, RaidOutcome};
 use data::game_actions::CardPromptAction;
-use data::primitives::{CardType, ColdDamage, Faction, Rarity, RoomLocation, School, Side};
+use data::primitives::{
+    CardType, ColdDamage, DamageType, Faction, Rarity, RoomLocation, School, Side,
+};
 use data::text::Keyword;
 use linkme::distributed_slice;
 use rules::helpers::*;
@@ -177,7 +180,7 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
     CardDefinition {
         name: CardName::SphinxOfWintersBreath,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_17"),
         card_type: CardType::Minion,
         side: Side::Overlord,
         school: School::Time,
@@ -185,11 +188,26 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
         abilities: vec![Ability {
             text: text![
                 Keyword::Combat,
-                "Deal 1 cold damage.",
+                Keyword::DealDamage(1, DamageType::Cold),
                 "If a card with an odd mana cost is discarded, end the raid."
             ],
             ability_type: AbilityType::Standard,
-            delegates: vec![],
+            delegates: vec![
+                combat(|g, s, _| {
+                    mutations::deal_damage(g, s, DamageType::Cold, 1);
+                }),
+                Delegate::DealtDamage(EventDelegate {
+                    requirement: |g, s, data| {
+                        s.ability_id() == data.source
+                            && data.discarded.iter().any(|card_id| {
+                                queries::mana_cost(g, *card_id).unwrap_or(0) % 2 != 0
+                            })
+                    },
+                    mutation: |g, _, _| {
+                        mutations::end_raid(g, RaidOutcome::Failure);
+                    },
+                }),
+            ],
         }],
         config: CardConfig {
             stats: CardStats { health: Some(3), shield: Some(1), ..CardStats::default() },

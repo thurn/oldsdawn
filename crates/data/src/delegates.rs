@@ -321,6 +321,12 @@ pub struct DealtDamage {
     pub discarded: Vec<CardId>,
 }
 
+impl HasAbilityId for DealtDamage {
+    fn ability_id(&self) -> AbilityId {
+        self.source
+    }
+}
+
 /// Actions to show the Champion during combat in addition to their weapon
 /// actions
 #[derive(Clone, Debug)]

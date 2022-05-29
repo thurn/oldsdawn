@@ -372,3 +372,21 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
         ..test_overlord_spell()
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_0_cost_champion_spell() -> CardDefinition {
+    CardDefinition {
+        name: CardName::Test0CostChampionSpell,
+        cost: cost(0),
+        ..test_champion_spell()
+    }
+}
+
+#[distributed_slice(DEFINITIONS)]
+pub fn test_1_cost_champion_spell() -> CardDefinition {
+    CardDefinition {
+        name: CardName::Test1CostChampionSpell,
+        cost: cost(1),
+        ..test_champion_spell()
+    }
+}

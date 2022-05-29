@@ -26,16 +26,16 @@ use std::cmp;
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
-    CardMoved, DawnEvent, DrawCardEvent, DuskEvent, EnterPlayEvent, MoveCardEvent,
-    OverlordScoreCardEvent, RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome,
+    CardMoved, DawnEvent, DealtDamage, DealtDamageEvent, DrawCardEvent, DuskEvent, EnterPlayEvent,
+    MoveCardEvent, OverlordScoreCardEvent, RaidEndEvent, RaidEnded, RaidFailureEvent, RaidOutcome,
     RaidSuccessEvent, Scope, ScoreCard, ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
     UnveilProjectEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, RaidPhase, TurnData};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{
-    ActionCount, BoostData, CardId, DamageType, ManaValue, PointsValue, RoomId, RoomLocation, Side,
-    TurnNumber,
+    ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
+    RoomLocation, Side, TurnNumber,
 };
 use data::updates::GameUpdate;
 use rand::seq::IteratorRandom;
@@ -534,15 +534,32 @@ pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion)
 
 /// Deals damage. Discards random card from the hand of the Champion player. If
 /// no cards remain, this player loses the game.
-pub fn deal_damage(game: &mut GameState, _: DamageType, amount: u32) {
+pub fn deal_damage(
+    game: &mut GameState,
+    source: impl HasAbilityId,
+    damage_type: DamageType,
+    amount: u32,
+) {
+    let mut discarded = vec![];
     for _ in 0..amount {
         if let Some(card_id) = game.random_card(CardPosition::Hand(Side::Champion)) {
             move_card(game, card_id, CardPosition::DiscardPile(Side::Champion));
+            discarded.push(card_id);
         } else {
             game.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
             game.updates.push(GameUpdate::GameOver(Side::Overlord));
         }
     }
+
+    dispatch::invoke_event(
+        game,
+        DealtDamageEvent(DealtDamage {
+            source: source.ability_id(),
+            amount,
+            damage_type,
+            discarded,
+        }),
+    );
 }
 
 /// Mutates the phase of an ongoing raid to be encountering the `minion_id`
