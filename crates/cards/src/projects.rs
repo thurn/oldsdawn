@@ -20,7 +20,7 @@ use data::primitives::{CardType, DamageType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use linkme::distributed_slice;
 use rules::helpers::*;
-use rules::mutations::{take_stored_mana, OnZeroStored};
+use rules::mutations::OnZeroStored;
 use rules::{abilities, mutations, text, DEFINITIONS};
 
 pub fn initialize() {}
@@ -41,14 +41,13 @@ pub fn gold_mine() -> CardDefinition {
                 ability_type: AbilityType::Standard,
                 delegates: vec![unveil_at_dusk(), store_mana_on_unveil::<12>()],
             },
-            Ability {
-                text: text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
-                ability_type: AbilityType::Standard,
-                delegates: vec![at_dusk(|g, s, _| {
+            simple_ability(
+                text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
+                at_dusk(|g, s, _| {
                     mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
                     alert(g, s);
-                })],
-            },
+                }),
+            ),
         ],
         config: CardConfig::default(),
     }
@@ -70,22 +69,21 @@ pub fn gemcarver() -> CardDefinition {
                 ability_type: AbilityType::Standard,
                 delegates: vec![unveil_at_dusk(), store_mana_on_unveil::<9>()],
             },
-            Ability {
-                text: text![
+            simple_ability(
+                text![
                     Keyword::Dusk,
                     Keyword::Take(Sentence::Start, 3),
                     ".",
                     "When empty, draw a card."
                 ],
-                ability_type: AbilityType::Standard,
-                delegates: vec![at_dusk(|g, s, _| {
+                at_dusk(|g, s, _| {
                     mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
                     if g.card(s.card_id()).data.stored_mana == 0 {
                         mutations::draw_cards(g, s.side(), 1);
                     }
                     alert(g, s);
-                })],
-            },
+                }),
+            ),
         ],
         config: CardConfig::default(),
     }
@@ -117,7 +115,7 @@ pub fn coinery() -> CardDefinition {
                         if mutations::unveil_project_for_free(g, s.card_id()) {
                             add_stored_mana(g, s.card_id(), 15);
                         }
-                        take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                        mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
                     }),
                 ],
             },
@@ -138,13 +136,12 @@ pub fn pit_trap() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![
             abilities::level_up(),
-            Ability {
-                text: text![
+            simple_ability(
+                text![
                     Keyword::Trap,
                     "If this card is in play, deal 2 damage plus 1 per level counter"
                 ],
-                ability_type: AbilityType::Standard,
-                delegates: vec![on_accessed(|g, s, _| {
+                on_accessed(|g, s, _| {
                     if g.card(s.card_id()).position().in_play() {
                         mutations::deal_damage(
                             g,
@@ -154,8 +151,8 @@ pub fn pit_trap() -> CardDefinition {
                         );
                         alert(g, s);
                     }
-                })],
-            },
+                }),
+            ),
         ],
         config: CardConfig::default(),
     }

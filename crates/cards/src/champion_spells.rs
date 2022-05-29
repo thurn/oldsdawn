@@ -35,11 +35,10 @@ pub fn arcane_recovery() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text!("Gain", mana_text(9)),
-            ability_type: AbilityType::Standard,
-            delegates: vec![on_cast(|g, s, _| mana::gain(g, s.side(), 9))],
-        }],
+        abilities: vec![simple_ability(
+            text!("Gain", mana_text(9)),
+            on_cast(|g, s, _| mana::gain(g, s.side(), 9)),
+        )],
         config: CardConfig::default(),
     }
 }
@@ -54,14 +53,13 @@ pub fn meditation() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text!("Gain", mana_text(5), ".", "Lose", actions_text(1), reminder("(if able).")),
-            ability_type: AbilityType::Standard,
-            delegates: vec![on_cast(|g, s, _| {
+        abilities: vec![simple_ability(
+            text!("Gain", mana_text(5), ".", "Lose", actions_text(1), reminder("(if able).")),
+            on_cast(|g, s, _| {
                 mana::gain(g, s.side(), 5);
                 mutations::lose_action_points_if_able(g, s.side(), 1);
-            })],
-        }],
+            }),
+        )],
         config: CardConfig::default(),
     }
 }
@@ -111,15 +109,14 @@ pub fn charged_strike() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text!("Initiate a raid.", "Gain", mana_text(5), "to spend during that raid."),
-            ability_type: AbilityType::Standard,
-            delegates: vec![on_cast(|g, s, play_card| {
+        abilities: vec![simple_ability(
+            text!("Initiate a raid.", "Gain", mana_text(5), "to spend during that raid."),
+            on_cast(|g, s, play_card| {
                 initiate_raid_with_callback(g, s, play_card.target, |game, raid_id| {
                     mana::add_raid_specific_mana(game, s.side(), raid_id, 5);
                 })
-            })],
-        }],
+            }),
+        )],
         config: CardConfig {
             custom_targeting: Some(TargetRequirement::TargetRoom(|game, _, room_id| {
                 flags::can_take_initiate_raid_action(game, Side::Champion, room_id)
@@ -182,14 +179,13 @@ pub fn preparation() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text!("Draw 4 cards.", "Lose", actions_text(1), reminder("(if able).")),
-            ability_type: AbilityType::Standard,
-            delegates: vec![on_cast(|g, s, _| {
+        abilities: vec![simple_ability(
+            text!("Draw 4 cards.", "Lose", actions_text(1), reminder("(if able).")),
+            on_cast(|g, s, _| {
                 mutations::draw_cards(g, s.side(), 4);
                 mutations::lose_action_points_if_able(g, s.side(), 1);
-            })],
-        }],
+            }),
+        )],
         config: CardConfig::default(),
     }
 }

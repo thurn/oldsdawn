@@ -62,16 +62,15 @@ pub fn time_golem() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![
             abilities::construct(),
-            Ability {
-                text: text![
+            simple_ability(
+                text![
                     Keyword::Encounter,
                     "End the raid unless the Champion pays",
                     mana_text(5),
                     "or",
                     actions_text(2)
                 ],
-                ability_type: AbilityType::Standard,
-                delegates: vec![on_encountered(|g, _s, _| {
+                on_encountered(|g, _s, _| {
                     set_card_prompt(
                         g,
                         Side::Champion,
@@ -81,8 +80,8 @@ pub fn time_golem() -> CardDefinition {
                             lose_actions_prompt(g, Side::Champion, 2),
                         ],
                     );
-                })],
-            },
+                }),
+            ),
         ],
         config: CardConfig {
             stats: health(3),
@@ -103,24 +102,15 @@ pub fn temporal_vortex() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            Ability {
-                text: text![
-                    Keyword::Combat,
-                    "End the raid unless the Champion pays",
-                    actions_text(2)
-                ],
-                ability_type: AbilityType::Standard,
-                delegates: vec![minion_combat_actions(|g, _, _, _| {
+            simple_ability(
+                text![Keyword::Combat, "End the raid unless the Champion pays", actions_text(2)],
+                minion_combat_actions(|g, _, _, _| {
                     vec![Some(CardPromptAction::EndRaid), lose_actions_prompt(g, Side::Champion, 2)]
-                })],
-            },
-            Ability {
-                text: text![
-                    Keyword::Combat,
-                    "Summon a minion from the Sanctum or Crypts for free.",
-                ],
-                ability_type: AbilityType::Standard,
-                delegates: vec![combat(|g, s, _| {
+                }),
+            ),
+            simple_ability(
+                text![Keyword::Combat, "Summon a minion from the Sanctum or Crypts for free.",],
+                combat(|g, s, _| {
                     let cards = g.hand(Side::Overlord).chain(g.discard_pile(Side::Overlord));
                     if let Some(minion_id) = queries::highest_cost(cards) {
                         let (room_id, index) =
@@ -134,8 +124,8 @@ pub fn temporal_vortex() -> CardDefinition {
                         mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts);
                         mutations::set_raid_encountering_minion(g, s.card_id());
                     }
-                })],
-            },
+                }),
+            ),
         ],
         config: CardConfig {
             stats: CardStats { health: Some(6), shield: Some(3), ..CardStats::default() },
@@ -156,16 +146,13 @@ pub fn shadow_lurker() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            Ability {
-                text: text!["While this minion is in an outer room, it has +2 health"],
-                ability_type: AbilityType::Standard,
-                delegates: vec![on_calculate_health(|g, s, _, current| {
-                    match g.card(s.card_id()).position() {
-                        CardPosition::Room(room_id, _) if !is_inner_room(room_id) => current + 2,
-                        _ => current,
-                    }
-                })],
-            },
+            simple_ability(
+                text!["While this minion is in an outer room, it has +2 health"],
+                on_calculate_health(|g, s, _, current| match g.card(s.card_id()).position() {
+                    CardPosition::Room(room_id, _) if !is_inner_room(room_id) => current + 2,
+                    _ => current,
+                }),
+            ),
             abilities::end_raid(),
         ],
         config: CardConfig {
@@ -229,8 +216,8 @@ pub fn bridge_troll() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text![
+        abilities: vec![simple_ability(
+            text![
                 Keyword::Combat,
                 "The Champion loses",
                 mana_text(3),
@@ -239,14 +226,13 @@ pub fn bridge_troll() -> CardDefinition {
                 mana_text(6),
                 "or less, end the raid."
             ],
-            ability_type: AbilityType::Standard,
-            delegates: vec![combat(|g, _, _| {
+            combat(|g, _, _| {
                 mana::lose_upto(g, Side::Champion, ManaPurpose::PayForTriggeredAbility, 3);
                 if mana::get(g, Side::Champion, ManaPurpose::BaseMana) <= 6 {
                     mutations::end_raid(g, RaidOutcome::Failure);
                 }
-            })],
-        }],
+            }),
+        )],
         config: CardConfig {
             stats: CardStats { health: Some(0), shield: Some(2), ..CardStats::default() },
             faction: Some(Faction::Mortal),
@@ -265,8 +251,8 @@ pub fn stormcaller() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text![
+        abilities: vec![simple_ability(
+            text![
                 Keyword::Combat,
                 "The Champion must end the raid and",
                 Keyword::DealDamage(DamageWord::TakeInternal, 2, DamageType::Lightning),
@@ -274,8 +260,7 @@ pub fn stormcaller() -> CardDefinition {
                 Keyword::DealDamage(DamageWord::TakeInternal, 4, DamageType::Lightning),
                 "."
             ],
-            ability_type: AbilityType::Standard,
-            delegates: vec![minion_combat_actions(|g, s, _, _| {
+            minion_combat_actions(|g, s, _, _| {
                 vec![
                     Some(CardPromptAction::TakeDamageEndRaid(
                         s.ability_id(),
@@ -284,8 +269,8 @@ pub fn stormcaller() -> CardDefinition {
                     )),
                     take_damage_prompt(g, s.ability_id(), DamageType::Lightning, 4),
                 ]
-            })],
-        }],
+            }),
+        )],
         config: CardConfig {
             stats: CardStats { health: Some(3), shield: Some(2), ..CardStats::default() },
             faction: Some(Faction::Infernal),
@@ -304,8 +289,8 @@ pub fn fire_goblin() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text![
+        abilities: vec![simple_ability(
+            text![
                 Keyword::Combat,
                 Keyword::DealDamage(DamageWord::DealStart, 1, DamageType::Fire),
                 ".",
@@ -313,12 +298,11 @@ pub fn fire_goblin() -> CardDefinition {
                 mana_text(1),
                 "."
             ],
-            ability_type: AbilityType::Standard,
-            delegates: vec![combat(|g, s, _| {
+            combat(|g, s, _| {
                 mutations::deal_damage(g, s, DamageType::Fire, 1);
                 mana::gain(g, Side::Overlord, 1);
-            })],
-        }],
+            }),
+        )],
         config: CardConfig {
             stats: CardStats { health: Some(1), shield: Some(2), ..CardStats::default() },
             faction: Some(Faction::Infernal),

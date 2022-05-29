@@ -85,14 +85,13 @@ pub fn accumulator() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            Ability {
-                text: text!(Keyword::SuccessfulRaid, Keyword::Store(Sentence::Start, 1)),
-                ability_type: AbilityType::Standard,
-                delegates: vec![on_raid_success(face_up_in_play, |g, s, _| {
+            simple_ability(
+                text!(Keyword::SuccessfulRaid, Keyword::Store(Sentence::Start, 1)),
+                on_raid_success(face_up_in_play, |g, s, _| {
                     add_stored_mana(g, s.card_id(), 1);
                     alert(g, s);
-                })],
-            },
+                }),
+            ),
             Ability {
                 text: text!(Keyword::Store(Sentence::Start, 1), ", then take all stored mana."),
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
@@ -169,15 +168,14 @@ pub fn storage_crystal() -> CardDefinition {
         school: School::Time,
         rarity: Rarity::Common,
         abilities: vec![
-            Ability {
-                text: text![Keyword::Dawn, Keyword::Take(Sentence::Start, 1)],
-                ability_type: AbilityType::Standard,
-                delegates: vec![at_dawn(|g, s, _| {
+            simple_ability(
+                text![Keyword::Dawn, Keyword::Take(Sentence::Start, 1)],
+                at_dawn(|g, s, _| {
                     let taken =
                         mutations::take_stored_mana(g, s.card_id(), 1, OnZeroStored::Ignore);
                     alert_if_nonzero(g, s, taken);
-                })],
-            },
+                }),
+            ),
             Ability {
                 text: text![Keyword::Store(Sentence::Start, 3)],
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
@@ -209,7 +207,7 @@ pub fn magical_resonator() -> CardDefinition {
                     "Use this ability only once per turn."
                 ],
                 ability_type: AbilityType::Activated(
-                    Cost { mana: None, actions: 1, custom_cost: once_per_turn_ability() },
+                    Cost { mana: None, actions: 1, custom_cost: once_per_turn_cost() },
                     TargetRequirement::None,
                 ),
                 delegates: vec![on_activated(|g, _s, activated| {
@@ -231,20 +229,17 @@ pub fn dark_grimoire() -> CardDefinition {
         side: Side::Champion,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text![
-                "The first time each turn you take the 'draw card' action, draw another card."
-            ],
-            ability_type: AbilityType::Standard,
-            delegates: vec![Delegate::DrawCardAction(EventDelegate {
+        abilities: vec![simple_ability(
+            text!["The first time each turn you take the 'draw card' action, draw another card."],
+            Delegate::DrawCardAction(EventDelegate {
                 requirement: face_up_in_play,
                 mutation: |g, s, _| {
                     once_per_turn(g, s, &(), |g, s, _| {
                         mutations::draw_cards(g, s.side(), 1);
                     })
                 },
-            })],
-        }],
+            }),
+        )],
         config: CardConfig::default(),
     }
 }

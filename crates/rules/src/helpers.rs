@@ -38,10 +38,6 @@ use crate::mana::ManaPurpose;
 use crate::mutations::SetPrompt;
 use crate::{mana, mutations, queries, raid_actions};
 
-pub fn number(number: impl Into<u32>) -> TextToken {
-    TextToken::Number(NumericOperator::None, number.into())
-}
-
 pub fn add_number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::Add, number.into())
 }
@@ -87,7 +83,7 @@ pub fn scheme_cost() -> Cost<CardId> {
 /// A [CustomCost] which allows an ability to be activated once per turn.
 ///
 /// Stores turn data in ability state. Never returns `None`.
-pub fn once_per_turn_ability() -> Option<CustomCost<AbilityId>> {
+pub fn once_per_turn_cost() -> Option<CustomCost<AbilityId>> {
     Some(CustomCost {
         can_pay: |game, ability_id| {
             utils::is_false(|| Some(game.ability_state(ability_id)?.turn? == game.data.turn))
@@ -101,6 +97,11 @@ pub fn once_per_turn_ability() -> Option<CustomCost<AbilityId>> {
 /// Provides an image for a card
 pub fn sprite(text: &str) -> Sprite {
     Sprite::new(text.to_string())
+}
+
+/// Creates a standard [Ability] with a single [Delegate].
+pub fn simple_ability(text: AbilityText, delegate: Delegate) -> Ability {
+    Ability { text, ability_type: AbilityType::Standard, delegates: vec![delegate] }
 }
 
 /// RequirementFn which always returns true

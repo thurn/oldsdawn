@@ -14,7 +14,7 @@
 
 //! Card definitions for the Spell card type & Overlord player
 
-use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
+use data::card_definition::{CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use linkme::distributed_slice;
@@ -34,11 +34,10 @@ pub fn gathering_dark() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text!("Gain", mana_text(9)),
-            ability_type: AbilityType::Standard,
-            delegates: vec![on_cast(|g, s, _| mana::gain(g, s.side(), 9))],
-        }],
+        abilities: vec![simple_ability(
+            text!("Gain", mana_text(9)),
+            on_cast(|g, s, _| mana::gain(g, s.side(), 9)),
+        )],
         config: CardConfig::default(),
     }
 }
@@ -53,11 +52,10 @@ pub fn overwhelming_power() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text!("Gain", mana_text(15)),
-            ability_type: AbilityType::Standard,
-            delegates: vec![on_cast(|g, s, _| mana::gain(g, s.side(), 15))],
-        }],
+        abilities: vec![simple_ability(
+            text!("Gain", mana_text(15)),
+            on_cast(|g, s, _| mana::gain(g, s.side(), 15)),
+        )],
         config: CardConfig::default(),
     }
 }
@@ -72,12 +70,11 @@ pub fn forced_march() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![Ability {
-            text: text!(
+        abilities: vec![simple_ability(
+            text!(
                 "Place 2 level counters on each card in target room which didn't enter play this turn"
             ),
-            ability_type: AbilityType::Standard,
-            delegates: vec![on_cast(|g, _, played| {
+            on_cast(|g, _, played| {
                 let targets = g
                     .defenders_and_occupants(played.target.room_id().expect("Room Target"))
                     .filter(|card| {
@@ -89,8 +86,8 @@ pub fn forced_march() -> CardDefinition {
                 for card_id in targets {
                     mutations::add_level_counters(g, card_id, 2);
                 }
-            })],
-        }],
+            }))
+        ],
         config: CardConfig {
             custom_targeting: Some(TargetRequirement::TargetRoom(|game, _, room_id| {
                 game.defenders_and_occupants(room_id).any(|card| {

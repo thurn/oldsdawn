@@ -172,17 +172,16 @@ pub fn bow_of_the_alliance() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![
             abilities::encounter_boost(),
-            Ability {
-                text: text!["+1 attack per weapon you control"],
-                ability_type: AbilityType::Standard,
-                delegates: vec![Delegate::AttackBoost(QueryDelegate {
+            simple_ability(
+                text!["+1 attack per weapon you control"],
+                Delegate::AttackBoost(QueryDelegate {
                     requirement: this_card,
                     transformation: |g, _s, _, boost| AttackBoost {
                         bonus: g.weapons().count() as u32,
                         ..boost
                     },
-                })],
-            },
+                }),
+            ),
         ],
         config: CardConfig {
             stats: attack(1, AttackBoost { cost: 1, bonus: 0 }),
