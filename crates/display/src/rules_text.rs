@@ -169,7 +169,6 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                     Sentence::Internal => "inner room",
                 }
                 .to_string(),
-                Keyword::EndRaid => "End the raid.".to_string(),
                 Keyword::Breach(breach) => {
                     format!("<b>Breach</b>{}{}", icons::NON_BREAKING_SPACE, breach)
                 }

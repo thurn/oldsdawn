@@ -154,7 +154,7 @@ pub fn stealth_mission() -> CardDefinition {
                 Delegate::ManaCost(QueryDelegate {
                     requirement: matching_raid,
                     transformation: |g, _s, card_id, current| {
-                        if rules::card_definition(g, card_id).card_type == CardType::Minion {
+                        if rules::card_definition(g, *card_id).card_type == CardType::Minion {
                             current.map(|current| current + 3)
                         } else {
                             current

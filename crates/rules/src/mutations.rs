@@ -236,14 +236,14 @@ pub fn take_stored_mana(
 /// Overwrites the value of [CardData::boost_count] to match the provided
 /// [BoostData].
 #[instrument(skip(game))]
-pub fn write_boost(game: &mut GameState, scope: Scope, data: BoostData) {
+pub fn write_boost(game: &mut GameState, scope: Scope, data: &BoostData) {
     info!(?scope, ?data, "write_boost");
     game.card_mut(data.card_id).data.boost_count = data.count;
 }
 
 /// Set the boost count to zero for the card in `scope`.
 #[instrument(skip(game))]
-pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: T) {
+pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: &T) {
     info!(?scope, "clear_boost");
     game.card_mut(scope.card_id()).data.boost_count = 0;
 }

@@ -105,7 +105,7 @@ pub fn research_project() -> CardDefinition {
                 Delegate::MaximumHandSize(QueryDelegate {
                     requirement: scored_by_owner,
                     transformation: |_, s, side, current| {
-                        if s.side() == side {
+                        if s.side() == *side {
                             current + 2
                         } else {
                             current

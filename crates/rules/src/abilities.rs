@@ -58,8 +58,8 @@ pub fn store_mana_on_play<const N: ManaValue>() -> Ability {
                 g.card_mut(played.card_id).data.stored_mana = N;
             })),
             Delegate::StoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
-                if g.card(card_id).data.stored_mana == 0 {
-                    mutations::move_card(g, card_id, CardPosition::DiscardPile(s.side()))
+                if g.card(*card_id).data.stored_mana == 0 {
+                    mutations::move_card(g, *card_id, CardPosition::DiscardPile(s.side()))
                 }
             })),
         ],
@@ -93,7 +93,7 @@ pub fn combat_deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
 /// Minion combat ability which ends the current raid in failure.
 pub fn end_raid() -> Ability {
     Ability {
-        text: text![Keyword::Combat, Keyword::EndRaid],
+        text: text![Keyword::Combat, "End the raid."],
         ability_type: AbilityType::Standard,
         delegates: vec![combat(|g, _, _| {
             mutations::end_raid(g, RaidOutcome::Failure);
@@ -103,14 +103,9 @@ pub fn end_raid() -> Ability {
 
 /// Applies this card's `attack_boost` stat a number of times equal to its
 /// [CardState::boost_count]. Panics if this card has no attack boost defined.
-fn add_boost(
-    game: &GameState,
-    _scope: Scope,
-    card_id: CardId,
-    current: AttackValue,
-) -> AttackValue {
-    let boost_count = queries::boost_count(game, card_id);
-    let bonus = queries::attack_boost(game, card_id).expect("Expected boost").bonus;
+fn add_boost(game: &GameState, _: Scope, card_id: &CardId, current: AttackValue) -> AttackValue {
+    let boost_count = queries::boost_count(game, *card_id);
+    let bonus = queries::attack_boost(game, *card_id).expect("Expected boost").bonus;
     current + (boost_count * bonus)
 }
 

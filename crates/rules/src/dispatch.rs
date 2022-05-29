@@ -47,7 +47,7 @@ pub fn populate_delegate_cache(game: &mut GameState) {
 /// [data::delegates::Delegate] for this event to mutate the [GameState]
 /// appropriately.
 #[instrument(skip(game))]
-pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, event: E) {
+pub fn invoke_event<D: Debug, E: EventData<D>>(game: &mut GameState, event: E) {
     let count = game.delegate_cache.delegate_count(event.kind());
     for i in 0..count {
         let delegate_context = game.delegate_cache.get(event.kind(), i);
@@ -64,7 +64,7 @@ pub fn invoke_event<D: Copy + Debug, E: EventData<D>>(game: &mut GameState, even
 /// [data::delegates::Delegate] for this query and allows them to intercept &
 /// transform the final result.
 #[instrument(skip(game))]
-pub fn perform_query<D: Copy + Debug, R: Debug, E: QueryData<D, R>>(
+pub fn perform_query<D: Debug, R: Debug, E: QueryData<D, R>>(
     game: &GameState,
     query: E,
     initial_value: R,

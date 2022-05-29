@@ -79,7 +79,6 @@ pub enum Keyword {
     Take(Sentence, u32),
     DealDamage(u32, DamageType),
     InnerRoom(Sentence),
-    EndRaid,
     Breach(BreachValue),
     LevelUp,
     Trap,

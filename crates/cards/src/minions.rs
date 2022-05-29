@@ -171,3 +171,30 @@ pub fn shadow_lurker() -> CardDefinition {
         },
     }
 }
+
+#[distributed_slice(DEFINITIONS)]
+pub fn sphinx_of_winters_breath() -> CardDefinition {
+    CardDefinition {
+        name: CardName::SphinxOfWintersBreath,
+        cost: cost(2),
+        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![Ability {
+            text: text![
+                Keyword::Combat,
+                "Deal 1 cold damage.",
+                "If a card with an odd mana cost is discarded, end the raid."
+            ],
+            ability_type: AbilityType::Standard,
+            delegates: vec![],
+        }],
+        config: CardConfig {
+            stats: CardStats { health: Some(3), shield: Some(1), ..CardStats::default() },
+            faction: Some(Faction::Mortal),
+            ..CardConfig::default()
+        },
+    }
+}

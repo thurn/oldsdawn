@@ -77,8 +77,8 @@ use crate::card_state::{CardData, CardPosition};
 use crate::game::GameState;
 use crate::game_actions::{CardPromptAction, CardTarget, PromptAction};
 use crate::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, BreachValue, CardId, HealthValue,
-    ManaValue, RaidId, RoomId, ShieldValue, Side, TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, BreachValue, CardId, DamageType,
+    HasAbilityId, HasCardId, HealthValue, ManaValue, RaidId, RoomId, ShieldValue, Side, TurnNumber,
 };
 
 /// Identifies the context for a given request to a delegate: which player,
@@ -116,21 +116,21 @@ impl fmt::Debug for Scope {
     }
 }
 
-impl From<Scope> for AbilityId {
-    fn from(scope: Scope) -> Self {
-        scope.ability_id
+impl HasAbilityId for Scope {
+    fn ability_id(&self) -> AbilityId {
+        self.ability_id
     }
 }
 
 /// Predicate to determine whether a delegate should run, taking contextual
 /// information `T`.
-pub type RequirementFn<T> = fn(&GameState, Scope, T) -> bool;
+pub type RequirementFn<T> = fn(&GameState, Scope, &T) -> bool;
 /// Function to mutate game state in response to an event, taking contextual
 /// information `T`.
-pub type MutationFn<T> = fn(&mut GameState, Scope, T);
+pub type MutationFn<T> = fn(&mut GameState, Scope, &T);
 /// Function to intercept a query for game information, taking contextual
 /// information `T` and the current query value `R`.
-pub type TransformationFn<T, R> = fn(&GameState, Scope, T, R) -> R;
+pub type TransformationFn<T, R> = fn(&GameState, Scope, &T, R) -> R;
 
 /// Delegate which responds to a given game event and mutates game state in
 /// response.
@@ -215,9 +215,9 @@ pub struct CardPlayed {
     pub target: CardTarget,
 }
 
-impl From<CardPlayed> for CardId {
-    fn from(played: CardPlayed) -> Self {
-        played.card_id
+impl HasCardId for CardPlayed {
+    fn card_id(&self) -> CardId {
+        self.card_id
     }
 }
 
@@ -234,15 +234,9 @@ impl AbilityActivated {
     }
 }
 
-impl From<AbilityActivated> for CardId {
-    fn from(activated: AbilityActivated) -> Self {
-        activated.ability_id.card_id
-    }
-}
-
-impl From<AbilityActivated> for AbilityId {
-    fn from(activated: AbilityActivated) -> Self {
-        activated.ability_id
+impl HasAbilityId for AbilityActivated {
+    fn ability_id(&self) -> AbilityId {
+        self.ability_id
     }
 }
 
@@ -293,9 +287,9 @@ pub struct ScoreCard {
     pub card_id: CardId,
 }
 
-impl From<ScoreCard> for CardId {
-    fn from(this: ScoreCard) -> Self {
-        this.card_id
+impl HasCardId for ScoreCard {
+    fn card_id(&self) -> CardId {
+        self.card_id
     }
 }
 
@@ -314,9 +308,17 @@ pub struct RaidEnded {
 }
 
 impl From<RaidEnded> for RaidId {
-    fn from(me: RaidEnded) -> Self {
-        me.raid_id
+    fn from(this: RaidEnded) -> Self {
+        this.raid_id
     }
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+pub struct DealtDamage {
+    pub source: AbilityId,
+    pub amount: u32,
+    pub damage_type: DamageType,
+    pub discarded: Vec<CardId>,
 }
 
 /// Actions to show the Champion during combat in addition to their weapon
@@ -400,6 +402,9 @@ pub enum Delegate {
     RaidSuccess(EventDelegate<RaidId>),
     /// Stored mana is taken from a card
     StoredManaTaken(EventDelegate<CardId>),
+    /// Damage has been dealt to the Champion player (in the form of discarded
+    /// cards).
+    DealtDamage(EventDelegate<DealtDamage>),
 
     /// Query whether the indicated player can currently take the basic game
     /// action to spend an action point to draw a card.
@@ -515,7 +520,7 @@ impl DelegateCache {
 /// deriving [DelegateEnum]
 pub trait EventData<T: fmt::Debug>: fmt::Debug {
     /// Get the underlying data for this event
-    fn data(&self) -> T;
+    fn data(&self) -> &T;
 
     fn kind(&self) -> DelegateKind;
 
@@ -528,7 +533,7 @@ pub trait EventData<T: fmt::Debug>: fmt::Debug {
 /// deriving [DelegateEnum]
 pub trait QueryData<TData: fmt::Debug, TResult: fmt::Debug>: fmt::Debug {
     /// Get the underlying data for this query
-    fn data(&self) -> TData;
+    fn data(&self) -> &TData;
 
     fn kind(&self) -> DelegateKind;
 

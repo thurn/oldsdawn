@@ -110,6 +110,11 @@ impl fmt::Debug for Side {
     }
 }
 
+/// Identifies a struct that is 1:1 associated with a given [CardId].
+pub trait HasCardId {
+    fn card_id(&self) -> CardId;
+}
+
 /// Identifies a card in an ongoing game
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd)]
 pub struct CardId {
@@ -120,6 +125,12 @@ pub struct CardId {
 impl CardId {
     pub fn new(side: Side, index: usize) -> Self {
         Self { side, index }
+    }
+}
+
+impl HasCardId for CardId {
+    fn card_id(&self) -> CardId {
+        *self
     }
 }
 
@@ -153,6 +164,17 @@ impl fmt::Debug for AbilityIndex {
     }
 }
 
+/// Identifies a struct that is 1:1 associated with a given [AbilityId].
+pub trait HasAbilityId {
+    fn ability_id(&self) -> AbilityId;
+}
+
+impl<T: HasAbilityId> HasCardId for T {
+    fn card_id(&self) -> CardId {
+        self.ability_id().card_id
+    }
+}
+
 /// Identifies an ability within a card. Abilities are the only game entity
 /// which may contain delegates..
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize)]
@@ -170,6 +192,12 @@ impl fmt::Debug for AbilityId {
 impl AbilityId {
     pub fn new(card_id: CardId, index: usize) -> Self {
         Self { card_id, index: AbilityIndex(index) }
+    }
+}
+
+impl HasAbilityId for AbilityId {
+    fn ability_id(&self) -> AbilityId {
+        *self
     }
 }
 
@@ -296,9 +324,9 @@ pub struct BoostData {
     pub count: u32,
 }
 
-impl From<BoostData> for CardId {
-    fn from(data: BoostData) -> Self {
-        data.card_id
+impl HasCardId for BoostData {
+    fn card_id(&self) -> CardId {
+        self.card_id
     }
 }
 

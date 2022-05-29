@@ -26,8 +26,8 @@ use data::delegates::{
 use data::game::GameState;
 use data::game_actions::{CardPromptAction, CardTarget, GamePrompt};
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, CardId, HealthValue, ManaValue, RaidId, RoomId, Side,
-    Sprite, TurnNumber,
+    AbilityId, ActionCount, AttackValue, CardId, HasAbilityId, HasCardId, HealthValue, ManaValue,
+    RaidId, RoomId, Side, Sprite, TurnNumber,
 };
 use data::special_effects::Projectile;
 use data::text::{AbilityText, NumericOperator, TextToken};
@@ -104,43 +104,43 @@ pub fn sprite(text: &str) -> Sprite {
 }
 
 /// RequirementFn which always returns true
-pub fn always<T>(_: &GameState, _: Scope, _: T) -> bool {
+pub fn always<T>(_: &GameState, _: Scope, _: &T) -> bool {
     true
 }
 
 /// RequirementFn that this delegate's card is currently face up & in play
-pub fn face_up_in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
+pub fn face_up_in_play<T>(game: &GameState, scope: Scope, _: &T) -> bool {
     let card = game.card(scope.card_id());
     card.is_face_up() && card.position().in_play()
 }
 
 /// RequirementFn that this delegate's card is currently face down & in play
-pub fn face_down_in_play<T>(game: &GameState, scope: Scope, _: T) -> bool {
+pub fn face_down_in_play<T>(game: &GameState, scope: Scope, _: &T) -> bool {
     let card = game.card(scope.card_id());
     card.is_face_down() && card.position().in_play()
 }
 
 /// RequirementFn that this delegate's card is currently in its owner's score
 /// pile
-pub fn scored_by_owner<T>(game: &GameState, scope: Scope, _: T) -> bool {
+pub fn scored_by_owner<T>(game: &GameState, scope: Scope, _: &T) -> bool {
     game.card(scope.card_id()).position() == CardPosition::Scored(scope.side())
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their
 /// own card.
-pub fn this_card(_game: &GameState, scope: Scope, card_id: impl Into<CardId>) -> bool {
-    scope.card_id() == card_id.into()
+pub fn this_card(_game: &GameState, scope: Scope, card_id: &impl HasCardId) -> bool {
+    scope.card_id() == card_id.card_id()
 }
 
 /// A RequirementFn which restricts delegates to only listen to events for their
 /// own ability.
-pub fn this_ability(_game: &GameState, scope: Scope, ability_id: impl Into<AbilityId>) -> bool {
-    scope.ability_id() == ability_id.into()
+pub fn this_ability(_game: &GameState, scope: Scope, ability_id: &impl HasAbilityId) -> bool {
+    scope.ability_id() == ability_id.ability_id()
 }
 
 /// A RequirementFn which checks if the current `raid_id` matches the stored
 /// [RaidId] for this `scope`.
-pub fn matching_raid<T>(game: &GameState, scope: Scope, _: T) -> bool {
+pub fn matching_raid<T>(game: &GameState, scope: Scope, _: &T) -> bool {
     utils::is_true(|| {
         Some(game.ability_state(scope.ability_id())?.raid_id? == game.data.raid.as_ref()?.raid_id)
     })
@@ -332,7 +332,7 @@ pub fn initiate_raid_with_callback(
 /// Invokes `function` at most once per turn.
 ///
 /// Stores ability state to track the last-invoked turn number
-pub fn once_per_turn<T>(game: &mut GameState, scope: Scope, data: T, function: MutationFn<T>) {
+pub fn once_per_turn<T>(game: &mut GameState, scope: Scope, data: &T, function: MutationFn<T>) {
     if utils::is_false(|| Some(game.ability_state(scope.ability_id())?.turn? == game.data.turn)) {
         save_turn(game, scope);
         function(game, scope, data)
@@ -340,13 +340,13 @@ pub fn once_per_turn<T>(game: &mut GameState, scope: Scope, data: T, function: M
 }
 
 /// Stores the current turn as ability state for the provided `ability_id`.
-pub fn save_turn(game: &mut GameState, ability_id: impl Into<AbilityId>) {
-    game.ability_state_mut(ability_id.into()).turn = Some(game.data.turn);
+pub fn save_turn(game: &mut GameState, ability_id: impl HasAbilityId) {
+    game.ability_state_mut(ability_id.ability_id()).turn = Some(game.data.turn);
 }
 
 /// Helper to store the provided [RaidId] as ability state for this [Scope].
-pub fn save_raid_id(game: &mut GameState, ability_id: impl Into<AbilityId>, raid_id: RaidId) {
-    game.ability_state_mut(ability_id.into()).raid_id = Some(raid_id);
+pub fn save_raid_id(game: &mut GameState, ability_id: impl HasAbilityId, raid_id: &RaidId) {
+    game.ability_state_mut(ability_id.ability_id()).raid_id = Some(*raid_id);
 }
 
 /// Add `amount` to the stored mana in a card. Returns the new stored amount.

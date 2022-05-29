@@ -133,12 +133,12 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
 
     quote! {
         #(#docs)*
-        #[derive(Debug, Copy, Clone)]
+        #[derive(Debug, Clone)]
         pub struct #struct_name(pub #data);
 
         impl #trait_value for #struct_name {
-            fn data(&self) -> #data {
-                self.0
+            fn data(&self) -> &#data {
+                &self.0
             }
 
             fn kind(&self) -> DelegateKind {

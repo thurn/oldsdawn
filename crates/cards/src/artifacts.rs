@@ -239,7 +239,7 @@ pub fn dark_grimoire() -> CardDefinition {
             delegates: vec![Delegate::DrawCardAction(EventDelegate {
                 requirement: face_up_in_play,
                 mutation: |g, s, _| {
-                    once_per_turn(g, s, (), |g, s, _| {
+                    once_per_turn(g, s, &(), |g, s, _| {
                         mutations::draw_cards(g, s.side(), 1);
                     })
                 },

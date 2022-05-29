@@ -105,6 +105,7 @@ pub enum CardName {
     TimeGolem,
     TemporalVortex,
     ShadowLurker,
+    SphinxOfWintersBreath,
 }
 
 impl CardName {
@@ -112,6 +113,7 @@ impl CardName {
     pub fn displayed_name(&self) -> String {
         match self {
             Self::MaraudersAxe => "Marauder's Axe".to_string(),
+            Self::SphinxOfWintersBreath => "Sphinx of Winter's Breath".to_string(),
             _ => format!("{}", self).from_case(Case::Pascal).to_case(Case::Title),
         }
     }

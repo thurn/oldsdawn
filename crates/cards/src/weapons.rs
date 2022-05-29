@@ -142,7 +142,7 @@ pub fn ethereal_blade() -> CardDefinition {
                 delegates: vec![
                     on_weapon_used(
                         |_g, s, used_weapon| used_weapon.weapon_id == s.card_id(),
-                        |g, s, used_weapon| save_raid_id(g, s, used_weapon.raid_id),
+                        |g, s, used_weapon| save_raid_id(g, s, &used_weapon.raid_id),
                     ),
                     on_raid_ended(matching_raid, |g, s, _| {
                         sacrifice_card(g, s.card_id());
