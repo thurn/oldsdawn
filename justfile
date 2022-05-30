@@ -53,7 +53,6 @@ clippy:
         -D clippy::multiple_inherent_impl \
         -D clippy::needless_continue \
         -D clippy::needless_for_each \
-        -D clippy::option_if_let_else \
         -D clippy::redundant_closure_for_method_calls \
         -D clippy::ref_option_ref \
         -D clippy::string_to_string \
@@ -64,7 +63,6 @@ clippy:
         -D clippy::unwrap_in_result \
         -D clippy::used_underscore_binding \
         -D clippy::useless_let_if_seq \
-        -D clippy::use_self
 
 # Reformats code. Requires nightly because several useful options (e.g. imports_granularity) are
 # nightly-only
