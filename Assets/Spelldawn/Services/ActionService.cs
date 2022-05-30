@@ -36,7 +36,8 @@ namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
   {
-    static readonly string ServerAddress = "http://localhost:50052";
+    //static readonly string ServerAddress = "http://localhost:50052";
+    static readonly string ServerAddress = "http://192.168.0.187:50052";
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
@@ -346,13 +347,13 @@ namespace Spelldawn.Services
       _ => false
     };
   }
-  
+
   /** You can use this type to log the size of server payloads before decompression. */
   // ReSharper disable once UnusedType.Global
   sealed class DebugGzipCompressionProvider : ICompressionProvider
   {
     readonly GzipCompressionProvider _wrappedProvider;
-    
+
     public DebugGzipCompressionProvider(CompressionLevel defaultCompressionLevel)
     {
       _wrappedProvider = new GzipCompressionProvider(defaultCompressionLevel);
@@ -368,5 +369,5 @@ namespace Spelldawn.Services
     }
 
     public string EncodingName => _wrappedProvider.EncodingName;
-  }  
+  }
 }
