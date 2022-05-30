@@ -26,6 +26,7 @@ use std::fmt::Debug;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use anyhow::Result;
+use cards::initialize;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardPositionKind};
 use data::deck::Deck;
@@ -62,8 +63,7 @@ pub const STARTING_MANA: ManaValue = 999;
 /// game is advanced to the user's first turn. See [Args] for information about
 /// the default configuration options and how to modify them.
 pub fn new_game(user_side: Side, args: Args) -> TestSession {
-    let discovered = cards::initialize();
-    println!("Discovered {} cards", discovered);
+    initialize::run();
     let (game_id, user_id, opponent_id) = generate_ids();
     let (overlord_user, champion_user) = match user_side {
         Side::Overlord => (user_id, opponent_id),

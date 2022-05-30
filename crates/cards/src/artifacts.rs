@@ -22,15 +22,13 @@ use data::delegates::{Delegate, EventDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use data::utils;
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::OnZeroStored;
 use rules::text_macro::text;
-use rules::{abilities, mutations, DEFINITIONS};
+use rules::{abilities, mutations};
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn lodestone() -> CardDefinition {
     CardDefinition {
         name: CardName::Lodestone,
@@ -48,7 +46,6 @@ pub fn lodestone() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn sanctum_passage() -> CardDefinition {
     CardDefinition {
         name: CardName::SanctumPassage,
@@ -74,7 +71,6 @@ pub fn sanctum_passage() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn accumulator() -> CardDefinition {
     CardDefinition {
         name: CardName::Accumulator,
@@ -105,8 +101,7 @@ pub fn accumulator() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
-fn mystic_portal() -> CardDefinition {
+pub fn mystic_portal() -> CardDefinition {
     CardDefinition {
         name: CardName::MysticPortal,
         cost: cost(5),
@@ -157,7 +152,6 @@ fn mystic_portal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn storage_crystal() -> CardDefinition {
     CardDefinition {
         name: CardName::StorageCrystal,
@@ -188,7 +182,6 @@ pub fn storage_crystal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn magical_resonator() -> CardDefinition {
     CardDefinition {
         name: CardName::MagicalResonator,
@@ -219,7 +212,6 @@ pub fn magical_resonator() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn dark_grimoire() -> CardDefinition {
     CardDefinition {
         name: CardName::DarkGrimoire,

@@ -20,10 +20,9 @@ use data::primitives::{
     CardType, ColdDamage, Faction, HealthValue, ManaValue, Rarity, School, Side,
 };
 use data::text::{Keyword, Sentence};
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::OnZeroStored;
-use rules::{abilities, mutations, text, DEFINITIONS};
+use rules::{abilities, mutations, text};
 
 pub const MINION_COST: ManaValue = 3;
 pub const WEAPON_COST: ManaValue = 3;
@@ -36,7 +35,6 @@ pub const TEST_FACTION: Faction = Faction::Infernal;
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_overlord_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestOverlordIdentity,
@@ -51,7 +49,6 @@ pub fn test_overlord_identity() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_champion_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestChampionIdentity,
@@ -66,7 +63,6 @@ pub fn test_champion_identity() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_overlord_spell() -> CardDefinition {
     CardDefinition {
         name: CardName::TestOverlordSpell,
@@ -76,7 +72,6 @@ pub fn test_overlord_spell() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_champion_spell() -> CardDefinition {
     CardDefinition {
         name: CardName::TestChampionSpell,
@@ -86,7 +81,6 @@ pub fn test_champion_spell() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_scheme_31() -> CardDefinition {
     CardDefinition {
         name: CardName::TestScheme31,
@@ -100,7 +94,6 @@ pub fn test_scheme_31() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_end_raid() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionEndRaid,
@@ -116,7 +109,6 @@ pub fn test_minion_end_raid() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_shield_1() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionShield1Infernal,
@@ -136,7 +128,6 @@ pub fn test_minion_shield_1() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_shield_2_abyssal() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionShield2Abyssal,
@@ -156,7 +147,6 @@ pub fn test_minion_shield_2_abyssal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_deal_damage() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionDealDamage,
@@ -172,7 +162,6 @@ pub fn test_minion_deal_damage() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_infernal() -> CardDefinition {
     CardDefinition {
         name: CardName::TestInfernalMinion,
@@ -185,7 +174,6 @@ pub fn test_minion_infernal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_abyssal() -> CardDefinition {
     CardDefinition {
         name: CardName::TestAbyssalMinion,
@@ -198,7 +186,6 @@ pub fn test_minion_abyssal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_minion_mortal() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMortalMinion,
@@ -211,7 +198,6 @@ pub fn test_minion_mortal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_2_attack() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeapon2Attack,
@@ -226,7 +212,6 @@ pub fn test_weapon_2_attack() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_2_attack_12_boost() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeapon2Attack12Boost,
@@ -240,7 +225,6 @@ pub fn test_weapon_2_attack_12_boost() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_3_attack_12_boost() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeapon3Attack12Boost3Cost,
@@ -254,7 +238,6 @@ pub fn test_weapon_3_attack_12_boost() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_4_attack_12_boost() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeapon4Attack12Boost,
@@ -268,7 +251,6 @@ pub fn test_weapon_4_attack_12_boost() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_abyssal() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeaponAbyssal,
@@ -282,7 +264,6 @@ pub fn test_weapon_abyssal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_infernal() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeaponInfernal,
@@ -296,7 +277,6 @@ pub fn test_weapon_infernal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_mortal() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeaponMortal,
@@ -310,7 +290,6 @@ pub fn test_weapon_mortal() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_weapon_5_attack() -> CardDefinition {
     CardDefinition {
         name: CardName::TestWeapon5Attack,
@@ -323,7 +302,6 @@ pub fn test_weapon_5_attack() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn activated_ability_take_mana() -> CardDefinition {
     CardDefinition {
         name: CardName::TestActivatedAbilityTakeMana,
@@ -338,7 +316,6 @@ pub fn activated_ability_take_mana() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn triggered_ability_take_mana() -> CardDefinition {
     CardDefinition {
         name: CardName::TestTriggeredAbilityTakeManaAtDusk,
@@ -373,7 +350,6 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_0_cost_champion_spell() -> CardDefinition {
     CardDefinition {
         name: CardName::Test0CostChampionSpell,
@@ -382,7 +358,6 @@ pub fn test_0_cost_champion_spell() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn test_1_cost_champion_spell() -> CardDefinition {
     CardDefinition {
         name: CardName::Test1CostChampionSpell,

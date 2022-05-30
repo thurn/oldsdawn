@@ -25,14 +25,12 @@ use data::text::Keyword;
 use data::utils;
 use display::rexard_images;
 use display::rexard_images::RexardWeaponType;
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::sacrifice_card;
-use rules::{abilities, text, DEFINITIONS};
+use rules::{abilities, text};
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn greataxe() -> CardDefinition {
     CardDefinition {
         name: CardName::Greataxe,
@@ -55,7 +53,6 @@ pub fn greataxe() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn marauders_axe() -> CardDefinition {
     CardDefinition {
         name: CardName::MaraudersAxe,
@@ -101,7 +98,6 @@ pub fn marauders_axe() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn keen_halberd() -> CardDefinition {
     CardDefinition {
         name: CardName::KeenHalberd,
@@ -126,7 +122,6 @@ pub fn keen_halberd() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn ethereal_blade() -> CardDefinition {
     CardDefinition {
         name: CardName::EtherealBlade,
@@ -162,7 +157,6 @@ pub fn ethereal_blade() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn bow_of_the_alliance() -> CardDefinition {
     CardDefinition {
         name: CardName::BowOfTheAlliance,

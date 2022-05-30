@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use ai::agents::{alpha_beta, monte_carlo};
-use cards::decklists;
+use cards::{decklists, initialize};
 use criterion::{criterion_group, criterion_main, Criterion};
 use data::primitives::Side;
 
@@ -21,6 +21,7 @@ criterion_group!(benches, uct_search, alpha_beta_search);
 criterion_main!(benches);
 
 pub fn uct_search(c: &mut Criterion) {
+    initialize::run();
     let game = decklists::canonical_game();
     c.bench_function("uct_search", |b| {
         b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 1000))
@@ -28,6 +29,7 @@ pub fn uct_search(c: &mut Criterion) {
 }
 
 pub fn alpha_beta_search(c: &mut Criterion) {
+    initialize::run();
     let game = decklists::canonical_game();
     c.bench_function("alpha_beta_search", |b| {
         b.iter(|| alpha_beta::run_search(&game, Side::Overlord, 4).unwrap())

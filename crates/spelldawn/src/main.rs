@@ -14,6 +14,7 @@
 
 //! Spelldawn: An asymmetric trading card game
 
+use cards::initialize;
 use protos::spelldawn::spelldawn_server::SpelldawnServer;
 use server::requests::GameService;
 use tonic::transport::Server;
@@ -26,7 +27,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     ai::core::initialize();
-    let found_cards = cards::initialize();
+    initialize::run();
     let fmt_layer = fmt::Layer::default().pretty().with_filter(LevelFilter::WARN);
     tracing_subscriber::registry().with(fmt_layer).init();
 
@@ -40,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .accept_gzip();
     let service = tonic_web::config().enable(server);
 
-    warn!("Discovered {} cards. Server listening on {}.", found_cards, address);
+    warn!("Server listening on {}.", address);
     Server::builder().accept_http1(true).add_service(service).serve(address).await?;
     Ok(())
 }

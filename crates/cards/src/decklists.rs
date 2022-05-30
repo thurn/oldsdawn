@@ -72,7 +72,6 @@ pub static CANONICAL_CHAMPION: Lazy<Deck> = Lazy::new(|| Deck {
 /// Creates a new game using the canonical decklists, deals opening hands and
 /// resolves mulligans.
 pub fn canonical_game() -> GameState {
-    crate::initialize();
     let mut game = GameState::new(
         GameId::new(0),
         CANONICAL_OVERLORD.clone(),

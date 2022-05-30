@@ -14,9 +14,13 @@
 
 //! Contains the definitions for all cards in the game.
 
+use data::card_definition::CardDefinition;
+use rules::DEFINITIONS;
+
 pub mod artifacts;
 pub mod champion_spells;
 pub mod decklists;
+pub mod initialize;
 pub mod minions;
 pub mod overlord_spells;
 pub mod projects;
@@ -24,20 +28,6 @@ pub mod schemes;
 pub mod test_cards;
 pub mod weapons;
 
-/// Initializes cards and returns the number of discovered cards.
-///
-/// In order for `linkme` to find the card definitions we need to call a
-/// function on each module, not completely sure if this is expected behavior or
-/// a bug.
-pub fn initialize() -> usize {
-    artifacts::initialize();
-    minions::initialize();
-    projects::initialize();
-    schemes::initialize();
-    champion_spells::initialize();
-    overlord_spells::initialize();
-    test_cards::initialize();
-    weapons::initialize();
-
-    rules::CARDS.len()
+pub fn insert_definition(function: fn() -> CardDefinition) {
+    DEFINITIONS.insert(function);
 }

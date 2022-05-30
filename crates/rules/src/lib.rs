@@ -16,11 +16,11 @@
 
 use std::collections::HashMap;
 
+use dashmap::DashSet;
 use data::card_definition::{Ability, CardDefinition};
 use data::card_name::CardName;
 use data::game::GameState;
 use data::primitives::{AbilityId, CardId};
-use linkme::distributed_slice;
 use once_cell::sync::Lazy;
 
 pub mod abilities;
@@ -37,13 +37,12 @@ pub mod raid_actions;
 pub mod raid_phases;
 pub mod text_macro;
 
-#[distributed_slice]
-pub static DEFINITIONS: [fn() -> CardDefinition] = [..];
+pub static DEFINITIONS: Lazy<DashSet<fn() -> CardDefinition>> = Lazy::new(DashSet::new);
 
 /// Contains [CardDefinition]s for all known cards, keyed by [CardName]
 pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
     let mut map = HashMap::new();
-    for card_fn in DEFINITIONS {
+    for card_fn in DEFINITIONS.iter() {
         let card = card_fn();
         map.insert(card.name, card);
     }
@@ -51,6 +50,7 @@ pub static CARDS: Lazy<HashMap<CardName, CardDefinition>> = Lazy::new(|| {
 });
 
 /// Looks up the definition for a [CardName]. Panics if no such card is defined.
+/// If this panics, you are probably not calling initialize::run();
 pub fn get(name: CardName) -> &'static CardDefinition {
     CARDS.get(&name).unwrap_or_else(|| panic!("Card not found: {:?}", name))
 }

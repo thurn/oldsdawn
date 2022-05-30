@@ -18,14 +18,12 @@ use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, Ta
 use data::card_name::CardName;
 use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::text_macro::text;
-use rules::{flags, mana, mutations, DEFINITIONS};
+use rules::{flags, mana, mutations};
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
         name: CardName::ArcaneRecovery,
@@ -43,7 +41,6 @@ pub fn arcane_recovery() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn meditation() -> CardDefinition {
     CardDefinition {
         name: CardName::Meditation,
@@ -64,7 +61,6 @@ pub fn meditation() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn coup_de_grace() -> CardDefinition {
     CardDefinition {
         name: CardName::CoupDeGrace,
@@ -99,7 +95,6 @@ pub fn coup_de_grace() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn charged_strike() -> CardDefinition {
     CardDefinition {
         name: CardName::ChargedStrike,
@@ -126,7 +121,6 @@ pub fn charged_strike() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn stealth_mission() -> CardDefinition {
     CardDefinition {
         name: CardName::StealthMission,
@@ -169,7 +163,6 @@ pub fn stealth_mission() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn preparation() -> CardDefinition {
     CardDefinition {
         name: CardName::Preparation,

@@ -25,15 +25,13 @@ use data::primitives::{
 use data::text::{DamageWord, Keyword};
 use display::rexard_images;
 use display::rexard_images::RexardPack;
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mana::ManaPurpose;
 use rules::mutations::SummonMinion;
-use rules::{abilities, mana, mutations, queries, text, DEFINITIONS};
+use rules::{abilities, mana, mutations, queries, text};
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn ice_dragon() -> CardDefinition {
     CardDefinition {
         name: CardName::IceDragon,
@@ -52,7 +50,6 @@ pub fn ice_dragon() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn time_golem() -> CardDefinition {
     CardDefinition {
         name: CardName::TimeGolem,
@@ -93,7 +90,6 @@ pub fn time_golem() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn temporal_vortex() -> CardDefinition {
     CardDefinition {
         name: CardName::TemporalVortex,
@@ -137,7 +133,6 @@ pub fn temporal_vortex() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn shadow_lurker() -> CardDefinition {
     CardDefinition {
         name: CardName::ShadowLurker,
@@ -165,7 +160,6 @@ pub fn shadow_lurker() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn sphinx_of_winters_breath() -> CardDefinition {
     CardDefinition {
         name: CardName::SphinxOfWintersBreath,
@@ -208,7 +202,6 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn bridge_troll() -> CardDefinition {
     CardDefinition {
         name: CardName::BridgeTroll,
@@ -243,7 +236,6 @@ pub fn bridge_troll() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn stormcaller() -> CardDefinition {
     CardDefinition {
         name: CardName::Stormcaller,
@@ -281,7 +273,6 @@ pub fn stormcaller() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn fire_goblin() -> CardDefinition {
     CardDefinition {
         name: CardName::FireGoblin,

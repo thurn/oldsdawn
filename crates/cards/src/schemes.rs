@@ -19,15 +19,13 @@ use data::card_name::CardName;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::SummonMinion;
 use rules::text_macro::text;
-use rules::{mana, mutations, queries, DEFINITIONS};
+use rules::{mana, mutations, queries};
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn dungeon_annex() -> CardDefinition {
     CardDefinition {
         name: CardName::DungeonAnnex,
@@ -51,7 +49,6 @@ pub fn dungeon_annex() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn activate_reinforcements() -> CardDefinition {
     CardDefinition {
         name: CardName::ActivateReinforcements,
@@ -85,7 +82,6 @@ pub fn activate_reinforcements() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn research_project() -> CardDefinition {
     CardDefinition {
         name: CardName::ResearchProject,

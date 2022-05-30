@@ -18,14 +18,12 @@ use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, Ta
 use data::card_name::CardName;
 use data::primitives::{CardType, DamageType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::mutations::OnZeroStored;
-use rules::{abilities, mutations, text, DEFINITIONS};
+use rules::{abilities, mutations, text};
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn gold_mine() -> CardDefinition {
     CardDefinition {
         name: CardName::GoldMine,
@@ -53,7 +51,6 @@ pub fn gold_mine() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn gemcarver() -> CardDefinition {
     CardDefinition {
         name: CardName::Gemcarver,
@@ -89,7 +86,6 @@ pub fn gemcarver() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn coinery() -> CardDefinition {
     CardDefinition {
         name: CardName::Coinery,
@@ -124,7 +120,6 @@ pub fn coinery() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn pit_trap() -> CardDefinition {
     CardDefinition {
         name: CardName::PitTrap,

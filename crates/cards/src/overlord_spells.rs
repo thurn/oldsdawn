@@ -17,14 +17,12 @@
 use data::card_definition::{CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
-use linkme::distributed_slice;
 use rules::helpers::*;
 use rules::text_macro::text;
-use rules::{flags, mana, mutations, DEFINITIONS};
+use rules::{flags, mana, mutations};
 
 pub fn initialize() {}
 
-#[distributed_slice(DEFINITIONS)]
 pub fn gathering_dark() -> CardDefinition {
     CardDefinition {
         name: CardName::GatheringDark,
@@ -42,7 +40,6 @@ pub fn gathering_dark() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn overwhelming_power() -> CardDefinition {
     CardDefinition {
         name: CardName::OverwhelmingPower,
@@ -60,7 +57,6 @@ pub fn overwhelming_power() -> CardDefinition {
     }
 }
 
-#[distributed_slice(DEFINITIONS)]
 pub fn forced_march() -> CardDefinition {
     CardDefinition {
         name: CardName::ForcedMarch,
