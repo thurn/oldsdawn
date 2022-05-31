@@ -14,6 +14,8 @@
 
 //! Core database implementation, handles querying and storing game state.
 
+use std::sync::Mutex;
+
 use anyhow::{Context, Result};
 use bincode;
 use cards::decklists;
@@ -25,7 +27,19 @@ use once_cell::sync::Lazy;
 use rules::dispatch;
 use sled::{Db, Tree};
 
-static DATABASE: Lazy<Db> = Lazy::new(|| sled::open("db").expect("Unable to open database"));
+static DATABASE_PATH: Lazy<Mutex<Option<String>>> = Lazy::new(|| Mutex::new(None));
+
+static DATABASE: Lazy<Db> = Lazy::new(|| {
+    let path = DATABASE_PATH.lock().unwrap().clone();
+    sled::open(path.unwrap_or_else(|| "db".to_string())).expect("Unable to open database")
+});
+
+/// Overrides the path used for the database, e.g. in order to use
+/// Application.persistentDataPath in Unity. Must be called before any database
+/// access in order to have effect.
+pub fn override_path(path: String) {
+    DATABASE_PATH.lock().unwrap().replace(path);
+}
 
 /// Abstraction layer for interacting with the database
 pub trait Database {
@@ -43,7 +57,11 @@ pub trait Database {
 }
 
 /// Database implementation based on the sled database
-pub struct SledDatabase;
+pub struct SledDatabase {
+    /// Whether to flush after each write() call. This is needed for the unity
+    /// plugin because auto-flush doesn't work on devices.
+    pub flush_on_write: bool,
+}
 
 impl Database for SledDatabase {
     fn generate_game_id(&self) -> Result<GameId> {
@@ -68,10 +86,16 @@ impl Database for SledDatabase {
     fn write_game(&mut self, game: &GameState) -> Result<()> {
         let serialized = bincode::serialize(game)
             .with_error(|| format!("Error serializing game {:?}", game.id))?;
-        games()?
+        let result = games()?
             .insert(game.id.key(), serialized)
             .map(|_| ()) // Ignore previously-set value
-            .with_error(|| format!("Error writing game {:?}", game.id))
+            .with_error(|| format!("Error writing game {:?}", game.id));
+
+        if self.flush_on_write {
+            DATABASE.flush()?;
+        }
+
+        result
     }
 
     fn deck(&self, player_id: PlayerId, side: Side) -> Result<Deck> {

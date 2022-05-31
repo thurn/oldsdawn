@@ -276,6 +276,9 @@ namespace Spelldawn.Services
         case ClientDebugCommand.DebugCommandOneofCase.LogMessage:
           Debug.Log(command.LogMessage);
           break;
+        case ClientDebugCommand.DebugCommandOneofCase.SetBooleanPreference:
+          PlayerPrefs.SetInt(command.SetBooleanPreference.Key, command.SetBooleanPreference.Value ? 1 : 0);
+          break;
       }
     }
 

@@ -14,9 +14,6 @@
 
 //! Contains the definitions for all cards in the game.
 
-use data::card_definition::CardDefinition;
-use rules::DEFINITIONS;
-
 pub mod artifacts;
 pub mod champion_spells;
 pub mod decklists;
@@ -27,7 +24,3 @@ pub mod projects;
 pub mod schemes;
 pub mod test_cards;
 pub mod weapons;
-
-pub fn insert_definition(function: fn() -> CardDefinition) {
-    DEFINITIONS.insert(function);
-}

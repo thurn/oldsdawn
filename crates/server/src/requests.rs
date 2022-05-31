@@ -73,7 +73,7 @@ impl Spelldawn for GameService {
 
         let (tx, rx) = mpsc::channel(4);
 
-        let mut database = SledDatabase;
+        let mut database = SledDatabase { flush_on_write: false };
         match handle_connect(&mut database, player_id, game_id) {
             Ok(commands) => {
                 let names = commands.commands.iter().map(command_name).collect::<Vec<_>>();
@@ -98,7 +98,7 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        let mut db = SledDatabase {};
+        let mut db = SledDatabase { flush_on_write: false };
         match handle_request(&mut db, request.get_ref()) {
             Ok(response) => {
                 if let Some(interceptor) = self.response_interceptor {
@@ -116,6 +116,21 @@ impl Spelldawn for GameService {
             }
         }
     }
+}
+
+/// Helper to perform the connect action from the unity plugin
+pub fn connect(message: ConnectRequest) -> Result<CommandList> {
+    let game_id = adapters::to_optional_server_game_id(&message.game_id);
+    let player_id = adapters::to_server_player_id(message.player_id)?;
+    let mut database = SledDatabase { flush_on_write: true };
+    handle_connect(&mut database, player_id, game_id)
+}
+
+/// Helper to perform an action from the unity plugin
+pub fn perform_action(request: GameRequest) -> Result<CommandList> {
+    let mut db = SledDatabase { flush_on_write: true };
+    let response = handle_request(&mut db, &request)?;
+    Ok(response.command_list)
 }
 
 /// A response to a given [GameRequest].

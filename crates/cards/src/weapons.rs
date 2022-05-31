@@ -29,8 +29,6 @@ use rules::helpers::*;
 use rules::mutations::sacrifice_card;
 use rules::{abilities, text};
 
-pub fn initialize() {}
-
 pub fn greataxe() -> CardDefinition {
     CardDefinition {
         name: CardName::Greataxe,

@@ -1166,10 +1166,18 @@ pub struct SetPlayerIdentifierCommand {
     #[prost(message, optional, tag = "1")]
     pub id: ::core::option::Option<PlayerIdentifier>,
 }
+/// Sets a client-side boolean player preference
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SetBooleanPreference {
+    #[prost(string, tag = "1")]
+    pub key: ::prost::alloc::string::String,
+    #[prost(bool, tag = "2")]
+    pub value: bool,
+}
 /// Activates client-side debugging functionality
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ClientDebugCommand {
-    #[prost(oneof = "client_debug_command::DebugCommand", tags = "1, 2, 3")]
+    #[prost(oneof = "client_debug_command::DebugCommand", tags = "1, 2, 3, 4")]
     pub debug_command: ::core::option::Option<client_debug_command::DebugCommand>,
 }
 /// Nested message and enum types in `ClientDebugCommand`.
@@ -1182,6 +1190,8 @@ pub mod client_debug_command {
         InvokeAction(super::GameAction),
         #[prost(string, tag = "3")]
         LogMessage(::prost::alloc::string::String),
+        #[prost(message, tag = "4")]
+        SetBooleanPreference(super::SetBooleanPreference),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

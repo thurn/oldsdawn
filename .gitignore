@@ -13,6 +13,7 @@ UIElementsSchema/
 HostedData/
 Assets/StreamingAssets/
 Assets/EntityCache
+Assets/Plugins/
 UserSettings/
 db/
 

@@ -30,8 +30,6 @@ use rules::mana::ManaPurpose;
 use rules::mutations::SummonMinion;
 use rules::{abilities, mana, mutations, queries, text};
 
-pub fn initialize() {}
-
 pub fn ice_dragon() -> CardDefinition {
     CardDefinition {
         name: CardName::IceDragon,

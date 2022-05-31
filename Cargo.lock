@@ -1071,6 +1071,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin"
+version = "0.0.0"
+dependencies = [
+ "ai",
+ "anyhow",
+ "cards",
+ "data",
+ "display",
+ "panels",
+ "prost",
+ "prost-build",
+ "prost-types",
+ "protos",
+ "rules",
+ "server",
+ "test_utils",
+ "ui",
+]
+
+[[package]]
 name = "ppv-lite86"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1470,6 +1490,7 @@ dependencies = [
  "maplit",
  "once_cell",
  "panels",
+ "plugin",
  "prost",
  "prost-types",
  "protos",

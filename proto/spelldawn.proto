@@ -1227,12 +1227,19 @@ message SetPlayerIdentifierCommand {
     PlayerIdentifier id = 1;
 }
 
+// Sets a client-side boolean player preference
+message SetBooleanPreference {
+    string key = 1;
+    bool value = 2;
+}
+
 // Activates client-side debugging functionality
 message ClientDebugCommand {
     oneof debug_command {
         google.protobuf.Empty ShowLogs = 1;
         GameAction invoke_action = 2;
         string log_message = 3;
+        SetBooleanPreference set_boolean_preference = 4;
     }
 }
 

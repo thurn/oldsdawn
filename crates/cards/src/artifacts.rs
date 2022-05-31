@@ -27,8 +27,6 @@ use rules::mutations::OnZeroStored;
 use rules::text_macro::text;
 use rules::{abilities, mutations};
 
-pub fn initialize() {}
-
 pub fn lodestone() -> CardDefinition {
     CardDefinition {
         name: CardName::Lodestone,

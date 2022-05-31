@@ -272,10 +272,7 @@ pub fn on_calculate_health(transformation: TransformationFn<CardId, HealthValue>
 pub fn add_vault_access<const N: u32>(requirement: RequirementFn<RaidId>) -> Delegate {
     Delegate::VaultAccessCount(QueryDelegate {
         requirement,
-        transformation: |_, _, _, current| {
-            println!("Adding {:?} to {:?}", N, current);
-            current + N
-        },
+        transformation: |_, _, _, current| current + N,
     })
 }
 

@@ -33,8 +33,6 @@ pub const MANA_TAKEN: ManaValue = 2;
 pub const MINION_HEALTH: HealthValue = 5;
 pub const TEST_FACTION: Faction = Faction::Infernal;
 
-pub fn initialize() {}
-
 pub fn test_overlord_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestOverlordIdentity,

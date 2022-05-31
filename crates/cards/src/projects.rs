@@ -22,8 +22,6 @@ use rules::helpers::*;
 use rules::mutations::OnZeroStored;
 use rules::{abilities, mutations, text};
 
-pub fn initialize() {}
-
 pub fn gold_mine() -> CardDefinition {
     CardDefinition {
         name: CardName::GoldMine,

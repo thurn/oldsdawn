@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-
 #nullable enable
 
 using System;
@@ -32,12 +31,12 @@ using Spelldawn.Utils;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
 using Random = UnityEngine.Random;
+
 namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
   {
-    //static readonly string ServerAddress = "http://localhost:50052";
-    static readonly string ServerAddress = "http://192.168.0.187:50052";
+    static readonly string ServerAddress = "http://localhost:50052";
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
@@ -58,6 +57,11 @@ namespace Spelldawn.Services
     [SerializeField] PlayerName _currentPriority;
     [SerializeField] bool _currentlyHandlingAction;
     Clickable? _lastClicked;
+
+    void Start()
+    {
+      Plugin.Initialize();
+    }
 
     public PlayerName CurrentPriority
     {
@@ -216,20 +220,34 @@ namespace Spelldawn.Services
 
     async void ConnectToServer()
     {
-      Debug.Log($"Connecting to {ServerAddress}");
-      using var call = _client.Connect(new ConnectRequest
+      var request = new ConnectRequest
       {
         GameId = _registry.GameService.CurrentGameId,
         PlayerId = _registry.GameService.PlayerId,
-      });
+      };
 
-      while (await call.ResponseStream.MoveNext())
+      if (PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
       {
-        if (this != null)
+        Debug.Log("Connecting to Offline Game");
+        var commands = Plugin.Connect(request);
+        if (commands != null)
         {
-          var commands = call.ResponseStream.Current;
           StartCoroutine(_registry.CommandService.HandleCommands(commands));
         }
+      }
+      else
+      {
+        Debug.Log($"Connecting to {ServerAddress}");
+        using var call = _client.Connect(request);
+
+        while (await call.ResponseStream.MoveNext())
+        {
+          if (this != null)
+          {
+            var commands = call.ResponseStream.Current;
+            StartCoroutine(_registry.CommandService.HandleCommands(commands));
+          }
+        }        
       }
     }
 
@@ -237,7 +255,7 @@ namespace Spelldawn.Services
     {
       yield return ApplyOptimisticResponse(action);
       // Introduce simulated server delay
-      yield return new WaitForSeconds(Random.Range(0.1f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
+      yield return new WaitForSeconds(Random.Range(0.5f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
 
       if (IsClientOnlyAction(action))
       {
@@ -248,17 +266,38 @@ namespace Spelldawn.Services
 
       // Send to server
       var request = new GameRequest
-        {
-          Action = action,
-          GameId = _registry.GameService.CurrentGameId,
-          PlayerId = _registry.GameService.PlayerId
-        };
+      {
+        Action = action,
+        GameId = _registry.GameService.CurrentGameId,
+        PlayerId = _registry.GameService.PlayerId
+      };
 
-        var task = _client.PerformActionAsync(request).GetAwaiter();
+      if (PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
+      {
+        yield return _registry.CommandService.HandleCommands(Plugin.PerformAction(request));
+      }
+      else
+      {
+        var call = _client.PerformActionAsync(request);
+        var task = call.GetAwaiter();
         yield return new WaitUntil(() => task.IsCompleted);
-        yield return _registry.CommandService.HandleCommands(task.GetResult());
 
-        _currentlyHandlingAction = false;
+        switch (call.GetStatus().StatusCode)
+        {
+          case StatusCode.OK:
+            yield return _registry.CommandService.HandleCommands(task.GetResult());
+            break;
+          case StatusCode.Unavailable:
+            Debug.LogError($"Server {ServerAddress} is not available! Attempting to fall back to offline.");
+            yield return _registry.CommandService.HandleCommands(Plugin.PerformAction(request));
+            break;
+          default:
+            Debug.LogError($"Error connecting to {ServerAddress}: {call.GetStatus().Detail}");
+            break;
+        }
+      }
+
+      _currentlyHandlingAction = false;
     }
 
     IEnumerator ApplyOptimisticResponse(GameAction action)

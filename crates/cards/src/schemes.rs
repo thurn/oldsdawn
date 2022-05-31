@@ -24,8 +24,6 @@ use rules::mutations::SummonMinion;
 use rules::text_macro::text;
 use rules::{mana, mutations, queries};
 
-pub fn initialize() {}
-
 pub fn dungeon_annex() -> CardDefinition {
     CardDefinition {
         name: CardName::DungeonAnnex,

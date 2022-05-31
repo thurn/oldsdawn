@@ -21,8 +21,6 @@ use rules::helpers::*;
 use rules::text_macro::text;
 use rules::{flags, mana, mutations};
 
-pub fn initialize() {}
-
 pub fn gathering_dark() -> CardDefinition {
     CardDefinition {
         name: CardName::GatheringDark,

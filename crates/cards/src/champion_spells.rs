@@ -22,8 +22,6 @@ use rules::helpers::*;
 use rules::text_macro::text;
 use rules::{flags, mana, mutations};
 
-pub fn initialize() {}
-
 pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
         name: CardName::ArcaneRecovery,

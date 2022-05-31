@@ -26,7 +26,6 @@ use regex::Regex;
 use walkdir::WalkDir;
 
 fn main() -> Result<()> {
-    println!("cargo:warning=Generating initialize.rs");
     let mut functions = HashMap::new();
     for e in WalkDir::new("src") {
         let entry = e?;

@@ -17,12 +17,33 @@ run:
     # Use +nightly in order to get backtraces for anyhow errors
     RUST_BACKTRACE=1 && cargo +nightly run
 
+plugin_out := "Assets/Plugins"
+target_arm := "aarch64-apple-darwin"
+target_x86 := "x86_64-apple-darwin"
+
+mac-plugin:
+    cargo build -p plugin --release --target={{target_arm}}
+    cargo build -p plugin --release --target={{target_x86}}
+    lipo -create -output libspelldawn.bundle \
+        target/{{target_arm}}/release/libspelldawn.dylib \
+        target/{{target_x86}}/release/libspelldawn.dylib
+    mv libspelldawn.bundle {{plugin_out}}/macOS/
+
+target_ios := "aarch64-apple-ios"
+
+ios-plugin:
+    cargo build -p plugin --release --target={{target_ios}}
+    cp target/{{target_ios}}/release/libspelldawn.a {{plugin_out}}/iOS
+
+plugin: mac-plugin ios-plugin
+
 test:
     cargo test
 
 test-backtrace:
     # Use +nightly in order to get backtraces for anyhow errors
     RUST_BACKTRACE=1 && cargo +nightly test
+
 doc:
     cargo doc
 
