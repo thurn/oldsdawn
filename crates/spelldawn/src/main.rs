@@ -26,7 +26,6 @@ use tracing_subscriber::util::SubscriberInitExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    ai::core::initialize();
     initialize::run();
     let fmt_layer = fmt::Layer::default().pretty().with_filter(LevelFilter::WARN);
     tracing_subscriber::registry().with(fmt_layer).init();

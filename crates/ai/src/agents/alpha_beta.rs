@@ -15,23 +15,16 @@
 use std::cmp;
 
 use anyhow::{bail, Result};
-use data::agent_definition::AgentName;
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
 use data::with_error::WithError;
-use linkme::distributed_slice;
 use ordered_float::NotNan;
 use rules::{actions, queries};
 
+use crate::core::legal_actions;
 use crate::core::types::{notnan, StatePredictionIterator};
-use crate::core::{legal_actions, AgentPair, AGENTS};
 use crate::heuristics::game_state_evaluator::{standard_evaluator, GameEvaluator};
-
-pub fn initialize() {}
-
-#[distributed_slice(AGENTS)]
-static AGENT: AgentPair = (AgentName::AlphaBeta, execute);
 
 /// Implementation of fail-hard alpha/beta pruning
 /// See <https://en.wikipedia.org/wiki/Alpha-beta_pruning>

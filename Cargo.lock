@@ -37,7 +37,6 @@ dependencies = [
  "data",
  "enum-iterator",
  "enum-kinds",
- "linkme",
  "once_cell",
  "ordered-float",
  "petgraph",

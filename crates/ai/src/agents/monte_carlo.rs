@@ -22,12 +22,10 @@ use std::collections::HashSet;
 use std::f64::consts;
 
 use anyhow::Result;
-use data::agent_definition::AgentName;
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
 use data::with_error::WithError;
-use linkme::distributed_slice;
 use ordered_float::NotNan;
 use petgraph::prelude::{EdgeRef, NodeIndex};
 use petgraph::{Direction, Graph};
@@ -35,13 +33,8 @@ use rand::prelude::IteratorRandom;
 use rand::thread_rng;
 use rules::{actions, queries};
 
+use crate::core::legal_actions;
 use crate::core::types::{notnan, StatePredictionIterator};
-use crate::core::{legal_actions, AgentPair, AGENTS};
-
-pub fn initialize() {}
-
-#[distributed_slice(AGENTS)]
-static AGENT: AgentPair = (AgentName::MonteCarlo, execute);
 
 pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
     let game = states.next().with_error(|| "Expected game state")?.state;

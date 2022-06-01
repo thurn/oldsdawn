@@ -29,6 +29,29 @@ mac-plugin:
         target/{{target_x86}}/release/libspelldawn.dylib
     mv libspelldawn.bundle {{plugin_out}}/macOS/
 
+# install via rustup target add aarch64-linux-android
+target_android := "aarch64-linux-android"
+
+# Android NDK path, typically installed via Unity
+# e.g. /Applications/Unity/Hub/Editor/2021.3.3f1/PlaybackEngines/AndroidPlayer/NDK
+android_ndk := env_var("ANDROID_NDK")
+
+llvm_toolchain := if os() == "macos" {
+        "darwin-x86_64"
+    } else if os() == "linux" {
+        "linux-x86_64"
+    } else {
+        "???"
+    }
+
+clang := "aarch64-linux-android21-clang"
+toolchains := "toolchains/llvm/prebuilt"
+export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER := join(android_ndk, toolchains, llvm_toolchain, "bin", clang)
+
+android-plugin:
+    echo "$CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
+    cargo build --release --target={{target_android}}
+
 target_ios := "aarch64-apple-ios"
 
 ios-plugin:

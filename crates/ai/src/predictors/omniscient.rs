@@ -15,19 +15,11 @@
 //! The omniscient state predictor creates predictions with perfect information
 //! about the opponent's cards.
 
-use data::agent_definition::GameStatePredictorName;
 use data::game::GameState;
 use data::primitives::Side;
-use linkme::distributed_slice;
 
 use crate::core::types::{StatePrediction, StatePredictionIterator};
-use crate::core::{GameStatePredictorPair, GAME_STATE_PREDICTORS};
 
-pub fn initialize() {}
-
-#[distributed_slice(GAME_STATE_PREDICTORS)]
-static PREDICTOR: GameStatePredictorPair = (GameStatePredictorName::Omniscient, omniscient);
-
-fn omniscient(game: &GameState, _side: Side) -> StatePredictionIterator {
+pub fn execute(game: &GameState, _side: Side) -> StatePredictionIterator {
     Box::new(vec![StatePrediction { score: 0.0, state: game.clone() }].into_iter())
 }

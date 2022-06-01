@@ -15,7 +15,6 @@
 //! Primary datatypes and helper functions for implementing AI agents
 
 use data::agent_definition::{AgentName, GameStatePredictorName};
-use linkme::distributed_slice;
 use types::{Agent, GameStatePredictor};
 
 use crate::agents::{alpha_beta, monte_carlo, pick_first_action};
@@ -24,39 +23,20 @@ use crate::predictors::omniscient;
 pub mod legal_actions;
 pub mod types;
 
-pub fn initialize() {
-    pick_first_action::initialize();
-    alpha_beta::initialize();
-    omniscient::initialize();
-    monte_carlo::initialize();
-}
-
-pub type AgentPair = (AgentName, Agent);
-
-#[distributed_slice]
-pub static AGENTS: [AgentPair] = [..];
-
 /// Looks up the definition for an [AgentName]. Panics if no such agent is
 /// defined.
 pub fn get_agent(name: AgentName) -> Agent {
-    AGENTS
-        .iter()
-        .find(|(n, _)| name == *n)
-        .unwrap_or_else(|| panic!("Agent not found: {:?}", name))
-        .1
+    match name {
+        AgentName::PickFirstAction => pick_first_action::execute,
+        AgentName::AlphaBeta => alpha_beta::execute,
+        AgentName::MonteCarlo => monte_carlo::execute,
+    }
 }
-
-pub type GameStatePredictorPair = (GameStatePredictorName, GameStatePredictor);
-
-#[distributed_slice]
-pub static GAME_STATE_PREDICTORS: [GameStatePredictorPair] = [..];
 
 /// Looks up the definition for a [GameStatePredictorName]. Panics if no such
 /// predictor is defined.
 pub fn get_game_state_predictor(name: GameStatePredictorName) -> GameStatePredictor {
-    GAME_STATE_PREDICTORS
-        .iter()
-        .find(|(n, _)| name == *n)
-        .unwrap_or_else(|| panic!("Predictor not found: {:?}", name))
-        .1
+    match name {
+        GameStatePredictorName::Omniscient => omniscient::execute,
+    }
 }

@@ -17,21 +17,14 @@
 //! `legal_actions` module.
 
 use anyhow::Result;
-use data::agent_definition::AgentName;
 use data::game_actions::UserAction;
 use data::primitives::Side;
 use data::with_error::WithError;
-use linkme::distributed_slice;
 
+use crate::core::legal_actions;
 use crate::core::types::StatePredictionIterator;
-use crate::core::{legal_actions, AgentPair, AGENTS};
 
-pub fn initialize() {}
-
-#[distributed_slice(AGENTS)]
-static AGENT: AgentPair = (AgentName::PickFirstAction, pick_first_action);
-
-fn pick_first_action(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
+pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
     let game = states.next().with_error(|| "Expected at least one GameState")?.state;
     let mut legal_actions = legal_actions::evaluate(&game, side);
     legal_actions.next().with_error(|| "Expected at least one action")
