@@ -53,14 +53,14 @@ namespace Spelldawn.Utils
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
     [DllImport("__Internal")]
 #else    
-    [DllImport("spelldawn")]
+    [DllImport("plugin")]
 #endif    
     public static extern int spelldawn_initialize(byte[] path, int pathLength);
 
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
     [DllImport("__Internal")]
 #else    
-    [DllImport("spelldawn")]
+    [DllImport("plugin")]
 #endif    
     public static extern int spelldawn_connect(
       byte[] request,
@@ -71,7 +71,7 @@ namespace Spelldawn.Utils
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
     [DllImport("__Internal")]
 #else    
-    [DllImport("spelldawn")]
+    [DllImport("plugin")]
 #endif
     public static extern int spelldawn_perform_action(
       byte[] request,

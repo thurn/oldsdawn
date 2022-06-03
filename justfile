@@ -21,16 +21,29 @@ plugin_out := "Assets/Plugins"
 target_arm := "aarch64-apple-darwin"
 target_x86 := "x86_64-apple-darwin"
 
+clean-plugin:
+    rm -r Assets/Plugins/
+
 mac-plugin:
     # you may need to run codesign --deep -s - -f spelldawn.app before running
     cargo build -p plugin --release --target={{target_arm}}
     cargo build -p plugin --release --target={{target_x86}}
     # lib prefix breaks on mac standalone
-    lipo -create -output spelldawn.bundle \
-        target/{{target_arm}}/release/libspelldawn.dylib \
-        target/{{target_x86}}/release/libspelldawn.dylib
+    lipo -create -output plugin.bundle \
+        target/{{target_arm}}/release/libplugin.dylib \
+        target/{{target_x86}}/release/libplugin.dylib
     mkdir -p {{plugin_out}}/macOS/
-    mv spelldawn.bundle {{plugin_out}}/macOS/
+    mv plugin.bundle {{plugin_out}}/macOS/
+
+target_windows := "x86_64-pc-windows-gnu"
+
+# You may need to install mingw, e.g. via brew install mingw-w64
+# Note that the plugin name cannot conflict with any .asmdef file
+windows-plugin:
+    # Note that you cannot use IL2CPP when cross-compiling for windows
+    cargo build --release -p plugin --target {{target_windows}}
+    mkdir -p {{plugin_out}}/Windows/
+    cp target/{{target_windows}}/release/plugin.dll {{plugin_out}}/Windows/
 
 # install via rustup target add aarch64-linux-android
 target_android := "aarch64-linux-android"
@@ -62,16 +75,17 @@ android-plugin:
     echo "Using linker $CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
     cargo build --release --target={{target_android}}
     mkdir -p {{plugin_out}}/Android/ARM64
-    cp target/{{target_android}}/release/libspelldawn.so {{plugin_out}}/Android/ARM64
+    # You see, standalone osx builds *don't* want the lib prefix but android fails *without* it...
+    cp target/{{target_android}}/release/libplugin.so {{plugin_out}}/Android/ARM64/
 
 target_ios := "aarch64-apple-ios"
 
 ios-plugin:
     cargo build -p plugin --release --target={{target_ios}}
     mkdir -p {{plugin_out}}/iOS/
-    cp target/{{target_ios}}/release/libspelldawn.a {{plugin_out}}/iOS
+    cp target/{{target_ios}}/release/libplugin.a {{plugin_out}}/iOS/
 
-plugin: mac-plugin ios-plugin android-plugin
+plugin: mac-plugin windows-plugin ios-plugin android-plugin
 
 test:
     cargo test
