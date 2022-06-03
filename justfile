@@ -22,13 +22,15 @@ target_arm := "aarch64-apple-darwin"
 target_x86 := "x86_64-apple-darwin"
 
 mac-plugin:
+    # you may need to run codesign --deep -s - -f spelldawn.app before running
     cargo build -p plugin --release --target={{target_arm}}
     cargo build -p plugin --release --target={{target_x86}}
-    lipo -create -output libspelldawn.bundle \
+    # lib prefix breaks on mac standalone
+    lipo -create -output spelldawn.bundle \
         target/{{target_arm}}/release/libspelldawn.dylib \
         target/{{target_x86}}/release/libspelldawn.dylib
     mkdir -p {{plugin_out}}/macOS/
-    mv libspelldawn.bundle {{plugin_out}}/macOS/
+    mv spelldawn.bundle {{plugin_out}}/macOS/
 
 # install via rustup target add aarch64-linux-android
 target_android := "aarch64-linux-android"
