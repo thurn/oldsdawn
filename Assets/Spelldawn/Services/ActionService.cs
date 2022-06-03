@@ -226,7 +226,7 @@ namespace Spelldawn.Services
         PlayerId = _registry.GameService.PlayerId,
       };
 
-      if (PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
+      if (!Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
       {
         Debug.Log("Connecting to Offline Game");
         var commands = Plugin.Connect(request);
@@ -237,6 +237,7 @@ namespace Spelldawn.Services
       }
       else
       {
+        // TODO: Android in particular seems to hang for multiple minutes when the server can't be reached?
         Debug.Log($"Connecting to {ServerAddress}");
         using var call = _client.Connect(request);
 
@@ -272,7 +273,7 @@ namespace Spelldawn.Services
         PlayerId = _registry.GameService.PlayerId
       };
 
-      if (PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
+      if (!Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
       {
         yield return _registry.CommandService.HandleCommands(Plugin.PerformAction(request));
       }

@@ -29,7 +29,7 @@ namespace Spelldawn.Utils
     public static void Initialize()
     {
       var path = $"{Application.persistentDataPath}/db";
-      Debug.Log($"Setting database path to {path}");
+      Debug.Log($"##### Setting database path to {path} #####");
       var encoded = Encoding.UTF8.GetBytes(path);
       Errors.CheckNonNegative(spelldawn_initialize(encoded, encoded.Length));
     }
@@ -51,17 +51,17 @@ namespace Spelldawn.Utils
     }
 
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
-      [DllImport("__Internal")]
-#else
-    [DllImport("libspelldawn")]
-#endif
+    [DllImport("__Internal")]
+#else    
+    [DllImport("spelldawn")]
+#endif    
     public static extern int spelldawn_initialize(byte[] path, int pathLength);
 
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
     [DllImport("__Internal")]
-#else
-    [DllImport("libspelldawn")]
-#endif
+#else    
+    [DllImport("spelldawn")]
+#endif    
     public static extern int spelldawn_connect(
       byte[] request,
       int requestLength,
@@ -70,8 +70,8 @@ namespace Spelldawn.Utils
 
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
     [DllImport("__Internal")]
-#else
-    [DllImport("libspelldawn")]
+#else    
+    [DllImport("spelldawn")]
 #endif
     public static extern int spelldawn_perform_action(
       byte[] request,

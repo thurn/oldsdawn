@@ -27,12 +27,14 @@ mac-plugin:
     lipo -create -output libspelldawn.bundle \
         target/{{target_arm}}/release/libspelldawn.dylib \
         target/{{target_x86}}/release/libspelldawn.dylib
+    mkdir -p {{plugin_out}}/macOS/
     mv libspelldawn.bundle {{plugin_out}}/macOS/
 
 # install via rustup target add aarch64-linux-android
 target_android := "aarch64-linux-android"
 
-# Android NDK path, typically installed via Unity
+# Android NDK path
+# e.g. /Users/name/Library/Android/sdk/ndk/24.0.8215888
 # e.g. /Applications/Unity/Hub/Editor/2021.3.3f1/PlaybackEngines/AndroidPlayer/NDK
 android_ndk := env_var("ANDROID_NDK")
 
@@ -41,24 +43,33 @@ llvm_toolchain := if os() == "macos" {
     } else if os() == "linux" {
         "linux-x86_64"
     } else {
-        "???"
+        error("unsupported os")
     }
+
+# If you get an error about libgcc not being found, see here:
+# https://github.com/rust-lang/rust/pull/85806
+# "Find directories containing file libunwind.a and create a text file called libgcc.a with the text INPUT(-lunwind)"
 
 clang := "aarch64-linux-android21-clang"
 toolchains := "toolchains/llvm/prebuilt"
 export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER := join(android_ndk, toolchains, llvm_toolchain, "bin", clang)
 
 android-plugin:
-    echo "$CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
+    # Note: builds for Android that use native plugins must use IL2CPP
+    # This is only arm64, need to do arm7 at some point too
+    echo "Using linker $CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
     cargo build --release --target={{target_android}}
+    mkdir -p {{plugin_out}}/Android/ARM64
+    cp target/{{target_android}}/release/libspelldawn.so {{plugin_out}}/Android/ARM64
 
 target_ios := "aarch64-apple-ios"
 
 ios-plugin:
     cargo build -p plugin --release --target={{target_ios}}
+    mkdir -p {{plugin_out}}/iOS/
     cp target/{{target_ios}}/release/libspelldawn.a {{plugin_out}}/iOS
 
-plugin: mac-plugin ios-plugin
+plugin: mac-plugin ios-plugin android-plugin
 
 test:
     cargo test
