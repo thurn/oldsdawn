@@ -16,7 +16,7 @@
 
 //! Implements a DLL for Unity to call into the Spelldawn API
 
-use std::str;
+use std::{panic, str};
 
 use anyhow::Result;
 use cards::initialize;
@@ -32,14 +32,13 @@ use server::{database, requests};
 /// Returns 0 on success and -1 on error.
 #[no_mangle]
 pub unsafe extern "C" fn spelldawn_initialize(path: *const u8, path_length: i32) -> i32 {
-    initialize_impl(path, path_length).unwrap_or(-1)
+    panic::catch_unwind(|| initialize_impl(path, path_length).unwrap_or(-1)).unwrap_or(-1)
 }
 
 unsafe fn initialize_impl(path: *const u8, path_length: i32) -> Result<i32> {
     initialize::run();
     let slice = std::slice::from_raw_parts(path, path_length as usize);
     let db_path = str::from_utf8(slice)?;
-    // let tmp = tmp_plugin_test::db_test(db_path.to_string());
     database::override_path(db_path.to_string());
     println!("Initialized libspelldawn with database path {}", db_path);
     Ok(0)
@@ -63,7 +62,10 @@ pub unsafe extern "C" fn spelldawn_connect(
     response: *mut u8,
     response_length: i32,
 ) -> i32 {
-    connect_impl(request, request_length, response, response_length).unwrap_or(-1)
+    panic::catch_unwind(|| {
+        connect_impl(request, request_length, response, response_length).unwrap_or(-1)
+    })
+    .unwrap_or(-1)
 }
 
 unsafe fn connect_impl(
@@ -97,7 +99,10 @@ pub unsafe extern "C" fn spelldawn_perform_action(
     response: *mut u8,
     response_length: i32,
 ) -> i32 {
-    perform_impl(request, request_length, response, response_length).unwrap_or(-1)
+    panic::catch_unwind(|| {
+        perform_impl(request, request_length, response, response_length).unwrap_or(-1)
+    })
+    .unwrap_or(-1)
 }
 
 unsafe fn perform_impl(
