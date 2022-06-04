@@ -18,6 +18,7 @@
 pub mod debug_panel;
 
 use anyhow::{bail, Result};
+use data::fail;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{InterfacePanel, PanelAddress, RenderInterfaceCommand};
 
@@ -34,7 +35,7 @@ pub fn render_panel(address: PanelAddress) -> Result<RenderInterfaceCommand> {
         panels: vec![InterfacePanel {
             address: address.into(),
             node: Some(match address {
-                PanelAddress::Unspecified => bail!("Invalid Panel Address"),
+                PanelAddress::Unspecified => fail!("Invalid Panel Address"),
                 PanelAddress::DebugPanel => debug_panel::render(),
             }),
         }],

@@ -18,13 +18,14 @@
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
 use data::game::GameState;
 use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
 };
+use data::with_error::WithError;
 use display::adapters;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_action::Action;
@@ -118,7 +119,7 @@ impl TestSession {
         *to_update = TestClient::new(user_id);
 
         for command in result.commands.iter() {
-            let c = command.command.as_ref().with_context(|| "command")?;
+            let c = command.command.as_ref().with_error(|| "command")?;
             to_update.handle_command(c);
         }
 

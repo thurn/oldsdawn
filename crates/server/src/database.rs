@@ -16,7 +16,7 @@
 
 use std::sync::Mutex;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use cards::decklists;
 use data::deck::Deck;
 use data::game::GameState;
@@ -65,7 +65,7 @@ pub struct SledDatabase {
 
 impl Database for SledDatabase {
     fn generate_game_id(&self) -> Result<GameId> {
-        Ok(GameId::new(DATABASE.generate_id().with_context(|| "Error generating ID")?))
+        Ok(GameId::new(DATABASE.generate_id().with_error(|| "Error generating ID")?))
     }
 
     fn has_game(&self, id: GameId) -> Result<bool> {

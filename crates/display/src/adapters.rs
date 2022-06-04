@@ -14,8 +14,10 @@
 
 //! Helpers for converting between server & client representations
 
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{anyhow, bail, Result};
+use data::fail;
 use data::primitives::{AbilityId, AbilityIndex, CardId, GameId, PlayerId, RoomId, Side};
+use data::with_error::WithError;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::{
     CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerName, PlayerSide,
@@ -55,7 +57,7 @@ pub fn to_server_side(side: Option<PlayerSide>) -> Result<Side> {
     match side {
         Some(PlayerSide::Overlord) => Ok(Side::Overlord),
         Some(PlayerSide::Champion) => Ok(Side::Champion),
-        _ => bail!("Invalid side"),
+        _ => fail!("Invalid side"),
     }
 }
 
@@ -107,7 +109,7 @@ pub fn to_server_room_id(identifier: i32) -> Result<RoomId> {
         Some(RoomIdentifier::RoomC) => Ok(RoomId::RoomC),
         Some(RoomIdentifier::RoomD) => Ok(RoomId::RoomD),
         Some(RoomIdentifier::RoomE) => Ok(RoomId::RoomE),
-        _ => bail!("Invalid RoomId: {:?}", identifier),
+        _ => fail!("Invalid RoomId: {:?}", identifier),
     }
 }
 
@@ -123,7 +125,7 @@ impl ServerCardId {
     pub fn as_card_id(self) -> Result<CardId> {
         match self {
             ServerCardId::CardId(card_id) => Ok(card_id),
-            ServerCardId::AbilityId(_) => bail!("Expected CardId"),
+            ServerCardId::AbilityId(_) => fail!("Expected CardId"),
         }
     }
 
@@ -132,7 +134,7 @@ impl ServerCardId {
     pub fn as_ability_id(self) -> Result<AbilityId> {
         match self {
             ServerCardId::AbilityId(ability_id) => Ok(ability_id),
-            ServerCardId::CardId(_) => bail!("Expected CardId"),
+            ServerCardId::CardId(_) => fail!("Expected CardId"),
         }
     }
 }
@@ -144,7 +146,7 @@ pub fn to_server_card_id(card_id: Option<CardIdentifier>) -> Result<ServerCardId
             side: match id.side() {
                 PlayerSide::Overlord => Side::Overlord,
                 PlayerSide::Champion => Side::Champion,
-                _ => bail!("Invalid CardId {:?}", card_id),
+                _ => fail!("Invalid CardId {:?}", card_id),
             },
             index: id.index as usize,
         };
@@ -167,5 +169,5 @@ pub fn card_id_to_object_id(id: CardId) -> GameObjectIdentifier {
 
 /// Converts a client [PlayerIdentifier] into a server [PlayerId].
 pub fn to_server_player_id(player_id: Option<PlayerIdentifier>) -> Result<PlayerId> {
-    Ok(PlayerId::new(player_id.with_context(|| "PlayerId is required")?.value))
+    Ok(PlayerId::new(player_id.with_error(|| "PlayerId is required")?.value))
 }

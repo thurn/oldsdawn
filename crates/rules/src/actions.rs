@@ -21,7 +21,7 @@
 //! game functions typically assume the game is in a valid state and will panic
 //! if that is not true.
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{bail, ensure, Result};
 use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
 use data::delegates::{
@@ -32,6 +32,8 @@ use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
 use data::updates::GameUpdate;
+use data::with_error::WithError;
+use data::{fail, verify};
 use tracing::{info, instrument};
 
 use crate::card_prompt::HandleCardPrompt;
@@ -43,7 +45,7 @@ use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid_actions
 /// to all [UserAction]s
 pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAction) -> Result<()> {
     match action {
-        UserAction::Debug(_) => bail!("Rules engine does not handle debug actions!"),
+        UserAction::Debug(_) => fail!("Rules engine does not handle debug actions!"),
         UserAction::GamePromptResponse(prompt_action) => {
             handle_prompt_action(game, user_side, prompt_action)
         }
@@ -66,14 +68,14 @@ fn handle_mulligan_decision(
     decision: MulliganDecision,
 ) -> Result<()> {
     info!(?user_side, ?decision, "handle_mulligan_decision");
-    ensure!(
+    verify!(
         flags::can_make_mulligan_decision(game, user_side),
         "Cannot make mulligan decision for {:?}",
         user_side
     );
     let mut mulligans = match &mut game.data.phase {
         GamePhase::ResolveMulligans(mulligans) => mulligans,
-        _ => bail!("Incorrect game phase"),
+        _ => fail!("Incorrect game phase"),
     };
 
     match user_side {
@@ -103,7 +105,7 @@ fn handle_mulligan_decision(
 #[instrument(skip(game))]
 fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
     info!(?user_side, "draw_card_action");
-    ensure!(
+    verify!(
         flags::can_take_draw_card_action(game, user_side),
         "Cannot draw card for {:?}",
         user_side
@@ -130,7 +132,7 @@ fn play_card_action(
     target: CardTarget,
 ) -> Result<()> {
     info!(?user_side, ?card_id, ?target, "play_card_action");
-    ensure!(
+    verify!(
         flags::can_take_play_card_action(game, user_side, card_id, target),
         "Cannot play card {:?}",
         card_id
@@ -140,7 +142,7 @@ fn play_card_action(
     let enters_face_up = flags::enters_play_face_up(game, card_id);
 
     if enters_face_up {
-        let amount = queries::mana_cost(game, card_id).with_context(|| "Card has no mana cost")?;
+        let amount = queries::mana_cost(game, card_id).with_error(|| "Card has no mana cost")?;
         mana::spend(game, user_side, ManaPurpose::PayForCard(card_id), amount);
         if let Some(custom_cost) = &definition.cost.custom_cost {
             (custom_cost.pay)(game, card_id);
@@ -181,7 +183,7 @@ fn activate_ability_action(
     target: CardTarget,
 ) -> Result<()> {
     info!(?user_side, ?ability_id, "activate_ability_action");
-    ensure!(
+    verify!(
         flags::can_take_activate_ability_action(game, user_side, ability_id, target),
         "Cannot activate ability {:?}",
         ability_id
@@ -200,7 +202,7 @@ fn activate_ability_action(
             (custom_cost.pay)(game, ability_id);
         }
     } else {
-        bail!("Ability is not an activated ability");
+        fail!("Ability is not an activated ability");
     }
 
     dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }));
@@ -214,7 +216,7 @@ fn activate_ability_action(
 #[instrument(skip(game))]
 fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     info!(?user_side, "gain_mana_action");
-    ensure!(
+    verify!(
         flags::can_take_gain_mana_action(game, user_side),
         "Cannot gain mana for {:?}",
         user_side
@@ -227,7 +229,7 @@ fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
 
 fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) -> Result<()> {
     info!(?user_side, "level_up_room_action");
-    ensure!(
+    verify!(
         flags::can_take_level_up_room_action(game, user_side, room_id),
         "Cannot level up room for {:?}",
         user_side
@@ -243,7 +245,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
 }
 
 fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()> {
-    ensure!(
+    verify!(
         queries::in_main_phase(game, user_side),
         "Cannot spend action point for {:?}",
         user_side
@@ -256,7 +258,7 @@ fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()
 /// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
 fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAction) -> Result<()> {
     fn validate(prompt: &GamePrompt, action: &PromptAction) -> Result<()> {
-        ensure!(
+        verify!(
             prompt.responses.iter().any(|p| p == action),
             "Unexpected action {:?} received",
             action
@@ -271,7 +273,7 @@ fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAct
         validate(prompt, &action)?;
         game.player_mut(user_side).game_prompt = None;
     } else {
-        bail!("Not expecting a prompt response");
+        fail!("Not expecting a prompt response");
     }
 
     match action {

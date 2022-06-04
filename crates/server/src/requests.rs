@@ -14,14 +14,14 @@
 
 //! Top-level server request handling
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{bail, ensure, Result};
 use dashmap::DashMap;
 use data::game::{GameConfiguration, GameState};
-use data::game_actions;
 use data::game_actions::UserAction;
 use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::UpdateTracker;
 use data::with_error::WithError;
+use data::{fail, game_actions, verify};
 use display::adapters::ServerCardId;
 use display::{adapters, render};
 use once_cell::sync::Lazy;
@@ -168,10 +168,10 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     let game_action = request
         .action
         .as_ref()
-        .with_context(|| "Action is required")?
+        .with_error(|| "Action is required")?
         .action
         .as_ref()
-        .with_context(|| "GameAction is required")?;
+        .with_error(|| "GameAction is required")?;
 
     let _span = warn_span!("handle_request", ?player_id, ?game_id, ?game_action).entered();
     warn!(?player_id, ?game_id, ?game_action, "received_request");
@@ -234,7 +234,7 @@ pub fn handle_connect(
             panels::render_standard_panels(&mut commands)?;
             Ok(command_list(commands))
         } else {
-            bail!("Game not found: {:?}", game_id)
+            fail!("Game not found: {:?}", game_id)
         }
     } else {
         Ok(command_list(vec![]))
@@ -351,7 +351,7 @@ fn handle_standard_action(
     game_id: Option<GameId>,
     standard_action: &StandardAction,
 ) -> Result<GameResponse> {
-    ensure!(!standard_action.payload.is_empty(), "Empty action payload received");
+    verify!(!standard_action.payload.is_empty(), "Empty action payload received");
     let action: UserAction = de::from_slice(&standard_action.payload)
         .with_error(|| "Failed to deserialize action payload")?;
     match action {
@@ -362,23 +362,10 @@ fn handle_standard_action(
     }
 }
 
-// fn handle_agent_response(game: GameState, side: Side, agent_data: AgentData)
-// {     task::spawn(async move {
-//         sleep(Duration::from_millis(1000)).await;
-//         let agent = agents::core::get_agent(agent_data.name);
-//         let state_predictor =
-// agents::core::get_game_state_predictor(agent_data.state_predictor);
-//         let states = state_predictor(&game, side);
-//         let _action = agent(states, side).expect("Error invoking AI Agent");
-//         // let response = handle_action(database, game.player(side).id,
-//         // Some(game.id), action);
-//     });
-// }
-
 /// Look up the state for a game which is expected to exist and assigns an
 /// [UpdateTracker] to it for the duration of this request.
 fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameState> {
-    let id = game_id.as_ref().with_context(|| "GameId not provided!")?;
+    let id = game_id.as_ref().with_error(|| "GameId not provided!")?;
     let mut game = database.game(*id)?;
     game.updates = UpdateTracker::new(!game.data.config.simulation);
     Ok(game)
@@ -391,7 +378,7 @@ pub fn user_side(player_id: PlayerId, game: &GameState) -> Result<Side> {
     } else if player_id == game.overlord.id {
         Ok(Side::Overlord)
     } else {
-        bail!("User {:?} is not a participant in game {:?}", player_id, game.id)
+        fail!("User {:?} is not a participant in game {:?}", player_id, game.id)
     }
 }
 

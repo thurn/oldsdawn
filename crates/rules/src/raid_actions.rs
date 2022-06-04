@@ -14,7 +14,7 @@
 
 //! Handling for raid-related user actions.
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{bail, ensure, Result};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     ChampionScoreCardEvent, MinionCombatAbilityEvent, MinionDefeatedEvent, RaidOutcome, RaidStart,
@@ -24,6 +24,8 @@ use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::primitives::{CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
+use data::with_error::WithError;
+use data::{fail, verify};
 use tracing::{info, instrument};
 
 use crate::card_prompt::HandleCardPrompt;
@@ -37,7 +39,7 @@ pub fn initiate_raid_action(
     target_room: RoomId,
 ) -> Result<()> {
     info!(?user_side, "initiate_raid_action");
-    ensure!(
+    verify!(
         flags::can_take_initiate_raid_action(game, user_side, target_room),
         "Cannot initiate raid for {:?}",
         user_side
@@ -88,7 +90,7 @@ pub fn room_activation_action(
     data: RoomActivationAction,
 ) -> Result<()> {
     info!(?user_side, ?data, "raid_activate_room_action");
-    ensure!(
+    verify!(
         flags::can_take_room_activation_action(game, user_side),
         "Cannot activate room for {:?}",
         user_side
@@ -105,7 +107,7 @@ pub fn encounter_action(
     action: EncounterAction,
 ) -> Result<()> {
     info!(?user_side, ?action, "raid_encounter_action");
-    ensure!(
+    verify!(
         flags::can_take_raid_encounter_action(game, user_side, action),
         "Cannot take encounter action for {:?}",
         user_side
@@ -114,10 +116,8 @@ pub fn encounter_action(
     let mut encounter_number = get_encounter_number(game)?;
     match action {
         EncounterAction::UseWeaponAbility(source_id, target_id) => {
-            let cost =
-                queries::cost_to_defeat_target(game, source_id, target_id).with_context(|| {
-                    format!("{:?} cannot defeat target: {:?}", source_id, target_id)
-                })?;
+            let cost = queries::cost_to_defeat_target(game, source_id, target_id)
+                .with_error(|| format!("{:?} cannot defeat target: {:?}", source_id, target_id))?;
             mana::spend(game, user_side, ManaPurpose::UseWeapon(source_id), cost);
             dispatch::invoke_event(
                 game,
@@ -166,7 +166,7 @@ pub fn encounter_action(
 fn get_encounter_number(game: &GameState) -> Result<usize> {
     match game.raid()?.phase {
         RaidPhase::Encounter(n) => Ok(n),
-        _ => bail!("Expected Encounter phase"),
+        _ => fail!("Expected Encounter phase"),
     }
 }
 
@@ -177,14 +177,14 @@ pub fn continue_action(
     action: ContinueAction,
 ) -> Result<()> {
     info!(?user_side, ?action, "raid_advance_action");
-    ensure!(
+    verify!(
         flags::can_take_continue_action(game, user_side),
         "Cannot take advance action for {:?}",
         user_side
     );
     let encounter_number = match game.raid()?.phase {
         RaidPhase::Continue(n) => n,
-        _ => bail!("Expected Continue phase"),
+        _ => fail!("Expected Continue phase"),
     };
 
     match action {
@@ -201,7 +201,7 @@ pub fn continue_action(
 #[instrument(skip(game))]
 pub fn destroy_card_action(game: &mut GameState, user_side: Side, card_id: CardId) -> Result<()> {
     info!(?user_side, ?card_id, "raid_destroy_card_action");
-    ensure!(
+    verify!(
         flags::can_take_raid_destroy_card_action(game, user_side, card_id),
         "Cannot take destroy card action for {:?}",
         user_side
@@ -212,7 +212,7 @@ pub fn destroy_card_action(game: &mut GameState, user_side: Side, card_id: CardI
 #[instrument(skip(game))]
 pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId) -> Result<()> {
     info!(?user_side, ?card_id, "raid_score_card_action");
-    ensure!(
+    verify!(
         flags::can_score_card_when_accessed(game, user_side, card_id),
         "Cannot take score card action for {:?}",
         user_side
@@ -221,7 +221,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
         .config
         .stats
         .scheme_points
-        .with_context(|| format!("Expected SchemePoints for {:?}", card_id))?;
+        .with_error(|| format!("Expected SchemePoints for {:?}", card_id))?;
 
     mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion));
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
@@ -236,7 +236,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
 #[instrument(skip(game))]
 pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
     info!(?user_side, "raid_end_action");
-    ensure!(
+    verify!(
         flags::can_take_raid_end_action(game, user_side),
         "Cannot take raid end action for {:?}",
         user_side

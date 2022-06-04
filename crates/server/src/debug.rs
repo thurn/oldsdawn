@@ -14,14 +14,16 @@
 
 use std::collections::HashMap;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, Result};
 use data::agent_definition::AgentData;
 use data::deck::Deck;
 use data::delegates::{DawnEvent, DuskEvent};
+use data::fail;
 use data::game::GameState;
 use data::game_actions::DebugAction;
 use data::primitives::{GameId, PlayerId, Side};
 use data::updates::GameUpdate;
+use data::with_error::WithError;
 use display::{adapters, render};
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
@@ -161,7 +163,7 @@ pub fn handle_debug_action(
         }
         DebugAction::LoadState(index) => {
             let mut game = database.game(GameId::new(u64::MAX - index))?;
-            game.id = game_id.with_context(|| "Expected GameId")?;
+            game.id = game_id.with_error(|| "Expected GameId")?;
             database.write_game(&game)?;
             render::on_disconnect(player_id);
             Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
@@ -225,10 +227,10 @@ fn opponent_player_id(
     } else if player_id == game.champion.id {
         Ok(game.overlord.id)
     } else {
-        bail!("ID must be present in game")
+        fail!("ID must be present in game")
     }
 }
 
 fn load_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<GameState> {
-    database.game(game_id.with_context(|| "GameId is required")?)
+    database.game(game_id.with_error(|| "GameId is required")?)
 }

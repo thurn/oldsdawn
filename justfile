@@ -14,8 +14,8 @@ build:
     cargo build --all-targets --all-features
 
 run:
-    # Use +nightly in order to get backtraces for anyhow errors
-    RUST_BACKTRACE=1 && cargo +nightly run
+    # Crash on error during development
+    RUSTFLAGS="--cfg errorpanic" cargo run
 
 plugin_out := "Assets/Plugins"
 target_arm := "aarch64-apple-darwin"

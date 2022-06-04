@@ -15,6 +15,7 @@
 use std::cmp;
 
 use anyhow::{bail, Result};
+use data::fail;
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
@@ -110,6 +111,6 @@ fn current_priority(game: &GameState) -> Result<Side> {
     } else if queries::can_take_action(game, Side::Champion) {
         Ok(Side::Champion)
     } else {
-        bail!("No player can take action!");
+        fail!("No player can take action!");
     }
 }

@@ -18,10 +18,36 @@ use std::fmt::Display;
 
 use anyhow::{Context, Error};
 
+/// Wrapper around [anyhow::ensure] which can be configured to panic on error.
+#[macro_export]
+macro_rules! verify {
+    ($($tts:tt)*) => {
+        if cfg!(errorpanic) {
+            assert!($($tts)*);
+        } else {
+            use anyhow::ensure;
+            ensure!($($tts)*);
+        }
+    }
+}
+
+/// Wrapper around [anyhow::bail] which can be configured to panic on error.
+#[macro_export]
+macro_rules! fail {
+    ($($tts:tt)*) => {
+        if cfg!(errorpanic) {
+            panic!($($tts)*);
+        } else {
+            use anyhow::bail;
+            bail!($($tts)*);
+        }
+    }
+}
+
 pub trait WithError<T, E> {
     /// Wrapper around anyhow::with_context. Wraps the error value with
     /// additional context that is evaluated lazily only once an error does
-    /// occur. Panics in debug builds.
+    /// occur. Can be configured to panic on error.
     fn with_error<C, F>(self, f: F) -> Result<T, Error>
     where
         C: Display + Send + Sync + 'static,
@@ -35,10 +61,10 @@ impl<T> WithError<T, Infallible> for Option<T> {
         F: FnOnce() -> C,
     {
         #[allow(unreachable_code)]
-        if cfg!(debug_assertions) {
+        if cfg!(errorpanic) {
             self.with_context(|| {
                 panic!("Error: {}", context());
-                "" // TODO: figure out why this is needed
+                ""
             })
         } else {
             self.with_context(context)
@@ -56,10 +82,10 @@ where
         F: FnOnce() -> C,
     {
         #[allow(unreachable_code)]
-        if cfg!(debug_assertions) {
+        if cfg!(errorpanic) {
             self.with_context(|| {
                 panic!("Error: {}", context());
-                "" // TODO: figure out why this is needed
+                ""
             })
         } else {
             self.with_context(context)
