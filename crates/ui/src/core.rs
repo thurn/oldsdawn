@@ -24,6 +24,7 @@ use protos::spelldawn::{
     DimensionUnit, EventHandlers, FlexColor, FlexRotate, FlexScale, FlexTranslate, FlexVector3,
     GameAction, GameCommand, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
 };
+use serde_json::ser;
 
 pub type Px = f32;
 pub type Percent = f32;
@@ -54,9 +55,8 @@ pub fn node(component: impl Component) -> Node {
 pub fn action(action: Option<UserAction>, optimistic: Option<Vec<Command>>) -> Option<GameAction> {
     Some(GameAction {
         action: Some(game_action::Action::StandardAction(StandardAction {
-            payload: action.map_or(vec![], |action| {
-                bincode::serialize(&action).expect("Serialization failed")
-            }),
+            payload: action
+                .map_or(vec![], |action| ser::to_vec(&action).expect("Serialization failed")),
             update: optimistic.map(|commands| CommandList {
                 commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
             }),

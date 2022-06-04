@@ -17,7 +17,6 @@
 use std::sync::Mutex;
 
 use anyhow::{Context, Result};
-use bincode;
 use cards::decklists;
 use data::deck::Deck;
 use data::game::GameState;
@@ -25,6 +24,7 @@ use data::primitives::{GameId, PlayerId, Side};
 use data::with_error::WithError;
 use once_cell::sync::Lazy;
 use rules::dispatch;
+use serde_json::{de, ser};
 use sled::{Db, Tree};
 
 static DATABASE_PATH: Lazy<Mutex<Option<String>>> = Lazy::new(|| Mutex::new(None));
@@ -77,15 +77,15 @@ impl Database for SledDatabase {
             .get(id.key())
             .with_error(|| format!("Error reading  game: {:?}", id))?
             .with_error(|| format!("Game not found: {:?}", id))?;
-        let mut game = bincode::deserialize(content.as_ref())
+        let mut game = de::from_slice(content.as_ref())
             .with_error(|| format!("Error deserializing game {:?}", id))?;
         dispatch::populate_delegate_cache(&mut game);
         Ok(game)
     }
 
     fn write_game(&mut self, game: &GameState) -> Result<()> {
-        let serialized = bincode::serialize(game)
-            .with_error(|| format!("Error serializing game {:?}", game.id))?;
+        let serialized =
+            ser::to_vec(game).with_error(|| format!("Error serializing game {:?}", game.id))?;
         let result = games()?
             .insert(game.id.key(), serialized)
             .map(|_| ()) // Ignore previously-set value

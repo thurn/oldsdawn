@@ -33,6 +33,7 @@ use protos::spelldawn::{
     CreateNewGameAction, GameCommand, GameRequest, PlayerSide, RoomIdentifier, StandardAction,
 };
 use rules::{actions, dispatch, mutations};
+use serde_json::de;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
@@ -351,7 +352,7 @@ fn handle_standard_action(
     standard_action: &StandardAction,
 ) -> Result<GameResponse> {
     ensure!(!standard_action.payload.is_empty(), "Empty action payload received");
-    let action: UserAction = bincode::deserialize(&standard_action.payload)
+    let action: UserAction = de::from_slice(&standard_action.payload)
         .with_error(|| "Failed to deserialize action payload")?;
     match action {
         UserAction::Debug(debug_action) => {
