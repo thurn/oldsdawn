@@ -49,9 +49,9 @@ use crate::{constants, dispatch, flags, mana, queries};
 /// appropriately. The card will be placed in the position in global sorting-key
 /// order, via [GameState::move_card].
 ///
-/// This function does *not* handle changing the 'revealed' state of the card,
-/// the caller is responsible for updating that when the card moves to a new
-/// game zone.
+/// This function does *not* handle changing the 'revealed' or 'face down' state
+/// of the card, the caller is responsible for updating that when the card moves
+/// to a new game zone.
 #[instrument(skip(game))]
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
     info!(?card_id, ?new_position, "move_card");
@@ -134,6 +134,11 @@ pub fn turn_face_up(game: &mut GameState, card_id: CardId) {
     if !was_revealed_to_opponent {
         game.updates.push(GameUpdate::RevealToOpponent(card_id));
     }
+}
+
+/// Switches a card to be face-down
+pub fn turn_face_down(game: &mut GameState, card_id: CardId) {
+    game.card_mut(card_id).turn_face_down();
 }
 
 /// Updates the 'revealed' state of a card to be visible to the indicated `side`

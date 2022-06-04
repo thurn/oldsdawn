@@ -189,6 +189,8 @@ impl CardState {
     }
 
     /// Change a card to the 'face up' state, revealing it to both players.
+    ///
+    /// Prefer `mutations::turn_face_up` to invoking this method directly.
     pub fn turn_face_up(&mut self) {
         self.data.revealed_to_owner = true;
         self.data.revealed_to_opponent = true;
@@ -197,6 +199,8 @@ impl CardState {
 
     /// Change a card to the 'face down' state, but does *not* change its
     /// revealed state for either player.
+    ///
+    /// Prefer `mutations::turn_face_down` to invoking this method directly.
     pub fn turn_face_down(&mut self) {
         self.data.is_face_up = false;
     }
