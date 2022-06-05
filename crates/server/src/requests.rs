@@ -131,6 +131,7 @@ pub fn connect(message: ConnectRequest) -> Result<CommandList> {
 pub fn perform_action(request: GameRequest) -> Result<CommandList> {
     let mut db = SledDatabase { flush_on_write: true };
     let response = handle_request(&mut db, &request)?;
+    agent_response::handle_request(db, &request)?;
     Ok(response.command_list)
 }
 

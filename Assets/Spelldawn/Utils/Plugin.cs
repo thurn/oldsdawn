@@ -25,6 +25,7 @@ namespace Spelldawn.Utils
   static class Plugin
   {
     const int BufferSize = 32_768;
+    static readonly byte[] PollBuffer = new byte[BufferSize];
 
     public static void Initialize()
     {
@@ -40,6 +41,12 @@ namespace Spelldawn.Utils
       var output = new byte[BufferSize];
       var responseSize = spelldawn_connect(input, input.Length, output, output.Length);
       return responseSize > 0 ? CommandList.Parser.ParseFrom(output, 0, responseSize) : null;
+    }
+
+    public static CommandList? Poll()
+    {
+        var responseSize = Errors.CheckNonNegative(spelldawn_poll(PollBuffer, PollBuffer.Length));
+        return responseSize > 0 ? CommandList.Parser.ParseFrom(PollBuffer, 0, responseSize) : null;
     }
 
     public static CommandList PerformAction(GameRequest request)
@@ -68,6 +75,15 @@ namespace Spelldawn.Utils
       [Out] byte[] response,
       int responseLength);
 
+#if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
+    [DllImport("__Internal")]
+#else    
+    [DllImport("plugin")]
+#endif    
+    public static extern int spelldawn_poll(
+        [Out] byte[] response,
+        int responseLength);    
+    
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
     [DllImport("__Internal")]
 #else    

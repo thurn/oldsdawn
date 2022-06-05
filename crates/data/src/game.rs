@@ -22,6 +22,7 @@ use anyhow::Result;
 use enum_kinds::EnumKind;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
 
 use crate::agent_definition::AgentData;
 use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState};
@@ -220,6 +221,7 @@ pub struct GameData {
 }
 
 /// Stores the primary state for an ongoing game
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameState {
     /// Unique identifier for this game
@@ -246,6 +248,7 @@ pub struct GameState {
     /// State for the champion player
     pub champion: PlayerState,
     /// State for abilities of cards in this game
+    #[serde_as(as = "Vec<(_, _)>")]
     pub ability_state: HashMap<AbilityId, AbilityState>,
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::next_sorting_key] and [Self::move_card].

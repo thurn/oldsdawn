@@ -274,7 +274,18 @@ namespace Spelldawn.Services
           StartCoroutine(HandleActionAsync(command.InvokeAction));
           break;
         case ClientDebugCommand.DebugCommandOneofCase.LogMessage:
-          Debug.Log(command.LogMessage);
+          switch (command.LogMessage.Level)
+          {
+            case LogMessageLevel.Error:
+              Debug.LogError(command.LogMessage.Text);
+              break;
+            case LogMessageLevel.Warning:
+              Debug.LogWarning(command.LogMessage.Text);
+              break;
+            default:
+              Debug.Log(command.LogMessage.Text);
+              break;
+          }
           break;
         case ClientDebugCommand.DebugCommandOneofCase.SetBooleanPreference:
           PlayerPrefs.SetInt(command.SetBooleanPreference.Key, command.SetBooleanPreference.Value ? 1 : 0);

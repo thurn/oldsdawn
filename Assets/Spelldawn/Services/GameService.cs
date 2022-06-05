@@ -23,7 +23,6 @@ namespace Spelldawn.Services
   public sealed class GameService : MonoBehaviour
   {
     const int DefaultUserId = 1;
-    const ulong DefaultGameId = 0;
 
     [SerializeField] Registry _registry = null!;
 
@@ -64,10 +63,7 @@ namespace Spelldawn.Services
         }
         else
         {
-          return new GameIdentifier
-          {
-            Value = DefaultGameId
-          };
+          return null;
         }
       }
       set => PlayerPrefs.SetString(Preferences.CurrentGameId, value?.Value.ToString());

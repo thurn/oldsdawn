@@ -21,6 +21,7 @@ use std::collections::HashMap;
 
 use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
 
 use crate::card_name::CardName;
 use crate::game::TurnData;
@@ -30,9 +31,11 @@ use crate::primitives::{
 
 /// State for an ability within a game
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde_as]
 pub struct AbilityState {
     pub raid_id: Option<RaidId>,
     pub turn: Option<TurnData>,
+    #[serde_as(as = "Vec<(_, _)>")]
     pub room_turns: HashMap<RoomId, TurnData>,
 }
 

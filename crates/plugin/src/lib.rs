@@ -16,13 +16,19 @@
 
 //! Implements a DLL for Unity to call into the Spelldawn API
 
+use std::panic::UnwindSafe;
 use std::{panic, str};
 
 use anyhow::Result;
 use cards::initialize;
 use prost::Message;
-use protos::spelldawn::{ConnectRequest, GameRequest};
-use server::{database, requests};
+use protos::spelldawn::client_debug_command::DebugCommand;
+use protos::spelldawn::game_command::Command;
+use protos::spelldawn::{
+    ClientDebugCommand, CommandList, ConnectRequest, GameCommand, GameRequest, LogMessage,
+    LogMessageLevel,
+};
+use server::{agent_response, database, requests};
 
 /// Initialize the plugin. Must be called immediately at application start.
 ///
@@ -62,10 +68,9 @@ pub unsafe extern "C" fn spelldawn_connect(
     response: *mut u8,
     response_length: i32,
 ) -> i32 {
-    panic::catch_unwind(|| {
-        connect_impl(request, request_length, response, response_length).unwrap_or(-1)
+    error_boundary(response, response_length, || {
+        connect_impl(request, request_length, response, response_length)
     })
-    .unwrap_or(-1)
 }
 
 unsafe fn connect_impl(
@@ -80,6 +85,31 @@ unsafe fn connect_impl(
     let mut out = std::slice::from_raw_parts_mut(response, response_length as usize);
     command_list.encode(&mut out)?;
     Ok(command_list.encoded_len() as i32)
+}
+
+/// Checks for new game responses which are available to be rendered on the
+/// client.
+///
+/// `response` should be an empty buffer of `response_length` bytes, this buffer
+/// will be populated with a protobuf-serialized `CommandList` describing an
+/// update to the game state, if any is available.
+///
+/// Returns the number of bytes written to the `response` buffer, 0 if no update
+/// is available, or -1 on error.
+#[no_mangle]
+pub unsafe extern "C" fn spelldawn_poll(response: *mut u8, response_length: i32) -> i32 {
+    error_boundary(response, response_length, || poll_impl(response, response_length))
+}
+
+unsafe fn poll_impl(response: *mut u8, response_length: i32) -> Result<i32> {
+    if agent_response::RESPONSES.is_empty() {
+        Ok(0)
+    } else {
+        let command_list = agent_response::RESPONSES.pop()?;
+        let mut out = std::slice::from_raw_parts_mut(response, response_length as usize);
+        command_list.encode(&mut out)?;
+        Ok(command_list.encoded_len() as i32)
+    }
 }
 
 /// Performs a given game action.
@@ -99,10 +129,9 @@ pub unsafe extern "C" fn spelldawn_perform_action(
     response: *mut u8,
     response_length: i32,
 ) -> i32 {
-    panic::catch_unwind(|| {
-        perform_impl(request, request_length, response, response_length).unwrap_or(-1)
+    error_boundary(response, response_length, || {
+        perform_impl(request, request_length, response, response_length)
     })
-    .unwrap_or(-1)
 }
 
 unsafe fn perform_impl(
@@ -119,9 +148,37 @@ unsafe fn perform_impl(
     Ok(command_list.encoded_len() as i32)
 }
 
+unsafe fn error_boundary(
+    response: *mut u8,
+    response_length: i32,
+    function: impl FnOnce() -> Result<i32> + UnwindSafe,
+) -> i32 {
+    panic::catch_unwind(|| match function() {
+        Ok(i) => i,
+        Err(e) => {
+            let error = CommandList {
+                commands: vec![GameCommand {
+                    command: Some(Command::Debug(ClientDebugCommand {
+                        debug_command: Some(DebugCommand::LogMessage(LogMessage {
+                            text: format!("{:?}", e),
+                            level: LogMessageLevel::Error.into(),
+                        })),
+                    })),
+                }],
+            };
+
+            let mut out = std::slice::from_raw_parts_mut(response, response_length as usize);
+            error.encode(&mut out).expect("Error serializing error");
+            error.encoded_len() as i32
+        }
+    })
+    .unwrap_or(-1)
+}
+
 // Note: I figured out how to do function callbacks in the plugin, but I don't
-// really need them right now, so I'm writing down here in case it comes up in
-// the future.
+// really need them right now. I'm writing it down here in case it comes up in
+// the future and because I'm annoyed I wasted a bunch of time figuring this
+// out.
 //
 // Basically you need to make a rust function like this:
 //

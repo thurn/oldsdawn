@@ -1233,12 +1233,26 @@ message SetBooleanPreference {
     bool value = 2;
 }
 
+// Possible client logging levels
+enum LogMessageLevel {
+    LOG_MESSAGE_LEVEL_UNSPECIFIED = 0;
+    LOG_MESSAGE_LEVEL_STANDARD = 1;
+    LOG_MESSAGE_LEVEL_WARNING = 2;
+    LOG_MESSAGE_LEVEL_ERROR = 3;
+}
+
+// Logs a client message
+message LogMessage {
+    string text = 1;
+    LogMessageLevel level = 2;
+}
+
 // Activates client-side debugging functionality
 message ClientDebugCommand {
     oneof debug_command {
         google.protobuf.Empty ShowLogs = 1;
         GameAction invoke_action = 2;
-        string log_message = 3;
+        LogMessage log_message = 3;
         SetBooleanPreference set_boolean_preference = 4;
     }
 }

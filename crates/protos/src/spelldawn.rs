@@ -1174,6 +1174,14 @@ pub struct SetBooleanPreference {
     #[prost(bool, tag = "2")]
     pub value: bool,
 }
+/// Logs a client message
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LogMessage {
+    #[prost(string, tag = "1")]
+    pub text: ::prost::alloc::string::String,
+    #[prost(enumeration = "LogMessageLevel", tag = "2")]
+    pub level: i32,
+}
 /// Activates client-side debugging functionality
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ClientDebugCommand {
@@ -1188,8 +1196,8 @@ pub mod client_debug_command {
         ShowLogs(()),
         #[prost(message, tag = "2")]
         InvokeAction(super::GameAction),
-        #[prost(string, tag = "3")]
-        LogMessage(::prost::alloc::string::String),
+        #[prost(message, tag = "3")]
+        LogMessage(super::LogMessage),
         #[prost(message, tag = "4")]
         SetBooleanPreference(super::SetBooleanPreference),
     }
@@ -1568,6 +1576,15 @@ pub enum SceneLoadMode {
     Single = 1,
     /// Adds a scene to the current loaded scenes.
     Additive = 2,
+}
+/// Possible client logging levels
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum LogMessageLevel {
+    Unspecified = 0,
+    Standard = 1,
+    Warning = 2,
+    Error = 3,
 }
 #[doc = r" Generated server implementations."]
 pub mod spelldawn_server {

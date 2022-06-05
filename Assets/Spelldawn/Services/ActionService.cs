@@ -58,7 +58,7 @@ namespace Spelldawn.Services
     [SerializeField] bool _currentlyHandlingAction;
     Clickable? _lastClicked;
 
-    void Start()
+    void Awake()
     {
       Plugin.Initialize();
     }
@@ -185,6 +185,12 @@ namespace Spelldawn.Services
           last!.MouseUp();
           break;
       }
+
+      var pollCommands = Plugin.Poll();
+      if (pollCommands != null)
+      {
+        StartCoroutine(_registry.CommandService.HandleCommands(pollCommands));
+      }
     }
 
     Clickable? FireMouseDown()
@@ -220,15 +226,24 @@ namespace Spelldawn.Services
 
     async void ConnectToServer()
     {
+      // Remember you can do Edit > Clear All Player Prefs to reset 
+
+      var gameId = _registry.GameService.CurrentGameId;
+      if (gameId == null)
+      {
+        Debug.Log("No active game");
+        return;
+      }
+      
       var request = new ConnectRequest
       {
-        GameId = _registry.GameService.CurrentGameId,
+        GameId = gameId,
         PlayerId = _registry.GameService.PlayerId,
       };
-
+      
       if (!Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
       {
-        Debug.Log("Connecting to Offline Game");
+        Debug.Log($"Connecting to Offline Game {request.GameId.Value}");
         var commands = Plugin.Connect(request);
         if (commands != null)
         {
@@ -238,7 +253,7 @@ namespace Spelldawn.Services
       else
       {
         // TODO: Android in particular seems to hang for multiple minutes when the server can't be reached?
-        Debug.Log($"Connecting to {ServerAddress}");
+        Debug.Log($"Connecting to {ServerAddress} with game {request.GameId.Value}");
         using var call = _client.Connect(request);
 
         while (await call.ResponseStream.MoveNext())
