@@ -118,3 +118,24 @@ unsafe fn perform_impl(
     command_list.encode(&mut out)?;
     Ok(command_list.encoded_len() as i32)
 }
+
+// Note: I figured out how to do function callbacks in the plugin, but I don't
+// really need them right now, so I'm writing down here in case it comes up in
+// the future.
+//
+// Basically you need to make a rust function like this:
+//
+// #[no_mangle]
+// pub unsafe extern "C" fn spelldawn_callback(
+//     callback: unsafe extern "C" fn(i32)) {}
+//
+// And then you make a delegate in C# like this:
+// [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+// public delegate void CallbackDelegate(int writtenBytes);
+//
+// public static extern void spelldawn_callback(CallbackDelegate callback);
+//
+// The callback can only be a static function like this:
+//     [MonoPInvokeCallback(typeof(CallbackDelegate))]
+//     public static void CBack(int writtenBytes) {}
+//
