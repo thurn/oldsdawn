@@ -108,7 +108,8 @@ clippy:
     cargo clippy --workspace --exclude "protos" -- \
         -D warnings \
         -D clippy::all \
-        -A clippy::needless-update \
+        -A clippy::needless_update \
+        -A clippy::needless_collect \
         -D clippy::cast_lossless \
         -D clippy::cloned_instead_of_copied \
         -D clippy::copy_iterator \
@@ -135,25 +136,12 @@ clippy:
         -D clippy::used_underscore_binding \
         -D clippy::useless_let_if_seq \
 
-# Reformats code. Requires nightly because several useful options (e.g. imports_granularity) are
-# nightly-only
-fmt:
-    cargo +nightly fmt
-
-check-format:
-    cargo +nightly fmt -- --check
-
-fix-lints:
-    cargo fix --all-features
-
-fix-clippy:
-    cargo clippy --fix
-
 clippy-fix:
     cargo clippy --fix -- \
         -D warnings \
         -D clippy::all \
-        -A clippy::needless-update \
+        -A clippy::needless_update \
+        -A clippy::needless_collect \
         -D clippy::cast_lossless \
         -D clippy::cloned_instead_of_copied \
         -D clippy::copy_iterator \
@@ -183,14 +171,27 @@ clippy-fix:
         -D clippy::useless_let_if_seq \
         -D clippy::use_self
 
+# Reformats code. Requires nightly because several useful options (e.g. imports_granularity) are
+# nightly-only
+fmt:
+    cargo +nightly fmt
+
+check-format:
+    cargo +nightly fmt -- --check
+
+fix-lints:
+    cargo fix --all-features
+
+fix-clippy:
+    cargo clippy --fix
+
 snapshots:
     cargo insta review
 
 benchmark:
-    # The 'inventory' and 'linkme' crates have both been semi-broken since august 2021,
-    # this works around those issues.
-    # See https://github.com/dtolnay/inventory/issues/32
-    RUSTFLAGS="-C codegen-units=1" cargo criterion -p spelldawn
+    cargo criterion --no-run -p spelldawn
+    codesign -f -s - `find target/release/deps -name '*benchmarks*'`
+    cargo criterion -p spelldawn
 
 # Checks documentation lints, haven't figured out how to do this with a single command
 check-docs:

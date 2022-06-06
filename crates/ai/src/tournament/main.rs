@@ -12,9 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Implementations of Agent
+use ai::tournament::run_tournament;
+use ai::tournament::run_tournament::RunGames;
+use cards::{decklists, initialize};
+use data::agent_definition::AgentName;
 
-pub mod alpha_beta;
-pub mod monte_carlo;
-pub mod pick_first_action;
-pub mod pick_random;
+pub fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("Running AI match");
+    initialize::run();
+    let mut game = decklists::canonical_game();
+    run_tournament::run_games(
+        &mut game,
+        1,
+        AgentName::PickRandom,
+        AgentName::PickRandom,
+        RunGames::PrintActions,
+    );
+
+    Ok(())
+}

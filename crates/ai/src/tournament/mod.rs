@@ -12,9 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Implementations of Agent
-
-pub mod alpha_beta;
-pub mod monte_carlo;
-pub mod pick_first_action;
-pub mod pick_random;
+pub mod matchup;
+pub mod run_tournament;

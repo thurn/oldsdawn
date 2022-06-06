@@ -11,7 +11,7 @@ test = false
 
 [[bin]]
 name = "tournament"
-path = "src/tournament/run.rs"
+path = "src/tournament/main.rs"
 test = false
 
 [dependencies]

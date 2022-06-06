@@ -71,7 +71,7 @@ pub fn initiate_raid(
     game.data.raid = Some(raid);
     on_begin(game, raid_id);
 
-    let phase = if game.defenders_alphabetical(target_room).any(CardState::is_face_down) {
+    let phase = if game.defenders_unordered(target_room).any(CardState::is_face_down) {
         RaidPhase::Activation
     } else {
         next_encounter(game, None, RaidPhase::Encounter)?

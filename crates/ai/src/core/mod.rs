@@ -17,7 +17,7 @@
 use data::agent_definition::{AgentName, GameStatePredictorName};
 use types::{Agent, GameStatePredictor};
 
-use crate::agents::{alpha_beta, monte_carlo, pick_first_action};
+use crate::agents::{alpha_beta, monte_carlo, pick_first_action, pick_random};
 use crate::predictors::omniscient;
 
 pub mod legal_actions;
@@ -28,6 +28,7 @@ pub mod types;
 pub fn get_agent(name: AgentName) -> Agent {
     match name {
         AgentName::PickFirstAction => pick_first_action::execute,
+        AgentName::PickRandom => pick_random::execute,
         AgentName::AlphaBeta => alpha_beta::execute,
         AgentName::MonteCarlo => monte_carlo::execute,
     }

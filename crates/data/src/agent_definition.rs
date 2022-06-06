@@ -28,6 +28,7 @@ pub enum GameStatePredictorName {
 #[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum AgentName {
     PickFirstAction,
+    PickRandom,
     AlphaBeta,
     MonteCarlo,
 }

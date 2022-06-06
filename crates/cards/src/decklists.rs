@@ -19,6 +19,8 @@ use data::game_actions::{PromptAction, UserAction};
 use data::primitives::{GameId, PlayerId, Side};
 use maplit::hashmap;
 use once_cell::sync::Lazy;
+use rand::prelude::StdRng;
+use rand::SeedableRng;
 use rules::{actions, dispatch, mutations};
 
 /// Standard Overlord deck for use in tests
@@ -69,15 +71,16 @@ pub static CANONICAL_CHAMPION: Lazy<Deck> = Lazy::new(|| Deck {
     },
 });
 
-/// Creates a new game using the canonical decklists, deals opening hands and
-/// resolves mulligans.
+/// Creates a new deterministic game using the canonical decklists, deals
+/// opening hands and resolves mulligans.
 pub fn canonical_game() -> GameState {
     let mut game = GameState::new(
         GameId::new(0),
         CANONICAL_OVERLORD.clone(),
         CANONICAL_CHAMPION.clone(),
-        GameConfiguration { deterministic: false, simulation: true },
+        GameConfiguration { deterministic: true, simulation: true },
     );
+    game.rng = Some(StdRng::seed_from_u64(3141592653589793));
     dispatch::populate_delegate_cache(&mut game);
     mutations::deal_opening_hands(&mut game);
     actions::handle_user_action(

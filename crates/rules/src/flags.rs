@@ -217,7 +217,7 @@ pub fn can_take_initiate_raid_action(game: &GameState, side: Side, target: RoomI
 pub fn can_take_level_up_room_action(game: &GameState, side: Side, room_id: RoomId) -> bool {
     let has_level_card = game
         .occupants(room_id)
-        .chain(game.defenders_alphabetical(room_id))
+        .chain(game.defenders_unordered(room_id))
         .any(|card| can_level_up_card(game, card.id));
     let can_level_up = has_level_card
         && side == Side::Overlord
@@ -244,7 +244,7 @@ pub fn can_take_room_activation_action(game: &GameState, side: Side) -> bool {
         && matches!(
             game.data.raid,
             Some(RaidData { phase: RaidPhase::Activation, target, .. })
-            if game.defenders_alphabetical(target).any(CardState::is_face_down)
+            if game.defenders_unordered(target).any(CardState::is_face_down)
         )
 }
 

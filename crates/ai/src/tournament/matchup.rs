@@ -20,6 +20,8 @@ use data::primitives::{PointsValue, Side, TurnNumber};
 use enum_iterator::IntoEnumIterator;
 use rules::{actions, queries};
 
+use crate::tournament::run_tournament::RunGames;
+
 pub struct OutcomePlayer {
     pub agent: AgentName,
     pub side: Side,
@@ -50,7 +52,7 @@ impl Display for MatchOutcome {
 /// Runs an AI matchup for a given `game`.
 ///
 /// The game must be configured to use Agents for both players.
-pub fn run(mut game: GameState, print_actions: bool) -> MatchOutcome {
+pub fn run(mut game: GameState, config: RunGames) -> MatchOutcome {
     loop {
         for side in Side::into_enum_iter() {
             if let GamePhase::GameOver(data) = &game.data.phase {
@@ -71,12 +73,12 @@ pub fn run(mut game: GameState, print_actions: bool) -> MatchOutcome {
 
             if queries::can_take_action(&game, side) {
                 let agent_data = game.player(side).agent.expect("Agent");
-                let agent = ai::core::get_agent(agent_data.name);
+                let agent = crate::core::get_agent(agent_data.name);
                 let state_predictor =
-                    ai::core::get_game_state_predictor(agent_data.state_predictor);
+                    crate::core::get_game_state_predictor(agent_data.state_predictor);
                 let action = agent(state_predictor(&game, side), side).expect("Agent Error");
 
-                if print_actions {
+                if config == RunGames::PrintActions {
                     println!("{:?} action: {:?}", side, action);
                 }
                 actions::handle_user_action(&mut game, side, action).expect("Action Error");

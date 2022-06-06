@@ -18,3 +18,4 @@ pub mod agents;
 pub mod core;
 pub mod heuristics;
 pub mod predictors;
+pub mod tournament;

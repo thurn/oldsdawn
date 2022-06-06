@@ -20,6 +20,7 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use enum_kinds::EnumKind;
+use rand::prelude::StdRng;
 use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
@@ -257,6 +258,8 @@ pub struct GameState {
     /// order to improve performance
     #[serde(skip)]
     pub delegate_cache: DelegateCache,
+    #[serde(skip)]
+    pub rng: Option<StdRng>,
 }
 
 impl GameState {
@@ -288,6 +291,7 @@ impl GameState {
             updates: UpdateTracker::new(!config.simulation),
             next_sorting_key: 1,
             delegate_cache: DelegateCache::default(),
+            rng: None,
         }
     }
 
@@ -312,7 +316,7 @@ impl GameState {
         &mut self.cards_mut(card_id.side)[card_id.index]
     }
 
-    /// Cards for a player, in alphabetical order
+    /// Cards for a player, in an unspecified order
     pub fn cards(&self, side: Side) -> &Vec<CardState> {
         match side {
             Side::Overlord => &self.overlord_cards,
@@ -379,6 +383,19 @@ impl GameState {
         }
     }
 
+    #[allow(clippy::unwrap_in_result)]
+    pub fn choose_randomly<I>(&mut self, iterator: I) -> Option<I::Item>
+    where
+        I: Iterator + Sized,
+    {
+        iterator.choose(self.rng.as_mut().unwrap())
+        // if self.rng.is_some() {
+        //     iterator.choose(self.rng.as_mut().unwrap())
+        // } else {
+        //     iterator.choose(&mut rand::thread_rng())
+        // }
+    }
+
     /// Return a random card in the provided `position`, or None if there are no
     /// cards in that position
     pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
@@ -391,7 +408,8 @@ impl GameState {
         .map(|c| c.id)
     }
 
-    /// Cards owned by a given player in a given position, in alphabetical order
+    /// Cards owned by a given player in a given position, in an unspecified
+    /// order
     pub fn cards_in_position(
         &self,
         side: Side,
@@ -415,23 +433,23 @@ impl GameState {
         result.iter().map(|c| c.id).collect()
     }
 
-    /// Cards in a player's hand, in alphabetical order
+    /// Cards in a player's hand, in an unspecified order
     pub fn hand(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position().in_hand())
     }
 
-    /// Cards in a player's deck, in alphabetical order
+    /// Cards in a player's deck, in an unspecified order
     pub fn deck(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position().in_deck())
     }
 
-    /// Cards in a player's discard pile, in alphabetical order
+    /// Cards in a player's discard pile, in an unspecified order
     pub fn discard_pile(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position().in_discard_pile())
     }
 
-    /// Returns Overlord cards defending a given room in alphabetical order
-    pub fn defenders_alphabetical(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
+    /// Returns Overlord cards defending a given room in an unspecified order
+    pub fn defenders_unordered(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Defender))
     }
 
@@ -444,13 +462,13 @@ impl GameState {
         )
     }
 
-    /// Overlord cards in a given room (not defenders), in alphabetical order
+    /// Overlord cards in a given room (not defenders), in an unspecified order
     pub fn occupants(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Overlord, CardPosition::Room(room_id, RoomLocation::Occupant))
     }
 
     /// All Overlord cards located within a given room, defenders and occupants,
-    /// in alphabetical order.
+    /// in an unspecified order.
     pub fn defenders_and_occupants(&self, room_id: RoomId) -> impl Iterator<Item = &CardState> {
         self.cards(Side::Overlord)
             .iter()
@@ -464,12 +482,13 @@ impl GameState {
             .filter(move |c| matches!(c.position(), CardPosition::Room(_, RoomLocation::Defender)))
     }
 
-    /// Champion cards which have been played as weapons, in alphabetical order
+    /// Champion cards which have been played as weapons, in an unspecified
+    /// order
     pub fn weapons(&self) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Champion, CardPosition::ArenaItem(ItemLocation::Weapons))
     }
 
-    /// Champion cards which have been played as artifacts, in alphabetical
+    /// Champion cards which have been played as artifacts, in an unspecified
     /// order
     pub fn artifacts(&self) -> impl Iterator<Item = &CardState> {
         self.cards_in_position(Side::Champion, CardPosition::ArenaItem(ItemLocation::Artifacts))
@@ -477,8 +496,8 @@ impl GameState {
 
     /// All Card IDs present in this game.
     ///
-    /// Overlord cards in alphabetical order followed by Champion cards in
-    /// alphabetical order.
+    /// Overlord cards in an unspecified order followed by Champion cards in
+    /// an unspecified order.
     pub fn all_card_ids(&self) -> impl Iterator<Item = CardId> {
         (0..self.overlord_cards.len())
             .map(|index| CardId::new(Side::Overlord, index))
@@ -487,8 +506,8 @@ impl GameState {
 
     /// All cards in this game.
     ///
-    /// Overlord cards in alphabetical order followed by Champion cards in
-    /// alphabetical order.
+    /// Overlord cards in an unspecified order followed by Champion cards in
+    /// an unspecified order.
     pub fn all_cards(&self) -> impl Iterator<Item = &CardState> {
         self.overlord_cards.iter().chain(self.champion_cards.iter())
     }
