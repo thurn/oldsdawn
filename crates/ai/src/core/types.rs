@@ -37,5 +37,5 @@ pub type Agent = fn(StatePredictionIterator, Side) -> Result<UserAction>;
 
 /// Wraps a float in a [NotNan]. Panics if the input is `NaN`.
 pub fn notnan(value: f64) -> NotNan<f64> {
-    NotNan::new(value).unwrap()
+    NotNan::new(value).expect("NaN Value")
 }

@@ -131,9 +131,9 @@ pub fn handle_debug_action(
                 game.data.turn.side = new_turn;
                 if new_turn == Side::Overlord {
                     game.data.turn.turn_number += 1;
-                    dispatch::invoke_event(game, DuskEvent(game.data.turn.turn_number));
+                    dispatch::invoke_event(game, DuskEvent(game.data.turn.turn_number))?;
                 } else {
-                    dispatch::invoke_event(game, DawnEvent(game.data.turn.turn_number));
+                    dispatch::invoke_event(game, DawnEvent(game.data.turn.turn_number))?;
                 }
                 game.player_mut(new_turn).actions =
                     queries::start_of_turn_action_count(game, new_turn);
@@ -211,7 +211,7 @@ fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<(
         current_game.data.config,
     );
     dispatch::populate_delegate_cache(&mut new_game);
-    mutations::deal_opening_hands(&mut new_game);
+    mutations::deal_opening_hands(&mut new_game)?;
     database.write_game(&new_game)?;
     Ok(())
 }

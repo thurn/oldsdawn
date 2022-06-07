@@ -23,6 +23,7 @@
 
 use std::cmp;
 
+use anyhow::Result;
 #[allow(unused)] // Used in rustdocs
 use data::card_state::{CardData, CardPosition, CardPositionKind};
 use data::delegates::{
@@ -53,15 +54,15 @@ use crate::{constants, dispatch, flags, mana, queries};
 /// of the card, the caller is responsible for updating that when the card moves
 /// to a new game zone.
 #[instrument(skip(game))]
-pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) {
+pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) -> Result<()> {
     info!(?card_id, ?new_position, "move_card");
     let old_position = game.card(card_id).position();
     game.move_card(card_id, new_position);
 
-    dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }));
+    dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }))?;
 
     if old_position.in_deck() && new_position.in_hand() {
-        dispatch::invoke_event(game, DrawCardEvent(card_id));
+        dispatch::invoke_event(game, DrawCardEvent(card_id))?;
         game.updates.push(GameUpdate::DrawCard(card_id));
     }
 
@@ -86,45 +87,48 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 
     if !old_position.in_play() && new_position.in_play() {
         game.card_mut(card_id).data.last_entered_play = Some(game.data.turn);
-        dispatch::invoke_event(game, EnterPlayEvent(card_id));
+        dispatch::invoke_event(game, EnterPlayEvent(card_id))?;
     }
 
     if !new_position.in_play() {
         clear_counters(game, card_id);
     }
+
+    Ok(())
 }
 
 /// Helper to move all cards in a list to a new [CardPosition] via [move_card].
-pub fn move_cards(game: &mut GameState, cards: &[CardId], to_position: CardPosition) {
+pub fn move_cards(game: &mut GameState, cards: &[CardId], to_position: CardPosition) -> Result<()> {
     for card_id in cards {
-        move_card(game, *card_id, to_position);
+        move_card(game, *card_id, to_position)?;
     }
+    Ok(())
 }
 
 /// Move a card to the discard pile. This should specifically be used when a
 /// player's *own* effect causes their card to be discarded.
-pub fn sacrifice_card(game: &mut GameState, card_id: CardId) {
-    move_card(game, card_id, CardPosition::DiscardPile(card_id.side));
+pub fn sacrifice_card(game: &mut GameState, card_id: CardId) -> Result<()> {
+    move_card(game, card_id, CardPosition::DiscardPile(card_id.side))
 }
 
 // Shuffles the provided `cards` into the `side` player's deck, clearing their
 // revealed state for both players.
-pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) {
-    move_cards(game, cards, CardPosition::DeckUnknown(side));
+pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) -> Result<()> {
+    move_cards(game, cards, CardPosition::DeckUnknown(side))?;
     for card_id in cards {
         game.card_mut(*card_id).turn_face_down();
         set_revealed_to(game, *card_id, Side::Overlord, false);
         set_revealed_to(game, *card_id, Side::Champion, false);
     }
-    shuffle_deck(game, side);
+    shuffle_deck(game, side)
 }
 
 /// Shuffles the `side` player's deck, moving all cards into the `DeckUnknown`
 /// card position.
-pub fn shuffle_deck(game: &mut GameState, side: Side) {
+pub fn shuffle_deck(game: &mut GameState, side: Side) -> Result<()> {
     let cards =
         game.cards_in_position(side, CardPosition::DeckTop(side)).map(|c| c.id).collect::<Vec<_>>();
-    move_cards(game, &cards, CardPosition::DeckUnknown(side));
+    move_cards(game, &cards, CardPosition::DeckUnknown(side))
 }
 
 /// Switches a card to be face-up and revealed to all players.
@@ -162,20 +166,21 @@ pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, reveal
 ///
 /// Cards are set as revealed to the `side` player. Returns a vector of the
 /// newly-drawn [CardId]s.
-pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Vec<CardId> {
-    let card_ids = realize_top_of_deck(game, side, count);
+pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Result<Vec<CardId>> {
+    let card_ids = realize_top_of_deck(game, side, count)?;
 
     if card_ids.len() != count as usize {
         game.data.phase = GamePhase::GameOver(GameOverData { winner: side.opponent() });
         game.updates.push(GameUpdate::GameOver(Side::Overlord));
-        return vec![];
+        return Ok(vec![]);
     }
 
     for card_id in &card_ids {
         set_revealed_to(game, *card_id, side, true);
-        move_card(game, *card_id, CardPosition::Hand(side))
+        move_card(game, *card_id, CardPosition::Hand(side))?;
     }
-    card_ids
+
+    Ok(card_ids)
 }
 
 /// Lose action points if a player has more than 0.
@@ -223,34 +228,36 @@ pub fn take_stored_mana(
     card_id: CardId,
     maximum: ManaValue,
     on_zero_stored: OnZeroStored,
-) -> ManaValue {
+) -> Result<ManaValue> {
     info!(?card_id, ?maximum, "take_stored_mana");
     let available = game.card(card_id).data.stored_mana;
     let taken = cmp::min(available, maximum);
     game.card_mut(card_id).data.stored_mana -= taken;
     mana::gain(game, card_id.side, taken);
-    dispatch::invoke_event(game, StoredManaTakenEvent(card_id));
+    dispatch::invoke_event(game, StoredManaTakenEvent(card_id))?;
 
     if on_zero_stored == OnZeroStored::Sacrifice && game.card(card_id).data.stored_mana == 0 {
-        sacrifice_card(game, card_id);
+        sacrifice_card(game, card_id)?;
     }
 
-    taken
+    Ok(taken)
 }
 
 /// Overwrites the value of [CardData::boost_count] to match the provided
 /// [BoostData].
 #[instrument(skip(game))]
-pub fn write_boost(game: &mut GameState, scope: Scope, data: &BoostData) {
+pub fn write_boost(game: &mut GameState, scope: Scope, data: &BoostData) -> Result<()> {
     info!(?scope, ?data, "write_boost");
     game.card_mut(data.card_id).data.boost_count = data.count;
+    Ok(())
 }
 
 /// Set the boost count to zero for the card in `scope`.
 #[instrument(skip(game))]
-pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: &T) {
+pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: &T) -> Result<()> {
     info!(?scope, "clear_boost");
     game.card_mut(scope.card_id()).data.boost_count = 0;
+    Ok(())
 }
 
 pub enum SetPrompt {
@@ -275,21 +282,22 @@ pub fn set_prompt(game: &mut GameState, side: Side, set_prompt: SetPrompt, promp
 
 /// Ends the current raid. Panics if no raid is currently active.
 #[instrument(skip(game))]
-pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) {
+pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) -> Result<()> {
     info!("end_raid");
     let raid_id = game.raid().expect("Active raid").raid_id;
     match outcome {
-        RaidOutcome::Success => dispatch::invoke_event(game, RaidSuccessEvent(raid_id)),
-        RaidOutcome::Failure => dispatch::invoke_event(game, RaidFailureEvent(raid_id)),
+        RaidOutcome::Success => dispatch::invoke_event(game, RaidSuccessEvent(raid_id))?,
+        RaidOutcome::Failure => dispatch::invoke_event(game, RaidFailureEvent(raid_id))?,
     }
-    dispatch::invoke_event(game, RaidEndEvent(RaidEnded { raid_id, outcome }));
+    dispatch::invoke_event(game, RaidEndEvent(RaidEnded { raid_id, outcome }))?;
     game.data.raid = None;
-    check_end_turn(game)
+    check_end_turn(game)?;
+    Ok(())
 }
 
 /// Deals initial hands to both players and prompts for mulligan decisions.
 #[instrument(skip(game))]
-pub fn deal_opening_hands(game: &mut GameState) {
+pub fn deal_opening_hands(game: &mut GameState) -> Result<()> {
     info!("deal_opening_hands");
     let prompt = GamePrompt {
         context: None,
@@ -298,10 +306,11 @@ pub fn deal_opening_hands(game: &mut GameState) {
             PromptAction::MulliganDecision(MulliganDecision::Mulligan),
         ],
     };
-    draw_cards(game, Side::Overlord, constants::STARTING_HAND_SIZE);
+    draw_cards(game, Side::Overlord, constants::STARTING_HAND_SIZE)?;
     set_prompt(game, Side::Overlord, SetPrompt::GamePrompt, prompt.clone());
-    draw_cards(game, Side::Champion, constants::STARTING_HAND_SIZE);
+    draw_cards(game, Side::Champion, constants::STARTING_HAND_SIZE)?;
     set_prompt(game, Side::Champion, SetPrompt::GamePrompt, prompt);
+    Ok(())
 }
 
 /// Invoked after a mulligan decision is received in order to check if the game
@@ -309,17 +318,18 @@ pub fn deal_opening_hands(game: &mut GameState) {
 ///
 /// Handles assigning initial mana & action points to players.
 #[instrument(skip(game))]
-pub fn check_start_game(game: &mut GameState) {
+pub fn check_start_game(game: &mut GameState) -> Result<()> {
     match &game.data.phase {
         GamePhase::ResolveMulligans(mulligans)
             if mulligans.overlord.is_some() && mulligans.champion.is_some() =>
         {
             mana::set(game, Side::Overlord, 5);
             mana::set(game, Side::Champion, 5);
-            start_turn(game, Side::Overlord, 1);
+            start_turn(game, Side::Overlord, 1)?;
         }
         _ => {}
     }
+    Ok(())
 }
 
 /// Returns a list of *up to* `count` cards from the top of the `side` player's
@@ -332,7 +342,7 @@ pub fn check_start_game(game: &mut GameState) {
 /// subsequent calls to this function will see the same results.
 ///
 /// Does not change the 'revealed' state of cards.
-pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Vec<CardId> {
+pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Result<Vec<CardId>> {
     let count = count as usize; //don't run this on 16 bit processors please :)
     let mut cards = game.card_list_for_position(side, CardPosition::DeckTop(side));
     let result = if count <= cards.len() {
@@ -350,17 +360,17 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Vec<
     };
 
     for card_id in &result {
-        move_card(game, *card_id, CardPosition::DeckTop(side));
+        move_card(game, *card_id, CardPosition::DeckTop(side))?;
     }
 
-    result
+    Ok(result)
 }
 
 /// Invoked after taking a game action to check if the turn should be switched
 /// for the provided player.
-pub fn check_end_turn(game: &mut GameState) {
+pub fn check_end_turn(game: &mut GameState) -> Result<()> {
     if !matches!(game.data.phase, GamePhase::Play) {
-        return;
+        return Ok(());
     }
 
     let turn = game.data.turn;
@@ -372,7 +382,7 @@ pub fn check_end_turn(game: &mut GameState) {
         if hand.len() > max_hand_size {
             let count = hand.len() - max_hand_size;
             for card_id in hand.iter().take(count) {
-                move_card(game, *card_id, CardPosition::DiscardPile(side));
+                move_card(game, *card_id, CardPosition::DiscardPile(side))?;
             }
             game.updates.push(GameUpdate::DiscardToHandSize(side, count as u32));
         }
@@ -382,8 +392,10 @@ pub fn check_end_turn(game: &mut GameState) {
             Side::Champion => turn.turn_number + 1,
         };
         let next_side = side.opponent();
-        start_turn(game, next_side, turn_number);
+        start_turn(game, next_side, turn_number)?;
     }
+
+    Ok(())
 }
 
 /// Increases the level of all `can_level_up` Overlord cards in a room by 1. If
@@ -391,7 +403,7 @@ pub fn check_end_turn(game: &mut GameState) {
 /// immediately scored and moved to the Overlord score zone.
 ///
 /// Does not spend mana/actions etc.
-pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
+pub fn level_up_room(game: &mut GameState, room_id: RoomId) -> Result<()> {
     let occupants = game.card_list_for_position(
         Side::Overlord,
         CardPosition::Room(room_id, RoomLocation::Occupant),
@@ -402,8 +414,10 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
         .collect::<Vec<_>>();
 
     for occupant_id in can_level {
-        add_level_counters(game, *occupant_id, 1);
+        add_level_counters(game, *occupant_id, 1)?;
     }
+
+    Ok(())
 }
 
 /// Adds `amount` level counters to the provided card.
@@ -412,36 +426,38 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) {
 /// immediately scored and moved to the Overlord's score zone.
 ///
 /// Panics if this card cannot be leveled up.
-pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) {
+pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) -> Result<()> {
     assert!(flags::can_level_up_card(game, card_id));
     game.card_mut(card_id).data.card_level += amount;
     let card = game.card(card_id);
     if let Some(scheme_points) = crate::get(card.name).config.stats.scheme_points {
         if card.data.card_level >= scheme_points.level_requirement {
             turn_face_up(game, card_id);
-            move_card(game, card_id, CardPosition::Scored(Side::Overlord));
-            dispatch::invoke_event(game, OverlordScoreCardEvent(card_id));
+            move_card(game, card_id, CardPosition::Scored(Side::Overlord))?;
+            dispatch::invoke_event(game, OverlordScoreCardEvent(card_id))?;
             dispatch::invoke_event(
                 game,
                 ScoreCardEvent(ScoreCard { player: Side::Overlord, card_id }),
-            );
+            )?;
             game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
             score_points(game, Side::Overlord, scheme_points.points);
         }
     }
+
+    Ok(())
 }
 
 /// Attempt to pay a project's cost and turn it face up. Has no effect if the
 /// card is not in play, already face up, or if the cost cannot be paid.
 ///
 /// Returns true if the card was unveiled.
-pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> bool {
+pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> Result<bool> {
     let result = if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
         if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
             if (custom_cost.can_pay)(game, card_id) {
                 (custom_cost.pay)(game, card_id);
             } else {
-                return false;
+                return Ok(false);
             }
         }
 
@@ -464,13 +480,14 @@ pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> bool {
     };
 
     if result {
-        dispatch::invoke_event(game, UnveilProjectEvent(card_id));
+        dispatch::invoke_event(game, UnveilProjectEvent(card_id))?;
     }
-    result
+
+    Ok(result)
 }
 
 /// Equivalent function to [try_unveil_project] which ignores costs.
-pub fn unveil_project_for_free(game: &mut GameState, card_id: CardId) -> bool {
+pub fn unveil_project_for_free(game: &mut GameState, card_id: CardId) -> Result<bool> {
     let result = if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
         turn_face_up(game, card_id);
         true
@@ -479,26 +496,28 @@ pub fn unveil_project_for_free(game: &mut GameState, card_id: CardId) -> bool {
     };
 
     if result {
-        dispatch::invoke_event(game, UnveilProjectEvent(card_id));
+        dispatch::invoke_event(game, UnveilProjectEvent(card_id))?;
     }
-    result
+
+    Ok(result)
 }
 
 /// Starts the turn for the `next_side` player.
-fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) {
+fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) -> Result<()> {
     game.data.phase = GamePhase::Play;
     game.data.turn = TurnData { side: next_side, turn_number };
 
     info!(?next_side, "start_player_turn");
     if next_side == Side::Overlord {
-        dispatch::invoke_event(game, DuskEvent(turn_number));
+        dispatch::invoke_event(game, DuskEvent(turn_number))?;
     } else {
-        dispatch::invoke_event(game, DawnEvent(turn_number));
+        dispatch::invoke_event(game, DawnEvent(turn_number))?;
     }
     game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
     game.updates.push(GameUpdate::StartTurn(next_side));
 
-    draw_cards(game, next_side, 1);
+    draw_cards(game, next_side, 1)?;
+    Ok(())
 }
 
 /// Clears card state which is specific to a card being in play.
@@ -521,7 +540,7 @@ pub enum SummonMinion {
 /// [SummonMinion] value provided.
 ///
 /// Panics if the indicated card is already face-up.
-pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion) {
+pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion) -> Result<()> {
     assert!(game.card(card_id).is_face_down());
     if costs == SummonMinion::PayCosts {
         if let Some(cost) = queries::mana_cost(game, card_id) {
@@ -533,8 +552,9 @@ pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion)
         }
     }
 
-    dispatch::invoke_event(game, SummonMinionEvent(card_id));
+    dispatch::invoke_event(game, SummonMinionEvent(card_id))?;
     turn_face_up(game, card_id);
+    Ok(())
 }
 
 /// Deals damage. Discards random card from the hand of the Champion player. If
@@ -544,11 +564,11 @@ pub fn deal_damage(
     source: impl HasAbilityId,
     damage_type: DamageType,
     amount: u32,
-) {
+) -> Result<()> {
     let mut discarded = vec![];
     for _ in 0..amount {
         if let Some(card_id) = game.random_card(CardPosition::Hand(Side::Champion)) {
-            move_card(game, card_id, CardPosition::DiscardPile(Side::Champion));
+            move_card(game, card_id, CardPosition::DiscardPile(Side::Champion))?;
             discarded.push(card_id);
         } else {
             game.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
@@ -564,7 +584,9 @@ pub fn deal_damage(
             damage_type,
             discarded,
         }),
-    );
+    )?;
+
+    Ok(())
 }
 
 /// Mutates the phase of an ongoing raid to be encountering the `minion_id`

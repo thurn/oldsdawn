@@ -110,6 +110,7 @@ clippy:
         -D clippy::all \
         -A clippy::needless_update \
         -A clippy::needless_collect \
+        -A clippy::unit-arg \
         -D clippy::cast_lossless \
         -D clippy::cloned_instead_of_copied \
         -D clippy::copy_iterator \
@@ -142,6 +143,7 @@ clippy-fix:
         -D clippy::all \
         -A clippy::needless_update \
         -A clippy::needless_collect \
+        -A clippy::unit-arg \
         -D clippy::cast_lossless \
         -D clippy::cloned_instead_of_copied \
         -D clippy::copy_iterator \

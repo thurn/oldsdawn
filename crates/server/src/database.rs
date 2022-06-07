@@ -30,7 +30,7 @@ use sled::{Db, Tree};
 static DATABASE_PATH: Lazy<Mutex<Option<String>>> = Lazy::new(|| Mutex::new(None));
 
 static DATABASE: Lazy<Db> = Lazy::new(|| {
-    let path = DATABASE_PATH.lock().unwrap().clone();
+    let path = DATABASE_PATH.lock().expect("path lock").clone();
     sled::open(path.unwrap_or_else(|| "db".to_string())).expect("Unable to open database")
 });
 
@@ -38,7 +38,7 @@ static DATABASE: Lazy<Db> = Lazy::new(|| {
 /// Application.persistentDataPath in Unity. Must be called before any database
 /// access in order to have effect.
 pub fn override_path(path: String) {
-    DATABASE_PATH.lock().unwrap().replace(path);
+    DATABASE_PATH.lock().expect("path lock").replace(path);
 }
 
 /// Abstraction layer for interacting with the database

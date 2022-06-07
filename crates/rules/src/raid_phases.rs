@@ -48,16 +48,16 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
         RaidPhase::Encounter(defender_index) => {
             let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
             if can_summon_defender(game, defender_index) {
-                mutations::summon_minion(game, defender_id, SummonMinion::PayCosts);
+                mutations::summon_minion(game, defender_id, SummonMinion::PayCosts)?;
             }
-            dispatch::invoke_event(game, EncounterMinionEvent(defender_id));
+            dispatch::invoke_event(game, EncounterMinionEvent(defender_id))?;
         }
         RaidPhase::Continue(_) => {}
         RaidPhase::Access => {
-            dispatch::invoke_event(game, RaidAccessStartEvent(game.raid()?.raid_id));
+            dispatch::invoke_event(game, RaidAccessStartEvent(game.raid()?.raid_id))?;
             let accessed = accessed_cards(game)?;
             for card_id in &accessed {
-                dispatch::invoke_event(game, CardAccessEvent(*card_id));
+                dispatch::invoke_event(game, CardAccessEvent(*card_id))?;
             }
             game.raid_mut()?.accessed = accessed;
         }
@@ -94,7 +94,7 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
 
     let accessed = match target {
         RoomId::Vault => {
-            mutations::realize_top_of_deck(game, Side::Overlord, queries::vault_access_count(game))
+            mutations::realize_top_of_deck(game, Side::Overlord, queries::vault_access_count(game))?
         }
         RoomId::Sanctum => {
             let count = queries::sanctum_access_count(game);

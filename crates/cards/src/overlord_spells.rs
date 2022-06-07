@@ -32,7 +32,10 @@ pub fn gathering_dark() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Gain", mana_text(9)),
-            on_cast(|g, s, _| mana::gain(g, s.side(), 9)),
+            on_cast(|g, s, _| {
+                mana::gain(g, s.side(), 9);
+                Ok(())
+            }),
         )],
         config: CardConfig::default(),
     }
@@ -49,7 +52,10 @@ pub fn overwhelming_power() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Gain", mana_text(15)),
-            on_cast(|g, s, _| mana::gain(g, s.side(), 15)),
+            on_cast(|g, s, _| {
+                mana::gain(g, s.side(), 15);
+                Ok(())
+            }),
         )],
         config: CardConfig::default(),
     }
@@ -78,8 +84,10 @@ pub fn forced_march() -> CardDefinition {
                     .map(|card| card.id)
                     .collect::<Vec<_>>();
                 for card_id in targets {
-                    mutations::add_level_counters(g, card_id, 2);
+                    mutations::add_level_counters(g, card_id, 2)?;
                 }
+
+                Ok(())
             }))
         ],
         config: CardConfig {

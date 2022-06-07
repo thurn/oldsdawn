@@ -44,14 +44,14 @@ pub fn handle(
             game.player_mut(side).actions -= amount;
         }
         CardPromptAction::EndRaid => {
-            mutations::end_raid(game, RaidOutcome::Failure);
+            mutations::end_raid(game, RaidOutcome::Failure)?;
         }
         CardPromptAction::TakeDamage(ability_id, damage_type, amount) => {
-            mutations::deal_damage(game, ability_id, damage_type, amount);
+            mutations::deal_damage(game, ability_id, damage_type, amount)?;
         }
         CardPromptAction::TakeDamageEndRaid(ability_id, damage_type, amount) => {
-            mutations::deal_damage(game, ability_id, damage_type, amount);
-            mutations::end_raid(game, RaidOutcome::Failure);
+            mutations::deal_damage(game, ability_id, damage_type, amount)?;
+            mutations::end_raid(game, RaidOutcome::Failure)?;
         }
     }
 

@@ -89,13 +89,13 @@ fn handle_mulligan_decision(
             game.updates.push(GameUpdate::KeepHand(user_side, hand));
         }
         MulliganDecision::Mulligan => {
-            mutations::shuffle_into_deck(game, user_side, &hand);
-            let new_hand = mutations::draw_cards(game, user_side, 5);
+            mutations::shuffle_into_deck(game, user_side, &hand)?;
+            let new_hand = mutations::draw_cards(game, user_side, 5)?;
             game.updates.push(GameUpdate::MulliganHand(user_side, hand, new_hand));
         }
     }
 
-    mutations::check_start_game(game);
+    mutations::check_start_game(game)?;
 
     Ok(())
 }
@@ -111,12 +111,12 @@ fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    let cards = mutations::draw_cards(game, user_side, 1);
+    let cards = mutations::draw_cards(game, user_side, 1)?;
     if let Some(card_id) = cards.get(0) {
-        dispatch::invoke_event(game, DrawCardActionEvent(*card_id));
+        dispatch::invoke_event(game, DrawCardActionEvent(*card_id))?;
     }
 
-    mutations::check_end_turn(game);
+    mutations::check_end_turn(game)?;
     Ok(())
 }
 
@@ -150,8 +150,8 @@ fn play_card_action(
     }
 
     mutations::spend_action_points(game, user_side, definition.cost.actions);
-    dispatch::invoke_event(game, PayCardCostsEvent(card_id));
-    dispatch::invoke_event(game, CastCardEvent(CardPlayed { card_id, target }));
+    dispatch::invoke_event(game, PayCardCostsEvent(card_id))?;
+    dispatch::invoke_event(game, CastCardEvent(CardPlayed { card_id, target }))?;
 
     let new_position = match definition.card_type {
         CardType::ChampionSpell | CardType::OverlordSpell => CardPosition::DiscardPile(user_side),
@@ -168,9 +168,9 @@ fn play_card_action(
         mutations::turn_face_up(game, card_id);
     }
 
-    mutations::move_card(game, card_id, new_position);
+    mutations::move_card(game, card_id, new_position)?;
 
-    mutations::check_end_turn(game);
+    mutations::check_end_turn(game)?;
     Ok(())
 }
 
@@ -205,9 +205,9 @@ fn activate_ability_action(
         fail!("Ability is not an activated ability");
     }
 
-    dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }));
+    dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }))?;
     game.updates.push(GameUpdate::AbilityActivated(ability_id));
-    mutations::check_end_turn(game);
+    mutations::check_end_turn(game)?;
     Ok(())
 }
 
@@ -223,7 +223,7 @@ fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
     );
     mutations::spend_action_points(game, user_side, 1);
     mana::gain(game, user_side, 1);
-    mutations::check_end_turn(game);
+    mutations::check_end_turn(game)?;
     Ok(())
 }
 
@@ -236,9 +236,9 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
     );
     mutations::spend_action_points(game, user_side, 1);
     mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1);
-    mutations::level_up_room(game, room_id);
+    mutations::level_up_room(game, room_id)?;
 
-    mutations::check_end_turn(game);
+    mutations::check_end_turn(game)?;
     game.updates.push(GameUpdate::LevelUpRoom(room_id));
 
     Ok(())
@@ -251,7 +251,7 @@ fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()
         user_side
     );
     mutations::spend_action_points(game, user_side, 1);
-    mutations::check_end_turn(game);
+    mutations::check_end_turn(game)?;
     Ok(())
 }
 

@@ -38,6 +38,7 @@ pub fn dungeon_annex() -> CardDefinition {
             ability_type: AbilityType::Standard,
             delegates: vec![on_overlord_score(|g, s, _| {
                 mana::gain(g, s.side(), 7);
+                Ok(())
             })],
         }],
         config: CardConfig {
@@ -67,9 +68,10 @@ pub fn activate_reinforcements() -> CardDefinition {
                     if let Some(minion_id) =
                         queries::highest_cost(g.minions().filter(|c| c.is_face_down()))
                     {
-                        mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts);
+                        mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts)?;
                         alert(g, s);
                     }
+                    Ok(())
                 },
             })],
         }],
@@ -93,9 +95,7 @@ pub fn research_project() -> CardDefinition {
             text: text![Keyword::Score, "Draw 2 cards.", "You get +2 maximum hand size."],
             ability_type: AbilityType::Standard,
             delegates: vec![
-                on_overlord_score(|g, s, _| {
-                    mutations::draw_cards(g, s.side(), 2);
-                }),
+                on_overlord_score(|g, s, _| mutations::draw_cards(g, s.side(), 2).map(|_| ())),
                 Delegate::MaximumHandSize(QueryDelegate {
                     requirement: scored_by_owner,
                     transformation: |_, s, side, current| {

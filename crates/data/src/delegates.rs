@@ -64,6 +64,7 @@ use std::collections::HashMap;
 use std::fmt;
 use std::fmt::Formatter;
 
+use anyhow::Result;
 use enum_kinds::EnumKind;
 use macros::DelegateEnum;
 
@@ -127,7 +128,7 @@ impl HasAbilityId for Scope {
 pub type RequirementFn<T> = fn(&GameState, Scope, &T) -> bool;
 /// Function to mutate game state in response to an event, taking contextual
 /// information `T`.
-pub type MutationFn<T> = fn(&mut GameState, Scope, &T);
+pub type MutationFn<T> = fn(&mut GameState, Scope, &T) -> Result<()>;
 /// Function to intercept a query for game information, taking contextual
 /// information `T` and the current query value `R`.
 pub type TransformationFn<T, R> = fn(&GameState, Scope, &T, R) -> R;

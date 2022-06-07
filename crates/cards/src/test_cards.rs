@@ -338,8 +338,9 @@ pub fn triggered_ability_take_mana() -> CardDefinition {
                         s.card_id(),
                         MANA_TAKEN,
                         OnZeroStored::Sacrifice,
-                    );
+                    )?;
                     alert(g, s);
+                    Ok(())
                 })],
             },
         ],

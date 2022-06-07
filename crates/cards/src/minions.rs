@@ -77,6 +77,7 @@ pub fn time_golem() -> CardDefinition {
                             lose_actions_prompt(g, Side::Champion, 2),
                         ],
                     );
+                    Ok(())
                 }),
             ),
         ],
@@ -116,11 +117,12 @@ pub fn temporal_vortex() -> CardDefinition {
                             g,
                             minion_id,
                             CardPosition::Room(room_id, RoomLocation::Defender),
-                        );
+                        )?;
                         g.move_card_to_index(minion_id, index);
-                        mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts);
+                        mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts)?;
                         mutations::set_raid_encountering_minion(g, s.card_id());
                     }
+                    Ok(())
                 }),
             ),
         ],
@@ -177,9 +179,7 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
             ],
             ability_type: AbilityType::Standard,
             delegates: vec![
-                combat(|g, s, _| {
-                    mutations::deal_damage(g, s, DamageType::Cold, 1);
-                }),
+                combat(|g, s, _| mutations::deal_damage(g, s, DamageType::Cold, 1)),
                 Delegate::DealtDamage(EventDelegate {
                     requirement: |g, s, data| {
                         s.ability_id() == data.source
@@ -187,9 +187,7 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
                                 queries::mana_cost(g, *card_id).unwrap_or(0) % 2 != 0
                             })
                     },
-                    mutation: |g, _, _| {
-                        mutations::end_raid(g, RaidOutcome::Failure);
-                    },
+                    mutation: |g, _, _| mutations::end_raid(g, RaidOutcome::Failure),
                 }),
             ],
         }],
@@ -223,8 +221,9 @@ pub fn bridge_troll() -> CardDefinition {
             combat(|g, _, _| {
                 mana::lose_upto(g, Side::Champion, ManaPurpose::PayForTriggeredAbility, 3);
                 if mana::get(g, Side::Champion, ManaPurpose::BaseMana) <= 6 {
-                    mutations::end_raid(g, RaidOutcome::Failure);
+                    mutations::end_raid(g, RaidOutcome::Failure)?;
                 }
+                Ok(())
             }),
         )],
         config: CardConfig {
@@ -291,8 +290,9 @@ pub fn fire_goblin() -> CardDefinition {
                 "."
             ],
             combat(|g, s, _| {
-                mutations::deal_damage(g, s, DamageType::Fire, 1);
+                mutations::deal_damage(g, s, DamageType::Fire, 1)?;
                 mana::gain(g, Side::Overlord, 1);
+                Ok(())
             }),
         )],
         config: CardConfig {

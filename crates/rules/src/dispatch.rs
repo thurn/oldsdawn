@@ -18,6 +18,7 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 
+use anyhow::Result;
 use data::delegates::{DelegateCache, DelegateContext, EventData, QueryData, Scope};
 use data::game::GameState;
 use data::primitives::AbilityId;
@@ -47,7 +48,7 @@ pub fn populate_delegate_cache(game: &mut GameState) {
 /// [data::delegates::Delegate] for this event to mutate the [GameState]
 /// appropriately.
 #[instrument(skip(game))]
-pub fn invoke_event<D: Debug, E: EventData<D>>(game: &mut GameState, event: E) {
+pub fn invoke_event<D: Debug, E: EventData<D>>(game: &mut GameState, event: E) -> Result<()> {
     let count = game.delegate_cache.delegate_count(event.kind());
     for i in 0..count {
         let delegate_context = game.delegate_cache.get(event.kind(), i);
@@ -55,9 +56,11 @@ pub fn invoke_event<D: Debug, E: EventData<D>>(game: &mut GameState, event: E) {
         let functions = E::extract(&delegate_context.delegate).expect("delegate");
         let data = event.data();
         if (functions.requirement)(game, scope, data) {
-            (functions.mutation)(game, scope, data);
+            (functions.mutation)(game, scope, data)?;
         }
     }
+
+    Ok(())
 }
 
 /// Called when game state information is needed. Invokes each registered

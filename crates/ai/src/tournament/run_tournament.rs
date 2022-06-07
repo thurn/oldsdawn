@@ -21,7 +21,7 @@ use crate::tournament::matchup;
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Running AI match");
     initialize::run();
-    let mut game = decklists::canonical_game();
+    let mut game = decklists::canonical_game()?;
     run_games(&mut game, 10, AgentName::AlphaBeta, AgentName::MonteCarlo, RunGames::PrintActions);
     Ok(())
 }

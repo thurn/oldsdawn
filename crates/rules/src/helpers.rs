@@ -15,6 +15,7 @@
 //! Helpers for defining card behaviors. This file is intended be be used via
 //! wildcard import in card definition files.
 
+use anyhow::Result;
 use data::card_definition::{
     Ability, AbilityType, AttackBoost, CardStats, Cost, CustomCost, SchemePoints, SpecialEffects,
 };
@@ -306,8 +307,8 @@ pub fn scheme_points(points: SchemePoints) -> CardStats {
 
 /// Initiates a raid on the `target` room and stores the raid ID as ability
 /// state.
-pub fn initiate_raid(game: &mut GameState, scope: Scope, target: CardTarget) {
-    initiate_raid_with_callback(game, scope, target, |_, _| {});
+pub fn initiate_raid(game: &mut GameState, scope: Scope, target: CardTarget) -> Result<()> {
+    initiate_raid_with_callback(game, scope, target, |_, _| {})
 }
 
 /// Initiates a raid on the `target` room and stores the raid ID as ability
@@ -319,21 +320,27 @@ pub fn initiate_raid_with_callback(
     scope: Scope,
     target: CardTarget,
     on_begin: impl Fn(&mut GameState, RaidId),
-) {
+) -> Result<()> {
     raid_actions::initiate_raid(game, target.room_id().expect("Room Target"), |game, raid_id| {
         game.ability_state_mut(scope.ability_id()).raid_id = Some(raid_id);
         on_begin(game, raid_id);
     })
-    .expect("Error initiating raid");
 }
 
 /// Invokes `function` at most once per turn.
 ///
 /// Stores ability state to track the last-invoked turn number
-pub fn once_per_turn<T>(game: &mut GameState, scope: Scope, data: &T, function: MutationFn<T>) {
+pub fn once_per_turn<T>(
+    game: &mut GameState,
+    scope: Scope,
+    data: &T,
+    function: MutationFn<T>,
+) -> Result<()> {
     if utils::is_false(|| Some(game.ability_state(scope.ability_id())?.turn? == game.data.turn)) {
         save_turn(game, scope);
         function(game, scope, data)
+    } else {
+        Ok(())
     }
 }
 
@@ -343,8 +350,13 @@ pub fn save_turn(game: &mut GameState, ability_id: impl HasAbilityId) {
 }
 
 /// Helper to store the provided [RaidId] as ability state for this [Scope].
-pub fn save_raid_id(game: &mut GameState, ability_id: impl HasAbilityId, raid_id: &RaidId) {
+pub fn save_raid_id(
+    game: &mut GameState,
+    ability_id: impl HasAbilityId,
+    raid_id: &RaidId,
+) -> Result<()> {
     game.ability_state_mut(ability_id.ability_id()).raid_id = Some(*raid_id);
+    Ok(())
 }
 
 /// Add `amount` to the stored mana in a card. Returns the new stored amount.
@@ -362,9 +374,7 @@ pub fn projectile(projectile: Projectile) -> SpecialEffects {
 pub fn unveil_at_dusk() -> Delegate {
     Delegate::Dusk(EventDelegate {
         requirement: face_down_in_play,
-        mutation: |g, s, _| {
-            mutations::try_unveil_project(g, s.card_id());
-        },
+        mutation: |g, s, _| mutations::try_unveil_project(g, s.card_id()).map(|_| ()),
     })
 }
 
@@ -372,6 +382,7 @@ pub fn unveil_at_dusk() -> Delegate {
 pub fn store_mana_on_unveil<const N: u32>() -> Delegate {
     when_unveiled(|g, s, _| {
         add_stored_mana(g, s.card_id(), N);
+        Ok(())
     })
 }
 

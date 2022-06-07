@@ -40,8 +40,9 @@ pub fn gold_mine() -> CardDefinition {
             simple_ability(
                 text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
                 at_dusk(|g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice)?;
                     alert(g, s);
+                    Ok(())
                 }),
             ),
         ],
@@ -72,11 +73,12 @@ pub fn gemcarver() -> CardDefinition {
                     "When empty, draw a card."
                 ],
                 at_dusk(|g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice)?;
                     if g.card(s.card_id()).data.stored_mana == 0 {
-                        mutations::draw_cards(g, s.side(), 1);
+                        mutations::draw_cards(g, s.side(), 1)?;
                     }
                     alert(g, s);
+                    Ok(())
                 }),
             ),
         ],
@@ -106,10 +108,11 @@ pub fn coinery() -> CardDefinition {
                     activate_while_face_down(),
                     face_down_ability_cost(),
                     on_activated(|g, s, _| {
-                        if mutations::unveil_project_for_free(g, s.card_id()) {
+                        if mutations::unveil_project_for_free(g, s.card_id())? {
                             add_stored_mana(g, s.card_id(), 15);
                         }
-                        mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                        mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice)
+                            .map(|_| ())
                     }),
                 ],
             },
@@ -141,9 +144,11 @@ pub fn pit_trap() -> CardDefinition {
                             s,
                             DamageType::Physical,
                             2 + g.card(s.card_id()).data.card_level,
-                        );
+                        )?;
                         alert(g, s);
                     }
+
+                    Ok(())
                 }),
             ),
         ],

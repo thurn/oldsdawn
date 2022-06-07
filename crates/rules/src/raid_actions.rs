@@ -78,7 +78,7 @@ pub fn initiate_raid(
     };
 
     raid_phases::set_raid_phase(game, phase)?;
-    dispatch::invoke_event(game, RaidStartEvent(RaidStart { raid_id, target: target_room }));
+    dispatch::invoke_event(game, RaidStartEvent(RaidStart { raid_id, target: target_room }))?;
     game.updates.push(GameUpdate::InitiateRaid(target_room));
     Ok(())
 }
@@ -127,8 +127,8 @@ pub fn encounter_action(
                     target_id,
                     mana_spent: cost,
                 }),
-            );
-            dispatch::invoke_event(game, MinionDefeatedEvent(target_id));
+            )?;
+            dispatch::invoke_event(game, MinionDefeatedEvent(target_id))?;
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(source_id),
                 target: InteractionObjectId::CardId(target_id),
@@ -137,7 +137,7 @@ pub fn encounter_action(
         EncounterAction::NoWeapon | EncounterAction::CardAction(_) => {
             let target = game.raid()?.target;
             let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
-            dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id));
+            dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id))?;
             game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
                 source: InteractionObjectId::CardId(defender_id),
                 target: InteractionObjectId::Identity(Side::Champion),
@@ -192,7 +192,7 @@ pub fn continue_action(
             raid_phases::set_raid_phase(game, RaidPhase::Encounter(encounter_number))
         }
         ContinueAction::Retreat => {
-            mutations::end_raid(game, RaidOutcome::Failure);
+            mutations::end_raid(game, RaidOutcome::Failure)?;
             Ok(())
         }
     }
@@ -223,11 +223,11 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
         .scheme_points
         .with_error(|| format!("Expected SchemePoints for {:?}", card_id))?;
 
-    mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion));
+    mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion))?;
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
     raid_phases::set_raid_prompt(game)?;
-    dispatch::invoke_event(game, ChampionScoreCardEvent(card_id));
-    dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }));
+    dispatch::invoke_event(game, ChampionScoreCardEvent(card_id))?;
+    dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }))?;
     game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
     mutations::score_points(game, Side::Champion, scheme_points.points);
     Ok(())
@@ -242,7 +242,7 @@ pub fn raid_end_action(game: &mut GameState, user_side: Side) -> Result<()> {
         user_side
     );
 
-    mutations::end_raid(game, RaidOutcome::Success);
+    mutations::end_raid(game, RaidOutcome::Success)?;
     Ok(())
 }
 

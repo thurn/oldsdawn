@@ -56,10 +56,13 @@ pub fn store_mana_on_play<const N: ManaValue>() -> Ability {
         delegates: vec![
             Delegate::CastCard(EventDelegate::new(this_card, |g, _s, played| {
                 g.card_mut(played.card_id).data.stored_mana = N;
+                Ok(())
             })),
             Delegate::StoredManaTaken(EventDelegate::new(this_card, |g, s, card_id| {
                 if g.card(*card_id).data.stored_mana == 0 {
                     mutations::move_card(g, *card_id, CardPosition::DiscardPile(s.side()))
+                } else {
+                    Ok(())
                 }
             })),
         ],
@@ -72,7 +75,8 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability
         text: text![Keyword::Take(Sentence::Start, N)],
         ability_type: AbilityType::Activated(cost, TargetRequirement::None),
         delegates: vec![on_activated(|g, _s, activated| {
-            mutations::take_stored_mana(g, activated.card_id(), N, OnZeroStored::Sacrifice);
+            mutations::take_stored_mana(g, activated.card_id(), N, OnZeroStored::Sacrifice)
+                .map(|_| ())
         })],
     }
 }
@@ -88,9 +92,7 @@ pub fn combat_deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
             "."
         ],
         ability_type: AbilityType::Standard,
-        delegates: vec![combat(|g, s, _| {
-            mutations::deal_damage(g, s, TDamage::damage_type(), N);
-        })],
+        delegates: vec![combat(|g, s, _| mutations::deal_damage(g, s, TDamage::damage_type(), N))],
     }
 }
 
@@ -99,9 +101,7 @@ pub fn end_raid() -> Ability {
     Ability {
         text: text![Keyword::Combat, "End the raid."],
         ability_type: AbilityType::Standard,
-        delegates: vec![combat(|g, _, _| {
-            mutations::end_raid(g, RaidOutcome::Failure);
-        })],
+        delegates: vec![combat(|g, _, _| mutations::end_raid(g, RaidOutcome::Failure))],
     }
 }
 
@@ -132,7 +132,7 @@ pub fn construct() -> Ability {
         delegates: vec![Delegate::MinionDefeated(EventDelegate {
             requirement: this_card,
             mutation: |g, s, _| {
-                mutations::move_card(g, s.card_id(), CardPosition::DiscardPile(s.side()));
+                mutations::move_card(g, s.card_id(), CardPosition::DiscardPile(s.side()))
             },
         })],
     }

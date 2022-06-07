@@ -60,7 +60,7 @@ pub fn sanctum_passage() -> CardDefinition {
             ability_type: AbilityType::Standard,
             delegates: vec![
                 on_raid_access_start(face_up_in_play, |g, s, raid_id| {
-                    once_per_turn(g, s, raid_id, save_raid_id);
+                    once_per_turn(g, s, raid_id, save_raid_id)
                 }),
                 add_sanctum_access::<1>(matching_raid),
             ],
@@ -84,6 +84,7 @@ pub fn accumulator() -> CardDefinition {
                 on_raid_success(face_up_in_play, |g, s, _| {
                     add_stored_mana(g, s.card_id(), 1);
                     alert(g, s);
+                    Ok(())
                 }),
             ),
             Ability {
@@ -91,7 +92,8 @@ pub fn accumulator() -> CardDefinition {
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
                 delegates: vec![on_activated(|g, s, activated| {
                     let mana = add_stored_mana(g, s.card_id(), 1);
-                    mutations::take_stored_mana(g, activated.card_id(), mana, OnZeroStored::Ignore);
+                    mutations::take_stored_mana(g, activated.card_id(), mana, OnZeroStored::Ignore)
+                        .map(|_| ())
                 })],
             },
         ],
@@ -131,17 +133,17 @@ pub fn mystic_portal() -> CardDefinition {
                     }),
                 ),
                 delegates: vec![
-                    on_activated(|g, s, activated| {
-                        initiate_raid(g, s, activated.target);
-                    }),
+                    on_activated(|g, s, activated| initiate_raid(g, s, activated.target)),
                     on_raid_start(always, |g, s, raid_start| {
                         let turn = g.data.turn;
                         g.ability_state_mut(s.ability_id())
                             .room_turns
                             .insert(raid_start.target, turn);
+                        Ok(())
                     }),
                     on_raid_success(matching_raid, |g, s, _| {
-                        mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice);
+                        mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice)
+                            .map(|_| ())
                     }),
                 ],
             },
@@ -164,8 +166,9 @@ pub fn storage_crystal() -> CardDefinition {
                 text![Keyword::Dawn, Keyword::Take(Sentence::Start, 1)],
                 at_dawn(|g, s, _| {
                     let taken =
-                        mutations::take_stored_mana(g, s.card_id(), 1, OnZeroStored::Ignore);
+                        mutations::take_stored_mana(g, s.card_id(), 1, OnZeroStored::Ignore)?;
                     alert_if_nonzero(g, s, taken);
+                    Ok(())
                 }),
             ),
             Ability {
@@ -173,6 +176,7 @@ pub fn storage_crystal() -> CardDefinition {
                 ability_type: AbilityType::Activated(actions(1), TargetRequirement::None),
                 delegates: vec![on_activated(|g, s, _| {
                     add_stored_mana(g, s.card_id(), 3);
+                    Ok(())
                 })],
             },
         ],
@@ -202,7 +206,8 @@ pub fn magical_resonator() -> CardDefinition {
                     TargetRequirement::None,
                 ),
                 delegates: vec![on_activated(|g, _s, activated| {
-                    mutations::take_stored_mana(g, activated.card_id(), 3, OnZeroStored::Sacrifice);
+                    mutations::take_stored_mana(g, activated.card_id(), 3, OnZeroStored::Sacrifice)
+                        .map(|_| ())
                 })],
             },
         ],
@@ -225,7 +230,7 @@ pub fn dark_grimoire() -> CardDefinition {
                 requirement: face_up_in_play,
                 mutation: |g, s, _| {
                     once_per_turn(g, s, &(), |g, s, _| {
-                        mutations::draw_cards(g, s.side(), 1);
+                        mutations::draw_cards(g, s.side(), 1).map(|_| ())
                     })
                 },
             }),

@@ -72,6 +72,7 @@ pub fn marauders_axe() -> CardDefinition {
                 delegates: vec![
                     on_raid_success(always, |g, s, _| {
                         save_turn(g, s);
+                        Ok(())
                     }),
                     Delegate::ManaCost(QueryDelegate {
                         requirement: this_card,
@@ -140,8 +141,9 @@ pub fn ethereal_blade() -> CardDefinition {
                         |g, s, used_weapon| save_raid_id(g, s, &used_weapon.raid_id),
                     ),
                     on_raid_ended(matching_raid, |g, s, _| {
-                        sacrifice_card(g, s.card_id());
+                        sacrifice_card(g, s.card_id())?;
                         alert(g, s);
+                        Ok(())
                     }),
                 ],
             },

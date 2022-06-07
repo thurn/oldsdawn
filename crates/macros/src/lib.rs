@@ -127,7 +127,7 @@ fn generate_variant(variant: &ParsedVariant) -> impl ToTokens {
     let (trait_value, return_value) = if variant.delegate_type == DelegateType::Event {
         (quote! {EventData<#data>}, quote! {Option<&EventDelegate<#data>>})
     } else {
-        let output = variant.output.as_ref().unwrap();
+        let output = variant.output.as_ref().expect("output");
         (quote! {QueryData<#data, #output>}, quote! {Option<&QueryDelegate<#data, #output>>})
     };
 

@@ -36,7 +36,7 @@ pub fn random_actions(c: &mut Criterion) {
     configure(&mut group);
     group.bench_function("random_actions", |b| {
         b.iter(|| {
-            let mut game = decklists::canonical_game();
+            let mut game = decklists::canonical_game().unwrap();
             run_tournament::run_games(
                 &mut game,
                 10,
@@ -53,7 +53,7 @@ pub fn uct_search(c: &mut Criterion) {
     initialize::run();
     let mut group = c.benchmark_group("uct_search");
     configure(&mut group);
-    let game = decklists::canonical_game();
+    let game = decklists::canonical_game().unwrap();
     group.bench_function("uct_search", |b| {
         b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 1000))
     });
@@ -63,7 +63,7 @@ pub fn alpha_beta_search(c: &mut Criterion) {
     initialize::run();
     let mut group = c.benchmark_group("alpha_beta_search");
     configure(&mut group);
-    let game = decklists::canonical_game();
+    let game = decklists::canonical_game().unwrap();
     group.bench_function("alpha_beta_search", |b| {
         b.iter(|| alpha_beta::run_search(&game, Side::Overlord, 4).unwrap())
     });

@@ -270,7 +270,7 @@ fn create_new_game(
     );
 
     dispatch::populate_delegate_cache(&mut game);
-    mutations::deal_opening_hands(&mut game);
+    mutations::deal_opening_hands(&mut game)?;
     database.write_game(&game)?;
     let commands = command_list(vec![Command::ConnectToGame(ConnectToGameCommand {
         game_id: Some(adapters::adapt_game_id(game.id)),

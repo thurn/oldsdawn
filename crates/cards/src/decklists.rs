@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use anyhow::Result;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState, MulliganDecision};
@@ -73,7 +74,7 @@ pub static CANONICAL_CHAMPION: Lazy<Deck> = Lazy::new(|| Deck {
 
 /// Creates a new deterministic game using the canonical decklists, deals
 /// opening hands and resolves mulligans.
-pub fn canonical_game() -> GameState {
+pub fn canonical_game() -> Result<GameState> {
     let mut game = GameState::new(
         GameId::new(0),
         CANONICAL_OVERLORD.clone(),
@@ -82,19 +83,19 @@ pub fn canonical_game() -> GameState {
     );
     game.rng = Some(StdRng::seed_from_u64(3141592653589793));
     dispatch::populate_delegate_cache(&mut game);
-    mutations::deal_opening_hands(&mut game);
+    mutations::deal_opening_hands(&mut game)?;
     actions::handle_user_action(
         &mut game,
         Side::Overlord,
         UserAction::GamePromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
     )
-    .unwrap();
+    .expect("mulligan error");
     actions::handle_user_action(
         &mut game,
         Side::Champion,
         UserAction::GamePromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
     )
-    .unwrap();
+    .expect("mulligan error");
 
-    game
+    Ok(game)
 }

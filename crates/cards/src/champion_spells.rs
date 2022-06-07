@@ -33,7 +33,10 @@ pub fn arcane_recovery() -> CardDefinition {
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Gain", mana_text(9)),
-            on_cast(|g, s, _| mana::gain(g, s.side(), 9)),
+            on_cast(|g, s, _| {
+                mana::gain(g, s.side(), 9);
+                Ok(())
+            }),
         )],
         config: CardConfig::default(),
     }
@@ -53,6 +56,7 @@ pub fn meditation() -> CardDefinition {
             on_cast(|g, s, _| {
                 mana::gain(g, s.side(), 5);
                 mutations::lose_action_points_if_able(g, s.side(), 1);
+                Ok(())
             }),
         )],
         config: CardConfig::default(),
@@ -79,7 +83,7 @@ pub fn coup_de_grace() -> CardDefinition {
                 add_vault_access::<1>(matching_raid),
                 add_sanctum_access::<1>(matching_raid),
                 on_raid_success(matching_raid, |g, s, _| {
-                    mutations::draw_cards(g, s.side(), 1);
+                    mutations::draw_cards(g, s.side(), 1).map(|_| ())
                 }),
             ],
         }],
@@ -137,9 +141,7 @@ pub fn stealth_mission() -> CardDefinition {
             ),
             ability_type: AbilityType::Standard,
             delegates: vec![
-                on_cast(|g, s, play_card| {
-                    initiate_raid(g, s, play_card.target);
-                }),
+                on_cast(|g, s, play_card| initiate_raid(g, s, play_card.target)),
                 Delegate::ManaCost(QueryDelegate {
                     requirement: matching_raid,
                     transformation: |g, _s, card_id, current| {
@@ -173,8 +175,9 @@ pub fn preparation() -> CardDefinition {
         abilities: vec![simple_ability(
             text!("Draw 4 cards.", "Lose", actions_text(1), reminder("(if able).")),
             on_cast(|g, s, _| {
-                mutations::draw_cards(g, s.side(), 4);
+                mutations::draw_cards(g, s.side(), 4)?;
                 mutations::lose_action_points_if_able(g, s.side(), 1);
+                Ok(())
             }),
         )],
         config: CardConfig::default(),
