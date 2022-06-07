@@ -231,7 +231,7 @@ pub fn handle_connect(
         if database.has_game(game_id)? {
             let game = database.game(game_id)?;
             let side = user_side(player_id, &game)?;
-            let mut commands = render::connect(&game, side);
+            let mut commands = render::connect(&game, side)?;
             panels::render_standard_panels(&mut commands)?;
             Ok(command_list(commands))
         } else {
@@ -317,11 +317,11 @@ pub fn handle_custom_action(
     let user_side = user_side(player_id, &game)?;
     function(&mut game, user_side)?;
 
-    let user_result = render::render_updates(&game, user_side);
+    let user_result = render::render_updates(&game, user_side)?;
     let opponent_id = game.player(user_side.opponent()).id;
 
     let channel_response =
-        Some((opponent_id, command_list(render::render_updates(&game, user_side.opponent()))));
+        Some((opponent_id, command_list(render::render_updates(&game, user_side.opponent())?)));
     database.write_game(&game)?;
 
     Ok(GameResponse {

@@ -20,6 +20,7 @@
 //! reconnects. Non-decorative changes to the client state should be handled by
 //! the [full_sync] module.
 
+use anyhow::Result;
 use data::card_state::{CardPosition, CardState};
 use data::game::GameState;
 use data::primitives::{AbilityId, CardId, RoomId, Side};
@@ -109,15 +110,15 @@ pub fn render(
     update: &GameUpdate,
     game: &GameState,
     user_side: Side,
-) {
+) -> Result<()> {
     match update {
         GameUpdate::LevelUpRoom(room_id) => level_up_room(commands, *room_id),
         GameUpdate::InitiateRaid(room_id) => initiate_raid(commands, *room_id),
         GameUpdate::StartTurn(side) => start_turn(commands, *side),
         GameUpdate::DrawHand(side) => draw_hand(commands, game, *side),
-        GameUpdate::KeepHand(side, cards) => keep_hand(commands, game, *side, cards),
+        GameUpdate::KeepHand(side, cards) => keep_hand(commands, game, *side, cards)?,
         GameUpdate::MulliganHand(side, old_cards, new_cards) => {
-            mulligan_hand(commands, game, *side, old_cards, new_cards)
+            mulligan_hand(commands, game, *side, old_cards, new_cards)?
         }
         GameUpdate::DrawCard(card_id) => draw_card(commands, game, user_side, *card_id),
         GameUpdate::RevealToOpponent(card_id) => reveal_card(commands, game, game.card(*card_id)),
@@ -150,6 +151,8 @@ pub fn render(
         GameUpdate::DiscardToHandSize(_, _) => {}
         _ => todo!("Implement {:?}", update),
     }
+
+    Ok(())
 }
 
 fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
@@ -198,7 +201,12 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
     }
 }
 
-fn keep_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, cards: &[CardId]) {
+fn keep_hand(
+    commands: &mut ResponseBuilder,
+    game: &GameState,
+    side: Side,
+    cards: &[CardId],
+) -> Result<()> {
     for card_id in cards {
         commands.move_card(
             UpdateType::Animation,
@@ -207,7 +215,7 @@ fn keep_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, cards
         );
     }
 
-    commands.apply_parallel_moves();
+    commands.apply_parallel_moves()?;
 
     for card_id in cards {
         // Need to manually update cards to change their 'can play' value
@@ -221,6 +229,8 @@ fn keep_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side, cards
             ),
         )
     }
+
+    Ok(())
 }
 
 fn mulligan_hand(
@@ -229,7 +239,7 @@ fn mulligan_hand(
     side: Side,
     old_cards: &[CardId],
     new_cards: &[CardId],
-) {
+) -> Result<()> {
     let mulligan_player_name = adapters::to_player_name(side, commands.user_side);
     for card_id in old_cards {
         commands.move_card(
@@ -238,7 +248,7 @@ fn mulligan_hand(
             Position::Deck(ObjectPositionDeck { owner: mulligan_player_name.into() }),
         );
     }
-    commands.apply_parallel_moves();
+    commands.apply_parallel_moves()?;
 
     for card_id in old_cards {
         destroy_card(commands, UpdateType::Animation, *card_id);
@@ -281,7 +291,8 @@ fn mulligan_hand(
         );
     }
 
-    commands.apply_parallel_moves();
+    commands.apply_parallel_moves()?;
+    Ok(())
 }
 
 /// Builds a [CardCreationStrategy] for representing the provided `card_id`

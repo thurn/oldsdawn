@@ -186,11 +186,13 @@ fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<(
         current_game.id,
         Deck {
             owner_id: current_game.overlord.id,
-            identity: current_game.identity(Side::Overlord).name,
+            identity: current_game.first_identity(Side::Overlord).expect("identity").name,
             cards: current_game
                 .overlord_cards
                 .iter()
-                .filter(|c| c.id != current_game.identity(Side::Overlord).id)
+                .filter(|c| {
+                    c.id != current_game.first_identity(Side::Overlord).expect("identity").id
+                })
                 .fold(HashMap::new(), |mut acc, card| {
                     *acc.entry(card.name).or_insert(0) += 1;
                     acc
@@ -198,11 +200,13 @@ fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<(
         },
         Deck {
             owner_id: current_game.champion.id,
-            identity: current_game.identity(Side::Champion).name,
+            identity: current_game.first_identity(Side::Champion).expect("identity").name,
             cards: current_game
                 .champion_cards
                 .iter()
-                .filter(|c| c.id != current_game.identity(Side::Champion).id)
+                .filter(|c| {
+                    c.id != current_game.first_identity(Side::Champion).expect("identity").id
+                })
                 .fold(HashMap::new(), |mut acc, card| {
                     *acc.entry(card.name).or_insert(0) += 1;
                     acc

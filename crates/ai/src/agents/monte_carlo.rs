@@ -22,6 +22,7 @@ use std::collections::HashSet;
 use std::f64::consts;
 
 use anyhow::Result;
+use data::fail;
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
@@ -38,7 +39,7 @@ use crate::core::types::{notnan, StatePredictionIterator};
 
 pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
     let game = states.next().with_error(|| "Expected game state")?.state;
-    Ok(uct_search(&game, side, 1000))
+    uct_search(&game, side, 1000)
 }
 
 type RewardValue = NotNan<f64>;
@@ -84,19 +85,19 @@ type SearchGraph = Graph<SearchNode, SearchEdge>;
 ///     BACKUP(v₁, ∆)
 ///   𝐫𝐞𝐭𝐮𝐫𝐧 𝒂(BESTCHILD(v₀, 0))
 /// ```
-pub fn uct_search(game_state: &GameState, side: Side, simulation_steps: u32) -> UserAction {
+pub fn uct_search(game_state: &GameState, side: Side, simulation_steps: u32) -> Result<UserAction> {
     let mut graph = SearchGraph::new();
     let root = graph.add_node(SearchNode { total_reward: notnan(0.0), visit_count: 1, side });
     for _ in 0..simulation_steps {
         let mut game = game_state.clone();
-        let node = tree_policy(&mut graph, &mut game, root);
-        let reward = default_policy(game, side);
-        backup(&mut graph, side, node, reward);
+        let node = tree_policy(&mut graph, &mut game, root)?;
+        let reward = default_policy(game, side)?;
+        backup(&mut graph, side, node, reward)?;
     }
 
     let (action, _) =
-        best_child(&graph, root, legal_actions::evaluate(game_state, side).collect(), 0.0);
-    action
+        best_child(&graph, root, legal_actions::evaluate(game_state, side).collect(), 0.0)?;
+    Ok(action)
 }
 
 /// Returns a descendant node to examine next for the provided parent node,
@@ -127,23 +128,27 @@ pub fn uct_search(game_state: &GameState, side: Side, simulation_steps: u32) -> 
 ///       v ← BESTCHILD(v, Cᵖ)
 ///   𝐫𝐞𝐭𝐮𝐫𝐧 v
 /// ```
-fn tree_policy(graph: &mut SearchGraph, game: &mut GameState, mut node: NodeIndex) -> NodeIndex {
+fn tree_policy(
+    graph: &mut SearchGraph,
+    game: &mut GameState,
+    mut node: NodeIndex,
+) -> Result<NodeIndex> {
     while !matches!(game.data.phase, GamePhase::GameOver(_)) {
-        let actions = legal_actions::evaluate(game, current_priority(game)).collect::<HashSet<_>>();
+        let actions =
+            legal_actions::evaluate(game, current_priority(game)?).collect::<HashSet<_>>();
         let explored = graph.edges(node).map(|e| e.weight().action).collect::<HashSet<_>>();
         if let Some(action) = actions.iter().find(|a| !explored.contains(a)) {
             // An action exists which has not yet been tried
             return expand(graph, game, node, *action);
         } else {
             // All actions have been tried, recursively search the best candidate
-            let (action, best) = best_child(graph, node, actions, consts::FRAC_1_SQRT_2);
-            actions::handle_user_action(game, current_priority(game), action)
-                .expect("Error handling action");
+            let (action, best) = best_child(graph, node, actions, consts::FRAC_1_SQRT_2)?;
+            actions::handle_user_action(game, current_priority(game)?, action)?;
             node = best;
         }
     }
 
-    node
+    Ok(node)
 }
 
 /// Generates a new tree node by applying the next untried action from the
@@ -164,14 +169,14 @@ fn expand(
     game: &mut GameState,
     source: NodeIndex,
     action: UserAction,
-) -> NodeIndex {
-    let side = current_priority(game);
+) -> Result<NodeIndex> {
+    let side = current_priority(game)?;
     // Instead of selecting an untried action here, we pass in the one we found in
     // `tree_policy` to avoid redundancy.
-    actions::handle_user_action(game, side, action).expect("Error handling action");
+    actions::handle_user_action(game, side, action)?;
     let target = graph.add_node(SearchNode { side, total_reward: notnan(0.0), visit_count: 0 });
     graph.add_edge(source, target, SearchEdge { action });
-    target
+    Ok(target)
 }
 
 /// Picks the most promising child node to explore, returning its associated
@@ -194,7 +199,7 @@ fn best_child(
     node: NodeIndex,
     legal: HashSet<UserAction>,
     exploration_bias: f64,
-) -> (UserAction, NodeIndex) {
+) -> Result<(UserAction, NodeIndex)> {
     let parent_visits = graph[node].visit_count;
     let result = graph
         .edges(node)
@@ -211,8 +216,8 @@ fn best_child(
             let exploitation = f64::sqrt((2.0 * f64::ln(f64::from(parent_visits))) / child_visits);
             exploration + (exploration_bias * exploitation)
         })
-        .expect("No children found");
-    (result.weight().action, result.target())
+        .with_error(|| "No children found")?;
+    Ok((result.weight().action, result.target()))
 }
 
 /// Plays out a game using random moves to determine its outcome until a
@@ -226,19 +231,20 @@ fn best_child(
 ///     s ← f(s,𝒂)
 ///   𝐫𝐞𝐭𝐮𝐫𝐧 reward for state s
 /// ```
-fn default_policy(mut game: GameState, side: Side) -> RewardValue {
+fn default_policy(mut game: GameState, side: Side) -> Result<RewardValue> {
     for _ in 0..60 {
         if let GamePhase::GameOver(data) = game.data.phase {
-            return notnan(if data.winner == side { 10.0 } else { -10.0 });
+            return Ok(notnan(if data.winner == side { 10.0 } else { -10.0 }));
         }
 
-        let side = current_priority(&game);
-        let action =
-            legal_actions::evaluate(&game, side).choose(&mut thread_rng()).expect("UserAction");
-        actions::handle_user_action(&mut game, side, action).expect("Error handling action");
+        let side = current_priority(&game)?;
+        let action = legal_actions::evaluate(&game, side)
+            .choose(&mut thread_rng())
+            .with_error(|| "No actions found")?;
+        actions::handle_user_action(&mut game, side, action)?;
     }
 
-    notnan(f64::from(game.player(side).score) - f64::from(game.player(side.opponent()).score))
+    Ok(notnan(f64::from(game.player(side).score) - f64::from(game.player(side.opponent()).score)))
 }
 
 /// Once a playout is completed, the backpropagation step walks back up the
@@ -257,25 +263,25 @@ fn backup(
     maximizing_side: Side,
     mut node: NodeIndex,
     reward: RewardValue,
-) {
+) -> Result<()> {
     loop {
-        let weight = graph.node_weight_mut(node).expect("Node");
+        let weight = graph.node_weight_mut(node).with_error(|| "Node not found")?;
         weight.visit_count += 1;
         weight.total_reward += if weight.side == maximizing_side { reward } else { -reward };
 
         node = match graph.neighbors_directed(node, Direction::Incoming).next() {
             Some(n) => n,
-            _ => return,
+            _ => return Ok(()),
         };
     }
 }
 
-fn current_priority(game: &GameState) -> Side {
+fn current_priority(game: &GameState) -> Result<Side> {
     if queries::can_take_action(game, Side::Overlord) {
-        Side::Overlord
+        Ok(Side::Overlord)
     } else if queries::can_take_action(game, Side::Champion) {
-        Side::Champion
+        Ok(Side::Champion)
     } else {
-        panic!("No player can take action!");
+        fail!("No player can take action!")
     }
 }

@@ -14,6 +14,7 @@
 
 //! Core functions for querying the current state of a game
 
+use anyhow::Result;
 use data::card_definition::{AbilityType, AttackBoost, CardStats};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
@@ -126,7 +127,7 @@ pub fn breach(game: &GameState, card_id: CardId) -> BreachValue {
     )
 }
 
-/// Returns the boost cost for a given card, if any
+/// Returns the [AttackBoost] for a given card, if any
 pub fn attack_boost(game: &GameState, card_id: CardId) -> Option<AttackBoost> {
     crate::card_definition(game, card_id)
         .config
@@ -195,16 +196,16 @@ pub fn start_of_turn_action_count(game: &GameState, side: Side) -> ActionCount {
 
 /// Look up the number of cards the Champion player can access from the Vault
 /// during the current raid
-pub fn vault_access_count(game: &GameState) -> u32 {
-    let raid_id = game.data.raid.as_ref().expect("Active Raid").raid_id;
-    dispatch::perform_query(game, VaultAccessCountQuery(raid_id), 1)
+pub fn vault_access_count(game: &GameState) -> Result<u32> {
+    let raid_id = game.raid()?.raid_id;
+    Ok(dispatch::perform_query(game, VaultAccessCountQuery(raid_id), 1))
 }
 
 /// Look up the number of cards the Champion player can access from the Sanctum
 /// during the current raid
-pub fn sanctum_access_count(game: &GameState) -> u32 {
-    let raid_id = game.data.raid.as_ref().expect("Active Raid").raid_id;
-    dispatch::perform_query(game, SanctumAccessCountQuery(raid_id), 1)
+pub fn sanctum_access_count(game: &GameState) -> Result<u32> {
+    let raid_id = game.raid()?.raid_id;
+    Ok(dispatch::perform_query(game, SanctumAccessCountQuery(raid_id), 1))
 }
 
 /// Looks up what type of target a given card requires

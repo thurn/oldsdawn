@@ -47,7 +47,7 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
         RaidPhase::Activation => {}
         RaidPhase::Encounter(defender_index) => {
             let defender_id = find_defender(game, game.raid()?.target, defender_index)?;
-            if can_summon_defender(game, defender_index) {
+            if can_summon_defender(game, defender_index)? {
                 mutations::summon_minion(game, defender_id, SummonMinion::PayCosts)?;
             }
             dispatch::invoke_event(game, EncounterMinionEvent(defender_id))?;
@@ -69,10 +69,11 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
 /// Returns true if the raid defender at `defender_index` is currently face down
 /// and could be turned face up automatically by paying its mana cost.
 ///
-/// Panics if there is no active raid or if this is an invalid defender index.
-pub fn can_summon_defender(game: &GameState, defender_index: usize) -> bool {
-    let raid = game.raid().expect("Active Raid");
-    let defender_id = find_defender(game, raid.target, defender_index).expect("Defender");
+/// Returns an error if there is no active raid or if this is an invalid
+/// defender index.
+pub fn can_summon_defender(game: &GameState, defender_index: usize) -> Result<bool> {
+    let raid = game.raid()?;
+    let defender_id = find_defender(game, raid.target, defender_index)?;
     let mut can_summon = raid.room_active && game.card(defender_id).is_face_down();
 
     if let Some(cost) = queries::mana_cost(game, defender_id) {
@@ -83,7 +84,7 @@ pub fn can_summon_defender(game: &GameState, defender_index: usize) -> bool {
         can_summon &= (custom_cost.can_pay)(game, defender_id);
     }
 
-    can_summon
+    Ok(can_summon)
 }
 
 /// Returns a vector of the cards accessed for the current raid target, mutating
@@ -93,11 +94,13 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
     let target = game.raid()?.target;
 
     let accessed = match target {
-        RoomId::Vault => {
-            mutations::realize_top_of_deck(game, Side::Overlord, queries::vault_access_count(game))?
-        }
+        RoomId::Vault => mutations::realize_top_of_deck(
+            game,
+            Side::Overlord,
+            queries::vault_access_count(game)?,
+        )?,
         RoomId::Sanctum => {
-            let count = queries::sanctum_access_count(game);
+            let count = queries::sanctum_access_count(game)?;
             if game.data.config.deterministic {
                 game.hand(Side::Overlord).map(|c| c.id).take(count as usize).collect()
             } else {

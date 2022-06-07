@@ -88,14 +88,12 @@ pub fn canonical_game() -> Result<GameState> {
         &mut game,
         Side::Overlord,
         UserAction::GamePromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
-    )
-    .expect("mulligan error");
+    )?;
     actions::handle_user_action(
         &mut game,
         Side::Champion,
         UserAction::GamePromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
-    )
-    .expect("mulligan error");
+    )?;
 
     Ok(game)
 }

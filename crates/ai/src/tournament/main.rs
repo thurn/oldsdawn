@@ -27,7 +27,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         AgentName::PickRandom,
         AgentName::PickRandom,
         RunGames::PrintActions,
-    );
+    )?;
 
     Ok(())
 }

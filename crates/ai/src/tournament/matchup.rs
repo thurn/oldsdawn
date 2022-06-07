@@ -14,9 +14,11 @@
 
 use std::fmt::{Display, Formatter};
 
+use anyhow::Result;
 use data::agent_definition::AgentName;
 use data::game::{GamePhase, GameState};
 use data::primitives::{PointsValue, Side, TurnNumber};
+use data::with_error::WithError;
 use enum_iterator::IntoEnumIterator;
 use rules::{actions, queries};
 
@@ -52,11 +54,11 @@ impl Display for MatchOutcome {
 /// Runs an AI matchup for a given `game`.
 ///
 /// The game must be configured to use Agents for both players.
-pub fn run(mut game: GameState, config: RunGames) -> MatchOutcome {
+pub fn run(mut game: GameState, config: RunGames) -> Result<MatchOutcome> {
     loop {
         for side in Side::into_enum_iter() {
             if let GamePhase::GameOver(data) = &game.data.phase {
-                return MatchOutcome {
+                return Ok(MatchOutcome {
                     winner: OutcomePlayer {
                         agent: game.player(data.winner).agent.unwrap().name,
                         side: data.winner,
@@ -68,20 +70,20 @@ pub fn run(mut game: GameState, config: RunGames) -> MatchOutcome {
                         score: game.player(data.winner.opponent()).score,
                     },
                     turn_count: game.data.turn.turn_number,
-                };
+                });
             }
 
             if queries::can_take_action(&game, side) {
-                let agent_data = game.player(side).agent.expect("Agent");
+                let agent_data = game.player(side).agent.with_error(|| "Agent not found")?;
                 let agent = crate::core::get_agent(agent_data.name);
                 let state_predictor =
                     crate::core::get_game_state_predictor(agent_data.state_predictor);
-                let action = agent(state_predictor(&game, side), side).expect("Agent Error");
+                let action = agent(state_predictor(&game, side), side)?;
 
                 if config == RunGames::PrintActions {
                     println!("{:?} action: {:?}", side, action);
                 }
-                actions::handle_user_action(&mut game, side, action).expect("Action Error");
+                actions::handle_user_action(&mut game, side, action)?;
             }
         }
     }

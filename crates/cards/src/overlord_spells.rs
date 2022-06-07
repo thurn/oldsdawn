@@ -76,7 +76,7 @@ pub fn forced_march() -> CardDefinition {
             ),
             on_cast(|g, _, played| {
                 let targets = g
-                    .defenders_and_occupants(played.target.room_id().expect("Room Target"))
+                    .defenders_and_occupants(played.target.room_id()?)
                     .filter(|card| {
                         flags::can_level_up_card(g, card.id)
                             && !flags::entered_play_this_turn(g, card.id)

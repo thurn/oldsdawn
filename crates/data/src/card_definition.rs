@@ -76,7 +76,7 @@ impl<T> Default for Cost<T> {
 
 /// An activated ability used by Weapons to increase their attack value by
 /// paying a mana cost during a raid encounter. Can be used any number of times.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Default)]
 pub struct AttackBoost {
     /// Cost to activate an instance of this boost
     pub cost: ManaValue,

@@ -16,6 +16,7 @@
 
 use std::collections::BTreeMap;
 
+use anyhow::Result;
 use data::card_definition::{AbilityType, CardDefinition, TargetRequirement};
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
@@ -69,9 +70,9 @@ pub struct FullSync {
 /// If [CardCreationStrategy] values are provided in the `card_creation` map,
 /// these override the default card creation behavior of placing cards in their
 /// current game position.
-pub fn run(game: &GameState, user_side: Side, options: ResponseOptions) -> FullSync {
-    FullSync {
-        game: update_game_view(game, user_side),
+pub fn run(game: &GameState, user_side: Side, options: ResponseOptions) -> Result<FullSync> {
+    Ok(FullSync {
+        game: update_game_view(game, user_side)?,
         cards: game
             .all_cards()
             .filter(|c| !c.position().shuffled_into_deck())
@@ -94,25 +95,25 @@ pub fn run(game: &GameState, user_side: Side, options: ResponseOptions) -> FullS
             .collect(),
         interface: interface::render(game, user_side),
         position_overrides: position_overrides(game, user_side),
-    }
+    })
 }
 
 /// Builds a command to update the client's current [GameView]
-fn update_game_view(game: &GameState, user_side: Side) -> UpdateGameViewCommand {
-    UpdateGameViewCommand {
+fn update_game_view(game: &GameState, user_side: Side) -> Result<UpdateGameViewCommand> {
+    Ok(UpdateGameViewCommand {
         game: Some(GameView {
             game_id: Some(adapters::adapt_game_id(game.id)),
-            user: Some(player_view(game, user_side)),
-            opponent: Some(player_view(game, user_side.opponent())),
+            user: Some(player_view(game, user_side)?),
+            opponent: Some(player_view(game, user_side.opponent())?),
             raid_active: game.data.raid.is_some(),
         }),
-    }
+    })
 }
 
 /// Builds a [PlayerView] for a given player
-fn player_view(game: &GameState, side: Side) -> PlayerView {
-    let identity = game.identity(side);
-    PlayerView {
+fn player_view(game: &GameState, side: Side) -> Result<PlayerView> {
+    let identity = game.first_identity(side)?;
+    Ok(PlayerView {
         side: adapters::adapt_side(side).into(),
         player_info: Some(PlayerInfo {
             name: Some(identity.name.displayed_name()),
@@ -139,7 +140,7 @@ fn player_view(game: &GameState, side: Side) -> PlayerView {
             available_action_count: game.player(side).actions,
         }),
         can_take_action: queries::can_take_action(game, side),
-    }
+    })
 }
 
 /// Possible behavior when creating a card -- used to enable different 'appear'

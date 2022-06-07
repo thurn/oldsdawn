@@ -74,46 +74,11 @@ fn active_agent(game: &GameState) -> Option<(Side, AgentData)> {
 
 /// Checks if an AI response is required for the game described by `request`, if
 /// any, and applies AI actions if needed.
-pub fn check_for_agent_response(mut database: SledDatabase, request: &GameRequest) -> Result<()> {
+pub fn check_for_agent_response(database: SledDatabase, request: &GameRequest) -> Result<()> {
     if let Some(game_id) = adapters::to_optional_server_game_id(&request.game_id) {
         if database.has_game(game_id)? {
             tokio::spawn(async move {
-                loop {
-                    let mut took_action = false;
-                    for side in Side::into_enum_iter() {
-                        let game = database.game(game_id).expect("game");
-                        if let Some(agent_data) = game.player(side).agent {
-                            if queries::can_take_action(&game, side) {
-                                took_action = true;
-                                let agent_name = agent_data.name;
-                                let agent = ai::core::get_agent(agent_data.name);
-                                let state_predictor =
-                                    ai::core::get_game_state_predictor(agent_data.state_predictor);
-                                warn!(?side, ?agent_name, "running agent");
-                                let action = agent(state_predictor(&game, side), side)
-                                    .expect("Error invoking AI Agent");
-                                warn!(?side, ?action, "applying agent action");
-                                let response = requests::handle_action(
-                                    &mut database,
-                                    game.player(side).id,
-                                    Some(game_id),
-                                    action,
-                                )
-                                .expect("Error handling GameAction");
-                                requests::send_player_response(response.opponent_response).await;
-                                requests::send_player_response(Some((
-                                    game.player(side).id,
-                                    response.command_list,
-                                )))
-                                .await
-                            }
-                        }
-                    }
-
-                    if !took_action {
-                        break;
-                    }
-                }
+                run_deprecated_agent_loop(database, game_id).await.expect("Agent error");
             });
         }
     }
@@ -147,6 +112,43 @@ fn run_agent_loop(mut database: SledDatabase, game_id: GameId, respond_to: Playe
                 }
             }
         } else {
+            return Ok(());
+        }
+    }
+}
+
+async fn run_deprecated_agent_loop(mut database: SledDatabase, game_id: GameId) -> Result<()> {
+    loop {
+        let mut took_action = false;
+        for side in Side::into_enum_iter() {
+            let game = database.game(game_id)?;
+            if let Some(agent_data) = game.player(side).agent {
+                if queries::can_take_action(&game, side) {
+                    took_action = true;
+                    let agent_name = agent_data.name;
+                    let agent = ai::core::get_agent(agent_data.name);
+                    let state_predictor =
+                        ai::core::get_game_state_predictor(agent_data.state_predictor);
+                    warn!(?side, ?agent_name, "running agent");
+                    let action = agent(state_predictor(&game, side), side)?;
+                    warn!(?side, ?action, "applying agent action");
+                    let response = requests::handle_action(
+                        &mut database,
+                        game.player(side).id,
+                        Some(game_id),
+                        action,
+                    )?;
+                    requests::send_player_response(response.opponent_response).await;
+                    requests::send_player_response(Some((
+                        game.player(side).id,
+                        response.command_list,
+                    )))
+                    .await
+                }
+            }
+        }
+
+        if !took_action {
             return Ok(());
         }
     }

@@ -31,7 +31,7 @@ use crate::{mutations, queries};
 pub fn encounter_boost() -> Ability {
     Ability {
         text: AbilityText::TextFn(|g, s| {
-            let boost = queries::attack_boost(g, s.card_id()).expect("attack_boost");
+            let boost = queries::attack_boost(g, s.card_id()).unwrap_or_default();
             vec![
                 cost(boost.cost).into(),
                 add_number(boost.bonus),
@@ -109,7 +109,7 @@ pub fn end_raid() -> Ability {
 /// [CardState::boost_count]. Panics if this card has no attack boost defined.
 fn add_boost(game: &GameState, _: Scope, card_id: &CardId, current: AttackValue) -> AttackValue {
     let boost_count = queries::boost_count(game, *card_id);
-    let bonus = queries::attack_boost(game, *card_id).expect("Expected boost").bonus;
+    let bonus = queries::attack_boost(game, *card_id).unwrap_or_default().bonus;
     current + (boost_count * bonus)
 }
 

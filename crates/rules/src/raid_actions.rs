@@ -262,7 +262,8 @@ fn next_encounter(
     let defenders = game.defender_list(game.raid()?.target);
     let position = defenders.iter().enumerate().rev().find(|(index, card_id)| {
         less_than.map_or(true, |less_than| *index < less_than)
-            && (game.card(**card_id).is_face_up() || raid_phases::can_summon_defender(game, *index))
+            && (game.card(**card_id).is_face_up()
+                || raid_phases::can_summon_defender(game, *index).unwrap_or(false))
     });
 
     Ok(if let Some((index, _)) = position { constructor(index) } else { RaidPhase::Access })

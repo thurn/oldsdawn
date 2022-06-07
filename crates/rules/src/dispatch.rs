@@ -53,7 +53,7 @@ pub fn invoke_event<D: Debug, E: EventData<D>>(game: &mut GameState, event: E) -
     for i in 0..count {
         let delegate_context = game.delegate_cache.get(event.kind(), i);
         let scope = delegate_context.scope;
-        let functions = E::extract(&delegate_context.delegate).expect("delegate");
+        let functions = E::extract(&delegate_context.delegate).expect("Delegate not in cache!");
         let data = event.data();
         if (functions.requirement)(game, scope, data) {
             (functions.mutation)(game, scope, data)?;
@@ -77,7 +77,7 @@ pub fn perform_query<D: Debug, R: Debug, E: QueryData<D, R>>(
     for i in 0..count {
         let delegate_context = game.delegate_cache.get(query.kind(), i);
         let scope = delegate_context.scope;
-        let functions = E::extract(&delegate_context.delegate).expect("delegate");
+        let functions = E::extract(&delegate_context.delegate).expect("Delegate not in cache!");
         let data = query.data();
         if (functions.requirement)(game, scope, data) {
             result = (functions.transformation)(game, scope, data, result);

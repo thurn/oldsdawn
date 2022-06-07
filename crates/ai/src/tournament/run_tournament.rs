@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use anyhow::Result;
 use cards::{decklists, initialize};
 use data::agent_definition::{AgentData, AgentName, GameStatePredictorName};
 use data::game::GameState;
@@ -22,7 +23,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Running AI match");
     initialize::run();
     let mut game = decklists::canonical_game()?;
-    run_games(&mut game, 10, AgentName::AlphaBeta, AgentName::MonteCarlo, RunGames::PrintActions);
+    run_games(&mut game, 10, AgentName::AlphaBeta, AgentName::MonteCarlo, RunGames::PrintActions)?;
     Ok(())
 }
 
@@ -38,14 +39,14 @@ pub fn run_games(
     one: AgentName,
     two: AgentName,
     config: RunGames,
-) {
+) -> Result<()> {
     for _ in 0..count {
         game.overlord.agent =
             Some(AgentData { name: one, state_predictor: GameStatePredictorName::Omniscient });
         game.champion.agent =
             Some(AgentData { name: two, state_predictor: GameStatePredictorName::Omniscient });
 
-        let outcome = matchup::run(game.clone(), config);
+        let outcome = matchup::run(game.clone(), config)?;
         if config == RunGames::PrintActions {
             println!(">>> {}", outcome);
         }
@@ -53,9 +54,11 @@ pub fn run_games(
         game.overlord.agent.unwrap().name = two;
         game.champion.agent.unwrap().name = one;
 
-        let outcome = matchup::run(game.clone(), config);
+        let outcome = matchup::run(game.clone(), config)?;
         if config == RunGames::PrintActions {
             println!(">>> {}", outcome);
         }
     }
+
+    Ok(())
 }

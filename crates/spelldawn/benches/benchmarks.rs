@@ -43,7 +43,8 @@ pub fn random_actions(c: &mut Criterion) {
                 AgentName::PickRandom,
                 AgentName::PickRandom,
                 RunGames::NoPrint,
-            );
+            )
+            .expect("Error running games");
         })
     });
     group.finish();

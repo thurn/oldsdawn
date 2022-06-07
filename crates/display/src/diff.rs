@@ -45,8 +45,8 @@ pub fn execute(
     game: &GameState,
     old: Option<&FullSync>,
     new: &FullSync,
-) {
-    commands.apply_parallel_moves();
+) -> Result<()> {
+    commands.apply_parallel_moves()?;
 
     if let Some(update) = diff_update_game_view_command(old.map(|old| &old.game), Some(&new.game)) {
         commands.push(UpdateType::General, Command::UpdateGameView(update));
@@ -66,18 +66,20 @@ pub fn execute(
         game,
         old.map(|old| &old.position_overrides),
         &new.position_overrides,
-    );
+    )?;
 
     // Always send ability card positions. Ability cards are moved into their owning
     // card when played, but the diff algorithm doesn't know about this happening.
     // So we need to return them to hand if they are still playable.
-    add_ability_card_positions(commands, game, new).expect("Ability position error");
+    add_ability_card_positions(commands, game, new)?;
 
-    commands.apply_parallel_moves();
+    commands.apply_parallel_moves()?;
 
     if old.map(|old| &old.interface) != Some(&new.interface) {
         commands.push(UpdateType::General, Command::RenderInterface(new.interface.clone()));
     }
+
+    Ok(())
 }
 
 fn diff_update_game_view_command(
@@ -207,7 +209,7 @@ fn diff_card_position_updates(
     game: &GameState,
     old: Option<&BTreeMap<Id, ObjectPosition>>,
     new: &BTreeMap<Id, ObjectPosition>,
-) {
+) -> Result<()> {
     let mut ids = vec![
         Id::Identity(PlayerName::User.into()),
         Id::Identity(PlayerName::Opponent.into()),
@@ -219,8 +221,10 @@ fn diff_card_position_updates(
     ids.extend(game.all_card_ids().map(|id| Id::CardId(adapters::adapt_card_id(id))));
 
     for id in ids {
-        push_move_command(commands, game, old, new, id);
+        push_move_command(commands, game, old, new, id)?;
     }
+
+    Ok(())
 }
 
 /// Appends a command to update the position for the provided `id` if it has
@@ -231,14 +235,16 @@ fn push_move_command(
     old: Option<&BTreeMap<Id, ObjectPosition>>,
     new: &BTreeMap<Id, ObjectPosition>,
     id: Id,
-) {
+) -> Result<()> {
     match old {
-        None if new.contains_key(&id) => move_to_position(commands, game, id, new.get(&id)),
+        None if new.contains_key(&id) => move_to_position(commands, game, id, new.get(&id))?,
         Some(old) if old.get(&id) != new.get(&id) => {
-            move_to_position(commands, game, id, new.get(&id))
+            move_to_position(commands, game, id, new.get(&id))?;
         }
         _ => {}
     }
+
+    Ok(())
 }
 
 /// Appends a command to move `id` to its indicated `position` (if provided) or
@@ -248,16 +254,13 @@ fn move_to_position(
     game: &GameState,
     id: Id,
     position: Option<&ObjectPosition>,
-) {
+) -> Result<()> {
     let new_position = if let Some(new) = position {
         new.clone()
     } else {
         match id {
             Id::CardId(card_id) => {
-                let id = adapters::to_server_card_id(Some(card_id))
-                    .expect("id")
-                    .as_card_id()
-                    .expect("card_id");
+                let id = adapters::to_server_card_id(Some(card_id))?.as_card_id()?;
                 if let Some(card_position) =
                     full_sync::adapt_position(game.card(id), commands.user_side)
                 {
@@ -265,7 +268,7 @@ fn move_to_position(
                 } else {
                     // Card has no position, e.g. because it has been shuffled back into the deck.
                     // The effect which causes this transition is responsible for destroying it.
-                    return;
+                    return Ok(());
                 }
             }
             Id::Identity(name) => ObjectPosition {
@@ -290,6 +293,7 @@ fn move_to_position(
     };
 
     commands.move_object(UpdateType::General, id, new_position);
+    Ok(())
 }
 
 fn add_ability_card_positions(

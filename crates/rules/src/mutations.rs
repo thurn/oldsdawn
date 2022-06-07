@@ -39,6 +39,7 @@ use data::primitives::{
     RoomLocation, Side, TurnNumber,
 };
 use data::updates::GameUpdate;
+use data::with_error::WithError;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
 
@@ -280,11 +281,11 @@ pub fn set_prompt(game: &mut GameState, side: Side, set_prompt: SetPrompt, promp
     }
 }
 
-/// Ends the current raid. Panics if no raid is currently active.
+/// Ends the current raid. Returns an error if no raid is currently active.
 #[instrument(skip(game))]
 pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) -> Result<()> {
     info!("end_raid");
-    let raid_id = game.raid().expect("Active raid").raid_id;
+    let raid_id = game.raid()?.raid_id;
     match outcome {
         RaidOutcome::Success => dispatch::invoke_event(game, RaidSuccessEvent(raid_id))?,
         RaidOutcome::Failure => dispatch::invoke_event(game, RaidFailureEvent(raid_id))?,
@@ -593,9 +594,11 @@ pub fn deal_damage(
 /// minion.
 ///
 /// Panics if no active raid is ongoing or if this minion is not in play.
-pub fn set_raid_encountering_minion(game: &mut GameState, minion_id: CardId) {
-    let (room_id, index) = queries::minion_position(game, minion_id).expect("position");
-    let raid = game.data.raid.as_mut().expect("raid");
+pub fn set_raid_encountering_minion(game: &mut GameState, minion_id: CardId) -> Result<()> {
+    let (room_id, index) =
+        queries::minion_position(game, minion_id).with_error(|| "Minion has no position")?;
+    let raid = game.raid_mut()?;
     raid.target = room_id;
     raid.phase = RaidPhase::Encounter(index);
+    Ok(())
 }

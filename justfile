@@ -194,6 +194,7 @@ benchmark:
     cargo criterion --no-run -p spelldawn
     codesign -f -s - `find target/release/deps -name '*benchmarks*'`
     cargo criterion -p spelldawn
+    /bin/rm -r \~
 
 # Checks documentation lints, haven't figured out how to do this with a single command
 check-docs:

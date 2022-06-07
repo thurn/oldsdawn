@@ -295,14 +295,14 @@ impl GameState {
         }
     }
 
-    /// Returns the identity card for the provided Side
-    ///
-    /// Panics if no identity card is present for this player.
-    pub fn identity(&self, side: Side) -> &CardState {
-        self.cards(side)
-            .iter()
-            .find(|c| c.position().kind() == CardPositionKind::Identity)
-            .expect("Identity Card")
+    /// Returns identity cards for the provided Side
+    pub fn identities(&self, side: Side) -> impl Iterator<Item = &CardState> {
+        self.cards(side).iter().filter(|c| c.position().kind() == CardPositionKind::Identity)
+    }
+
+    /// Returns an arbitrary identity card for the provided `side`, if any.
+    pub fn first_identity(&self, side: Side) -> Result<&CardState> {
+        self.identities(side).next().with_error(|| format!("No identity card for {:?}", side))
     }
 
     /// Look up [CardState] for a card. Panics if this card is not present in

@@ -321,7 +321,7 @@ pub fn initiate_raid_with_callback(
     target: CardTarget,
     on_begin: impl Fn(&mut GameState, RaidId),
 ) -> Result<()> {
-    raid_actions::initiate_raid(game, target.room_id().expect("Room Target"), |game, raid_id| {
+    raid_actions::initiate_raid(game, target.room_id()?, |game, raid_id| {
         game.ability_state_mut(scope.ability_id()).raid_id = Some(raid_id);
         on_begin(game, raid_id);
     })

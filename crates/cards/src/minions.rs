@@ -23,6 +23,7 @@ use data::primitives::{
     CardType, ColdDamage, DamageType, Faction, Rarity, RoomLocation, School, Side,
 };
 use data::text::{DamageWord, Keyword};
+use data::with_error::WithError;
 use display::rexard_images;
 use display::rexard_images::RexardPack;
 use rules::helpers::*;
@@ -110,8 +111,8 @@ pub fn temporal_vortex() -> CardDefinition {
                 combat(|g, s, _| {
                     let cards = g.hand(Side::Overlord).chain(g.discard_pile(Side::Overlord));
                     if let Some(minion_id) = queries::highest_cost(cards) {
-                        let (room_id, index) =
-                            queries::minion_position(g, s.card_id()).expect("position");
+                        let (room_id, index) = queries::minion_position(g, s.card_id())
+                            .with_error(|| "Minion not found")?;
                         mutations::turn_face_down(g, minion_id); // Card may be face-up in Crypt
                         mutations::move_card(
                             g,
@@ -120,7 +121,7 @@ pub fn temporal_vortex() -> CardDefinition {
                         )?;
                         g.move_card_to_index(minion_id, index);
                         mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts)?;
-                        mutations::set_raid_encountering_minion(g, s.card_id());
+                        mutations::set_raid_encountering_minion(g, s.card_id())?;
                     }
                     Ok(())
                 }),

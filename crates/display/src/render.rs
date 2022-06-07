@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use anyhow::Result;
 use dashmap::DashMap;
 use data::game::GameState;
 use data::primitives::{PlayerId, Side};
 use data::updates::{GameUpdate, GameUpdateKind};
+use data::with_error::WithError;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_command::Command;
 
@@ -35,18 +37,18 @@ pub fn on_disconnect(player_id: PlayerId) {
 /// the state of the provided `game`, returning a command to update the state of
 /// every active game object. Caches the response for use by future incremental
 /// updates via [render_updates].
-pub fn connect(game: &GameState, user_side: Side) -> Vec<Command> {
+pub fn connect(game: &GameState, user_side: Side) -> Result<Vec<Command>> {
     let user_id = game.player(user_side).id;
     let options = ResponseOptions::ANIMATE | ResponseOptions::IS_INITIAL_CONNECT;
-    let sync = full_sync::run(game, user_side, options);
+    let sync = full_sync::run(game, user_side, options)?;
     let mut builder = ResponseBuilder::new(user_side, CardUpdateTypes::default(), options);
-    diff::execute(&mut builder, game, None, &sync);
+    diff::execute(&mut builder, game, None, &sync)?;
     RESPONSES.insert(user_id, sync);
     builder.build()
 }
 
-pub fn render_updates(game: &GameState, user_side: Side) -> Vec<Command> {
-    let mut updates = game.updates.list().expect("Update tracking is not enabled").clone();
+pub fn render_updates(game: &GameState, user_side: Side) -> Result<Vec<Command>> {
+    let mut updates = game.updates.list().with_error(|| "Game updates not enabled")?.clone();
     updates.sort_by_key(GameUpdate::kind);
     let mut card_update_types = CardUpdateTypes::default();
     for update in &updates {
@@ -56,15 +58,15 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Vec<Command> {
     let user_id = game.player(user_side).id;
     let options = ResponseOptions::ANIMATE;
     let mut builder = ResponseBuilder::new(user_side, card_update_types, options);
-    let sync = full_sync::run(game, user_side, options);
+    let sync = full_sync::run(game, user_side, options)?;
 
     for update in &updates {
         if update.kind() == GameUpdateKind::GeneralUpdate {
             let reference = RESPONSES.get(&user_id);
             let previous_response = reference.as_deref();
-            diff::execute(&mut builder, game, previous_response, &sync);
+            diff::execute(&mut builder, game, previous_response, &sync)?;
         } else {
-            animations::render(&mut builder, update, game, user_side);
+            animations::render(&mut builder, update, game, user_side)?;
         }
     }
 

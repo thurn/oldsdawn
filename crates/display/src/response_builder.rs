@@ -14,9 +14,11 @@
 
 use std::collections::HashMap;
 
+use anyhow::Result;
 use bitflags::bitflags;
 use data::card_state::CardState;
 use data::primitives::{CardId, Side};
+use data::with_error::WithError;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
@@ -186,7 +188,7 @@ impl ResponseBuilder {
         );
     }
 
-    pub fn apply_parallel_moves(&mut self) {
+    pub fn apply_parallel_moves(&mut self) -> Result<()> {
         if !self.moves.is_empty() {
             self.moves.sort_by_key(|(_, id, _)| *id);
             let commands = self
@@ -199,7 +201,9 @@ impl ResponseBuilder {
 
             match commands.len() {
                 0 => {}
-                1 => self.commands.push(commands.into_iter().next().expect("command")),
+                1 => self
+                    .commands
+                    .push(commands.into_iter().next().with_error(|| "Command expected")?),
                 _ => self.commands.push(Command::RunInParallel(RunInParallelCommand {
                     commands: commands
                         .into_iter()
@@ -210,6 +214,8 @@ impl ResponseBuilder {
 
             self.moves.clear();
         }
+
+        Ok(())
     }
 
     pub fn adapt_player_name(&self, side: Side) -> i32 {
@@ -217,9 +223,9 @@ impl ResponseBuilder {
     }
 
     /// Converts this builder into a [Command] vector
-    pub fn build(mut self) -> Vec<Command> {
-        self.apply_parallel_moves();
-        self.commands
+    pub fn build(mut self) -> Result<Vec<Command>> {
+        self.apply_parallel_moves()?;
+        Ok(self.commands)
     }
 
     fn process_move(
