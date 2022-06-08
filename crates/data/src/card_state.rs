@@ -74,6 +74,7 @@ impl CardPosition {
         self.kind() == CardPositionKind::Hand
     }
 
+    // True if a card is currently shuffled into a deck
     pub fn shuffled_into_deck(&self) -> bool {
         self.kind() == CardPositionKind::DeckUnknown
     }
@@ -88,6 +89,7 @@ impl CardPosition {
         self.kind() == CardPositionKind::DiscardPile
     }
 
+    /// True if this card is current in the indicated room
     pub fn is_room_occupant(&self, room_id: RoomId) -> bool {
         matches!(
             self,
@@ -101,6 +103,7 @@ impl CardPosition {
         self.kind() == CardPositionKind::Scored
     }
 
+    /// True if this card is an identity card
     pub fn is_identity(&self) -> bool {
         self.kind() == CardPositionKind::Identity
     }

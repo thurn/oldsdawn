@@ -411,7 +411,11 @@ pub fn face_down_ability_cost() -> Delegate {
 
 /// Sets the card prompt for the `side` player to show the provided non-`None`
 /// `actions`.
-pub fn set_card_prompt(game: &mut GameState, side: Side, actions: Vec<Option<CardPromptAction>>) {
+pub fn set_card_prompt(
+    game: &mut GameState,
+    side: Side,
+    actions: Vec<Option<CardPromptAction>>,
+) -> Result<()> {
     mutations::set_prompt(
         game,
         side,

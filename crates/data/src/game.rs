@@ -301,7 +301,7 @@ impl GameState {
     }
 
     /// Returns an arbitrary identity card for the provided `side`, if any.
-    pub fn first_identity(&self, side: Side) -> Result<&CardState> {
+    pub fn some_identity(&self, side: Side) -> Result<&CardState> {
         self.identities(side).next().with_error(|| format!("No identity card for {:?}", side))
     }
 

@@ -14,7 +14,7 @@
 
 //! Helpers for converting between server & client representations
 
-use anyhow::{anyhow, bail, Result};
+use anyhow::{bail, Result};
 use data::fail;
 use data::primitives::{AbilityId, AbilityIndex, CardId, GameId, PlayerId, RoomId, Side};
 use data::with_error::WithError;
@@ -158,7 +158,7 @@ pub fn to_server_card_id(card_id: Option<CardIdentifier>) -> Result<ServerCardId
             }))
         })
     } else {
-        Err(anyhow!("Missing Required CardId"))
+        fail!("Missing Required CardId")
     }
 }
 

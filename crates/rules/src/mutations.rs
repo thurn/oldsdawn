@@ -39,6 +39,7 @@ use data::primitives::{
     RoomLocation, Side, TurnNumber,
 };
 use data::updates::GameUpdate;
+use data::verify;
 use data::with_error::WithError;
 use rand::seq::IteratorRandom;
 use tracing::{info, instrument};
@@ -118,8 +119,8 @@ pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) -> 
     move_cards(game, cards, CardPosition::DeckUnknown(side))?;
     for card_id in cards {
         game.card_mut(*card_id).turn_face_down();
-        set_revealed_to(game, *card_id, Side::Overlord, false);
-        set_revealed_to(game, *card_id, Side::Champion, false);
+        set_revealed_to(game, *card_id, Side::Overlord, false)?;
+        set_revealed_to(game, *card_id, Side::Champion, false)?;
     }
     shuffle_deck(game, side)
 }
@@ -133,17 +134,19 @@ pub fn shuffle_deck(game: &mut GameState, side: Side) -> Result<()> {
 }
 
 /// Switches a card to be face-up and revealed to all players.
-pub fn turn_face_up(game: &mut GameState, card_id: CardId) {
+pub fn turn_face_up(game: &mut GameState, card_id: CardId) -> Result<()> {
     let was_revealed_to_opponent = game.card(card_id).is_revealed_to(card_id.side.opponent());
     game.card_mut(card_id).turn_face_up();
     if !was_revealed_to_opponent {
         game.updates.push(GameUpdate::RevealToOpponent(card_id));
     }
+    Ok(())
 }
 
 /// Switches a card to be face-down
-pub fn turn_face_down(game: &mut GameState, card_id: CardId) {
+pub fn turn_face_down(game: &mut GameState, card_id: CardId) -> Result<()> {
     game.card_mut(card_id).turn_face_down();
+    Ok(())
 }
 
 /// Updates the 'revealed' state of a card to be visible to the indicated `side`
@@ -152,13 +155,20 @@ pub fn turn_face_down(game: &mut GameState, card_id: CardId) {
 /// Appends [GameUpdate::RevealToOpponent] if the new state is revealed to the
 /// opponent.
 #[instrument(skip(game))]
-pub fn set_revealed_to(game: &mut GameState, card_id: CardId, side: Side, revealed: bool) {
+pub fn set_revealed_to(
+    game: &mut GameState,
+    card_id: CardId,
+    side: Side,
+    revealed: bool,
+) -> Result<()> {
     let current = game.card(card_id).is_revealed_to(side);
     game.card_mut(card_id).set_revealed_to(side, revealed);
 
     if side != card_id.side && !current && revealed {
         game.updates.push(GameUpdate::RevealToOpponent(card_id));
     }
+
+    Ok(())
 }
 
 /// Helper function to draw `count` cards from the top of a player's deck and
@@ -177,7 +187,7 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Result<Vec<Ca
     }
 
     for card_id in &card_ids {
-        set_revealed_to(game, *card_id, side, true);
+        set_revealed_to(game, *card_id, side, true)?;
         move_card(game, *card_id, CardPosition::Hand(side))?;
     }
 
@@ -186,29 +196,36 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Result<Vec<Ca
 
 /// Lose action points if a player has more than 0.
 #[instrument(skip(game))]
-pub fn lose_action_points_if_able(game: &mut GameState, side: Side, amount: ActionCount) {
+pub fn lose_action_points_if_able(
+    game: &mut GameState,
+    side: Side,
+    amount: ActionCount,
+) -> Result<()> {
     if game.player(side).actions > 0 {
-        spend_action_points(game, side, amount)
+        spend_action_points(game, side, amount)?;
     }
+    Ok(())
 }
 
 /// Spends a player's action points.
 ///
-/// Panics if sufficient action points are not available.
+/// Returns an error if sufficient action points are not available.
 #[instrument(skip(game))]
-pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount) {
+pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount) -> Result<()> {
     info!(?side, ?amount, "spend_action_points");
-    assert!(game.player(side).actions >= amount, "Insufficient action points available");
+    verify!(game.player(side).actions >= amount, "Insufficient action points available");
     game.player_mut(side).actions -= amount;
+    Ok(())
 }
 
 /// Adds points to a player's score and checks for the Game Over condition.
-pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) {
+pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) -> Result<()> {
     game.player_mut(side).score += amount;
     if game.player(side).score >= 7 {
         game.data.phase = GamePhase::GameOver(GameOverData { winner: side });
         game.updates.push(GameUpdate::GameOver(side));
     }
+    Ok(())
 }
 
 /// Behavior when a card has no stored mana remaining after [take_stored_mana].
@@ -268,17 +285,23 @@ pub enum SetPrompt {
 
 /// Sets the current prompt of the [SetPrompt] type for the `side` player.
 /// Panics if a prompt is already set for this player.
-pub fn set_prompt(game: &mut GameState, side: Side, set_prompt: SetPrompt, prompt: GamePrompt) {
+pub fn set_prompt(
+    game: &mut GameState,
+    side: Side,
+    set_prompt: SetPrompt,
+    prompt: GamePrompt,
+) -> Result<()> {
     match set_prompt {
         SetPrompt::GamePrompt => {
-            assert!(game.player(side).game_prompt.is_none(), "Prompt already present");
+            verify!(game.player(side).game_prompt.is_none(), "Prompt already present");
             game.player_mut(side).game_prompt = Some(prompt);
         }
         SetPrompt::CardPrompt => {
-            assert!(game.player(side).card_prompt.is_none(), "Prompt already present");
+            verify!(game.player(side).card_prompt.is_none(), "Prompt already present");
             game.player_mut(side).card_prompt = Some(prompt);
         }
     }
+    Ok(())
 }
 
 /// Ends the current raid. Returns an error if no raid is currently active.
@@ -308,9 +331,9 @@ pub fn deal_opening_hands(game: &mut GameState) -> Result<()> {
         ],
     };
     draw_cards(game, Side::Overlord, constants::STARTING_HAND_SIZE)?;
-    set_prompt(game, Side::Overlord, SetPrompt::GamePrompt, prompt.clone());
+    set_prompt(game, Side::Overlord, SetPrompt::GamePrompt, prompt.clone())?;
     draw_cards(game, Side::Champion, constants::STARTING_HAND_SIZE)?;
-    set_prompt(game, Side::Champion, SetPrompt::GamePrompt, prompt);
+    set_prompt(game, Side::Champion, SetPrompt::GamePrompt, prompt)?;
     Ok(())
 }
 
@@ -433,7 +456,7 @@ pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) ->
     let card = game.card(card_id);
     if let Some(scheme_points) = crate::get(card.name).config.stats.scheme_points {
         if card.data.card_level >= scheme_points.level_requirement {
-            turn_face_up(game, card_id);
+            turn_face_up(game, card_id)?;
             move_card(game, card_id, CardPosition::Scored(Side::Overlord))?;
             dispatch::invoke_event(game, OverlordScoreCardEvent(card_id))?;
             dispatch::invoke_event(
@@ -441,7 +464,7 @@ pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) ->
                 ScoreCardEvent(ScoreCard { player: Side::Overlord, card_id }),
             )?;
             game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
-            score_points(game, Side::Overlord, scheme_points.points);
+            score_points(game, Side::Overlord, scheme_points.points)?;
         }
     }
 
@@ -464,14 +487,14 @@ pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> Result<bool>
 
         match queries::mana_cost(game, card_id) {
             None => {
-                turn_face_up(game, card_id);
+                turn_face_up(game, card_id)?;
                 true
             }
             Some(cost)
                 if cost <= mana::get(game, card_id.side, ManaPurpose::PayForCard(card_id)) =>
             {
                 mana::spend(game, card_id.side, ManaPurpose::PayForCard(card_id), cost);
-                turn_face_up(game, card_id);
+                turn_face_up(game, card_id)?;
                 true
             }
             _ => false,
@@ -490,7 +513,7 @@ pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> Result<bool>
 /// Equivalent function to [try_unveil_project] which ignores costs.
 pub fn unveil_project_for_free(game: &mut GameState, card_id: CardId) -> Result<bool> {
     let result = if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
-        turn_face_up(game, card_id);
+        turn_face_up(game, card_id)?;
         true
     } else {
         false
@@ -554,7 +577,7 @@ pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion)
     }
 
     dispatch::invoke_event(game, SummonMinionEvent(card_id))?;
-    turn_face_up(game, card_id);
+    turn_face_up(game, card_id)?;
     Ok(())
 }
 

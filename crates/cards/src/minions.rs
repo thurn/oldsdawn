@@ -77,8 +77,7 @@ pub fn time_golem() -> CardDefinition {
                             lose_mana_prompt(g, Side::Champion, 5),
                             lose_actions_prompt(g, Side::Champion, 2),
                         ],
-                    );
-                    Ok(())
+                    )
                 }),
             ),
         ],
@@ -113,7 +112,7 @@ pub fn temporal_vortex() -> CardDefinition {
                     if let Some(minion_id) = queries::highest_cost(cards) {
                         let (room_id, index) = queries::minion_position(g, s.card_id())
                             .with_error(|| "Minion not found")?;
-                        mutations::turn_face_down(g, minion_id); // Card may be face-up in Crypt
+                        mutations::turn_face_down(g, minion_id)?; // Card may be face-up in Crypt
                         mutations::move_card(
                             g,
                             minion_id,

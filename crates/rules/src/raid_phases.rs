@@ -116,7 +116,7 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
     };
 
     for card_id in &accessed {
-        mutations::set_revealed_to(game, *card_id, Side::Champion, true);
+        mutations::set_revealed_to(game, *card_id, Side::Champion, true)?;
     }
 
     Ok(accessed)
@@ -135,7 +135,7 @@ pub fn set_raid_prompt(game: &mut GameState) -> Result<()> {
         RaidPhase::Access => (Side::Champion, build_access_prompt(game)?),
     };
 
-    mutations::set_prompt(game, active_player, SetPrompt::GamePrompt, prompt);
+    mutations::set_prompt(game, active_player, SetPrompt::GamePrompt, prompt)?;
     Ok(())
 }
 

@@ -55,8 +55,7 @@ pub fn meditation() -> CardDefinition {
             text!("Gain", mana_text(5), ".", "Lose", actions_text(1), reminder("(if able).")),
             on_cast(|g, s, _| {
                 mana::gain(g, s.side(), 5);
-                mutations::lose_action_points_if_able(g, s.side(), 1);
-                Ok(())
+                mutations::lose_action_points_if_able(g, s.side(), 1)
             }),
         )],
         config: CardConfig::default(),
@@ -176,8 +175,7 @@ pub fn preparation() -> CardDefinition {
             text!("Draw 4 cards.", "Lose", actions_text(1), reminder("(if able).")),
             on_cast(|g, s, _| {
                 mutations::draw_cards(g, s.side(), 4)?;
-                mutations::lose_action_points_if_able(g, s.side(), 1);
-                Ok(())
+                mutations::lose_action_points_if_able(g, s.side(), 1)
             }),
         )],
         config: CardConfig::default(),

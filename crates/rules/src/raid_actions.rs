@@ -44,7 +44,7 @@ pub fn initiate_raid_action(
         "Cannot initiate raid for {:?}",
         user_side
     );
-    mutations::spend_action_points(game, user_side, 1);
+    mutations::spend_action_points(game, user_side, 1)?;
     initiate_raid(game, target_room, |_, _| {})?;
     Ok(())
 }
@@ -229,7 +229,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id))?;
     dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }))?;
     game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
-    mutations::score_points(game, Side::Champion, scheme_points.points);
+    mutations::score_points(game, Side::Champion, scheme_points.points)?;
     Ok(())
 }
 

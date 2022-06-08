@@ -202,6 +202,7 @@ impl CardDefinition {
         &self.abilities[index.value()]
     }
 
+    /// Iterator over all [AbilityId]s of a card.
     pub fn ability_ids(&self, card_id: CardId) -> impl Iterator<Item = AbilityId> {
         (0..self.abilities.len()).map(move |i| AbilityId::new(card_id, i))
     }

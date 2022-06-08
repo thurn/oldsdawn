@@ -112,7 +112,7 @@ fn update_game_view(game: &GameState, user_side: Side) -> Result<UpdateGameViewC
 
 /// Builds a [PlayerView] for a given player
 fn player_view(game: &GameState, side: Side) -> Result<PlayerView> {
-    let identity = game.first_identity(side)?;
+    let identity = game.some_identity(side)?;
     Ok(PlayerView {
         side: adapters::adapt_side(side).into(),
         player_info: Some(PlayerInfo {

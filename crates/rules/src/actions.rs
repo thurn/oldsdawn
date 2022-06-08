@@ -110,7 +110,7 @@ fn draw_card_action(game: &mut GameState, user_side: Side) -> Result<()> {
         "Cannot draw card for {:?}",
         user_side
     );
-    mutations::spend_action_points(game, user_side, 1);
+    mutations::spend_action_points(game, user_side, 1)?;
     let cards = mutations::draw_cards(game, user_side, 1)?;
     if let Some(card_id) = cards.get(0) {
         dispatch::invoke_event(game, DrawCardActionEvent(*card_id))?;
@@ -149,7 +149,7 @@ fn play_card_action(
         }
     }
 
-    mutations::spend_action_points(game, user_side, definition.cost.actions);
+    mutations::spend_action_points(game, user_side, definition.cost.actions)?;
     dispatch::invoke_event(game, PayCardCostsEvent(card_id))?;
     dispatch::invoke_event(game, CastCardEvent(CardPlayed { card_id, target }))?;
 
@@ -165,7 +165,7 @@ fn play_card_action(
     };
 
     if enters_face_up {
-        mutations::turn_face_up(game, card_id);
+        mutations::turn_face_up(game, card_id)?;
     }
 
     mutations::move_card(game, card_id, new_position)?;
@@ -193,7 +193,7 @@ fn activate_ability_action(
     if let AbilityType::Activated(cost, _) =
         &crate::get(card.name).ability(ability_id.index).ability_type
     {
-        mutations::spend_action_points(game, user_side, cost.actions);
+        mutations::spend_action_points(game, user_side, cost.actions)?;
         if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
             mana::spend(game, user_side, ManaPurpose::ActivateAbility(ability_id), mana);
         }
@@ -221,7 +221,7 @@ fn gain_mana_action(game: &mut GameState, user_side: Side) -> Result<()> {
         "Cannot gain mana for {:?}",
         user_side
     );
-    mutations::spend_action_points(game, user_side, 1);
+    mutations::spend_action_points(game, user_side, 1)?;
     mana::gain(game, user_side, 1);
     mutations::check_end_turn(game)?;
     Ok(())
@@ -234,7 +234,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
         "Cannot level up room for {:?}",
         user_side
     );
-    mutations::spend_action_points(game, user_side, 1);
+    mutations::spend_action_points(game, user_side, 1)?;
     mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1);
     mutations::level_up_room(game, room_id)?;
 
@@ -250,7 +250,7 @@ fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()
         "Cannot spend action point for {:?}",
         user_side
     );
-    mutations::spend_action_points(game, user_side, 1);
+    mutations::spend_action_points(game, user_side, 1)?;
     mutations::check_end_turn(game)?;
     Ok(())
 }
