@@ -17,8 +17,11 @@
 
 use std::cmp;
 
+use anyhow::Result;
 use data::game::{GameState, SpecificRaidMana};
 use data::primitives::{AbilityId, CardId, ManaValue, RaidId, RoomId, Side};
+use data::verify;
+use data::with_error::WithError;
 
 /// Identifies possible reasons why a player's mana value would need to be
 /// queried or spent.
@@ -61,15 +64,26 @@ pub fn get(game: &GameState, side: Side, purpose: ManaPurpose) -> ManaValue {
 /// only be used for a certain type of action is preferred, then raid-specific
 /// mana, then general mana.
 ///
-/// Panics if insufficient mana is available.
-pub fn spend(game: &mut GameState, side: Side, purpose: ManaPurpose, amount: ManaValue) {
-    assert!(get(game, side, purpose) >= amount);
+/// Returns an error if insufficient mana is available.
+pub fn spend(
+    game: &mut GameState,
+    side: Side,
+    purpose: ManaPurpose,
+    amount: ManaValue,
+) -> Result<()> {
+    verify!(get(game, side, purpose) >= amount);
     let mut to_spend = amount;
 
     match (&game.data.raid, &game.player(side).mana_state.specific_raid_mana) {
         (Some(raid_data), Some(raid_mana)) if raid_data.raid_id == raid_mana.raid_id => {
             to_spend = try_spend(
-                &mut game.player_mut(side).mana_state.specific_raid_mana.as_mut().unwrap().mana,
+                &mut game
+                    .player_mut(side)
+                    .mana_state
+                    .specific_raid_mana
+                    .as_mut()
+                    .with_error(|| "Expected raid-specific mana")?
+                    .mana,
                 to_spend,
             );
         }
@@ -77,11 +91,13 @@ pub fn spend(game: &mut GameState, side: Side, purpose: ManaPurpose, amount: Man
     }
 
     game.player_mut(side).mana_state.base_mana -= to_spend;
+    Ok(())
 }
 
 /// Causes a player to lose up to a given amount of mana.
 pub fn lose_upto(game: &mut GameState, side: Side, purpose: ManaPurpose, amount: ManaValue) {
-    spend(game, side, purpose, cmp::min(get(game, side, purpose), amount));
+    spend(game, side, purpose, cmp::min(get(game, side, purpose), amount))
+        .expect("Error spending mana");
 }
 
 /// Adds the specified amount of base mana (no restrictions on use) for the

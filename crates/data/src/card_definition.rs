@@ -20,6 +20,7 @@
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 
+use anyhow::Result;
 use enum_kinds::EnumKind;
 
 use crate::card_name::CardName;
@@ -45,9 +46,9 @@ use crate::text::AbilityText;
 pub struct CustomCost<T> {
     /// Whether this cost can currently be paid
     pub can_pay: fn(&GameState, T) -> bool,
-    /// Mutate the game to pay this cost. May panic if `can_pay` would return
+    /// Mutate the game to pay this cost. May fail if `can_pay` would return
     /// false.
-    pub pay: fn(&mut GameState, T),
+    pub pay: fn(&mut GameState, T) -> Result<()>,
 }
 
 impl<T> Debug for CustomCost<T> {

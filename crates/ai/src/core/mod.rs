@@ -23,8 +23,7 @@ use crate::predictors::omniscient;
 pub mod legal_actions;
 pub mod types;
 
-/// Looks up the definition for an [AgentName]. Panics if no such agent is
-/// defined.
+/// Looks up the definition for an [AgentName].
 pub fn get_agent(name: AgentName) -> Agent {
     match name {
         AgentName::PickFirstAction => pick_first_action::execute,
@@ -34,8 +33,7 @@ pub fn get_agent(name: AgentName) -> Agent {
     }
 }
 
-/// Looks up the definition for a [GameStatePredictorName]. Panics if no such
-/// predictor is defined.
+/// Looks up the definition for a [GameStatePredictorName].
 pub fn get_game_state_predictor(name: GameStatePredictorName) -> GameStatePredictor {
     match name {
         GameStatePredictorName::Omniscient => omniscient::execute,

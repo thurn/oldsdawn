@@ -13,9 +13,7 @@
 // limitations under the License.
 
 //! Core game mutations. In general, functions in this module append updates to
-//! [GameState::updates]. Functions in this module panic if their preconditions
-//! are not met, the higher-level game UI is responsible for ensuring this does
-//! not happen.
+//! [GameState::updates].
 //!
 //! Generally, mutation functions are expected to invoke a delegate event
 //! *after* performing their mutation to inform other systems that game state
@@ -284,7 +282,7 @@ pub enum SetPrompt {
 }
 
 /// Sets the current prompt of the [SetPrompt] type for the `side` player.
-/// Panics if a prompt is already set for this player.
+/// Returns an error if a prompt is already set for this player.
 pub fn set_prompt(
     game: &mut GameState,
     side: Side,
@@ -449,9 +447,9 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) -> Result<()> {
 /// If the card has scheme points and the level requirement is met, the card is
 /// immediately scored and moved to the Overlord's score zone.
 ///
-/// Panics if this card cannot be leveled up.
+/// Returns an error if this card cannot be leveled up.
 pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) -> Result<()> {
-    assert!(flags::can_level_up_card(game, card_id));
+    verify!(flags::can_level_up_card(game, card_id));
     game.card_mut(card_id).data.card_level += amount;
     let card = game.card(card_id);
     if let Some(scheme_points) = crate::get(card.name).config.stats.scheme_points {
@@ -479,7 +477,7 @@ pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> Result<bool>
     let result = if game.card(card_id).is_face_down() && game.card(card_id).position().in_play() {
         if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
             if (custom_cost.can_pay)(game, card_id) {
-                (custom_cost.pay)(game, card_id);
+                (custom_cost.pay)(game, card_id)?;
             } else {
                 return Ok(false);
             }
@@ -493,7 +491,7 @@ pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> Result<bool>
             Some(cost)
                 if cost <= mana::get(game, card_id.side, ManaPurpose::PayForCard(card_id)) =>
             {
-                mana::spend(game, card_id.side, ManaPurpose::PayForCard(card_id), cost);
+                mana::spend(game, card_id.side, ManaPurpose::PayForCard(card_id), cost)?;
                 turn_face_up(game, card_id)?;
                 true
             }
@@ -563,16 +561,16 @@ pub enum SummonMinion {
 /// Turn a minion card in play face up, paying its costs based on the
 /// [SummonMinion] value provided.
 ///
-/// Panics if the indicated card is already face-up.
+/// Returns an error if the indicated card is already face-up.
 pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion) -> Result<()> {
-    assert!(game.card(card_id).is_face_down());
+    verify!(game.card(card_id).is_face_down());
     if costs == SummonMinion::PayCosts {
         if let Some(cost) = queries::mana_cost(game, card_id) {
-            mana::spend(game, Side::Overlord, ManaPurpose::PayForCard(card_id), cost);
+            mana::spend(game, Side::Overlord, ManaPurpose::PayForCard(card_id), cost)?;
         }
 
         if let Some(custom_cost) = &crate::card_definition(game, card_id).cost.custom_cost {
-            (custom_cost.pay)(game, card_id);
+            (custom_cost.pay)(game, card_id)?;
         }
     }
 
@@ -616,7 +614,8 @@ pub fn deal_damage(
 /// Mutates the phase of an ongoing raid to be encountering the `minion_id`
 /// minion.
 ///
-/// Panics if no active raid is ongoing or if this minion is not in play.
+/// Returns an error if no active raid is ongoing or if this minion is not in
+/// play.
 pub fn set_raid_encountering_minion(game: &mut GameState, minion_id: CardId) -> Result<()> {
     let (room_id, index) =
         queries::minion_position(game, minion_id).with_error(|| "Minion has no position")?;

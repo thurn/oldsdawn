@@ -118,7 +118,7 @@ pub fn encounter_action(
         EncounterAction::UseWeaponAbility(source_id, target_id) => {
             let cost = queries::cost_to_defeat_target(game, source_id, target_id)
                 .with_error(|| format!("{:?} cannot defeat target: {:?}", source_id, target_id))?;
-            mana::spend(game, user_side, ManaPurpose::UseWeapon(source_id), cost);
+            mana::spend(game, user_side, ManaPurpose::UseWeapon(source_id), cost)?;
             dispatch::invoke_event(
                 game,
                 UsedWeaponEvent(UsedWeapon {

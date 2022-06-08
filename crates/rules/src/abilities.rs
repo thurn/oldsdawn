@@ -106,7 +106,8 @@ pub fn end_raid() -> Ability {
 }
 
 /// Applies this card's `attack_boost` stat a number of times equal to its
-/// [CardState::boost_count]. Panics if this card has no attack boost defined.
+/// [CardState::boost_count]. Returns default if this card has no attack boost
+/// defined.
 fn add_boost(game: &GameState, _: Scope, card_id: &CardId, current: AttackValue) -> AttackValue {
     let boost_count = queries::boost_count(game, *card_id);
     let bonus = queries::attack_boost(game, *card_id).unwrap_or_default().bonus;

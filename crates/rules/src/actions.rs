@@ -17,9 +17,7 @@
 //! entry-point into the rules engine.
 //!
 //! By convention, functions in this module are responsible for validating the
-//! legality of requests and returning [Result] accordingly. Beyond this point,
-//! game functions typically assume the game is in a valid state and will panic
-//! if that is not true.
+//! legality of requests and returning [Result] accordingly.
 
 use anyhow::{bail, ensure, Result};
 use data::card_definition::AbilityType;
@@ -143,9 +141,9 @@ fn play_card_action(
 
     if enters_face_up {
         let amount = queries::mana_cost(game, card_id).with_error(|| "Card has no mana cost")?;
-        mana::spend(game, user_side, ManaPurpose::PayForCard(card_id), amount);
+        mana::spend(game, user_side, ManaPurpose::PayForCard(card_id), amount)?;
         if let Some(custom_cost) = &definition.cost.custom_cost {
-            (custom_cost.pay)(game, card_id);
+            (custom_cost.pay)(game, card_id)?;
         }
     }
 
@@ -195,11 +193,11 @@ fn activate_ability_action(
     {
         mutations::spend_action_points(game, user_side, cost.actions)?;
         if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
-            mana::spend(game, user_side, ManaPurpose::ActivateAbility(ability_id), mana);
+            mana::spend(game, user_side, ManaPurpose::ActivateAbility(ability_id), mana)?;
         }
 
         if let Some(custom_cost) = &cost.custom_cost {
-            (custom_cost.pay)(game, ability_id);
+            (custom_cost.pay)(game, ability_id)?;
         }
     } else {
         fail!("Ability is not an activated ability");
@@ -235,7 +233,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
         user_side
     );
     mutations::spend_action_points(game, user_side, 1)?;
-    mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1);
+    mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1)?;
     mutations::level_up_room(game, room_id)?;
 
     mutations::check_end_turn(game)?;

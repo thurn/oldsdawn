@@ -37,11 +37,10 @@ pub fn handle(
 ) -> Result<()> {
     match action {
         CardPromptAction::LoseMana(side, amount) => {
-            mana::spend(game, side, ManaPurpose::PayForTriggeredAbility, amount);
+            mana::spend(game, side, ManaPurpose::PayForTriggeredAbility, amount)?;
         }
         CardPromptAction::LoseActions(side, amount) => {
-            assert!(game.player(side).actions >= amount);
-            game.player_mut(side).actions -= amount;
+            mutations::spend_action_points(game, side, amount)?;
         }
         CardPromptAction::EndRaid => {
             mutations::end_raid(game, RaidOutcome::Failure)?;

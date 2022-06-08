@@ -91,6 +91,7 @@ pub fn once_per_turn_cost() -> Option<CustomCost<AbilityId>> {
         },
         pay: |game, ability_id| {
             game.ability_state_mut(ability_id).turn = Some(game.data.turn);
+            Ok(())
         },
     })
 }
