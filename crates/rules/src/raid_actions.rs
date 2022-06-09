@@ -52,7 +52,7 @@ pub fn initiate_raid_action(
 /// Initiates a raid on the indicated `target_room`.
 ///
 /// The `on_begin` function is invoked with the [RaidId] once the raid is
-/// created, but before a [RaidPhase] is selected.
+/// created, with the raid phase set to [RaidPhase::Begin].
 pub fn initiate_raid(
     game: &mut GameState,
     target_room: RoomId,

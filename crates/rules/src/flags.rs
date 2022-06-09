@@ -37,7 +37,7 @@ pub fn can_make_mulligan_decision(game: &GameState, side: Side) -> bool {
     )
 }
 
-/// Returns true if the owner of the `card_id` card can current pay its cost.
+/// Returns true if the owner of the `card_id` card can currently pay its cost.
 pub fn can_pay_card_cost(game: &GameState, card_id: CardId) -> bool {
     let mut can_pay = matches!(queries::mana_cost(game, card_id), Some(cost)
                              if cost <= mana::get(game, card_id.side, ManaPurpose::PayForCard(card_id)));
