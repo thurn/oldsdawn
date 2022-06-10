@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 #nullable enable
 

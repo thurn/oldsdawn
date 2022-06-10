@@ -71,7 +71,10 @@ namespace Spelldawn.Services
 
     void Start()
     {
-      _registry.ActionService.Connect();
+      _registry.ActionService.Connect(
+        CurrentGameId,
+        offlineMode: !Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0
+      );
     }
   }
 }

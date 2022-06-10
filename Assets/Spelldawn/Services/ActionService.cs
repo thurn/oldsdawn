@@ -68,9 +68,9 @@ namespace Spelldawn.Services
       set => _currentPriority = value;
     }
 
-    public void Connect()
+    public void Connect(GameIdentifier? gameIdentifier, bool offlineMode)
     {
-      ConnectToServer();
+      ConnectToRulesEngine(gameIdentifier, offlineMode);
     }
 
     public void HandleAction(GameAction action)
@@ -224,11 +224,10 @@ namespace Spelldawn.Services
       return fired;
     }
 
-    async void ConnectToServer()
+    async void ConnectToRulesEngine(GameIdentifier? gameId, bool offlineMode)
     {
       // Remember you can do Edit > Clear All Player Prefs to reset 
 
-      var gameId = _registry.GameService.CurrentGameId;
       if (gameId == null)
       {
         Debug.Log("No active game");
@@ -241,14 +240,10 @@ namespace Spelldawn.Services
         PlayerId = _registry.GameService.PlayerId,
       };
       
-      if (!Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
+      if (offlineMode)
       {
         Debug.Log($"Connecting to Offline Game {request.GameId.Value}");
-        var commands = Plugin.Connect(request);
-        if (commands != null)
-        {
-          StartCoroutine(_registry.CommandService.HandleCommands(commands));
-        }
+        StartCoroutine(ConnectToOfflineGame(request));
       }
       else
       {
@@ -267,6 +262,16 @@ namespace Spelldawn.Services
       }
     }
 
+    /// <summary>Connects to an existing offline game, handling responses.</summary>
+    public IEnumerator ConnectToOfflineGame(ConnectRequest request)
+    {
+      var commands = Plugin.Connect(request);
+      if (commands != null)
+      {
+        yield return _registry.CommandService.HandleCommands(commands);
+      }      
+    }
+    
     IEnumerator HandleActionAsync(GameAction action)
     {
       yield return ApplyOptimisticResponse(action);

@@ -1,4 +1,10 @@
-code-review: git-status check-format build clippy test check-docs
+code-review: git-status check-format build clippy test check-docs end-to-end
+
+unity := if os() == "macos" {
+    "/Applications/Unity/Hub/Editor/2021.3.3f1/Unity.app/Contents/MacOS/Unity"
+  } else {
+    error("Please add unity path")
+  }
 
 clean:
     rm -f target/.rustc_info.json
@@ -16,6 +22,17 @@ build:
 run:
     # Crash on error during development
     RUSTFLAGS="--cfg errorpanic" cargo run
+
+test:
+    cargo test
+
+end-to-end:
+    @ echo "\nRunning End-to-End Tests"
+    @ echo "\n(this would be a good time to grab a snack)"
+    @ echo "\nPlease Stand By...\n"
+    mkdir -p /tmp/spelldawn
+    - rsync -aE . –-delete --exclude={Temp,target} /tmp/spelldawn
+    "{{unity}}" -runTests -batchmode -projectPath /tmp/spelldawn -testPlatform "PlayMode" -testResults /tmp/spelldawn/output.xml
 
 plugin_out := "Assets/Plugins"
 target_arm := "aarch64-apple-darwin"
@@ -72,7 +89,7 @@ export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER := join(android_ndk, toolchains
 android-plugin:
     # Note: builds for Android that use native plugins must use IL2CPP
     # This is only arm64, need to do arm7 at some point too
-    echo "Using linker $CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
+    @ echo "Using linker $CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
     cargo build --release --target={{target_android}}
     mkdir -p {{plugin_out}}/Android/ARM64
     # You see, standalone osx builds *don't* want the lib prefix but android fails *without* it...
@@ -86,9 +103,6 @@ ios-plugin:
     cp target/{{target_ios}}/release/libplugin.a {{plugin_out}}/iOS/
 
 plugin: mac-plugin windows-plugin ios-plugin android-plugin
-
-test:
-    cargo test
 
 test-backtrace:
     # Use +nightly in order to get backtraces for anyhow errors
