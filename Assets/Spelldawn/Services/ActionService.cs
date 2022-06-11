@@ -58,6 +58,9 @@ namespace Spelldawn.Services
     [SerializeField] bool _currentlyHandlingAction;
     Clickable? _lastClicked;
 
+    /// <summary>Returns true if this service is currently not doing any work.</summary>
+    public bool Idle => _actionQueue.Count == 0 && !_currentlyHandlingAction;
+
     void Awake()
     {
       Plugin.Initialize();

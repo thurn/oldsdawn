@@ -81,9 +81,10 @@ public class EndToEndTests
             });
         });
 
-        yield return new WaitForSeconds(1f);
-        Debug.Assert(Registry.CardBrowser.AllObjects.Count == 5); 
-        yield return new WaitForSeconds(1f);
+        yield return WaitUntilIdle();
+        Debug.Assert(Registry.CardBrowser.AllObjects.Count == 5);
+        
+        yield return EndTest();
     }
 
     IEnumerator WaitUntilSceneLoaded(Action action)
@@ -91,6 +92,20 @@ public class EndToEndTests
         _sceneLoaded = false;
         action();
         return new WaitUntil(() => _sceneLoaded);
+    }
+
+    IEnumerator WaitUntilIdle()
+    {
+        yield return new WaitUntil(() => Registry.CommandService.Idle && Registry.ActionService.Idle);
+        
+        // I was using WaitForEndOfFrame() for stuff but it just hangs forever when you run from the command line?!
+        yield return new WaitForSeconds(0.01f);
+    }
+
+    IEnumerator EndTest()
+    {
+        // It's helpful to wait for the end of frame after tests to let cleanup code (e.g. in DOTween) run 
+        yield return new WaitForSeconds(0.01f);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)

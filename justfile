@@ -26,12 +26,14 @@ run:
 test:
     cargo test
 
+# You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
+# before running end to end tests.
 end-to-end: plugin
     @ echo "\nRunning End-to-End Tests"
     @ echo "\n(this would be a good time to grab a snack)"
     @ echo "\nPlease Stand By...\n"
     mkdir -p /tmp/spelldawn
-    rm /tmp/spelldawn/output.xml
+    rm -f /tmp/spelldawn/output.xml
     - rsync -aE . –-delete --exclude={Temp,target} /tmp/spelldawn
     - "{{unity}}" -runTests -batchmode -projectPath /tmp/spelldawn -testPlatform "PlayMode" -testResults /tmp/spelldawn/output.xml
     cargo build --bin print_test_results

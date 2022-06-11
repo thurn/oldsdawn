@@ -31,7 +31,8 @@ namespace Spelldawn.Services
     [SerializeField] bool _currentlyHandling;
     readonly Queue<CommandList> _queue = new();
 
-    public bool CurrentlyHandlingCommand => _currentlyHandling;
+    /// <summary>Returns true if this service is currently not doing any work.</summary>
+    public bool Idle => _queue.Count == 0 && !_currentlyHandling;
 
     public IEnumerator HandleCommands(IEnumerable<GameCommand> commands)
     {
