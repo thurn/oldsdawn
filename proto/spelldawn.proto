@@ -856,16 +856,25 @@ message TogglePanelAction {
     bool open = 2;
 }
 
+// Test/debug options for creating a game
+message CreateGameDebugOptions {
+    // If true, all game events will be non-random.
+    bool deterministic = 1;
+
+    // Force the created game to use a specific identifier
+    GameIdentifier override_game_identifier = 2;
+
+    // If true, this game's state will be stored in memory instead of being
+    // written to disk.
+    bool in_memory = 3;
+}
+
 message CreateNewGameAction {
     PlayerSide side = 1;
 
     PlayerIdentifier opponent_id = 2;
 
-    // If true, all game events will be non-random.
-    bool deterministic = 3;
-
-    // If true, the created game's ID will be 0.
-    bool use_debug_id = 4;
+    CreateGameDebugOptions debug_options = 3;
 }
 
 // Action to spend an action point with no other effect, typically used for
@@ -891,18 +900,39 @@ message GameAction {
     }
 }
 
+// Special options for use in development/tests
+message DebugOptions {
+    // If true, this request should not read or write from the filesystem.
+    bool in_memory = 1;
+}
+
+// Initiate a play session. If a game_id is provided, connects to an ongoing
+// game. Otherwise, creates a new game. This must be sent from an empty game
+// scene.
+message ConnectRequest {
+    //Target game to connect to
+    GameIdentifier game_id = 1;
+
+    // User making this request.
+    PlayerIdentifier player_id = 2;
+
+    // Debugging options
+    DebugOptions debug_options = 3;
+}
+
 message GameRequest {
     GameAction action = 1;
 
-    /* Current game_id, if a game is currently ongoing. */
+    // Current game_id, if a game is currently ongoing.
     GameIdentifier game_id = 2;
 
-    /*
-     * Identifies the user making this request. At some point I'm going to
-     * figure out how to set up authentication, but currently we operate on
-     * the honor system :)
-     */
+    // Identifies the user making this request. At some point I'm going to
+    // figure out how to set up authentication, but currently we operate on
+    // the honor system :)
     PlayerIdentifier player_id = 3;
+
+    // Debugging options
+    DebugOptions debug_options = 4;
 }
 
 // ============================================================================
@@ -1285,19 +1315,6 @@ message GameCommand {
 
 message CommandList {
     repeated GameCommand commands = 1;
-}
-
-/*
- * Initiate a play session. If a game_id is provided, connects to an ongoing
- * game. Otherwise, creates a new game. This must be sent from an empty game
- * scene.
- */
-message ConnectRequest {
-    /* Target game to connect to, if any */
-    GameIdentifier game_id = 1;
-
-    /* User making this request. */
-    PlayerIdentifier player_id = 2;
 }
 
 service Spelldawn {

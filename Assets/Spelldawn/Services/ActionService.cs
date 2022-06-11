@@ -238,6 +238,10 @@ namespace Spelldawn.Services
       {
         GameId = gameId,
         PlayerId = _registry.GameService.PlayerId,
+        DebugOptions = new DebugOptions
+        {
+          InMemory = PlayerPrefs.GetInt(Preferences.InMemory) > 0
+        }
       };
       
       if (offlineMode)
@@ -290,7 +294,11 @@ namespace Spelldawn.Services
       {
         Action = action,
         GameId = _registry.GameService.CurrentGameId,
-        PlayerId = _registry.GameService.PlayerId
+        PlayerId = _registry.GameService.PlayerId,
+        DebugOptions = new DebugOptions
+        {
+          InMemory = PlayerPrefs.GetInt(Preferences.InMemory) > 0
+        }        
       };
 
       if (!Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)

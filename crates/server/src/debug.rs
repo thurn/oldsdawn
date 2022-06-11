@@ -29,9 +29,9 @@ use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugCommand, CommandList, ConnectToGameCommand, CreateNewGameAction, GameAction,
-    GameCommand, GameIdentifier, LoadSceneCommand, PanelAddress, SceneLoadMode,
-    SetPlayerIdentifierCommand,
+    ClientDebugCommand, CommandList, ConnectToGameCommand, CreateGameDebugOptions,
+    CreateNewGameAction, GameAction, GameCommand, GameIdentifier, LoadSceneCommand, PanelAddress,
+    SceneLoadMode, SetPlayerIdentifierCommand,
 };
 use rules::{dispatch, mana, mutations, queries};
 
@@ -60,8 +60,11 @@ pub fn handle_debug_action(
                                         PlayerId::new(1)
                                     },
                                 )),
-                                deterministic: false,
-                                use_debug_id: true,
+                                debug_options: Some(CreateGameDebugOptions {
+                                    deterministic: true,
+                                    override_game_identifier: Some(GameIdentifier { value: 0 }),
+                                    in_memory: false,
+                                }),
                             })),
                         })),
                     })),

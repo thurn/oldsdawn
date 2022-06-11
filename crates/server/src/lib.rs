@@ -17,4 +17,5 @@
 pub mod agent_response;
 pub mod database;
 pub mod debug;
+pub mod in_memory_database;
 pub mod requests;

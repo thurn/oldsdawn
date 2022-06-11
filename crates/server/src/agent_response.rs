@@ -30,7 +30,7 @@ use protos::spelldawn::{CommandList, GameRequest};
 use rules::queries;
 use tracing::warn;
 
-use crate::database::{Database, SledDatabase};
+use crate::database::Database;
 use crate::requests;
 
 /// Queue of agent responses that need to be sent to the client
@@ -40,7 +40,7 @@ pub static RESPONSES: Lazy<ConcurrentQueue<CommandList>> = Lazy::new(ConcurrentQ
 // active?
 static AGENT_RUNNING: AtomicBool = AtomicBool::new(false);
 
-pub fn handle_request(database: SledDatabase, request: &GameRequest) -> Result<()> {
+pub fn handle_request(database: impl Database + 'static, request: &GameRequest) -> Result<()> {
     let game_id = match adapters::to_optional_server_game_id(&request.game_id) {
         None => return Ok(()),
         Some(game_id) => game_id,
@@ -74,7 +74,10 @@ fn active_agent(game: &GameState) -> Option<(Side, AgentData)> {
 
 /// Checks if an AI response is required for the game described by `request`, if
 /// any, and applies AI actions if needed.
-pub fn check_for_agent_response(database: SledDatabase, request: &GameRequest) -> Result<()> {
+pub fn deprecated_check_for_agent_response(
+    database: impl Database + 'static,
+    request: &GameRequest,
+) -> Result<()> {
     if let Some(game_id) = adapters::to_optional_server_game_id(&request.game_id) {
         if database.has_game(game_id)? {
             tokio::spawn(async move {
@@ -86,7 +89,11 @@ pub fn check_for_agent_response(database: SledDatabase, request: &GameRequest) -
     Ok(())
 }
 
-fn run_agent_loop(mut database: SledDatabase, game_id: GameId, respond_to: PlayerId) -> Result<()> {
+fn run_agent_loop(
+    mut database: impl Database,
+    game_id: GameId,
+    respond_to: PlayerId,
+) -> Result<()> {
     loop {
         let game = database.game(game_id)?;
         if let Some((side, agent_data)) = active_agent(&game) {
@@ -117,7 +124,7 @@ fn run_agent_loop(mut database: SledDatabase, game_id: GameId, respond_to: Playe
     }
 }
 
-async fn run_deprecated_agent_loop(mut database: SledDatabase, game_id: GameId) -> Result<()> {
+async fn run_deprecated_agent_loop(mut database: impl Database, game_id: GameId) -> Result<()> {
     loop {
         let mut took_action = false;
         for side in Side::into_enum_iter() {

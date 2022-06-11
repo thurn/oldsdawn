@@ -42,7 +42,7 @@ pub fn override_path(path: String) {
 }
 
 /// Abstraction layer for interacting with the database
-pub trait Database {
+pub trait Database: Send + Sync {
     /// Generate a new unique [GameId] to be used for a new game
     fn generate_game_id(&self) -> Result<GameId>;
     /// Check whether a given game exists.
@@ -99,11 +99,7 @@ impl Database for SledDatabase {
     }
 
     fn deck(&self, player_id: PlayerId, side: Side) -> Result<Deck> {
-        Ok(if side == Side::Champion {
-            Deck { owner_id: player_id, ..decklists::CANONICAL_CHAMPION.clone() }
-        } else {
-            Deck { owner_id: player_id, ..decklists::CANONICAL_OVERLORD.clone() }
-        })
+        Ok(decklists::canonical_deck(player_id, side))
     }
 }
 

@@ -30,7 +30,8 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
     card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand,
-    CreateNewGameAction, GameCommand, GameRequest, PlayerSide, RoomIdentifier, StandardAction,
+    CreateNewGameAction, DebugOptions, GameCommand, GameRequest, PlayerSide, RoomIdentifier,
+    StandardAction,
 };
 use rules::{actions, dispatch, mutations};
 use serde_json::de;
@@ -41,6 +42,7 @@ use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
 
 use crate::database::{Database, SledDatabase};
+use crate::in_memory_database::InMemoryDatabase;
 use crate::{agent_response, debug};
 
 /// Stores active channels for each user.
@@ -74,8 +76,12 @@ impl Spelldawn for GameService {
 
         let (tx, rx) = mpsc::channel(4);
 
-        let mut database = SledDatabase { flush_on_write: false };
-        match handle_connect(&mut database, player_id, game_id) {
+        let result = if in_memory(message.debug_options.as_ref()) {
+            handle_connect(&mut InMemoryDatabase, player_id, game_id)
+        } else {
+            handle_connect(&mut SledDatabase { flush_on_write: false }, player_id, game_id)
+        };
+        match result {
             Ok(commands) => {
                 let names = commands.commands.iter().map(command_name).collect::<Vec<_>>();
                 info!(?player_id, ?names, "sending_connection_response");
@@ -99,16 +105,30 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        let mut db = SledDatabase { flush_on_write: false };
-        match handle_request(&mut db, request.get_ref()) {
+        let response = if in_memory(request.get_ref().debug_options.as_ref()) {
+            handle_request(&mut InMemoryDatabase, request.get_ref())
+        } else {
+            handle_request(&mut SledDatabase { flush_on_write: false }, request.get_ref())
+        };
+        match response {
             Ok(response) => {
                 if let Some(interceptor) = self.response_interceptor {
                     interceptor(&response.command_list);
                 }
 
                 send_player_response(response.opponent_response).await;
-                agent_response::check_for_agent_response(db, request.get_ref())
-                    .expect("AI Agent Error");
+                if in_memory(request.get_ref().debug_options.as_ref()) {
+                    agent_response::deprecated_check_for_agent_response(
+                        InMemoryDatabase,
+                        request.get_ref(),
+                    )
+                } else {
+                    agent_response::deprecated_check_for_agent_response(
+                        SledDatabase { flush_on_write: false },
+                        request.get_ref(),
+                    )
+                }
+                .expect("TODO make this a server error");
                 Ok(Response::new(response.command_list))
             }
             Err(error) => {
@@ -123,16 +143,28 @@ impl Spelldawn for GameService {
 pub fn connect(message: ConnectRequest) -> Result<CommandList> {
     let game_id = adapters::to_optional_server_game_id(&message.game_id);
     let player_id = adapters::to_server_player_id(message.player_id)?;
-    let mut database = SledDatabase { flush_on_write: true };
-    handle_connect(&mut database, player_id, game_id)
+    if in_memory(message.debug_options.as_ref()) {
+        handle_connect(&mut InMemoryDatabase, player_id, game_id)
+    } else {
+        handle_connect(&mut SledDatabase { flush_on_write: true }, player_id, game_id)
+    }
 }
 
 /// Helper to perform an action from the unity plugin
 pub fn perform_action(request: GameRequest) -> Result<CommandList> {
-    let mut db = SledDatabase { flush_on_write: true };
-    let response = handle_request(&mut db, &request)?;
-    agent_response::handle_request(db, &request)?;
-    Ok(response.command_list)
+    let result = if in_memory(request.debug_options.as_ref()) {
+        let mut db = InMemoryDatabase;
+        let response = handle_request(&mut db, &request)?;
+        agent_response::handle_request(db, &request)?;
+        response
+    } else {
+        let mut db = SledDatabase { flush_on_write: true };
+        let response = handle_request(&mut db, &request)?;
+        agent_response::handle_request(db, &request)?;
+        response
+    };
+
+    Ok(result.command_list)
 }
 
 /// A response to a given [GameRequest].
@@ -249,7 +281,9 @@ fn create_new_game(
     user_id: PlayerId,
     action: &CreateNewGameAction,
 ) -> Result<GameResponse> {
-    let game_id = if action.use_debug_id { GameId::new(0) } else { database.generate_game_id()? };
+    let debug_options = action.debug_options.clone().unwrap_or_default();
+    let game_id = adapters::to_optional_server_game_id(&debug_options.override_game_identifier)
+        .unwrap_or(database.generate_game_id()?);
     info!(?game_id, "create_new_game");
     let opponent_id = adapters::to_server_player_id(action.opponent_id)?;
     let user_side = adapters::to_server_side(PlayerSide::from_i32(action.side))?;
@@ -266,7 +300,10 @@ fn create_new_game(
         game_id,
         overlord_deck,
         champion_deck,
-        GameConfiguration { deterministic: action.deterministic, ..GameConfiguration::default() },
+        GameConfiguration {
+            deterministic: debug_options.deterministic,
+            ..GameConfiguration::default()
+        },
     );
 
     dispatch::populate_delegate_cache(&mut game);
@@ -439,4 +476,8 @@ fn to_server_room_id(room_id: Option<RoomIdentifier>) -> Option<RoomId> {
         Some(RoomIdentifier::RoomD) => Some(RoomId::RoomD),
         Some(RoomIdentifier::RoomE) => Some(RoomId::RoomE),
     }
+}
+
+fn in_memory(options: Option<&DebugOptions>) -> bool {
+    options.map_or(false, |o| o.in_memory)
 }

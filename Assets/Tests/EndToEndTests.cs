@@ -46,6 +46,7 @@ public class EndToEndTests
         SceneManager.sceneLoaded += OnSceneLoaded;
         PlayerPrefs.DeleteAll();
         PlayerPrefs.SetInt(Preferences.OfflineMode, 1);
+        PlayerPrefs.SetInt(Preferences.InMemory, 1);
         
         yield return WaitUntilSceneLoaded(() =>
         {
@@ -68,8 +69,14 @@ public class EndToEndTests
                     {
                         Value = 2
                     },
-                    Deterministic = true,
-                    UseDebugId = true
+                    DebugOptions = new CreateGameDebugOptions
+                    {
+                        Deterministic = true,
+                        OverrideGameIdentifier = new GameIdentifier
+                        {
+                            Value = 0
+                        }
+                    }
                 }
             });
         });

@@ -72,6 +72,15 @@ pub static CANONICAL_CHAMPION: Lazy<Deck> = Lazy::new(|| Deck {
     },
 });
 
+/// Returns a canonical deck associated with the given [PlayerId].
+pub fn canonical_deck(player_id: PlayerId, side: Side) -> Deck {
+    if side == Side::Champion {
+        Deck { owner_id: player_id, ..CANONICAL_CHAMPION.clone() }
+    } else {
+        Deck { owner_id: player_id, ..CANONICAL_OVERLORD.clone() }
+    }
+}
+
 /// Creates a new deterministic game using the canonical decklists, deals
 /// opening hands and resolves mulligans.
 pub fn canonical_game() -> Result<GameState> {

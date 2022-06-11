@@ -26,7 +26,7 @@ run:
 test:
     cargo test
 
-end-to-end:
+end-to-end: plugin
     @ echo "\nRunning End-to-End Tests"
     @ echo "\n(this would be a good time to grab a snack)"
     @ echo "\nPlease Stand By...\n"

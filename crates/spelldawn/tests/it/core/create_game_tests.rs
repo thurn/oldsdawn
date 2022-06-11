@@ -19,7 +19,7 @@ use display::adapters;
 use insta::assert_snapshot;
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
-use protos::spelldawn::{CreateNewGameAction, PlayerName, PlayerSide};
+use protos::spelldawn::{CreateGameDebugOptions, CreateNewGameAction, PlayerName, PlayerSide};
 use test_utils::client::{HasText, TestSession};
 use test_utils::fake_database::FakeDatabase;
 use test_utils::summarize::Summary;
@@ -33,8 +33,10 @@ fn create_new_game() {
         Action::CreateNewGame(CreateNewGameAction {
             side: PlayerSide::Overlord.into(),
             opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
-            deterministic: true,
-            use_debug_id: false,
+            debug_options: Some(CreateGameDebugOptions {
+                deterministic: true,
+                ..CreateGameDebugOptions::default()
+            }),
         }),
         session.user_id(),
         None,
@@ -52,8 +54,10 @@ fn connect_to_new_game() {
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
                 opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
-                deterministic: true,
-                use_debug_id: false,
+                debug_options: Some(CreateGameDebugOptions {
+                    deterministic: true,
+                    ..CreateGameDebugOptions::default()
+                }),
             }),
             session.user_id(),
             None,
@@ -78,8 +82,10 @@ fn keep_opening_hand() {
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
                 opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
-                deterministic: true,
-                use_debug_id: false,
+                debug_options: Some(CreateGameDebugOptions {
+                    deterministic: true,
+                    ..CreateGameDebugOptions::default()
+                }),
             }),
             session.user_id(),
             None,
@@ -110,8 +116,10 @@ fn mulligan_opening_hand() {
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
                 opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
-                deterministic: true,
-                use_debug_id: false,
+                debug_options: Some(CreateGameDebugOptions {
+                    deterministic: true,
+                    ..CreateGameDebugOptions::default()
+                }),
             }),
             session.user_id(),
             None,
@@ -142,8 +150,10 @@ fn both_keep_opening_hands() {
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
                 opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
-                deterministic: true,
-                use_debug_id: false,
+                debug_options: Some(CreateGameDebugOptions {
+                    deterministic: true,
+                    ..CreateGameDebugOptions::default()
+                }),
             }),
             session.user_id(),
             None,

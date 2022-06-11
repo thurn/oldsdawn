@@ -816,18 +816,28 @@ pub struct TogglePanelAction {
     #[prost(bool, tag = "2")]
     pub open: bool,
 }
+/// Test/debug options for creating a game
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateGameDebugOptions {
+    /// If true, all game events will be non-random.
+    #[prost(bool, tag = "1")]
+    pub deterministic: bool,
+    /// Force the created game to use a specific identifier
+    #[prost(message, optional, tag = "2")]
+    pub override_game_identifier: ::core::option::Option<GameIdentifier>,
+    /// If true, this game's state will be stored in memory instead of being
+    /// written to disk.
+    #[prost(bool, tag = "3")]
+    pub in_memory: bool,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateNewGameAction {
     #[prost(enumeration = "PlayerSide", tag = "1")]
     pub side: i32,
     #[prost(message, optional, tag = "2")]
     pub opponent_id: ::core::option::Option<PlayerIdentifier>,
-    /// If true, all game events will be non-random.
-    #[prost(bool, tag = "3")]
-    pub deterministic: bool,
-    /// If true, the created game's ID will be 0.
-    #[prost(bool, tag = "4")]
-    pub use_debug_id: bool,
+    #[prost(message, optional, tag = "3")]
+    pub debug_options: ::core::option::Option<CreateGameDebugOptions>,
 }
 /// Action to spend an action point with no other effect, typically used for
 /// tests
@@ -867,6 +877,28 @@ pub mod game_action {
         SpendActionPoint(super::SpendActionPointAction),
     }
 }
+/// Special options for use in development/tests
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DebugOptions {
+    /// If true, this request should not read or write from the filesystem.
+    #[prost(bool, tag = "1")]
+    pub in_memory: bool,
+}
+/// Initiate a play session. If a game_id is provided, connects to an ongoing
+/// game. Otherwise, creates a new game. This must be sent from an empty game
+/// scene.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConnectRequest {
+    ///Target game to connect to
+    #[prost(message, optional, tag = "1")]
+    pub game_id: ::core::option::Option<GameIdentifier>,
+    /// User making this request.
+    #[prost(message, optional, tag = "2")]
+    pub player_id: ::core::option::Option<PlayerIdentifier>,
+    /// Debugging options
+    #[prost(message, optional, tag = "3")]
+    pub debug_options: ::core::option::Option<DebugOptions>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameRequest {
     #[prost(message, optional, tag = "1")]
@@ -874,12 +906,14 @@ pub struct GameRequest {
     /// Current game_id, if a game is currently ongoing.
     #[prost(message, optional, tag = "2")]
     pub game_id: ::core::option::Option<GameIdentifier>,
-    ///
     /// Identifies the user making this request. At some point I'm going to
     /// figure out how to set up authentication, but currently we operate on
     /// the honor system :)
     #[prost(message, optional, tag = "3")]
     pub player_id: ::core::option::Option<PlayerIdentifier>,
+    /// Debugging options
+    #[prost(message, optional, tag = "4")]
+    pub debug_options: ::core::option::Option<DebugOptions>,
 }
 // ============================================================================
 // Commands
@@ -1262,19 +1296,6 @@ pub mod game_command {
 pub struct CommandList {
     #[prost(message, repeated, tag = "1")]
     pub commands: ::prost::alloc::vec::Vec<GameCommand>,
-}
-///
-/// Initiate a play session. If a game_id is provided, connects to an ongoing
-/// game. Otherwise, creates a new game. This must be sent from an empty game
-/// scene.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ConnectRequest {
-    /// Target game to connect to, if any
-    #[prost(message, optional, tag = "1")]
-    pub game_id: ::core::option::Option<GameIdentifier>,
-    /// User making this request.
-    #[prost(message, optional, tag = "2")]
-    pub player_id: ::core::option::Option<PlayerIdentifier>,
 }
 // ============================================================================
 // Masonry
