@@ -31,8 +31,11 @@ end-to-end: plugin
     @ echo "\n(this would be a good time to grab a snack)"
     @ echo "\nPlease Stand By...\n"
     mkdir -p /tmp/spelldawn
+    rm /tmp/spelldawn/output.xml
     - rsync -aE . –-delete --exclude={Temp,target} /tmp/spelldawn
-    "{{unity}}" -runTests -batchmode -projectPath /tmp/spelldawn -testPlatform "PlayMode" -testResults /tmp/spelldawn/output.xml
+    - "{{unity}}" -runTests -batchmode -projectPath /tmp/spelldawn -testPlatform "PlayMode" -testResults /tmp/spelldawn/output.xml
+    cargo build --bin print_test_results
+    ./target/debug/print_test_results /tmp/spelldawn/output.xml
 
 plugin_out := "Assets/Plugins"
 target_arm := "aarch64-apple-darwin"
@@ -214,7 +217,8 @@ benchmark:
 check-docs:
     #!/usr/bin/env sh
     set -euxo pipefail
-    for file in `ls crates | grep -v 'spelldawn'`; do
+    # Cargo rusdoc fails if there are no library targets, should figure out how to skip them properly
+    for file in `ls crates | grep -v 'spelldawn' | grep -v 'print_test_results'`; do
         echo "Checking rustdoc for $file";
         cargo rustdoc --lib -p $file -- \
             -D rustdoc::broken-intra-doc-links \
