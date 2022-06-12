@@ -30,6 +30,7 @@ namespace Spelldawn.Game
     [SerializeField] GameObject _changeEffect = null!;
     [SerializeField] TextMeshPro _manaText = null!;
     [SerializeField] TextMeshPro _bonusManaText = null!;
+    [SerializeField] TextMeshPro _manaSymbol = null!;
     [SerializeField] uint _currentMana = 5;
     [SerializeField] uint _currentBonusMana = 0;
 
@@ -42,6 +43,11 @@ namespace Spelldawn.Game
     {
       SetMana(manaView.BaseMana);
       SetBonusMana(manaView.BonusMana);
+    }
+
+    public void DisableSymbolAnimation()
+    {
+      _manaSymbol.fontMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
     }
 
     public void GainMana(uint amount)

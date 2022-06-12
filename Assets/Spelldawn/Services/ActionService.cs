@@ -61,7 +61,7 @@ namespace Spelldawn.Services
     /// <summary>Returns true if this service is currently not doing any work.</summary>
     public bool Idle => _actionQueue.Count == 0 && !_currentlyHandlingAction;
 
-    void Awake()
+    public void Initialize()
     {
       Plugin.Initialize();
     }

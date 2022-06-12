@@ -69,7 +69,7 @@ namespace Spelldawn.Services
       set => PlayerPrefs.SetString(Preferences.CurrentGameId, value?.Value.ToString());
     }
 
-    void Start()
+    public void Initialize()
     {
       _registry.ActionService.Connect(
         CurrentGameId,

@@ -26,18 +26,64 @@ run:
 test:
     cargo test
 
-# You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
-# before running end to end tests.
-end-to-end: plugin
+e2e-message:
     @ echo "\nRunning End-to-End Tests"
     @ echo "\n(this would be a good time to grab a snack)"
     @ echo "\nPlease Stand By...\n"
+
+rsync:
     mkdir -p /tmp/spelldawn
-    rm -f /tmp/spelldawn/output.xml
     - rsync -aE . –-delete --exclude={Temp,target} /tmp/spelldawn
-    - "{{unity}}" -runTests -batchmode -projectPath /tmp/spelldawn -testPlatform "PlayMode" -testResults /tmp/spelldawn/output.xml
-    cargo build --bin print_test_results
-    ./target/debug/print_test_results /tmp/spelldawn/output.xml
+
+build_flag := if os() == "macos" {
+    "-buildOSXUniversalPlayer"
+  } else {
+    error("OS not supported")
+  }
+
+app_path := if os() == "macos" {
+    "/tmp/spelldawn/out/spelldawn.app"
+  } else {
+    error("OS not supported")
+  }
+
+bin_path := if os() == "macos" {
+    "/tmp/spelldawn/out/spelldawn.app/Contents/MacOS/Spelldawn"
+  } else {
+    error("OS not supported")
+  }
+
+screenshot_path := if os() == "macos" {
+    join(app_path, "Contents", "Screenshots")
+  } else {
+    error("OS not supported")
+  }
+
+# You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
+# before running end to end tests.
+e2e: e2e-message plugin rsync
+    rm -rf /tmp/spelldawn/out/
+    mkdir -p /tmp/spelldawn/out/
+    "{{unity}}" -batchMode -quit -projectPath "/tmp/spelldawn" {{build_flag}} "{{app_path}}"
+    "{{bin_path}}" -test
+
+end-to-end: e2e
+  #!/usr/bin/env sh
+  set -o xtrace
+  for file in `ls "{{screenshot_path}}"`; do
+    magick compare -metric ae -fuzz 1% "{{screenshot_path}}/$file" "./EndToEndTests/$file" difference.png
+    if [ $? -ne 0 ]; then
+        echo "Test Failed: $file"
+        open difference.png
+        exit 1
+    fi
+    rm difference.png
+  done
+
+record: e2e
+    rm -rf EndToEndTests
+    mkdir -p EndToEndTests
+    cp "{{screenshot_path}}"/*.png EndToEndTests/
 
 plugin_out := "Assets/Plugins"
 target_arm := "aarch64-apple-darwin"

@@ -33,7 +33,7 @@ namespace Spelldawn.Services
     [SerializeField] AudioSource _raidAudioSource = null!;
     AudioSource? _currentAudioSource;
 
-    void Start()
+    public void Initialize()
     {
       SetMusicState(MusicState.Gameplay);
 

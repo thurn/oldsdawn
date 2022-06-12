@@ -52,7 +52,7 @@ namespace Spelldawn.Services
     VisualElement _supplementalCardInfo = null!;
     Node _supplementalCardInfoNode = null!;
 
-    void Start()
+    public void Initialize()
     {
       _document.rootVisualElement.Clear();
       AddRoot("Main Controls", out _mainControls, out _mainControlsNode);

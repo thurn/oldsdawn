@@ -12,11 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 #nullable enable
 
@@ -154,9 +152,19 @@ namespace Spelldawn.Services
     public GameObject ActiveLightForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userActiveLight : _opponentActiveLight;
 
+    [SerializeField] EndToEndTestService _endToEndTestService = null!;
+
+    [SerializeField] GameObject _graphy = null!;
+    public GameObject Graphy => _graphy;
+
     void Awake()
     {
       Application.targetFrameRate = 60;
+      _endToEndTestService.Initialize();
+      ActionService.Initialize();
+      DocumentService.Initialize();
+      GameService.Initialize();
+      MusicService.Initialize();
     }
   }
 }

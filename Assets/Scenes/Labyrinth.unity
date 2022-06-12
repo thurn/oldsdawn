@@ -37919,6 +37919,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1233844048}
   m_Mesh: {fileID: -5621590533107392077, guid: 47d025c639bbaaa4397d03750028c50b, type: 3}
+--- !u!1 &1234301886 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
+  m_PrefabInstance: {fileID: 831658861}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1234503237
 GameObject:
   m_ObjectHideFlags: 0
@@ -43878,6 +43883,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8076396049406040626, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
   m_PrefabInstance: {fileID: 2862352590837435789}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1437158731 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8076396049406040629, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
+  m_PrefabInstance: {fileID: 2862352590837435789}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1443208278
 GameObject:
   m_ObjectHideFlags: 0
@@ -43992,6 +44008,7 @@ GameObject:
   - component: {fileID: 1445473043}
   - component: {fileID: 1445473051}
   - component: {fileID: 1445473054}
+  - component: {fileID: 1445473056}
   m_Layer: 0
   m_Name: Registry
   m_TagString: Untagged
@@ -44123,6 +44140,8 @@ MonoBehaviour:
   _opponentIdentityCard: {fileID: 1560564983}
   _userActiveLight: {fileID: 581497112}
   _opponentActiveLight: {fileID: 1139747704}
+  _endToEndTestService: {fileID: 1445473056}
+  _graphy: {fileID: 1234301886}
 --- !u!4 &1445473049
 Transform:
   m_ObjectHideFlags: 0
@@ -44246,6 +44265,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0abe00566ce479b9191caf1ceea60a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 1445473048}
+--- !u!114 &1445473056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445473042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84bf80741f7b405a9a0f3f21e8e90781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
@@ -51238,6 +51270,17 @@ MonoBehaviour:
   _animationDuration: 0.3
   _registry: {fileID: 1445473048}
   _active: 0
+--- !u!114 &1690224821 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8076396049406040629, guid: b0f79d1e100864eb9ac5e30cc9f854f9, type: 3}
+  m_PrefabInstance: {fileID: 913936728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1690657432
 GameObject:
   m_ObjectHideFlags: 0
@@ -62345,6 +62388,7 @@ MonoBehaviour:
   _changeEffect: {fileID: 1155770419}
   _manaText: {fileID: 1033154067}
   _bonusManaText: {fileID: 2119003170}
+  _manaSymbol: {fileID: 1690224821}
   _currentMana: 5
   _currentBonusMana: 0
 --- !u!65 &2092383658
@@ -109594,6 +109638,7 @@ MonoBehaviour:
   _changeEffect: {fileID: 1879127066}
   _manaText: {fileID: 2862352590944203462}
   _bonusManaText: {fileID: 1296750308}
+  _manaSymbol: {fileID: 1437158731}
   _currentMana: 5
   _currentBonusMana: 0
 --- !u!4 &2862352591999099261
