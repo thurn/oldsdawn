@@ -20,8 +20,6 @@ use data::game_actions::{PromptAction, UserAction};
 use data::primitives::{GameId, PlayerId, Side};
 use maplit::hashmap;
 use once_cell::sync::Lazy;
-use rand::prelude::StdRng;
-use rand::SeedableRng;
 use rules::{actions, dispatch, mutations};
 
 /// Standard Overlord deck for use in tests
@@ -90,7 +88,7 @@ pub fn canonical_game() -> Result<GameState> {
         CANONICAL_CHAMPION.clone(),
         GameConfiguration { deterministic: true, simulation: true },
     );
-    game.rng = Some(StdRng::seed_from_u64(3141592653589793));
+
     dispatch::populate_delegate_cache(&mut game);
     mutations::deal_opening_hands(&mut game)?;
     actions::handle_user_action(

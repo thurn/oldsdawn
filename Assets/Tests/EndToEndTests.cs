@@ -98,7 +98,7 @@ public class EndToEndTests
     {
         yield return new WaitUntil(() => Registry.CommandService.Idle && Registry.ActionService.Idle);
         
-        // I was using WaitForEndOfFrame() for stuff but it just hangs forever when you run from the command line?!
+        // I was using WaitForEndOfFrame() for this but it just hangs forever when you run from the command line?!
         yield return new WaitForSeconds(0.01f);
     }
 

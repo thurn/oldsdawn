@@ -34,7 +34,7 @@ command_list:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 2
+            sorting_key: 3
             position: ObjectPositionHand { owner: User }
     UpdateGameView: 
         user: 
@@ -63,7 +63,7 @@ channel_response:
     MoveGameObjects: 
         id: O1
         position: 
-            sorting_key: 2
+            sorting_key: 3
             position: ObjectPositionHand { owner: Opponent }
     UpdateGameView: 
         opponent: 

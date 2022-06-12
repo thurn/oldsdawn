@@ -1,67 +1,39 @@
 ---
 source: crates/spelldawn/tests/it/core/create_game_tests.rs
-assertion_line: 157
+assertion_line: 167
 expression: "Summary::summarize(&response)"
 ---
 
 command_list: 
     RunInParallel: 
         MoveGameObjects: 
-            id: C1
-            position: 
-                sorting_key: 16
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: C2
+            id: C10
             position: 
                 sorting_key: 17
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
-            id: C3
-            position: 
-                sorting_key: 18
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: C4
+            id: C17
             position: 
                 sorting_key: 19
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
-            id: C5
+            id: C23
+            position: 
+                sorting_key: 16
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: C29
             position: 
                 sorting_key: 20
                 position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: C43
+            position: 
+                sorting_key: 18
+                position: ObjectPositionHand { owner: User }
     CreateOrUpdateCard: 
         card: 
-            card_id: C1
-            revealed_to_viewer: true
-            is_face_up: false
-            card_icons: 
-                top_left_icon: "1"
-                top_right_icon: 
-                bottom_left_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: User
-            revealed_card: 
-                card_frame: "<SpriteAddress>"
-                title_background: "<SpriteAddress>"
-                jewel: "<SpriteAddress>"
-                image: "<SpriteAddress>"
-                title: "Test Champion Spell"
-                rules_text: "<RulesText>"
-                targeting: 
-                    can_play: false
-                on_release_position: 
-                    sorting_key: 4294967295
-                    position: ObjectPositionStaging
-        create_position: 
-            sorting_key: 16
-            position: ObjectPositionHand { owner: User }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: C2
+            card_id: C10
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -89,35 +61,7 @@ command_list:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: C3
-            revealed_to_viewer: true
-            is_face_up: false
-            card_icons: 
-                top_left_icon: "1"
-                top_right_icon: 
-                bottom_left_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: User
-            revealed_card: 
-                card_frame: "<SpriteAddress>"
-                title_background: "<SpriteAddress>"
-                jewel: "<SpriteAddress>"
-                image: "<SpriteAddress>"
-                title: "Test Champion Spell"
-                rules_text: "<RulesText>"
-                targeting: 
-                    can_play: false
-                on_release_position: 
-                    sorting_key: 4294967295
-                    position: ObjectPositionStaging
-        create_position: 
-            sorting_key: 18
-            position: ObjectPositionHand { owner: User }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: C4
+            card_id: C17
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -145,7 +89,35 @@ command_list:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: C5
+            card_id: C23
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+                top_right_icon: 
+                bottom_left_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Champion Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 16
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C29
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -173,7 +145,35 @@ command_list:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O6
+            card_id: C43
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+                top_right_icon: 
+                bottom_left_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Champion Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 18
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O18
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -189,7 +189,7 @@ command_list:
             position: ObjectPositionDeck { owner: Opponent }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: O6
+        id: O18
         position: 
             sorting_key: 22
             position: ObjectPositionHand { owner: Opponent }
@@ -212,50 +212,33 @@ command_list:
 channel_response: 
     RunInParallel: 
         MoveGameObjects: 
-            id: C1
-            position: 
-                sorting_key: 16
-                position: ObjectPositionHand { owner: Opponent }
-        MoveGameObjects: 
-            id: C2
+            id: C10
             position: 
                 sorting_key: 17
                 position: ObjectPositionHand { owner: Opponent }
         MoveGameObjects: 
-            id: C3
-            position: 
-                sorting_key: 18
-                position: ObjectPositionHand { owner: Opponent }
-        MoveGameObjects: 
-            id: C4
+            id: C17
             position: 
                 sorting_key: 19
                 position: ObjectPositionHand { owner: Opponent }
         MoveGameObjects: 
-            id: C5
+            id: C23
+            position: 
+                sorting_key: 16
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: C29
             position: 
                 sorting_key: 20
                 position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: C43
+            position: 
+                sorting_key: 18
+                position: ObjectPositionHand { owner: Opponent }
     CreateOrUpdateCard: 
         card: 
-            card_id: C1
-            revealed_to_viewer: false
-            is_face_up: false
-            card_icons: 
-                top_left_icon: 
-                top_right_icon: 
-                bottom_left_icon: 
-                bottom_right_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: Opponent
-        create_position: 
-            sorting_key: 16
-            position: ObjectPositionHand { owner: Opponent }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: C2
+            card_id: C10
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -272,24 +255,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: C3
-            revealed_to_viewer: false
-            is_face_up: false
-            card_icons: 
-                top_left_icon: 
-                top_right_icon: 
-                bottom_left_icon: 
-                bottom_right_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: Opponent
-        create_position: 
-            sorting_key: 18
-            position: ObjectPositionHand { owner: Opponent }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: C4
+            card_id: C17
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -306,7 +272,24 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: C5
+            card_id: C23
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 16
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: C29
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -323,7 +306,24 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O6
+            card_id: C43
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 18
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O18
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -347,7 +347,7 @@ channel_response:
                     position: ObjectPositionStaging
         create_animation: DrawCard
     MoveGameObjects: 
-        id: O6
+        id: O18
         position: 
             sorting_key: 22
             position: ObjectPositionHand { owner: User }
@@ -364,7 +364,7 @@ channel_response:
         raid_active: false
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
+            card_id: O4
             revealed_to_viewer: true
             is_face_up: false
             owning_player: User
@@ -377,33 +377,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O2
-            revealed_to_viewer: true
-            is_face_up: false
-            owning_player: User
-            revealed_card: 
-                targeting: 
-                    can_play: true
-        create_position: 
-            sorting_key: 7
-            position: ObjectPositionHand { owner: User }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O3
-            revealed_to_viewer: true
-            is_face_up: false
-            owning_player: User
-            revealed_card: 
-                targeting: 
-                    can_play: true
-        create_position: 
-            sorting_key: 8
-            position: ObjectPositionHand { owner: User }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O4
+            card_id: O8
             revealed_to_viewer: true
             is_face_up: false
             owning_player: User
@@ -416,7 +390,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O5
+            card_id: O9
             revealed_to_viewer: true
             is_face_up: false
             owning_player: User
@@ -425,6 +399,32 @@ channel_response:
                     can_play: true
         create_position: 
             sorting_key: 10
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O25
+            revealed_to_viewer: true
+            is_face_up: false
+            owning_player: User
+            revealed_card: 
+                targeting: 
+                    can_play: true
+        create_position: 
+            sorting_key: 7
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O36
+            revealed_to_viewer: true
+            is_face_up: false
+            owning_player: User
+            revealed_card: 
+                targeting: 
+                    can_play: true
+        create_position: 
+            sorting_key: 8
             position: ObjectPositionHand { owner: User }
         create_animation: Unspecified
     RenderInterface: 

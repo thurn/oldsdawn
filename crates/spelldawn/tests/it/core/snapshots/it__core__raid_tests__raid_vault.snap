@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 413
+assertion_line: 429
 expression: "Summary::summarize(&response)"
 ---
 
@@ -23,10 +23,6 @@ command_list:
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
-                top_right_icon: 
-                bottom_left_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
             owning_player: Opponent
             revealed_card: 
                 card_frame: "<SpriteAddress>"
@@ -41,7 +37,7 @@ command_list:
                     sorting_key: 4294967295
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         create_position: 
-            sorting_key: 7
+            sorting_key: 8
             position: ObjectPositionDeck { owner: Opponent }
         create_animation: Unspecified
     RunInParallel: 
@@ -53,7 +49,7 @@ command_list:
         MoveGameObjects: 
             id: O45
             position: 
-                sorting_key: 2
+                sorting_key: 3
                 position: ObjectPositionRoom { room_id: Vault, room_location: Front }
         MoveGameObjects: 
             id: Identity(User)
@@ -92,23 +88,6 @@ channel_response:
             mana: 995
             can_take_action: true
         raid_active: true
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O1
-            revealed_to_viewer: false
-            is_face_up: false
-            card_icons: 
-                top_left_icon: 
-                top_right_icon: 
-                bottom_left_icon: 
-                bottom_right_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: User
-        create_position: 
-            sorting_key: 7
-            position: ObjectPositionDeck { owner: User }
-        create_animation: Unspecified
     RunInParallel: 
         MoveGameObjects: 
             id: O1
@@ -118,7 +97,7 @@ channel_response:
         MoveGameObjects: 
             id: O45
             position: 
-                sorting_key: 2
+                sorting_key: 3
                 position: ObjectPositionRoom { room_id: Vault, room_location: Front }
         MoveGameObjects: 
             id: Identity(Opponent)

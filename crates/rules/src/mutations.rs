@@ -37,9 +37,8 @@ use data::primitives::{
     RoomLocation, Side, TurnNumber,
 };
 use data::updates::GameUpdate;
-use data::verify;
 use data::with_error::WithError;
-use rand::seq::IteratorRandom;
+use data::{random, verify};
 use tracing::{info, instrument};
 
 use crate::mana::ManaPurpose;
@@ -365,18 +364,14 @@ pub fn check_start_game(game: &mut GameState) -> Result<()> {
 ///
 /// Does not change the 'revealed' state of cards.
 pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Result<Vec<CardId>> {
-    let count = count as usize; //don't run this on 16 bit processors please :)
+    let count = count as usize; // don't run this on 16 bit processors please :)
     let mut cards = game.card_list_for_position(side, CardPosition::DeckTop(side));
     let result = if count <= cards.len() {
         cards[0..count].to_vec()
     } else {
         let remaining = count - cards.len();
-        let unknown = game.cards_in_position(side, CardPosition::DeckUnknown(side)).map(|c| c.id);
-        let mut shuffled = if game.data.config.deterministic {
-            unknown.take(remaining).collect()
-        } else {
-            unknown.choose_multiple(&mut rand::thread_rng(), remaining)
-        };
+        let mut shuffled =
+            random::cards_in_position(game, side, CardPosition::DeckUnknown(side), remaining);
         shuffled.append(&mut cards);
         shuffled
     };
@@ -589,7 +584,9 @@ pub fn deal_damage(
 ) -> Result<()> {
     let mut discarded = vec![];
     for _ in 0..amount {
-        if let Some(card_id) = game.random_card(CardPosition::Hand(Side::Champion)) {
+        if let Some(card_id) =
+            random::card_in_position(game, Side::Champion, CardPosition::Hand(Side::Champion))
+        {
             move_card(game, card_id, CardPosition::DiscardPile(Side::Champion))?;
             discarded.push(card_id);
         } else {

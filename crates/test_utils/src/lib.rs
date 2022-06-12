@@ -234,6 +234,7 @@ fn set_deck_top(game: &mut GameState, side: Side, deck_top: Option<CardName>) {
             .expect("No cards in deck")
             .id;
         client::overwrite_card(game, target_id, deck_top);
+        game.move_card(target_id, CardPosition::DeckTop(side))
     }
 }
 

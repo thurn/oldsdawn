@@ -1,49 +1,49 @@
 ---
 source: crates/spelldawn/tests/it/core/create_game_tests.rs
-assertion_line: 124
+assertion_line: 132
 expression: "Summary::summarize(&response)"
 ---
 
 command_list: 
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
-            position: 
-                sorting_key: 31
-                position: ObjectPositionDeck { owner: User }
-        MoveGameObjects: 
-            id: O2
-            position: 
-                sorting_key: 32
-                position: ObjectPositionDeck { owner: User }
-        MoveGameObjects: 
-            id: O3
-            position: 
-                sorting_key: 33
-                position: ObjectPositionDeck { owner: User }
-        MoveGameObjects: 
             id: O4
             position: 
-                sorting_key: 34
+                sorting_key: 21
                 position: ObjectPositionDeck { owner: User }
         MoveGameObjects: 
-            id: O5
+            id: O8
             position: 
-                sorting_key: 35
+                sorting_key: 22
                 position: ObjectPositionDeck { owner: User }
-    DestroyCard: 
-        card_id: O1
-    DestroyCard: 
-        card_id: O2
-    DestroyCard: 
-        card_id: O3
+        MoveGameObjects: 
+            id: O9
+            position: 
+                sorting_key: 23
+                position: ObjectPositionDeck { owner: User }
+        MoveGameObjects: 
+            id: O25
+            position: 
+                sorting_key: 24
+                position: ObjectPositionDeck { owner: User }
+        MoveGameObjects: 
+            id: O36
+            position: 
+                sorting_key: 25
+                position: ObjectPositionDeck { owner: User }
     DestroyCard: 
         card_id: O4
     DestroyCard: 
-        card_id: O5
+        card_id: O8
+    DestroyCard: 
+        card_id: O9
+    DestroyCard: 
+        card_id: O25
+    DestroyCard: 
+        card_id: O36
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
+            card_id: O26
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -70,13 +70,13 @@ command_list:
             position: ObjectPositionDeck { owner: User }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: O1
+        id: O26
         position: 
             sorting_key: 31
             position: ObjectPositionBrowser
     CreateOrUpdateCard: 
         card: 
-            card_id: O2
+            card_id: O24
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -103,13 +103,13 @@ command_list:
             position: ObjectPositionDeck { owner: User }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: O2
+        id: O24
         position: 
             sorting_key: 32
             position: ObjectPositionBrowser
     CreateOrUpdateCard: 
         card: 
-            card_id: O3
+            card_id: O18
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -136,13 +136,13 @@ command_list:
             position: ObjectPositionDeck { owner: User }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: O3
+        id: O18
         position: 
             sorting_key: 33
             position: ObjectPositionBrowser
     CreateOrUpdateCard: 
         card: 
-            card_id: O4
+            card_id: O15
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -169,13 +169,13 @@ command_list:
             position: ObjectPositionDeck { owner: User }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: O4
+        id: O15
         position: 
             sorting_key: 34
             position: ObjectPositionBrowser
     CreateOrUpdateCard: 
         card: 
-            card_id: O5
+            card_id: O19
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -202,36 +202,36 @@ command_list:
             position: ObjectPositionDeck { owner: User }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: O5
+        id: O19
         position: 
             sorting_key: 35
             position: ObjectPositionBrowser
     Delay: 1500
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
-            position: 
-                sorting_key: 31
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O2
-            position: 
-                sorting_key: 32
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O3
-            position: 
-                sorting_key: 33
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O4
+            id: O15
             position: 
                 sorting_key: 34
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
-            id: O5
+            id: O18
+            position: 
+                sorting_key: 33
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O19
             position: 
                 sorting_key: 35
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O24
+            position: 
+                sorting_key: 32
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O26
+            position: 
+                sorting_key: 31
                 position: ObjectPositionHand { owner: User }
     UpdateGameView: 
         user: 
@@ -247,43 +247,43 @@ command_list:
 channel_response: 
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
-            position: 
-                sorting_key: 31
-                position: ObjectPositionDeck { owner: Opponent }
-        MoveGameObjects: 
-            id: O2
-            position: 
-                sorting_key: 32
-                position: ObjectPositionDeck { owner: Opponent }
-        MoveGameObjects: 
-            id: O3
-            position: 
-                sorting_key: 33
-                position: ObjectPositionDeck { owner: Opponent }
-        MoveGameObjects: 
             id: O4
             position: 
-                sorting_key: 34
+                sorting_key: 21
                 position: ObjectPositionDeck { owner: Opponent }
         MoveGameObjects: 
-            id: O5
+            id: O8
             position: 
-                sorting_key: 35
+                sorting_key: 22
                 position: ObjectPositionDeck { owner: Opponent }
-    DestroyCard: 
-        card_id: O1
-    DestroyCard: 
-        card_id: O2
-    DestroyCard: 
-        card_id: O3
+        MoveGameObjects: 
+            id: O9
+            position: 
+                sorting_key: 23
+                position: ObjectPositionDeck { owner: Opponent }
+        MoveGameObjects: 
+            id: O25
+            position: 
+                sorting_key: 24
+                position: ObjectPositionDeck { owner: Opponent }
+        MoveGameObjects: 
+            id: O36
+            position: 
+                sorting_key: 25
+                position: ObjectPositionDeck { owner: Opponent }
     DestroyCard: 
         card_id: O4
     DestroyCard: 
-        card_id: O5
+        card_id: O8
+    DestroyCard: 
+        card_id: O9
+    DestroyCard: 
+        card_id: O25
+    DestroyCard: 
+        card_id: O36
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
+            card_id: O26
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -300,7 +300,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O2
+            card_id: O24
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -317,7 +317,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O3
+            card_id: O18
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -334,7 +334,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O4
+            card_id: O15
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -351,7 +351,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O5
+            card_id: O19
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -368,29 +368,29 @@ channel_response:
         create_animation: Unspecified
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
-            position: 
-                sorting_key: 31
-                position: ObjectPositionHand { owner: Opponent }
-        MoveGameObjects: 
-            id: O2
-            position: 
-                sorting_key: 32
-                position: ObjectPositionHand { owner: Opponent }
-        MoveGameObjects: 
-            id: O3
-            position: 
-                sorting_key: 33
-                position: ObjectPositionHand { owner: Opponent }
-        MoveGameObjects: 
-            id: O4
+            id: O15
             position: 
                 sorting_key: 34
                 position: ObjectPositionHand { owner: Opponent }
         MoveGameObjects: 
-            id: O5
+            id: O18
+            position: 
+                sorting_key: 33
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O19
             position: 
                 sorting_key: 35
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O24
+            position: 
+                sorting_key: 32
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O26
+            position: 
+                sorting_key: 31
                 position: ObjectPositionHand { owner: Opponent }
     UpdateGameView: 
         opponent: 

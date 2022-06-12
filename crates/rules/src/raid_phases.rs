@@ -24,9 +24,8 @@ use data::game_actions::{
     ContinueAction, EncounterAction, GamePrompt, PromptAction, PromptContext, RoomActivationAction,
 };
 use data::primitives::{CardId, CardType, RoomId, Side};
+use data::random;
 use data::with_error::WithError;
-use rand::seq::IteratorRandom;
-use rand::thread_rng;
 
 use crate::mana::ManaPurpose;
 use crate::mutations::{SetPrompt, SummonMinion};
@@ -101,13 +100,12 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
         )?,
         RoomId::Sanctum => {
             let count = queries::sanctum_access_count(game)?;
-            if game.data.config.deterministic {
-                game.hand(Side::Overlord).map(|c| c.id).take(count as usize).collect()
-            } else {
-                game.hand(Side::Overlord)
-                    .map(|c| c.id)
-                    .choose_multiple(&mut thread_rng(), count as usize)
-            }
+            random::cards_in_position(
+                game,
+                Side::Overlord,
+                CardPosition::Hand(Side::Overlord),
+                count as usize,
+            )
         }
         RoomId::Crypts => {
             game.card_list_for_position(Side::Overlord, CardPosition::DiscardPile(Side::Overlord))

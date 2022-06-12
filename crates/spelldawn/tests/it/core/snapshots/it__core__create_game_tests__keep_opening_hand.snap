@@ -1,39 +1,39 @@
 ---
 source: crates/spelldawn/tests/it/core/create_game_tests.rs
-assertion_line: 101
+assertion_line: 107
 expression: "Summary::summarize(&response)"
 ---
 
 command_list: 
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
+            id: O4
             position: 
                 sorting_key: 6
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
-            id: O2
-            position: 
-                sorting_key: 7
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O3
-            position: 
-                sorting_key: 8
-                position: ObjectPositionHand { owner: User }
-        MoveGameObjects: 
-            id: O4
+            id: O8
             position: 
                 sorting_key: 9
                 position: ObjectPositionHand { owner: User }
         MoveGameObjects: 
-            id: O5
+            id: O9
             position: 
                 sorting_key: 10
                 position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O25
+            position: 
+                sorting_key: 7
+                position: ObjectPositionHand { owner: User }
+        MoveGameObjects: 
+            id: O36
+            position: 
+                sorting_key: 8
+                position: ObjectPositionHand { owner: User }
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
+            card_id: O4
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -61,63 +61,7 @@ command_list:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O2
-            revealed_to_viewer: true
-            is_face_up: false
-            card_icons: 
-                top_left_icon: "1"
-                top_right_icon: 
-                bottom_left_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: User
-            revealed_card: 
-                card_frame: "<SpriteAddress>"
-                title_background: "<SpriteAddress>"
-                jewel: "<SpriteAddress>"
-                image: "<SpriteAddress>"
-                title: "Test Overlord Spell"
-                rules_text: "<RulesText>"
-                targeting: 
-                    can_play: false
-                on_release_position: 
-                    sorting_key: 4294967295
-                    position: ObjectPositionStaging
-        create_position: 
-            sorting_key: 7
-            position: ObjectPositionHand { owner: User }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O3
-            revealed_to_viewer: true
-            is_face_up: false
-            card_icons: 
-                top_left_icon: "1"
-                top_right_icon: 
-                bottom_left_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: User
-            revealed_card: 
-                card_frame: "<SpriteAddress>"
-                title_background: "<SpriteAddress>"
-                jewel: "<SpriteAddress>"
-                image: "<SpriteAddress>"
-                title: "Test Overlord Spell"
-                rules_text: "<RulesText>"
-                targeting: 
-                    can_play: false
-                on_release_position: 
-                    sorting_key: 4294967295
-                    position: ObjectPositionStaging
-        create_position: 
-            sorting_key: 8
-            position: ObjectPositionHand { owner: User }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O4
+            card_id: O8
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -145,7 +89,7 @@ command_list:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O5
+            card_id: O9
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -169,6 +113,62 @@ command_list:
                     position: ObjectPositionStaging
         create_position: 
             sorting_key: 10
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O25
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+                top_right_icon: 
+                bottom_left_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 7
+            position: ObjectPositionHand { owner: User }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O36
+            revealed_to_viewer: true
+            is_face_up: false
+            card_icons: 
+                top_left_icon: "1"
+                top_right_icon: 
+                bottom_left_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: User
+            revealed_card: 
+                card_frame: "<SpriteAddress>"
+                title_background: "<SpriteAddress>"
+                jewel: "<SpriteAddress>"
+                image: "<SpriteAddress>"
+                title: "Test Overlord Spell"
+                rules_text: "<RulesText>"
+                targeting: 
+                    can_play: false
+                on_release_position: 
+                    sorting_key: 4294967295
+                    position: ObjectPositionStaging
+        create_position: 
+            sorting_key: 8
             position: ObjectPositionHand { owner: User }
         create_animation: Unspecified
     UpdateGameView: 
@@ -185,33 +185,33 @@ command_list:
 channel_response: 
     RunInParallel: 
         MoveGameObjects: 
-            id: O1
+            id: O4
             position: 
                 sorting_key: 6
                 position: ObjectPositionHand { owner: Opponent }
         MoveGameObjects: 
-            id: O2
-            position: 
-                sorting_key: 7
-                position: ObjectPositionHand { owner: Opponent }
-        MoveGameObjects: 
-            id: O3
-            position: 
-                sorting_key: 8
-                position: ObjectPositionHand { owner: Opponent }
-        MoveGameObjects: 
-            id: O4
+            id: O8
             position: 
                 sorting_key: 9
                 position: ObjectPositionHand { owner: Opponent }
         MoveGameObjects: 
-            id: O5
+            id: O9
             position: 
                 sorting_key: 10
                 position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O25
+            position: 
+                sorting_key: 7
+                position: ObjectPositionHand { owner: Opponent }
+        MoveGameObjects: 
+            id: O36
+            position: 
+                sorting_key: 8
+                position: ObjectPositionHand { owner: Opponent }
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
+            card_id: O4
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -228,41 +228,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O2
-            revealed_to_viewer: false
-            is_face_up: false
-            card_icons: 
-                top_left_icon: 
-                top_right_icon: 
-                bottom_left_icon: 
-                bottom_right_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: Opponent
-        create_position: 
-            sorting_key: 7
-            position: ObjectPositionHand { owner: Opponent }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O3
-            revealed_to_viewer: false
-            is_face_up: false
-            card_icons: 
-                top_left_icon: 
-                top_right_icon: 
-                bottom_left_icon: 
-                bottom_right_icon: 
-                arena_icon: 
-            arena_frame: "<SpriteAddress>"
-            owning_player: Opponent
-        create_position: 
-            sorting_key: 8
-            position: ObjectPositionHand { owner: Opponent }
-        create_animation: Unspecified
-    CreateOrUpdateCard: 
-        card: 
-            card_id: O4
+            card_id: O8
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -279,7 +245,7 @@ channel_response:
         create_animation: Unspecified
     CreateOrUpdateCard: 
         card: 
-            card_id: O5
+            card_id: O9
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -292,6 +258,40 @@ channel_response:
             owning_player: Opponent
         create_position: 
             sorting_key: 10
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O25
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 7
+            position: ObjectPositionHand { owner: Opponent }
+        create_animation: Unspecified
+    CreateOrUpdateCard: 
+        card: 
+            card_id: O36
+            revealed_to_viewer: false
+            is_face_up: false
+            card_icons: 
+                top_left_icon: 
+                top_right_icon: 
+                bottom_left_icon: 
+                bottom_right_icon: 
+                arena_icon: 
+            arena_frame: "<SpriteAddress>"
+            owning_player: Opponent
+        create_position: 
+            sorting_key: 8
             position: ObjectPositionHand { owner: Opponent }
         create_animation: Unspecified
     UpdateGameView: 

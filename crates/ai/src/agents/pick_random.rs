@@ -17,6 +17,7 @@
 use anyhow::Result;
 use data::game_actions::UserAction;
 use data::primitives::Side;
+use data::random;
 use data::with_error::WithError;
 
 use crate::core::legal_actions;
@@ -25,5 +26,5 @@ use crate::core::types::StatePredictionIterator;
 pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
     let mut game = states.next().with_error(|| "Expected at least one GameState")?.state;
     let collected = legal_actions::evaluate(&game, side).collect::<Vec<_>>();
-    game.choose_randomly(collected.into_iter()).with_error(|| "Expected at least one action")
+    random::choose(&mut game, collected.into_iter()).with_error(|| "Expected at least one action")
 }

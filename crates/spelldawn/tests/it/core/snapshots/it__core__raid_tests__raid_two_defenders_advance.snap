@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 611
+assertion_line: 624
 expression: "Summary::summarize(&response)"
 ---
 
@@ -33,7 +33,7 @@ command_list:
                     sorting_key: 4294967295
                     position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         create_position: 
-            sorting_key: 2
+            sorting_key: 3
             position: ObjectPositionRoom { room_id: Vault, room_location: Front }
         create_animation: Unspecified
     RenderInterface: 
@@ -57,6 +57,6 @@ channel_response:
             is_face_up: true
             owning_player: User
         create_position: 
-            sorting_key: 2
+            sorting_key: 3
             position: ObjectPositionRoom { room_id: Vault, room_location: Front }
         create_animation: Unspecified

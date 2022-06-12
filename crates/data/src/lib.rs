@@ -23,6 +23,7 @@ pub mod delegates;
 pub mod game;
 pub mod game_actions;
 pub mod primitives;
+pub mod random;
 pub mod special_effects;
 pub mod text;
 pub mod updates;

@@ -1,13 +1,13 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 369
+assertion_line: 385
 expression: "Summary::summarize(&response)"
 ---
 
 command_list: 
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
+            card_id: O24
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -23,7 +23,7 @@ command_list:
             position: ObjectPositionDeck { owner: Opponent }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: O1
+        id: O24
         position: 
             sorting_key: 11
             position: ObjectPositionHand { owner: Opponent }
@@ -44,7 +44,7 @@ command_list:
 channel_response: 
     CreateOrUpdateCard: 
         card: 
-            card_id: O1
+            card_id: O24
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -68,7 +68,7 @@ channel_response:
                     position: ObjectPositionStaging
         create_animation: DrawCard
     MoveGameObjects: 
-        id: O1
+        id: O24
         position: 
             sorting_key: 11
             position: ObjectPositionHand { owner: User }

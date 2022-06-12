@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 586
+assertion_line: 599
 expression: "Summary::summarize(&response)"
 ---
 
@@ -21,7 +21,7 @@ command_list:
         MoveGameObjects: 
             id: O44
             position: 
-                sorting_key: 4
+                sorting_key: 5
                 position: ObjectPositionRoom { room_id: Vault, room_location: Front }
         MoveGameObjects: 
             id: Identity(User)
@@ -53,7 +53,7 @@ channel_response:
         MoveGameObjects: 
             id: O44
             position: 
-                sorting_key: 4
+                sorting_key: 5
                 position: ObjectPositionRoom { room_id: Vault, room_location: Front }
         MoveGameObjects: 
             id: Identity(Opponent)

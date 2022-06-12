@@ -1,13 +1,13 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 264
+assertion_line: 284
 expression: "Summary::run(&response)"
 ---
 
 command_list: 
     CreateOrUpdateCard: 
         card: 
-            card_id: C1
+            card_id: C11
             revealed_to_viewer: false
             is_face_up: false
             card_icons: 
@@ -23,7 +23,7 @@ command_list:
             position: ObjectPositionDeck { owner: Opponent }
         create_animation: Unspecified
     MoveGameObjects: 
-        id: C1
+        id: C11
         position: 
             sorting_key: 2
             position: ObjectPositionHand { owner: Opponent }
@@ -44,7 +44,7 @@ command_list:
 channel_response: 
     CreateOrUpdateCard: 
         card: 
-            card_id: C1
+            card_id: C11
             revealed_to_viewer: true
             is_face_up: false
             card_icons: 
@@ -68,7 +68,7 @@ channel_response:
                     position: ObjectPositionStaging
         create_animation: DrawCard
     MoveGameObjects: 
-        id: C1
+        id: C11
         position: 
             sorting_key: 2
             position: ObjectPositionHand { owner: User }

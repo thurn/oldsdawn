@@ -20,8 +20,8 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use enum_kinds::EnumKind;
-use rand::prelude::StdRng;
-use rand::seq::IteratorRandom;
+use rand_xoshiro::rand_core::SeedableRng;
+use rand_xoshiro::Xoshiro256StarStar;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -144,7 +144,7 @@ pub struct RaidData {
 #[derive(Debug, Clone, Default, Copy, Serialize, Deserialize)]
 pub struct GameConfiguration {
     /// If true, all random choices within this game will be made
-    /// deterministically instead of using a random number generator. Useful for
+    /// deterministically using a seeded random number generator. Useful for
     /// e.g. unit tests.
     pub deterministic: bool,
     /// Whether to run in simulation mode and thus disable update tracking
@@ -254,12 +254,15 @@ pub struct GameState {
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::next_sorting_key] and [Self::move_card].
     next_sorting_key: u32,
+    /// Optionally, a random number generator for this game to use. This
+    /// generator is serializable, so the state will be deterministic even
+    /// across different sessions. If not specified, `rand::thread_rng()` is
+    /// used.
+    pub rng: Option<Xoshiro256StarStar>,
     /// Optional lookup table for delegates present on cards in this game in
     /// order to improve performance
     #[serde(skip)]
     pub delegate_cache: DelegateCache,
-    #[serde(skip)]
-    pub rng: Option<StdRng>,
 }
 
 impl GameState {
@@ -291,7 +294,11 @@ impl GameState {
             updates: UpdateTracker::new(!config.simulation),
             next_sorting_key: 1,
             delegate_cache: DelegateCache::default(),
-            rng: None,
+            rng: if config.deterministic {
+                Some(Xoshiro256StarStar::seed_from_u64(314159265358979323))
+            } else {
+                None
+            },
         }
     }
 
@@ -383,30 +390,27 @@ impl GameState {
         }
     }
 
-    #[allow(clippy::unwrap_in_result)]
-    pub fn choose_randomly<I>(&mut self, iterator: I) -> Option<I::Item>
-    where
-        I: Iterator + Sized,
-    {
-        iterator.choose(self.rng.as_mut().unwrap())
-        // if self.rng.is_some() {
-        //     iterator.choose(self.rng.as_mut().unwrap())
-        // } else {
-        //     iterator.choose(&mut rand::thread_rng())
-        // }
-    }
+    // #[allow(clippy::unwrap_in_result)]
+    // pub fn choose_randomly<I>(&mut self, iterator: I) -> Option<I::Item>
+    // where I: Iterator,
+    // {
+    //     // iterator.choose(self.rng.as_mut().unwrap())
+    //     if self.rng.is_some() {
+    //         iterator.choose(self.rng.as_mut().unwrap())
+    //     } else {
+    //         iterator.choose(&mut rand::thread_rng())
+    //     }
+    // }
 
-    /// Return a random card in the provided `position`, or None if there are no
-    /// cards in that position
-    pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
-        let mut cards = self.all_cards().filter(|c| c.position() == position);
-        if self.data.config.deterministic {
-            cards.next()
-        } else {
-            cards.choose(&mut rand::thread_rng())
-        }
-        .map(|c| c.id)
-    }
+    // pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
+    //     let mut cards = self.all_cards().filter(|c| c.position() == position);
+    //     if self.data.config.deterministic {
+    //         cards.next()
+    //     } else {
+    //         cards.choose(&mut rand::thread_rng())
+    //     }
+    //     .map(|c| c.id)
+    // }
 
     /// Cards owned by a given player in a given position, in an unspecified
     /// order
