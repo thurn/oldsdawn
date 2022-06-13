@@ -255,6 +255,9 @@ fix-clippy:
 snapshots:
     cargo insta review
 
+update-cards:
+    cargo run --bin update_cards
+
 benchmark:
     cargo criterion --no-run -p spelldawn
     codesign -f -s - `find target/release/deps -name '*benchmarks*'`

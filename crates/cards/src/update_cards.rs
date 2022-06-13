@@ -26,21 +26,21 @@ use regex::Regex;
 use walkdir::WalkDir;
 
 fn main() -> Result<()> {
+    println!("Generating initialize.rs");
     let mut functions = HashMap::new();
-    for e in WalkDir::new("src") {
+    for e in WalkDir::new("crates/cards/src") {
         let entry = e?;
         let file_name = match entry.file_name().to_str() {
             Some(n) => n.to_string(),
             _ => continue,
-        }
-        .replace(".rs", "");
+        };
 
-        if entry.file_type().is_file() {
-            functions.insert(file_name, find_functions(entry.path())?);
+        if file_name.contains(".rs") && entry.file_type().is_file() {
+            functions.insert(file_name.replace(".rs", ""), find_functions(entry.path())?);
         }
     }
 
-    let out_path = Path::new("src/initialize.rs");
+    let out_path = Path::new("crates/cards/src/initialize.rs");
     if out_path.exists() {
         fs::remove_file(out_path)?;
     }
