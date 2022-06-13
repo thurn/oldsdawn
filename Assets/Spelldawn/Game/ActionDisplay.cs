@@ -43,11 +43,14 @@ namespace Spelldawn.Game
       _filled[_right] = true;
     }
 
-    public void DisableSymbolAnimation()
+    public void DisableAnimation()
     {
-      _left.fontMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
-      _center.fontMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
-      _right.fontMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
+      var disabled = new Material(Shader.Find("TextMeshPro/Distance Field"));
+      _left.fontMaterial = disabled;
+      _center.fontMaterial = disabled;
+      _right.fontMaterial = disabled;
+      _activeMaterial = disabled;
+      _inactiveMaterial = disabled;
     }    
     
     public void RenderActionTrackerView(ActionTrackerView actionTrackerView)

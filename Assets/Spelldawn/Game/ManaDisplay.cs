@@ -33,6 +33,7 @@ namespace Spelldawn.Game
     [SerializeField] TextMeshPro _manaSymbol = null!;
     [SerializeField] uint _currentMana = 5;
     [SerializeField] uint _currentBonusMana = 0;
+    bool _animationDisabled;
 
     public uint CurrentMana => _currentMana;
 
@@ -45,9 +46,10 @@ namespace Spelldawn.Game
       SetBonusMana(manaView.BonusMana);
     }
 
-    public void DisableSymbolAnimation()
+    public void DisableAnimation()
     {
       _manaSymbol.fontMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
+      _animationDisabled = true;
     }
 
     public void GainMana(uint amount)
@@ -65,7 +67,7 @@ namespace Spelldawn.Game
     {
       Errors.CheckNonNegative(currentMana);
 
-      if (currentMana != _currentMana)
+      if (currentMana != _currentMana && !_animationDisabled)
       {
         _changeEffect.SetActive(false);
         _changeEffect.SetActive(true);

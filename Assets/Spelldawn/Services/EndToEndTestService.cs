@@ -32,6 +32,7 @@ namespace Spelldawn.Services
     Registry _registry = null!;
     int _imageNumber = 1000;
     bool _sceneStart;
+    string _directory = null!;
 
     public static void Initialize(Registry registry)
     {
@@ -59,14 +60,19 @@ namespace Spelldawn.Services
       PlayerPrefs.DeleteAll();
       PlayerPrefs.SetInt(Preferences.OfflineMode, 1);
       PlayerPrefs.SetInt(Preferences.InMemory, 1);
+      _directory = Application.isEditor
+        ? "/tmp/spelldawn/Screenshots"
+        : Path.Combine(Application.dataPath, "Screenshots");
+      Directory.CreateDirectory(_directory);
+      Debug.Log($"Saving screenshots to {_directory}");
     }
 
     void OnSceneStart()
     {
-      _registry.ManaDisplayForPlayer(PlayerName.User).DisableSymbolAnimation();
-      _registry.ManaDisplayForPlayer(PlayerName.Opponent).DisableSymbolAnimation();
-      _registry.ActionDisplayForPlayer(PlayerName.User).DisableSymbolAnimation();
-      _registry.ActionDisplayForPlayer(PlayerName.Opponent).DisableSymbolAnimation();
+      _registry.ManaDisplayForPlayer(PlayerName.User).DisableAnimation();
+      _registry.ManaDisplayForPlayer(PlayerName.Opponent).DisableAnimation();
+      _registry.ActionDisplayForPlayer(PlayerName.User).DisableAnimation();
+      _registry.ActionDisplayForPlayer(PlayerName.Opponent).DisableAnimation();
       _registry.Graphy.SetActive(false);
       _sceneStart = true;
     }
@@ -106,12 +112,7 @@ namespace Spelldawn.Services
 
     void Capture(string imageName)
     {
-      var directory = Application.isEditor
-        ? "/tmp/spelldawn/Screenshots"
-        : Path.Combine(Application.dataPath, "Screenshots");
-
-      Directory.CreateDirectory(directory);
-      var path = Path.Combine(directory, $"{_imageNumber++}_{imageName}.png");
+      var path = Path.Combine(_directory, $"{_imageNumber++}_{imageName}.png");
       ScreenCapture.CaptureScreenshot(path);
     }
 
@@ -145,9 +146,7 @@ namespace Spelldawn.Services
 
     static void Quit(int code)
     {
-#if UNITY_EDITOR
-      EditorApplication.isPlaying = false;
-#else
+#if !UNITY_EDITOR
       Application.Quit(code);
 #endif
     }
