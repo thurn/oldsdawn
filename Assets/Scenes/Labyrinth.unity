@@ -44008,7 +44008,6 @@ GameObject:
   - component: {fileID: 1445473043}
   - component: {fileID: 1445473051}
   - component: {fileID: 1445473054}
-  - component: {fileID: 1445473056}
   m_Layer: 0
   m_Name: Registry
   m_TagString: Untagged
@@ -44096,6 +44095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8158c3a977b1c470db7268ea8637d804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _globalGameMode: 1
   _mainCamera: {fileID: 963194227}
   _logViewer: {fileID: 950699554}
   _mainAudioSource: {fileID: 963194234}
@@ -44140,7 +44140,6 @@ MonoBehaviour:
   _opponentIdentityCard: {fileID: 1560564983}
   _userActiveLight: {fileID: 581497112}
   _opponentActiveLight: {fileID: 1139747704}
-  _endToEndTestService: {fileID: 1445473056}
   _graphy: {fileID: 1234301886}
 --- !u!4 &1445473049
 Transform:
@@ -44265,19 +44264,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0abe00566ce479b9191caf1ceea60a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _registry: {fileID: 1445473048}
---- !u!114 &1445473056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1445473042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84bf80741f7b405a9a0f3f21e8e90781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}

@@ -33,9 +33,12 @@ namespace Spelldawn.Services
     [SerializeField] AudioSource _raidAudioSource = null!;
     AudioSource? _currentAudioSource;
 
-    public void Initialize()
+    public void Initialize(GlobalGameMode globalGameMode)
     {
-      SetMusicState(MusicState.Gameplay);
+      if (globalGameMode == GlobalGameMode.Default)
+      {
+        SetMusicState(MusicState.Gameplay);
+      }
 
       _gameplayAudioSource.volume = PlayerPrefs.GetFloat(Preferences.MusicVolume);
       _raidAudioSource.volume = PlayerPrefs.GetFloat(Preferences.MusicVolume);

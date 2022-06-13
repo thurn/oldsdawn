@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
 using Spelldawn.Game;
 using Spelldawn.Protos;
 using UnityEngine;
@@ -20,8 +21,17 @@ using UnityEngine;
 
 namespace Spelldawn.Services
 {
+  public enum GlobalGameMode
+  {
+    Default,
+    EndToEndTest
+  }  
+  
   public sealed class Registry : MonoBehaviour
   {
+    [SerializeField] GlobalGameMode _globalGameMode;
+    public GlobalGameMode GlobalGameMode => _globalGameMode;
+    
     [SerializeField] Camera _mainCamera = null!;
     public Camera MainCamera => _mainCamera;
 
@@ -151,20 +161,28 @@ namespace Spelldawn.Services
 
     public GameObject ActiveLightForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userActiveLight : _opponentActiveLight;
-
-    [SerializeField] EndToEndTestService _endToEndTestService = null!;
-
+    
     [SerializeField] GameObject _graphy = null!;
     public GameObject Graphy => _graphy;
-
-    void Awake()
+    
+    void Start()
     {
       Application.targetFrameRate = 60;
-      _endToEndTestService.Initialize();
+
+      if (System.Environment.GetCommandLineArgs().Any(arg => arg.Contains("test")))
+      {
+        _globalGameMode = GlobalGameMode.EndToEndTest;
+      }      
+      
       ActionService.Initialize();
       DocumentService.Initialize();
-      GameService.Initialize();
-      MusicService.Initialize();
+      GameService.Initialize(_globalGameMode);
+      MusicService.Initialize(_globalGameMode);
+
+      if (_globalGameMode == GlobalGameMode.EndToEndTest)
+      {
+        EndToEndTestService.Initialize(this);
+      }
     }
   }
 }

@@ -69,12 +69,15 @@ namespace Spelldawn.Services
       set => PlayerPrefs.SetString(Preferences.CurrentGameId, value?.Value.ToString());
     }
 
-    public void Initialize()
+    public void Initialize(GlobalGameMode globalGameMode)
     {
-      _registry.ActionService.Connect(
-        CurrentGameId,
-        offlineMode: !Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0
-      );
+      if (globalGameMode == GlobalGameMode.Default)
+      {
+        _registry.ActionService.Connect(
+          CurrentGameId,
+          offlineMode: !Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0
+        );        
+      }
     }
   }
 }

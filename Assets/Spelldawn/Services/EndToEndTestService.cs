@@ -16,8 +16,9 @@
 
 using System.Collections;
 using System.IO;
-using System.Linq;
 using Spelldawn.Protos;
+using Spelldawn.Utils;
+using UnityEditor;
 using UnityEngine;
 using Directory = System.IO.Directory;
 
@@ -28,48 +29,127 @@ namespace Spelldawn.Services
   /// This originally used Unity's own screenshot testing tools, but I had a bunch of problems with them.
   public sealed class EndToEndTestService : MonoBehaviour
   {
+    Registry _registry = null!;
     int _imageNumber = 1000;
-    [SerializeField] Registry _registry = null!;
-    
-    public void Initialize()
+    bool _sceneStart;
+
+    public static void Initialize(Registry registry)
     {
-      Application.logMessageReceived += HandleException;      
+      var testService = FindObjectOfType<EndToEndTestService>();
+      if (testService)
+      {
+        testService._registry = registry;
+        testService.OnSceneStart();
+      }
+      else
+      {
+        var go = new GameObject("EndToEndTestService");
+        var result = go.AddComponent<EndToEndTestService>();
+        result._registry = registry;
+        result.OnCreated();
+        result.OnSceneStart();
+        result.StartCoroutine(result.Run());
+      }
+    }
+
+    void OnCreated()
+    {
+      DontDestroyOnLoad(gameObject);
+      Application.logMessageReceived += HandleException;
+      PlayerPrefs.DeleteAll();
+      PlayerPrefs.SetInt(Preferences.OfflineMode, 1);
+      PlayerPrefs.SetInt(Preferences.InMemory, 1);
+    }
+
+    void OnSceneStart()
+    {
       _registry.ManaDisplayForPlayer(PlayerName.User).DisableSymbolAnimation();
       _registry.ManaDisplayForPlayer(PlayerName.Opponent).DisableSymbolAnimation();
       _registry.ActionDisplayForPlayer(PlayerName.User).DisableSymbolAnimation();
       _registry.ActionDisplayForPlayer(PlayerName.Opponent).DisableSymbolAnimation();
       _registry.Graphy.SetActive(false);
-
-      var args = System.Environment.GetCommandLineArgs();
-      if (args.Any(arg => arg.Contains("test")))
-      {
-        StartCoroutine(Run());
-      }
+      _sceneStart = true;
     }
 
     IEnumerator Run()
     {
       Debug.Log("Running End to End Tests");
-      yield return new WaitForSeconds(5f);
-      Capture("Start");
-      yield return new WaitForSeconds(5f);
-      Application.Quit();
+      _registry.GameService.CurrentGameId = null;
+      _registry.GameService.PlayerId = new PlayerIdentifier { Value = 1 };
+      _registry.ActionService.HandleAction(new GameAction
+      {
+        CreateNewGame = new CreateNewGameAction
+        {
+          Side = PlayerSide.Overlord,
+          OpponentId = new PlayerIdentifier
+          {
+            Value = 2
+          },
+          DebugOptions = new CreateGameDebugOptions
+          {
+            Deterministic = true,
+            OverrideGameIdentifier = new GameIdentifier
+            {
+              Value = 0
+            }
+          }
+        }
+      });
+
+      yield return WaitUntilSceneStart();
+      _registry.GameService.Initialize(GlobalGameMode.Default);
+      yield return WaitUntilIdle();
+      Capture("OpeningHand");
+
+      yield return Finish();
     }
 
     void Capture(string imageName)
     {
-      var dir = Path.Combine(Application.dataPath, "Screenshots");
-      Directory.CreateDirectory(dir);
-      var path = Path.Combine(dir, $"{_imageNumber++}_{imageName}.png");
+      var directory = Application.isEditor
+        ? "/tmp/spelldawn/Screenshots"
+        : Path.Combine(Application.dataPath, "Screenshots");
+
+      Directory.CreateDirectory(directory);
+      var path = Path.Combine(directory, $"{_imageNumber++}_{imageName}.png");
       ScreenCapture.CaptureScreenshot(path);
     }
-    
+
+    IEnumerator WaitUntilSceneStart()
+    {
+      _sceneStart = false;
+      yield return new WaitUntil(() => _sceneStart);
+      yield return WaitUntilIdle();
+    }
+
+    IEnumerator WaitUntilIdle()
+    {
+      yield return new WaitUntil(() => _registry.CommandService.Idle && _registry.ActionService.Idle);
+      yield return new WaitForEndOfFrame();
+    }
+
+    IEnumerator Finish()
+    {
+      Debug.Log("Done Running End To End Tests");
+      yield return new WaitForSeconds(1.0f);
+      Quit(0);
+    }
+
     void HandleException(string logString, string stackTrace, LogType type)
     {
       if (type is LogType.Exception)
       {
-        Application.Quit(1);
+        Quit(1);
       }
+    }
+
+    static void Quit(int code)
+    {
+#if UNITY_EDITOR
+      EditorApplication.isPlaying = false;
+#else
+      Application.Quit(code);
+#endif
     }
   }
 }

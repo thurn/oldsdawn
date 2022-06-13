@@ -65,13 +65,13 @@ e2e: e2e-message plugin rsync
     rm -rf /tmp/spelldawn/out/
     mkdir -p /tmp/spelldawn/out/
     "{{unity}}" -batchMode -quit -projectPath "/tmp/spelldawn" {{build_flag}} "{{app_path}}"
-    "{{bin_path}}" -test
+    "{{bin_path}}" -test -screen-width 1334 -screen-height 750 -screen-quality "High" -screen-fullscreen 0
 
 end-to-end: e2e
   #!/usr/bin/env sh
   set -o xtrace
   for file in `ls "{{screenshot_path}}"`; do
-    magick compare -metric ae -fuzz 1% "{{screenshot_path}}/$file" "./EndToEndTests/$file" difference.png
+    magick compare -metric mse "{{screenshot_path}}/$file" "./EndToEndTests/$file" difference.png
     if [ $? -ne 0 ]; then
         echo "Test Failed: $file"
         open difference.png
