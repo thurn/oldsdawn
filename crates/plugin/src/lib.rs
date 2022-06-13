@@ -17,6 +17,7 @@
 //! Implements a DLL for Unity to call into the Spelldawn API
 
 use std::panic::UnwindSafe;
+use std::sync::atomic::Ordering;
 use std::{panic, str};
 
 use anyhow::Result;
@@ -33,20 +34,32 @@ use server::{agent_response, database, requests};
 /// Initialize the plugin. Must be called immediately at application start.
 ///
 /// Should be invoked with a buffer containing a UTF-8 encoded string of the
-/// database path the plugin should use, along with its length.
+/// database path the plugin should use, along with its length. If `in_memory`
+/// is true, the plugin should store all state in memory instead of writing to
+/// the database.
 ///
 /// Returns 0 on success and -1 on error.
 #[no_mangle]
-pub unsafe extern "C" fn spelldawn_initialize(path: *const u8, path_length: i32) -> i32 {
-    panic::catch_unwind(|| initialize_impl(path, path_length).unwrap_or(-1)).unwrap_or(-1)
+pub unsafe extern "C" fn spelldawn_initialize(
+    path: *const u8,
+    path_length: i32,
+    in_memory: bool,
+) -> i32 {
+    panic::catch_unwind(|| initialize_impl(path, path_length, in_memory).unwrap_or(-1))
+        .unwrap_or(-1)
 }
 
-unsafe fn initialize_impl(path: *const u8, path_length: i32) -> Result<i32> {
+unsafe fn initialize_impl(path: *const u8, path_length: i32, in_memory: bool) -> Result<i32> {
     initialize::run();
     let slice = std::slice::from_raw_parts(path, path_length as usize);
     let db_path = str::from_utf8(slice)?;
-    database::override_path(db_path.to_string());
-    println!("Initialized libspelldawn with database path {}", db_path);
+    if in_memory {
+        requests::IN_MEMORY.store(true, Ordering::Relaxed);
+        println!("Initialized plugin in-memory");
+    } else {
+        database::override_path(db_path.to_string());
+        println!("Initialized plugin with database path {}", db_path);
+    }
     Ok(0)
 }
 

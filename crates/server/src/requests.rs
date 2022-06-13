@@ -14,6 +14,8 @@
 
 //! Top-level server request handling
 
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use anyhow::{bail, ensure, Result};
 use dashmap::DashMap;
 use data::game::{GameConfiguration, GameState};
@@ -30,8 +32,7 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
     card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand,
-    CreateNewGameAction, DebugOptions, GameCommand, GameRequest, PlayerSide, RoomIdentifier,
-    StandardAction,
+    CreateNewGameAction, GameCommand, GameRequest, PlayerSide, RoomIdentifier, StandardAction,
 };
 use rules::{actions, dispatch, mutations};
 use serde_json::de;
@@ -50,6 +51,10 @@ use crate::{agent_response, debug};
 /// TODO: How do you clean these up if a user disconnects?
 static CHANNELS: Lazy<DashMap<PlayerId, Sender<Result<CommandList, Status>>>> =
     Lazy::new(DashMap::new);
+
+/// Should requests be handled entirely in-memory, without ever writing to the
+/// database?
+pub static IN_MEMORY: AtomicBool = AtomicBool::new(false);
 
 pub type ResponseInterceptor = fn(&CommandList);
 
@@ -76,7 +81,7 @@ impl Spelldawn for GameService {
 
         let (tx, rx) = mpsc::channel(4);
 
-        let result = if in_memory(message.debug_options.as_ref()) {
+        let result = if in_memory() {
             handle_connect(&mut InMemoryDatabase, player_id, game_id)
         } else {
             handle_connect(&mut SledDatabase { flush_on_write: false }, player_id, game_id)
@@ -105,7 +110,7 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        let response = if in_memory(request.get_ref().debug_options.as_ref()) {
+        let response = if in_memory() {
             handle_request(&mut InMemoryDatabase, request.get_ref())
         } else {
             handle_request(&mut SledDatabase { flush_on_write: false }, request.get_ref())
@@ -117,7 +122,7 @@ impl Spelldawn for GameService {
                 }
 
                 send_player_response(response.opponent_response).await;
-                if in_memory(request.get_ref().debug_options.as_ref()) {
+                if in_memory() {
                     agent_response::deprecated_check_for_agent_response(
                         InMemoryDatabase,
                         request.get_ref(),
@@ -143,7 +148,7 @@ impl Spelldawn for GameService {
 pub fn connect(message: ConnectRequest) -> Result<CommandList> {
     let game_id = adapters::to_optional_server_game_id(&message.game_id);
     let player_id = adapters::to_server_player_id(message.player_id)?;
-    if in_memory(message.debug_options.as_ref()) {
+    if in_memory() {
         handle_connect(&mut InMemoryDatabase, player_id, game_id)
     } else {
         handle_connect(&mut SledDatabase { flush_on_write: true }, player_id, game_id)
@@ -152,7 +157,7 @@ pub fn connect(message: ConnectRequest) -> Result<CommandList> {
 
 /// Helper to perform an action from the unity plugin
 pub fn perform_action(request: GameRequest) -> Result<CommandList> {
-    let result = if in_memory(request.debug_options.as_ref()) {
+    let result = if in_memory() {
         let mut db = InMemoryDatabase;
         let response = handle_request(&mut db, &request)?;
         agent_response::handle_request(db, &request)?;
@@ -478,6 +483,6 @@ fn to_server_room_id(room_id: Option<RoomIdentifier>) -> Option<RoomId> {
     }
 }
 
-fn in_memory(options: Option<&DebugOptions>) -> bool {
-    options.map_or(false, |o| o.in_memory)
+fn in_memory() -> bool {
+    IN_MEMORY.load(Ordering::Relaxed)
 }

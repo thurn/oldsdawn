@@ -63,7 +63,7 @@ namespace Spelldawn.Services
 
     public void Initialize()
     {
-      Plugin.Initialize();
+      Plugin.Initialize(PlayerPrefs.GetInt(Preferences.InMemory) > 0);
     }
 
     public PlayerName CurrentPriority
@@ -241,10 +241,6 @@ namespace Spelldawn.Services
       {
         GameId = gameId,
         PlayerId = _registry.GameService.PlayerId,
-        DebugOptions = new DebugOptions
-        {
-          InMemory = PlayerPrefs.GetInt(Preferences.InMemory) > 0
-        }
       };
       
       if (offlineMode)
@@ -298,10 +294,6 @@ namespace Spelldawn.Services
         Action = action,
         GameId = _registry.GameService.CurrentGameId,
         PlayerId = _registry.GameService.PlayerId,
-        DebugOptions = new DebugOptions
-        {
-          InMemory = PlayerPrefs.GetInt(Preferences.InMemory) > 0
-        }        
       };
 
       if (!Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)

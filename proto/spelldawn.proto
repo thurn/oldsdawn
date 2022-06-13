@@ -900,12 +900,6 @@ message GameAction {
     }
 }
 
-// Special options for use in development/tests
-message DebugOptions {
-    // If true, this request should not read or write from the filesystem.
-    bool in_memory = 1;
-}
-
 // Initiate a play session. If a game_id is provided, connects to an ongoing
 // game. Otherwise, creates a new game. This must be sent from an empty game
 // scene.
@@ -915,9 +909,6 @@ message ConnectRequest {
 
     // User making this request.
     PlayerIdentifier player_id = 2;
-
-    // Debugging options
-    DebugOptions debug_options = 3;
 }
 
 message GameRequest {
@@ -930,9 +921,6 @@ message GameRequest {
     // figure out how to set up authentication, but currently we operate on
     // the honor system :)
     PlayerIdentifier player_id = 3;
-
-    // Debugging options
-    DebugOptions debug_options = 4;
 }
 
 // ============================================================================

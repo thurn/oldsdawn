@@ -149,7 +149,6 @@ impl TestSession {
                 action: Some(GameAction { action: Some(action) }),
                 game_id,
                 player_id: Some(adapters::adapt_player_id(player_id)),
-                debug_options: None,
             },
         )?;
 

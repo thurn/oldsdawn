@@ -877,13 +877,6 @@ pub mod game_action {
         SpendActionPoint(super::SpendActionPointAction),
     }
 }
-/// Special options for use in development/tests
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct DebugOptions {
-    /// If true, this request should not read or write from the filesystem.
-    #[prost(bool, tag = "1")]
-    pub in_memory: bool,
-}
 /// Initiate a play session. If a game_id is provided, connects to an ongoing
 /// game. Otherwise, creates a new game. This must be sent from an empty game
 /// scene.
@@ -895,9 +888,6 @@ pub struct ConnectRequest {
     /// User making this request.
     #[prost(message, optional, tag = "2")]
     pub player_id: ::core::option::Option<PlayerIdentifier>,
-    /// Debugging options
-    #[prost(message, optional, tag = "3")]
-    pub debug_options: ::core::option::Option<DebugOptions>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameRequest {
@@ -911,9 +901,6 @@ pub struct GameRequest {
     /// the honor system :)
     #[prost(message, optional, tag = "3")]
     pub player_id: ::core::option::Option<PlayerIdentifier>,
-    /// Debugging options
-    #[prost(message, optional, tag = "4")]
-    pub debug_options: ::core::option::Option<DebugOptions>,
 }
 // ============================================================================
 // Commands
