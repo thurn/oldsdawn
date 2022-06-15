@@ -15,6 +15,7 @@
 using System.Linq;
 using Spelldawn.Game;
 using Spelldawn.Protos;
+using Spelldawn.Tests;
 using UnityEngine;
 
 #nullable enable
@@ -25,13 +26,13 @@ namespace Spelldawn.Services
   {
     Default,
     EndToEndTest
-  }  
-  
+  }
+
   public sealed class Registry : MonoBehaviour
   {
     [SerializeField] GlobalGameMode _globalGameMode;
     public GlobalGameMode GlobalGameMode => _globalGameMode;
-    
+
     [SerializeField] Camera _mainCamera = null!;
     public Camera MainCamera => _mainCamera;
 
@@ -67,7 +68,7 @@ namespace Spelldawn.Services
 
     [SerializeField] MusicService _musicService = null!;
     public MusicService MusicService => _musicService;
-    
+
     [SerializeField] ArrowService _arrowService = null!;
     public ArrowService ArrowService => _arrowService;
 
@@ -104,7 +105,8 @@ namespace Spelldawn.Services
     [SerializeField] CurveObjectDisplay _userHand = null!;
     [SerializeField] CurveObjectDisplay _opponentHand = null!;
 
-    public CurveObjectDisplay HandForPlayer(PlayerName playerName) => playerName == PlayerName.User ? _userHand : _opponentHand;
+    public CurveObjectDisplay HandForPlayer(PlayerName playerName) =>
+      playerName == PlayerName.User ? _userHand : _opponentHand;
 
     [SerializeField] ObjectDisplay _userDeckPosition = null!;
     [SerializeField] ObjectDisplay _opponentDeckPosition = null!;
@@ -161,27 +163,32 @@ namespace Spelldawn.Services
 
     public GameObject ActiveLightForPlayer(PlayerName playerName) =>
       playerName == PlayerName.User ? _userActiveLight : _opponentActiveLight;
-    
+
     [SerializeField] GameObject _graphy = null!;
     public GameObject Graphy => _graphy;
-    
+
+    public EndToEndTestService? EndToEndTests { get; private set; }
+
     void Start()
     {
       Application.targetFrameRate = 60;
+      var runTests = false;
 
-      if (System.Environment.GetCommandLineArgs().Any(arg => arg.Contains("test")))
+      if (_globalGameMode == GlobalGameMode.EndToEndTest ||
+          System.Environment.GetCommandLineArgs().Any(arg => arg.Contains("test")))
       {
         _globalGameMode = GlobalGameMode.EndToEndTest;
-      }      
-      
+        EndToEndTests = EndToEndTestService.Initialize(this, out runTests);
+      }
+
       ActionService.Initialize();
       DocumentService.Initialize();
       GameService.Initialize(_globalGameMode);
       MusicService.Initialize(_globalGameMode);
 
-      if (_globalGameMode == GlobalGameMode.EndToEndTest)
+      if (runTests)
       {
-        EndToEndTestService.Initialize(this);
+        EndToEndTests!.RunTests();
       }
     }
   }

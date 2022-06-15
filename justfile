@@ -33,7 +33,7 @@ e2e-message:
 
 rsync:
     mkdir -p /tmp/spelldawn
-    - rsync -aE . –-delete --exclude={Temp,target} /tmp/spelldawn
+    rsync --delete -a . --exclude='{Temp,target}' /tmp/spelldawn
 
 build_flag := if os() == "macos" {
     "-buildOSXUniversalPlayer"
@@ -61,26 +61,35 @@ screenshot_path := if os() == "macos" {
 
 # You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
 # before running end to end tests.
-e2e: e2e-message plugin rsync
+run-e2e: e2e-message plugin rsync
     rm -rf /tmp/spelldawn/out/
     mkdir -p /tmp/spelldawn/out/
     "{{unity}}" -batchMode -quit -projectPath "/tmp/spelldawn" {{build_flag}} "{{app_path}}"
     "{{bin_path}}" -test -screen-width 1334 -screen-height 750 -screen-quality "High" -screen-fullscreen 0
 
-end-to-end: e2e
+e2e-screenshots: run-e2e
+    #!/usr/bin/env sh
+    set -o xtrace
+    for file in `ls "{{screenshot_path}}"`; do
+        magick "{{screenshot_path}}/$file" -resize '50%' "{{screenshot_path}}/$file"
+    done
+
+end-to-end: e2e-screenshots
   #!/usr/bin/env sh
   set -o xtrace
   for file in `ls "{{screenshot_path}}"`; do
-    magick compare -metric mse "{{screenshot_path}}/$file" "./EndToEndTests/$file" difference.png
-    if [ $? -ne 0 ]; then
-        echo "Test Failed: $file"
+    result=`magick compare -metric mse "{{screenshot_path}}/$file" "./EndToEndTests/$file" difference.png 2>&1`
+    difference=`echo $result | cut -f 1 -d ' ' -`
+    echo "\n>>> Image difference is $difference\n"
+    if awk "BEGIN {exit !($difference >= 5)}"; then
+        echo "\n>>> Test Failed: $file\n"
         open difference.png
         exit 1
     fi
     rm difference.png
   done
 
-record: e2e
+record: e2e-screenshots
     rm -rf EndToEndTests
     mkdir -p EndToEndTests
     cp "{{screenshot_path}}"/*.png EndToEndTests/

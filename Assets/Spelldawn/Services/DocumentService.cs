@@ -52,6 +52,8 @@ namespace Spelldawn.Services
     VisualElement _supplementalCardInfo = null!;
     Node _supplementalCardInfoNode = null!;
 
+    public VisualElement RootVisualElement => _document.rootVisualElement;
+
     public void Initialize()
     {
       _document.rootVisualElement.Clear();

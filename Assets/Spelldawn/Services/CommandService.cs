@@ -57,11 +57,11 @@ namespace Spelldawn.Services
       if (_queue.Count > 0 && !_currentlyHandling)
       {
         _currentlyHandling = true;
-        StartCoroutine(HandleCommandsAsync(_queue.Dequeue(), () => { _currentlyHandling = false; }));
+        StartCoroutine(HandleCommandsAsync(_queue.Dequeue(), isParallel: false, () => { _currentlyHandling = false; }));
       }
     }
 
-    IEnumerator HandleCommandsAsync(CommandList commandList, Action? onComplete = null)
+    IEnumerator HandleCommandsAsync(CommandList commandList, bool isParallel = false, Action? onComplete = null)
     {
       yield return _registry.AssetService.LoadAssets(commandList);
 
@@ -138,6 +138,11 @@ namespace Spelldawn.Services
           default:
             break;
         }
+
+        if (_registry.EndToEndTests && !isParallel)
+        {
+          yield return _registry.EndToEndTests!.OnCommandHandled(command);
+        }
       }
 
       onComplete?.Invoke();
@@ -154,7 +159,7 @@ namespace Spelldawn.Services
       var coroutines = new List<Coroutine>();
       foreach (var list in command.Commands)
       {
-        coroutines.Add(StartCoroutine(HandleCommandsAsync(list)));
+        coroutines.Add(StartCoroutine(HandleCommandsAsync(list, isParallel: true)));
       }
 
       foreach (var coroutine in coroutines)
@@ -287,6 +292,7 @@ namespace Spelldawn.Services
               Debug.Log(command.LogMessage.Text);
               break;
           }
+
           break;
         case ClientDebugCommand.DebugCommandOneofCase.SetBooleanPreference:
           PlayerPrefs.SetInt(command.SetBooleanPreference.Key, command.SetBooleanPreference.Value ? 1 : 0);

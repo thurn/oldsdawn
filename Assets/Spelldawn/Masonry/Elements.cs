@@ -61,6 +61,8 @@ namespace Spelldawn.Masonry
       _actions[eventType] = callback;
     }
 
+    public bool HasCallback(Event eventType) => _registered.Contains(eventType);
+
     void Register(VisualElement e, Event eventType)
     {
       switch (eventType)
@@ -85,7 +87,7 @@ namespace Spelldawn.Masonry
       }
     }
 
-    void OnClick(ClickEvent evt)
+    public void OnClick(ClickEvent evt)
     {
       if (Mathf.Abs(Time.time - _lastClickTime) > 0.1f)
       {
