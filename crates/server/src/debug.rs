@@ -64,6 +64,7 @@ pub fn handle_debug_action(
                                     deterministic: true,
                                     override_game_identifier: Some(GameIdentifier { value: 0 }),
                                     in_memory: false,
+                                    vs_agent: false,
                                 }),
                             })),
                         })),

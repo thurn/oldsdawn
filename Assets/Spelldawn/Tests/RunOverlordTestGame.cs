@@ -43,7 +43,8 @@ namespace Spelldawn.Tests
             OverrideGameIdentifier = new GameIdentifier
             {
               Value = 0
-            }
+            },
+            VsAgent = true
           }
         }
       });
@@ -58,6 +59,7 @@ namespace Spelldawn.Tests
       service.ClickOn("Mulligan");
       yield return service.StepCapture("MulliganDraw");
       yield return service.StepCapture("DrawMulliganCard");
+      yield return service.StepCapture("TurnStart", steps: 7);
 
       yield return service.Finish();
     }
