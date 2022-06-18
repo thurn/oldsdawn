@@ -24,7 +24,7 @@ use data::game_actions::DebugAction;
 use data::primitives::{GameId, PlayerId, Side};
 use data::updates::GameUpdate;
 use data::with_error::WithError;
-use display::{adapters, render};
+use display2::{adapters, render};
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;

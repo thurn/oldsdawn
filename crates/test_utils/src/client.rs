@@ -26,7 +26,7 @@ use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
 };
 use data::with_error::WithError;
-use display::adapters;
+use display2::adapters;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;

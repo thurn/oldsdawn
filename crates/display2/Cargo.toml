@@ -1,5 +1,5 @@
 [package]
-name = "display"
+name = "display2"
 version = "0.0.0"
 description = "Converts internal game state representation into a format the client can understand"
 license = "Apache-2.0"

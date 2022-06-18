@@ -24,8 +24,8 @@ use data::primitives::{
 };
 use data::text::{DamageWord, Keyword};
 use data::with_error::WithError;
-use display::rexard_images;
-use display::rexard_images::RexardPack;
+use display2::rexard_images;
+use display2::rexard_images::RexardPack;
 use rules::helpers::*;
 use rules::mana::ManaPurpose;
 use rules::mutations::SummonMinion;

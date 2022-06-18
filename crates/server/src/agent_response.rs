@@ -23,7 +23,7 @@ use data::agent_definition::AgentData;
 use data::fail;
 use data::game::GameState;
 use data::primitives::{GameId, PlayerId, Side};
-use display::adapters;
+use display2::adapters;
 use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};

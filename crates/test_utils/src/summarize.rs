@@ -15,8 +15,8 @@
 use std::fmt::Debug;
 
 use anyhow::Result;
-use display::adapters;
-use display::adapters::ServerCardId;
+use display2::adapters;
+use display2::adapters::ServerCardId;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
