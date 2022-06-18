@@ -829,9 +829,6 @@ pub struct CreateGameDebugOptions {
     /// written to disk.
     #[prost(bool, tag = "3")]
     pub in_memory: bool,
-    /// If true, an AI agent opponent is selected for this game.
-    #[prost(bool, tag = "4")]
-    pub vs_agent: bool,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateNewGameAction {

@@ -36,9 +36,8 @@ namespace Spelldawn.Tests
     int _imageNumber = 1000;
     bool _sceneStart;
     string _directory = null!;
-    
-    [SerializeField] int _testStep = -1;
-    [SerializeField] int _commandStep;
+    int? _testStep;
+    int _commandStep;
 
     public static EndToEndTestService Initialize(Registry registry, out bool runTests)
     {
@@ -118,11 +117,6 @@ namespace Spelldawn.Tests
       _testStep = target;
     }
 
-    public void Step()
-    {
-      _testStep++;
-    }
-
     public IEnumerator WaitUntilSceneStart()
     {
       _sceneStart = false;
@@ -162,10 +156,10 @@ namespace Spelldawn.Tests
           break;
       }
 
-      if (_testStep >= 0)
+      if (_testStep != null)
       {
         Debug.Log($"OnCommandHandled: Waiting at {_commandStep}, test step is {_testStep}");
-        yield return new WaitUntil(() => _testStep <= _commandStep);        
+        yield return new WaitUntil(() => _testStep == _commandStep);        
       }
     }
 

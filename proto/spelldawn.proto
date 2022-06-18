@@ -867,9 +867,6 @@ message CreateGameDebugOptions {
     // If true, this game's state will be stored in memory instead of being
     // written to disk.
     bool in_memory = 3;
-
-    // If true, an AI agent opponent is selected for this game.
-    bool vs_agent = 4;
 }
 
 message CreateNewGameAction {

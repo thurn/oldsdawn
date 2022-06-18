@@ -18,7 +18,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 use anyhow::{bail, ensure, Result};
 use dashmap::DashMap;
-use data::agent_definition::{AgentData, AgentName, GameStatePredictorName};
 use data::game::{GameConfiguration, GameState};
 use data::game_actions::UserAction;
 use data::primitives::{GameId, PlayerId, RoomId, Side};
@@ -311,12 +310,6 @@ fn create_new_game(
             ..GameConfiguration::default()
         },
     );
-    if debug_options.vs_agent {
-        game.player_mut(user_side.opponent()).agent = Some(AgentData {
-            name: AgentName::PickRandom,
-            state_predictor: GameStatePredictorName::Omniscient,
-        });
-    }
 
     dispatch::populate_delegate_cache(&mut game);
     mutations::deal_opening_hands(&mut game)?;
