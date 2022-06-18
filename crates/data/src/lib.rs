@@ -26,6 +26,7 @@ pub mod primitives;
 pub mod random;
 pub mod special_effects;
 pub mod text;
+pub mod updates2;
 pub mod updates;
 pub mod utils;
 pub mod with_error;

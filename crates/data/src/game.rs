@@ -34,7 +34,7 @@ use crate::primitives::{
     AbilityId, ActionCount, CardId, GameId, HasAbilityId, ItemLocation, ManaValue, PlayerId,
     PointsValue, RaidId, RoomId, RoomLocation, Side, TurnNumber,
 };
-use crate::updates::UpdateTracker;
+use crate::updates2::UpdateTracker2;
 use crate::with_error::WithError;
 
 /// Mana to be spent only during the `raid_id` raid
@@ -237,7 +237,7 @@ pub struct GameState {
     /// changes in response to that request. Consequently, its value is not
     /// serialized.
     #[serde(skip)]
-    pub updates: UpdateTracker,
+    pub updates2: UpdateTracker2,
     /// Cards for the overlord player. In general, code should use one of the
     /// helper methods below instead of accessing this directly.
     pub overlord_cards: Vec<CardState>,
@@ -291,7 +291,7 @@ impl GameState {
             overlord: PlayerState::new(overlord_deck.owner_id),
             champion: PlayerState::new(champion_deck.owner_id),
             ability_state: HashMap::new(),
-            updates: UpdateTracker::new(!config.simulation),
+            updates2: UpdateTracker2::new(!config.simulation),
             next_sorting_key: 1,
             delegate_cache: DelegateCache::default(),
             rng: if config.deterministic {

@@ -27,7 +27,7 @@ use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::special_effects::{
     FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
 };
-use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
+use data::updates2::{GameUpdate2, InteractionObjectId2, TargetedInteraction2};
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
@@ -53,24 +53,24 @@ use crate::{adapters, assets, full_sync};
 pub fn populate_card_update_types(
     game: &GameState,
     user_side: Side,
-    update: &GameUpdate,
+    update: &GameUpdate2,
     types: &mut CardUpdateTypes,
 ) {
     match update {
-        GameUpdate::DrawHand(side) => {
+        GameUpdate2::DrawHand(side) => {
             for card in game.hand(*side) {
                 types.insert(card.id, UpdateType::Animation);
             }
         }
-        GameUpdate::KeepHand(_, cards) => {
+        GameUpdate2::KeepHand(_, cards) => {
             for card_id in cards {
                 types.insert(*card_id, UpdateType::Animation);
             }
         }
-        GameUpdate::DrawCard(card_id) => {
+        GameUpdate2::DrawCard(card_id) => {
             types.insert(*card_id, UpdateType::Utility);
         }
-        GameUpdate::MulliganHand(_, old_cards, new_cards) => {
+        GameUpdate2::MulliganHand(_, old_cards, new_cards) => {
             for card_id in old_cards {
                 types.insert(*card_id, UpdateType::Animation);
             }
@@ -78,19 +78,19 @@ pub fn populate_card_update_types(
                 types.insert(*card_id, UpdateType::Animation);
             }
         }
-        GameUpdate::ShuffleIntoDeck(card_id) => {
+        GameUpdate2::ShuffleIntoDeck(card_id) => {
             types.insert(*card_id, UpdateType::Utility);
         }
-        GameUpdate::DestroyCard(card_id) => {
+        GameUpdate2::DestroyCard(card_id) => {
             types.insert(*card_id, UpdateType::Utility);
         }
-        GameUpdate::OverlordScoreCard(card_id, _) => {
+        GameUpdate2::OverlordScoreCard(card_id, _) => {
             types.insert(*card_id, UpdateType::Animation);
         }
-        GameUpdate::ChampionScoreCard(card_id, _) => {
+        GameUpdate2::ChampionScoreCard(card_id, _) => {
             types.insert(*card_id, UpdateType::Animation);
         }
-        GameUpdate::RevealToOpponent(card_id) => {
+        GameUpdate2::RevealToOpponent(card_id) => {
             if game.data.raid.is_none() && user_side != game.card(*card_id).side() {
                 // Kind of a hack: reveal_card only adds animations for the opponent when no
                 // raid is active.
@@ -107,48 +107,48 @@ pub fn populate_card_update_types(
 /// `commands` list.
 pub fn render(
     commands: &mut ResponseBuilder,
-    update: &GameUpdate,
+    update: &GameUpdate2,
     game: &GameState,
     user_side: Side,
 ) -> Result<()> {
     match update {
-        GameUpdate::LevelUpRoom(room_id) => level_up_room(commands, *room_id),
-        GameUpdate::InitiateRaid(room_id) => initiate_raid(commands, *room_id),
-        GameUpdate::StartTurn(side) => start_turn(commands, *side),
-        GameUpdate::DrawHand(side) => draw_hand(commands, game, *side),
-        GameUpdate::KeepHand(side, cards) => keep_hand(commands, game, *side, cards)?,
-        GameUpdate::MulliganHand(side, old_cards, new_cards) => {
+        GameUpdate2::LevelUpRoom(room_id) => level_up_room(commands, *room_id),
+        GameUpdate2::InitiateRaid(room_id) => initiate_raid(commands, *room_id),
+        GameUpdate2::StartTurn(side) => start_turn(commands, *side),
+        GameUpdate2::DrawHand(side) => draw_hand(commands, game, *side),
+        GameUpdate2::KeepHand(side, cards) => keep_hand(commands, game, *side, cards)?,
+        GameUpdate2::MulliganHand(side, old_cards, new_cards) => {
             mulligan_hand(commands, game, *side, old_cards, new_cards)?
         }
-        GameUpdate::DrawCard(card_id) => draw_card(commands, game, user_side, *card_id),
-        GameUpdate::RevealToOpponent(card_id) => reveal_card(commands, game, game.card(*card_id)),
-        GameUpdate::TargetedInteraction(interaction) => {
+        GameUpdate2::DrawCard(card_id) => draw_card(commands, game, user_side, *card_id),
+        GameUpdate2::RevealToOpponent(card_id) => reveal_card(commands, game, game.card(*card_id)),
+        GameUpdate2::TargetedInteraction(interaction) => {
             targeted_interaction(commands, game, user_side, *interaction)
         }
-        GameUpdate::OverlordScoreCard(card_id, _) => {
+        GameUpdate2::OverlordScoreCard(card_id, _) => {
             score_card(commands, game, game.card(*card_id), Side::Overlord)
         }
-        GameUpdate::ChampionScoreCard(card_id, _) => {
+        GameUpdate2::ChampionScoreCard(card_id, _) => {
             score_card(commands, game, game.card(*card_id), Side::Champion)
         }
-        GameUpdate::DestroyCard(card_id) => destroy_card(commands, UpdateType::Utility, *card_id),
-        GameUpdate::MoveToZone(card_id) => {
+        GameUpdate2::DestroyCard(card_id) => destroy_card(commands, UpdateType::Utility, *card_id),
+        GameUpdate2::MoveToZone(card_id) => {
             move_card(commands, UpdateType::Utility, game.card(*card_id))
         }
-        GameUpdate::MoveToZoneDuringRaid(card_id) => {
+        GameUpdate2::MoveToZoneDuringRaid(card_id) => {
             move_card(commands, UpdateType::Utility, game.card(*card_id))
         }
-        GameUpdate::ShuffleIntoDeck(card_id) => {
+        GameUpdate2::ShuffleIntoDeck(card_id) => {
             shuffle_into_deck(commands, game, user_side, *card_id, UpdateType::Utility)
         }
-        GameUpdate::AbilityActivated(ability_id) => {
+        GameUpdate2::AbilityActivated(ability_id) => {
             if ability_id.card_id.side != commands.user_side {
                 show_ability_fired(commands, game, *ability_id)
             }
         }
-        GameUpdate::AbilityTriggered(ability_id) => show_ability_fired(commands, game, *ability_id),
-        GameUpdate::GameOver(side) => game_over(commands, game, *side),
-        GameUpdate::DiscardToHandSize(_, _) => {}
+        GameUpdate2::AbilityTriggered(ability_id) => show_ability_fired(commands, game, *ability_id),
+        GameUpdate2::GameOver(side) => game_over(commands, game, *side),
+        GameUpdate2::DiscardToHandSize(_, _) => {}
         _ => todo!("Implement {:?}", update),
     }
 
@@ -444,7 +444,7 @@ fn targeted_interaction(
     commands: &mut ResponseBuilder,
     game: &GameState,
     user_side: Side,
-    interaction: TargetedInteraction,
+    interaction: TargetedInteraction2,
 ) {
     let mut projectile = FireProjectileCommand {
         source_id: Some(adapt_interaction_id(interaction.source, user_side)),
@@ -462,9 +462,9 @@ fn targeted_interaction(
 fn apply_projectile(
     game: &GameState,
     command: &mut FireProjectileCommand,
-    interaction: TargetedInteraction,
+    interaction: TargetedInteraction2,
 ) {
-    if let (InteractionObjectId::CardId(card_id), _) = (interaction.source, interaction.target) {
+    if let (InteractionObjectId2::CardId(card_id), _) = (interaction.source, interaction.target) {
         let effects = &rules::card_definition(game, card_id).config.special_effects;
         if let Some(projectile) = effects.projectile {
             command.projectile = Some(assets::projectile(projectile));
@@ -723,17 +723,17 @@ fn create_or_update(
     ))
 }
 
-fn adapt_interaction_id(id: InteractionObjectId, user_side: Side) -> GameObjectIdentifier {
+fn adapt_interaction_id(id: InteractionObjectId2, user_side: Side) -> GameObjectIdentifier {
     GameObjectIdentifier {
         id: Some(match id {
-            InteractionObjectId::CardId(id) => Id::CardId(adapters::adapt_card_id(id)),
-            InteractionObjectId::Identity(side) => {
+            InteractionObjectId2::CardId(id) => Id::CardId(adapters::adapt_card_id(id)),
+            InteractionObjectId2::Identity(side) => {
                 Id::Identity(adapters::to_player_name(side, user_side).into())
             }
-            InteractionObjectId::Deck(side) => {
+            InteractionObjectId2::Deck(side) => {
                 Id::Deck(adapters::to_player_name(side, user_side).into())
             }
-            InteractionObjectId::DiscardPile(side) => {
+            InteractionObjectId2::DiscardPile(side) => {
                 Id::DiscardPile(adapters::to_player_name(side, user_side).into())
             }
         }),

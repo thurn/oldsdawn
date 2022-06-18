@@ -29,7 +29,7 @@ use data::delegates::{
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
-use data::updates::GameUpdate;
+use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use data::{fail, verify};
 use tracing::{info, instrument};
@@ -84,12 +84,12 @@ fn handle_mulligan_decision(
     let hand = game.hand(user_side).map(|c| c.id).collect::<Vec<_>>();
     match decision {
         MulliganDecision::Keep => {
-            game.updates.push(GameUpdate::KeepHand(user_side, hand));
+            game.updates2.push(GameUpdate2::KeepHand(user_side, hand));
         }
         MulliganDecision::Mulligan => {
             mutations::shuffle_into_deck(game, user_side, &hand)?;
             let new_hand = mutations::draw_cards(game, user_side, 5)?;
-            game.updates.push(GameUpdate::MulliganHand(user_side, hand, new_hand));
+            game.updates2.push(GameUpdate2::MulliganHand(user_side, hand, new_hand));
         }
     }
 
@@ -204,7 +204,7 @@ fn activate_ability_action(
     }
 
     dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }))?;
-    game.updates.push(GameUpdate::AbilityActivated(ability_id));
+    game.updates2.push(GameUpdate2::AbilityActivated(ability_id));
     mutations::check_end_turn(game)?;
     Ok(())
 }
@@ -237,7 +237,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
     mutations::level_up_room(game, room_id)?;
 
     mutations::check_end_turn(game)?;
-    game.updates.push(GameUpdate::LevelUpRoom(room_id));
+    game.updates2.push(GameUpdate2::LevelUpRoom(room_id));
 
     Ok(())
 }

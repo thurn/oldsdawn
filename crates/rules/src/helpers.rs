@@ -32,7 +32,7 @@ use data::primitives::{
 };
 use data::special_effects::Projectile;
 use data::text::{AbilityText, NumericOperator, TextToken};
-use data::updates::GameUpdate;
+use data::updates2::GameUpdate2;
 use data::utils;
 
 use crate::mana::ManaPurpose;
@@ -157,7 +157,7 @@ pub fn is_inner_room(room_id: RoomId) -> bool {
 /// Pushes a [GameUpdate] indicating the ability represented by [Scope] should
 /// have a trigger animation shown in the UI.
 pub fn alert(game: &mut GameState, scope: Scope) {
-    game.updates.push(GameUpdate::AbilityTriggered(scope.ability_id()));
+    game.updates2.push(GameUpdate2::AbilityTriggered(scope.ability_id()));
 }
 
 /// Invokes [alert] if the provided `number` is not zero.

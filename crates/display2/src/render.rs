@@ -16,7 +16,7 @@ use anyhow::Result;
 use dashmap::DashMap;
 use data::game::GameState;
 use data::primitives::{PlayerId, Side};
-use data::updates::{GameUpdate, GameUpdateKind};
+use data::updates2::{GameUpdate2, GameUpdateKind};
 use data::with_error::WithError;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_command::Command;
@@ -48,8 +48,8 @@ pub fn connect(game: &GameState, user_side: Side) -> Result<Vec<Command>> {
 }
 
 pub fn render_updates(game: &GameState, user_side: Side) -> Result<Vec<Command>> {
-    let mut updates = game.updates.list().with_error(|| "Game updates not enabled")?.clone();
-    updates.sort_by_key(GameUpdate::kind);
+    let mut updates = game.updates2.list().with_error(|| "Game updates not enabled")?.clone();
+    updates.sort_by_key(GameUpdate2::kind);
     let mut card_update_types = CardUpdateTypes::default();
     for update in &updates {
         animations::populate_card_update_types(game, user_side, update, &mut card_update_types);

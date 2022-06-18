@@ -36,7 +36,7 @@ use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
     RoomLocation, Side, TurnNumber,
 };
-use data::updates::GameUpdate;
+use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use data::{random, verify};
 use tracing::{info, instrument};
@@ -62,11 +62,11 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 
     if old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, DrawCardEvent(card_id))?;
-        game.updates.push(GameUpdate::DrawCard(card_id));
+        game.updates2.push(GameUpdate2::DrawCard(card_id));
     }
 
     if new_position.kind() == CardPositionKind::DeckUnknown {
-        game.updates.push(GameUpdate::ShuffleIntoDeck(card_id));
+        game.updates2.push(GameUpdate2::ShuffleIntoDeck(card_id));
     }
 
     if new_position.kind() == CardPositionKind::Room {
@@ -74,14 +74,14 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
         // overwrites the raid position of the card.
         // TODO: Make position sync less insane
         if game.data.raid.is_some() {
-            game.updates.push(GameUpdate::MoveToZoneDuringRaid(card_id));
+            game.updates2.push(GameUpdate2::MoveToZoneDuringRaid(card_id));
         } else {
-            game.updates.push(GameUpdate::MoveToZone(card_id));
+            game.updates2.push(GameUpdate2::MoveToZone(card_id));
         }
     }
 
     if new_position.in_discard_pile() || new_position.kind() == CardPositionKind::ArenaItem {
-        game.updates.push(GameUpdate::MoveToZone(card_id));
+        game.updates2.push(GameUpdate2::MoveToZone(card_id));
     }
 
     if !old_position.in_play() && new_position.in_play() {
@@ -135,7 +135,7 @@ pub fn turn_face_up(game: &mut GameState, card_id: CardId) -> Result<()> {
     let was_revealed_to_opponent = game.card(card_id).is_revealed_to(card_id.side.opponent());
     game.card_mut(card_id).turn_face_up();
     if !was_revealed_to_opponent {
-        game.updates.push(GameUpdate::RevealToOpponent(card_id));
+        game.updates2.push(GameUpdate2::RevealToOpponent(card_id));
     }
     Ok(())
 }
@@ -162,7 +162,7 @@ pub fn set_revealed_to(
     game.card_mut(card_id).set_revealed_to(side, revealed);
 
     if side != card_id.side && !current && revealed {
-        game.updates.push(GameUpdate::RevealToOpponent(card_id));
+        game.updates2.push(GameUpdate2::RevealToOpponent(card_id));
     }
 
     Ok(())
@@ -179,7 +179,7 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Result<Vec<Ca
 
     if card_ids.len() != count as usize {
         game.data.phase = GamePhase::GameOver(GameOverData { winner: side.opponent() });
-        game.updates.push(GameUpdate::GameOver(Side::Overlord));
+        game.updates2.push(GameUpdate2::GameOver(Side::Overlord));
         return Ok(vec![]);
     }
 
@@ -220,7 +220,7 @@ pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) -> Re
     game.player_mut(side).score += amount;
     if game.player(side).score >= 7 {
         game.data.phase = GamePhase::GameOver(GameOverData { winner: side });
-        game.updates.push(GameUpdate::GameOver(side));
+        game.updates2.push(GameUpdate2::GameOver(side));
     }
     Ok(())
 }
@@ -401,7 +401,7 @@ pub fn check_end_turn(game: &mut GameState) -> Result<()> {
             for card_id in hand.iter().take(count) {
                 move_card(game, *card_id, CardPosition::DiscardPile(side))?;
             }
-            game.updates.push(GameUpdate::DiscardToHandSize(side, count as u32));
+            game.updates2.push(GameUpdate2::DiscardToHandSize(side, count as u32));
         }
 
         let turn_number = match side {
@@ -456,7 +456,7 @@ pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) ->
                 game,
                 ScoreCardEvent(ScoreCard { player: Side::Overlord, card_id }),
             )?;
-            game.updates.push(GameUpdate::OverlordScoreCard(card_id, scheme_points.points));
+            game.updates2.push(GameUpdate2::OverlordScoreCard(card_id, scheme_points.points));
             score_points(game, Side::Overlord, scheme_points.points)?;
         }
     }
@@ -531,7 +531,7 @@ fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) ->
         dispatch::invoke_event(game, DawnEvent(turn_number))?;
     }
     game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
-    game.updates.push(GameUpdate::StartTurn(next_side));
+    game.updates2.push(GameUpdate2::StartTurn(next_side));
 
     draw_cards(game, next_side, 1)?;
     Ok(())
@@ -591,7 +591,7 @@ pub fn deal_damage(
             discarded.push(card_id);
         } else {
             game.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
-            game.updates.push(GameUpdate::GameOver(Side::Overlord));
+            game.updates2.push(GameUpdate2::GameOver(Side::Overlord));
         }
     }
 

@@ -22,7 +22,7 @@ use data::fail;
 use data::game::GameState;
 use data::game_actions::DebugAction;
 use data::primitives::{GameId, PlayerId, Side};
-use data::updates::GameUpdate;
+use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use display2::{adapters, render};
 use protos::spelldawn::client_debug_command::DebugCommand;
@@ -140,7 +140,7 @@ pub fn handle_debug_action(
                 }
                 game.player_mut(new_turn).actions =
                     queries::start_of_turn_action_count(game, new_turn);
-                game.updates.push(GameUpdate::StartTurn(new_turn));
+                game.updates2.push(GameUpdate2::StartTurn(new_turn));
                 Ok(())
             })
         }

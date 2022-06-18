@@ -23,7 +23,7 @@ use data::delegates::{
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::primitives::{CardId, RaidId, RoomId, Side};
-use data::updates::{GameUpdate, InteractionObjectId, TargetedInteraction};
+use data::updates2::{GameUpdate2, InteractionObjectId2, TargetedInteraction2};
 use data::with_error::WithError;
 use data::{fail, verify};
 use tracing::{info, instrument};
@@ -79,7 +79,7 @@ pub fn initiate_raid(
 
     raid_phases::set_raid_phase(game, phase)?;
     dispatch::invoke_event(game, RaidStartEvent(RaidStart { raid_id, target: target_room }))?;
-    game.updates.push(GameUpdate::InitiateRaid(target_room));
+    game.updates2.push(GameUpdate2::InitiateRaid(target_room));
     Ok(())
 }
 
@@ -129,18 +129,18 @@ pub fn encounter_action(
                 }),
             )?;
             dispatch::invoke_event(game, MinionDefeatedEvent(target_id))?;
-            game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
-                source: InteractionObjectId::CardId(source_id),
-                target: InteractionObjectId::CardId(target_id),
+            game.updates2.push(GameUpdate2::TargetedInteraction(TargetedInteraction2 {
+                source: InteractionObjectId2::CardId(source_id),
+                target: InteractionObjectId2::CardId(target_id),
             }))
         }
         EncounterAction::NoWeapon | EncounterAction::CardAction(_) => {
             let target = game.raid()?.target;
             let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
             dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id))?;
-            game.updates.push(GameUpdate::TargetedInteraction(TargetedInteraction {
-                source: InteractionObjectId::CardId(defender_id),
-                target: InteractionObjectId::Identity(Side::Champion),
+            game.updates2.push(GameUpdate2::TargetedInteraction(TargetedInteraction2 {
+                source: InteractionObjectId2::CardId(defender_id),
+                target: InteractionObjectId2::Identity(Side::Champion),
             }));
         }
     }
@@ -228,7 +228,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
     raid_phases::set_raid_prompt(game)?;
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id))?;
     dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }))?;
-    game.updates.push(GameUpdate::ChampionScoreCard(card_id, scheme_points.points));
+    game.updates2.push(GameUpdate2::ChampionScoreCard(card_id, scheme_points.points));
     mutations::score_points(game, Side::Champion, scheme_points.points)?;
     Ok(())
 }
