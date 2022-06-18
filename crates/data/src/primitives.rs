@@ -51,7 +51,7 @@ impl PlayerId {
 }
 
 impl fmt::Debug for PlayerId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value)
     }
 }
@@ -74,7 +74,7 @@ impl GameId {
 }
 
 impl fmt::Debug for GameId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value)
     }
 }
@@ -99,7 +99,7 @@ impl Side {
 }
 
 impl fmt::Debug for Side {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "{}",
@@ -136,7 +136,7 @@ impl HasCardId for CardId {
 }
 
 impl fmt::Debug for CardId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "{}{}",
@@ -160,7 +160,7 @@ impl AbilityIndex {
 }
 
 impl fmt::Debug for AbilityIndex {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
     }
 }
@@ -185,7 +185,7 @@ pub struct AbilityId {
 }
 
 impl fmt::Debug for AbilityId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}[{:?}]", self.card_id, self.index)
     }
 }
@@ -211,7 +211,7 @@ impl HasAbilityId for AbilityId {
 pub struct RaidId(pub u32);
 
 impl fmt::Debug for RaidId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "%{}", self.0)
     }
 }
@@ -239,7 +239,19 @@ pub enum School {
 }
 
 /// The possible Rooms in which the Overlord player may play their cards.
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(
+    Copy,
+    Clone,
+    Eq,
+    PartialEq,
+    Hash,
+    Debug,
+    Serialize,
+    Deserialize,
+    IntoEnumIterator,
+    Ord,
+    PartialOrd,
+)]
 pub enum RoomId {
     /// The Overlord's deck
     Vault,
@@ -264,14 +276,14 @@ impl RoomId {
 }
 
 /// Used to control where a card is rendered within a room
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd)]
 pub enum RoomLocation {
     Defender,
     Occupant,
 }
 
 /// Used to control where an item is rendered within the Champion's item display
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd)]
 pub enum ItemLocation {
     Weapons,
     Artifacts,

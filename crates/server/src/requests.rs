@@ -41,6 +41,7 @@ use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
+use data::updates::UpdateTracker;
 
 use crate::database::{Database, SledDatabase};
 use crate::in_memory_database::InMemoryDatabase;
@@ -414,6 +415,7 @@ fn handle_standard_action(
 fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameState> {
     let id = game_id.as_ref().with_error(|| "GameId not provided!")?;
     let mut game = database.game(*id)?;
+    game.updates = UpdateTracker::new(!game.data.config.simulation);
     game.updates2 = UpdateTracker2::new(!game.data.config.simulation);
     Ok(game)
 }
@@ -453,6 +455,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::DisplayRewards(_) => "DisplayRewards",
         Command::LoadScene(_) => "LoadScene",
         Command::SetPlayerId(_) => "SetPlayerIdentifier",
+        Command::MoveMultipleGameObjects(_) => "MoveMultipleGameObjects",
     })
 }
 

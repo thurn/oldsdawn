@@ -18,12 +18,7 @@ use data::fail;
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::primitives::{AbilityId, CardId, ItemLocation, RoomId, RoomLocation, Side};
 use protos::spelldawn::object_position::Position;
-use protos::spelldawn::{
-    ClientItemLocation, ClientRoomLocation, ObjectPosition, ObjectPositionBrowser,
-    ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
-    ObjectPositionIntoCard, ObjectPositionItem, ObjectPositionRaid, ObjectPositionRoom,
-    ObjectPositionStaging,
-};
+use protos::spelldawn::{ClientItemLocation, ClientRoomLocation, ObjectPosition, ObjectPositionBrowser, ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionIntoCard, ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards, ObjectPositionRoom, ObjectPositionStaging};
 
 use crate::adapters;
 use crate::response_builder::ResponseBuilder;
@@ -33,9 +28,20 @@ pub enum GameObjectId {
     CardId(CardId),
     AbilityId(AbilityId),
     Deck(Side),
-    Hand(Side),
     DiscardPile(Side),
     Identity(Side),
+}
+
+impl From<CardId> for GameObjectId {
+    fn from(card_id: CardId) -> Self {
+        GameObjectId::CardId(card_id)
+    }
+}
+
+impl From<AbilityId> for GameObjectId {
+    fn from(ability_id: AbilityId) -> Self {
+        GameObjectId::AbilityId(ability_id)
+    }
 }
 
 pub fn for_card(card: &CardState, position: Position) -> ObjectPosition {
@@ -48,6 +54,13 @@ pub fn for_ability(game: &GameState, ability_id: AbilityId, position: Position) 
         sorting_key: game.card(ability_id.card_id).sorting_key,
         sorting_subkey: 1 + (ability_id.index.value() as u32),
     }
+}
+
+pub fn for_sorting_key(
+    sorting_key: u32,
+    position: Position,
+) -> ObjectPosition {
+    ObjectPosition { sorting_key, sorting_subkey: 0, position: Some(position) }
 }
 
 pub fn room(room_id: RoomId, location: RoomLocation) -> Position {
@@ -93,6 +106,10 @@ pub fn staging() -> Position {
 
 pub fn browser() -> Position {
     Position::Browser(ObjectPositionBrowser {})
+}
+
+pub fn revealed_cards() -> Position {
+    Position::Revealed(ObjectPositionRevealedCards {})
 }
 
 pub fn raid() -> Position {
@@ -173,7 +190,8 @@ fn browser_position(
 ) -> Option<ObjectPosition> {
     browser
         .iter()
-        .position(|gid| matches!(gid, GameObjectId::CardId(card_id) if *card_id == card.id)).map(|index| ObjectPosition {
+        .position(|gid| matches!(gid, GameObjectId::CardId(card_id) if *card_id == card.id))
+        .map(|index| ObjectPosition {
             sorting_key: index as u32,
             sorting_subkey: 0,
             position: Some(position),
@@ -188,7 +206,7 @@ fn raid_browser(game: &GameState, raid: &RaidData) -> Result<Vec<GameObjectId>> 
             result.push(GameObjectId::Deck(Side::Overlord));
         }
         RoomId::Sanctum => {
-            result.push(GameObjectId::Hand(Side::Overlord));
+            result.push(GameObjectId::Identity(Side::Overlord));
         }
         RoomId::Crypts => {
             result.push(GameObjectId::DiscardPile(Side::Overlord));

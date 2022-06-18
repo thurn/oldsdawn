@@ -613,6 +613,10 @@ message ObjectPositionIntoCard {
     CardIdentifier card_id = 1;
 }
 
+/// An object position for newly-revealed cards, appears above other content
+/// like the staging area.
+message ObjectPositionRevealedCards {}
+
 message ObjectPosition {
      // A key by which to sort this object -- objects with higher sorting keys
      // should be displayed 'on top of' or 'in front of' objects with lower
@@ -638,6 +642,7 @@ message ObjectPosition {
         ObjectPositionIdentity identity = 15;
         ObjectPositionIdentityContainer identity_container = 16;
         ObjectPositionIntoCard into_card = 17;
+        ObjectPositionRevealedCards revealed = 18;
     }
 }
 
@@ -1122,6 +1127,22 @@ message MoveGameObjectsCommand {
     bool disable_animation = 3;
 }
 
+message GameObjectMove {
+    GameObjectIdentifier id = 1;
+
+    ObjectPosition position = 2;
+}
+
+// Move a list of game objects to new positions, in parallel
+message MoveMultipleGameObjectsCommand {
+    repeated GameObjectMove moves = 1;
+
+    bool disable_animation = 2;
+
+    // A delay once the cards reach their destination
+    TimeValue delay = 3;
+}
+
 /*
  * Request to move all GameObjects located at a specific object position to
  * another object position.
@@ -1304,6 +1325,7 @@ message GameCommand {
         DisplayRewardsCommand display_rewards = 19;
         LoadSceneCommand load_scene = 20;
         SetPlayerIdentifierCommand set_player_id = 21;
+        MoveMultipleGameObjectsCommand move_multiple_game_objects = 22;
     }
 }
 

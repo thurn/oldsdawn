@@ -234,7 +234,7 @@ fn set_deck_top(game: &mut GameState, side: Side, deck_top: Option<CardName>) {
             .expect("No cards in deck")
             .id;
         client::overwrite_card(game, target_id, deck_top);
-        game.move_card(target_id, CardPosition::DeckTop(side))
+        game.move_card_internal(target_id, CardPosition::DeckTop(side))
     }
 }
 
@@ -248,8 +248,8 @@ fn set_discard_pile(game: &mut GameState, side: Side, discard: Option<CardName>)
             .expect("No cards in deck")
             .id;
         client::overwrite_card(game, target_id, discard);
-        game.move_card(target_id, CardPosition::DiscardPile(side));
-        game.card_mut(target_id).turn_face_down();
+        game.move_card_internal(target_id, CardPosition::DiscardPile(side));
+        game.card_mut(target_id).turn_face_down_internal();
     }
 }
 

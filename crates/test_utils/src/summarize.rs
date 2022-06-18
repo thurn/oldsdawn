@@ -28,13 +28,14 @@ use protos::spelldawn::{
     CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
     CreateOrUpdateCardCommand, DelayCommand, DestroyCardCommand, DisplayGameMessageCommand,
     DisplayRewardsCommand, EffectAddress, FireProjectileCommand, GameCommand, GameMessageType,
-    GameObjectIdentifier, GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand,
-    ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MusicState, NoTargeting,
-    Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand, PlayEffectPosition,
-    PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide, PlayerView,
-    ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomVisitType,
-    RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand,
-    SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
+    GameObjectIdentifier, GameObjectMove, GameView, InterfaceMainControls, InterfacePanel,
+    LoadSceneCommand, ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand,
+    MoveMultipleGameObjectsCommand, MusicState, NoTargeting, Node, NodeType, ObjectPosition,
+    PanelAddress, PlayEffectCommand, PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo,
+    PlayerName, PlayerSide, PlayerView, ProjectileAddress, RenderInterfaceCommand,
+    RevealedCardView, RoomIdentifier, RoomVisitType, RulesText, RunInParallelCommand,
+    SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand,
+    SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
     UpdateGameViewCommand, VisitRoomCommand,
 };
 use server::requests::GameResponse;
@@ -279,6 +280,7 @@ impl Summarize for Command {
             Command::DisplayRewards(v) => summary.child_node("DisplayRewards", v),
             Command::LoadScene(v) => summary.child_node("LoadScene", v),
             Command::SetPlayerId(v) => summary.child_node("SetPlayerId", v),
+            Command::MoveMultipleGameObjects(v) => summary.child_node("MoveMultipleGameObjects", v),
         }
     }
 }
@@ -569,6 +571,7 @@ impl Summarize for Position {
             Position::Identity(v) => summary.primitive(v),
             Position::IdentityContainer(v) => summary.primitive(v),
             Position::IntoCard(v) => summary.primitive(v),
+            Position::Revealed(v) => summary.primitive(v),
         }
     }
 }
@@ -682,4 +685,17 @@ impl Summarize for SceneLoadMode {
 
 impl Summarize for SetPlayerIdentifierCommand {
     fn summarize(self, _: &mut Summary) {}
+}
+
+impl Summarize for GameObjectMove {
+    fn summarize(self, summary: &mut Summary) {
+        summary.child("id", self.id);
+        summary.child("position", self.position);
+    }
+}
+
+impl Summarize for MoveMultipleGameObjectsCommand {
+    fn summarize(self, summary: &mut Summary) {
+        summary.values(self.moves);
+    }
 }

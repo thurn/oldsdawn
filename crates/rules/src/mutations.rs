@@ -36,6 +36,7 @@ use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
     RoomLocation, Side, TurnNumber,
 };
+use data::updates::GameUpdate;
 use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use data::{random, verify};
@@ -56,7 +57,7 @@ use crate::{constants, dispatch, flags, mana, queries};
 pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPosition) -> Result<()> {
     info!(?card_id, ?new_position, "move_card");
     let old_position = game.card(card_id).position();
-    game.move_card(card_id, new_position);
+    game.move_card_internal(card_id, new_position);
 
     dispatch::invoke_event(game, MoveCardEvent(CardMoved { old_position, new_position }))?;
 
@@ -115,7 +116,7 @@ pub fn sacrifice_card(game: &mut GameState, card_id: CardId) -> Result<()> {
 pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) -> Result<()> {
     move_cards(game, cards, CardPosition::DeckUnknown(side))?;
     for card_id in cards {
-        game.card_mut(*card_id).turn_face_down();
+        game.card_mut(*card_id).turn_face_down_internal();
         set_revealed_to(game, *card_id, Side::Overlord, false)?;
         set_revealed_to(game, *card_id, Side::Champion, false)?;
     }
@@ -133,7 +134,9 @@ pub fn shuffle_deck(game: &mut GameState, side: Side) -> Result<()> {
 /// Switches a card to be face-up and revealed to all players.
 pub fn turn_face_up(game: &mut GameState, card_id: CardId) -> Result<()> {
     let was_revealed_to_opponent = game.card(card_id).is_revealed_to(card_id.side.opponent());
-    game.card_mut(card_id).turn_face_up();
+    game.card_mut(card_id).turn_face_up_internal();
+    set_revealed_to(game, card_id, Side::Overlord, true)?;
+    set_revealed_to(game, card_id, Side::Champion, true)?;
     if !was_revealed_to_opponent {
         game.updates2.push(GameUpdate2::RevealToOpponent(card_id));
     }
@@ -142,7 +145,7 @@ pub fn turn_face_up(game: &mut GameState, card_id: CardId) -> Result<()> {
 
 /// Switches a card to be face-down
 pub fn turn_face_down(game: &mut GameState, card_id: CardId) -> Result<()> {
-    game.card_mut(card_id).turn_face_down();
+    game.card_mut(card_id).turn_face_down_internal();
     Ok(())
 }
 
@@ -159,7 +162,7 @@ pub fn set_revealed_to(
     revealed: bool,
 ) -> Result<()> {
     let current = game.card(card_id).is_revealed_to(side);
-    game.card_mut(card_id).set_revealed_to(side, revealed);
+    game.card_mut(card_id).set_revealed_internal(side, revealed);
 
     if side != card_id.side && !current && revealed {
         game.updates2.push(GameUpdate2::RevealToOpponent(card_id));
@@ -185,6 +188,11 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Result<Vec<Ca
 
     for card_id in &card_ids {
         set_revealed_to(game, *card_id, side, true)?;
+    }
+
+    game.push_update(GameUpdate::DrawCards(side, card_ids.clone()));
+
+    for card_id in &card_ids {
         move_card(game, *card_id, CardPosition::Hand(side))?;
     }
 

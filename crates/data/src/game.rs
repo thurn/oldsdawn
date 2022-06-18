@@ -394,11 +394,11 @@ impl GameState {
 
     /// Moves a card to a new [CardPosition], updating its sorting key.
     ///
-    /// eGenerally use `mutations::move_card` instead of calling this method
+    /// Generally use `mutations::move_card` instead of calling this method
     /// directly.
-    pub fn move_card(&mut self, card_id: CardId, new_position: CardPosition) {
+    pub fn move_card_internal(&mut self, card_id: CardId, new_position: CardPosition) {
         let key = self.next_sorting_key();
-        self.card_mut(card_id).set_position(key, new_position);
+        self.card_mut(card_id).set_position_internal(key, new_position);
     }
 
     /// Moves a card to a given `index` location within its [CardPosition],
@@ -418,28 +418,6 @@ impl GameState {
             self.card_mut(id).sorting_key = self.next_sorting_key();
         }
     }
-
-    // #[allow(clippy::unwrap_in_result)]
-    // pub fn choose_randomly<I>(&mut self, iterator: I) -> Option<I::Item>
-    // where I: Iterator,
-    // {
-    //     // iterator.choose(self.rng.as_mut().unwrap())
-    //     if self.rng.is_some() {
-    //         iterator.choose(self.rng.as_mut().unwrap())
-    //     } else {
-    //         iterator.choose(&mut rand::thread_rng())
-    //     }
-    // }
-
-    // pub fn random_card(&self, position: CardPosition) -> Option<CardId> {
-    //     let mut cards = self.all_cards().filter(|c| c.position() == position);
-    //     if self.data.config.deterministic {
-    //         cards.next()
-    //     } else {
-    //         cards.choose(&mut rand::thread_rng())
-    //     }
-    //     .map(|c| c.id)
-    // }
 
     /// Cards owned by a given player in a given position, in an unspecified
     /// order
@@ -610,9 +588,9 @@ mod tests {
             hand(g).iter().map(|id| g.card(*id).sorting_key).collect::<HashSet<_>>().len()
         }
 
-        g.move_card(abyssal, CardPosition::Hand(Side::Overlord));
-        g.move_card(infernal, CardPosition::Hand(Side::Overlord));
-        g.move_card(mortal, CardPosition::Hand(Side::Overlord));
+        g.move_card_internal(abyssal, CardPosition::Hand(Side::Overlord));
+        g.move_card_internal(infernal, CardPosition::Hand(Side::Overlord));
+        g.move_card_internal(mortal, CardPosition::Hand(Side::Overlord));
         assert_eq!(3, hand_key_count(&g));
         assert_eq!(vec![abyssal, infernal, mortal], hand(&g));
 

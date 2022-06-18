@@ -40,7 +40,9 @@ pub struct AbilityState {
 }
 
 /// Identifies the location of a card during an active game
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind, Serialize, Deserialize)]
+#[derive(
+    PartialEq, Eq, Hash, Debug, Copy, Clone, EnumKind, Serialize, Deserialize, Ord, PartialOrd,
+)]
 #[enum_kind(CardPositionKind)]
 pub enum CardPosition {
     /// An unspecified random position within a user's deck. The default
@@ -177,9 +179,9 @@ impl CardState {
         self.position
     }
 
-    /// Sets the position of this card. Please use `Game::move_card` instead of
-    /// invoking this directly.
-    pub fn set_position(&mut self, sorting_key: u32, position: CardPosition) {
+    /// Sets the position of this card. Please use `mutations::move_card`
+    /// instead of invoking this directly.
+    pub fn set_position_internal(&mut self, sorting_key: u32, position: CardPosition) {
         self.sorting_key = sorting_key;
         self.position = position;
     }
@@ -194,12 +196,11 @@ impl CardState {
         !self.data.is_face_up
     }
 
-    /// Change a card to the 'face up' state, revealing it to both players.
+    /// Change a card to the 'face up' state, but does *not* change its
+    /// revealed state for either player.'
     ///
     /// Prefer `mutations::turn_face_up` to invoking this method directly.
-    pub fn turn_face_up(&mut self) {
-        self.data.revealed_to_owner = true;
-        self.data.revealed_to_opponent = true;
+    pub fn turn_face_up_internal(&mut self) {
         self.data.is_face_up = true;
     }
 
@@ -207,15 +208,17 @@ impl CardState {
     /// revealed state for either player.
     ///
     /// Prefer `mutations::turn_face_down` to invoking this method directly.
-    pub fn turn_face_down(&mut self) {
+    pub fn turn_face_down_internal(&mut self) {
         self.data.is_face_up = false;
     }
 
-    /// Sets whether this card is revealed to the `side` player.
+    /// Sets whether this card is revealed to the `side` player. You should
+    /// typically use `mutations::set_revealed_to` instead of calling this
+    /// method.
     ///
     /// Note that this is not the same as [Self::turn_face_up], both players may
     /// know a card without it being the the 'face up' state.
-    pub fn set_revealed_to(&mut self, side: Side, revealed: bool) {
+    pub fn set_revealed_internal(&mut self, side: Side, revealed: bool) {
         if self.id.side == side {
             self.data.revealed_to_owner = revealed
         } else {

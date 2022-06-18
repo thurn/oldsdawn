@@ -13,7 +13,9 @@
 // limitations under the License.
 
 use anyhow::Result;
+use itertools::Itertools;
 
+use crate::card_state::CardPosition;
 use crate::game::GameState;
 use crate::primitives::{AbilityId, CardId, Side};
 use crate::with_error::WithError;
@@ -38,8 +40,8 @@ impl From<AbilityId> for StackId {
 
 #[derive(Debug, Clone)]
 pub enum GameUpdate {
-    /// A card has become revealed to the [Side] player.
-    CardRevealed(Side, CardId),
+    /// One or more cards have been drawn by the [Side] player.
+    DrawCards(Side, Vec<CardId>),
 }
 
 #[derive(Debug, Clone)]

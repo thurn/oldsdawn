@@ -99,8 +99,7 @@ pub fn ability_card_view(
         revealed_to_viewer: true,
         is_face_up: false,
         card_icons: Some(CardIcons {
-            top_left_icon: queries::ability_mana_cost(game, ability_id)
-                .map(mana_card_icon),
+            top_left_icon: queries::ability_mana_cost(game, ability_id).map(mana_card_icon),
             ..CardIcons::default()
         }),
         arena_frame: None,

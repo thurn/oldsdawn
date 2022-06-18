@@ -401,6 +401,7 @@ dependencies = [
  "convert_case",
  "enum-iterator",
  "enum-kinds",
+ "itertools",
  "macros",
  "rand",
  "rand_xoshiro",

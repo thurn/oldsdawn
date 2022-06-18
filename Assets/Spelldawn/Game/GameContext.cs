@@ -31,6 +31,7 @@ namespace Spelldawn.Game
     Interface = 6,
     Staging = 7,
     Browser = 12,
+    RevealedCardsBrowser = 18,
     Scored = 11,
     Effects = 8,
     Dragging = 9,

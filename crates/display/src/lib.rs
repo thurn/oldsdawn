@@ -13,6 +13,7 @@
 // limitations under the License.
 
 pub mod adapters;
+pub mod animations;
 pub mod assets;
 pub mod card_sync;
 pub mod positions;

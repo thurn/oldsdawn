@@ -15,9 +15,10 @@
 use anyhow::Result;
 use data::fail;
 use data::primitives::{AbilityId, AbilityIndex, CardId, GameId, PlayerId, RoomId, Side, Sprite};
-use protos::spelldawn::{
-    CardIdentifier, GameIdentifier, PlayerIdentifier, PlayerSide, RoomIdentifier, SpriteAddress,
-};
+use protos::spelldawn::game_object_identifier::Id;
+use protos::spelldawn::{CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerSide, RoomIdentifier, SpriteAddress, TimeValue};
+
+use crate::positions::GameObjectId;
 
 pub fn player_identifier(player_id: PlayerId) -> PlayerIdentifier {
     PlayerIdentifier { value: player_id.value }
@@ -41,6 +42,18 @@ pub fn card_identifier(card_id: CardId) -> CardIdentifier {
         side: player_side(card_id.side) as i32,
         index: card_id.index as u32,
         ability_id: None,
+    }
+}
+
+pub fn game_object_identifier(identifier: impl Into<GameObjectId>) -> GameObjectIdentifier {
+    GameObjectIdentifier {
+        id: Some(match identifier.into() {
+            GameObjectId::CardId(card_id) => Id::CardId(card_identifier(card_id)),
+            GameObjectId::AbilityId(ability_id) => Id::CardId(ability_card_identifier(ability_id)),
+            GameObjectId::Deck(side) => Id::Deck(player_side(side)),
+            GameObjectId::DiscardPile(side) => Id::DiscardPile(player_side(side)),
+            GameObjectId::Identity(side) => Id::Identity(player_side(side)),
+        }),
     }
 }
 
@@ -114,4 +127,8 @@ pub fn room_id(identifier: i32) -> Result<RoomId> {
 /// Turns a [Sprite] into its protobuf equivalent
 pub fn sprite(sprite: &Sprite) -> SpriteAddress {
     SpriteAddress { address: sprite.address.clone() }
+}
+
+pub fn milliseconds(milliseconds: u32) -> TimeValue {
+    TimeValue { milliseconds }
 }

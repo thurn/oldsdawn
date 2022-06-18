@@ -56,12 +56,13 @@ namespace Spelldawn.Game
       GameContext.Interface => 800,
       GameContext.Staging => 900,
       GameContext.Browser => 1000,
-      GameContext.Scored => 1100,
-      GameContext.Effects => 1200,
-      GameContext.Dragging => 1300,
-      GameContext.UserMessage => 1400,
-      GameContext.RewardBrowser => 1500,
-      GameContext.InfoZoom => 1600,
+      GameContext.RevealedCardsBrowser => 1100,
+      GameContext.Scored => 1200,
+      GameContext.Effects => 1300,
+      GameContext.Dragging => 1400,
+      GameContext.UserMessage => 1500,
+      GameContext.RewardBrowser => 1600,
+      GameContext.InfoZoom => 1700,
       _ => throw new ArgumentOutOfRangeException()
     };
   }

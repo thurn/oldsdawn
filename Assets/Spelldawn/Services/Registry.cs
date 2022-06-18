@@ -83,6 +83,9 @@ namespace Spelldawn.Services
 
     [SerializeField] CurveObjectDisplay _cardStaging = null!;
     public CurveObjectDisplay CardStaging => _cardStaging;
+    
+    [SerializeField] CurveObjectDisplay _revealedCardsBrowser = null!;
+    public CurveObjectDisplay RevealedCardsBrowser => _revealedCardsBrowser;
 
     [SerializeField] CardBrowser _cardBrowser = null!;
     public CardBrowser CardBrowser => _cardBrowser;

@@ -209,8 +209,8 @@ impl TestSession {
             .unwrap()
             .id;
         overwrite_card(self.database.game_mut(), card_id, card_name);
-        self.database.game_mut().move_card(card_id, CardPosition::Hand(side));
-        self.database.game_mut().card_mut(card_id).set_revealed_to(card_id.side, true);
+        self.database.game_mut().move_card_internal(card_id, CardPosition::Hand(side));
+        self.database.game_mut().card_mut(card_id).set_revealed_internal(card_id.side, true);
 
         self.connect(self.user.id, Some(self.database.game().id)).expect("User connection error");
         self.connect(self.opponent.id, Some(self.database.game().id))
@@ -389,7 +389,7 @@ impl TestSession {
 pub fn overwrite_card(game: &mut GameState, card_id: CardId, card_name: CardName) {
     let card = game.card(card_id);
     let mut state = CardState::new(card_id, card_name, false);
-    state.set_position(card.sorting_key, card.position());
+    state.set_position_internal(card.sorting_key, card.position());
     *game.card_mut(card_id) = state;
 
     // Our delegate cache logic assumes the set of card names in a game will not

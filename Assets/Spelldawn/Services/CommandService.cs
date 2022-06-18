@@ -134,6 +134,10 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.SetPlayerId:
             _registry.GameService.PlayerId = command.SetPlayerId.Id;
             break;
+          case GameCommand.CommandOneofCase.MoveMultipleGameObjects:
+            yield return _registry.ObjectPositionService.HandleMoveMultipleGameObjectsCommand(
+              command.MoveMultipleGameObjects);
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;

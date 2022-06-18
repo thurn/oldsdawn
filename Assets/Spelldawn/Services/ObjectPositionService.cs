@@ -120,6 +120,38 @@ namespace Spelldawn.Services
         animate: !command.DisableAnimation);
     }
 
+    public IEnumerator HandleMoveMultipleGameObjectsCommand(MoveMultipleGameObjectsCommand command)
+    {
+      if (!command.DisableAnimation)
+      {
+        _registry.StaticAssets.PlayCardSound();
+      }
+
+      var coroutines = new List<Coroutine>();
+
+      for (var i = 0; i < command.Moves.Count; ++i)
+      {
+        var move = command.Moves[i];
+        coroutines.Add(
+          StartCoroutine(
+            MoveGameObject(Find(move.Id),
+              move.Position,
+              animate: !command.DisableAnimation
+            )));
+      }
+
+      foreach (var coroutine in coroutines)
+      {
+        yield return coroutine;
+      }
+
+      if (command.Delay != null)
+      {
+        yield return new WaitForSeconds(command.Delay.Milliseconds / 1000f);
+      }
+    }
+
+
     public IEnumerator MoveGameObject(
       Displayable displayable,
       ObjectPosition targetPosition,
@@ -145,7 +177,8 @@ namespace Spelldawn.Services
         displayable.SortingSubkey = sortingSubkey;
         sortingKey++;
       }
-      return ObjectDisplayForPosition(targetPosition).AddObjects(list, animate, animateRemove);
+
+      yield return ObjectDisplayForPosition(targetPosition).AddObjects(list, animate, animateRemove);
     }
 
     public void MoveGameObjectImmediate(Displayable displayable, ObjectPosition targetPosition)
@@ -207,6 +240,8 @@ namespace Spelldawn.Services
           _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner),
         ObjectPosition.PositionOneofCase.IntoCard =>
           _registry.CardService.FindCard(position.IntoCard.CardId).ContainedObjects,
+        ObjectPosition.PositionOneofCase.Revealed =>
+          _registry.RevealedCardsBrowser,
         _ => throw new ArgumentOutOfRangeException()
       };
     }
@@ -232,7 +267,8 @@ namespace Spelldawn.Services
         .AppendCallback(() => card.StagingAnimationComplete = true);
     }
 
-    public IEnumerator PlayCreateFromParentCardAnimation(Card card, CardIdentifier identifier, ObjectPosition createPosition)
+    public IEnumerator PlayCreateFromParentCardAnimation(Card card, CardIdentifier identifier,
+      ObjectPosition createPosition)
     {
       var parentCard = _registry.CardService.FindCard(new CardIdentifier
       {

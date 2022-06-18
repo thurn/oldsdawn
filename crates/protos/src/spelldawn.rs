@@ -525,6 +525,10 @@ pub struct ObjectPositionIntoCard {
     #[prost(message, optional, tag = "1")]
     pub card_id: ::core::option::Option<CardIdentifier>,
 }
+//// An object position for newly-revealed cards, appears above other content
+//// like the staging area.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ObjectPositionRevealedCards {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPosition {
     /// A key by which to sort this object -- objects with higher sorting keys
@@ -537,7 +541,7 @@ pub struct ObjectPosition {
     pub sorting_subkey: u32,
     #[prost(
         oneof = "object_position::Position",
-        tags = "3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17"
+        tags = "3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18"
     )]
     pub position: ::core::option::Option<object_position::Position>,
 }
@@ -575,6 +579,8 @@ pub mod object_position {
         IdentityContainer(super::ObjectPositionIdentityContainer),
         #[prost(message, tag = "17")]
         IntoCard(super::ObjectPositionIntoCard),
+        #[prost(message, tag = "18")]
+        Revealed(super::ObjectPositionRevealedCards),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -619,8 +625,7 @@ pub struct CardView {
     /// Which prefab to use for this card, controls the overall appearance
     #[prost(enumeration = "CardPrefab", tag = "3")]
     pub prefab: i32,
-    /// Whether the viewer (current player) is able to see the front of this
-    /// card.
+    /// Whether the viewer (current player) is able to see the front of this card.
     #[prost(bool, tag = "4")]
     pub revealed_to_viewer: bool,
     /// Whether the card is in the 'face up' state.
@@ -721,7 +726,7 @@ pub struct GameView {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
-    /// * Opaque payload to send to the server when invoked.
+    ///* Opaque payload to send to the server when invoked.
     #[prost(bytes = "vec", tag = "1")]
     pub payload: ::prost::alloc::vec::Vec<u8>,
     /// Immediate optimistic mutations to game state for this action.
@@ -780,8 +785,8 @@ pub mod card_target {
 ///     the options optimistically, instead they animate to the reveal card area
 ///   - Item cards which don't require a choice to be made or target simply
 ///     animate into the play area optimistically
-///   - Spell cards animate to the reveal card area and wait for their effects
-///     to be applied
+///   - Spell cards animate to the reveal card area and wait for their effects to
+///     be applied
 ///   - Minion and Project cards animate to their selected room optimistically
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayCardAction {
@@ -1031,8 +1036,8 @@ pub struct CreateOrUpdateCardCommand {
     pub card: ::core::option::Option<CardView>,
     ///
     /// Optionally, a position in which to create this card. Ignored if the card
-    /// already exists, if a 'create_animation' is specified, or during
-    /// optimistic card draw.
+    /// already exists, if a 'create_animation' is specified, or during optimistic
+    /// card draw.
     #[prost(message, optional, tag = "2")]
     pub create_position: ::core::option::Option<ObjectPosition>,
     ///
@@ -1069,6 +1074,24 @@ pub struct MoveGameObjectsCommand {
     pub position: ::core::option::Option<ObjectPosition>,
     #[prost(bool, tag = "3")]
     pub disable_animation: bool,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GameObjectMove {
+    #[prost(message, optional, tag = "1")]
+    pub id: ::core::option::Option<GameObjectIdentifier>,
+    #[prost(message, optional, tag = "2")]
+    pub position: ::core::option::Option<ObjectPosition>,
+}
+/// Move a list of game objects to new positions, in parallel
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MoveMultipleGameObjectsCommand {
+    #[prost(message, repeated, tag = "1")]
+    pub moves: ::prost::alloc::vec::Vec<GameObjectMove>,
+    #[prost(bool, tag = "2")]
+    pub disable_animation: bool,
+    /// A delay once the cards reach their destination
+    #[prost(message, optional, tag = "3")]
+    pub delay: ::core::option::Option<TimeValue>,
 }
 ///
 /// Request to move all GameObjects located at a specific object position to
@@ -1229,7 +1252,7 @@ pub mod client_debug_command {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21"
+        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1279,6 +1302,8 @@ pub mod game_command {
         LoadScene(super::LoadSceneCommand),
         #[prost(message, tag = "21")]
         SetPlayerId(super::SetPlayerIdentifierCommand),
+        #[prost(message, tag = "22")]
+        MoveMultipleGameObjects(super::MoveMultipleGameObjectsCommand),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1635,20 +1660,17 @@ pub mod spelldawn_server {
                 send_compression_encodings: Default::default(),
             }
         }
-
         pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
         }
-
         #[doc = r" Enable decompressing requests with `gzip`."]
         pub fn accept_gzip(mut self) -> Self {
             self.accept_compression_encodings.enable_gzip();
             self
         }
-
         #[doc = r" Compress responses with `gzip`, if the client supports it."]
         pub fn send_gzip(mut self) -> Self {
             self.send_compression_encodings.enable_gzip();
@@ -1661,14 +1683,12 @@ pub mod spelldawn_server {
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
+        type Response = http::Response<tonic::body::BoxBody>;
         type Error = Never;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        type Response = http::Response<tonic::body::BoxBody>;
-
         fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
-
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
@@ -1676,11 +1696,10 @@ pub mod spelldawn_server {
                     #[allow(non_camel_case_types)]
                     struct ConnectSvc<T: Spelldawn>(pub Arc<T>);
                     impl<T: Spelldawn> tonic::server::ServerStreamingService<super::ConnectRequest> for ConnectSvc<T> {
-                        type Future =
-                            BoxFuture<tonic::Response<Self::ResponseStream>, tonic::Status>;
                         type Response = super::CommandList;
                         type ResponseStream = T::ConnectStream;
-
+                        type Future =
+                            BoxFuture<tonic::Response<Self::ResponseStream>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ConnectRequest>,
@@ -1710,9 +1729,8 @@ pub mod spelldawn_server {
                     #[allow(non_camel_case_types)]
                     struct PerformActionSvc<T: Spelldawn>(pub Arc<T>);
                     impl<T: Spelldawn> tonic::server::UnaryService<super::GameRequest> for PerformActionSvc<T> {
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         type Response = super::CommandList;
-
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GameRequest>,
