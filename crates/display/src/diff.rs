@@ -96,6 +96,7 @@ fn diff_game_view(old: Option<&GameView>, new: Option<&GameView>) -> Option<Game
         game_id: new.game_id.clone(),
         user: diff_player_view(old.user.as_ref(), new.user.as_ref()),
         opponent: diff_player_view(old.opponent.as_ref(), new.opponent.as_ref()),
+        cards: vec![],
         raid_active: new.raid_active,
     })
 }
@@ -149,6 +150,7 @@ fn diff_create_or_update_card(
 fn diff_card_view(old: Option<&CardView>, new: Option<&CardView>) -> Option<CardView> {
     run_diff(old, new, |old, new| CardView {
         card_id: new.card_id,
+        card_position: None,
         prefab: new.prefab,
         revealed_to_viewer: new.revealed_to_viewer,
         is_face_up: new.is_face_up,
@@ -276,18 +278,21 @@ fn move_to_position(
                 position: Some(Position::IdentityContainer(ObjectPositionIdentityContainer {
                     owner: name,
                 })),
+                ..ObjectPosition::default()
             },
             Id::Deck(name) => ObjectPosition {
                 sorting_key: 0,
                 position: Some(Position::DeckContainer(ObjectPositionDeckContainer {
                     owner: name,
                 })),
+                ..ObjectPosition::default()
             },
             Id::DiscardPile(name) => ObjectPosition {
                 sorting_key: 0,
                 position: Some(Position::DiscardPileContainer(
                     ObjectPositionDiscardPileContainer { owner: name },
                 )),
+                ..ObjectPosition::default()
             },
         }
     };
@@ -314,6 +319,7 @@ fn add_ability_card_positions(
                     position: Some(Position::Hand(ObjectPositionHand {
                         owner: PlayerName::User.into(),
                     })),
+                    ..ObjectPosition::default()
                 },
             );
         }

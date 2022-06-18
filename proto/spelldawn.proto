@@ -614,29 +614,30 @@ message ObjectPositionIntoCard {
 }
 
 message ObjectPosition {
-    /*
-     * A key by which to sort this object -- objects with higher sorting keys
-     * should be displayed 'on top of' or 'in front of' objects with lower
-     * sorting keys. In the case of ties, any ordering is acceptable.
-     */
+     // A key by which to sort this object -- objects with higher sorting keys
+     // should be displayed 'on top of' or 'in front of' objects with lower
+     // sorting keys.
     uint32 sorting_key = 1;
 
+    // An additional key, can be used to break ties in `sorting_key`
+    uint32 sorting_subkey = 2;
+
     oneof position {
-        ObjectPositionOffscreen offscreen = 2;
-        ObjectPositionRoom room = 3;
-        ObjectPositionItem item = 4;
-        ObjectPositionStaging staging = 5;
-        ObjectPositionHand hand = 6;
-        ObjectPositionDeck deck = 7;
-        ObjectPositionDeckContainer deck_container = 8;
-        ObjectPositionDiscardPile discard_pile = 9;
-        ObjectPositionDiscardPileContainer discard_pile_container = 10;
-        ObjectPositionScoreAnimation score_animation = 11;
-        ObjectPositionRaid raid = 12;
-        ObjectPositionBrowser browser = 13;
-        ObjectPositionIdentity identity = 14;
-        ObjectPositionIdentityContainer identity_container = 15;
-        ObjectPositionIntoCard into_card = 16;
+        ObjectPositionOffscreen offscreen = 3;
+        ObjectPositionRoom room = 4;
+        ObjectPositionItem item = 5;
+        ObjectPositionStaging staging = 6;
+        ObjectPositionHand hand = 7;
+        ObjectPositionDeck deck = 8;
+        ObjectPositionDeckContainer deck_container = 9;
+        ObjectPositionDiscardPile discard_pile = 10;
+        ObjectPositionDiscardPileContainer discard_pile_container = 11;
+        ObjectPositionScoreAnimation score_animation = 12;
+        ObjectPositionRaid raid = 13;
+        ObjectPositionBrowser browser = 14;
+        ObjectPositionIdentity identity = 15;
+        ObjectPositionIdentityContainer identity_container = 16;
+        ObjectPositionIntoCard into_card = 17;
     }
 }
 
@@ -678,32 +679,27 @@ enum CardPrefab {
 message CardView {
     CardIdentifier card_id = 1;
 
-    // Which prefab to use for this card, controls the overall appearance
-    CardPrefab prefab = 2;
+    // Where is this card located in the game?
+    ObjectPosition card_position = 2;
 
-    // Whether the current user is able to see the front of this card.
-    bool revealed_to_viewer = 3;
+    // Which prefab to use for this card, controls the overall appearance
+    CardPrefab prefab = 3;
+
+    // Whether the viewer (current player) is able to see the front of this card.
+    bool revealed_to_viewer = 4;
 
     // Whether the card is in the 'face up' state.
-    bool is_face_up = 4;
+    bool is_face_up = 5;
 
-    CardIcons card_icons = 5;
+    CardIcons card_icons = 6;
 
-    SpriteAddress arena_frame = 6;
+    SpriteAddress arena_frame = 7;
 
     // Used to e.g. determine which card back to display for this card.
-    PlayerName owning_player = 7;
+    PlayerName owning_player = 8;
 
     // Card information which is only present on revealed cards.
-    RevealedCardView revealed_card = 8;
-}
-
-message HandView {
-    repeated CardView cards = 1;
-}
-
-message DiscardPileView {
-    repeated CardView cards = 1;
+    RevealedCardView revealed_card = 9;
 }
 
 message PlayerInfo {
@@ -727,18 +723,8 @@ message ScoreView {
     uint32 score = 1;
 }
 
-message RoomView {
-    RoomIdentifier room_id = 1;
-    repeated CardView back_cards = 2;
-    repeated CardView front_cards = 3;
-}
-
 message ActionTrackerView {
     uint32 available_action_count = 1;
-}
-
-message DeckView {
-    repeated CardView top_cards = 1;
 }
 
 message PlayerView {
@@ -757,9 +743,13 @@ message GameView {
     PlayerView user = 2;
     PlayerView opponent = 3;
 
+    // Updated values for the cards in this game. Any cards which have changed
+    // position will be moved to their new positions in parallel.
+    repeated CardView cards = 4;
+
     // Whether a raid is currently active. If true, the raid overlay will be
     // displayed, the raid music will be played, etc.
-    bool raid_active = 4;
+    bool raid_active = 5;
 }
 
 

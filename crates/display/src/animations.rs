@@ -169,6 +169,7 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
                     position: Some(Position::Deck(ObjectPositionDeck {
                         owner: adapters::to_player_name(side, commands.user_side).into(),
                     })),
+                    ..ObjectPosition::default()
                 }),
             )),
         );
@@ -181,6 +182,7 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
                     position: Some(ObjectPosition {
                         sorting_key: game.card(card_id).sorting_key,
                         position: Some(Position::Browser(ObjectPositionBrowser {})),
+                        ..ObjectPosition::default()
                     }),
                     disable_animation: false,
                 }),
@@ -266,6 +268,7 @@ fn mulligan_hand(
                     position: Some(Position::Deck(ObjectPositionDeck {
                         owner: mulligan_player_name.into(),
                     })),
+                    ..ObjectPosition::default()
                 }),
             ),
         );
@@ -306,6 +309,7 @@ fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
             position: Some(Position::Deck(ObjectPositionDeck {
                 owner: PlayerName::Opponent.into(),
             })),
+            ..ObjectPosition::default()
         })
     };
 
@@ -344,6 +348,7 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
                 position: Some(ObjectPosition {
                     sorting_key: 0,
                     position: Some(Position::Staging(ObjectPositionStaging {})),
+                    ..ObjectPosition::default()
                 }),
                 disable_animation: false,
             }),
@@ -403,6 +408,7 @@ fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
             position: Some(Position::IdentityContainer(ObjectPositionIdentityContainer {
                 owner: commands.adapt_player_name(Side::Champion),
             })),
+            ..ObjectPosition::default()
         },
     )
 }
@@ -429,6 +435,7 @@ fn level_up_room(commands: &mut ResponseBuilder, target: RoomId) {
             position: Some(Position::IdentityContainer(ObjectPositionIdentityContainer {
                 owner: overlord_player_name,
             })),
+            ..ObjectPosition::default()
         },
     )
 }
@@ -496,6 +503,7 @@ fn score_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState
             ObjectPosition {
                 sorting_key: card.sorting_key,
                 position: Some(Position::ScoreAnimation(ObjectPositionScoreAnimation {})),
+                ..ObjectPosition::default()
             },
         ),
     );
@@ -533,6 +541,7 @@ fn score_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState
                 position: Some(Position::Identity(ObjectPositionIdentity {
                     owner: commands.adapt_player_name(side),
                 })),
+                ..ObjectPosition::default()
             },
         ),
     );
@@ -583,6 +592,7 @@ fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_
             create_position: Some(ObjectPosition {
                 sorting_key: game.card(ability_id.card_id).sorting_key,
                 position: Some(Position::Staging(ObjectPositionStaging {})),
+                ..ObjectPosition::default()
             }),
             create_animation: CardCreationAnimation::FromParentCard.into(),
             disable_flip_animation: true,
@@ -599,6 +609,7 @@ fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_
                 position: Some(Position::IntoCard(ObjectPositionIntoCard {
                     card_id: Some(adapters::adapt_card_id(ability_id.card_id)),
                 })),
+                ..ObjectPosition::default()
             }),
             disable_animation: false,
         }),

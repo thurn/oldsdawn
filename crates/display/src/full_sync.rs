@@ -105,6 +105,7 @@ fn update_game_view(game: &GameState, user_side: Side) -> Result<UpdateGameViewC
             game_id: Some(adapters::adapt_game_id(game.id)),
             user: Some(player_view(game, user_side)?),
             opponent: Some(player_view(game, user_side.opponent())?),
+            cards: vec![],
             raid_active: game.data.raid.is_some(),
         }),
     })
@@ -213,6 +214,7 @@ fn create_ability_cards(
                         position: Some(Position::Hand(ObjectPositionHand {
                             owner: PlayerName::User.into(),
                         })),
+                        ..ObjectPosition::default()
                     }),
                     create_animation: if options.contains(ResponseOptions::IS_INITIAL_CONNECT) {
                         CardCreationAnimation::Unspecified
@@ -264,6 +266,7 @@ pub fn ability_card_view(
 
     CardView {
         card_id: Some(identifier),
+        card_position: None,
         prefab: CardPrefab::TokenCard.into(),
         revealed_to_viewer: true,
         is_face_up: false,
@@ -289,6 +292,7 @@ pub fn ability_card_view(
                 position: Some(Position::IntoCard(ObjectPositionIntoCard {
                     card_id: Some(adapters::adapt_card_id(card.id)),
                 })),
+                ..ObjectPosition::default()
             }),
             supplemental_info: Some(rules_text::build_supplemental_info(
                 game,
@@ -325,6 +329,7 @@ pub fn card_view(game: &GameState, card: &CardState, user_side: Side) -> CardVie
     let revealed = card.is_revealed_to(user_side);
     CardView {
         card_id: Some(adapters::adapt_card_id(card.id)),
+        card_position: None,
         prefab: CardPrefab::Standard.into(),
         revealed_to_viewer: card.is_revealed_to(user_side),
         is_face_up: card.is_face_up(),
@@ -466,6 +471,7 @@ fn opening_hand_position_overrides(
                     ObjectPosition {
                         sorting_key: card.sorting_key,
                         position: Some(Position::Browser(ObjectPositionBrowser {})),
+                        ..ObjectPosition::default()
                     },
                 )
             })
@@ -521,6 +527,7 @@ fn raid_position_overrides(
                 ObjectPosition {
                     sorting_key: i as u32,
                     position: Some(Position::Raid(ObjectPositionRaid {})),
+                    ..ObjectPosition::default()
                 },
             )
         })
@@ -539,6 +546,7 @@ fn raid_access_position_overrides(
             ObjectPosition {
                 sorting_key: i as u32,
                 position: Some(Position::Browser(ObjectPositionBrowser {})),
+                ..ObjectPosition::default()
             },
         )
     }
@@ -600,7 +608,7 @@ pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPositio
         CardPosition::DeckUnknown(_side) => None,
     };
 
-    result.map(|p| ObjectPosition { sorting_key: card.sorting_key, position: Some(p) })
+    result.map(|p| ObjectPosition { sorting_key: card.sorting_key, position: Some(p), ..ObjectPosition::default() })
 }
 
 /// Builds a description of the standard [CardTargeting] behavior of a card
@@ -683,6 +691,7 @@ fn release_position(definition: &CardDefinition) -> ObjectPosition {
                 room_location: ClientRoomLocation::Back.into(),
             }),
         }),
+        ..ObjectPosition::default()
     }
 }
 

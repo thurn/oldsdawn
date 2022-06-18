@@ -163,7 +163,7 @@ impl ResponseBuilder {
         self.move_object(
             update_type,
             Id::CardId(adapters::adapt_card_id(card.id)),
-            ObjectPosition { sorting_key: card.sorting_key, position: Some(position) },
+            ObjectPosition { sorting_key: card.sorting_key, position: Some(position), ..ObjectPosition::default() },
         )
     }
 
@@ -182,6 +182,7 @@ impl ResponseBuilder {
                 position: Some(ObjectPosition {
                     sorting_key: card.sorting_key,
                     position: Some(position),
+                    ..ObjectPosition::default()
                 }),
                 disable_animation: !self.options.contains(ResponseOptions::ANIMATE),
             }),
