@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Spelldawn.Game;
 using Spelldawn.Protos;
@@ -40,9 +41,47 @@ namespace Spelldawn.Services
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
     readonly Dictionary<CardIdentifier, Card> _cards = new();
-    
+
     public bool CurrentlyDragging { get; set; }
 
+    public IEnumerator SyncCards(List<CardView> views, bool animate)
+    {
+      var toDelete = _cards.Keys.ToHashSet();
+      var coroutines = new List<Coroutine>();
+
+      foreach (var view in views)
+      {
+        toDelete.Remove(view.CardId);
+        Card card;
+        if (_cards.ContainsKey(view.CardId))
+        {
+          card = _cards[view.CardId];
+        }
+        else
+        {
+          card = InstantiateCardPrefab(view.Prefab);
+          card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
+          var position = view.CreatePosition ?? Errors.CheckNotNull(view.CardPosition);
+          _registry.ObjectPositionService.MoveGameObjectImmediate(card, position);
+          _cards[view.CardId] = card;
+        }
+
+        card.Render(view, animate: animate);
+
+        // Need to update all cards in case sorting keys change
+        coroutines.Add(StartCoroutine(
+          _registry.ObjectPositionService.MoveGameObject(card, view.CardPosition, animate)));
+      }
+
+      coroutines.AddRange(
+        toDelete.Select(delete => StartCoroutine(HandleDestroyCard(delete))));
+
+      foreach (var coroutine in coroutines)
+      {
+        yield return coroutine;
+      }
+    }
+    
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)
     {
       if (userCardBack != null)
@@ -75,7 +114,7 @@ namespace Spelldawn.Services
       }
 
       _optimisticCard = InstantiateCardPrefab(CardPrefab.Standard);
-      _optimisticCard.Render(_registry, new CardView { OwningPlayer = PlayerName.User }, GameContext.Staging);
+      _optimisticCard.Render(new CardView { OwningPlayer = PlayerName.User }, GameContext.Staging);
       _optimisticCard.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       _registry.ObjectPositionService.PlayDrawCardAnimation(_optimisticCard);
     }
@@ -87,7 +126,7 @@ namespace Spelldawn.Services
       if (_cards.ContainsKey(cardId))
       {
         yield return FindCard(cardId)
-          .Render(_registry, command.Card, animate: !command.DisableFlipAnimation)
+          .Render(command.Card, animate: !command.DisableFlipAnimation)
           ?.WaitForCompletion();
       }
       else
@@ -115,14 +154,14 @@ namespace Spelldawn.Services
         if (command.CreateAnimation == CardCreationAnimation.Unspecified)
         {
           StartCoroutine(
-            _registry.ObjectPositionService.ObjectDisplayForPosition(
-                Errors.CheckNotNull(command.CreatePosition, "No create position specified"))
-              .AddObject(card, animate: false));
+            _registry.ObjectPositionService.MoveGameObject(
+              card,
+              Errors.CheckNotNull(command.CreatePosition, "No create position specified"),
+              animate: false));
         }
       }
 
       card.Render(
-        _registry,
         command.Card,
         GameContext.Staging,
         animate: !command.DisableFlipAnimation);
@@ -156,7 +195,7 @@ namespace Spelldawn.Services
     {
       var card = InstantiateCardPrefab(cardView.Prefab);
       card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
-      card.Render(_registry, cardView, gameContext, animate: animate);
+      card.Render(cardView, gameContext, animate: animate);
       _cards[Errors.CheckNotNull(cardView.CardId)] = card;
       return card;
     }
@@ -219,15 +258,24 @@ namespace Spelldawn.Services
         card.Parent.RemoveObjectIfPresent(card, animate: false);
       }
 
+      if (card.DestroyPosition != null)
+      {
+        yield return _registry.ObjectPositionService.MoveGameObject(card, card.DestroyPosition);
+      }
+
       Destroy(card.gameObject);
-      yield break;
     }
 
-    Card InstantiateCardPrefab(CardPrefab prefab) => ComponentUtils.Instantiate(prefab switch
+    Card InstantiateCardPrefab(CardPrefab prefab)
     {
-      CardPrefab.Standard => _cardPrefab,
-      CardPrefab.TokenCard => _tokenCardPrefab,
-      _ => throw new ArgumentOutOfRangeException()
-    });
+      var result = ComponentUtils.Instantiate(prefab switch
+      {
+        CardPrefab.Standard => _cardPrefab,
+        CardPrefab.TokenCard => _tokenCardPrefab,
+        _ => throw new ArgumentOutOfRangeException()
+      });
+      result.Registry = _registry;
+      return result;
+    }
   }
 }

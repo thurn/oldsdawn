@@ -183,6 +183,7 @@ namespace Spelldawn.Services
       {
         LoadPlayerAssets(requests, game.User);
         LoadPlayerAssets(requests, game.Opponent);
+        LoadCardListAssets(requests, game.Cards);
       }
     }
 

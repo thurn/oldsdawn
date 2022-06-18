@@ -334,7 +334,7 @@ pub struct PlayerIdentifier {
     #[prost(uint64, tag = "1")]
     pub value: u64,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Message)]
 pub struct GameIdentifier {
     #[prost(uint64, tag = "1")]
     pub value: u64,
@@ -619,7 +619,8 @@ pub struct CardView {
     /// Which prefab to use for this card, controls the overall appearance
     #[prost(enumeration = "CardPrefab", tag = "3")]
     pub prefab: i32,
-    /// Whether the viewer (current player) is able to see the front of this card.
+    /// Whether the viewer (current player) is able to see the front of this
+    /// card.
     #[prost(bool, tag = "4")]
     pub revealed_to_viewer: bool,
     /// Whether the card is in the 'face up' state.
@@ -635,6 +636,18 @@ pub struct CardView {
     /// Card information which is only present on revealed cards.
     #[prost(message, optional, tag = "9")]
     pub revealed_card: ::core::option::Option<RevealedCardView>,
+    /// Optionally, a position at which to create this card.
+    ///
+    /// If this card does not already exist, it will be created at this position
+    /// before being animated to its 'card_position'.
+    #[prost(message, optional, tag = "10")]
+    pub create_position: ::core::option::Option<ObjectPosition>,
+    /// Optionally, a position at which to destroy this card.
+    ///
+    /// If provided, the card will be animated to this position before being
+    /// destroyed.
+    #[prost(message, optional, tag = "11")]
+    pub destroy_position: ::core::option::Option<ObjectPosition>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayerInfo {
@@ -693,7 +706,8 @@ pub struct GameView {
     #[prost(message, optional, tag = "3")]
     pub opponent: ::core::option::Option<PlayerView>,
     /// Updated values for the cards in this game. Any cards which have changed
-    /// position will be moved to their new positions in parallel.
+    /// position should be moved to their new positions in parallel. Cards which
+    /// do not exist in this list must be destroyed.
     #[prost(message, repeated, tag = "4")]
     pub cards: ::prost::alloc::vec::Vec<CardView>,
     /// Whether a raid is currently active. If true, the raid overlay will be
@@ -707,7 +721,7 @@ pub struct GameView {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
-    ///* Opaque payload to send to the server when invoked.
+    /// * Opaque payload to send to the server when invoked.
     #[prost(bytes = "vec", tag = "1")]
     pub payload: ::prost::alloc::vec::Vec<u8>,
     /// Immediate optimistic mutations to game state for this action.
@@ -766,8 +780,8 @@ pub mod card_target {
 ///     the options optimistically, instead they animate to the reveal card area
 ///   - Item cards which don't require a choice to be made or target simply
 ///     animate into the play area optimistically
-///   - Spell cards animate to the reveal card area and wait for their effects to
-///     be applied
+///   - Spell cards animate to the reveal card area and wait for their effects
+///     to be applied
 ///   - Minion and Project cards animate to their selected room optimistically
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayCardAction {
@@ -987,6 +1001,9 @@ pub struct TogglePanelCommand {
 pub struct UpdateGameViewCommand {
     #[prost(message, optional, tag = "1")]
     pub game: ::core::option::Option<GameView>,
+    /// Whether this update should be animated
+    #[prost(bool, tag = "2")]
+    pub animate: bool,
 }
 ///
 /// Animates 'initiator' moving to a room and plays a standard particle effect
@@ -1014,8 +1031,8 @@ pub struct CreateOrUpdateCardCommand {
     pub card: ::core::option::Option<CardView>,
     ///
     /// Optionally, a position in which to create this card. Ignored if the card
-    /// already exists, if a 'create_animation' is specified, or during optimistic
-    /// card draw.
+    /// already exists, if a 'create_animation' is specified, or during
+    /// optimistic card draw.
     #[prost(message, optional, tag = "2")]
     pub create_position: ::core::option::Option<ObjectPosition>,
     ///
@@ -1618,17 +1635,20 @@ pub mod spelldawn_server {
                 send_compression_encodings: Default::default(),
             }
         }
+
         pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
         }
+
         #[doc = r" Enable decompressing requests with `gzip`."]
         pub fn accept_gzip(mut self) -> Self {
             self.accept_compression_encodings.enable_gzip();
             self
         }
+
         #[doc = r" Compress responses with `gzip`, if the client supports it."]
         pub fn send_gzip(mut self) -> Self {
             self.send_compression_encodings.enable_gzip();
@@ -1641,12 +1661,14 @@ pub mod spelldawn_server {
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
-        type Response = http::Response<tonic::body::BoxBody>;
         type Error = Never;
         type Future = BoxFuture<Self::Response, Self::Error>;
+        type Response = http::Response<tonic::body::BoxBody>;
+
         fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
+
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
@@ -1654,10 +1676,11 @@ pub mod spelldawn_server {
                     #[allow(non_camel_case_types)]
                     struct ConnectSvc<T: Spelldawn>(pub Arc<T>);
                     impl<T: Spelldawn> tonic::server::ServerStreamingService<super::ConnectRequest> for ConnectSvc<T> {
-                        type Response = super::CommandList;
-                        type ResponseStream = T::ConnectStream;
                         type Future =
                             BoxFuture<tonic::Response<Self::ResponseStream>, tonic::Status>;
+                        type Response = super::CommandList;
+                        type ResponseStream = T::ConnectStream;
+
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ConnectRequest>,
@@ -1687,8 +1710,9 @@ pub mod spelldawn_server {
                     #[allow(non_camel_case_types)]
                     struct PerformActionSvc<T: Spelldawn>(pub Arc<T>);
                     impl<T: Spelldawn> tonic::server::UnaryService<super::GameRequest> for PerformActionSvc<T> {
-                        type Response = super::CommandList;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Response = super::CommandList;
+
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GameRequest>,

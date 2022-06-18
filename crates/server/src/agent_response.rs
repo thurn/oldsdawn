@@ -23,7 +23,8 @@ use data::agent_definition::AgentData;
 use data::fail;
 use data::game::GameState;
 use data::primitives::{GameId, PlayerId, Side};
-use display2::adapters;
+use data::with_error::WithError;
+use display::adapters;
 use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
@@ -41,11 +42,11 @@ pub static RESPONSES: Lazy<ConcurrentQueue<CommandList>> = Lazy::new(ConcurrentQ
 static AGENT_RUNNING: AtomicBool = AtomicBool::new(false);
 
 pub fn handle_request(database: impl Database + 'static, request: &GameRequest) -> Result<()> {
-    let game_id = match adapters::to_optional_server_game_id(&request.game_id) {
+    let game_id = match request.game_id.map(adapters::game_id) {
         None => return Ok(()),
         Some(game_id) => game_id,
     };
-    let respond_to = adapters::to_server_player_id(request.player_id)?;
+    let respond_to = adapters::player_id(request.player_id.with_error(|| "PlayerId is required")?);
 
     let game = database.game(game_id)?;
 
@@ -78,7 +79,7 @@ pub fn deprecated_check_for_agent_response(
     database: impl Database + 'static,
     request: &GameRequest,
 ) -> Result<()> {
-    if let Some(game_id) = adapters::to_optional_server_game_id(&request.game_id) {
+    if let Some(game_id) = request.game_id.map(adapters::game_id) {
         if database.has_game(game_id)? {
             tokio::spawn(async move {
                 run_deprecated_agent_loop(database, game_id).await.expect("Agent error");

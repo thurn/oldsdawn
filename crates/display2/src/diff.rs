@@ -29,7 +29,7 @@ use protos::spelldawn::{
 };
 
 use crate::full_sync::FullSync;
-use crate::response_builder::{ResponseBuilder, UpdateType};
+use crate::response_builder::{ResponseBuilder2, UpdateType};
 use crate::{adapters, full_sync};
 
 /// Performs a diff operation on two provided [FullSync] values, appending the
@@ -41,7 +41,7 @@ use crate::{adapters, full_sync};
 /// not changed are not updated, the client is assumed to preserve their state
 /// between requests.
 pub fn execute(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     old: Option<&FullSync>,
     new: &FullSync,
@@ -88,12 +88,13 @@ fn diff_update_game_view_command(
 ) -> Option<UpdateGameViewCommand> {
     run_diff(old, new, |old, new| UpdateGameViewCommand {
         game: diff_game_view(old.game.as_ref(), new.game.as_ref()),
+        animate: true,
     })
 }
 
 fn diff_game_view(old: Option<&GameView>, new: Option<&GameView>) -> Option<GameView> {
     run_diff(old, new, |old, new| GameView {
-        game_id: new.game_id.clone(),
+        game_id: new.game_id,
         user: diff_player_view(old.user.as_ref(), new.user.as_ref()),
         opponent: diff_player_view(old.opponent.as_ref(), new.opponent.as_ref()),
         cards: vec![],
@@ -123,7 +124,7 @@ fn diff_player_info(old: Option<&PlayerInfo>, new: Option<&PlayerInfo>) -> Optio
 }
 
 fn diff_create_or_update_card(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     old: Option<&CreateOrUpdateCardCommand>,
     new: Option<&CreateOrUpdateCardCommand>,
 ) {
@@ -161,6 +162,7 @@ fn diff_card_view(old: Option<&CardView>, new: Option<&CardView>) -> Option<Card
             old.revealed_card.as_ref(),
             new.revealed_card.as_ref(),
         ),
+        ..CardView::default()
     })
 }
 
@@ -207,7 +209,7 @@ fn diff_card_icon(old: Option<&CardIcon>, new: Option<&CardIcon>) -> Option<Card
 }
 
 fn diff_card_position_updates(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     old: Option<&BTreeMap<Id, ObjectPosition>>,
     new: &BTreeMap<Id, ObjectPosition>,
@@ -232,7 +234,7 @@ fn diff_card_position_updates(
 /// Appends a command to update the position for the provided `id` if it has
 /// changed between the position maps in `old` and `new`.
 fn push_move_command(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     old: Option<&BTreeMap<Id, ObjectPosition>>,
     new: &BTreeMap<Id, ObjectPosition>,
@@ -252,7 +254,7 @@ fn push_move_command(
 /// Appends a command to move `id` to its indicated `position` (if provided) or
 /// else to its default game position.
 fn move_to_position(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     id: Id,
     position: Option<&ObjectPosition>,
@@ -302,7 +304,7 @@ fn move_to_position(
 }
 
 fn add_ability_card_positions(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     sync: &FullSync,
 ) -> Result<()> {

@@ -55,18 +55,16 @@ namespace Spelldawn.Game
       }
     }
 
-    public IEnumerator RenderPlayerInfo(PlayerInfo playerInfo)
+    public void RenderPlayerInfo(PlayerInfo playerInfo)
     {
       _validRoomsToVisit = playerInfo.ValidRoomsToVisit.ToHashSet();
       _registry.AssetService.AssignSprite(_image, playerInfo.Portrait);
       _registry.AssetService.AssignSprite(_frame, playerInfo.PortraitFrame);
-      yield break;
     }
 
-    public IEnumerator RenderScore(ScoreView scoreView)
+    public void RenderScore(ScoreView scoreView)
     {
       _scoreText.text = scoreView.Score.ToString();
-      yield break;
     }
 
     public override bool MouseDown()

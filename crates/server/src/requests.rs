@@ -24,15 +24,15 @@ use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates2::UpdateTracker2;
 use data::with_error::WithError;
 use data::{fail, game_actions, verify};
-use display2::adapters::ServerCardId;
-use display2::{adapters, render};
+use display::adapters::ServerCardId;
+use display::{adapters, render};
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
     card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand,
-    CreateNewGameAction, GameCommand, GameRequest, PlayerSide, RoomIdentifier, StandardAction,
+    CreateNewGameAction, GameCommand, GameRequest, RoomIdentifier, StandardAction,
 };
 use rules::{actions, dispatch, mutations};
 use serde_json::de;
@@ -72,9 +72,9 @@ impl Spelldawn for GameService {
         request: Request<ConnectRequest>,
     ) -> Result<Response<Self::ConnectStream>, Status> {
         let message = request.get_ref();
-        let game_id = adapters::to_optional_server_game_id(&message.game_id);
-        let player_id = match adapters::to_server_player_id(message.player_id) {
-            Ok(player_id) => player_id,
+        let game_id = message.game_id.map(adapters::game_id);
+        let player_id = match message.player_id.map(adapters::player_id) {
+            Some(player_id) => player_id,
             _ => return Err(Status::unauthenticated("PlayerId is required")),
         };
         warn!(?player_id, ?game_id, "received_connection");
@@ -146,8 +146,8 @@ impl Spelldawn for GameService {
 
 /// Helper to perform the connect action from the unity plugin
 pub fn connect(message: ConnectRequest) -> Result<CommandList> {
-    let game_id = adapters::to_optional_server_game_id(&message.game_id);
-    let player_id = adapters::to_server_player_id(message.player_id)?;
+    let game_id = message.game_id.map(adapters::game_id);
+    let player_id = adapters::player_id(message.player_id.with_error(|| "PlayerId is required")?);
     if in_memory() {
         handle_connect(&mut InMemoryDatabase, player_id, game_id)
     } else {
@@ -201,8 +201,8 @@ impl GameResponse {
 /// Processes an incoming client request and returns a [GameResponse] describing
 /// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
-    let game_id = adapters::to_optional_server_game_id(&request.game_id);
-    let player_id = adapters::to_server_player_id(request.player_id)?;
+    let game_id = request.game_id.map(adapters::game_id);
+    let player_id = adapters::player_id(request.player_id.with_error(|| "PlayerId is Required")?);
     let game_action = request
         .action
         .as_ref()
@@ -226,23 +226,24 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
         Action::CreateNewGame(create_game) => create_new_game(database, player_id, create_game),
         Action::DrawCard(_) => handle_action(database, player_id, game_id, UserAction::DrawCard),
         Action::PlayCard(action) => {
-            let action = match adapters::to_server_card_id(action.card_id)? {
-                ServerCardId::CardId(card_id) => {
-                    UserAction::PlayCard(card_id, card_target(&action.target))
-                }
-                ServerCardId::AbilityId(ability_id) => {
-                    UserAction::ActivateAbility(ability_id, card_target(&action.target))
-                }
-            };
+            let action =
+                match adapters::server_card_id(action.card_id.with_error(|| "CardID expected")?)? {
+                    ServerCardId::CardId(card_id) => {
+                        UserAction::PlayCard(card_id, card_target(&action.target))
+                    }
+                    ServerCardId::AbilityId(ability_id) => {
+                        UserAction::ActivateAbility(ability_id, card_target(&action.target))
+                    }
+                };
             handle_action(database, player_id, game_id, action)
         }
         Action::GainMana(_) => handle_action(database, player_id, game_id, UserAction::GainMana),
         Action::InitiateRaid(action) => {
-            let room_id = adapters::to_server_room_id(action.room_id)?;
+            let room_id = adapters::room_id(action.room_id)?;
             handle_action(database, player_id, game_id, UserAction::InitiateRaid(room_id))
         }
         Action::LevelUpRoom(level_up) => {
-            let room_id = adapters::to_server_room_id(level_up.room_id)?;
+            let room_id = adapters::room_id(level_up.room_id)?;
             handle_action(database, player_id, game_id, UserAction::LevelUpRoom(room_id))
         }
         Action::SpendActionPoint(_) => {
@@ -287,11 +288,14 @@ fn create_new_game(
     action: &CreateNewGameAction,
 ) -> Result<GameResponse> {
     let debug_options = action.debug_options.clone().unwrap_or_default();
-    let game_id = adapters::to_optional_server_game_id(&debug_options.override_game_identifier)
+    let game_id = debug_options
+        .override_game_identifier
+        .map(adapters::game_id)
         .unwrap_or(database.generate_game_id()?);
     info!(?game_id, "create_new_game");
-    let opponent_id = adapters::to_server_player_id(action.opponent_id)?;
-    let user_side = adapters::to_server_side(PlayerSide::from_i32(action.side))?;
+    let opponent_id =
+        action.opponent_id.map(adapters::player_id).with_error(|| "Expected opponent ID")?;
+    let user_side = adapters::side(action.side)?;
     let (overlord_deck, champion_deck) = match user_side {
         Side::Overlord => {
             (database.deck(user_id, Side::Overlord)?, database.deck(opponent_id, Side::Champion)?)
@@ -315,7 +319,7 @@ fn create_new_game(
     mutations::deal_opening_hands(&mut game)?;
     database.write_game(&game)?;
     let commands = command_list(vec![Command::ConnectToGame(ConnectToGameCommand {
-        game_id: Some(adapters::adapt_game_id(game.id)),
+        game_id: Some(adapters::game_identifier(game.id)),
         scene_name: "Labyrinth".to_string(),
     })]);
 

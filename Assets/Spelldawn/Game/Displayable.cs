@@ -31,6 +31,9 @@ namespace Spelldawn.Game
 
     /// <summary>Provided by the server, used to order items within a display.</summary>
     public uint SortingKey { get; set; }
+    
+    /// <summary>Tie-breaker key in the case of sorting key ties.</summary>
+    public uint SortingSubkey { get; set; }    
 
     public ObjectDisplay? Parent
     {

@@ -700,6 +700,18 @@ message CardView {
 
     // Card information which is only present on revealed cards.
     RevealedCardView revealed_card = 9;
+
+    // Optionally, a position at which to create this card.
+    //
+    // If this card does not already exist, it will be created at this position
+    // before being animated to its 'card_position'.
+    ObjectPosition create_position = 10;
+
+    // Optionally, a position at which to destroy this card.
+    //
+    // If provided, the card will be animated to this position before being
+    // destroyed.
+    ObjectPosition destroy_position = 11;
 }
 
 message PlayerInfo {
@@ -744,7 +756,8 @@ message GameView {
     PlayerView opponent = 3;
 
     // Updated values for the cards in this game. Any cards which have changed
-    // position will be moved to their new positions in parallel.
+    // position should be moved to their new positions in parallel. Cards which
+    // do not exist in this list must be destroyed.
     repeated CardView cards = 4;
 
     // Whether a raid is currently active. If true, the raid overlay will be
@@ -1017,9 +1030,12 @@ message TogglePanelCommand {
     bool open = 2;
 }
 
-/* Updates the current GameView state. */
+// Updates the current GameView state.
 message UpdateGameViewCommand {
     GameView game = 1;
+
+    // Whether this update should be animated
+    bool animate = 2;
 }
 
 enum RoomVisitType {

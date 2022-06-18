@@ -30,6 +30,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "spelldawn.GameObjectIdentifier",
             "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]",
         )
+        .type_attribute("spelldawn.GameIdentifier", "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]")
         .type_attribute("spelldawn.CardIdentifier", "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]")
         .type_attribute(
             "spelldawn.GameObjectIdentifier.id",

@@ -47,7 +47,7 @@ use protos::spelldawn::{
 };
 
 use crate::full_sync::CardCreationStrategy;
-use crate::response_builder::{CardUpdateTypes, ResponseBuilder, UpdateType};
+use crate::response_builder::{CardUpdateTypes, ResponseBuilder2, UpdateType};
 use crate::{adapters, assets, full_sync};
 
 pub fn populate_card_update_types(
@@ -106,7 +106,7 @@ pub fn populate_card_update_types(
 /// corresponding [GameCommand]s. Commands are appended to the provided
 /// `commands` list.
 pub fn render(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     update: &GameUpdate2,
     game: &GameState,
     user_side: Side,
@@ -146,7 +146,9 @@ pub fn render(
                 show_ability_fired(commands, game, *ability_id)
             }
         }
-        GameUpdate2::AbilityTriggered(ability_id) => show_ability_fired(commands, game, *ability_id),
+        GameUpdate2::AbilityTriggered(ability_id) => {
+            show_ability_fired(commands, game, *ability_id)
+        }
         GameUpdate2::GameOver(side) => game_over(commands, game, *side),
         GameUpdate2::DiscardToHandSize(_, _) => {}
         _ => todo!("Implement {:?}", update),
@@ -155,7 +157,7 @@ pub fn render(
     Ok(())
 }
 
-fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
+fn draw_hand(commands: &mut ResponseBuilder2, game: &GameState, side: Side) {
     let hand = game.card_list_for_position(side, CardPosition::Hand(side));
     for card_id in hand {
         commands.push(
@@ -204,7 +206,7 @@ fn draw_hand(commands: &mut ResponseBuilder, game: &GameState, side: Side) {
 }
 
 fn keep_hand(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     side: Side,
     cards: &[CardId],
@@ -236,7 +238,7 @@ fn keep_hand(
 }
 
 fn mulligan_hand(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     side: Side,
     old_cards: &[CardId],
@@ -300,7 +302,7 @@ fn mulligan_hand(
 
 /// Builds a [CardCreationStrategy] for representing the provided `card_id`
 /// being drawn.
-fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, card_id: CardId) {
+fn draw_card(commands: &mut ResponseBuilder2, game: &GameState, user_side: Side, card_id: CardId) {
     let creation_strategy = if card_id.side == user_side {
         CardCreationStrategy::DrawUserCard
     } else {
@@ -329,7 +331,7 @@ fn draw_card(commands: &mut ResponseBuilder, game: &GameState, user_side: Side, 
 /// Appends a move card command to move a card to its current location. Skips
 /// appending the command if the destination would not be a valid game position,
 /// e.g. if it is [CardPosition::DeckUnknown].
-fn move_card(commands: &mut ResponseBuilder, update_type: UpdateType, card: &CardState) {
+fn move_card(commands: &mut ResponseBuilder2, update_type: UpdateType, card: &CardState) {
     commands.move_object_optional(
         update_type,
         Id::CardId(adapters::adapt_card_id(card.id)),
@@ -338,7 +340,7 @@ fn move_card(commands: &mut ResponseBuilder, update_type: UpdateType, card: &Car
 }
 
 /// Commands to reveal the indicated card to all players
-fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState) {
+fn reveal_card(commands: &mut ResponseBuilder2, game: &GameState, card: &CardState) {
     if commands.user_side != card.side() && game.data.raid.is_none() {
         // If there is no active raid, animate the card to the staging area on reveal.
         commands.push(
@@ -375,7 +377,7 @@ fn reveal_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardStat
 }
 
 /// Starts the `side` player's turn
-fn start_turn(commands: &mut ResponseBuilder, side: Side) {
+fn start_turn(commands: &mut ResponseBuilder2, side: Side) {
     commands.push(
         UpdateType::Animation,
         Command::DisplayGameMessage(DisplayGameMessageCommand {
@@ -387,7 +389,7 @@ fn start_turn(commands: &mut ResponseBuilder, side: Side) {
     )
 }
 
-fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
+fn initiate_raid(commands: &mut ResponseBuilder2, target: RoomId) {
     if commands.user_side == Side::Overlord {
         commands.push(
             UpdateType::Animation,
@@ -413,7 +415,7 @@ fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
     )
 }
 
-fn level_up_room(commands: &mut ResponseBuilder, target: RoomId) {
+fn level_up_room(commands: &mut ResponseBuilder2, target: RoomId) {
     let overlord_player_name = commands.adapt_player_name(Side::Overlord);
     if commands.user_side == Side::Champion {
         commands.push(
@@ -441,7 +443,7 @@ fn level_up_room(commands: &mut ResponseBuilder, target: RoomId) {
 }
 
 fn targeted_interaction(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     user_side: Side,
     interaction: TargetedInteraction2,
@@ -476,7 +478,7 @@ fn apply_projectile(
     }
 }
 
-fn score_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState, side: Side) {
+fn score_card(commands: &mut ResponseBuilder2, game: &GameState, card: &CardState, side: Side) {
     let object_id = adapters::card_id_to_object_id(card.id);
 
     if side == Side::Overlord && commands.user_side == Side::Champion {
@@ -549,7 +551,7 @@ fn score_card(commands: &mut ResponseBuilder, game: &GameState, card: &CardState
 
 /// Moves a card to its owner's deck and then destroys it.
 fn shuffle_into_deck(
-    commands: &mut ResponseBuilder,
+    commands: &mut ResponseBuilder2,
     game: &GameState,
     user_side: Side,
     card_id: CardId,
@@ -566,7 +568,7 @@ fn shuffle_into_deck(
     destroy_card(commands, update_type, card_id);
 }
 
-fn destroy_card(commands: &mut ResponseBuilder, update_type: UpdateType, card_id: CardId) {
+fn destroy_card(commands: &mut ResponseBuilder2, update_type: UpdateType, card_id: CardId) {
     commands.push(
         update_type,
         Command::DestroyCard(DestroyCardCommand {
@@ -577,7 +579,7 @@ fn destroy_card(commands: &mut ResponseBuilder, update_type: UpdateType, card_id
 
 /// Animates a token card appearing, representing an ability being activated or
 /// triggered.
-fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_id: AbilityId) {
+fn show_ability_fired(commands: &mut ResponseBuilder2, game: &GameState, ability_id: AbilityId) {
     let identifier = adapters::adapt_ability_id(ability_id);
     let card = full_sync::ability_card_view(
         game,
@@ -621,7 +623,7 @@ fn show_ability_fired(commands: &mut ResponseBuilder, game: &GameState, ability_
     );
 }
 
-fn game_over(commands: &mut ResponseBuilder, game: &GameState, winner: Side) {
+fn game_over(commands: &mut ResponseBuilder2, game: &GameState, winner: Side) {
     commands.push(UpdateType::Animation, delay(500));
 
     commands.push(

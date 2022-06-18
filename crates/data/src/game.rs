@@ -34,6 +34,7 @@ use crate::primitives::{
     AbilityId, ActionCount, CardId, GameId, HasAbilityId, ItemLocation, ManaValue, PlayerId,
     PointsValue, RaidId, RoomId, RoomLocation, Side, TurnNumber,
 };
+use crate::updates::{GameUpdate, UpdateTracker};
 use crate::updates2::UpdateTracker2;
 use crate::with_error::WithError;
 
@@ -229,6 +230,8 @@ pub struct GameState {
     pub id: GameId,
     /// General game state & configuration
     pub data: GameData,
+    #[serde(skip)]
+    pub updates: UpdateTracker,
     /// Used to track changes to game state in order to update the client. Code
     /// which mutates the game state is responsible for appending a
     /// description of the change to `updates` via [UpdateTracker::push].
@@ -291,6 +294,7 @@ impl GameState {
             overlord: PlayerState::new(overlord_deck.owner_id),
             champion: PlayerState::new(champion_deck.owner_id),
             ability_state: HashMap::new(),
+            updates: UpdateTracker::new(!config.simulation),
             updates2: UpdateTracker2::new(!config.simulation),
             next_sorting_key: 1,
             delegate_cache: DelegateCache::default(),
@@ -302,9 +306,34 @@ impl GameState {
         }
     }
 
+    pub fn push_update(&mut self, update: GameUpdate) {
+        let clone = Self {
+            id: self.id,
+            data: self.data.clone(),
+            updates: UpdateTracker::new(false),
+            updates2: UpdateTracker2::new(false),
+            overlord_cards: self.overlord_cards.clone(),
+            champion_cards: self.champion_cards.clone(),
+            overlord: self.overlord.clone(),
+            champion: self.champion.clone(),
+            ability_state: self.ability_state.clone(),
+            next_sorting_key: self.next_sorting_key,
+            rng: None,
+            delegate_cache: DelegateCache::default(),
+        };
+
+        self.updates.push(clone, update);
+    }
+
     /// Returns identity cards for the provided Side
     pub fn identities(&self, side: Side) -> impl Iterator<Item = &CardState> {
         self.cards(side).iter().filter(|c| c.position().kind() == CardPositionKind::Identity)
+    }
+
+    /// Returns the first identity for the `side` player.
+    pub fn first_identity(&self, side: Side) -> Result<CardId> {
+        let identities = self.card_list_for_position(side, CardPosition::Identity(side));
+        Ok(*identities.first().with_error(|| "No identity found")?)
     }
 
     /// Returns an arbitrary identity card for the provided `side`, if any.

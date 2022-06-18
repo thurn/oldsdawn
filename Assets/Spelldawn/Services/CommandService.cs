@@ -89,7 +89,7 @@ namespace Spelldawn.Services
             yield return new WaitForSeconds(DataUtils.ToSeconds(command.Delay.Duration, 0));
             break;
           case GameCommand.CommandOneofCase.UpdateGameView:
-            yield return HandleUpdateGameView(command.UpdateGameView.Game);
+            yield return HandleUpdateGameView(command.UpdateGameView.Game, command.UpdateGameView.Animate);
             break;
           case GameCommand.CommandOneofCase.VisitRoom:
             yield return _registry.ArenaService.HandleVisitRoom(command.VisitRoom);
@@ -198,7 +198,7 @@ namespace Spelldawn.Services
       yield return new WaitForSeconds(DataUtils.ToSeconds(command.Duration, 0));
     }
 
-    IEnumerator HandleUpdateGameView(GameView game)
+    IEnumerator HandleUpdateGameView(GameView game, bool animate)
     {
       if (game.GameId != null)
       {
@@ -214,18 +214,20 @@ namespace Spelldawn.Services
           _registry.ArenaService.UpdateViewForSide(game.User.Side);
         }
 
-        yield return HandleRenderPlayer(PlayerName.User, game.User);
+        HandleRenderPlayer(PlayerName.User, game.User);
       }
 
       if (game.Opponent != null)
       {
-        yield return HandleRenderPlayer(PlayerName.Opponent, game.Opponent);
+        HandleRenderPlayer(PlayerName.Opponent, game.Opponent);
       }
-
+      
       _registry.RaidService.RaidActive = game.RaidActive;
+
+      yield return _registry.CardService.SyncCards(game.Cards.ToList(), animate);
     }
 
-    IEnumerator HandleRenderPlayer(PlayerName playerName, PlayerView playerView)
+    void HandleRenderPlayer(PlayerName playerName, PlayerView playerView)
     {
       if (playerView.Side != PlayerSide.Unspecified)
       {
@@ -234,12 +236,12 @@ namespace Spelldawn.Services
 
       if (playerView.PlayerInfo != null)
       {
-        yield return _registry.IdentityCardForPlayer(playerName).RenderPlayerInfo(playerView.PlayerInfo);
+        _registry.IdentityCardForPlayer(playerName).RenderPlayerInfo(playerView.PlayerInfo);
       }
 
       if (playerView.Score != null)
       {
-        yield return _registry.IdentityCardForPlayer(playerName).RenderScore(playerView.Score);
+        _registry.IdentityCardForPlayer(playerName).RenderScore(playerView.Score);
       }
 
       if (playerView.Mana != null)

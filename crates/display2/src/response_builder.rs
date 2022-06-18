@@ -83,7 +83,7 @@ bitflags! {
 
 /// Keeps track of [Command]s required to update the client
 #[derive(Clone, Debug)]
-pub struct ResponseBuilder {
+pub struct ResponseBuilder2 {
     pub user_side: Side,
     pub options: ResponseOptions,
     card_update_types: CardUpdateTypes,
@@ -91,7 +91,7 @@ pub struct ResponseBuilder {
     moves: Vec<(UpdateType, Id, ObjectPosition)>,
 }
 
-impl ResponseBuilder {
+impl ResponseBuilder2 {
     pub fn new(
         user_side: Side,
         card_update_types: CardUpdateTypes,
@@ -163,7 +163,11 @@ impl ResponseBuilder {
         self.move_object(
             update_type,
             Id::CardId(adapters::adapt_card_id(card.id)),
-            ObjectPosition { sorting_key: card.sorting_key, position: Some(position), ..ObjectPosition::default() },
+            ObjectPosition {
+                sorting_key: card.sorting_key,
+                position: Some(position),
+                ..ObjectPosition::default()
+            },
         )
     }
 

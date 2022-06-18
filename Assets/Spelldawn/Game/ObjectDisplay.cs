@@ -69,6 +69,15 @@ namespace Spelldawn.Game
       Insert(displayable, animateRemove);
       yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
     }
+    
+    /// <summary>Insert a Displayable into this container immediately, with no animation.</summary>
+    public void AddObjectImmediate(
+      Displayable displayable)
+    {
+      Insert(displayable, false);
+      MoveObjectsToPosition(false);
+      OnUpdated();
+    }    
 
     public IEnumerator AddObjects(
       IEnumerable<Displayable> objects,
@@ -168,7 +177,7 @@ namespace Spelldawn.Game
       if (!_objects.Contains(displayable))
       {
         _objects.Add(displayable);
-        _objects = _objects.OrderBy(o => o.SortingKey).ToList();
+        _objects = _objects.OrderBy(o => o.SortingKey).ThenBy(o => o.SortingSubkey).ToList();
       }
     }
 

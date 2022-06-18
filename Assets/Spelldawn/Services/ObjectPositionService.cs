@@ -137,13 +137,22 @@ namespace Spelldawn.Services
       bool animate = true,
       bool animateRemove = true)
     {
-      uint sortingKey = targetPosition.SortingKey;
+      var sortingKey = targetPosition.SortingKey;
+      var sortingSubkey = targetPosition.SortingSubkey;
       foreach (var displayable in list)
       {
         displayable.SortingKey = sortingKey;
+        displayable.SortingSubkey = sortingSubkey;
         sortingKey++;
       }
       return ObjectDisplayForPosition(targetPosition).AddObjects(list, animate, animateRemove);
+    }
+
+    public void MoveGameObjectImmediate(Displayable displayable, ObjectPosition targetPosition)
+    {
+      displayable.SortingKey = targetPosition.SortingKey;
+      displayable.SortingSubkey = targetPosition.SortingSubkey;
+      ObjectDisplayForPosition(targetPosition).AddObjectImmediate(displayable);
     }
 
     Displayable CheckExists(GameObjectIdentifier gameObjectId)
@@ -163,8 +172,9 @@ namespace Spelldawn.Services
       }
     }
 
-    public ObjectDisplay ObjectDisplayForPosition(ObjectPosition position)
+    ObjectDisplay ObjectDisplayForPosition(ObjectPosition position)
     {
+      Errors.CheckNotNull(position);
       return position.PositionCase switch
       {
         ObjectPosition.PositionOneofCase.Offscreen =>

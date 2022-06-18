@@ -22,7 +22,7 @@ use once_cell::sync::Lazy;
 use protos::spelldawn::game_command::Command;
 
 use crate::full_sync::FullSync;
-use crate::response_builder::{CardUpdateTypes, ResponseBuilder, ResponseOptions};
+use crate::response_builder::{CardUpdateTypes, ResponseBuilder2, ResponseOptions};
 use crate::{animations, diff, full_sync};
 
 /// Map from user IDs to the most recent game response we sent to that user.
@@ -41,7 +41,7 @@ pub fn connect(game: &GameState, user_side: Side) -> Result<Vec<Command>> {
     let user_id = game.player(user_side).id;
     let options = ResponseOptions::ANIMATE | ResponseOptions::IS_INITIAL_CONNECT;
     let sync = full_sync::run(game, user_side, options)?;
-    let mut builder = ResponseBuilder::new(user_side, CardUpdateTypes::default(), options);
+    let mut builder = ResponseBuilder2::new(user_side, CardUpdateTypes::default(), options);
     diff::execute(&mut builder, game, None, &sync)?;
     RESPONSES.insert(user_id, sync);
     builder.build()
@@ -57,7 +57,7 @@ pub fn render_updates(game: &GameState, user_side: Side) -> Result<Vec<Command>>
 
     let user_id = game.player(user_side).id;
     let options = ResponseOptions::ANIMATE;
-    let mut builder = ResponseBuilder::new(user_side, card_update_types, options);
+    let mut builder = ResponseBuilder2::new(user_side, card_update_types, options);
     let sync = full_sync::run(game, user_side, options)?;
 
     for update in &updates {

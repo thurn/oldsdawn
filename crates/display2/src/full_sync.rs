@@ -108,6 +108,7 @@ fn update_game_view(game: &GameState, user_side: Side) -> Result<UpdateGameViewC
             cards: vec![],
             raid_active: game.data.raid.is_some(),
         }),
+        animate: true,
     })
 }
 
@@ -300,6 +301,7 @@ pub fn ability_card_view(
                 Some(ability_id.index),
             )),
         }),
+        ..CardView::default()
     }
 }
 
@@ -341,6 +343,7 @@ pub fn card_view(game: &GameState, card: &CardState, user_side: Side) -> CardVie
         )),
         owning_player: adapters::to_player_name(definition.side, user_side).into(),
         revealed_card: revealed.then(|| revealed_card_view(game, card, definition, user_side)),
+        ..CardView::default()
     }
 }
 
@@ -608,7 +611,11 @@ pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPositio
         CardPosition::DeckUnknown(_side) => None,
     };
 
-    result.map(|p| ObjectPosition { sorting_key: card.sorting_key, position: Some(p), ..ObjectPosition::default() })
+    result.map(|p| ObjectPosition {
+        sorting_key: card.sorting_key,
+        position: Some(p),
+        ..ObjectPosition::default()
+    })
 }
 
 /// Builds a description of the standard [CardTargeting] behavior of a card

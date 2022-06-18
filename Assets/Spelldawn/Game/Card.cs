@@ -70,7 +70,6 @@ namespace Spelldawn.Game
     ISet<RoomIdentifier>? _validRoomTargets;
     ObjectPosition? _releasePosition;
     Node? _supplementalInfo;
-    Registry _registry = null!;
     ArrowService.Type? _arrowOnDrag;
 
     [Serializable]
@@ -82,6 +81,8 @@ namespace Spelldawn.Game
       public TextMeshPro Text => _text;
     }
 
+    public Registry Registry { get; set; } = null!;
+
     public bool IsRevealed => _isRevealed;
 
     public bool StagingAnimationComplete { get; set; }
@@ -91,6 +92,8 @@ namespace Spelldawn.Game
     public override float DefaultScale => CardScale;
 
     public ObjectPosition? ReleasePosition => _releasePosition;
+    
+    public ObjectPosition? DestroyPosition { get; private set; }
 
     public Transform TopLeftAnchor => _topLeftAnchor;
 
@@ -103,14 +106,12 @@ namespace Spelldawn.Game
     public Node? SupplementalInfo => _supplementalInfo;
 
     public ObjectDisplay ContainedObjects => Errors.CheckNotNull(_containedObjectsDisplay);
-
+    
     public Sequence? Render(
-      Registry registry,
       CardView cardView,
       GameContext? gameContext = null,
       bool animate = true)
     {
-      _registry = registry;
       _cardId = cardView.CardId;
 
       if (gameContext is { } gc)
@@ -120,12 +121,12 @@ namespace Spelldawn.Game
 
       if (cardView.OwningPlayer != PlayerName.Unspecified)
       {
-        _cardBack.sprite = _registry.AssetService.GetSprite(_registry.CardService.GetCardBack(cardView.OwningPlayer));
+        _cardBack.sprite = Registry.AssetService.GetSprite(Registry.CardService.GetCardBack(cardView.OwningPlayer));
       }
 
       _outline.sortingOrder = -1;
-
-      _registry.AssetService.AssignSprite(_arenaFrame, cardView.ArenaFrame);
+      Registry.AssetService.AssignSprite(_arenaFrame, cardView.ArenaFrame);
+      DestroyPosition = cardView.DestroyPosition;
 
       if (cardView.RevealedToViewer)
       {
@@ -158,7 +159,7 @@ namespace Spelldawn.Game
       _outline.gameObject.SetActive(CanPlay());
     }
 
-    bool CanPlay() => _serverCanPlay == true && InHand() && _registry.ActionService.CanInitiateAction() && _isRevealed;
+    bool CanPlay() => _serverCanPlay == true && InHand() && Registry.ActionService.CanInitiateAction() && _isRevealed;
 
     public Card Clone()
     {
@@ -169,13 +170,13 @@ namespace Spelldawn.Game
       result._validRoomTargets = _validRoomTargets;
       result._releasePosition = _releasePosition;
       result._supplementalInfo = _supplementalInfo;
-      result._registry = _registry;
+      result.Registry = Registry;
       return result;
     }
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
     {
-      Errors.CheckNotNull(_registry);
+      Errors.CheckNotNull(Registry);
       if (newContext.IsArenaContext())
       {
         _arenaCardBack.SetActive(!_isRevealed);
@@ -223,25 +224,25 @@ namespace Spelldawn.Game
     {
       var result = false;
 
-      if (_registry.ActionService.CanInfoZoom(GameContext) && _isRevealed)
+      if (Registry.ActionService.CanInfoZoom(GameContext) && _isRevealed)
       {
-        _registry.StaticAssets.PlayCardSound();
-        _registry.CardService.DisplayInfoZoom(
-          WorldMousePosition(_registry, _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z),
+        Registry.StaticAssets.PlayCardSound();
+        Registry.CardService.DisplayInfoZoom(
+          WorldMousePosition(Registry, Registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z),
           this);
         result = true;
       }
 
       if (InHand() && CanPlay())
       {
-        _registry.CardService.CurrentlyDragging = true;
+        Registry.CardService.CurrentlyDragging = true;
         SetGameContext(GameContext.Dragging);
         _previousParent = Parent;
         _previousParent!.RemoveObject(this);
         _outline.gameObject.SetActive(false);
         _initialDragRotation = transform.rotation;
-        _dragStartScreenZ = _registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
-        _dragStartPosition = WorldMousePosition(_registry, _dragStartScreenZ);
+        _dragStartScreenZ = Registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
+        _dragStartPosition = WorldMousePosition(Registry, _dragStartScreenZ);
         _dragOffset = gameObject.transform.position - _dragStartPosition;
         result = true;
       }
@@ -251,12 +252,12 @@ namespace Spelldawn.Game
 
     public override void MouseDrag()
     {
-      if (!_registry.CardService.CurrentlyDragging)
+      if (!Registry.CardService.CurrentlyDragging)
       {
         return;
       }
 
-      var mousePosition = WorldMousePosition(_registry, _dragStartScreenZ);
+      var mousePosition = WorldMousePosition(Registry, _dragStartScreenZ);
       var distanceDragged = Vector2.Distance(mousePosition, _dragStartPosition);
       var t = Mathf.Clamp01(distanceDragged / 5);
       transform.position = _dragOffset + mousePosition;
@@ -265,25 +266,25 @@ namespace Spelldawn.Game
 
       if (distanceDragged > 0.25f)
       {
-        _registry.CardService.ClearInfoZoom();
+        Registry.CardService.ClearInfoZoom();
       }
 
-      if (_registry.CardService.IsMouseOverPlayCardArea())
+      if (Registry.CardService.IsMouseOverPlayCardArea())
       {
         if (_validRoomTargets != null)
         {
-          _registry.ArenaService.ShowRoomSelectorForMousePosition(_validRoomTargets);
+          Registry.ArenaService.ShowRoomSelectorForMousePosition(_validRoomTargets);
         }
 
         if (_arrowOnDrag is {} arrow)
         {
           gameObject.SetActive(false);
-          _registry.ArrowService.ShowArrow(arrow, _registry.IdentityCardForPlayer(PlayerName.User).transform, this);
+          Registry.ArrowService.ShowArrow(arrow, Registry.IdentityCardForPlayer(PlayerName.User).transform, this);
         }
       }
       else
       {
-        _registry.ArenaService.HideRoomSelector();
+        Registry.ArenaService.HideRoomSelector();
       }
     }
 
@@ -293,24 +294,24 @@ namespace Spelldawn.Game
       {
         // GameObject will be disabled when arrow is being shown 
         gameObject.SetActive(true);
-        _registry.ArrowService.HideArrows();
+        Registry.ArrowService.HideArrows();
       }
       
-      _registry.CardService.ClearInfoZoom();
+      Registry.CardService.ClearInfoZoom();
 
-      if (!_registry.CardService.CurrentlyDragging)
+      if (!Registry.CardService.CurrentlyDragging)
       {
-        _registry.StaticAssets.PlayCardSound();
+        Registry.StaticAssets.PlayCardSound();
         return;
       }
 
-      _registry.CardService.CurrentlyDragging = false;
+      Registry.CardService.CurrentlyDragging = false;
 
       if (ShouldReturnToHandOnRelease())
       {
-        _registry.StaticAssets.PlayCardSound();
+        Registry.StaticAssets.PlayCardSound();
         StartCoroutine(_previousParent!.AddObject(this, animate: true));
-        _registry.ArenaService.HideRoomSelector();
+        Registry.ArenaService.HideRoomSelector();
         return;
       }
 
@@ -321,7 +322,7 @@ namespace Spelldawn.Game
 
       if (_validRoomTargets != null)
       {
-        var roomId = Errors.CheckNotDefault(Errors.CheckNotNull(_registry.ArenaService.CurrentRoomSelector).RoomId);
+        var roomId = Errors.CheckNotDefault(Errors.CheckNotNull(Registry.ArenaService.CurrentRoomSelector).RoomId);
         Errors.CheckState(_validRoomTargets.Contains(roomId), "Invalid Room selected");
         action.Target = new CardTarget
         {
@@ -329,9 +330,9 @@ namespace Spelldawn.Game
         };
       }
 
-      _registry.ArenaService.HideRoomSelector();
+      Registry.ArenaService.HideRoomSelector();
 
-      _registry.ActionService.HandleAction(new GameAction
+      Registry.ActionService.HandleAction(new GameAction
       {
         PlayCard = action
       });
@@ -343,18 +344,18 @@ namespace Spelldawn.Game
 
     bool ShouldReturnToHandOnRelease()
     {
-      if (!_registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard))
+      if (!Registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard))
       {
         return true;
       }
 
       if (_validRoomTargets == null)
       {
-        return !_registry.CardService.IsMouseOverPlayCardArea();
+        return !Registry.CardService.IsMouseOverPlayCardArea();
       }
       else
       {
-        return !_registry.ArenaService.CurrentRoomSelector;
+        return !Registry.ArenaService.CurrentRoomSelector;
       }
     }
 
@@ -452,10 +453,10 @@ namespace Spelldawn.Game
 
       _cardBack.gameObject.SetActive(value: false);
       _cardFront.gameObject.SetActive(value: true);
-      _registry.AssetService.AssignSprite(_image, revealed.Image, referenceWidth: 243.3f);
+      Registry.AssetService.AssignSprite(_image, revealed.Image, referenceWidth: 243.3f);
       _image.gameObject.SetActive(true);
-      _registry.AssetService.AssignSprite(_frame, revealed.CardFrame);
-      _registry.AssetService.AssignSprite(_titleBackground, revealed.TitleBackground);
+      Registry.AssetService.AssignSprite(_frame, revealed.CardFrame);
+      Registry.AssetService.AssignSprite(_titleBackground, revealed.TitleBackground);
       SetTitle(revealed.Title?.Text);
       if (revealed.RulesText?.Text != null)
       {
@@ -464,7 +465,7 @@ namespace Spelldawn.Game
 
       if (_jewel)
       {
-        _registry.AssetService.AssignSprite(_jewel!, revealed.Jewel);
+        Registry.AssetService.AssignSprite(_jewel!, revealed.Jewel);
       }
     }
 
@@ -503,7 +504,7 @@ namespace Spelldawn.Game
     {
       var iconContainer = icon.Background.transform.parent;
 
-      _registry.AssetService.AssignSprite(icon.Background, cardIcon?.Background);
+      Registry.AssetService.AssignSprite(icon.Background, cardIcon?.Background);
 
       if (cardIcon?.BackgroundScale is { } scale)
       {
@@ -539,9 +540,9 @@ namespace Spelldawn.Game
 
     public void OnArrowMoved(Vector3 position)
     {
-      if (!_registry.CardService.IsMouseOverPlayCardArea())
+      if (!Registry.CardService.IsMouseOverPlayCardArea())
       {
-        _registry.ArrowService.HideArrows();
+        Registry.ArrowService.HideArrows();
         gameObject.SetActive(true);
       }
     }

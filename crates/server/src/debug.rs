@@ -24,7 +24,7 @@ use data::game_actions::DebugAction;
 use data::primitives::{GameId, PlayerId, Side};
 use data::updates2::GameUpdate2;
 use data::with_error::WithError;
-use display2::{adapters, render};
+use display::adapters;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -52,8 +52,8 @@ pub fn handle_debug_action(
                     command: Some(Command::Debug(ClientDebugCommand {
                         debug_command: Some(DebugCommand::InvokeAction(GameAction {
                             action: Some(Action::CreateNewGame(CreateNewGameAction {
-                                side: adapters::adapt_side(side).into(),
-                                opponent_id: Some(adapters::adapt_player_id(
+                                side: adapters::player_side(side),
+                                opponent_id: Some(adapters::player_identifier(
                                     if player_id.value == 1 {
                                         PlayerId::new(2)
                                     } else {
@@ -61,7 +61,7 @@ pub fn handle_debug_action(
                                     },
                                 )),
                                 debug_options: Some(CreateGameDebugOptions {
-                                    deterministic: true,
+                                    deterministic: false,
                                     override_game_identifier: Some(GameIdentifier { value: 0 }),
                                     in_memory: false,
                                 }),
@@ -85,8 +85,6 @@ pub fn handle_debug_action(
         }),
         DebugAction::ResetGame => {
             let game = load_game(database, game_id)?;
-            render::on_disconnect(game.overlord.id);
-            render::on_disconnect(game.champion.id);
             reset_game(database, game_id)?;
             let commands = CommandList {
                 commands: vec![GameCommand {
@@ -144,20 +142,17 @@ pub fn handle_debug_action(
                 Ok(())
             })
         }
-        DebugAction::FlipViewpoint => {
-            render::on_disconnect(player_id);
-            Ok(GameResponse::from_commands(vec![
-                Command::SetPlayerId(SetPlayerIdentifierCommand {
-                    id: Some(adapters::adapt_player_id(opponent_player_id(
-                        database, player_id, game_id,
-                    )?)),
-                }),
-                Command::LoadScene(LoadSceneCommand {
-                    scene_name: "Labyrinth".to_string(),
-                    mode: SceneLoadMode::Single.into(),
-                }),
-            ]))
-        }
+        DebugAction::FlipViewpoint => Ok(GameResponse::from_commands(vec![
+            Command::SetPlayerId(SetPlayerIdentifierCommand {
+                id: Some(adapters::player_identifier(opponent_player_id(
+                    database, player_id, game_id,
+                )?)),
+            }),
+            Command::LoadScene(LoadSceneCommand {
+                scene_name: "Labyrinth".to_string(),
+                mode: SceneLoadMode::Single.into(),
+            }),
+        ])),
         DebugAction::SaveState(index) => {
             let mut game = load_game(database, game_id)?;
             game.id = GameId::new(u64::MAX - index);
@@ -168,7 +163,6 @@ pub fn handle_debug_action(
             let mut game = database.game(GameId::new(u64::MAX - index))?;
             game.id = game_id.with_error(|| "Expected GameId")?;
             database.write_game(&game)?;
-            render::on_disconnect(player_id);
             Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
                 scene_name: "Labyrinth".to_string(),
                 mode: SceneLoadMode::Single.into(),

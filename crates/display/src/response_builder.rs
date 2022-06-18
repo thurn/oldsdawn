@@ -12,21 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Data types used to represent game state
+use data::primitives::Side;
+use protos::spelldawn::game_command::Command;
+use protos::spelldawn::PlayerName;
 
-pub mod agent_definition;
-pub mod card_definition;
-pub mod card_name;
-pub mod card_state;
-pub mod deck;
-pub mod delegates;
-pub mod game;
-pub mod game_actions;
-pub mod primitives;
-pub mod random;
-pub mod special_effects;
-pub mod text;
-pub mod updates;
-pub mod updates2;
-pub mod utils;
-pub mod with_error;
+pub struct ResponseBuilder {
+    pub user_side: Side,
+    pub animate: bool,
+    pub commands: Vec<Command>,
+}
+
+impl ResponseBuilder {
+    pub fn push(&mut self, command: Command) {
+        self.commands.push(command);
+    }
+
+    pub fn to_player_name(&self, side: Side) -> i32 {
+        if side == self.user_side {
+            PlayerName::User as i32
+        } else {
+            PlayerName::Opponent as i32
+        }
+    }
+}

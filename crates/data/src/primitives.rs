@@ -194,6 +194,10 @@ impl AbilityId {
     pub fn new(card_id: CardId, index: usize) -> Self {
         Self { card_id, index: AbilityIndex(index) }
     }
+
+    pub fn side(&self) -> Side {
+        self.card_id.side
+    }
 }
 
 impl HasAbilityId for AbilityId {
