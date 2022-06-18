@@ -234,10 +234,6 @@ impl CardState {
             self.data.revealed_to_opponent
         }
     }
-
-    pub fn is_in_room(&self, room_id: RoomId) -> bool {
-        matches!(self.position, CardPosition::Room(id, _) if id == room_id)
-    }
 }
 
 impl PartialOrd<Self> for CardState {

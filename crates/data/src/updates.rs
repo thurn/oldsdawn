@@ -78,8 +78,6 @@ pub enum GameUpdate {
 
     /// A card has become revealed to the opponent.
     RevealToOpponent(CardId),
-    /// The current raid has gained access to the indicated room
-    RaidAccess(RoomId),
     /// The game has ended and the indicated player has won
     GameOver(Side),
     MoveToZone(CardId),
