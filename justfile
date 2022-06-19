@@ -209,7 +209,7 @@ clippy:
         -D clippy::unused_self \
         -D clippy::unwrap_in_result \
         -D clippy::used_underscore_binding \
-        -D clippy::useless_let_if_seq \
+        -D clippy::useless_let_if_seq
 
 clippy-fix:
     cargo clippy --fix -- \

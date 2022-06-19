@@ -13,10 +13,10 @@ test = false
 anyhow = "1.0.51"
 dashmap = "5.0.0"
 enum-iterator = "0.7.0"
+fallible-iterator = "0.2.0"
 if_chain = "1.0.2"
 once_cell = "1.8.0"
 rand = "0.8.4"
 tracing = { version = "0.1.29", features = ["max_level_debug", "release_max_level_warn"] }
-lru = "0.7.5"
 
 data = { path = "../data", version = "0.0.0" }

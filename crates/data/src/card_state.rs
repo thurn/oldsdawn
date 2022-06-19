@@ -142,7 +142,7 @@ pub struct CardData {
 pub struct CardState {
     /// ID for this card.
     pub id: CardId,
-    /// Car d name, can be used to look up this card's definition
+    /// Card name, can be used to look up this card's definition
     pub name: CardName,
     /// Optional state for this card
     pub data: CardData,

@@ -14,7 +14,7 @@
 
 //! Handling for raid-related user actions.
 
-use anyhow::{bail, ensure, Result};
+use anyhow::{bail, ensure, Error, Result};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     ChampionScoreCardEvent, MinionCombatAbilityEvent, MinionDefeatedEvent, RaidOutcome, RaidStart,
@@ -25,7 +25,8 @@ use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::primitives::{CardId, GameObjectId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, TargetedInteraction};
 use data::with_error::WithError;
-use data::{fail, verify};
+use data::{fail, utils, verify};
+use fallible_iterator::{Convert, FallibleIterator, IntoFallibleIterator};
 use tracing::{info, instrument};
 
 use crate::card_prompt::HandleCardPrompt;
@@ -269,11 +270,13 @@ fn next_encounter(
     constructor: impl Fn(usize) -> RaidPhase,
 ) -> Result<RaidPhase> {
     let defenders = game.defender_list(game.raid()?.target);
-    let position = defenders.iter().enumerate().rev().find(|(index, card_id)| {
-        less_than.map_or(true, |less_than| *index < less_than)
-            && (game.card(**card_id).is_face_up()
-                || raid_phases::can_summon_defender(game, *index).unwrap_or(false))
-    });
+    let mut reversed = utils::fallible(defenders.iter().enumerate().rev());
+    let position = reversed.find(|(index, card_id)| {
+        let in_range = less_than.map_or(true, |less_than| *index < less_than);
+        let can_encounter =
+            game.card(**card_id).is_face_up() || raid_phases::can_summon_defender(game, *index)?;
+        Ok(in_range && can_encounter)
+    })?;
 
     Ok(if let Some((index, _)) = position { constructor(index) } else { RaidPhase::Access })
 }

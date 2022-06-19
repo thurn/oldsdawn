@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use anyhow::{Error, Result};
+use fallible_iterator::Convert;
+
 /// Helper function to run a closure and return `true` if the result is
 /// `Some(true)`.
 pub fn is_true(function: impl FnOnce() -> Option<bool>) -> bool {
@@ -22,4 +25,17 @@ pub fn is_true(function: impl FnOnce() -> Option<bool>) -> bool {
 /// `None` or `Some(false)`.
 pub fn is_false(function: impl FnOnce() -> Option<bool>) -> bool {
     !is_true(function)
+}
+
+/// Converts an iterator over T into an iterator over Result<T>, wrapping each
+/// item in 'Ok'
+pub fn all_ok<T>(it: impl Iterator<Item = T>) -> impl Iterator<Item = Result<T, Error>> {
+    it.map(Ok::<T, Error>)
+}
+
+/// Converts an iterator into a fallible iterator
+pub fn fallible<T>(
+    input: impl Iterator<Item = T>,
+) -> Convert<impl Iterator<Item = Result<T, Error>>> {
+    fallible_iterator::convert(all_ok(input))
 }
