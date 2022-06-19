@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using Spelldawn.Utils;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -22,48 +24,46 @@ namespace Spelldawn.Game
 {
   public sealed class SortingOrder
   {
-    public static SortingOrder Create(GameContext gameContext, int index = 0) => new(gameContext, index);
+    public static SortingOrder Create(GameContext gameContext, int key = 0, int subkey = 0) =>
+      new(gameContext, key, subkey);
 
     readonly GameContext _gameContext;
-    readonly int _index;
+    readonly int _key;
+    readonly int _subkey;
+    readonly Lazy<Dictionary<GameContext, int>> _sortingLayers = new(() =>
+    {
+      var result = new Dictionary<GameContext, int>();
+      foreach (GameContext context in Enum.GetValues(typeof(GameContext)))
+      {
+        result.Add(context, SortingLayer.NameToID(context.ToString()));
+      }      
+      return result;
+    });
 
-    SortingOrder(GameContext gameContext, int index)
+    SortingOrder(GameContext gameContext, int key, int subkey)
     {
       _gameContext = gameContext;
-      _index = index;
+      _key = key;
+      _subkey = subkey;
     }
 
     public void ApplyTo(SortingGroup group)
     {
       group.sortingOrder = Position();
+      group.sortingLayerID = _sortingLayers.Value[_gameContext];
     }
 
     public void ApplyTo(Renderer renderer)
     {
       renderer.sortingOrder = Position();
+      renderer.sortingLayerID = _sortingLayers.Value[_gameContext];
     }
 
-    int Position() => _index + _gameContext switch
+    int Position()
     {
-      GameContext.Hidden => 0,
-      GameContext.Arena => 100,
-      GameContext.Deck => 200,
-      GameContext.DiscardPile => 300,
-      GameContext.Identity => 400,
-      GameContext.ArenaRaidParticipant => 500,
-      GameContext.RaidParticipant => 600,
-      GameContext.Hand => 700,
-      GameContext.Interface => 800,
-      GameContext.Staging => 900,
-      GameContext.Browser => 1000,
-      GameContext.RevealedCardsBrowser => 1100,
-      GameContext.Scored => 1200,
-      GameContext.Effects => 1300,
-      GameContext.Dragging => 1400,
-      GameContext.UserMessage => 1500,
-      GameContext.RewardBrowser => 1600,
-      GameContext.InfoZoom => 1700,
-      _ => throw new ArgumentOutOfRangeException()
-    };
+      var position = _subkey + (_key * 100);
+      Errors.CheckState(position < 32767, "Position overflow");
+      return position;
+    }
   }
 }

@@ -174,9 +174,8 @@ namespace Spelldawn.Game
       return result;
     }
 
-    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
+    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext)
     {
-      Errors.CheckNotNull(Registry);
       if (newContext.IsArenaContext())
       {
         _arenaCardBack.SetActive(!_isRevealed);

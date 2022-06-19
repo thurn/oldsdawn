@@ -41,3 +41,57 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Hidden
+    uniqueID: 1670812453
+    locked: 0
+  - name: Arena
+    uniqueID: 1471301815
+    locked: 0
+  - name: Deck
+    uniqueID: 2793550661
+    locked: 0
+  - name: DiscardPile
+    uniqueID: 2902998159
+    locked: 0
+  - name: Identity
+    uniqueID: 4286107515
+    locked: 0
+  - name: ArenaRaidParticipant
+    uniqueID: 4122294463
+    locked: 0
+  - name: RaidParticipant
+    uniqueID: 1934750129
+    locked: 0
+  - name: Hand
+    uniqueID: 4258681941
+    locked: 0
+  - name: Interface
+    uniqueID: 2048004209
+    locked: 0
+  - name: Staging
+    uniqueID: 2244730151
+    locked: 0
+  - name: Browser
+    uniqueID: 3182936583
+    locked: 0
+  - name: RevealedCardsBrowser
+    uniqueID: 1041461123
+    locked: 0
+  - name: Scored
+    uniqueID: 1408845761
+    locked: 0
+  - name: Effects
+    uniqueID: 2758342043
+    locked: 0
+  - name: Dragging
+    uniqueID: 306207183
+    locked: 0
+  - name: UserMessage
+    uniqueID: 2295498059
+    locked: 0
+  - name: RewardBrowser
+    uniqueID: 1787654705
+    locked: 0
+  - name: InfoZoom
+    uniqueID: 3750139825
+    locked: 0

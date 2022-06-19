@@ -138,7 +138,7 @@ namespace Spelldawn.Game
       _registry.ArenaService.HideRoomSelector();
     }
 
-    protected override void OnSetGameContext(GameContext _, GameContext gameContext, int? index = null)
+    protected override void OnSetGameContext(GameContext _, GameContext gameContext)
     {
     }
   }

@@ -618,9 +618,13 @@ message ObjectPositionIntoCard {
 message ObjectPositionRevealedCards {}
 
 message ObjectPosition {
-     // A key by which to sort this object -- objects with higher sorting keys
-     // should be displayed 'on top of' or 'in front of' objects with lower
-     // sorting keys.
+    // A key by which to sort this object -- objects with higher sorting keys
+    // should be displayed 'on top of' or 'in front of' objects with lower
+    // sorting keys.
+    //
+    // NOTE: Despite the fact that Unity uses the 'int' type for this in C#,
+    // they actually store these as 16-bit signed integers, and your code
+    // silently breaks if you use a number over 32,767!
     uint32 sorting_key = 1;
 
     // An additional key, can be used to break ties in `sorting_key`

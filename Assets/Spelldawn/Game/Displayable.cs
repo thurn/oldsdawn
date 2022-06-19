@@ -68,23 +68,23 @@ namespace Spelldawn.Game
 
     protected virtual GameContext DefaultGameContext() => GameContext.Unspecified;
 
-    public void SetGameContext(GameContext gameContext, int? index = null)
+    public void SetGameContext(GameContext gameContext)
     {
       Errors.CheckNotDefault(gameContext);
+      
+      if (_sortingGroup)
+      {
+        SortingOrder.Create(gameContext, (int)SortingKey, (int)SortingSubkey).ApplyTo(_sortingGroup!);
+      }      
 
       if (_gameContext != gameContext)
       {
-        if (_sortingGroup)
-        {
-          SortingOrder.Create(gameContext, index ?? 0).ApplyTo(_sortingGroup!);
-        }
-
         var oldContext = _gameContext;
         _gameContext = gameContext;
-        OnSetGameContext(oldContext, gameContext, index);
+        OnSetGameContext(oldContext, gameContext);
       }
     }
 
-    protected abstract void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null);
+    protected abstract void OnSetGameContext(GameContext oldContext, GameContext newContext);
   }
 }

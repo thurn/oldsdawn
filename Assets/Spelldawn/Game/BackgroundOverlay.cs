@@ -27,7 +27,7 @@ namespace Spelldawn.Game
 
     public void Enable(GameContext layer, bool translucent)
     {
-      SortingOrder.Create(layer, -1).ApplyTo(_renderer);
+      SortingOrder.Create(layer).ApplyTo(_renderer);
       _renderer.enabled = true;
       _renderer.color = Color.clear;
       _renderer.DOBlendableColor(translucent ? new Color(0, 0, 0, 0.5f) : Color.black, 0.3f);

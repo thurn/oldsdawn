@@ -30,7 +30,7 @@ namespace Spelldawn.Game
 
     public override float DefaultScale => _defaultScale;
 
-    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
+    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext)
     {
     }
   }

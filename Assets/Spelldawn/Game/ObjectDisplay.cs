@@ -134,7 +134,7 @@ namespace Spelldawn.Game
 
     public override bool IsContainer() => true;
 
-    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext, int? index = null)
+    protected override void OnSetGameContext(GameContext oldContext, GameContext newContext)
     {
       MarkUpdateRequired(true);
     }
@@ -238,7 +238,7 @@ namespace Spelldawn.Game
           displayable.transform.localScale = Vector3.one * scale;
         }
 
-        displayable.SetGameContext(GameContext, 10 + i);
+        displayable.SetGameContext(GameContext);
       }
 
       if (animate)
