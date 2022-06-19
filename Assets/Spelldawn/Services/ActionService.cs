@@ -274,19 +274,24 @@ namespace Spelldawn.Services
         yield return _registry.CommandService.HandleCommands(commands);
       }      
     }
-    
+
     IEnumerator HandleActionAsync(GameAction action)
     {
-      yield return ApplyOptimisticResponse(action);
-      // Introduce simulated server delay
-      yield return new WaitForSeconds(Random.Range(0.5f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
-
-      if (IsClientOnlyAction(action))
+      if (action.ActionCase is GameAction.ActionOneofCase.TogglePanel or GameAction.ActionOneofCase.StandardAction)
       {
-        // Client-only action, do not send to server
-        _currentlyHandlingAction = false;
-        yield break;
+        yield return ApplyOptimisticResponse(action);
       }
+
+      // StartCoroutine(ApplyOptimisticResponse(action));
+      // Introduce simulated server delay
+      // yield return new WaitForSeconds(Random.Range(0.5f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
+
+      // if (IsClientOnlyAction(action))
+      // {
+        // Client-only action, do not send to server
+        // _currentlyHandlingAction = false;
+        // yield break;
+      // }
 
       // Send to server
       var request = new GameRequest
@@ -386,7 +391,12 @@ namespace Spelldawn.Services
     {
       var card = _registry.CardService.FindCard(action.CardId);
       _registry.StaticAssets.PlayWhooshSound();
-      var position = Errors.CheckNotNull(card.ReleasePosition, "Card does not have release position");
+      if (card.ReleasePosition == null)
+      {
+        yield break;
+      }
+
+      var position = card.ReleasePosition;
 
       if (position.PositionCase == ObjectPosition.PositionOneofCase.Room)
       {
@@ -399,7 +409,7 @@ namespace Spelldawn.Services
         position = newPosition;
       }
 
-      return _registry.ObjectPositionService.MoveGameObject(card, position);
+      yield return _registry.ObjectPositionService.MoveGameObject(card, position);
     }
 
     static bool IsClientOnlyAction(GameAction action) => action.ActionCase switch

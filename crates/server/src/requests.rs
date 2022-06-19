@@ -21,7 +21,7 @@ use dashmap::DashMap;
 use data::game::{GameConfiguration, GameState};
 use data::game_actions::UserAction;
 use data::primitives::{GameId, PlayerId, RoomId, Side};
-use data::updates::UpdateTracker;
+use data::updates::{UpdateTracker, Updates};
 use data::updates2::UpdateTracker2;
 use data::with_error::WithError;
 use data::{fail, game_actions, verify};
@@ -415,7 +415,11 @@ fn handle_standard_action(
 fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameState> {
     let id = game_id.as_ref().with_error(|| "GameId not provided!")?;
     let mut game = database.game(*id)?;
-    game.updates = UpdateTracker::new(!game.data.config.simulation);
+    game.updates = UpdateTracker::new(if game.data.config.simulation {
+        Updates::Ignore
+    } else {
+        Updates::Push
+    });
     game.updates2 = UpdateTracker2::new(!game.data.config.simulation);
     Ok(game)
 }

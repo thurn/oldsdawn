@@ -15,7 +15,7 @@
 use anyhow::Result;
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
-use data::primitives::{AbilityId, CardId, ItemLocation, RoomId, RoomLocation, Side};
+use data::primitives::{AbilityId, GameObjectId, ItemLocation, RoomId, RoomLocation, Side};
 use data::{fail, utils};
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
@@ -29,27 +29,6 @@ use protos::spelldawn::{
 
 use crate::adapters;
 use crate::response_builder::ResponseBuilder;
-
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub enum GameObjectId {
-    CardId(CardId),
-    AbilityId(AbilityId),
-    Deck(Side),
-    DiscardPile(Side),
-    Identity(Side),
-}
-
-impl From<CardId> for GameObjectId {
-    fn from(card_id: CardId) -> Self {
-        GameObjectId::CardId(card_id)
-    }
-}
-
-impl From<AbilityId> for GameObjectId {
-    fn from(ability_id: AbilityId) -> Self {
-        GameObjectId::AbilityId(ability_id)
-    }
-}
 
 pub fn for_card(card: &CardState, position: Position) -> ObjectPosition {
     ObjectPosition { position: Some(position), sorting_key: card.sorting_key, sorting_subkey: 0 }

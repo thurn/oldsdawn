@@ -135,7 +135,7 @@ fn revealed_card_view(
         targeting: Some(card_targeting(definition.config.custom_targeting.as_ref(), |target| {
             flags::can_take_play_card_action(game, builder.user_side, card.id, target)
         })),
-        on_release_position: Some(positions::for_card(card, positions::staging())),
+        on_release_position: None,
         supplemental_info: Some(rules_text::build_supplemental_info(game, card, None)),
     }
 }

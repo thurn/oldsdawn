@@ -14,14 +14,16 @@
 
 use anyhow::Result;
 use data::fail;
-use data::primitives::{AbilityId, AbilityIndex, CardId, GameId, PlayerId, RoomId, Side, Sprite};
+use data::primitives::{
+    AbilityId, AbilityIndex, CardId, GameId, GameObjectId, PlayerId, RoomId, Side, Sprite,
+};
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::{
     CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerSide,
     RoomIdentifier, SpriteAddress, TimeValue,
 };
 
-use crate::positions::GameObjectId;
+use crate::response_builder::ResponseBuilder;
 
 pub fn player_identifier(player_id: PlayerId) -> PlayerIdentifier {
     PlayerIdentifier { value: player_id.value }
@@ -48,14 +50,17 @@ pub fn card_identifier(card_id: CardId) -> CardIdentifier {
     }
 }
 
-pub fn game_object_identifier(identifier: impl Into<GameObjectId>) -> GameObjectIdentifier {
+pub fn game_object_identifier(
+    builder: &ResponseBuilder,
+    identifier: impl Into<GameObjectId>,
+) -> GameObjectIdentifier {
     GameObjectIdentifier {
         id: Some(match identifier.into() {
             GameObjectId::CardId(card_id) => Id::CardId(card_identifier(card_id)),
             GameObjectId::AbilityId(ability_id) => Id::CardId(ability_card_identifier(ability_id)),
-            GameObjectId::Deck(side) => Id::Deck(player_side(side)),
-            GameObjectId::DiscardPile(side) => Id::DiscardPile(player_side(side)),
-            GameObjectId::Identity(side) => Id::Identity(player_side(side)),
+            GameObjectId::Deck(side) => Id::Deck(builder.to_player_name(side)),
+            GameObjectId::DiscardPile(side) => Id::DiscardPile(builder.to_player_name(side)),
+            GameObjectId::Identity(side) => Id::Identity(builder.to_player_name(side)),
         }),
     }
 }

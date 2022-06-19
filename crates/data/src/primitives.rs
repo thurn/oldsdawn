@@ -131,6 +131,8 @@ impl CardId {
 
 impl HasCardId for CardId {
     fn card_id(&self) -> CardId {
+        // I know this is the same as Into, I just find it less annoying to have
+        // explicit types :)
         *self
     }
 }
@@ -203,6 +205,28 @@ impl AbilityId {
 impl HasAbilityId for AbilityId {
     fn ability_id(&self) -> AbilityId {
         *self
+    }
+}
+
+/// Represents an entity in the game which can be independently animated.
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum GameObjectId {
+    CardId(CardId),
+    AbilityId(AbilityId),
+    Deck(Side),
+    DiscardPile(Side),
+    Identity(Side),
+}
+
+impl From<CardId> for GameObjectId {
+    fn from(card_id: CardId) -> Self {
+        GameObjectId::CardId(card_id)
+    }
+}
+
+impl From<AbilityId> for GameObjectId {
+    fn from(ability_id: AbilityId) -> Self {
+        GameObjectId::AbilityId(ability_id)
     }
 }
 

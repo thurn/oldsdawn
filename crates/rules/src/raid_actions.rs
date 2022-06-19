@@ -22,7 +22,8 @@ use data::delegates::{
 };
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
-use data::primitives::{CardId, RaidId, RoomId, Side};
+use data::primitives::{CardId, GameObjectId, RaidId, RoomId, Side};
+use data::updates::{GameUpdate, TargetedInteraction};
 use data::updates2::{GameUpdate2, InteractionObjectId2, TargetedInteraction2};
 use data::with_error::WithError;
 use data::{fail, verify};
@@ -119,6 +120,14 @@ pub fn encounter_action(
             let cost = queries::cost_to_defeat_target(game, source_id, target_id)
                 .with_error(|| format!("{:?} cannot defeat target: {:?}", source_id, target_id))?;
             mana::spend(game, user_side, ManaPurpose::UseWeapon(source_id), cost)?;
+
+            game.push_update(|| {
+                GameUpdate::TargetedInteraction(TargetedInteraction {
+                    source: GameObjectId::CardId(source_id),
+                    target: GameObjectId::CardId(target_id),
+                })
+            });
+
             dispatch::invoke_event(
                 game,
                 UsedWeaponEvent(UsedWeapon {
@@ -129,19 +138,17 @@ pub fn encounter_action(
                 }),
             )?;
             dispatch::invoke_event(game, MinionDefeatedEvent(target_id))?;
-            game.updates2.push(GameUpdate2::TargetedInteraction(TargetedInteraction2 {
-                source: InteractionObjectId2::CardId(source_id),
-                target: InteractionObjectId2::CardId(target_id),
-            }))
         }
         EncounterAction::NoWeapon | EncounterAction::CardAction(_) => {
             let target = game.raid()?.target;
             let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
+            game.push_update(|| {
+                GameUpdate::TargetedInteraction(TargetedInteraction {
+                    source: GameObjectId::CardId(defender_id),
+                    target: GameObjectId::Identity(Side::Champion),
+                })
+            });
             dispatch::invoke_event(game, MinionCombatAbilityEvent(defender_id))?;
-            game.updates2.push(GameUpdate2::TargetedInteraction(TargetedInteraction2 {
-                source: InteractionObjectId2::CardId(defender_id),
-                target: InteractionObjectId2::Identity(Side::Champion),
-            }));
         }
     }
 

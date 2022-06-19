@@ -165,7 +165,7 @@ fn play_card_action(
     };
 
     if enters_face_up {
-        mutations::turn_face_up(game, card_id)?;
+        game.card_mut(card_id).turn_face_up();
     }
 
     mutations::move_card(game, card_id, new_position)?;

@@ -12,19 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::HashMap;
+
 use data::primitives::Side;
 use protos::spelldawn::game_command::Command;
-use protos::spelldawn::PlayerName;
+use protos::spelldawn::{
+    CardIdentifier, GameView, ObjectPosition, PlayerName, UpdateGameViewCommand,
+};
 
 pub struct ResponseBuilder {
     pub user_side: Side,
     pub animate: bool,
     pub commands: Vec<Command>,
+
+    /// Tracks the positions of client cards as of the most recently-seen
+    /// snapshot. Can be used to customize animation behavior.
+    pub last_snapshot_positions: HashMap<CardIdentifier, ObjectPosition>,
 }
 
 impl ResponseBuilder {
+    pub fn new(user_side: Side, animate: bool) -> Self {
+        Self { user_side, animate, commands: vec![], last_snapshot_positions: HashMap::default() }
+    }
+
     pub fn push(&mut self, command: Command) {
         self.commands.push(command);
+    }
+
+    pub fn push_game_view(&mut self, game: GameView) {
+        for card in &game.cards {
+            if let (Some(id), Some(position)) = (card.card_id, card.card_position.clone()) {
+                self.last_snapshot_positions.insert(id, position);
+            }
+        }
+
+        self.commands.push(Command::UpdateGameView(UpdateGameViewCommand {
+            game: Some(game),
+            animate: self.animate,
+        }));
     }
 
     pub fn to_player_name(&self, side: Side) -> i32 {

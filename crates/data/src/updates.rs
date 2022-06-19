@@ -13,57 +13,81 @@
 // limitations under the License.
 
 use crate::game::GameState;
-use crate::primitives::{AbilityId, CardId, Side};
+use crate::primitives::{CardId, GameObjectId, Side};
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
-pub enum StackId {
-    CardId(CardId),
-    AbilityId(AbilityId),
+/// Indicates one game object targeted another with an effect.
+///
+/// Typically represented in animation as a projectile being fired.
+#[derive(Debug, Clone)]
+pub struct TargetedInteraction {
+    pub source: GameObjectId,
+    pub target: GameObjectId,
 }
 
-impl From<CardId> for StackId {
-    fn from(card_id: CardId) -> Self {
-        Self::CardId(card_id)
-    }
-}
-
-impl From<AbilityId> for StackId {
-    fn from(ability_id: AbilityId) -> Self {
-        Self::AbilityId(ability_id)
-    }
-}
-
+/// Represents a change to the state of the game which should be translated
+/// into a client animation
 #[derive(Debug, Clone)]
 pub enum GameUpdate {
     /// One or more cards have been drawn by the [Side] player.
     DrawCards(Side, Vec<CardId>),
+    /// A project card has been turned face-up.
+    UnveilProject(CardId),
+    /// A minion card has been turned face-up.
+    SummonMinion(CardId),
+    /// Cards have been accessed during a raid
+    CardsAccessed(Vec<CardId>),
+    /// See [TargetedInteraction].
+    TargetedInteraction(TargetedInteraction),
 }
 
+/// A step in the animation process
 #[derive(Debug, Clone)]
-pub enum UpdateStep {
-    GameUpdate(GameUpdate),
-    Sync(Box<GameState>),
+pub struct UpdateStep {
+    pub snapshot: GameState,
+    pub update: GameUpdate,
 }
 
-#[derive(Debug, Clone, Default)]
+/// Standard enum used by APIs to configure their update tracking behavior.
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum Updates {
+    /// Game updates should not be tracked by the receiver
+    Ignore,
+    /// Game updates should be tracked by the receiver
+    Push,
+}
+
+/// Tracks game mutations for a game action.
+///
+/// Some game state changes in Spelldawn require custom animations in the UI in
+/// order to communicate their effects clearly. In order to implement the
+/// animation system, code which mutates game state can also call
+/// [GameState::push_update] and provide a [GameUpdate] to record the action
+/// they took. The way this process works is that a snapshot of the game state
+/// is stored (to capture any mutations that occurred *before* the animation),
+/// and then the update is stored. During the animation process, the
+/// stored snapshots and [GameUpdate]s are played back sequentially.
+///
+/// Many types of state changes are handled automatically by the game state
+/// snapshot system, so appending an update is only needed for custom
+/// animations. For example the system will correctly detect and animate a card
+/// which has moved to a new position.
+#[derive(Debug, Clone)]
 pub struct UpdateTracker {
-    enabled: bool,
-    updates: Vec<UpdateStep>,
+    /// Used to globally disable or enable update tracking
+    pub state: Updates,
+    /// List of update steps, either full snapshots of the game state or
+    /// individual mutations.
+    pub steps: Vec<UpdateStep>,
+}
+
+impl Default for UpdateTracker {
+    fn default() -> Self {
+        Self { state: Updates::Ignore, steps: vec![] }
+    }
 }
 
 impl UpdateTracker {
-    pub fn new(enabled: bool) -> Self {
-        Self { enabled, updates: vec![] }
-    }
-
-    pub fn updates(&self) -> impl Iterator<Item = &UpdateStep> {
-        self.updates.iter()
-    }
-
-    pub fn push(&mut self, game: GameState, update: GameUpdate) {
-        if self.enabled {
-            self.updates.push(UpdateStep::Sync(Box::new(game)));
-            self.updates.push(UpdateStep::GameUpdate(update));
-        }
+    pub fn new(updates: Updates) -> Self {
+        Self { state: updates, steps: vec![] }
     }
 }

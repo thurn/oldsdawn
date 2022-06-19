@@ -40,18 +40,15 @@ pub fn run(builder: &mut ResponseBuilder, game: &GameState) -> Result<()> {
         })
         .collect();
 
-    builder.push(Command::UpdateGameView(UpdateGameViewCommand {
-        game: Some(GameView {
-            game_id: Some(adapters::game_identifier(game.id)),
-            user: Some(player_view(game, builder.user_side)?),
-            opponent: Some(player_view(game, builder.user_side.opponent())?),
-            cards: cards?,
-            raid_active: game.data.raid.is_some(),
-            game_object_positions: Some(positions::game_object_positions(builder, game)?),
-            main_controls: interface::render(game, builder.user_side),
-        }),
-        animate: builder.animate,
-    }));
+    builder.push_game_view(GameView {
+        game_id: Some(adapters::game_identifier(game.id)),
+        user: Some(player_view(game, builder.user_side)?),
+        opponent: Some(player_view(game, builder.user_side.opponent())?),
+        cards: cards?,
+        raid_active: game.data.raid.is_some(),
+        game_object_positions: Some(positions::game_object_positions(builder, game)?),
+        main_controls: interface::render(game, builder.user_side),
+    });
 
     Ok(())
 }

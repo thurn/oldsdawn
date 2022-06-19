@@ -34,7 +34,7 @@ use crate::primitives::{
     AbilityId, ActionCount, CardId, GameId, HasAbilityId, ItemLocation, ManaValue, PlayerId,
     PointsValue, RaidId, RoomId, RoomLocation, Side, TurnNumber,
 };
-use crate::updates::{GameUpdate, UpdateTracker};
+use crate::updates::{GameUpdate, UpdateStep, UpdateTracker, Updates};
 use crate::updates2::UpdateTracker2;
 use crate::with_error::WithError;
 
@@ -294,7 +294,11 @@ impl GameState {
             overlord: PlayerState::new(overlord_deck.owner_id),
             champion: PlayerState::new(champion_deck.owner_id),
             ability_state: HashMap::new(),
-            updates: UpdateTracker::new(!config.simulation),
+            updates: UpdateTracker::new(if config.simulation {
+                Updates::Ignore
+            } else {
+                Updates::Push
+            }),
             updates2: UpdateTracker2::new(!config.simulation),
             next_sorting_key: 1,
             delegate_cache: DelegateCache::default(),
@@ -306,23 +310,27 @@ impl GameState {
         }
     }
 
-    pub fn push_update(&mut self, update: GameUpdate) {
-        let clone = Self {
-            id: self.id,
-            data: self.data.clone(),
-            updates: UpdateTracker::new(false),
-            updates2: UpdateTracker2::new(false),
-            overlord_cards: self.overlord_cards.clone(),
-            champion_cards: self.champion_cards.clone(),
-            overlord: self.overlord.clone(),
-            champion: self.champion.clone(),
-            ability_state: self.ability_state.clone(),
-            next_sorting_key: self.next_sorting_key,
-            rng: None,
-            delegate_cache: DelegateCache::default(),
-        };
+    pub fn push_update(&mut self, update: impl FnOnce() -> GameUpdate) {
+        if self.updates.state == Updates::Push {
+            // Snapshot current game state, omit things that aren't important for display
+            // logic.
+            let clone = Self {
+                id: self.id,
+                data: self.data.clone(),
+                updates: UpdateTracker::new(Updates::Ignore),
+                updates2: UpdateTracker2::new(false),
+                overlord_cards: self.overlord_cards.clone(),
+                champion_cards: self.champion_cards.clone(),
+                overlord: self.overlord.clone(),
+                champion: self.champion.clone(),
+                ability_state: self.ability_state.clone(),
+                next_sorting_key: self.next_sorting_key,
+                rng: None,
+                delegate_cache: DelegateCache::default(),
+            };
 
-        self.updates.push(clone, update);
+            self.updates.steps.push(UpdateStep { snapshot: clone, update: update() });
+        }
     }
 
     /// Returns identity cards for the provided Side

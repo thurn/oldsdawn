@@ -200,29 +200,25 @@ impl CardState {
         !self.data.is_face_up
     }
 
-    /// Change a card to the 'face up' state, but does *not* change its
-    /// revealed state for either player.'
-    ///
-    /// Prefer `mutations::turn_face_up` to invoking this method directly.
-    pub fn turn_face_up_internal(&mut self) {
+    /// Change a card to the 'face up' state and makes the card revealed to both
+    /// players.
+    pub fn turn_face_up(&mut self) {
         self.data.is_face_up = true;
+        self.set_revealed_to(Side::Overlord, true);
+        self.set_revealed_to(Side::Champion, true);
     }
 
     /// Change a card to the 'face down' state, but does *not* change its
     /// revealed state for either player.
-    ///
-    /// Prefer `mutations::turn_face_down` to invoking this method directly.
-    pub fn turn_face_down_internal(&mut self) {
+    pub fn turn_face_down(&mut self) {
         self.data.is_face_up = false;
     }
 
-    /// Sets whether this card is revealed to the `side` player. You should
-    /// typically use `mutations::set_revealed_to` instead of calling this
-    /// method.
-    ///
-    /// Note that this is not the same as [Self::turn_face_up], both players may
-    /// know a card without it being the the 'face up' state.
-    pub fn set_revealed_internal(&mut self, side: Side, revealed: bool) {
+    /// Updates the 'revealed' state of a card to be visible to the indicated
+    /// `side` player. Note that this is *not* the same as turning a card
+    /// face-up, a card can be revealed to both players without being
+    /// face-up
+    pub fn set_revealed_to(&mut self, side: Side, revealed: bool) {
         if self.id.side == side {
             self.data.revealed_to_owner = revealed
         } else {
