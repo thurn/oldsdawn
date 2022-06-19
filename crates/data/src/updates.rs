@@ -38,8 +38,6 @@ pub enum GameUpdate {
     LevelUpRoom(RoomId),
     /// The Champion has initiated a raid on a room
     InitiateRaid(RoomId),
-    /// Cards have been accessed during a raid
-    CardsAccessed(Vec<CardId>),
     /// See [TargetedInteraction].
     TargetedInteraction(TargetedInteraction),
     /// A player has scored a card

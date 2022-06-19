@@ -44,7 +44,7 @@ namespace Spelldawn.Services
 
     public bool CurrentlyDragging { get; set; }
 
-    public IEnumerator Sync(List<CardView> views, GameObjectPositions? positions, bool animate)
+    public List<Coroutine> Sync(List<CardView> views, GameObjectPositions? positions, bool animate)
     {
       var toDelete = _cards.Keys.ToHashSet();
       var coroutines = new List<Coroutine>();
@@ -60,14 +60,14 @@ namespace Spelldawn.Services
         else
         {
           card = InstantiateCardPrefab(view.Prefab);
+          _cards[view.CardId] = card;
           card.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
           var position = view.CreatePosition ?? Errors.CheckNotNull(view.CardPosition);
           _registry.ObjectPositionService.MoveGameObjectImmediate(card, position);
-          _cards[view.CardId] = card;
         }
-
+        
         card.Render(view, animate: animate);
-
+        
         // Need to update all cards in case sorting keys change
         coroutines.Add(StartCoroutine(
           _registry.ObjectPositionService.MoveGameObject(card, view.CardPosition, animate)));
@@ -92,10 +92,7 @@ namespace Spelldawn.Services
       coroutines.AddRange(
         toDelete.Select(delete => StartCoroutine(HandleDestroyCard(delete))));
 
-      foreach (var coroutine in coroutines)
-      {
-        yield return coroutine;
-      }
+      return coroutines;
     }
 
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)

@@ -14,7 +14,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using DG.Tweening;
 using Spelldawn.Services;
@@ -75,8 +74,7 @@ namespace Spelldawn.Game
     }
     
     /// <summary>Insert a Displayable into this container immediately, with no animation.</summary>
-    public void AddObjectImmediate(
-      Displayable displayable)
+    public void AddObjectImmediate(Displayable displayable)
     {
       Insert(displayable, false);
       MoveObjectsToPosition(false);
@@ -191,6 +189,11 @@ namespace Spelldawn.Game
     {
       Errors.CheckNotNull(displayable);
       var modified = false;
+
+      if (displayable is Card card && card.gameObject.name.EndsWith("O1"))
+      {
+        Debug.Log($"Insert: moving {displayable} from {displayable.Parent!.name} to {name}");
+      }
       
       if (!_objects.Contains(displayable))
       {

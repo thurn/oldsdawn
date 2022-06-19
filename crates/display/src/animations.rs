@@ -45,9 +45,6 @@ pub fn render(
         GameUpdate::SummonMinion(card_id) => reveal(builder, Side::Champion, vec![*card_id].iter()),
         GameUpdate::LevelUpRoom(room_id) => level_up_room(builder, *room_id),
         GameUpdate::InitiateRaid(room_id) => initiate_raid(builder, *room_id),
-        GameUpdate::CardsAccessed(_) => {
-            // Not sure we need an explicit animation for this?
-        }
         GameUpdate::TargetedInteraction(interaction) => {
             targeted_interaction(builder, snapshot, interaction)
         }

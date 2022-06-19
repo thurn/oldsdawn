@@ -31,19 +31,23 @@ use crate::adapters;
 use crate::response_builder::ResponseBuilder;
 
 pub fn for_card(card: &CardState, position: Position) -> ObjectPosition {
-    ObjectPosition { position: Some(position), sorting_key: card.sorting_key, sorting_subkey: 0 }
+    ObjectPosition {
+        position: Some(position),
+        sorting_key: 1 + card.sorting_key,
+        sorting_subkey: 0,
+    }
 }
 
 pub fn for_ability(game: &GameState, ability_id: AbilityId, position: Position) -> ObjectPosition {
     ObjectPosition {
         position: Some(position),
-        sorting_key: game.card(ability_id.card_id).sorting_key,
+        sorting_key: 1 + game.card(ability_id.card_id).sorting_key,
         sorting_subkey: 1 + (ability_id.index.value() as u32),
     }
 }
 
 pub fn for_sorting_key(sorting_key: u32, position: Position) -> ObjectPosition {
-    ObjectPosition { sorting_key, sorting_subkey: 0, position: Some(position) }
+    ObjectPosition { sorting_key: 1 + sorting_key, sorting_subkey: 0, position: Some(position) }
 }
 
 pub fn room(room_id: RoomId, location: RoomLocation) -> Position {
@@ -269,10 +273,11 @@ fn raid_browser(game: &GameState, raid: &RaidData) -> Result<Vec<GameObjectId>> 
 
     let defenders = game.defender_list(raid.target);
     let included = match raid.phase {
+        RaidPhase::Begin => return Ok(vec![]),
         RaidPhase::Activation => &defenders,
         RaidPhase::Encounter(i) => &defenders[..=i],
         RaidPhase::Continue(i) => &defenders[..=i],
-        _ => fail!("Expected raid to be in-flight"),
+        RaidPhase::Access => fail!("Expected raid to be in-flight"),
     };
     result.extend(included.iter().map(|card_id| GameObjectId::CardId(*card_id)));
     result.push(GameObjectId::Identity(Side::Champion));

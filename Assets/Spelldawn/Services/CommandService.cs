@@ -227,10 +227,15 @@ namespace Spelldawn.Services
       }
       
       _registry.RaidService.RaidActive = game.RaidActive;
+      var coroutines = _registry.CardService.Sync(game.Cards.ToList(), game.GameObjectPositions, animate);
 
-      _registry.DocumentService.RenderMainControls(game.MainControls);
-
-      yield return _registry.CardService.Sync(game.Cards.ToList(), game.GameObjectPositions, animate);
+      foreach (var coroutine in coroutines)
+      {
+        yield return coroutine;
+      }
+      
+      // Must run after move completion, uses card positions for anchoring
+      _registry.DocumentService.RenderMainControls(game.MainControls);      
     }
 
     void HandleRenderPlayer(PlayerName playerName, PlayerView playerView)

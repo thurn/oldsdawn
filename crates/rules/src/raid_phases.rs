@@ -56,11 +56,11 @@ fn on_enter_raid_phase(game: &mut GameState) -> Result<()> {
         RaidPhase::Access => {
             dispatch::invoke_event(game, RaidAccessStartEvent(game.raid()?.raid_id))?;
             let accessed = accessed_cards(game)?;
+            game.raid_mut()?.accessed = accessed.clone();
 
             for card_id in &accessed {
                 dispatch::invoke_event(game, CardAccessEvent(*card_id))?;
             }
-            game.raid_mut()?.accessed = accessed;
         }
     }
 
@@ -118,8 +118,6 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
     for card_id in &accessed {
         game.card_mut(*card_id).set_revealed_to(Side::Champion, true);
     }
-
-    game.push_update(|| GameUpdate::CardsAccessed(accessed.clone()));
 
     Ok(accessed)
 }

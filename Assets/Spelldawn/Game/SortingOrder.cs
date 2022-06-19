@@ -49,13 +49,15 @@ namespace Spelldawn.Game
 
     public void ApplyTo(SortingGroup group)
     {
-      group.sortingOrder = Position();
+      var position = Position();
+      group.sortingOrder = position;
       group.sortingLayerID = _sortingLayers.Value[_gameContext];
     }
 
     public void ApplyTo(Renderer renderer)
     {
-      renderer.sortingOrder = Position();
+      var position = Position();
+      renderer.sortingOrder = position;
       renderer.sortingLayerID = _sortingLayers.Value[_gameContext];
     }
 

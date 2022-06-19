@@ -49,7 +49,7 @@ namespace Spelldawn.Game
     {
       if (_sortingGroup && _gameContext != GameContext.Unspecified)
       {
-        SortingOrder.Create(_gameContext).ApplyTo(_sortingGroup!);
+        SortingOrder.Create(_gameContext, (int)SortingKey, (int)SortingSubkey).ApplyTo(_sortingGroup!);
       }
 
       OnStart();
