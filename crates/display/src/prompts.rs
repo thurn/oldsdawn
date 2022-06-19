@@ -20,7 +20,7 @@ use data::game_actions::{
 use data::primitives::{CardId, Side};
 use protos::spelldawn::{
     AnchorCorner, CardAnchor, CardAnchorNode, CardNodeAnchorPosition, FlexAlign, FlexJustify,
-    FlexStyle, FlexWrap, InterfaceMainControls, Node, RenderInterfaceCommand,
+    FlexStyle, FlexWrap, InterfaceMainControls, Node,
 };
 use rules::queries;
 use ui::components::{Button, ButtonLines, ButtonVariant, Row, Text};

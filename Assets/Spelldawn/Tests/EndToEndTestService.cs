@@ -71,7 +71,6 @@ namespace Spelldawn.Tests
       DontDestroyOnLoad(gameObject);
       Application.logMessageReceived += HandleException;
       PlayerPrefs.DeleteAll();
-      PlayerPrefs.SetInt(Preferences.OfflineMode, 1);
       PlayerPrefs.SetInt(Preferences.InMemory, 1);
       _directory = Application.isEditor
         ? "/tmp/spelldawn/Screenshots"

@@ -75,7 +75,7 @@ namespace Spelldawn.Services
       {
         _registry.ActionService.Connect(
           CurrentGameId,
-          offlineMode: !Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0
+          offlineMode: Application.isMobilePlatform
         );        
       }
     }

@@ -29,6 +29,7 @@ use data::delegates::{
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
+use data::updates::GameUpdate;
 use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use data::{fail, verify};
@@ -239,11 +240,9 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
     );
     mutations::spend_action_points(game, user_side, 1)?;
     mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1)?;
+    game.push_update(|| GameUpdate::LevelUpRoom(room_id));
     mutations::level_up_room(game, room_id)?;
-
     mutations::check_end_turn(game)?;
-    game.updates2.push(GameUpdate2::LevelUpRoom(room_id));
-
     Ok(())
 }
 

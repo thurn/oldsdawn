@@ -22,7 +22,7 @@ use enum_iterator::IntoEnumIterator;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::{
     ArrowTargetRoom, CardIcon, CardIcons, CardPrefab, CardTargeting, CardTitle, CardView,
-    NoTargeting, RevealedCardView, RulesText, TargetingArrow,
+    NoTargeting, PlayInRoom, RevealedCardView, RulesText, TargetingArrow,
 };
 use rules::{flags, queries};
 
@@ -132,9 +132,11 @@ fn revealed_card_view(
         image: Some(adapters::sprite(&definition.image)),
         title: Some(CardTitle { text: definition.name.displayed_name() }),
         rules_text: Some(rules_text::build(game, card, definition)),
-        targeting: Some(card_targeting(definition.config.custom_targeting.as_ref(), |target| {
-            flags::can_take_play_card_action(game, builder.user_side, card.id, target)
-        })),
+        targeting: Some(card_targeting(
+            definition.config.custom_targeting.as_ref(),
+            flags::enters_play_in_room(game, card.id),
+            |target| flags::can_take_play_card_action(game, builder.user_side, card.id, target),
+        )),
         on_release_position: None,
         supplemental_info: Some(rules_text::build_supplemental_info(game, card, None)),
     }
@@ -156,7 +158,7 @@ fn revealed_ability_card_view(
         image: Some(adapters::sprite(&definition.image)),
         title: Some(CardTitle { text: definition.name.displayed_name() }),
         rules_text: Some(RulesText { text: rules_text::ability_text(game, ability_id, ability) }),
-        targeting: Some(card_targeting(target_requirement, |target| {
+        targeting: Some(card_targeting(target_requirement, false, |target| {
             flags::can_take_activate_ability_action(game, ability_id.side(), ability_id, target)
         })),
         on_release_position: Some(positions::for_ability(game, ability_id, positions::staging())),
@@ -170,20 +172,29 @@ fn revealed_ability_card_view(
 
 fn card_targeting<T>(
     requirement: Option<&TargetRequirement<T>>,
+    play_in_room: bool,
     can_play: impl Fn(CardTarget) -> bool,
 ) -> CardTargeting {
     CardTargeting {
-        targeting: Some(match requirement {
-            None | Some(TargetRequirement::None) => {
+        targeting: Some(match (requirement, play_in_room) {
+            (None, false) | (Some(TargetRequirement::None), _) => {
                 Targeting::NoTargeting(NoTargeting { can_play: can_play(CardTarget::None) })
             }
-            Some(TargetRequirement::TargetRoom(_)) => Targeting::ArrowTargetRoom(ArrowTargetRoom {
-                valid_rooms: RoomId::into_enum_iter()
+            (None, true) | (Some(TargetRequirement::TargetRoom(_)), _) => {
+                let valid = RoomId::into_enum_iter()
                     .filter(|room_id| can_play(CardTarget::Room(*room_id)))
                     .map(adapters::room_identifier)
-                    .collect(),
-                arrow: TargetingArrow::Red.into(),
-            }),
+                    .collect();
+
+                if play_in_room {
+                    Targeting::PlayInRoom(PlayInRoom { valid_rooms: valid })
+                } else {
+                    Targeting::ArrowTargetRoom(ArrowTargetRoom {
+                        valid_rooms: valid,
+                        arrow: TargetingArrow::Red.into(),
+                    })
+                }
+            }
         }),
     }
 }

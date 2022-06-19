@@ -36,7 +36,7 @@ use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
     RoomLocation, Side, TurnNumber,
 };
-use data::updates::{GameUpdate, Updates};
+use data::updates::GameUpdate;
 use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use data::{random, verify};
@@ -394,12 +394,12 @@ pub fn level_up_room(game: &mut GameState, room_id: RoomId) -> Result<()> {
         CardPosition::Room(room_id, RoomLocation::Occupant),
     );
     let can_level = occupants
-        .iter()
-        .filter(|card_id| flags::can_level_up_card(game, **card_id))
+        .into_iter()
+        .filter(|card_id| flags::can_level_up_card(game, *card_id))
         .collect::<Vec<_>>();
 
     for occupant_id in can_level {
-        add_level_counters(game, *occupant_id, 1)?;
+        add_level_counters(game, occupant_id, 1)?;
     }
 
     Ok(())
@@ -418,14 +418,15 @@ pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) ->
     if let Some(scheme_points) = crate::get(card.name).config.stats.scheme_points {
         if card.data.card_level >= scheme_points.level_requirement {
             game.card_mut(card_id).turn_face_up();
-            move_card(game, card_id, CardPosition::Scored(Side::Overlord))?;
+            move_card(game, card_id, CardPosition::Stack)?;
+            game.push_update(|| GameUpdate::ScoreCard(Side::Overlord, card_id));
             dispatch::invoke_event(game, OverlordScoreCardEvent(card_id))?;
             dispatch::invoke_event(
                 game,
                 ScoreCardEvent(ScoreCard { player: Side::Overlord, card_id }),
             )?;
-            game.updates2.push(GameUpdate2::OverlordScoreCard(card_id, scheme_points.points));
             score_points(game, Side::Overlord, scheme_points.points)?;
+            move_card(game, card_id, CardPosition::Scored(Side::Overlord))?;
         }
     }
 

@@ -21,7 +21,6 @@ namespace Spelldawn.Utils
     public const string PlayerId = "PlayerId";
     public const string CurrentGameId = "CurrentGameId";
     public const string MusicVolume = "MusicVolume";
-    public const string OfflineMode = "OfflineMode";
     public const string InMemory = "InMemory";
   }
 }

@@ -14,13 +14,20 @@
 
 use anyhow::Result;
 use data::game::GameState;
-use data::primitives::{CardId, GameObjectId, Side};
-use data::special_effects::Projectile;
+use data::primitives::{CardId, GameObjectId, RoomId, Side};
+use data::special_effects::{
+    FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
+};
 use data::updates::{GameUpdate, TargetedInteraction};
 use data::utils;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
-use protos::spelldawn::{FireProjectileCommand, GameObjectMove, MoveMultipleGameObjectsCommand};
+use protos::spelldawn::play_effect_position::EffectPosition;
+use protos::spelldawn::{
+    DelayCommand, FireProjectileCommand, GameObjectMove, MoveMultipleGameObjectsCommand,
+    MusicState, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand, RoomVisitType,
+    SetMusicCommand, TimeValue, VisitRoomCommand,
+};
 
 use crate::response_builder::ResponseBuilder;
 use crate::{adapters, assets, positions};
@@ -36,12 +43,15 @@ pub fn render(
             reveal(builder, Side::Champion, vec![*card_id].iter())
         }
         GameUpdate::SummonMinion(card_id) => reveal(builder, Side::Champion, vec![*card_id].iter()),
+        GameUpdate::LevelUpRoom(room_id) => level_up_room(builder, *room_id),
+        GameUpdate::InitiateRaid(room_id) => initiate_raid(builder, *room_id),
         GameUpdate::CardsAccessed(_) => {
             // Not sure we need an explicit animation for this?
         }
         GameUpdate::TargetedInteraction(interaction) => {
             targeted_interaction(builder, snapshot, interaction)
         }
+        GameUpdate::ScoreCard(_, card_id) => score_card(builder, *card_id),
     }
     Ok(())
 }
@@ -65,6 +75,39 @@ fn reveal<'a>(builder: &mut ResponseBuilder, side: Side, cards: impl Iterator<It
             delay: Some(adapters::milliseconds(1000)),
         }))
     }
+}
+
+fn in_display_position(builder: &ResponseBuilder, card_id: CardId) -> bool {
+    utils::is_true(|| {
+        Some(matches!(
+            builder
+                .last_snapshot_positions
+                .get(&adapters::card_identifier(card_id))?
+                .position
+                .as_ref()?,
+            Position::Staging(_)
+                | Position::Raid(_)
+                | Position::Browser(_)
+                | Position::Revealed(_)
+                | Position::ScoreAnimation(_)
+        ))
+    })
+}
+
+fn level_up_room(commands: &mut ResponseBuilder, target: RoomId) {
+    commands.push(Command::VisitRoom(VisitRoomCommand {
+        initiator: commands.to_player_name(Side::Overlord),
+        room_id: adapters::room_identifier(target),
+        visit_type: RoomVisitType::LevelUpRoom.into(),
+    }));
+}
+
+fn initiate_raid(commands: &mut ResponseBuilder, target: RoomId) {
+    commands.push(Command::VisitRoom(VisitRoomCommand {
+        initiator: commands.to_player_name(Side::Champion),
+        room_id: adapters::room_identifier(target),
+        visit_type: RoomVisitType::InitiateRaid.into(),
+    }));
 }
 
 fn targeted_interaction(
@@ -102,19 +145,67 @@ fn apply_projectile(
     }
 }
 
-fn in_display_position(builder: &ResponseBuilder, card_id: CardId) -> bool {
-    utils::is_true(|| {
-        Some(matches!(
-            builder
-                .last_snapshot_positions
-                .get(&adapters::card_identifier(card_id))?
-                .position
-                .as_ref()?,
-            Position::Staging(_)
-                | Position::Raid(_)
-                | Position::Browser(_)
-                | Position::Revealed(_)
-                | Position::ScoreAnimation(_)
-        ))
+fn score_card(builder: &mut ResponseBuilder, card_id: CardId) {
+    builder.push(set_music(MusicState::Silent));
+    builder.push(play_sound(SoundEffect::FantasyEvents(FantasyEventSounds::Positive1)));
+    builder.push(play_effect(
+        builder,
+        TimedEffect::HovlMagicHit(4),
+        card_id,
+        PlayEffectOptions {
+            duration: Some(adapters::milliseconds(700)),
+            sound: Some(SoundEffect::Fireworks(FireworksSound::RocketExplodeLarge)),
+            ..PlayEffectOptions::default()
+        },
+    ));
+    builder.push(play_effect(
+        builder,
+        TimedEffect::HovlMagicHit(4),
+        card_id,
+        PlayEffectOptions {
+            duration: Some(adapters::milliseconds(300)),
+            sound: Some(SoundEffect::Fireworks(FireworksSound::RocketExplode)),
+            ..PlayEffectOptions::default()
+        },
+    ));
+    builder.push(delay(1000));
+}
+
+#[derive(Debug, Default)]
+struct PlayEffectOptions {
+    pub duration: Option<TimeValue>,
+    pub sound: Option<SoundEffect>,
+    pub scale: Option<f32>,
+}
+
+fn play_effect(
+    builder: &ResponseBuilder,
+    effect: TimedEffect,
+    id: impl Into<GameObjectId>,
+    options: PlayEffectOptions,
+) -> Command {
+    Command::PlayEffect(PlayEffectCommand {
+        effect: Some(assets::timed_effect(effect)),
+        position: Some(PlayEffectPosition {
+            effect_position: Some(EffectPosition::GameObject(adapters::game_object_identifier(
+                builder,
+                id.into(),
+            ))),
+        }),
+        scale: options.scale,
+        duration: Some(options.duration.unwrap_or_else(|| adapters::milliseconds(300))),
+        sound: options.sound.map(assets::sound_effect),
     })
+}
+
+fn delay(milliseconds: u32) -> Command {
+    Command::Delay(DelayCommand { duration: Some(TimeValue { milliseconds }) })
+}
+
+fn set_music(music_state: MusicState) -> Command {
+    Command::SetMusic(SetMusicCommand { music_state: music_state.into() })
+}
+
+fn play_sound(sound: SoundEffect) -> Command {
+    Command::PlaySound(PlaySoundCommand { sound: Some(assets::sound_effect(sound)) })
 }

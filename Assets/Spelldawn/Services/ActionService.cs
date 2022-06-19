@@ -30,7 +30,6 @@ using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
-using Random = UnityEngine.Random;
 
 namespace Spelldawn.Services
 {
@@ -60,6 +59,8 @@ namespace Spelldawn.Services
 
     /// <summary>Returns true if this service is currently not doing any work.</summary>
     public bool Idle => _actionQueue.Count == 0 && !_currentlyHandlingAction;
+    
+    public bool OfflineMode { get; private set; }
 
     public void Initialize()
     {
@@ -73,7 +74,8 @@ namespace Spelldawn.Services
 
     public void Connect(GameIdentifier? gameIdentifier, bool offlineMode)
     {
-      ConnectToRulesEngine(gameIdentifier, offlineMode);
+      OfflineMode = offlineMode;
+      ConnectToRulesEngine(gameIdentifier);
     }
 
     public void HandleAction(GameAction action)
@@ -227,7 +229,7 @@ namespace Spelldawn.Services
       return fired;
     }
 
-    async void ConnectToRulesEngine(GameIdentifier? gameId, bool offlineMode)
+    async void ConnectToRulesEngine(GameIdentifier? gameId)
     {
       // Remember you can do Edit > Clear All Player Prefs to reset 
 
@@ -243,7 +245,7 @@ namespace Spelldawn.Services
         PlayerId = _registry.GameService.PlayerId,
       };
       
-      if (offlineMode)
+      if (OfflineMode)
       {
         Debug.Log($"Connecting to Offline Game {request.GameId.Value}");
         StartCoroutine(ConnectToOfflineGame(request));
@@ -277,21 +279,20 @@ namespace Spelldawn.Services
 
     IEnumerator HandleActionAsync(GameAction action)
     {
-      if (action.ActionCase is GameAction.ActionOneofCase.TogglePanel or GameAction.ActionOneofCase.StandardAction)
+      if (action.ActionCase is GameAction.ActionOneofCase.StandardAction or GameAction.ActionOneofCase.TogglePanel)
       {
         yield return ApplyOptimisticResponse(action);
       }
-
+      
+      if (IsClientOnlyAction(action))
+      { 
+        _currentlyHandlingAction = false; 
+        yield break;
+      }      
+      
       // StartCoroutine(ApplyOptimisticResponse(action));
       // Introduce simulated server delay
       // yield return new WaitForSeconds(Random.Range(0.5f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
-
-      // if (IsClientOnlyAction(action))
-      // {
-        // Client-only action, do not send to server
-        // _currentlyHandlingAction = false;
-        // yield break;
-      // }
 
       // Send to server
       var request = new GameRequest
@@ -301,7 +302,7 @@ namespace Spelldawn.Services
         PlayerId = _registry.GameService.PlayerId,
       };
 
-      if (!Application.isEditor || PlayerPrefs.GetInt(Preferences.OfflineMode) > 0)
+      if (OfflineMode)
       {
         yield return _registry.CommandService.HandleCommands(Plugin.PerformAction(request));
       }

@@ -187,6 +187,14 @@ pub fn enters_play_face_up(game: &GameState, card_id: CardId) -> bool {
     )
 }
 
+/// Returns true if the indicated card should enter play in a room
+pub fn enters_play_in_room(game: &GameState, card_id: CardId) -> bool {
+    matches!(
+        crate::get(game.card(card_id).name).card_type,
+        CardType::Minion | CardType::Scheme | CardType::Project
+    )
+}
+
 /// Returns whether the indicated player can currently take the basic game
 /// action to draw a card.
 pub fn can_take_draw_card_action(game: &GameState, side: Side) -> bool {
@@ -334,7 +342,7 @@ pub fn can_take_raid_destroy_card_action(_game: &GameState, _side: Side, _card_i
 
 /// Can the provided player score the `card_id` card when accessed during a
 /// raid?
-pub fn can_score_card_when_accessed(game: &GameState, side: Side, card_id: CardId) -> bool {
+pub fn can_score_during_raid(game: &GameState, side: Side, card_id: CardId) -> bool {
     let raid = match &game.data.raid {
         Some(r) => r,
         None => return false,

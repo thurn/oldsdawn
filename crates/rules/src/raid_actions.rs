@@ -24,7 +24,6 @@ use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::primitives::{CardId, GameObjectId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, TargetedInteraction};
-use data::updates2::{GameUpdate2, InteractionObjectId2, TargetedInteraction2};
 use data::with_error::WithError;
 use data::{fail, verify};
 use tracing::{info, instrument};
@@ -71,6 +70,7 @@ pub fn initiate_raid(
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
     on_begin(game, raid_id);
+    game.push_update(|| GameUpdate::InitiateRaid(target_room));
 
     let phase = if game.defenders_unordered(target_room).any(CardState::is_face_down) {
         RaidPhase::Activation
@@ -80,7 +80,6 @@ pub fn initiate_raid(
 
     raid_phases::set_raid_phase(game, phase)?;
     dispatch::invoke_event(game, RaidStartEvent(RaidStart { raid_id, target: target_room }))?;
-    game.updates2.push(GameUpdate2::InitiateRaid(target_room));
     Ok(())
 }
 
@@ -220,7 +219,7 @@ pub fn destroy_card_action(game: &mut GameState, user_side: Side, card_id: CardI
 pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId) -> Result<()> {
     info!(?user_side, ?card_id, "raid_score_card_action");
     verify!(
-        flags::can_score_card_when_accessed(game, user_side, card_id),
+        flags::can_score_during_raid(game, user_side, card_id),
         "Cannot take score card action for {:?}",
         user_side
     );
@@ -230,13 +229,16 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
         .scheme_points
         .with_error(|| format!("Expected SchemePoints for {:?}", card_id))?;
 
-    mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion))?;
+    game.card_mut(card_id).turn_face_up();
+    mutations::move_card(game, card_id, CardPosition::Stack)?;
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
     raid_phases::set_raid_prompt(game)?;
+    game.push_update(|| GameUpdate::ScoreCard(Side::Champion, card_id));
+
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id))?;
     dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }))?;
-    game.updates2.push(GameUpdate2::ChampionScoreCard(card_id, scheme_points.points));
     mutations::score_points(game, Side::Champion, scheme_points.points)?;
+    mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion))?;
     Ok(())
 }
 

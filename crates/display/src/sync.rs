@@ -18,10 +18,8 @@ use anyhow::Result;
 use data::game::GameState;
 use data::primitives::{RoomId, Side};
 use enum_iterator::IntoEnumIterator;
-use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     ActionTrackerView, CardView, GameView, ManaView, PlayerInfo, PlayerView, ScoreView,
-    UpdateGameViewCommand,
 };
 use rules::mana::ManaPurpose;
 use rules::{flags, mana, queries};

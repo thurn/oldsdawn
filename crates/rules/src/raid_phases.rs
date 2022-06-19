@@ -197,7 +197,7 @@ fn build_access_prompt(game: &GameState) -> Result<GamePrompt> {
 fn access_prompt_for_card(game: &GameState, card_id: CardId) -> Option<PromptAction> {
     let definition = crate::card_definition(game, card_id);
     match definition.card_type {
-        CardType::Scheme if flags::can_score_card_when_accessed(game, Side::Champion, card_id) => {
+        CardType::Scheme if flags::can_score_during_raid(game, Side::Champion, card_id) => {
             Some(PromptAction::RaidScoreCard(card_id))
         }
         CardType::Project if flags::can_destroy_accessed_card(game, card_id) => {

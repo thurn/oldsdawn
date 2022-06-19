@@ -36,7 +36,12 @@ namespace Spelldawn.Game
     {
       foreach (var obj in AllObjects)
       {
-        ComponentUtils.GetComponent<SpriteRenderer>(obj).sprite = _registry.AssetService.GetSprite(spriteAddress);
+        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        if (spriteRenderer)
+        {
+          // Update card back images for placeholder cards
+          spriteRenderer.sprite = _registry.AssetService.GetSprite(spriteAddress);          
+        }
       }
     }
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::game::GameState;
-use crate::primitives::{CardId, GameObjectId, Side};
+use crate::primitives::{CardId, GameObjectId, RoomId, Side};
 
 /// Indicates one game object targeted another with an effect.
 ///
@@ -34,10 +34,16 @@ pub enum GameUpdate {
     UnveilProject(CardId),
     /// A minion card has been turned face-up.
     SummonMinion(CardId),
+    /// The Overlord has leveled up a room
+    LevelUpRoom(RoomId),
+    /// The Champion has initiated a raid on a room
+    InitiateRaid(RoomId),
     /// Cards have been accessed during a raid
     CardsAccessed(Vec<CardId>),
     /// See [TargetedInteraction].
     TargetedInteraction(TargetedInteraction),
+    /// A player has scored a card
+    ScoreCard(Side, CardId),
 }
 
 /// A step in the animation process

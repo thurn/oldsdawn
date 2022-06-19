@@ -14,6 +14,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DG.Tweening;
 using Spelldawn.Services;
@@ -65,9 +66,12 @@ namespace Spelldawn.Game
       bool animate = true,
       bool animateRemove = true)
     {
-      MarkUpdateRequired(animate);
-      Insert(displayable, animateRemove);
-      yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
+      var modified = Insert(displayable, animateRemove);
+      if (modified)
+      {
+        MarkUpdateRequired(animate);
+        yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
+      }
     }
     
     /// <summary>Insert a Displayable into this container immediately, with no animation.</summary>
@@ -80,34 +84,53 @@ namespace Spelldawn.Game
     }    
 
     public IEnumerator AddObjects(
-      IEnumerable<Displayable> objects,
+      List<Displayable> objects,
       bool animate = true,
       bool animateRemove = true)
     {
-      MarkUpdateRequired(animate);
+      if (objects.Count == 0)
+      {
+        yield break;
+      }
+      
+      var modified = false;
       foreach (var displayable in objects)
       {
-        Insert(displayable, animateRemove);
+        modified |= Insert(displayable, animateRemove);
       }
 
-      yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
+      if (modified)
+      {
+        MarkUpdateRequired(animate);
+        yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
+      }
     }
 
-    public uint RemoveObject(Displayable displayable, bool animate = true)
+    public void RemoveObject(Displayable displayable, bool animate = true)
     {
-      MarkUpdateRequired(animate);
       var index = _objects.FindIndex(c => c == displayable);
       Errors.CheckNonNegative(index);
       _objects.RemoveAt(index);
       displayable.Parent = null;
-      return (uint)index;
+
+      if (_objects.Count > 0)
+      {
+        MarkUpdateRequired(animate);        
+      }
     }
 
-    public void RemoveObjectIfPresent(Displayable displayable, bool animate = true)
+    /// <summary>Tries to remove an object from this ObjectDisplay, returning true if the object was removed.</summary>
+    public bool RemoveObjectIfPresent(Displayable displayable, bool animate = true)
     {
-      MarkUpdateRequired(animate);
-      _objects.Remove(displayable);
-      displayable.Parent = null;
+      if (_objects.Contains(displayable))
+      {
+        RemoveObject(displayable, animate);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 
     public void DestroyAll()
@@ -164,21 +187,32 @@ namespace Spelldawn.Game
       _animateNextUpdate |= animate;
     }
 
-    void Insert(Displayable displayable, bool animateRemove)
+    bool Insert(Displayable displayable, bool animateRemove)
     {
       Errors.CheckNotNull(displayable);
-
-      if (displayable.Parent)
-      {
-        displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
-      }
-
-      displayable.Parent = this;
+      var modified = false;
+      
       if (!_objects.Contains(displayable))
       {
+        if (displayable.Parent)
+        {
+          displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
+        }
+        
+        displayable.Parent = this;
         _objects.Add(displayable);
-        _objects = _objects.OrderBy(o => o.SortingKey).ThenBy(o => o.SortingSubkey).ToList();
+        modified = true;
       }
+      
+      var sorted = _objects.OrderBy(o => o.SortingKey).ThenBy(o => o.SortingSubkey).ToList();
+      if (!sorted.SequenceEqual(_objects))
+      {
+        // Even if the object is already present, the sorting order of elements might have changed.
+        _objects = sorted;
+        modified = true;
+      }
+
+      return modified;
     }
 
     void MoveObjectsToPosition(bool animate)
@@ -221,6 +255,7 @@ namespace Spelldawn.Game
           {
             sequence.Insert(atPosition: 0,
               displayable.transform.DOLocalRotate(vector, duration: AnimationDuration));
+            
           }
           else
           {

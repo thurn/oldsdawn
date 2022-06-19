@@ -112,8 +112,9 @@ namespace Spelldawn.Services
     public IEnumerator HandleVisitRoom(VisitRoomCommand command)
     {
       var room = FindRoom(command.RoomId).transform;
+      var identityCard = _registry.IdentityCardForPlayer(command.Initiator).transform;
       yield return TweenUtils.Sequence("RoomVisit")
-        .Append(_registry.IdentityCardForPlayer(command.Initiator).transform
+        .Append(identityCard
           .DOMove(room.position, 0.3f).SetEase(Ease.OutSine))
         .AppendCallback(() =>
         {
@@ -125,6 +126,9 @@ namespace Spelldawn.Services
           }, room.position);
           effect.transform.localScale = 5f * Vector3.one;
         })
+        .Append(identityCard
+          .DOMove(_registry.IdentityCardPositionForPlayer(command.Initiator).transform.position, 0.3f)
+          .SetEase(Ease.OutSine))
         .WaitForCompletion();
     }
 
