@@ -141,8 +141,7 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Result<Vec<Ca
     let card_ids = realize_top_of_deck(game, side, count)?;
 
     if card_ids.len() != count as usize {
-        game.data.phase = GamePhase::GameOver(GameOverData { winner: side.opponent() });
-        game.updates2.push(GameUpdate2::GameOver(Side::Overlord));
+        game_over(game, side.opponent())?;
         return Ok(vec![]);
     }
 
@@ -187,9 +186,15 @@ pub fn spend_action_points(game: &mut GameState, side: Side, amount: ActionCount
 pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) -> Result<()> {
     game.player_mut(side).score += amount;
     if game.player(side).score >= 7 {
-        game.data.phase = GamePhase::GameOver(GameOverData { winner: side });
-        game.updates2.push(GameUpdate2::GameOver(side));
+        game_over(game, side)?;
     }
+    Ok(())
+}
+
+/// Mark the game as won by the `winner` player.
+pub fn game_over(game: &mut GameState, winner: Side) -> Result<()> {
+    game.data.phase = GamePhase::GameOver(GameOverData { winner });
+    game.push_update(|| GameUpdate::GameOver(winner));
     Ok(())
 }
 
@@ -496,14 +501,14 @@ fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) ->
     game.data.turn = TurnData { side: next_side, turn_number };
 
     info!(?next_side, "start_player_turn");
+    game.push_update(|| GameUpdate::StartTurn(next_side));
+
     if next_side == Side::Overlord {
         dispatch::invoke_event(game, DuskEvent(turn_number))?;
     } else {
         dispatch::invoke_event(game, DawnEvent(turn_number))?;
     }
     game.player_mut(next_side).actions = queries::start_of_turn_action_count(game, next_side);
-    game.updates2.push(GameUpdate2::StartTurn(next_side));
-
     draw_cards(game, next_side, 1)?;
     Ok(())
 }
@@ -562,8 +567,7 @@ pub fn deal_damage(
             move_card(game, card_id, CardPosition::DiscardPile(Side::Champion))?;
             discarded.push(card_id);
         } else {
-            game.data.phase = GamePhase::GameOver(GameOverData { winner: Side::Overlord });
-            game.updates2.push(GameUpdate2::GameOver(Side::Overlord));
+            game_over(game, Side::Overlord)?;
         }
     }
 

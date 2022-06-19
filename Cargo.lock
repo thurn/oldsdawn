@@ -409,6 +409,7 @@ dependencies = [
  "dashmap",
  "data",
  "enum-iterator",
+ "fallible-iterator",
  "if_chain",
  "itertools",
  "once_cell",

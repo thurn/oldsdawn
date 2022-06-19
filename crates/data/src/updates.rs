@@ -28,6 +28,8 @@ pub struct TargetedInteraction {
 /// into a client animation
 #[derive(Debug, Clone)]
 pub enum GameUpdate {
+    /// Indicates that a player's turn has started
+    StartTurn(Side),
     /// One or more cards have been drawn by the [Side] player.
     DrawCards(Side, Vec<CardId>),
     /// A project card has been turned face-up.
@@ -42,6 +44,8 @@ pub enum GameUpdate {
     TargetedInteraction(TargetedInteraction),
     /// A player has scored a card
     ScoreCard(Side, CardId),
+    /// The game has ended and the indicated player has won
+    GameOver(Side),
 }
 
 /// A step in the animation process

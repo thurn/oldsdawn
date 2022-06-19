@@ -20,17 +20,19 @@ use data::special_effects::{
 };
 use data::updates::{GameUpdate, TargetedInteraction};
 use data::utils;
+use fallible_iterator::FallibleIterator;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::play_effect_position::EffectPosition;
 use protos::spelldawn::{
-    DelayCommand, FireProjectileCommand, GameObjectMove, MoveMultipleGameObjectsCommand,
-    MusicState, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand, RoomVisitType,
+    DelayCommand, DisplayGameMessageCommand, DisplayRewardsCommand, FireProjectileCommand,
+    GameMessageType, GameObjectMove, MoveMultipleGameObjectsCommand, MusicState, PlayEffectCommand,
+    PlayEffectPosition, PlaySoundCommand, RoomVisitType, SetGameObjectsEnabledCommand,
     SetMusicCommand, TimeValue, VisitRoomCommand,
 };
 
 use crate::response_builder::ResponseBuilder;
-use crate::{adapters, assets, positions};
+use crate::{adapters, assets, card_sync, positions};
 
 pub fn render(
     builder: &mut ResponseBuilder,
@@ -38,6 +40,7 @@ pub fn render(
     snapshot: &GameState,
 ) -> Result<()> {
     match update {
+        GameUpdate::StartTurn(side) => start_turn(builder, *side),
         GameUpdate::DrawCards(side, cards) => reveal(builder, *side, cards.iter()),
         GameUpdate::UnveilProject(card_id) => {
             reveal(builder, Side::Champion, vec![*card_id].iter())
@@ -49,8 +52,18 @@ pub fn render(
             targeted_interaction(builder, snapshot, interaction)
         }
         GameUpdate::ScoreCard(_, card_id) => score_card(builder, *card_id),
+        GameUpdate::GameOver(side) => game_over(builder, snapshot, *side)?
     }
     Ok(())
+}
+
+fn start_turn(builder: &mut ResponseBuilder, side: Side) {
+    builder.push(Command::DisplayGameMessage(DisplayGameMessageCommand {
+        message_type: match side {
+            Side::Overlord => GameMessageType::Dusk.into(),
+            Side::Champion => GameMessageType::Dawn.into(),
+        },
+    }))
 }
 
 fn reveal<'a>(builder: &mut ResponseBuilder, side: Side, cards: impl Iterator<Item = &'a CardId>) {
@@ -166,6 +179,40 @@ fn score_card(builder: &mut ResponseBuilder, card_id: CardId) {
         },
     ));
     builder.push(delay(1000));
+}
+
+fn game_over(builder: &mut ResponseBuilder, snapshot: &GameState, winner: Side) -> Result<()> {
+    builder.push(delay(1000));
+
+    builder.push(Command::SetGameObjectsEnabled(SetGameObjectsEnabledCommand {
+        game_objects_enabled: false,
+    }));
+
+    builder.push(Command::DisplayGameMessage(DisplayGameMessageCommand {
+        message_type: if winner == builder.user_side {
+            GameMessageType::Victory
+        } else {
+            GameMessageType::Defeat
+        }
+        .into(),
+    }));
+
+    if winner == builder.user_side {
+        // TODO: Show real rewards instead of placeholder values
+        builder.push(Command::DisplayRewards(DisplayRewardsCommand {
+            rewards: utils::fallible(
+                snapshot
+                    .cards(winner)
+                    .iter()
+                    .filter(|card| card.is_revealed_to(winner) && !card.position().is_identity())
+                    .take(5),
+            )
+            .map(|card| card_sync::card_view(builder, snapshot, card))
+            .collect()?,
+        }));
+    }
+
+    Ok(())
 }
 
 #[derive(Debug, Default)]
