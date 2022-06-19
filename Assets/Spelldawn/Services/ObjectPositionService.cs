@@ -95,6 +95,9 @@ namespace Spelldawn.Services
       }
     }
 
+    public IEnumerator MoveByIdentifier(GameObjectIdentifier identifier, ObjectPosition position, bool animate) => 
+      MoveGameObject(Find(identifier), position, animate);
+
     public IEnumerator HandleMoveGameObjectsCommand(MoveGameObjectsCommand command)
     {
       if (!command.DisableAnimation)

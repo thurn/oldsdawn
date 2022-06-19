@@ -759,6 +759,16 @@ message PlayerView {
     bool can_take_action = 6;
 }
 
+// Positions of non-Card game objects.
+message GameObjectPositions {
+    ObjectPosition user_deck = 1;
+    ObjectPosition opponent_deck = 2;
+    ObjectPosition user_identity = 3;
+    ObjectPosition opponent_identity = 4;
+    ObjectPosition user_discard = 5;
+    ObjectPosition opponent_discard = 6;
+}
+
 message GameView {
     GameIdentifier game_id = 1;
     PlayerView user = 2;
@@ -772,12 +782,19 @@ message GameView {
     // Whether a raid is currently active. If true, the raid overlay will be
     // displayed, the raid music will be played, etc.
     bool raid_active = 5;
+
+    // Positions of non-Card game objects.
+    GameObjectPositions game_object_positions = 6;
+
+    // Controls for game actions such as interface prompts
+    InterfaceMainControls main_controls = 7;
 }
 
 
 // ============================================================================
 // Actions
 // ============================================================================
+
 
 message StandardAction {
     /** Opaque payload to send to the server when invoked. */

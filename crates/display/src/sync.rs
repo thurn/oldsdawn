@@ -27,7 +27,7 @@ use rules::mana::ManaPurpose;
 use rules::{flags, mana, queries};
 
 use crate::response_builder::ResponseBuilder;
-use crate::{adapters, assets, card_sync};
+use crate::{adapters, assets, card_sync, interface, positions};
 
 pub fn run(builder: &mut ResponseBuilder, game: &GameState) -> Result<()> {
     let cards: Result<Vec<CardView>> = game
@@ -47,6 +47,8 @@ pub fn run(builder: &mut ResponseBuilder, game: &GameState) -> Result<()> {
             opponent: Some(player_view(game, builder.user_side.opponent())?),
             cards: cards?,
             raid_active: game.data.raid.is_some(),
+            game_object_positions: Some(positions::game_object_positions(builder, game)?),
+            main_controls: interface::render(game, builder.user_side),
         }),
         animate: builder.animate,
     }));

@@ -44,7 +44,7 @@ namespace Spelldawn.Services
 
     public bool CurrentlyDragging { get; set; }
 
-    public IEnumerator SyncCards(List<CardView> views, bool animate)
+    public IEnumerator Sync(List<CardView> views, GameObjectPositions? positions, bool animate)
     {
       var toDelete = _cards.Keys.ToHashSet();
       var coroutines = new List<Coroutine>();
@@ -73,6 +73,22 @@ namespace Spelldawn.Services
           _registry.ObjectPositionService.MoveGameObject(card, view.CardPosition, animate)));
       }
 
+      if (positions != null)
+      {
+        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
+          IdUtil.DeckObjectId(PlayerName.User), positions.UserDeck, animate)));
+        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
+          IdUtil.DeckObjectId(PlayerName.Opponent), positions.OpponentDeck, animate)));
+        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
+          IdUtil.IdentityCardId(PlayerName.User), positions.UserIdentity, animate)));
+        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
+          IdUtil.IdentityCardId(PlayerName.Opponent), positions.OpponentIdentity, animate)));
+        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
+          IdUtil.DiscardPileObjectId(PlayerName.User), positions.UserDiscard, animate)));
+        coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
+          IdUtil.DiscardPileObjectId(PlayerName.Opponent), positions.OpponentDiscard, animate)));              
+      }
+      
       coroutines.AddRange(
         toDelete.Select(delete => StartCoroutine(HandleDestroyCard(delete))));
 
@@ -81,7 +97,7 @@ namespace Spelldawn.Services
         yield return coroutine;
       }
     }
-    
+
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)
     {
       if (userCardBack != null)

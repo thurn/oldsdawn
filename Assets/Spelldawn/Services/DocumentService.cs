@@ -110,18 +110,22 @@ namespace Spelldawn.Services
       }
 
       RenderPanels();
+      RenderMainControls(command.MainControls);
+    }
 
-      if (command.MainControls != null)
+    public void RenderMainControls(InterfaceMainControls? mainControls)
+    {
+      if (mainControls != null)
       {
         Reconcile(
           ref _mainControlsNode,
           ref _mainControls,
-          MainControls(command.MainControls.Node));
+          MainControls(mainControls.Node));
 
         Reconcile(
           ref _cardControlsNode,
           ref _cardControls,
-          CardAnchors(command.MainControls.CardAnchorNodes));
+          CardAnchors(mainControls.CardAnchorNodes));
       }
     }
 

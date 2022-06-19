@@ -534,6 +534,10 @@ pub struct ObjectPosition {
     /// A key by which to sort this object -- objects with higher sorting keys
     /// should be displayed 'on top of' or 'in front of' objects with lower
     /// sorting keys.
+    ///
+    /// NOTE: Despite the fact that Unity uses the 'int' type for this in C#,
+    /// they actually store these as 16-bit signed integers, and your code
+    /// silently breaks if you use a number over 32,767!
     #[prost(uint32, tag = "1")]
     pub sorting_key: u32,
     /// An additional key, can be used to break ties in `sorting_key`
@@ -703,6 +707,22 @@ pub struct PlayerView {
     #[prost(bool, tag = "6")]
     pub can_take_action: bool,
 }
+/// Positions of non-Card game objects.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GameObjectPositions {
+    #[prost(message, optional, tag = "1")]
+    pub user_deck: ::core::option::Option<ObjectPosition>,
+    #[prost(message, optional, tag = "2")]
+    pub opponent_deck: ::core::option::Option<ObjectPosition>,
+    #[prost(message, optional, tag = "3")]
+    pub user_identity: ::core::option::Option<ObjectPosition>,
+    #[prost(message, optional, tag = "4")]
+    pub opponent_identity: ::core::option::Option<ObjectPosition>,
+    #[prost(message, optional, tag = "5")]
+    pub user_discard: ::core::option::Option<ObjectPosition>,
+    #[prost(message, optional, tag = "6")]
+    pub opponent_discard: ::core::option::Option<ObjectPosition>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameView {
     #[prost(message, optional, tag = "1")]
@@ -720,6 +740,12 @@ pub struct GameView {
     /// displayed, the raid music will be played, etc.
     #[prost(bool, tag = "5")]
     pub raid_active: bool,
+    /// Positions of non-Card game objects.
+    #[prost(message, optional, tag = "6")]
+    pub game_object_positions: ::core::option::Option<GameObjectPositions>,
+    /// Controls for game actions such as interface prompts
+    #[prost(message, optional, tag = "7")]
+    pub main_controls: ::core::option::Option<InterfaceMainControls>,
 }
 // ============================================================================
 // Actions

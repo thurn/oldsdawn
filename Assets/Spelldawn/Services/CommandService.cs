@@ -228,7 +228,9 @@ namespace Spelldawn.Services
       
       _registry.RaidService.RaidActive = game.RaidActive;
 
-      yield return _registry.CardService.SyncCards(game.Cards.ToList(), animate);
+      _registry.DocumentService.RenderMainControls(game.MainControls);
+
+      yield return _registry.CardService.Sync(game.Cards.ToList(), game.GameObjectPositions, animate);
     }
 
     void HandleRenderPlayer(PlayerName playerName, PlayerView playerView)

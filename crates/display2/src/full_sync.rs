@@ -107,6 +107,7 @@ fn update_game_view(game: &GameState, user_side: Side) -> Result<UpdateGameViewC
             opponent: Some(player_view(game, user_side.opponent())?),
             cards: vec![],
             raid_active: game.data.raid.is_some(),
+            ..GameView::default()
         }),
         animate: true,
     })
@@ -609,7 +610,7 @@ pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPositio
             }))
         }
         CardPosition::DeckUnknown(_side) => None,
-        CardPosition::Stack => None
+        CardPosition::Stack => None,
     };
 
     result.map(|p| ObjectPosition {

@@ -52,12 +52,12 @@ pub fn card_view(
         owning_player: builder.to_player_name(definition.side),
         revealed_card: revealed.then(|| revealed_card_view(builder, game, card)),
         create_position: if builder.animate {
-            Some(positions::for_card(card, positions::deck_top(builder, card.side())))
+            Some(positions::for_card(card, positions::deck(builder, card.side())))
         } else {
             None
         },
         destroy_position: if builder.animate {
-            Some(positions::for_card(card, positions::deck_top(builder, card.side())))
+            Some(positions::for_card(card, positions::deck(builder, card.side())))
         } else {
             None
         },

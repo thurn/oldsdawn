@@ -99,6 +99,7 @@ fn diff_game_view(old: Option<&GameView>, new: Option<&GameView>) -> Option<Game
         opponent: diff_player_view(old.opponent.as_ref(), new.opponent.as_ref()),
         cards: vec![],
         raid_active: new.raid_active,
+        ..GameView::default()
     })
 }
 

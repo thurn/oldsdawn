@@ -45,6 +45,7 @@ namespace Spelldawn.Services
         {
           spriteRenderer.transform.localScale = (referenceWidth.Value / sprite.texture.width) * Vector3.one;
         }
+
         spriteRenderer.sprite = sprite;
       }
     }
@@ -142,11 +143,17 @@ namespace Spelldawn.Services
         LoadNodeAssets(requests, panel.Node);
       }
 
-      if (command.MainControls != null)
-      {
-        LoadNodeAssets(requests, command.MainControls.Node);
+      LoadInterfaceMainControlsAssets(requests, command.MainControls);
+    }
 
-        foreach (var controlNode in command.MainControls.CardAnchorNodes)
+    void LoadInterfaceMainControlsAssets(IDictionary<string, ResourceRequest> requests,
+      InterfaceMainControls? mainControls)
+    {
+      if (mainControls != null)
+      {
+        LoadNodeAssets(requests, mainControls.Node);
+
+        foreach (var controlNode in mainControls.CardAnchorNodes)
         {
           LoadNodeAssets(requests, controlNode.Node);
         }
@@ -184,6 +191,7 @@ namespace Spelldawn.Services
         LoadPlayerAssets(requests, game.User);
         LoadPlayerAssets(requests, game.Opponent);
         LoadCardListAssets(requests, game.Cards);
+        LoadInterfaceMainControlsAssets(requests, game.MainControls);        
       }
     }
 

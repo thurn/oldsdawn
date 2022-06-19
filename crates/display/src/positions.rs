@@ -19,10 +19,12 @@ use data::primitives::{AbilityId, CardId, ItemLocation, RoomId, RoomLocation, Si
 use data::{fail, utils};
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
-    ClientItemLocation, ClientRoomLocation, ObjectPosition, ObjectPositionBrowser,
-    ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
-    ObjectPositionIntoCard, ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards,
-    ObjectPositionRoom, ObjectPositionStaging,
+    ClientItemLocation, ClientRoomLocation, GameObjectPositions, ObjectPosition,
+    ObjectPositionBrowser, ObjectPositionDeck, ObjectPositionDeckContainer,
+    ObjectPositionDiscardPile, ObjectPositionDiscardPileContainer, ObjectPositionHand,
+    ObjectPositionIdentity, ObjectPositionIdentityContainer, ObjectPositionIntoCard,
+    ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards, ObjectPositionRoom,
+    ObjectPositionStaging,
 };
 
 use crate::adapters;
@@ -90,16 +92,32 @@ pub fn hand(builder: &ResponseBuilder, side: Side) -> Position {
     Position::Hand(ObjectPositionHand { owner: builder.to_player_name(side) })
 }
 
-pub fn deck_top(builder: &ResponseBuilder, side: Side) -> Position {
+pub fn deck(builder: &ResponseBuilder, side: Side) -> Position {
     Position::Deck(ObjectPositionDeck { owner: builder.to_player_name(side) })
+}
+
+pub fn deck_container(builder: &ResponseBuilder, side: Side) -> Position {
+    Position::DeckContainer(ObjectPositionDeckContainer { owner: builder.to_player_name(side) })
 }
 
 pub fn discard(builder: &ResponseBuilder, side: Side) -> Position {
     Position::DiscardPile(ObjectPositionDiscardPile { owner: builder.to_player_name(side) })
 }
 
-pub fn scored(builder: &ResponseBuilder, side: Side) -> Position {
+pub fn discard_container(builder: &ResponseBuilder, side: Side) -> Position {
+    Position::DiscardPileContainer(ObjectPositionDiscardPileContainer {
+        owner: builder.to_player_name(side),
+    })
+}
+
+pub fn identity(builder: &ResponseBuilder, side: Side) -> Position {
     Position::Identity(ObjectPositionIdentity { owner: builder.to_player_name(side) })
+}
+
+pub fn identity_container(builder: &ResponseBuilder, side: Side) -> Position {
+    Position::IdentityContainer(ObjectPositionIdentityContainer {
+        owner: builder.to_player_name(side),
+    })
 }
 
 pub fn staging() -> Position {
@@ -138,9 +156,11 @@ pub fn convert(
                 CardPosition::Room(room_id, location) => room(room_id, location),
                 CardPosition::ArenaItem(location) => item(location),
                 CardPosition::Hand(side) => hand(builder, side),
-                CardPosition::DeckTop(side) => deck_top(builder, side),
+                CardPosition::DeckTop(side) => deck(builder, side),
                 CardPosition::DiscardPile(side) => discard(builder, side),
-                CardPosition::Scored(side) | CardPosition::Identity(side) => scored(builder, side),
+                CardPosition::Scored(side) | CardPosition::Identity(side) => {
+                    identity(builder, side)
+                }
                 CardPosition::Stack => staging(),
                 CardPosition::DeckUnknown(_) => fail!("Invalid card position"),
             }),
@@ -165,6 +185,38 @@ pub fn ability_card_position(
     )
 }
 
+pub fn game_object_positions(
+    builder: &ResponseBuilder,
+    game: &GameState,
+) -> Result<GameObjectPositions> {
+    let (side, opponent) = (builder.user_side, builder.user_side.opponent());
+    Ok(GameObjectPositions {
+        user_deck: Some(non_card(builder, game, GameObjectId::Deck(side))?),
+        opponent_deck: Some(non_card(builder, game, GameObjectId::Deck(opponent))?),
+        user_identity: Some(non_card(builder, game, GameObjectId::Identity(side))?),
+        opponent_identity: Some(non_card(builder, game, GameObjectId::Identity(opponent))?),
+        user_discard: Some(non_card(builder, game, GameObjectId::DiscardPile(side))?),
+        opponent_discard: Some(non_card(builder, game, GameObjectId::DiscardPile(opponent))?),
+    })
+}
+
+fn non_card(
+    builder: &ResponseBuilder,
+    game: &GameState,
+    id: GameObjectId,
+) -> Result<ObjectPosition> {
+    Ok(if let Some(position_override) = raid_position_override(game, id)? {
+        position_override
+    } else {
+        match id {
+            GameObjectId::Deck(side) => for_sorting_key(0, deck_container(builder, side)),
+            GameObjectId::DiscardPile(side) => for_sorting_key(0, discard_container(builder, side)),
+            GameObjectId::Identity(side) => for_sorting_key(0, identity_container(builder, side)),
+            _ => fail!("Unsupported ID type"),
+        }
+    })
+}
+
 fn position_override(
     builder: &ResponseBuilder,
     game: &GameState,
@@ -174,17 +226,21 @@ fn position_override(
         GamePhase::ResolveMulligans(mulligans) => {
             Ok(opening_hand_position_override(builder, game, card, mulligans))
         }
-        GamePhase::Play => Ok(if let Some(raid) = &game.data.raid {
-            if raid.phase == RaidPhase::Access {
-                browser_position(card, browser(), raid_access_browser(game, raid))
-            } else {
-                browser_position(card, browser(), raid_browser(game, raid)?)
-            }
-        } else {
-            None
-        }),
+        GamePhase::Play => raid_position_override(game, card.id.into()),
         _ => Ok(None),
     }
+}
+
+fn raid_position_override(game: &GameState, id: GameObjectId) -> Result<Option<ObjectPosition>> {
+    Ok(if let Some(raid_data) = &game.data.raid {
+        if raid_data.phase == RaidPhase::Access {
+            browser_position(id, browser(), raid_access_browser(game, raid_data))
+        } else {
+            browser_position(id, raid(), raid_browser(game, raid_data)?)
+        }
+    } else {
+        None
+    })
 }
 
 fn opening_hand_position_override(
@@ -203,18 +259,15 @@ fn opening_hand_position_override(
 }
 
 fn browser_position(
-    card: &CardState,
+    id: GameObjectId,
     position: Position,
     browser: Vec<GameObjectId>,
 ) -> Option<ObjectPosition> {
-    browser
-        .iter()
-        .position(|gid| matches!(gid, GameObjectId::CardId(card_id) if *card_id == card.id))
-        .map(|index| ObjectPosition {
-            sorting_key: index as u32,
-            sorting_subkey: 0,
-            position: Some(position),
-        })
+    browser.iter().position(|gid| *gid == id).map(|index| ObjectPosition {
+        sorting_key: index as u32,
+        sorting_subkey: 0,
+        position: Some(position),
+    })
 }
 
 fn raid_browser(game: &GameState, raid: &RaidData) -> Result<Vec<GameObjectId>> {

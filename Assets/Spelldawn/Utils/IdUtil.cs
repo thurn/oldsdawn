@@ -33,7 +33,6 @@ namespace Spelldawn.Utils
     public static GameObjectIdentifier IdentityCardId(PlayerName playerName) =>
       playerName == PlayerName.User ? UserCardId : OpponentCardId;
 
-    // ReSharper disable once UnusedMember.Local
     public static GameObjectIdentifier DeckObjectId(PlayerName playerName) => new()
     {
       Deck = playerName
