@@ -16,7 +16,10 @@ use anyhow::Result;
 use data::fail;
 use data::primitives::{AbilityId, AbilityIndex, CardId, GameId, PlayerId, RoomId, Side, Sprite};
 use protos::spelldawn::game_object_identifier::Id;
-use protos::spelldawn::{CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerSide, RoomIdentifier, SpriteAddress, TimeValue};
+use protos::spelldawn::{
+    CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerSide,
+    RoomIdentifier, SpriteAddress, TimeValue,
+};
 
 use crate::positions::GameObjectId;
 

@@ -135,9 +135,11 @@ fn play_card_action(
         "Cannot play card {:?}",
         card_id
     );
+
     let card = game.card(card_id);
     let definition = crate::get(card.name);
     let enters_face_up = flags::enters_play_face_up(game, card_id);
+    mutations::move_card(game, card_id, CardPosition::Stack)?;
 
     if enters_face_up {
         let amount = queries::mana_cost(game, card_id).with_error(|| "Card has no mana cost")?;
@@ -186,6 +188,8 @@ fn activate_ability_action(
         "Cannot activate ability {:?}",
         ability_id
     );
+
+    game.ability_state.entry(ability_id).or_default().on_stack = true;
     let card = game.card(ability_id.card_id);
 
     if let AbilityType::Activated(cost, _) =
@@ -205,6 +209,7 @@ fn activate_ability_action(
 
     dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }))?;
     game.updates2.push(GameUpdate2::AbilityActivated(ability_id));
+    game.ability_state.entry(ability_id).or_default().on_stack = false;
     mutations::check_end_turn(game)?;
     Ok(())
 }

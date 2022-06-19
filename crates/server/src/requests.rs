@@ -21,6 +21,7 @@ use dashmap::DashMap;
 use data::game::{GameConfiguration, GameState};
 use data::game_actions::UserAction;
 use data::primitives::{GameId, PlayerId, RoomId, Side};
+use data::updates::UpdateTracker;
 use data::updates2::UpdateTracker2;
 use data::with_error::WithError;
 use data::{fail, game_actions, verify};
@@ -41,7 +42,6 @@ use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
-use data::updates::UpdateTracker;
 
 use crate::database::{Database, SledDatabase};
 use crate::in_memory_database::InMemoryDatabase;

@@ -90,11 +90,7 @@ pub fn ability_card_view(
 ) -> CardView {
     CardView {
         card_id: Some(adapters::ability_card_identifier(ability_id)),
-        card_position: Some(positions::for_ability(
-            game,
-            ability_id,
-            positions::hand(builder, ability_id.side()),
-        )),
+        card_position: Some(positions::ability_card_position(builder, game, ability_id)),
         prefab: CardPrefab::TokenCard.into(),
         revealed_to_viewer: true,
         is_face_up: false,

@@ -609,6 +609,7 @@ pub fn adapt_position(card: &CardState, user_side: Side) -> Option<ObjectPositio
             }))
         }
         CardPosition::DeckUnknown(_side) => None,
+        CardPosition::Stack => None
     };
 
     result.map(|p| ObjectPosition {

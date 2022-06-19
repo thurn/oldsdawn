@@ -14,11 +14,16 @@
 
 use anyhow::Result;
 use data::card_state::{CardPosition, CardState};
-use data::fail;
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::primitives::{AbilityId, CardId, ItemLocation, RoomId, RoomLocation, Side};
+use data::{fail, utils};
 use protos::spelldawn::object_position::Position;
-use protos::spelldawn::{ClientItemLocation, ClientRoomLocation, ObjectPosition, ObjectPositionBrowser, ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity, ObjectPositionIntoCard, ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards, ObjectPositionRoom, ObjectPositionStaging};
+use protos::spelldawn::{
+    ClientItemLocation, ClientRoomLocation, ObjectPosition, ObjectPositionBrowser,
+    ObjectPositionDeck, ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionIdentity,
+    ObjectPositionIntoCard, ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards,
+    ObjectPositionRoom, ObjectPositionStaging,
+};
 
 use crate::adapters;
 use crate::response_builder::ResponseBuilder;
@@ -56,10 +61,7 @@ pub fn for_ability(game: &GameState, ability_id: AbilityId, position: Position) 
     }
 }
 
-pub fn for_sorting_key(
-    sorting_key: u32,
-    position: Position,
-) -> ObjectPosition {
+pub fn for_sorting_key(sorting_key: u32, position: Position) -> ObjectPosition {
     ObjectPosition { sorting_key, sorting_subkey: 0, position: Some(position) }
 }
 
@@ -139,11 +141,28 @@ pub fn convert(
                 CardPosition::DeckTop(side) => deck_top(builder, side),
                 CardPosition::DiscardPile(side) => discard(builder, side),
                 CardPosition::Scored(side) | CardPosition::Identity(side) => scored(builder, side),
+                CardPosition::Stack => staging(),
                 CardPosition::DeckUnknown(_) => fail!("Invalid card position"),
             }),
             ..ObjectPosition::default()
         }
     })
+}
+
+pub fn ability_card_position(
+    builder: &ResponseBuilder,
+    game: &GameState,
+    ability_id: AbilityId,
+) -> ObjectPosition {
+    for_ability(
+        game,
+        ability_id,
+        if utils::is_true(|| Some(game.ability_state.get(&ability_id)?.on_stack)) {
+            staging()
+        } else {
+            hand(builder, ability_id.side())
+        },
+    )
 }
 
 fn position_override(

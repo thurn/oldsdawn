@@ -33,6 +33,8 @@ use crate::primitives::{
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde_as]
 pub struct AbilityState {
+    /// True if this ability is currently being resolved
+    pub on_stack: bool,
     pub raid_id: Option<RaidId>,
     pub turn: Option<TurnData>,
     #[serde_as(as = "Vec<(_, _)>")]
@@ -55,8 +57,10 @@ pub enum CardPosition {
     ArenaItem(ItemLocation),
     DiscardPile(Side),
     Scored(Side),
-    /// Marks the identity card for a side. It is an error for a game to contain
-    /// more than one identity card per side.
+    /// A card is in the process of resolving
+    Stack,
+    /// Marks the identity card for a side. The first identity (by sorting key)
+    /// is the primary identity for a player.
     Identity(Side),
 }
 

@@ -19,9 +19,9 @@ use data::updates::GameUpdate;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{GameObjectMove, MoveMultipleGameObjectsCommand};
 
+use crate::adapters::milliseconds;
 use crate::response_builder::ResponseBuilder;
 use crate::{adapters, positions};
-use crate::adapters::milliseconds;
 
 pub fn render(builder: &mut ResponseBuilder, update: &GameUpdate, _game: &GameState) -> Result<()> {
     match update {
@@ -45,7 +45,7 @@ fn draw_cards(builder: &mut ResponseBuilder, side: Side, cards: &[CardId]) {
                 })
                 .collect(),
             disable_animation: !builder.animate,
-            delay: Some(milliseconds(1000))
+            delay: Some(milliseconds(1000)),
         }))
     }
 }
