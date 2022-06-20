@@ -460,6 +460,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::LoadScene(_) => "LoadScene",
         Command::SetPlayerId(_) => "SetPlayerIdentifier",
         Command::MoveMultipleGameObjects(_) => "MoveMultipleGameObjects",
+        Command::CreateTokenCard(_) => "CreateTokenCard",
     })
 }
 

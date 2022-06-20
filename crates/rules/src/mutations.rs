@@ -121,7 +121,7 @@ pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) -> 
         game.card_mut(*card_id).set_revealed_to(Side::Champion, false);
     }
     shuffle_deck(game, side)?;
-    game.push_update(|| GameUpdate::ShuffleIntoDeck);
+    game.record_update(|| GameUpdate::ShuffleIntoDeck);
     Ok(())
 }
 
@@ -151,7 +151,7 @@ pub fn draw_cards(game: &mut GameState, side: Side, count: u32) -> Result<Vec<Ca
         game.card_mut(*card_id).set_revealed_to(side, true);
     }
 
-    game.push_update(|| GameUpdate::DrawCards(side, card_ids.clone()));
+    game.record_update(|| GameUpdate::DrawCards(side, card_ids.clone()));
 
     for card_id in &card_ids {
         move_card(game, *card_id, CardPosition::Hand(side))?;
@@ -196,7 +196,7 @@ pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) -> Re
 /// Mark the game as won by the `winner` player.
 pub fn game_over(game: &mut GameState, winner: Side) -> Result<()> {
     game.data.phase = GamePhase::GameOver(GameOverData { winner });
-    game.push_update(|| GameUpdate::GameOver(winner));
+    game.record_update(|| GameUpdate::GameOver(winner));
     Ok(())
 }
 
@@ -426,7 +426,7 @@ pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) ->
         if card.data.card_level >= scheme_points.level_requirement {
             game.card_mut(card_id).turn_face_up();
             move_card(game, card_id, CardPosition::Stack)?;
-            game.push_update(|| GameUpdate::ScoreCard(Side::Overlord, card_id));
+            game.record_update(|| GameUpdate::ScoreCard(Side::Overlord, card_id));
             dispatch::invoke_event(game, OverlordScoreCardEvent(card_id))?;
             dispatch::invoke_event(
                 game,
@@ -473,7 +473,7 @@ pub fn try_unveil_project(game: &mut GameState, card_id: CardId) -> Result<bool>
     };
 
     if result {
-        game.push_update(|| GameUpdate::UnveilProject(card_id));
+        game.record_update(|| GameUpdate::UnveilProject(card_id));
         dispatch::invoke_event(game, UnveilProjectEvent(card_id))?;
     }
 
@@ -490,7 +490,7 @@ pub fn unveil_project_for_free(game: &mut GameState, card_id: CardId) -> Result<
     };
 
     if result {
-        game.push_update(|| GameUpdate::UnveilProject(card_id));
+        game.record_update(|| GameUpdate::UnveilProject(card_id));
         dispatch::invoke_event(game, UnveilProjectEvent(card_id))?;
     }
 
@@ -503,7 +503,7 @@ fn start_turn(game: &mut GameState, next_side: Side, turn_number: TurnNumber) ->
     game.data.turn = TurnData { side: next_side, turn_number };
 
     info!(?next_side, "start_player_turn");
-    game.push_update(|| GameUpdate::StartTurn(next_side));
+    game.record_update(|| GameUpdate::StartTurn(next_side));
 
     if next_side == Side::Overlord {
         dispatch::invoke_event(game, DuskEvent(turn_number))?;
@@ -547,7 +547,7 @@ pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion)
         }
     }
 
-    game.push_update(|| GameUpdate::SummonMinion(card_id));
+    game.record_update(|| GameUpdate::SummonMinion(card_id));
     dispatch::invoke_event(game, SummonMinionEvent(card_id))?;
     game.card_mut(card_id).turn_face_up();
     Ok(())

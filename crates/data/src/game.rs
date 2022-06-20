@@ -310,7 +310,7 @@ impl GameState {
         }
     }
 
-    pub fn push_update(&mut self, update: impl FnOnce() -> GameUpdate) {
+    pub fn record_update(&mut self, update: impl FnOnce() -> GameUpdate) {
         if self.updates.state == Updates::Push {
             // Snapshot current game state, omit things that aren't important for display
             // logic.

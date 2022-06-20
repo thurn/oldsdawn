@@ -56,22 +56,23 @@ pub fn card_view(
         } else {
             None
         },
-        destroy_position: Some(positions::for_card(card, positions::deck(builder, card.side())))
+        destroy_position: Some(positions::for_card(card, positions::deck(builder, card.side()))),
     })
 }
 
-pub fn ability_cards(
+pub fn activated_ability_cards(
     builder: &ResponseBuilder,
     game: &GameState,
     card: &CardState,
 ) -> Vec<Result<CardView>> {
     let mut result = vec![];
+    if card.side() != builder.user_side || !card.position().in_play() {
+        return result;
+    }
+
     for (ability_index, ability) in rules::get(card.name).abilities.iter().enumerate() {
         if let AbilityType::Activated(_, target_requirement) = &ability.ability_type {
             let ability_id = AbilityId::new(card.id, ability_index);
-            if !flags::activated_ability_has_valid_targets(game, builder.user_side, ability_id) {
-                continue;
-            }
             result.push(Ok(ability_card_view(builder, game, ability_id, Some(target_requirement))));
         }
     }
@@ -107,7 +108,11 @@ pub fn ability_card_view(
         } else {
             None
         },
-        destroy_position: Some(positions::for_ability(game, ability_id, positions::parent_card(ability_id)))
+        destroy_position: Some(positions::for_ability(
+            game,
+            ability_id,
+            positions::parent_card(ability_id),
+        )),
     }
 }
 
@@ -201,7 +206,6 @@ fn card_icons(
 
     if card.data.card_level > 0 {
         icons.arena_icon = Some(CardIcon {
-            enabled: true,
             background: Some(assets::card_icon(CardIconType::LevelCounter)),
             text: Some(card.data.card_level.to_string()),
             background_scale: assets::background_scale(CardIconType::LevelCounter),
@@ -210,7 +214,6 @@ fn card_icons(
 
     if card.data.stored_mana > 0 {
         icons.arena_icon = Some(CardIcon {
-            enabled: true,
             background: Some(assets::card_icon(CardIconType::Mana)),
             text: Some(card.data.stored_mana.to_string()),
             background_scale: assets::background_scale(CardIconType::Mana),
@@ -224,14 +227,12 @@ fn card_icons(
             .stats
             .base_attack
             .map(|_| CardIcon {
-                enabled: true,
                 background: Some(assets::card_icon(CardIconType::Attack)),
                 text: Some(queries::attack(game, card.id).to_string()),
                 background_scale: assets::background_scale(CardIconType::Attack),
             })
             .or_else(|| {
                 definition.config.stats.health.map(|_| CardIcon {
-                    enabled: true,
                     background: Some(assets::card_icon(CardIconType::Health)),
                     text: Some(queries::health(game, card.id).to_string()),
                     background_scale: assets::background_scale(CardIconType::Health),
@@ -240,7 +241,6 @@ fn card_icons(
         let shield = queries::shield(game, card.id);
         if shield > 0 {
             icons.bottom_left_icon = Some(CardIcon {
-                enabled: true,
                 background: Some(assets::card_icon(CardIconType::Shield)),
                 text: Some(shield.to_string()),
                 background_scale: assets::background_scale(CardIconType::Shield),
@@ -253,7 +253,6 @@ fn card_icons(
 
 fn mana_card_icon(value: ManaValue) -> CardIcon {
     CardIcon {
-        enabled: true,
         background: Some(assets::card_icon(CardIconType::Mana)),
         text: Some(value.to_string()),
         background_scale: assets::background_scale(CardIconType::Mana),

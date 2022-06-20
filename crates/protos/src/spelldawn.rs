@@ -375,22 +375,14 @@ pub mod game_object_identifier {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CardIcon {
-    ///*
-    /// Whether to show this icon.
-    ///
-    /// This is needed to help the client differentiate between a null icon,
-    /// which it interprets as "don't change anything" and a icon which should
-    /// explicitly be removed.
-    #[prost(bool, tag = "1")]
-    pub enabled: bool,
     /// Background for the icon.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag = "1")]
     pub background: ::core::option::Option<SpriteAddress>,
     /// Text to display on the icon.
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "2")]
     pub text: ::core::option::Option<::prost::alloc::string::String>,
     /// Scale multiplier for the background image.
-    #[prost(message, optional, tag = "4")]
+    #[prost(message, optional, tag = "3")]
     pub background_scale: ::core::option::Option<f32>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1049,6 +1041,23 @@ pub struct VisitRoomCommand {
     #[prost(enumeration = "RoomVisitType", tag = "3")]
     pub visit_type: i32,
 }
+/// Creates a new token card.
+///
+/// This command is typically used to create short-lived 'token' cards to
+/// represent things like abilities firing, but this isn't specifically
+/// required. If a matching CardIdentifier already exists, that card will be
+/// updated instead.
+///
+/// Note that the created card will always be deleted by the next
+/// UpdateGameViewCommand if its ID is not present in that update.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateTokenCardCommand {
+    #[prost(message, optional, tag = "1")]
+    pub card: ::core::option::Option<CardView>,
+    /// Whether this update should be animated
+    #[prost(bool, tag = "2")]
+    pub animate: bool,
+}
 ///
 /// Creates a new card, or updates an existing card if one is already present
 /// with the provided CardId.
@@ -1279,7 +1288,7 @@ pub mod client_debug_command {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
+        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1331,6 +1340,8 @@ pub mod game_command {
         SetPlayerId(super::SetPlayerIdentifierCommand),
         #[prost(message, tag = "22")]
         MoveMultipleGameObjects(super::MoveMultipleGameObjectsCommand),
+        #[prost(message, tag = "23")]
+        CreateTokenCard(super::CreateTokenCardCommand),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

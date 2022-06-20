@@ -139,19 +139,21 @@ fn play_card_action(
 
     let card = game.card(card_id);
     let definition = crate::get(card.name);
-    let enters_face_up = flags::enters_play_face_up(game, card_id);
     mutations::move_card(game, card_id, CardPosition::Stack)?;
 
-    if enters_face_up {
+    mutations::spend_action_points(game, user_side, definition.cost.actions)?;
+    dispatch::invoke_event(game, PayCardCostsEvent(card_id))?;
+
+    if flags::enters_play_face_up(game, card_id) {
         let amount = queries::mana_cost(game, card_id).with_error(|| "Card has no mana cost")?;
         mana::spend(game, user_side, ManaPurpose::PayForCard(card_id), amount)?;
         if let Some(custom_cost) = &definition.cost.custom_cost {
             (custom_cost.pay)(game, card_id)?;
         }
+        game.card_mut(card_id).turn_face_up();
+        game.record_update(|| GameUpdate::PlayCardFaceUp(user_side, card_id));
     }
 
-    mutations::spend_action_points(game, user_side, definition.cost.actions)?;
-    dispatch::invoke_event(game, PayCardCostsEvent(card_id))?;
     dispatch::invoke_event(game, CastCardEvent(CardPlayed { card_id, target }))?;
 
     let new_position = match definition.card_type {
@@ -164,10 +166,6 @@ fn play_card_action(
         }
         CardType::Identity => CardPosition::Identity(user_side),
     };
-
-    if enters_face_up {
-        game.card_mut(card_id).turn_face_up();
-    }
 
     mutations::move_card(game, card_id, new_position)?;
 
@@ -192,24 +190,22 @@ fn activate_ability_action(
 
     game.ability_state.entry(ability_id).or_default().on_stack = true;
     let card = game.card(ability_id.card_id);
+    let cost = match &crate::get(card.name).ability(ability_id.index).ability_type {
+        AbilityType::Activated(cost, _) => cost,
+        _ => fail!("Ability is not an activated ability"),
+    };
 
-    if let AbilityType::Activated(cost, _) =
-        &crate::get(card.name).ability(ability_id.index).ability_type
-    {
-        mutations::spend_action_points(game, user_side, cost.actions)?;
-        if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
-            mana::spend(game, user_side, ManaPurpose::ActivateAbility(ability_id), mana)?;
-        }
-
-        if let Some(custom_cost) = &cost.custom_cost {
-            (custom_cost.pay)(game, ability_id)?;
-        }
-    } else {
-        fail!("Ability is not an activated ability");
+    mutations::spend_action_points(game, user_side, cost.actions)?;
+    if let Some(mana) = queries::ability_mana_cost(game, ability_id) {
+        mana::spend(game, user_side, ManaPurpose::ActivateAbility(ability_id), mana)?;
     }
 
+    if let Some(custom_cost) = &cost.custom_cost {
+        (custom_cost.pay)(game, ability_id)?;
+    }
+    game.record_update(|| GameUpdate::AbilityActivated(user_side, ability_id));
     dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }))?;
-    game.updates2.push(GameUpdate2::AbilityActivated(ability_id));
+
     game.ability_state.entry(ability_id).or_default().on_stack = false;
     mutations::check_end_turn(game)?;
     Ok(())
@@ -240,7 +236,7 @@ fn level_up_room_action(game: &mut GameState, user_side: Side, room_id: RoomId) 
     );
     mutations::spend_action_points(game, user_side, 1)?;
     mana::spend(game, user_side, ManaPurpose::LevelUpRoom(room_id), 1)?;
-    game.push_update(|| GameUpdate::LevelUpRoom(room_id));
+    game.record_update(|| GameUpdate::LevelUpRoom(room_id));
     mutations::level_up_room(game, room_id)?;
     mutations::check_end_turn(game)?;
     Ok(())

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -22,6 +21,7 @@ using Spelldawn.Services;
 using Spelldawn.Utils;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #nullable enable
 
@@ -66,6 +66,10 @@ namespace Spelldawn.Game
     // Minor hack: we want to shift the image down to be centered within the card in the arena, so we store
     // the image position here to restore it later.
     [SerializeField] float _arenaCardYOffset;
+    
+    // Desired size for the card image in px. Images in token cards are slightly smaller, so we customize this
+    // for each prefab.
+    [FormerlySerializedAs("_referenceWidth")] [SerializeField] float _referenceImageWidth;
 
     CardIdentifier? _cardId;
     bool? _serverCanPlay;
@@ -458,7 +462,7 @@ namespace Spelldawn.Game
 
       _cardBack.gameObject.SetActive(value: false);
       _cardFront.gameObject.SetActive(value: true);
-      Registry.AssetService.AssignSprite(_image, revealed.Image, referenceWidth: 243.3f);
+      Registry.AssetService.AssignSprite(_image, revealed.Image, referenceWidth: _referenceImageWidth);
       _image.gameObject.SetActive(true);
       Registry.AssetService.AssignSprite(_frame, revealed.CardFrame);
       Registry.AssetService.AssignSprite(_titleBackground, revealed.TitleBackground);
@@ -508,28 +512,16 @@ namespace Spelldawn.Game
     void SetCardIcon(Icon icon, CardIcon? cardIcon, bool show)
     {
       var iconContainer = icon.Background.transform.parent;
-
-      Registry.AssetService.AssignSprite(icon.Background, cardIcon?.Background);
-
-      if (cardIcon?.BackgroundScale is { } scale)
+      if (cardIcon == null || !show)
       {
-        icon.Background.transform.localScale = scale * Vector3.one;
-      }
-
-      if (cardIcon?.Text != null)
-      {
-        icon.Text.text = cardIcon.Text;
-      }
-
-      if (cardIcon?.Enabled == false || !show)
-      {
-        // Check for an explicit 'false' enabled state to differentiate null ("don't change anything") from
-        // "hide this icon".
         iconContainer.gameObject.SetActive(false);
       }
       else
       {
         iconContainer.gameObject.SetActive(true);
+        Registry.AssetService.AssignSprite(icon.Background, cardIcon.Background);
+        icon.Background.transform.localScale = (cardIcon.BackgroundScale ?? 1.0f) * Vector3.one;
+        icon.Text.text = cardIcon.Text;
       }
     }
 

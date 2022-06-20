@@ -44,7 +44,7 @@ namespace Spelldawn.Services
 
     public bool CurrentlyDragging { get; set; }
 
-    public IEnumerator Sync(List<CardView> views, GameObjectPositions? positions, bool animate)
+    public IEnumerator Sync(List<CardView> views, GameObjectPositions? positions, bool animate = true, bool delete = true)
     {
       var toDelete = _cards.Keys.ToHashSet();
       var coroutines = new List<Coroutine>();
@@ -88,9 +88,12 @@ namespace Spelldawn.Services
         coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
           IdUtil.DiscardPileObjectId(PlayerName.Opponent), positions.OpponentDiscard, animate)));              
       }
-      
-      coroutines.AddRange(
-        toDelete.Select(delete => StartCoroutine(HandleDestroyCard(delete, animate))));
+
+      if (delete)
+      {
+        coroutines.AddRange(
+          toDelete.Select(cardId => StartCoroutine(HandleDestroyCard(cardId, animate))));        
+      }
 
       foreach (var coroutine in coroutines)
       {

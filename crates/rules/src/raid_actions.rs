@@ -71,7 +71,7 @@ pub fn initiate_raid(
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
     on_begin(game, raid_id);
-    game.push_update(|| GameUpdate::InitiateRaid(target_room));
+    game.record_update(|| GameUpdate::InitiateRaid(target_room));
 
     let phase = if game.defenders_unordered(target_room).any(CardState::is_face_down) {
         RaidPhase::Activation
@@ -121,7 +121,7 @@ pub fn encounter_action(
                 .with_error(|| format!("{:?} cannot defeat target: {:?}", source_id, target_id))?;
             mana::spend(game, user_side, ManaPurpose::UseWeapon(source_id), cost)?;
 
-            game.push_update(|| {
+            game.record_update(|| {
                 GameUpdate::TargetedInteraction(TargetedInteraction {
                     source: GameObjectId::CardId(source_id),
                     target: GameObjectId::CardId(target_id),
@@ -142,7 +142,7 @@ pub fn encounter_action(
         EncounterAction::NoWeapon | EncounterAction::CardAction(_) => {
             let target = game.raid()?.target;
             let defender_id = raid_phases::find_defender(game, target, encounter_number)?;
-            game.push_update(|| {
+            game.record_update(|| {
                 GameUpdate::TargetedInteraction(TargetedInteraction {
                     source: GameObjectId::CardId(defender_id),
                     target: GameObjectId::Identity(Side::Champion),
@@ -234,7 +234,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
     mutations::move_card(game, card_id, CardPosition::Stack)?;
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
     raid_phases::set_raid_prompt(game)?;
-    game.push_update(|| GameUpdate::ScoreCard(Side::Champion, card_id));
+    game.record_update(|| GameUpdate::ScoreCard(Side::Champion, card_id));
 
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id))?;
     dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }))?;

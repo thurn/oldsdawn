@@ -15,7 +15,7 @@
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::primitives::{GameId, PlayerId};
-use display2::adapters;
+use display::adapters;
 use insta::assert_snapshot;
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
@@ -32,7 +32,7 @@ fn create_new_game() {
     let response = session.perform_action_with_game_id(
         Action::CreateNewGame(CreateNewGameAction {
             side: PlayerSide::Overlord.into(),
-            opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
+            opponent_id: Some(adapters::player_identifier(session.opponent_id())),
             debug_options: Some(CreateGameDebugOptions {
                 deterministic: true,
                 ..CreateGameDebugOptions::default()
@@ -53,7 +53,7 @@ fn connect_to_new_game() {
         .perform_action_with_game_id(
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
-                opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
+                opponent_id: Some(adapters::player_identifier(session.opponent_id())),
                 debug_options: Some(CreateGameDebugOptions {
                     deterministic: true,
                     ..CreateGameDebugOptions::default()
@@ -81,7 +81,7 @@ fn keep_opening_hand() {
         .perform_action_with_game_id(
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
-                opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
+                opponent_id: Some(adapters::player_identifier(session.opponent_id())),
                 debug_options: Some(CreateGameDebugOptions {
                     deterministic: true,
                     ..CreateGameDebugOptions::default()
@@ -115,7 +115,7 @@ fn mulligan_opening_hand() {
         .perform_action_with_game_id(
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
-                opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
+                opponent_id: Some(adapters::player_identifier(session.opponent_id())),
                 debug_options: Some(CreateGameDebugOptions {
                     deterministic: true,
                     ..CreateGameDebugOptions::default()
@@ -149,7 +149,7 @@ fn both_keep_opening_hands() {
         .perform_action_with_game_id(
             Action::CreateNewGame(CreateNewGameAction {
                 side: PlayerSide::Overlord.into(),
-                opponent_id: Some(adapters::adapt_player_id(session.opponent_id())),
+                opponent_id: Some(adapters::player_identifier(session.opponent_id())),
                 debug_options: Some(CreateGameDebugOptions {
                     deterministic: true,
                     ..CreateGameDebugOptions::default()

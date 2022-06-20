@@ -24,8 +24,8 @@ use data::primitives::{
 };
 use data::text::{DamageWord, Keyword};
 use data::with_error::WithError;
-use display2::rexard_images;
-use display2::rexard_images::RexardPack;
+use display::rexard_images;
+use display::rexard_images::RexardPack;
 use rules::helpers::*;
 use rules::mana::ManaPurpose;
 use rules::mutations::SummonMinion;
@@ -108,7 +108,10 @@ pub fn temporal_vortex() -> CardDefinition {
             simple_ability(
                 text![Keyword::Combat, "Summon a minion from the Sanctum or Crypts for free.",],
                 combat(|g, s, _| {
-                    let cards = g.hand(Side::Overlord).chain(g.discard_pile(Side::Overlord));
+                    let cards = g
+                        .hand(Side::Overlord)
+                        .chain(g.discard_pile(Side::Overlord))
+                        .filter(|c| rules::card_definition(g, c.id).card_type == CardType::Minion);
                     if let Some(minion_id) = queries::highest_cost(cards) {
                         let (room_id, index) = queries::minion_position(g, s.card_id())
                             .with_error(|| "Minion not found")?;

@@ -23,3 +23,4 @@ pub mod render;
 pub mod response_builder;
 pub mod rules_text;
 pub mod sync;
+pub mod rexard_images;

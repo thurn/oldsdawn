@@ -257,7 +257,6 @@ pub fn ability_card_view(
         },
         |mana| CardIcons {
             top_left_icon: Some(CardIcon {
-                enabled: true,
                 background: Some(assets::card_icon(CardIconType::Mana)),
                 text: Some(mana.to_string()),
                 background_scale: assets::background_scale(CardIconType::Mana),
@@ -367,7 +366,6 @@ fn card_icons(
 
     if card.data.card_level > 0 {
         icons.arena_icon = Some(CardIcon {
-            enabled: true,
             background: Some(assets::card_icon(CardIconType::LevelCounter)),
             text: Some(card.data.card_level.to_string()),
             background_scale: assets::background_scale(CardIconType::LevelCounter),
@@ -376,7 +374,6 @@ fn card_icons(
 
     if card.data.stored_mana > 0 {
         icons.arena_icon = Some(CardIcon {
-            enabled: true,
             background: Some(assets::card_icon(CardIconType::Mana)),
             text: Some(card.data.stored_mana.to_string()),
             background_scale: assets::background_scale(CardIconType::Mana),
@@ -385,7 +382,6 @@ fn card_icons(
 
     if revealed {
         icons.top_left_icon = queries::mana_cost(game, card.id).map(|mana| CardIcon {
-            enabled: true,
             background: Some(assets::card_icon(CardIconType::Mana)),
             text: Some(mana.to_string()),
             background_scale: assets::background_scale(CardIconType::Mana),
@@ -395,14 +391,12 @@ fn card_icons(
             .stats
             .base_attack
             .map(|_| CardIcon {
-                enabled: true,
                 background: Some(assets::card_icon(CardIconType::Attack)),
                 text: Some(queries::attack(game, card.id).to_string()),
                 background_scale: assets::background_scale(CardIconType::Attack),
             })
             .or_else(|| {
                 definition.config.stats.health.map(|_| CardIcon {
-                    enabled: true,
                     background: Some(assets::card_icon(CardIconType::Health)),
                     text: Some(queries::health(game, card.id).to_string()),
                     background_scale: assets::background_scale(CardIconType::Health),
@@ -411,7 +405,6 @@ fn card_icons(
         let shield = queries::shield(game, card.id);
         if shield > 0 {
             icons.bottom_left_icon = Some(CardIcon {
-                enabled: true,
                 background: Some(assets::card_icon(CardIconType::Shield)),
                 text: Some(shield.to_string()),
                 background_scale: assets::background_scale(CardIconType::Shield),

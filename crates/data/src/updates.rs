@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::game::GameState;
-use crate::primitives::{CardId, GameObjectId, RoomId, Side};
+use crate::primitives::{AbilityId, CardId, GameObjectId, RoomId, Side};
 
 /// Indicates one game object targeted another with an effect.
 ///
@@ -30,8 +30,16 @@ pub struct TargetedInteraction {
 pub enum GameUpdate {
     /// Indicates that a player's turn has started
     StartTurn(Side),
+    /// A player has played a card which entered play face-up.
+    PlayCardFaceUp(Side, CardId),
+    /// A player has activated an ability of a card
+    AbilityActivated(Side, AbilityId),
+    /// An ability of a card has triggered an effect
+    AbilityTriggered(AbilityId),
     /// One or more cards have been drawn by the [Side] player.
     DrawCards(Side, Vec<CardId>),
+    /// A player has shuffled cards into their deck
+    ShuffleIntoDeck,
     /// A project card has been turned face-up.
     UnveilProject(CardId),
     /// A minion card has been turned face-up.
@@ -46,8 +54,6 @@ pub enum GameUpdate {
     ScoreCard(Side, CardId),
     /// The game has ended and the indicated player has won
     GameOver(Side),
-    /// A player has shuffled cards into their deck
-    ShuffleIntoDeck,
 }
 
 /// A step in the animation process

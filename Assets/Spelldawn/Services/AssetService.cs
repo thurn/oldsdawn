@@ -112,6 +112,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.DisplayRewards:
             LoadCardListAssets(requests, command.DisplayRewards.Rewards);
             break;
+          case GameCommand.CommandOneofCase.CreateTokenCard:
+            LoadCardListAssets(requests, new List<CardView> { command.CreateTokenCard.Card });
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;

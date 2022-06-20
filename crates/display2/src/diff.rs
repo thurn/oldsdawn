@@ -202,7 +202,6 @@ fn diff_card_icons(old: Option<&CardIcons>, new: Option<&CardIcons>) -> Option<C
 
 fn diff_card_icon(old: Option<&CardIcon>, new: Option<&CardIcon>) -> Option<CardIcon> {
     run_diff(old, new, |old, new| CardIcon {
-        enabled: new.enabled,
         background: diff_simple(&old.background, &new.background),
         text: diff_simple(&old.text, &new.text),
         background_scale: new.background_scale,

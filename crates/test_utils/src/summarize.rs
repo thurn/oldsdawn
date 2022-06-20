@@ -26,17 +26,17 @@ use protos::spelldawn::{
     game_object_identifier, node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom,
     AudioClipAddress, CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons,
     CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
-    CreateOrUpdateCardCommand, DelayCommand, DestroyCardCommand, DisplayGameMessageCommand,
-    DisplayRewardsCommand, EffectAddress, FireProjectileCommand, GameCommand, GameMessageType,
-    GameObjectIdentifier, GameObjectMove, GameView, InterfaceMainControls, InterfacePanel,
-    LoadSceneCommand, ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand,
-    MoveMultipleGameObjectsCommand, MusicState, NoTargeting, Node, NodeType, ObjectPosition,
-    PanelAddress, PlayEffectCommand, PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo,
-    PlayerName, PlayerSide, PlayerView, ProjectileAddress, RenderInterfaceCommand,
-    RevealedCardView, RoomIdentifier, RoomVisitType, RulesText, RunInParallelCommand,
-    SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand,
-    SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
-    UpdateGameViewCommand, VisitRoomCommand,
+    CreateOrUpdateCardCommand, CreateTokenCardCommand, DelayCommand, DestroyCardCommand,
+    DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand,
+    GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameView,
+    InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView,
+    MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MoveMultipleGameObjectsCommand,
+    MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand,
+    PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide,
+    PlayerView, ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier,
+    RoomVisitType, RulesText, RunInParallelCommand, SceneLoadMode, ScoreView,
+    SetGameObjectsEnabledCommand, SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress,
+    TimeValue, TogglePanelCommand, UpdateGameViewCommand, VisitRoomCommand,
 };
 use server::requests::GameResponse;
 
@@ -281,6 +281,7 @@ impl Summarize for Command {
             Command::LoadScene(v) => summary.child_node("LoadScene", v),
             Command::SetPlayerId(v) => summary.child_node("SetPlayerId", v),
             Command::MoveMultipleGameObjects(v) => summary.child_node("MoveMultipleGameObjects", v),
+            Command::CreateTokenCard(v) => summary.child_node("CreateTokenCard", v),
         }
     }
 }
@@ -697,5 +698,11 @@ impl Summarize for GameObjectMove {
 impl Summarize for MoveMultipleGameObjectsCommand {
     fn summarize(self, summary: &mut Summary) {
         summary.values(self.moves);
+    }
+}
+
+impl Summarize for CreateTokenCardCommand {
+    fn summarize(self, summary: &mut Summary) {
+        summary.child("card", self.card);
     }
 }

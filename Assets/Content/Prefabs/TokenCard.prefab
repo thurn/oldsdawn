@@ -1568,6 +1568,7 @@ MonoBehaviour:
   _previousParent: {fileID: 0}
   _containedObjectsDisplay: {fileID: 0}
   _arenaCardYOffset: 0.78
+  _referenceWidth: 200
 --- !u!210 &6859622998180740047
 SortingGroup:
   m_ObjectHideFlags: 0

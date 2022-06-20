@@ -138,6 +138,9 @@ namespace Spelldawn.Services
             yield return _registry.ObjectPositionService.HandleMoveMultipleGameObjectsCommand(
               command.MoveMultipleGameObjects);
             break;
+          case GameCommand.CommandOneofCase.CreateTokenCard:
+            yield return HandleCreateTokenCard(command.CreateTokenCard);
+            break;
           case GameCommand.CommandOneofCase.None:
           default:
             break;
@@ -306,6 +309,11 @@ namespace Spelldawn.Services
           PlayerPrefs.SetInt(command.SetBooleanPreference.Key, command.SetBooleanPreference.Value ? 1 : 0);
           break;
       }
+    }
+
+    IEnumerator HandleCreateTokenCard(CreateTokenCardCommand command)
+    {
+      return _registry.CardService.Sync(new List<CardView> { command.Card }, null, command.Animate, delete: false);
     }
 
     IEnumerator HandleActionAsync(GameAction action)

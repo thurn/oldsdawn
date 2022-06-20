@@ -14,7 +14,7 @@
 
 use anyhow::Result;
 use data::game::GameState;
-use data::primitives::{CardId, GameObjectId, RoomId, Side};
+use data::primitives::{AbilityId, CardId, GameObjectId, RoomId, Side};
 use data::special_effects::{
     FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
 };
@@ -25,10 +25,10 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::play_effect_position::EffectPosition;
 use protos::spelldawn::{
-    DelayCommand, DisplayGameMessageCommand, DisplayRewardsCommand, FireProjectileCommand,
-    GameMessageType, GameObjectMove, MoveMultipleGameObjectsCommand, MusicState, PlayEffectCommand,
-    PlayEffectPosition, PlaySoundCommand, RoomVisitType, SetGameObjectsEnabledCommand,
-    SetMusicCommand, TimeValue, VisitRoomCommand,
+    CreateTokenCardCommand, DelayCommand, DisplayGameMessageCommand, DisplayRewardsCommand,
+    FireProjectileCommand, GameMessageType, GameObjectMove, MoveMultipleGameObjectsCommand,
+    MusicState, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand, RoomVisitType,
+    SetGameObjectsEnabledCommand, SetMusicCommand, TimeValue, VisitRoomCommand,
 };
 
 use crate::response_builder::ResponseBuilder;
@@ -41,7 +41,19 @@ pub fn render(
 ) -> Result<()> {
     match update {
         GameUpdate::StartTurn(side) => start_turn(builder, *side),
+        GameUpdate::PlayCardFaceUp(side, card_id) => {
+            reveal(builder, side.opponent(), &vec![*card_id])
+        }
+        GameUpdate::AbilityActivated(side, ability_id) => {
+            if *side != builder.user_side {
+                show_ability(builder, snapshot, *ability_id);
+            }
+        }
+        GameUpdate::AbilityTriggered(ability_id) => show_ability(builder, snapshot, *ability_id),
         GameUpdate::DrawCards(side, cards) => reveal(builder, *side, cards),
+        GameUpdate::ShuffleIntoDeck => {
+            // No animation, just acts as a snapshot point.
+        }
         GameUpdate::UnveilProject(card_id) => reveal(builder, Side::Champion, &vec![*card_id]),
         GameUpdate::SummonMinion(card_id) => reveal(builder, Side::Champion, &vec![*card_id]),
         GameUpdate::LevelUpRoom(room_id) => level_up_room(builder, *room_id),
@@ -51,9 +63,6 @@ pub fn render(
         }
         GameUpdate::ScoreCard(_, card_id) => score_card(builder, *card_id),
         GameUpdate::GameOver(side) => game_over(builder, snapshot, *side)?,
-        GameUpdate::ShuffleIntoDeck => {
-            // No animation, just acts as a snapshot point.
-        }
     }
     Ok(())
 }
@@ -67,9 +76,9 @@ fn start_turn(builder: &mut ResponseBuilder, side: Side) {
     }))
 }
 
-fn reveal(builder: &mut ResponseBuilder, side: Side, cards: &Vec<CardId>) {
+fn reveal(builder: &mut ResponseBuilder, revealed_to: Side, cards: &Vec<CardId>) {
     let is_large_draw = cards.len() >= 4;
-    if side == builder.user_side {
+    if revealed_to == builder.user_side {
         builder.push(Command::MoveMultipleGameObjects(MoveMultipleGameObjectsCommand {
             moves: cards
                 .iter()
@@ -109,6 +118,18 @@ fn in_display_position(builder: &ResponseBuilder, card_id: CardId) -> bool {
                 | Position::ScoreAnimation(_)
         ))
     })
+}
+
+fn show_ability(builder: &mut ResponseBuilder, snapshot: &GameState, ability_id: AbilityId) {
+    let mut card = card_sync::ability_card_view(builder, snapshot, ability_id, None);
+    card.card_position = Some(positions::for_ability(snapshot, ability_id, positions::staging()));
+
+    builder.push(Command::CreateTokenCard(CreateTokenCardCommand {
+        card: Some(card),
+        animate: builder.animate,
+    }));
+
+    builder.push(delay(1500));
 }
 
 fn level_up_room(commands: &mut ResponseBuilder, target: RoomId) {

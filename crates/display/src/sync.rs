@@ -32,7 +32,7 @@ pub fn run(builder: &mut ResponseBuilder, game: &GameState) -> Result<()> {
         .all_cards()
         .filter(|c| !c.position().shuffled_into_deck())
         .flat_map(|c| {
-            let mut cards = card_sync::ability_cards(builder, game, c);
+            let mut cards = card_sync::activated_ability_cards(builder, game, c);
             cards.push(card_sync::card_view(builder, game, c));
             cards
         })

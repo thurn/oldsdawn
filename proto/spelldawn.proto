@@ -469,20 +469,12 @@ enum RoomIdentifier {
 
 
 message CardIcon {
-    /**
-     * Whether to show this icon.
-     *
-     * This is needed to help the client differentiate between a null icon,
-     * which it interprets as "don't change anything" and a icon which should
-     * explicitly be removed.
-     */
-    bool enabled = 1;
     /* Background for the icon. */
-    SpriteAddress background = 2;
+    SpriteAddress background = 1;
     /* Text to display on the icon. */
-    google.protobuf.StringValue text = 3;
+    google.protobuf.StringValue text = 2;
     /* Scale multiplier for the background image. */
-    google.protobuf.FloatValue background_scale = 4;
+    google.protobuf.FloatValue background_scale = 3;
 }
 
 message CardIcons {
@@ -1091,6 +1083,22 @@ enum CardCreationAnimation {
     CARD_CREATION_ANIMATION_FROM_PARENT_CARD = 2;
 }
 
+// Creates a new token card.
+//
+// This command is typically used to create short-lived 'token' cards to
+// represent things like abilities firing, but this isn't specifically required.
+// If a matching CardIdentifier already exists, that card will be updated
+// instead.
+//
+// Note that the created card will always be deleted by the next
+// UpdateGameViewCommand if its ID is not present in that update.
+message CreateTokenCardCommand {
+    CardView card = 1;
+
+    // Whether this update should be animated
+    bool animate = 2;
+}
+
 /*
  * Creates a new card, or updates an existing card if one is already present
  * with the provided CardId.
@@ -1347,6 +1355,7 @@ message GameCommand {
         LoadSceneCommand load_scene = 20;
         SetPlayerIdentifierCommand set_player_id = 21;
         MoveMultipleGameObjectsCommand move_multiple_game_objects = 22;
+        CreateTokenCardCommand create_token_card = 23;
     }
 }
 

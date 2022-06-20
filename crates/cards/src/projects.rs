@@ -77,6 +77,8 @@ pub fn gemcarver() -> CardDefinition {
                     if g.card(s.card_id()).data.stored_mana == 0 {
                         mutations::draw_cards(g, s.side(), 1)?;
                     }
+
+                    // TODO: Consider not alerting on the first turn to avoid two popups
                     alert(g, s);
                     Ok(())
                 }),
