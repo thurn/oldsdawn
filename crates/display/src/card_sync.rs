@@ -56,11 +56,7 @@ pub fn card_view(
         } else {
             None
         },
-        destroy_position: if builder.animate {
-            Some(positions::for_card(card, positions::deck(builder, card.side())))
-        } else {
-            None
-        },
+        destroy_position: Some(positions::for_card(card, positions::deck(builder, card.side())))
     })
 }
 
@@ -111,11 +107,7 @@ pub fn ability_card_view(
         } else {
             None
         },
-        destroy_position: if builder.animate {
-            Some(positions::for_ability(game, ability_id, positions::parent_card(ability_id)))
-        } else {
-            None
-        },
+        destroy_position: Some(positions::for_ability(game, ability_id, positions::parent_card(ability_id)))
     }
 }
 

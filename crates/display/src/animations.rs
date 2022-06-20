@@ -41,18 +41,19 @@ pub fn render(
 ) -> Result<()> {
     match update {
         GameUpdate::StartTurn(side) => start_turn(builder, *side),
-        GameUpdate::DrawCards(side, cards) => reveal(builder, *side, cards.iter()),
-        GameUpdate::UnveilProject(card_id) => {
-            reveal(builder, Side::Champion, vec![*card_id].iter())
-        }
-        GameUpdate::SummonMinion(card_id) => reveal(builder, Side::Champion, vec![*card_id].iter()),
+        GameUpdate::DrawCards(side, cards) => reveal(builder, *side, cards),
+        GameUpdate::UnveilProject(card_id) => reveal(builder, Side::Champion, &vec![*card_id]),
+        GameUpdate::SummonMinion(card_id) => reveal(builder, Side::Champion, &vec![*card_id]),
         GameUpdate::LevelUpRoom(room_id) => level_up_room(builder, *room_id),
         GameUpdate::InitiateRaid(room_id) => initiate_raid(builder, *room_id),
         GameUpdate::TargetedInteraction(interaction) => {
             targeted_interaction(builder, snapshot, interaction)
         }
         GameUpdate::ScoreCard(_, card_id) => score_card(builder, *card_id),
-        GameUpdate::GameOver(side) => game_over(builder, snapshot, *side)?
+        GameUpdate::GameOver(side) => game_over(builder, snapshot, *side)?,
+        GameUpdate::ShuffleIntoDeck => {
+            // No animation, just acts as a snapshot point.
+        }
     }
     Ok(())
 }
@@ -66,10 +67,12 @@ fn start_turn(builder: &mut ResponseBuilder, side: Side) {
     }))
 }
 
-fn reveal<'a>(builder: &mut ResponseBuilder, side: Side, cards: impl Iterator<Item = &'a CardId>) {
+fn reveal(builder: &mut ResponseBuilder, side: Side, cards: &Vec<CardId>) {
+    let is_large_draw = cards.len() >= 4;
     if side == builder.user_side {
         builder.push(Command::MoveMultipleGameObjects(MoveMultipleGameObjectsCommand {
             moves: cards
+                .iter()
                 // Skip animation for cards that are already in a prominent interface position
                 .filter(|card_id| !in_display_position(builder, **card_id))
                 .enumerate()
@@ -77,12 +80,16 @@ fn reveal<'a>(builder: &mut ResponseBuilder, side: Side, cards: impl Iterator<It
                     id: Some(adapters::game_object_identifier(builder, *card_id)),
                     position: Some(positions::for_sorting_key(
                         i as u32,
-                        positions::revealed_cards(),
+                        if is_large_draw {
+                            positions::browser()
+                        } else {
+                            positions::revealed_cards()
+                        },
                     )),
                 })
                 .collect(),
             disable_animation: !builder.animate,
-            delay: Some(adapters::milliseconds(1000)),
+            delay: Some(adapters::milliseconds(if is_large_draw { 2000 } else { 1000 })),
         }))
     }
 }

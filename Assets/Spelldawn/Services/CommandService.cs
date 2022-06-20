@@ -98,7 +98,7 @@ namespace Spelldawn.Services
             yield return _registry.CardService.HandleCreateOrUpdateCardCommand(command.CreateOrUpdateCard);
             break;
           case GameCommand.CommandOneofCase.DestroyCard:
-            yield return _registry.CardService.HandleDestroyCard(command.DestroyCard.CardId);
+            yield return _registry.CardService.HandleDestroyCard(command.DestroyCard.CardId, animate: true);
             break;
           case GameCommand.CommandOneofCase.MoveGameObjects:
             yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(command.MoveGameObjects);
@@ -227,12 +227,7 @@ namespace Spelldawn.Services
       }
       
       _registry.RaidService.RaidActive = game.RaidActive;
-      var coroutines = _registry.CardService.Sync(game.Cards.ToList(), game.GameObjectPositions, animate);
-
-      foreach (var coroutine in coroutines)
-      {
-        yield return coroutine;
-      }
+      yield return _registry.CardService.Sync(game.Cards.ToList(), game.GameObjectPositions, animate);
       
       // Must run after move completion, uses card positions for anchoring
       _registry.DocumentService.RenderMainControls(game.MainControls);      

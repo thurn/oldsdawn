@@ -30,15 +30,12 @@ namespace Spelldawn.Game
     [SerializeField] Transform _controlPoint4 = null!;
     [SerializeField] float _gizmoRadius = 1.0f;
     [SerializeField] float _objectScale;
-    [SerializeField] float _animationDuration = 0.3f;
     [SerializeField] Registry _registry = null!;
 
     protected override Registry Registry => _registry;
 
     protected override GameContext DefaultGameContext() => _sortingGameContext;
-
-    protected override float AnimationDuration => _animationDuration;
-
+    
     protected override Vector3 CalculateObjectPosition(int index, int count)
     {
       var curvePosition = CalculateCurvePosition(index, count);

@@ -120,7 +120,9 @@ pub fn shuffle_into_deck(game: &mut GameState, side: Side, cards: &[CardId]) -> 
         game.card_mut(*card_id).set_revealed_to(Side::Overlord, false);
         game.card_mut(*card_id).set_revealed_to(Side::Champion, false);
     }
-    shuffle_deck(game, side)
+    shuffle_deck(game, side)?;
+    game.push_update(|| GameUpdate::ShuffleIntoDeck);
+    Ok(())
 }
 
 /// Shuffles the `side` player's deck, moving all cards into the `DeckUnknown`

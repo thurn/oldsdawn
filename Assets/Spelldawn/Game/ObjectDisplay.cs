@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +70,7 @@ namespace Spelldawn.Game
       if (modified)
       {
         MarkUpdateRequired(animate);
-        yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
+        yield return WaitUntilIdle();
       }
     }
     
@@ -100,7 +101,7 @@ namespace Spelldawn.Game
       if (modified)
       {
         MarkUpdateRequired(animate);
-        yield return new WaitUntil(() => !_animationRunning && !_updateRequired);
+        yield return WaitUntilIdle();
       }
     }
 
@@ -118,16 +119,11 @@ namespace Spelldawn.Game
     }
 
     /// <summary>Tries to remove an object from this ObjectDisplay, returning true if the object was removed.</summary>
-    public bool RemoveObjectIfPresent(Displayable displayable, bool animate = true)
+    public void RemoveObjectIfPresent(Displayable displayable, bool animate = true)
     {
       if (_objects.Contains(displayable))
       {
         RemoveObject(displayable, animate);
-        return true;
-      }
-      else
-      {
-        return false;
       }
     }
 
@@ -154,6 +150,8 @@ namespace Spelldawn.Game
     }
 
     public override bool IsContainer() => true;
+    
+    public WaitUntil WaitUntilIdle() => new(() => !_animationRunning && !_updateRequired);
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext)
     {
@@ -166,9 +164,7 @@ namespace Spelldawn.Game
     }
 
     protected abstract override GameContext DefaultGameContext();
-
-    protected virtual float AnimationDuration => 0.3f;
-
+    
     protected abstract Vector3 CalculateObjectPosition(int index, int count);
 
     protected virtual Vector3? CalculateObjectRotation(int index, int count) => null;
@@ -190,11 +186,6 @@ namespace Spelldawn.Game
       Errors.CheckNotNull(displayable);
       var modified = false;
 
-      if (displayable is Card card && card.gameObject.name.EndsWith("O1"))
-      {
-        Debug.Log($"Insert: moving {displayable} from {displayable.Parent!.name} to {name}");
-      }
-      
       if (!_objects.Contains(displayable))
       {
         if (displayable.Parent)
@@ -227,6 +218,8 @@ namespace Spelldawn.Game
         sequence = TweenUtils.Sequence($"{gameObject.name} MoveObjectsToPosition");
       }
 
+      const float duration = TweenUtils.MoveAnimationDurationSeconds;
+
       for (var i = 0; i < _objects.Count; ++i)
       {
         var displayable = _objects[i];
@@ -245,7 +238,7 @@ namespace Spelldawn.Game
 
         if (shouldAnimate)
         {
-          sequence.Insert(atPosition: 0, displayable.transform.DOMove(position, duration: AnimationDuration));
+          sequence.Insert(atPosition: 0, displayable.transform.DOMove(position, duration));
         }
         else
         {
@@ -257,7 +250,7 @@ namespace Spelldawn.Game
           if (shouldAnimate)
           {
             sequence.Insert(atPosition: 0,
-              displayable.transform.DOLocalRotate(vector, duration: AnimationDuration));
+              displayable.transform.DOLocalRotate(vector, duration));
             
           }
           else
@@ -269,7 +262,7 @@ namespace Spelldawn.Game
         if (shouldAnimate)
         {
           sequence.Insert(atPosition: 0,
-            displayable.transform.DOScale(Vector3.one * scale, duration: AnimationDuration));
+            displayable.transform.DOScale(Vector3.one * scale, duration));
         }
         else
         {
@@ -281,7 +274,7 @@ namespace Spelldawn.Game
 
       if (animate)
       {
-        sequence.InsertCallback(AnimationDuration, () =>
+        sequence.InsertCallback(duration, () =>
         {
           _animationRunning = false;
           _animateNextUpdate = false;

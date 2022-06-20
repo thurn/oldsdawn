@@ -77,36 +77,36 @@ namespace Spelldawn.Game
       switch (availableActions)
       {
         case 0:
-          SetFiled(_left, false);
-          SetFiled(_center, false);
-          SetFiled(_right, false);
+          SetFilled(_left, false);
+          SetFilled(_center, false);
+          SetFilled(_right, false);
           break;
         case 1:
-          SetFiled(_left, false);
-          SetFiled(_center, false);
-          SetFiled(_right, true);
+          SetFilled(_left, false);
+          SetFilled(_center, false);
+          SetFilled(_right, true);
           break;
         case 2:
-          SetFiled(_left, false);
-          SetFiled(_center, true);
-          SetFiled(_right, true);
+          SetFilled(_left, false);
+          SetFilled(_center, true);
+          SetFilled(_right, true);
           break;
         case 3:
-          SetFiled(_left, true);
-          SetFiled(_center, true);
-          SetFiled(_right, true);
+          SetFilled(_left, true);
+          SetFilled(_center, true);
+          SetFilled(_right, true);
           break;
         default:
           _left.gameObject.SetActive(false);
           _center.gameObject.SetActive(false);
-          SetFiled(_right, true);
+          SetFilled(_right, true);
           _number.gameObject.SetActive(true);
           _number.text = availableActions + "";
           break;
       }
     }
 
-    void SetFiled(TextMeshPro text, bool filled)
+    void SetFilled(TextMeshPro text, bool filled)
     {
       text.gameObject.SetActive(true);
       if (_filled[text] != filled)

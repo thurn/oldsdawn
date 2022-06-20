@@ -46,6 +46,8 @@ pub enum GameUpdate {
     ScoreCard(Side, CardId),
     /// The game has ended and the indicated player has won
     GameOver(Side),
+    /// A player has shuffled cards into their deck
+    ShuffleIntoDeck,
 }
 
 /// A step in the animation process

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -59,7 +60,9 @@ namespace Spelldawn.Game
     [SerializeField] Vector3 _dragOffset;
     [SerializeField] Quaternion _initialDragRotation;
     [SerializeField] ObjectDisplay? _previousParent;
+
     [SerializeField] ObjectDisplay? _containedObjectsDisplay;
+
     // Minor hack: we want to shift the image down to be centered within the card in the arena, so we store
     // the image position here to restore it later.
     [SerializeField] float _arenaCardYOffset;
@@ -92,7 +95,7 @@ namespace Spelldawn.Game
     public override float DefaultScale => CardScale;
 
     public ObjectPosition? ReleasePosition => _releasePosition;
-    
+
     public ObjectPosition? DestroyPosition { get; private set; }
 
     public Transform TopLeftAnchor => _topLeftAnchor;
@@ -106,7 +109,7 @@ namespace Spelldawn.Game
     public Node? SupplementalInfo => _supplementalInfo;
 
     public ObjectDisplay ContainedObjects => Errors.CheckNotNull(_containedObjectsDisplay);
-    
+
     public Sequence? Render(
       CardView cardView,
       GameContext? gameContext = null,
@@ -173,6 +176,9 @@ namespace Spelldawn.Game
       result.Registry = Registry;
       return result;
     }
+
+    public Sequence? TurnFaceDown(bool animate)
+      => Flip(_cardBack, _cardFront, () => { }, animate);
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext)
     {
@@ -275,7 +281,7 @@ namespace Spelldawn.Game
           Registry.ArenaService.ShowRoomSelectorForMousePosition(_validRoomTargets);
         }
 
-        if (_arrowOnDrag is {} arrow)
+        if (_arrowOnDrag is { } arrow)
         {
           gameObject.SetActive(false);
           Registry.ArrowService.ShowArrow(arrow, Registry.IdentityCardForPlayer(PlayerName.User).transform, this);
@@ -295,7 +301,7 @@ namespace Spelldawn.Game
         gameObject.SetActive(true);
         Registry.ArrowService.HideArrows();
       }
-      
+
       Registry.CardService.ClearInfoZoom();
 
       if (!Registry.CardService.CurrentlyDragging)
@@ -362,7 +368,7 @@ namespace Spelldawn.Game
     {
       if (animate)
       {
-        const float duration = 0.2f;
+        const float duration = TweenUtils.FlipAnimationDurationSeconds / 2f;
         return TweenUtils.Sequence($"{faceUp.transform.parent.gameObject.name} Flip")
           .Insert(atPosition: 0, faceDown.transform.DOLocalRotate(new Vector3(x: 0, y: 90, z: 0), duration))
           .InsertCallback(atPosition: duration, () =>
@@ -412,7 +418,7 @@ namespace Spelldawn.Game
       _validRoomTargets = null;
       _serverCanPlay = false;
       _arrowOnDrag = null;
-      
+
       switch (revealed.Targeting?.TargetingCase)
       {
         case CardTargeting.TargetingOneofCase.NoTargeting:
@@ -514,7 +520,7 @@ namespace Spelldawn.Game
       {
         icon.Text.text = cardIcon.Text;
       }
-      
+
       if (cardIcon?.Enabled == false || !show)
       {
         // Check for an explicit 'false' enabled state to differentiate null ("don't change anything") from

@@ -44,7 +44,7 @@ namespace Spelldawn.Services
 
     public bool CurrentlyDragging { get; set; }
 
-    public List<Coroutine> Sync(List<CardView> views, GameObjectPositions? positions, bool animate)
+    public IEnumerator Sync(List<CardView> views, GameObjectPositions? positions, bool animate)
     {
       var toDelete = _cards.Keys.ToHashSet();
       var coroutines = new List<Coroutine>();
@@ -90,9 +90,12 @@ namespace Spelldawn.Services
       }
       
       coroutines.AddRange(
-        toDelete.Select(delete => StartCoroutine(HandleDestroyCard(delete))));
+        toDelete.Select(delete => StartCoroutine(HandleDestroyCard(delete, animate))));
 
-      return coroutines;
+      foreach (var coroutine in coroutines)
+      {
+        yield return coroutine;
+      }
     }
 
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)
@@ -262,20 +265,29 @@ namespace Spelldawn.Services
       _infoZoomRight.DestroyAll();
     }
 
-    public IEnumerator HandleDestroyCard(CardIdentifier cardId)
+    public IEnumerator HandleDestroyCard(CardIdentifier cardId, bool animate)
     {
       var card = FindCard(cardId);
-      _cards.Remove(cardId);
-      if (card.Parent && card.Parent != null)
-      {
-        card.Parent.RemoveObjectIfPresent(card, animate: false);
-      }
-
+      var sequence = card.TurnFaceDown(animate);
+      
       if (card.DestroyPosition != null)
       {
-        yield return _registry.ObjectPositionService.MoveGameObject(card, card.DestroyPosition);
+        yield return _registry.ObjectPositionService.MoveGameObject(card, card.DestroyPosition, animate);
+      }
+      
+      _cards.Remove(cardId);
+      
+      if (card.Parent)
+      {
+        var parent = card.Parent;
+        parent!.RemoveObjectIfPresent(card, animate: false);
       }
 
+      if (sequence != null && sequence.IsActive() && !sequence.IsComplete())
+      {
+        yield return sequence.WaitForCompletion();
+      }
+      
       Destroy(card.gameObject);
     }
 
