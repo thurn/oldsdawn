@@ -24,7 +24,6 @@ use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
 use data::delegates::{
     AbilityActivated, ActivateAbilityEvent, CardPlayed, CastCardEvent, DrawCardActionEvent,
-    PayCardCostsEvent,
 };
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
@@ -57,6 +56,7 @@ pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAct
         UserAction::InitiateRaid(room_id) => initiate_raid_action(game, user_side, room_id),
         UserAction::LevelUpRoom(room_id) => level_up_room_action(game, user_side, room_id),
         UserAction::SpendActionPoint => spend_action_point_action(game, user_side),
+        UserAction::Sync => Ok(()),
     }
 }
 
@@ -142,7 +142,6 @@ fn play_card_action(
     mutations::move_card(game, card_id, CardPosition::Stack)?;
 
     mutations::spend_action_points(game, user_side, definition.cost.actions)?;
-    dispatch::invoke_event(game, PayCardCostsEvent(card_id))?;
 
     if flags::enters_play_face_up(game, card_id) {
         let amount = queries::mana_cost(game, card_id).with_error(|| "Card has no mana cost")?;

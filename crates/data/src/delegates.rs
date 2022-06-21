@@ -354,9 +354,6 @@ pub enum Delegate {
     DrawCard(EventDelegate<CardId>),
     /// A user takes the explicit 'draw card' game action
     DrawCardAction(EventDelegate<CardId>),
-    /// A card has been selected to play via the Play action and should have
-    /// additional costs deducted.
-    PayCardCosts(EventDelegate<CardId>),
     /// A card has been played via the Play Card action and has had its costs
     /// paid
     CastCard(EventDelegate<CardPlayed>),

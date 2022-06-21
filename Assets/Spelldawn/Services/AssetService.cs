@@ -121,6 +121,11 @@ namespace Spelldawn.Services
         }
       }
 
+      yield return WaitForRequests(requests);
+    }
+
+    public IEnumerator WaitForRequests(IDictionary<string, ResourceRequest> requests)
+    {
       if (requests.Count > 0)
       {
         yield return new WaitUntil(() => requests.Values.All(r => r.isDone));
@@ -136,7 +141,7 @@ namespace Spelldawn.Services
             Debug.LogError($"Null asset for {address}");
           }
         }
-      }
+      }      
     }
 
     void LoadRenderInterfaceAssets(IDictionary<string, ResourceRequest> requests, RenderInterfaceCommand command)
@@ -145,8 +150,6 @@ namespace Spelldawn.Services
       {
         LoadNodeAssets(requests, panel.Node);
       }
-
-      LoadInterfaceMainControlsAssets(requests, command.MainControls);
     }
 
     void LoadInterfaceMainControlsAssets(IDictionary<string, ResourceRequest> requests,
@@ -162,8 +165,8 @@ namespace Spelldawn.Services
         }
       }
     }
-
-    void LoadNodeAssets(IDictionary<string, ResourceRequest> requests, Node? node)
+    
+    public void LoadNodeAssets(IDictionary<string, ResourceRequest> requests, Node? node)
     {
       if (node != null)
       {

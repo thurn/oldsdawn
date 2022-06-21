@@ -350,6 +350,12 @@ pub enum CardType {
     Identity,
 }
 
+impl CardType {
+    pub fn is_spell(&self) -> bool {
+        matches!(self, CardType::ChampionSpell | CardType::OverlordSpell)
+    }
+}
+
 /// Subtypes of cards
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum CardSubtype {

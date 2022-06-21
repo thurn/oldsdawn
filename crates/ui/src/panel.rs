@@ -19,9 +19,9 @@ use protos::spelldawn::{
 };
 
 use crate::components::{IconButton, Row, Text};
-use crate::core::{Px, *};
+use crate::core::{Component, Px, *};
 use crate::macros::children;
-use crate::{colors, font_sizes, fonts, icons, Component};
+use crate::{colors, font_sizes, fonts, icons};
 
 #[derive(Debug, Clone, Default)]
 pub struct Panel<TContent: Component> {

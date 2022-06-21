@@ -63,8 +63,11 @@ namespace Spelldawn.Services
 
     IEnumerator HandleCommandsAsync(CommandList commandList, bool isParallel = false, Action? onComplete = null)
     {
+      // Clear UI during animations
+      _registry.DocumentService.RenderMainControls(null);      
+      
       yield return _registry.AssetService.LoadAssets(commandList);
-
+      
       foreach (var command in commandList.Commands)
       {
         switch (command.CommandCase)

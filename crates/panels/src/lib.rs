@@ -24,13 +24,13 @@ use protos::spelldawn::{InterfacePanel, PanelAddress, RenderInterfaceCommand};
 
 /// Appends commands to `commands` to render commonly-used panels.
 pub fn render_standard_panels(commands: &mut Vec<Command>) -> Result<()> {
-    commands.push(Command::RenderInterface(render_panel(PanelAddress::DebugPanel)?));
+    commands.push(Command::RenderInterface(render_panel_command(PanelAddress::DebugPanel)?));
     Ok(())
 }
 
 /// Primary entry-point for panels. Given a [PanelAddress], creates its UI
 /// hierarchy.
-pub fn render_panel(address: PanelAddress) -> Result<RenderInterfaceCommand> {
+pub fn render_panel_command(address: PanelAddress) -> Result<RenderInterfaceCommand> {
     Ok(RenderInterfaceCommand {
         panels: vec![InterfacePanel {
             address: address.into(),
@@ -39,6 +39,5 @@ pub fn render_panel(address: PanelAddress) -> Result<RenderInterfaceCommand> {
                 PanelAddress::DebugPanel => debug_panel::render(),
             }),
         }],
-        main_controls: None,
     })
 }

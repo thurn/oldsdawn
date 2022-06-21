@@ -140,6 +140,7 @@ namespace Spelldawn.Services
       GameAction.ActionOneofCase.PlayCard => CanAct(),
       GameAction.ActionOneofCase.LevelUpRoom => CanAct(),
       GameAction.ActionOneofCase.InitiateRaid => CanAct(),
+      GameAction.ActionOneofCase.SyncAction => true,
       _ => false
     };
 

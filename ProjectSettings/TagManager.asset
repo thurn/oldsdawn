@@ -68,11 +68,11 @@ TagManager:
   - name: Interface
     uniqueID: 2048004209
     locked: 0
-  - name: Staging
-    uniqueID: 2244730151
-    locked: 0
   - name: Browser
     uniqueID: 3182936583
+    locked: 0
+  - name: Staging
+    uniqueID: 2244730151
     locked: 0
   - name: RevealedCardsBrowser
     uniqueID: 1041461123

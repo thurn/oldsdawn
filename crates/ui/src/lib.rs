@@ -14,11 +14,6 @@
 
 //! Library for user interface rendering
 
-use protos::spelldawn::game_command::Command;
-use protos::spelldawn::{InterfaceMainControls, RenderInterfaceCommand};
-
-use crate::core::Component;
-
 pub mod card_info;
 pub mod colors;
 pub mod components;
@@ -28,29 +23,3 @@ pub mod fonts;
 pub mod icons;
 pub mod macros;
 pub mod panel;
-
-/// Renders a given [Component] as the main interface controls via
-/// [RenderInterfaceCommand], appearing immediately above the user's hand
-pub fn main_controls(component: impl Component) -> RenderInterfaceCommand {
-    RenderInterfaceCommand {
-        panels: vec![],
-        main_controls: Some(InterfaceMainControls {
-            node: Some(component.render()),
-            card_anchor_nodes: vec![],
-        }),
-    }
-}
-
-/// Command to clear all content in the interface
-pub fn clear_main_controls() -> RenderInterfaceCommand {
-    RenderInterfaceCommand {
-        panels: vec![],
-        main_controls: Some(InterfaceMainControls { node: None, card_anchor_nodes: vec![] }),
-    }
-}
-
-/// Equivalent to [clear_main_controls] which wraps the result in a
-/// [Command] vector.
-pub fn clear_main_controls_command() -> Vec<Command> {
-    vec![Command::RenderInterface(clear_main_controls())]
-}

@@ -42,7 +42,9 @@ pub fn render(
     match update {
         GameUpdate::StartTurn(side) => start_turn(builder, *side),
         GameUpdate::PlayCardFaceUp(side, card_id) => {
-            reveal(builder, side.opponent(), &vec![*card_id])
+            if builder.user_side == side.opponent() {
+                show_cards(builder, &vec![*card_id])
+            }
         }
         GameUpdate::AbilityActivated(side, ability_id) => {
             if *side != builder.user_side {
@@ -50,12 +52,18 @@ pub fn render(
             }
         }
         GameUpdate::AbilityTriggered(ability_id) => show_ability(builder, snapshot, *ability_id),
-        GameUpdate::DrawCards(side, cards) => reveal(builder, *side, cards),
+        GameUpdate::DrawCards(side, cards) => if builder.user_side == *side {
+            show_cards(builder, cards)
+        },
         GameUpdate::ShuffleIntoDeck => {
             // No animation, just acts as a snapshot point.
         }
-        GameUpdate::UnveilProject(card_id) => reveal(builder, Side::Champion, &vec![*card_id]),
-        GameUpdate::SummonMinion(card_id) => reveal(builder, Side::Champion, &vec![*card_id]),
+        GameUpdate::UnveilProject(card_id) => if builder.user_side == Side::Champion {
+            show_cards(builder, &vec![*card_id])
+        },
+        GameUpdate::SummonMinion(card_id) => if builder.user_side == Side::Champion {
+            show_cards(builder, &vec![*card_id])
+        },
         GameUpdate::LevelUpRoom(room_id) => level_up_room(builder, *room_id),
         GameUpdate::InitiateRaid(room_id) => initiate_raid(builder, *room_id),
         GameUpdate::TargetedInteraction(interaction) => {
@@ -76,31 +84,25 @@ fn start_turn(builder: &mut ResponseBuilder, side: Side) {
     }))
 }
 
-fn reveal(builder: &mut ResponseBuilder, revealed_to: Side, cards: &Vec<CardId>) {
-    let is_large_draw = cards.len() >= 4;
-    if revealed_to == builder.user_side {
-        builder.push(Command::MoveMultipleGameObjects(MoveMultipleGameObjectsCommand {
-            moves: cards
-                .iter()
-                // Skip animation for cards that are already in a prominent interface position
-                .filter(|card_id| !in_display_position(builder, **card_id))
-                .enumerate()
-                .map(|(i, card_id)| GameObjectMove {
-                    id: Some(adapters::game_object_identifier(builder, *card_id)),
-                    position: Some(positions::for_sorting_key(
-                        i as u32,
-                        if is_large_draw {
-                            positions::browser()
-                        } else {
-                            positions::revealed_cards()
-                        },
-                    )),
-                })
-                .collect(),
-            disable_animation: !builder.animate,
-            delay: Some(adapters::milliseconds(if is_large_draw { 2000 } else { 1000 })),
-        }))
-    }
+fn show_cards(builder: &mut ResponseBuilder, cards: &Vec<CardId>) {
+    let is_large = cards.len() >= 4;
+    builder.push(Command::MoveMultipleGameObjects(MoveMultipleGameObjectsCommand {
+        moves: cards
+            .iter()
+            // Skip animation for cards that are already in a prominent interface position
+            .filter(|card_id| !in_display_position(builder, **card_id))
+            .enumerate()
+            .map(|(i, card_id)| GameObjectMove {
+                id: Some(adapters::game_object_identifier(builder, *card_id)),
+                position: Some(positions::for_sorting_key(
+                    i as u32,
+                    if is_large { positions::browser() } else { positions::revealed_cards() },
+                )),
+            })
+            .collect(),
+        disable_animation: !builder.animate,
+        delay: Some(adapters::milliseconds(if is_large { 2000 } else { 1000 })),
+    }))
 }
 
 fn in_display_position(builder: &ResponseBuilder, card_id: CardId) -> bool {

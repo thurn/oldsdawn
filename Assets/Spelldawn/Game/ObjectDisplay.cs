@@ -56,9 +56,10 @@ namespace Spelldawn.Game
       if (_updateRequired && !_animationRunning)
       {
         MoveObjectsToPosition(_animateNextUpdate);
-        OnUpdated();
         _updateRequired = false;
       }
+      
+      OnUpdated();
     }
 
     public IEnumerator AddObject(

@@ -592,10 +592,10 @@ impl ClientInterface {
 
     fn update(&mut self, command: Command) {
         if let Command::RenderInterface(render) = command {
-            if let Some(main_controls) = render.main_controls {
-                self.main_controls = main_controls.node;
-                self.card_anchors = main_controls.card_anchor_nodes;
-            }
+            // if let Some(main_controls) = render.main_controls {
+            //     self.main_controls = main_controls.node;
+            //     self.card_anchors = main_controls.card_anchor_nodes;
+            // }
         }
     }
 }

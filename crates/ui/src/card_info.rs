@@ -15,8 +15,8 @@
 use protos::spelldawn::{FlexAlign, FlexJustify, FlexStyle, Node, TextAlign, WhiteSpace};
 
 use crate::components::{Column, Row, Text};
-use crate::core::*;
-use crate::{colors, font_sizes, fonts, Component};
+use crate::core::{Component, *};
+use crate::{colors, font_sizes, fonts};
 
 /// Renders helper text for a card, displayed during an info zoom.
 #[derive(Debug, Default)]

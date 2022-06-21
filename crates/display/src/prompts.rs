@@ -172,7 +172,7 @@ impl Component for ResponseButton {
             action: self.action.and_then(|a| {
                 action(
                     Some(UserAction::GamePromptResponse(a)),
-                    Some(ui::clear_main_controls_command()),
+                    None, //Some(ui::clear_main_controls_command()),
                 )
             }),
             lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },

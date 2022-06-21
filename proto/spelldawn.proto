@@ -902,6 +902,9 @@ message CreateNewGameAction {
 // tests
 message SpendActionPointAction {}
 
+// Request a server sync with no other effects
+message SyncAction {}
+
 // Possible game actions taken by the user.
 //
 // Actions have an associated 'optimistic' behavior to display while waiting
@@ -918,6 +921,7 @@ message GameAction {
         LevelUpRoomAction level_up_room = 7;
         InitiateRaidAction initiate_raid = 8;
         SpendActionPointAction spend_action_point = 9;
+        SyncAction sync_action = 10;
     }
 }
 
@@ -1036,9 +1040,6 @@ message RenderInterfaceCommand {
     // of each known panel are cached and can then be opened immediately
     // via TogglePanelAction, without waiting for a server response.
     repeated InterfacePanel panels = 1;
-
-    // Controls for game actions such as interface prompts
-    InterfaceMainControls main_controls = 2;
 }
 
 // Opens or closes the given interface panel.

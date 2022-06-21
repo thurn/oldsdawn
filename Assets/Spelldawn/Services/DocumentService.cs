@@ -110,7 +110,6 @@ namespace Spelldawn.Services
       }
 
       RenderPanels();
-      RenderMainControls(command.MainControls);
     }
 
     public void RenderMainControls(InterfaceMainControls? mainControls)
@@ -144,21 +143,6 @@ namespace Spelldawn.Services
       }
 
       previousNode = newNode;
-    }
-
-
-    public IEnumerator RenderMainControls(Node node)
-    {
-      return _registry.CommandService.HandleCommands(new GameCommand
-      {
-        RenderInterface = new RenderInterfaceCommand
-        {
-          MainControls = new InterfaceMainControls
-          {
-            Node = node
-          }
-        }
-      });
     }
 
     public void ClearSupplementalCardInfo()
@@ -302,23 +286,7 @@ namespace Spelldawn.Services
       {
         OnClick = new GameAction
         {
-          StandardAction = new StandardAction
-          {
-            Update = new CommandList
-            {
-              Commands =
-              {
-                new GameCommand
-                {
-                  RenderInterface = new RenderInterfaceCommand
-                  {
-                    MainControls = new InterfaceMainControls()
-                  }
-                },
-                update
-              }
-            }
-          }
+          SyncAction = new SyncAction()
         }
       },
       Text(label, new FlexStyle

@@ -220,9 +220,9 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
             handle_standard_action(database, player_id, game_id, standard_action)
         }
         Action::TogglePanel(toggle_panel) => {
-            Ok(GameResponse::from_commands(vec![Command::RenderInterface(panels::render_panel(
-                toggle_panel.panel_address(),
-            )?)]))
+            Ok(GameResponse::from_commands(vec![Command::RenderInterface(
+                panels::render_panel_command(toggle_panel.panel_address())?,
+            )]))
         }
         Action::CreateNewGame(create_game) => create_new_game(database, player_id, create_game),
         Action::DrawCard(_) => handle_action(database, player_id, game_id, UserAction::DrawCard),
@@ -250,6 +250,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
         Action::SpendActionPoint(_) => {
             handle_action(database, player_id, game_id, UserAction::SpendActionPoint)
         }
+        Action::SyncAction(_) => handle_action(database, player_id, game_id, UserAction::Sync),
     }?;
 
     let commands = response.command_list.commands.iter().map(command_name).collect::<Vec<_>>();

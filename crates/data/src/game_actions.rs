@@ -163,4 +163,5 @@ pub enum UserAction {
     InitiateRaid(RoomId),
     LevelUpRoom(RoomId),
     SpendActionPoint,
+    Sync,
 }

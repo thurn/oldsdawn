@@ -866,6 +866,9 @@ pub struct CreateNewGameAction {
 /// tests
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SpendActionPointAction {}
+/// Request a server sync with no other effects
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SyncAction {}
 /// Possible game actions taken by the user.
 ///
 /// Actions have an associated 'optimistic' behavior to display while waiting
@@ -873,7 +876,7 @@ pub struct SpendActionPointAction {}
 /// same time -- interaction should be disabled while an action is pending.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameAction {
-    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
+    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10")]
     pub action: ::core::option::Option<game_action::Action>,
 }
 /// Nested message and enum types in `GameAction`.
@@ -898,6 +901,8 @@ pub mod game_action {
         InitiateRaid(super::InitiateRaidAction),
         #[prost(message, tag = "9")]
         SpendActionPoint(super::SpendActionPointAction),
+        #[prost(message, tag = "10")]
+        SyncAction(super::SyncAction),
     }
 }
 /// Initiate a play session. If a game_id is provided, connects to an ongoing
@@ -1007,9 +1012,6 @@ pub struct RenderInterfaceCommand {
     /// via TogglePanelAction, without waiting for a server response.
     #[prost(message, repeated, tag = "1")]
     pub panels: ::prost::alloc::vec::Vec<InterfacePanel>,
-    /// Controls for game actions such as interface prompts
-    #[prost(message, optional, tag = "2")]
-    pub main_controls: ::core::option::Option<InterfaceMainControls>,
 }
 /// Opens or closes the given interface panel.
 #[derive(Clone, PartialEq, ::prost::Message)]

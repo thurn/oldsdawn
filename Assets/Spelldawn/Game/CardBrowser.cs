@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections;
+using System.Collections.Generic;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using UnityEngine;
@@ -51,7 +52,6 @@ namespace Spelldawn.Game
       }
     }
 
-
     public IEnumerator BrowseCards(ObjectPosition atPosition)
     {
       if (Registry.ActionService.CanInitiateAction())
@@ -64,16 +64,27 @@ namespace Spelldawn.Game
             SourcePosition = atPosition,
             TargetPosition = BrowserPosition,
           });
-
-        yield return Registry.DocumentService.RenderMainControls(
-          DocumentService.ControlGroup(DocumentService.Button("Close", new GameCommand
+        
+        var node = DocumentService.ControlGroup(DocumentService.Button("Close", new GameCommand
+        {
+          MoveObjectsAtPosition = new MoveGameObjectsAtPositionCommand
           {
-            MoveObjectsAtPosition = new MoveGameObjectsAtPositionCommand
-            {
-              SourcePosition = BrowserPosition,
-              TargetPosition = atPosition
-            }
-          })));
+            SourcePosition = BrowserPosition,
+            TargetPosition = atPosition
+          }
+        }));
+
+        // TODO: This is a weird hack where we do client-side interface rendering, get rid of this
+        var requests = new Dictionary<string, ResourceRequest>();
+        Registry.AssetService.LoadNodeAssets(requests, node);
+        yield return Registry.AssetService.WaitForRequests(requests);
+
+        Registry.DocumentService.RenderMainControls(
+          new InterfaceMainControls
+          {
+            Node = node
+          }
+        );
       }
     }
   }

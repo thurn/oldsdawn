@@ -25,7 +25,8 @@ pub fn render(game: &GameState, user_side: Side) -> RenderInterfaceCommand {
     if game.overlord.game_prompt.is_some() || game.champion.game_prompt.is_some() {
         render_prompt(game, user_side)
     } else {
-        ui::clear_main_controls()
+        RenderInterfaceCommand::default()
+        // ui::clear_main_controls()
     }
 }
 
@@ -36,6 +37,7 @@ fn render_prompt(game: &GameState, side: Side) -> RenderInterfaceCommand {
     } else if let Some(prompt) = &game.player(side).game_prompt {
         prompts::action_prompt(game, side, prompt)
     } else {
-        ui::main_controls(WaitingPrompt {})
+        RenderInterfaceCommand::default()
+        // ui::main_controls(WaitingPrompt {})
     }
 }

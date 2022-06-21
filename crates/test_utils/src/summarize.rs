@@ -314,7 +314,6 @@ impl Summarize for TogglePanelCommand {
 impl Summarize for RenderInterfaceCommand {
     fn summarize(self, summary: &mut Summary) {
         summary.children("panels", self.panels);
-        summary.child("main_controls", self.main_controls);
     }
 }
 

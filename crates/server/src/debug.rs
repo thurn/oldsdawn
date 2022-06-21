@@ -103,9 +103,9 @@ pub fn handle_debug_action(
             })
         }
         DebugAction::FetchStandardPanels => {
-            Ok(GameResponse::from_commands(vec![Command::RenderInterface(panels::render_panel(
-                PanelAddress::DebugPanel,
-            )?)]))
+            Ok(GameResponse::from_commands(vec![Command::RenderInterface(
+                panels::render_panel_command(PanelAddress::DebugPanel)?,
+            )]))
         }
         DebugAction::AddMana(amount) => {
             requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
