@@ -34,13 +34,15 @@ use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, node_type, ArrowTargetRoom, CardAnchorNode, CardIdentifier, CardTarget, CardView,
-    ClientItemLocation, ClientRoomLocation, CommandList, CreateOrUpdateCardCommand, EventHandlers,
+    ClientItemLocation, ClientRoomLocation, CommandList, EventHandlers,
     GameAction, GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest,
     InitiateRaidAction, NoTargeting, Node, NodeType, ObjectPosition, ObjectPositionBrowser,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionItem, ObjectPositionRoom,
-    PlayCardAction, PlayInRoom, PlayerName, PlayerView, RevealedCardView, RoomIdentifier,
+    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionItem, ObjectPositionRevealedCards,
+    ObjectPositionRoom, PlayCardAction, PlayInRoom, PlayerName, PlayerView,
+    RevealedCardView, RevealedCardsBrowserSize, RoomIdentifier,
 };
 use rules::dispatch;
+use server::requests;
 use server::requests::GameResponse;
 
 use crate::fake_database::FakeDatabase;
@@ -97,7 +99,7 @@ impl TestSession {
         &self.user.this_player
     }
 
-    /// Returns the opponent player state for the oppponent client (i.e. the
+    /// Returns the opponent player state for the opponent client (i.e. the
     /// opponent's state from their perspective).
     pub fn you(&self) -> &ClientPlayer {
         &self.opponent.this_player
@@ -105,10 +107,9 @@ impl TestSession {
 
     /// Simulates a client connecting to the server, either creating a new game
     /// or connecting to an existing game. Returns the commands which would
-    /// be sent to the client when connected. If a new game is created, its
-    /// ID will be 0.
+    /// be sent to the client when connected.
     pub fn connect(&mut self, user_id: PlayerId, game_id: Option<GameId>) -> Result<CommandList> {
-        let result = server::requests::handle_connect(&mut self.database, user_id, game_id)?;
+        let result = requests::handle_connect(&mut self.database, user_id, game_id)?;
         let to_update = match () {
             _ if user_id == self.user.id => &mut self.user,
             _ if user_id == self.opponent.id => &mut self.opponent,
@@ -143,7 +144,7 @@ impl TestSession {
         player_id: PlayerId,
         game_id: Option<GameIdentifier>,
     ) -> Result<GameResponse> {
-        let response = server::requests::handle_request(
+        let response = requests::handle_request(
             &mut self.database,
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),
@@ -189,8 +190,9 @@ impl TestSession {
     ///
     /// This function operates by locating a test card in the owner's deck and
     /// overwriting it with the provided `card_name`. This card is then
-    /// moved to the user's hand via [GameState::move_card].
-    /// CreateOrUpdateCard commands are sent to the attached test clients.
+    /// moved to the user's hand via [GameState::move_card_internal]. The
+    /// complete game state is synced for both players by invoking
+    /// [Self::connect].
     ///
     /// This function will *not* spend action points, check the legality of
     /// drawing a card, invoke any game events, or append a game update. It
@@ -227,12 +229,12 @@ impl TestSession {
     /// as normal.
     ///
     /// If the card is a minion, project, or scheme card, it is played
-    /// into the [crate::ROOM_ID] room. The [GameResponse] produced by
-    /// playing the card is returned, along with its [CardIdentifier].
+    /// into the [crate::ROOM_ID] room. The [CardIdentifier] for the played card
+    /// is returned.
     ///
     /// Panics if the server returns an error for playing this card.
     pub fn play_from_hand(&mut self, card_name: CardName) -> CardIdentifier {
-        self.play_internal(
+        self.play_impl(
             card_name,
             match rules::get(card_name).card_type {
                 CardType::Minion | CardType::Project | CardType::Scheme => Some(ROOM_ID),
@@ -248,15 +250,13 @@ impl TestSession {
         card_name: CardName,
         room_id: RoomId,
     ) -> CardIdentifier {
-        self.play_internal(card_name, Some(room_id))
+        self.play_impl(card_name, Some(room_id))
     }
 
-    fn play_internal(&mut self, card_name: CardName, room_id: Option<RoomId>) -> CardIdentifier {
+    fn play_impl(&mut self, card_name: CardName, room_id: Option<RoomId>) -> CardIdentifier {
         let card_id = self.add_to_hand(card_name);
         let target = room_id.map(|room_id| CardTarget {
-            card_target: Some(card_target::CardTarget::RoomId(
-                adapters::room_identifier(room_id),
-            )),
+            card_target: Some(card_target::CardTarget::RoomId(adapters::room_identifier(room_id))),
         });
 
         self.play_card(
@@ -268,7 +268,7 @@ impl TestSession {
         card_id
     }
 
-    /// Helpers to take the [PlayCardAction] with a given card ID.
+    /// Helper to take the [PlayCardAction] with a given card ID.
     pub fn play_card(
         &mut self,
         card_id: CardIdentifier,
@@ -282,7 +282,7 @@ impl TestSession {
     }
 
     /// Locate a button containing the provided `text` in the provided player's
-    /// main controls and invoke its registered action.
+    /// interface controls and invoke its registered action.
     pub fn click_on(&mut self, player_id: PlayerId, text: impl Into<String>) -> GameResponse {
         let (_, player, _) = self.opponent_local_remote(player_id);
         let handlers = player.interface.controls().find_handlers(text);
@@ -310,6 +310,7 @@ impl TestSession {
                 == GameMessageType::Defeat
     }
 
+    /// Returns the [TestClient] for a given player in the game.
     pub fn player(&self, player_id: PlayerId) -> &TestClient {
         match () {
             _ if player_id == self.user.id => &self.user,
@@ -318,10 +319,12 @@ impl TestSession {
         }
     }
 
+    /// Returns the [TestClient] for the [Side] player in the game.
     pub fn player_for_side(&self, side: Side) -> &TestClient {
         self.player(self.player_id_for_side(side))
     }
 
+    /// Looks up the [PlayerId] for the [Side] player.
     pub fn player_id_for_side(&self, side: Side) -> PlayerId {
         if self.database.game().player(side).id == self.user.id {
             self.user.id
@@ -332,7 +335,8 @@ impl TestSession {
         }
     }
 
-    /// Activates an ability of a card owned by the user
+    /// Activates an ability of a card owned by the user based on its ability
+    /// index.
     pub fn activate_ability(&mut self, card_id: CardIdentifier, index: u32) {
         self.activate_ability_impl(card_id, index, None)
     }
@@ -357,9 +361,9 @@ impl TestSession {
             Action::PlayCard(PlayCardAction {
                 card_id: Some(CardIdentifier { ability_id: Some(index), ..card_id }),
                 target: target.map(|room_id| CardTarget {
-                    card_target: Some(card_target::CardTarget::RoomId(
-                        adapters::room_identifier(room_id),
-                    )),
+                    card_target: Some(card_target::CardTarget::RoomId(adapters::room_identifier(
+                        room_id,
+                    ))),
                 }),
             }),
             self.user_id(),
@@ -397,7 +401,8 @@ pub fn overwrite_card(game: &mut GameState, card_id: CardId, card_name: CardName
     dispatch::populate_delegate_cache(game);
 }
 
-pub fn side_for_card_name(name: CardName) -> Side {
+/// Returns the [Side] player who owns the [CardName] card
+fn side_for_card_name(name: CardName) -> Side {
     rules::get(name).side
 }
 
@@ -406,9 +411,9 @@ pub fn side_for_card_name(name: CardName) -> Side {
 pub struct TestClient {
     pub id: PlayerId,
     pub data: ClientGameData,
-    /// A player's view of *their own* state.
+    /// A player's view of *their own* player state.
     pub this_player: ClientPlayer,
-    /// A player's view of *their opponent's* state.
+    /// A player's view of *their opponent's* player state.
     pub other_player: ClientPlayer,
     pub interface: ClientInterface,
     pub cards: ClientCards,
@@ -436,14 +441,6 @@ impl TestClient {
         self.other_player.update(command.clone());
         self.interface.update(command.clone());
         self.cards.update(command.clone());
-
-        if let Command::RunInParallel(run_in_parallel) = command {
-            for list in &run_in_parallel.commands {
-                for command in &list.commands {
-                    self.handle_command(command.command.as_ref().expect("Command"));
-                }
-            }
-        }
     }
 }
 
@@ -451,7 +448,7 @@ impl TestClient {
 #[derive(Clone, Default)]
 pub struct ClientGameData {
     raid_active: Option<bool>,
-    object_positions: HashMap<GameObjectIdentifier, (u32, Position)>,
+    object_positions: HashMap<GameObjectIdentifier, ObjectPosition>,
     last_message: Option<GameMessageType>,
 }
 
@@ -460,17 +457,36 @@ impl ClientGameData {
         self.raid_active.expect("raid_active")
     }
 
+    /// Returns the position of the `id` object along with its index within its
+    /// position list
     pub fn object_index_position(&self, id: Id) -> (u32, Position) {
-        self.object_positions
+        let position = self
+            .object_positions
             .get(&GameObjectIdentifier { id: Some(id) })
             .unwrap_or_else(|| panic!("No position available for {:?}", id))
             .clone()
+            .position
+            .expect("position");
+        let mut positions = self
+            .object_positions
+            .iter()
+            .filter(|(_, p)| p.position.as_ref().expect("position") == &position)
+            .collect::<Vec<_>>();
+        positions.sort_by_key(|(_, p)| (p.sorting_key, p.sorting_subkey));
+        let index = positions
+            .iter()
+            .position(|(object_id, _)| object_id.id.as_ref().expect("id") == &id)
+            .expect("index");
+
+        (index as u32, position)
     }
 
+    /// Returns the position of the `id` object
     pub fn object_position(&self, id: Id) -> Position {
         self.object_index_position(id).1
     }
 
+    /// Returns the last-seen `GameMessage`.
     pub fn last_message(&self) -> GameMessageType {
         self.last_message.expect("Game Message")
     }
@@ -478,21 +494,63 @@ impl ClientGameData {
     fn update(&mut self, command: Command) {
         match command {
             Command::UpdateGameView(update_game) => {
-                self.raid_active = Some(update_game.game.as_ref().unwrap().raid_active);
-            }
-            Command::MoveGameObjects(move_objects) => {
-                for id in move_objects.ids {
-                    let p = move_objects.position.as_ref().expect("ObjectPosition").clone();
+                let game = update_game.game.as_ref().unwrap();
+                self.raid_active = Some(game.raid_active);
+                for card in &game.cards {
                     self.object_positions
-                        .insert(id, (p.sorting_key, p.position.expect("Position")));
+                        .insert(card_object_id(card.card_id), card.card_position.clone().unwrap());
+                }
+
+                let non_card = game.game_object_positions.as_ref().unwrap();
+                self.insert_position(deck_id(PlayerName::User), &non_card.user_deck);
+                self.insert_position(deck_id(PlayerName::Opponent), &non_card.opponent_deck);
+                self.insert_position(identity_id(PlayerName::User), &non_card.user_identity);
+                self.insert_position(
+                    identity_id(PlayerName::Opponent),
+                    &non_card.opponent_identity,
+                );
+                self.insert_position(discard_id(PlayerName::User), &non_card.user_discard);
+                self.insert_position(discard_id(PlayerName::Opponent), &non_card.opponent_deck);
+            }
+            Command::MoveMultipleGameObjects(move_objects) => {
+                for move_object in move_objects.moves {
+                    let p = move_object.position.as_ref().expect("ObjectPosition").clone();
+                    self.object_positions.insert(move_object.id.clone().expect("id"), p);
                 }
             }
             Command::DisplayGameMessage(display_message) => {
                 self.last_message = GameMessageType::from_i32(display_message.message_type);
             }
+            Command::CreateTokenCard(create_token) => {
+                let card = create_token.card.as_ref().expect("card");
+                self.object_positions.insert(
+                    card_object_id(card.card_id),
+                    card.card_position.clone().expect("position"),
+                );
+            }
             _ => {}
         }
     }
+
+    fn insert_position(&mut self, id: GameObjectIdentifier, position: &Option<ObjectPosition>) {
+        self.object_positions.insert(id, position.clone().expect("position"));
+    }
+}
+
+fn card_object_id(id: Option<CardIdentifier>) -> GameObjectIdentifier {
+    GameObjectIdentifier { id: Some(Id::CardId(id.expect("card_id"))) }
+}
+
+fn deck_id(name: PlayerName) -> GameObjectIdentifier {
+    GameObjectIdentifier { id: Some(Id::Deck(name as i32)) }
+}
+
+fn identity_id(name: PlayerName) -> GameObjectIdentifier {
+    GameObjectIdentifier { id: Some(Id::Identity(name as i32)) }
+}
+
+fn discard_id(name: PlayerName) -> GameObjectIdentifier {
+    GameObjectIdentifier { id: Some(Id::DiscardPile(name as i32)) }
 }
 
 /// Simulated player state in an ongoing [TestSession]
@@ -550,10 +608,10 @@ impl ClientPlayer {
 
     fn update_with_player(&mut self, player: Option<PlayerView>) {
         if let Some(p) = player {
-            write_if_present(&mut self.mana, &p.mana, |v| v.base_mana);
-            write_if_present(&mut self.bonus_mana, &p.mana, |v| v.bonus_mana);
-            write_if_present(&mut self.actions, &p.action_tracker, |v| v.available_action_count);
-            write_if_present(&mut self.score, &p.score, |v| v.score);
+            self.mana = Some(p.mana.clone().expect("mana").base_mana);
+            self.bonus_mana = Some(p.mana.clone().expect("mana").bonus_mana);
+            self.actions = Some(p.action_tracker.clone().expect("actions").available_action_count);
+            self.score = Some(p.score.clone().expect("score").score);
             self.can_take_action = Some(p.can_take_action);
         }
     }
@@ -591,11 +649,10 @@ impl ClientInterface {
     }
 
     fn update(&mut self, command: Command) {
-        if let Command::RenderInterface(render) = command {
-            // if let Some(main_controls) = render.main_controls {
-            //     self.main_controls = main_controls.node;
-            //     self.card_anchors = main_controls.card_anchor_nodes;
-            // }
+        if let Command::UpdateGameView(update) = command {
+            let controls = update.game.as_ref().expect("game").main_controls.as_ref();
+            self.main_controls = controls.and_then(|c| c.node.clone());
+            self.card_anchors = controls.map_or(vec![], |c| c.card_anchor_nodes.clone());
         }
     }
 }
@@ -732,6 +789,18 @@ impl ClientCards {
         self.names_in_position(Position::Browser(ObjectPositionBrowser {}))
     }
 
+    /// Returns a vec of card names currently displayed in the revealed cards
+    /// area
+    pub fn revealed_cards(&self) -> Vec<String> {
+        let mut result = self.names_in_position(Position::Revealed(ObjectPositionRevealedCards {
+            size: RevealedCardsBrowserSize::Small as i32,
+        }));
+        result.append(&mut self.names_in_position(Position::Revealed(ObjectPositionRevealedCards {
+            size: RevealedCardsBrowserSize::Large as i32,
+        })));
+        result
+    }
+
     /// Returns a player's discard pile in the same manner as [Self::hand]
     pub fn discard_pile(&self, player: PlayerName) -> Vec<String> {
         self.names_in_position(Position::DiscardPile(ObjectPositionDiscardPile {
@@ -789,30 +858,26 @@ impl ClientCards {
 
     fn update(&mut self, command: Command) {
         match command {
-            Command::CreateOrUpdateCard(create_or_update) => {
-                let card_view = create_or_update.clone().card.expect("CardView");
-                self.card_map
-                    .entry(card_view.card_id.expect("card_id"))
-                    .and_modify(|c| c.update(&card_view))
-                    .or_insert_with(|| ClientCard::new(&create_or_update));
-            }
-            Command::MoveGameObjects(move_objects) => {
-                let position = move_objects.clone().position.expect("ObjectPosition");
-                for id in move_objects.ids {
-                    if let Id::CardId(identifier) = id.id.expect("ID") {
-                        assert!(
-                            self.card_map.contains_key(&identifier),
-                            "Card not found (not created/already destroyed?) for {:?} -> {:?}",
-                            identifier,
-                            position
-                        );
-                        let mut card = self.card_map.get_mut(&identifier).unwrap();
-                        card.position = Some(position.clone());
-                    }
+            Command::UpdateGameView(update_game) => {
+                let game = update_game.game.as_ref().unwrap();
+                self.card_map.clear();
+                for card in &game.cards {
+                    self.card_map.insert(card.card_id.expect("card_id"), ClientCard::new(card));
                 }
             }
-            Command::DestroyCard(destroy_card) => {
-                self.card_map.remove(&destroy_card.card_id.expect("card_id"));
+            Command::MoveMultipleGameObjects(move_objects) => {
+                for move_object in move_objects.moves {
+                    let p = move_object.position.as_ref().expect("ObjectPosition").clone();
+                    let id = match move_object.id.clone().expect("id").id.expect("id") {
+                        Id::CardId(identifier) => identifier,
+                        _ => panic!("Expected CardId"),
+                    };
+                    self.card_map.get_mut(&id).unwrap().set_position(p);
+                }
+            }
+            Command::CreateTokenCard(create_token) => {
+                let card = create_token.card.as_ref().expect("card");
+                self.card_map.insert(card.card_id.expect("card_id"), ClientCard::new(card));
             }
             _ => {}
         }
@@ -894,44 +959,30 @@ impl ClientCard {
         self.bottom_right_icon.clone().expect("bottom_right_icon")
     }
 
-    fn new(command: &CreateOrUpdateCardCommand) -> Self {
-        let mut result = Self { position: command.create_position.clone(), ..Self::default() };
-        result.update(command.card.as_ref().expect("No CardView found"));
+    pub fn set_position(&mut self, position: ObjectPosition) {
+        self.position = Some(position);
+    }
+
+    fn new(view: &CardView) -> Self {
+        let mut result = Self::default();
+        result.update(view);
         result
     }
 
     fn update(&mut self, view: &CardView) {
         self.id = view.card_id;
+        self.position = view.card_position.clone();
         self.revealed_to_me = Some(view.revealed_to_viewer);
         self.is_face_up = Some(view.is_face_up);
         if let Some(revealed) = &view.revealed_card {
             self.update_revealed_card(revealed);
         }
 
-        if let Some(icon) = (|| view.card_icons.as_ref()?.arena_icon.as_ref()?.text.as_ref())() {
-            self.arena_icon = Some(icon.clone());
-        }
-
-        if let Some(icon) = (|| view.card_icons.as_ref()?.top_left_icon.as_ref()?.text.as_ref())() {
-            self.top_left_icon = Some(icon.clone());
-        }
-
-        if let Some(icon) = (|| view.card_icons.as_ref()?.top_right_icon.as_ref()?.text.as_ref())()
-        {
-            self.top_right_icon = Some(icon.clone());
-        }
-
-        if let Some(icon) =
-            (|| view.card_icons.as_ref()?.bottom_left_icon.as_ref()?.text.as_ref())()
-        {
-            self.bottom_left_icon = Some(icon.clone());
-        }
-
-        if let Some(icon) =
-            (|| view.card_icons.as_ref()?.bottom_right_icon.as_ref()?.text.as_ref())()
-        {
-            self.bottom_right_icon = Some(icon.clone());
-        }
+        self.arena_icon = card_icon(view, |v| v.card_icons?.arena_icon?.text);
+        self.top_left_icon = card_icon(view, |v| v.card_icons?.top_left_icon?.text);
+        self.top_right_icon = card_icon(view, |v| v.card_icons?.top_right_icon?.text);
+        self.bottom_left_icon = card_icon(view, |v| v.card_icons?.bottom_left_icon?.text);
+        self.bottom_right_icon = card_icon(view, |v| v.card_icons?.bottom_right_icon?.text);
     }
 
     fn update_revealed_card(&mut self, revealed: &RevealedCardView) {
@@ -960,14 +1011,12 @@ impl ClientCard {
     }
 }
 
+fn card_icon(view: &CardView, function: impl Fn(CardView) -> Option<String>) -> Option<String> {
+    function(view.clone())
+}
+
 impl PartialOrd for ClientCard {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.position.as_ref()?.sorting_key.partial_cmp(&other.position.as_ref()?.sorting_key)
-    }
-}
-
-fn write_if_present<T, U>(value: &mut Option<T>, option: &Option<U>, map: impl Fn(&U) -> T) {
-    if let Some(v) = option {
-        *value = Some(map(v));
     }
 }

@@ -27,7 +27,7 @@ use data::delegates::{
 };
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
-use data::primitives::{AbilityId, CardId, CardType, ItemLocation, RoomId, RoomLocation, Side};
+use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::updates::GameUpdate;
 use data::updates2::GameUpdate2;
 use data::with_error::WithError;

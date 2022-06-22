@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use anyhow::Result;
+
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::game_actions::CardTarget;
@@ -169,9 +170,10 @@ fn adapt_position(
 
 /// Calculates the position of a card after it has been played.
 ///
-/// For cards that are played by the opponent, we animate them to the staging area. We also animate
-/// spell cards to staging while resolving their effects. For other card types, we move them
-/// directly to their destination to make playing a card feel more responsive.
+/// For cards that are played by the opponent, we animate them to the staging
+/// area. We also animate spell cards to staging while resolving their effects.
+/// For other card types, we move them directly to their destination to make
+/// playing a card feel more responsive.
 fn card_release_position(
     builder: &ResponseBuilder,
     game: &GameState,
@@ -274,7 +276,7 @@ fn opening_hand_position_override(
     if data.decision(builder.user_side).is_none()
         && game.hand(builder.user_side).any(|c| c.id == card.id)
     {
-        Some(for_card(card, browser()))
+        Some(for_card(card, revealed_cards(true)))
     } else {
         None
     }

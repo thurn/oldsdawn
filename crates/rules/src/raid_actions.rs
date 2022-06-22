@@ -14,7 +14,7 @@
 
 //! Handling for raid-related user actions.
 
-use anyhow::{bail, ensure, Error, Result};
+use anyhow::{bail, ensure, Result};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     ChampionScoreCardEvent, MinionCombatAbilityEvent, MinionDefeatedEvent, RaidOutcome, RaidStart,
@@ -26,7 +26,7 @@ use data::primitives::{CardId, GameObjectId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, TargetedInteraction};
 use data::with_error::WithError;
 use data::{fail, utils, verify};
-use fallible_iterator::{Convert, FallibleIterator, IntoFallibleIterator};
+use fallible_iterator::{FallibleIterator};
 use tracing::{info, instrument};
 
 use crate::card_prompt::HandleCardPrompt;
