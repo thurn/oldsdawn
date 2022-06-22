@@ -605,9 +605,17 @@ message ObjectPositionIntoCard {
     CardIdentifier card_id = 1;
 }
 
+enum RevealedCardsBrowserSize {
+    REVEALED_CARDS_BROWSER_SIZE_UNSPECIFIED = 0;
+    REVEALED_CARDS_BROWSER_SIZE_SMALL = 1;
+    REVEALED_CARDS_BROWSER_SIZE_LARGE = 2;
+}
+
 /// An object position for newly-revealed cards, appears above other content
 /// like the staging area.
-message ObjectPositionRevealedCards {}
+message ObjectPositionRevealedCards {
+    RevealedCardsBrowserSize size = 1;
+}
 
 message ObjectPosition {
     // A key by which to sort this object -- objects with higher sorting keys

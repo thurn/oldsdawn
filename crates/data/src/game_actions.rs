@@ -133,7 +133,9 @@ pub enum DebugAction {
 /// Possible targets for the 'play card' action. Note that many types of targets
 /// are *not* selected in the original PlayCard action request but are instead
 /// selected via a follow-up prompt, and thus are not represented here.
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, EnumKind)]
+#[derive(
+    PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, EnumKind, Ord, PartialOrd,
+)]
 #[enum_kind(CardTargetKind)]
 pub enum CardTarget {
     None,

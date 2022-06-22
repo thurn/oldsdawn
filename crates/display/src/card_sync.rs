@@ -158,7 +158,7 @@ fn revealed_ability_card_view(
         targeting: Some(card_targeting(target_requirement, false, |target| {
             flags::can_take_activate_ability_action(game, ability_id.side(), ability_id, target)
         })),
-        on_release_position: Some(positions::for_ability(game, ability_id, positions::staging())),
+        on_release_position: None,
         supplemental_info: Some(rules_text::build_supplemental_info(
             game,
             card,

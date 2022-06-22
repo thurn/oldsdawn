@@ -231,7 +231,7 @@ pub fn score_card_action(game: &mut GameState, user_side: Side, card_id: CardId)
         .with_error(|| format!("Expected SchemePoints for {:?}", card_id))?;
 
     game.card_mut(card_id).turn_face_up();
-    mutations::move_card(game, card_id, CardPosition::Stack)?;
+    mutations::move_card(game, card_id, CardPosition::Scoring)?;
     game.raid_mut()?.accessed.retain(|c| *c != card_id);
     raid_phases::set_raid_prompt(game)?;
     game.record_update(|| GameUpdate::ScoreCard(Side::Champion, card_id));

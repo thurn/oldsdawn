@@ -52,18 +52,24 @@ pub fn render(
             }
         }
         GameUpdate::AbilityTriggered(ability_id) => show_ability(builder, snapshot, *ability_id),
-        GameUpdate::DrawCards(side, cards) => if builder.user_side == *side {
-            show_cards(builder, cards)
-        },
+        GameUpdate::DrawCards(side, cards) => {
+            if builder.user_side == *side {
+                show_cards(builder, cards)
+            }
+        }
         GameUpdate::ShuffleIntoDeck => {
             // No animation, just acts as a snapshot point.
         }
-        GameUpdate::UnveilProject(card_id) => if builder.user_side == Side::Champion {
-            show_cards(builder, &vec![*card_id])
-        },
-        GameUpdate::SummonMinion(card_id) => if builder.user_side == Side::Champion {
-            show_cards(builder, &vec![*card_id])
-        },
+        GameUpdate::UnveilProject(card_id) => {
+            if builder.user_side == Side::Champion {
+                show_cards(builder, &vec![*card_id])
+            }
+        }
+        GameUpdate::SummonMinion(card_id) => {
+            if builder.user_side == Side::Champion {
+                show_cards(builder, &vec![*card_id])
+            }
+        }
         GameUpdate::LevelUpRoom(room_id) => level_up_room(builder, *room_id),
         GameUpdate::InitiateRaid(room_id) => initiate_raid(builder, *room_id),
         GameUpdate::TargetedInteraction(interaction) => {
@@ -96,7 +102,7 @@ fn show_cards(builder: &mut ResponseBuilder, cards: &Vec<CardId>) {
                 id: Some(adapters::game_object_identifier(builder, *card_id)),
                 position: Some(positions::for_sorting_key(
                     i as u32,
-                    if is_large { positions::browser() } else { positions::revealed_cards() },
+                    positions::revealed_cards(is_large),
                 )),
             })
             .collect(),

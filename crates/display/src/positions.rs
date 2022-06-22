@@ -15,7 +15,8 @@
 use anyhow::Result;
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
-use data::primitives::{AbilityId, GameObjectId, ItemLocation, RoomId, RoomLocation, Side};
+use data::game_actions::CardTarget;
+use data::primitives::{AbilityId, CardId, GameObjectId, ItemLocation, RoomId, RoomLocation, Side};
 use data::{fail, utils};
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
@@ -24,8 +25,9 @@ use protos::spelldawn::{
     ObjectPositionDiscardPile, ObjectPositionDiscardPileContainer, ObjectPositionHand,
     ObjectPositionIdentity, ObjectPositionIdentityContainer, ObjectPositionIntoCard,
     ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards, ObjectPositionRoom,
-    ObjectPositionStaging,
+    ObjectPositionStaging, RevealedCardsBrowserSize,
 };
+use rules::queries;
 
 use crate::adapters;
 use crate::response_builder::ResponseBuilder;
@@ -111,8 +113,11 @@ pub fn browser() -> Position {
     Position::Browser(ObjectPositionBrowser {})
 }
 
-pub fn revealed_cards() -> Position {
-    Position::Revealed(ObjectPositionRevealedCards {})
+pub fn revealed_cards(large: bool) -> Position {
+    Position::Revealed(ObjectPositionRevealedCards {
+        size: if large { RevealedCardsBrowserSize::Large } else { RevealedCardsBrowserSize::Small }
+            as i32,
+    })
 }
 
 pub fn raid() -> Position {
@@ -135,21 +140,55 @@ pub fn convert(
     } else {
         ObjectPosition {
             sorting_key: card.sorting_key,
-            position: Some(match card.position() {
-                CardPosition::Room(room_id, location) => room(room_id, location),
-                CardPosition::ArenaItem(location) => item(location),
-                CardPosition::Hand(side) => hand(builder, side),
-                CardPosition::DeckTop(side) => deck(builder, side),
-                CardPosition::DiscardPile(side) => discard(builder, side),
-                CardPosition::Scored(side) | CardPosition::Identity(side) => {
-                    identity(builder, side)
-                }
-                CardPosition::Stack => staging(),
-                CardPosition::DeckUnknown(_) => fail!("Invalid card position"),
-            }),
+            position: Some(adapt_position(builder, game, card.id, card.position())?),
             ..ObjectPosition::default()
         }
     })
+}
+
+fn adapt_position(
+    builder: &ResponseBuilder,
+    game: &GameState,
+    card_id: CardId,
+    position: CardPosition,
+) -> Result<Position> {
+    Ok(match position {
+        CardPosition::Room(room_id, location) => room(room_id, location),
+        CardPosition::ArenaItem(location) => item(location),
+        CardPosition::Hand(side) => hand(builder, side),
+        CardPosition::DeckTop(side) => deck(builder, side),
+        CardPosition::DiscardPile(side) => discard(builder, side),
+        CardPosition::Scored(side) | CardPosition::Identity(side) => identity(builder, side),
+        CardPosition::Scoring => staging(),
+        CardPosition::Played(side, target) => {
+            card_release_position(builder, game, side, card_id, target)?
+        }
+        CardPosition::DeckUnknown(_) => fail!("Invalid card position"),
+    })
+}
+
+/// Calculates the position of a card after it has been played.
+///
+/// For cards that are played by the opponent, we animate them to the staging area. We also animate
+/// spell cards to staging while resolving their effects. For other card types, we move them
+/// directly to their destination to make playing a card feel more responsive.
+fn card_release_position(
+    builder: &ResponseBuilder,
+    game: &GameState,
+    side: Side,
+    card_id: CardId,
+    target: CardTarget,
+) -> Result<Position> {
+    if builder.user_side != side || rules::card_definition(game, card_id).card_type.is_spell() {
+        Ok(staging())
+    } else {
+        adapt_position(
+            builder,
+            game,
+            card_id,
+            queries::played_position(game, side, card_id, target)?,
+        )
+    }
 }
 
 pub fn ability_card_position(
@@ -160,7 +199,7 @@ pub fn ability_card_position(
     for_ability(
         game,
         ability_id,
-        if utils::is_true(|| Some(game.ability_state.get(&ability_id)?.on_stack)) {
+        if utils::is_true(|| Some(game.ability_state.get(&ability_id)?.currently_resolving)) {
             staging()
         } else {
             hand(builder, ability_id.side())

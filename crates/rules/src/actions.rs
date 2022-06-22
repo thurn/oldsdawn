@@ -139,7 +139,7 @@ fn play_card_action(
 
     let card = game.card(card_id);
     let definition = crate::get(card.name);
-    mutations::move_card(game, card_id, CardPosition::Stack)?;
+    mutations::move_card(game, card_id, CardPosition::Played(user_side, target))?;
 
     mutations::spend_action_points(game, user_side, definition.cost.actions)?;
 
@@ -154,19 +154,11 @@ fn play_card_action(
     }
 
     dispatch::invoke_event(game, CastCardEvent(CardPlayed { card_id, target }))?;
-
-    let new_position = match definition.card_type {
-        CardType::ChampionSpell | CardType::OverlordSpell => CardPosition::DiscardPile(user_side),
-        CardType::Weapon => CardPosition::ArenaItem(ItemLocation::Weapons),
-        CardType::Artifact => CardPosition::ArenaItem(ItemLocation::Artifacts),
-        CardType::Minion => CardPosition::Room(target.room_id()?, RoomLocation::Defender),
-        CardType::Project | CardType::Scheme => {
-            CardPosition::Room(target.room_id()?, RoomLocation::Occupant)
-        }
-        CardType::Identity => CardPosition::Identity(user_side),
-    };
-
-    mutations::move_card(game, card_id, new_position)?;
+    mutations::move_card(
+        game,
+        card_id,
+        queries::played_position(game, user_side, card_id, target)?,
+    )?;
 
     mutations::check_end_turn(game)?;
     Ok(())
@@ -187,7 +179,7 @@ fn activate_ability_action(
         ability_id
     );
 
-    game.ability_state.entry(ability_id).or_default().on_stack = true;
+    game.ability_state.entry(ability_id).or_default().currently_resolving = true;
     let card = game.card(ability_id.card_id);
     let cost = match &crate::get(card.name).ability(ability_id.index).ability_type {
         AbilityType::Activated(cost, _) => cost,
@@ -205,7 +197,7 @@ fn activate_ability_action(
     game.record_update(|| GameUpdate::AbilityActivated(user_side, ability_id));
     dispatch::invoke_event(game, ActivateAbilityEvent(AbilityActivated { ability_id, target }))?;
 
-    game.ability_state.entry(ability_id).or_default().on_stack = false;
+    game.ability_state.entry(ability_id).or_default().currently_resolving = false;
     mutations::check_end_turn(game)?;
     Ok(())
 }

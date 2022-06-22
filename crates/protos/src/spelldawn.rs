@@ -520,7 +520,10 @@ pub struct ObjectPositionIntoCard {
 //// An object position for newly-revealed cards, appears above other content
 //// like the staging area.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ObjectPositionRevealedCards {}
+pub struct ObjectPositionRevealedCards {
+    #[prost(enumeration = "RevealedCardsBrowserSize", tag = "1")]
+    pub size: i32,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ObjectPosition {
     /// A key by which to sort this object -- objects with higher sorting keys
@@ -1577,6 +1580,13 @@ pub enum ClientItemLocation {
     Unspecified = 0,
     Left = 1,
     Right = 2,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum RevealedCardsBrowserSize {
+    Unspecified = 0,
+    Small = 1,
+    Large = 2,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

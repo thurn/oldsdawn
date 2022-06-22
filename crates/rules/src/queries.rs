@@ -24,10 +24,10 @@ use data::delegates::{
     VaultAccessCountQuery,
 };
 use data::game::{GamePhase, GameState, RaidPhase};
-use data::game_actions::{CardTargetKind, EncounterAction, PromptAction};
+use data::game_actions::{CardTarget, CardTargetKind, EncounterAction, PromptAction};
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BreachValue, CardId, CardType, HealthValue,
-    ManaValue, RoomId, RoomLocation, ShieldValue, Side,
+    ItemLocation, ManaValue, RoomId, RoomLocation, ShieldValue, Side,
 };
 
 use crate::{constants, dispatch};
@@ -258,4 +258,24 @@ pub fn minion_combat_actions(game: &GameState, minion_id: CardId) -> Vec<PromptA
     } else {
         result
     }
+}
+
+/// Returns the position to which a card should be moved after being played by
+/// the [Side] player with a given [CardTarget].
+pub fn played_position(
+    game: &GameState,
+    side: Side,
+    card_id: CardId,
+    target: CardTarget,
+) -> Result<CardPosition> {
+    Ok(match crate::card_definition(game, card_id).card_type {
+        CardType::ChampionSpell | CardType::OverlordSpell => CardPosition::DiscardPile(side),
+        CardType::Weapon => CardPosition::ArenaItem(ItemLocation::Weapons),
+        CardType::Artifact => CardPosition::ArenaItem(ItemLocation::Artifacts),
+        CardType::Minion => CardPosition::Room(target.room_id()?, RoomLocation::Defender),
+        CardType::Project | CardType::Scheme => {
+            CardPosition::Room(target.room_id()?, RoomLocation::Occupant)
+        }
+        CardType::Identity => CardPosition::Identity(side),
+    })
 }

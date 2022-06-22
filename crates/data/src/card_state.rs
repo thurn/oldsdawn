@@ -25,6 +25,7 @@ use serde_with::serde_as;
 
 use crate::card_name::CardName;
 use crate::game::TurnData;
+use crate::game_actions::CardTarget;
 use crate::primitives::{
     BoostCount, CardId, ItemLocation, LevelValue, ManaValue, RaidId, RoomId, RoomLocation, Side,
 };
@@ -34,7 +35,8 @@ use crate::primitives::{
 #[serde_as]
 pub struct AbilityState {
     /// True if this ability is currently being resolved
-    pub on_stack: bool,
+    #[serde(alias = "on_stack")]
+    pub currently_resolving: bool,
     pub raid_id: Option<RaidId>,
     pub turn: Option<TurnData>,
     #[serde_as(as = "Vec<(_, _)>")]
@@ -56,9 +58,14 @@ pub enum CardPosition {
     Room(RoomId, RoomLocation),
     ArenaItem(ItemLocation),
     DiscardPile(Side),
+    /// A card has been scored and is currently resolving its scoring effects
+    /// before moving to a score pile.
+    Scoring,
+    /// Card is in the [Side] player's score pile
     Scored(Side),
-    /// A card is in the process of resolving
-    Stack,
+    /// A card has been played by the [Side] player and is in the process of
+    /// resolving with the provided target
+    Played(Side, CardTarget),
     /// Marks the identity card for a side. The first identity (by sorting key)
     /// is the primary identity for a player.
     Identity(Side),

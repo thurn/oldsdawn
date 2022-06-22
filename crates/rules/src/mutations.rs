@@ -425,7 +425,7 @@ pub fn add_level_counters(game: &mut GameState, card_id: CardId, amount: u32) ->
     if let Some(scheme_points) = crate::get(card.name).config.stats.scheme_points {
         if card.data.card_level >= scheme_points.level_requirement {
             game.card_mut(card_id).turn_face_up();
-            move_card(game, card_id, CardPosition::Stack)?;
+            move_card(game, card_id, CardPosition::Scoring)?;
             game.record_update(|| GameUpdate::ScoreCard(Side::Overlord, card_id));
             dispatch::invoke_event(game, OverlordScoreCardEvent(card_id))?;
             dispatch::invoke_event(

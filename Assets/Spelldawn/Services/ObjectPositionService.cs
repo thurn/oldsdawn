@@ -243,8 +243,12 @@ namespace Spelldawn.Services
           _registry.IdentityCardPositionForPlayer(position.IdentityContainer.Owner),
         ObjectPosition.PositionOneofCase.IntoCard =>
           _registry.CardService.FindCard(position.IntoCard.CardId).ContainedObjects,
-        ObjectPosition.PositionOneofCase.Revealed =>
-          _registry.RevealedCardsBrowser,
+        ObjectPosition.PositionOneofCase.Revealed => position.Revealed.Size switch
+        {
+          RevealedCardsBrowserSize.Small => _registry.RevealedCardsBrowserSmall,
+          RevealedCardsBrowserSize.Large => _registry.RevealedCardsBrowserLarge,
+          _ => throw new ArgumentOutOfRangeException()
+        },
         _ => throw new ArgumentOutOfRangeException()
       };
     }
