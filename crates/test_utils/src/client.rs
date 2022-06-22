@@ -26,7 +26,7 @@ use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
 };
 use data::with_error::WithError;
-use display2::adapters;
+use display::adapters;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -131,7 +131,7 @@ impl TestSession {
     /// Returns the [GameResponse] for this action or an error if the server
     /// request failed.
     pub fn perform_action(&mut self, action: Action, player_id: PlayerId) -> Result<GameResponse> {
-        let game_id = adapters::adapt_game_id(self.game_id());
+        let game_id = adapters::game_identifier(self.game_id());
         self.perform_action_with_game_id(action, player_id, Some(game_id))
     }
 
@@ -148,7 +148,7 @@ impl TestSession {
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),
                 game_id,
-                player_id: Some(adapters::adapt_player_id(player_id)),
+                player_id: Some(adapters::player_identifier(player_id)),
             },
         )?;
 
@@ -178,7 +178,7 @@ impl TestSession {
     pub fn initiate_raid(&mut self, room_id: RoomId) -> GameResponse {
         self.perform_action(
             Action::InitiateRaid(InitiateRaidAction {
-                room_id: adapters::adapt_room_id(room_id).into(),
+                room_id: adapters::room_identifier(room_id),
             }),
             self.player_id_for_side(Side::Champion),
         )
@@ -216,7 +216,7 @@ impl TestSession {
         self.connect(self.opponent.id, Some(self.database.game().id))
             .expect("Opponent connection error");
 
-        adapters::adapt_card_id(card_id)
+        adapters::card_identifier(card_id)
     }
 
     /// Creates and then plays a named card as the user who owns this card.
@@ -255,7 +255,7 @@ impl TestSession {
         let card_id = self.add_to_hand(card_name);
         let target = room_id.map(|room_id| CardTarget {
             card_target: Some(card_target::CardTarget::RoomId(
-                adapters::adapt_room_id(room_id).into(),
+                adapters::room_identifier(room_id),
             )),
         });
 
@@ -358,7 +358,7 @@ impl TestSession {
                 card_id: Some(CardIdentifier { ability_id: Some(index), ..card_id }),
                 target: target.map(|room_id| CardTarget {
                     card_target: Some(card_target::CardTarget::RoomId(
-                        adapters::adapt_room_id(room_id).into(),
+                        adapters::room_identifier(room_id),
                     )),
                 }),
             }),
@@ -749,7 +749,7 @@ impl ClientCards {
     /// Returns left items in play
     pub fn right_items(&self) -> Vec<String> {
         self.names_in_position(Position::Item(ObjectPositionItem {
-            item_location: ClientItemLocation::Right.into(),
+            item_location: ClientItemLocation::Right as i32,
         }))
     }
 
@@ -758,7 +758,7 @@ impl ClientCards {
     /// in [Self::hand].
     pub fn room_cards(&self, room_id: RoomId, location: ClientRoomLocation) -> Vec<String> {
         self.names_in_position(Position::Room(ObjectPositionRoom {
-            room_id: adapters::adapt_room_id(room_id).into(),
+            room_id: adapters::room_identifier(room_id),
             room_location: location.into(),
         }))
     }

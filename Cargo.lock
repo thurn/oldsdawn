@@ -1657,7 +1657,7 @@ dependencies = [
  "anyhow",
  "cards",
  "data",
- "display2",
+ "display",
  "linkme",
  "maplit",
  "panels",

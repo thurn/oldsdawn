@@ -15,8 +15,8 @@
 use std::fmt::Debug;
 
 use anyhow::Result;
-use display2::adapters;
-use display2::adapters::ServerCardId;
+use display::adapters;
+use display::adapters::ServerCardId;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
@@ -177,7 +177,7 @@ impl Summarize for RoomIdentifier {
 
 impl Summarize for CardIdentifier {
     fn summarize(self, summary: &mut Summary) {
-        match adapters::to_server_card_id(Some(self)).expect("server_card_id") {
+        match adapters::server_card_id(self).expect("server_card_id") {
             ServerCardId::CardId(card_id) => summary.primitive(card_id),
             ServerCardId::AbilityId(ability_id) => summary.primitive(ability_id),
         }
