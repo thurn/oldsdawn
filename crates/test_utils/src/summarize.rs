@@ -22,22 +22,7 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::play_effect_position::EffectPosition;
-use protos::spelldawn::{
-    game_object_identifier, node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom,
-    AudioClipAddress, CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons,
-    CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
-    CreateOrUpdateCardCommand, CreateTokenCardCommand, DelayCommand, DestroyCardCommand,
-    DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand,
-    GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameView,
-    InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView,
-    MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MoveMultipleGameObjectsCommand,
-    MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand,
-    PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide,
-    PlayerView, ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier,
-    RoomVisitType, RulesText, RunInParallelCommand, SceneLoadMode, ScoreView,
-    SetGameObjectsEnabledCommand, SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress,
-    TimeValue, TogglePanelCommand, UpdateGameViewCommand, VisitRoomCommand,
-};
+use protos::spelldawn::{game_object_identifier, node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom, AudioClipAddress, CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand, CreateOrUpdateCardCommand, CreateTokenCardCommand, DelayCommand, DestroyCardCommand, DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand, GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MoveMultipleGameObjectsCommand, MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand, PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide, PlayerView, ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomVisitType, RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand, UpdateGameViewCommand, VisitRoomCommand, GameObjectPositions};
 use server::requests::GameResponse;
 
 pub trait Summarize {
@@ -378,6 +363,9 @@ impl Summarize for GameView {
         summary.child("user", self.user);
         summary.child("opponent", self.opponent);
         summary.child_node("raid_active", self.raid_active);
+        summary.child("controls", self.main_controls);
+        summary.child("game_object_positions", self.game_object_positions);
+        summary.children("cards", self.cards);
     }
 }
 
@@ -426,6 +414,17 @@ impl Summarize for ActionTrackerView {
 impl Summarize for ScoreView {
     fn summarize(self, summary: &mut Summary) {
         summary.primitive(self.score);
+    }
+}
+
+impl Summarize for GameObjectPositions {
+    fn summarize(self, summary: &mut Summary) {
+        summary.child("user_deck", self.user_deck);
+        summary.child("opponent_deck", self.opponent_deck);
+        summary.child("user_identity", self.user_identity);
+        summary.child("opponent_identity", self.opponent_identity);
+        summary.child("user_discard", self.user_discard);
+        summary.child("opponent_discard", self.opponent_discard);
     }
 }
 
