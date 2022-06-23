@@ -22,7 +22,6 @@ use data::game::{GameConfiguration, GameState};
 use data::game_actions::UserAction;
 use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::{UpdateTracker, Updates};
-use data::updates2::UpdateTracker2;
 use data::with_error::WithError;
 use data::{fail, game_actions, verify};
 use display::adapters::ServerCardId;
@@ -420,7 +419,7 @@ fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameSt
     } else {
         Updates::Push
     });
-    game.updates2 = UpdateTracker2::new(!game.data.config.simulation);
+
     Ok(game)
 }
 

@@ -37,7 +37,6 @@ use data::primitives::{
     RoomLocation, Side, TurnNumber,
 };
 use data::updates::GameUpdate;
-use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use data::{random, verify};
 use tracing::{info, instrument};
@@ -63,26 +62,6 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
 
     if old_position.in_deck() && new_position.in_hand() {
         dispatch::invoke_event(game, DrawCardEvent(card_id))?;
-        game.updates2.push(GameUpdate2::DrawCard(card_id));
-    }
-
-    if new_position.kind() == CardPositionKind::DeckUnknown {
-        game.updates2.push(GameUpdate2::ShuffleIntoDeck(card_id));
-    }
-
-    if new_position.kind() == CardPositionKind::Room {
-        // HACK: Use an earlier `MoveToZone` update for rooms during raids, because it
-        // overwrites the raid position of the card.
-        // TODO: Make position sync less insane
-        if game.data.raid.is_some() {
-            game.updates2.push(GameUpdate2::MoveToZoneDuringRaid(card_id));
-        } else {
-            game.updates2.push(GameUpdate2::MoveToZone(card_id));
-        }
-    }
-
-    if new_position.in_discard_pile() || new_position.kind() == CardPositionKind::ArenaItem {
-        game.updates2.push(GameUpdate2::MoveToZone(card_id));
     }
 
     if !old_position.in_play() && new_position.in_play() {
@@ -376,7 +355,6 @@ pub fn check_end_turn(game: &mut GameState) -> Result<()> {
             for card_id in hand.iter().take(count) {
                 move_card(game, *card_id, CardPosition::DiscardPile(side))?;
             }
-            game.updates2.push(GameUpdate2::DiscardToHandSize(side, count as u32));
         }
 
         let turn_number = match side {

@@ -29,7 +29,6 @@ use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::updates::GameUpdate;
-use data::updates2::GameUpdate2;
 use data::with_error::WithError;
 use data::{fail, verify};
 use tracing::{info, instrument};
@@ -84,13 +83,10 @@ fn handle_mulligan_decision(
 
     let hand = game.hand(user_side).map(|c| c.id).collect::<Vec<_>>();
     match decision {
-        MulliganDecision::Keep => {
-            game.updates2.push(GameUpdate2::KeepHand(user_side, hand));
-        }
+        MulliganDecision::Keep => {}
         MulliganDecision::Mulligan => {
             mutations::shuffle_into_deck(game, user_side, &hand)?;
-            let new_hand = mutations::draw_cards(game, user_side, 5)?;
-            game.updates2.push(GameUpdate2::MulliganHand(user_side, hand, new_hand));
+            mutations::draw_cards(game, user_side, 5)?;
         }
     }
 
