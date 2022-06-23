@@ -48,7 +48,7 @@ use crate::{constants, dispatch, flags, mana, queries};
 /// Move a card to a new position. Detects cases like drawing cards, playing
 /// cards, and shuffling cards back into the deck and fires events
 /// appropriately. The card will be placed in the position in global sorting-key
-/// order, via [GameState::move_card].
+/// order, via [GameState::move_card_internal].
 ///
 /// This function does *not* handle changing the 'revealed' or 'face down' state
 /// of the card, the caller is responsible for updating that when the card moves

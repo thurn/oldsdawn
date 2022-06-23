@@ -34,12 +34,11 @@ use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, node_type, ArrowTargetRoom, CardAnchorNode, CardIdentifier, CardTarget, CardView,
-    ClientItemLocation, ClientRoomLocation, CommandList, EventHandlers,
-    GameAction, GameIdentifier, GameMessageType, GameObjectIdentifier, GameRequest,
-    InitiateRaidAction, NoTargeting, Node, NodeType, ObjectPosition, ObjectPositionBrowser,
-    ObjectPositionDiscardPile, ObjectPositionHand, ObjectPositionItem, ObjectPositionRevealedCards,
-    ObjectPositionRoom, PlayCardAction, PlayInRoom, PlayerName, PlayerView,
-    RevealedCardView, RevealedCardsBrowserSize, RoomIdentifier,
+    ClientItemLocation, ClientRoomLocation, CommandList, EventHandlers, GameAction, GameIdentifier,
+    GameMessageType, GameObjectIdentifier, GameRequest, InitiateRaidAction, NoTargeting, Node,
+    NodeType, ObjectPosition, ObjectPositionBrowser, ObjectPositionDiscardPile, ObjectPositionHand,
+    ObjectPositionItem, ObjectPositionRevealedCards, ObjectPositionRoom, PlayCardAction,
+    PlayInRoom, PlayerName, PlayerView, RevealedCardView, RevealedCardsBrowserSize, RoomIdentifier,
 };
 use rules::dispatch;
 use server::requests;
@@ -515,7 +514,7 @@ impl ClientGameData {
             Command::MoveMultipleGameObjects(move_objects) => {
                 for move_object in move_objects.moves {
                     let p = move_object.position.as_ref().expect("ObjectPosition").clone();
-                    self.object_positions.insert(move_object.id.clone().expect("id"), p);
+                    self.object_positions.insert(move_object.id.expect("id"), p);
                 }
             }
             Command::DisplayGameMessage(display_message) => {
@@ -795,9 +794,9 @@ impl ClientCards {
         let mut result = self.names_in_position(Position::Revealed(ObjectPositionRevealedCards {
             size: RevealedCardsBrowserSize::Small as i32,
         }));
-        result.append(&mut self.names_in_position(Position::Revealed(ObjectPositionRevealedCards {
-            size: RevealedCardsBrowserSize::Large as i32,
-        })));
+        result.append(&mut self.names_in_position(Position::Revealed(
+            ObjectPositionRevealedCards { size: RevealedCardsBrowserSize::Large as i32 },
+        )));
         result
     }
 
@@ -868,7 +867,7 @@ impl ClientCards {
             Command::MoveMultipleGameObjects(move_objects) => {
                 for move_object in move_objects.moves {
                     let p = move_object.position.as_ref().expect("ObjectPosition").clone();
-                    let id = match move_object.id.clone().expect("id").id.expect("id") {
+                    let id = match move_object.id.expect("id").id.expect("id") {
                         Id::CardId(identifier) => identifier,
                         _ => panic!("Expected CardId"),
                     };

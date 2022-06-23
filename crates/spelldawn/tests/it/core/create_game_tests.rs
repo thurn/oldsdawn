@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use insta::assert_snapshot;
-use test_utils::summarize::Summary;
 use cards::initialize;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::primitives::{GameId, PlayerId};
 use display::adapters;
-
+use insta::assert_snapshot;
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::{CreateGameDebugOptions, CreateNewGameAction, PlayerName, PlayerSide};
-
 use test_utils::client::{HasText, TestSession};
 use test_utils::fake_database::FakeDatabase;
-
+use test_utils::summarize::Summary;
 use test_utils::*;
 
 #[test]

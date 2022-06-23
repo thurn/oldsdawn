@@ -292,8 +292,7 @@ fn create_new_game(
     let debug_options = action.debug_options.clone().unwrap_or_default();
     let game_id = debug_options
         .override_game_identifier
-        .map(adapters::game_id)
-        .unwrap_or(database.generate_game_id()?);
+        .map_or(database.generate_game_id()?, adapters::game_id);
     info!(?game_id, "create_new_game");
     let opponent_id =
         action.opponent_id.map(adapters::player_id).with_error(|| "Expected opponent ID")?;

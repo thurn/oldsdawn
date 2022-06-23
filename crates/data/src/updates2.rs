@@ -97,11 +97,6 @@ impl GameUpdate2 {
     }
 }
 
-/// Tracks game mutations for a given network request. If a vector is present
-/// here, then code which mutates the GameState is also responsible for
-/// appending a [GameUpdate] which describes the mutation. If no vector is
-/// present it means update tracking is currently disabled (e.g. because we are
-/// running in simulation mode).
 #[derive(Debug, Clone, Default)]
 pub struct UpdateTracker2 {
     update_list: Option<Vec<GameUpdate2>>,
@@ -116,7 +111,6 @@ impl UpdateTracker2 {
         self.update_list.as_ref()
     }
 
-    /// Appends a [GameUpdate] to the update list.
     pub fn push(&mut self, update: GameUpdate2) {
         if let Some(vec) = &mut self.update_list {
             vec.push(update)

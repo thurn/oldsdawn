@@ -22,7 +22,22 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::play_effect_position::EffectPosition;
-use protos::spelldawn::{game_object_identifier, node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom, AudioClipAddress, CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons, CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand, CreateOrUpdateCardCommand, CreateTokenCardCommand, DelayCommand, DestroyCardCommand, DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand, GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView, MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MoveMultipleGameObjectsCommand, MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand, PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide, PlayerView, ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier, RoomVisitType, RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand, UpdateGameViewCommand, VisitRoomCommand, GameObjectPositions};
+use protos::spelldawn::{
+    game_object_identifier, node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom,
+    AudioClipAddress, CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons,
+    CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
+    CreateOrUpdateCardCommand, CreateTokenCardCommand, DelayCommand, DestroyCardCommand,
+    DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand,
+    GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameObjectPositions,
+    GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView,
+    MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MoveMultipleGameObjectsCommand,
+    MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand,
+    PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide,
+    PlayerView, ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier,
+    RoomVisitType, RulesText, RunInParallelCommand, SceneLoadMode, ScoreView,
+    SetGameObjectsEnabledCommand, SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress,
+    TimeValue, TogglePanelCommand, UpdateGameViewCommand, VisitRoomCommand,
+};
 use server::requests::GameResponse;
 
 pub trait Summarize {

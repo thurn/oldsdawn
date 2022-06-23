@@ -77,7 +77,7 @@ pub enum Updates {
 /// Some game state changes in Spelldawn require custom animations in the UI in
 /// order to communicate their effects clearly. In order to implement the
 /// animation system, code which mutates game state can also call
-/// [GameState::push_update] and provide a [GameUpdate] to record the action
+/// [GameState::record_update] and provide a [GameUpdate] to record the action
 /// they took. The way this process works is that a snapshot of the game state
 /// is stored (to capture any mutations that occurred *before* the animation),
 /// and then the update is stored. During the animation process, the

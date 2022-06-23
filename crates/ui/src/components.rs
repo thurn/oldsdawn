@@ -139,10 +139,10 @@ pub enum ButtonVariant {
 impl ButtonVariant {
     fn background_image(self) -> Option<SpriteAddress> {
         match self {
-            ButtonVariant::Primary => sprite(
+            Self::Primary => sprite(
                 "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange",
             ),
-            ButtonVariant::Secondary => sprite(
+            Self::Secondary => sprite(
                 "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray",
             ),
         }

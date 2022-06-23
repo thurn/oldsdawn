@@ -230,15 +230,10 @@ pub struct GameState {
     pub id: GameId,
     /// General game state & configuration
     pub data: GameData,
+    /// Used to track changes to game state in order to update the client. See
+    /// [UpdateTracker] for more information.
     #[serde(skip)]
     pub updates: UpdateTracker,
-    /// Used to track changes to game state in order to update the client. Code
-    /// which mutates the game state is responsible for appending a
-    /// description of the change to `updates` via [UpdateTracker::push].
-    ///
-    /// A new `updates` buffer should be set for each network request to track
-    /// changes in response to that request. Consequently, its value is not
-    /// serialized.
     #[serde(skip)]
     pub updates2: UpdateTracker2,
     /// Cards for the overlord player. In general, code should use one of the
@@ -255,7 +250,7 @@ pub struct GameState {
     #[serde_as(as = "Vec<(_, _)>")]
     pub ability_state: HashMap<AbilityId, AbilityState>,
     /// Next sorting key to use for card moves. Automatically updated by
-    /// [Self::next_sorting_key] and [Self::move_card].
+    /// [Self::next_sorting_key] and [Self::move_card_internal].
     next_sorting_key: u32,
     /// Optionally, a random number generator for this game to use. This
     /// generator is serializable, so the state will be deterministic even

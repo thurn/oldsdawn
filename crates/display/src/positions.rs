@@ -13,7 +13,6 @@
 // limitations under the License.
 
 use anyhow::Result;
-
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
 use data::game_actions::CardTarget;

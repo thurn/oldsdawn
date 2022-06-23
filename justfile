@@ -171,9 +171,9 @@ test-backtrace:
 doc:
     cargo doc
 
-fix: git-status fix-lints fmt fix-clippy
+fix: git-status fix-lints fmt clippy-fix
 
-fix-amend: git-status fix-lints git-amend1 fmt git-amend2 fix-clippy git-amend3
+fix-amend: git-status fix-lints git-amend1 fmt git-amend2 clippy-fix git-amend3
 
 tournament:
     cargo run --bin tournament
@@ -212,7 +212,7 @@ clippy:
         -D clippy::useless_let_if_seq
 
 clippy-fix:
-    cargo clippy --fix -- \
+    cargo clippy --fix --allow-dirty -- \
         -D warnings \
         -D clippy::all \
         -A clippy::needless_update \
@@ -256,10 +256,7 @@ check-format:
     cargo +nightly fmt -- --check
 
 fix-lints:
-    cargo fix --all-features
-
-fix-clippy:
-    cargo clippy --fix
+    cargo fix --allow-dirty --all-features
 
 snapshots:
     cargo insta review

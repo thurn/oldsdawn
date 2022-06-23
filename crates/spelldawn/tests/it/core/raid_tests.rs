@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use insta::assert_snapshot;
 use cards::test_cards::WEAPON_COST;
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
-
+use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
@@ -27,7 +26,6 @@ use protos::spelldawn::{
 };
 use test_utils::client::HasText;
 use test_utils::summarize::Summary;
-
 use test_utils::{test_games, *};
 
 #[test]

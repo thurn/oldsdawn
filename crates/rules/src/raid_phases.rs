@@ -25,7 +25,6 @@ use data::game_actions::{
 };
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::random;
-
 use data::with_error::WithError;
 
 use crate::mana::ManaPurpose;

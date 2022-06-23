@@ -1,0 +1,160 @@
+---
+source: crates/spelldawn/tests/it/core/action_tests.rs
+assertion_line: 206
+expression: "Summary::run(&response)"
+---
+
+command_list: 
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            player_info: 
+                name: "Test Overlord Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 6
+            action_tracker: 2
+            score: 0
+            can_take_action: true
+        opponent: 
+            side: Champion
+            player_info: 
+                name: "Test Champion Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 999
+            action_tracker: 0
+            score: 0
+            can_take_action: false
+        raid_active: false
+        game_object_positions: 
+            user_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: User }
+            opponent_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: Opponent }
+            user_identity: 
+                sorting_key: 1
+                position: ObjectPositionIdentityContainer { owner: User }
+            opponent_identity: 
+                sorting_key: 1
+                position: ObjectPositionIdentityContainer { owner: Opponent }
+            user_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: User }
+            opponent_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: Opponent }
+    cards: 
+        card_id: O0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Overlord Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+        card_id: C0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Champion Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+channel_response: 
+    UpdateGameView: 
+        user: 
+            side: Champion
+            player_info: 
+                name: "Test Champion Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 999
+            action_tracker: 0
+            score: 0
+            can_take_action: false
+        opponent: 
+            side: Overlord
+            player_info: 
+                name: "Test Overlord Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 6
+            action_tracker: 2
+            score: 0
+            can_take_action: true
+        raid_active: false
+        game_object_positions: 
+            user_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: User }
+            opponent_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: Opponent }
+            user_identity: 
+                sorting_key: 1
+                position: ObjectPositionIdentityContainer { owner: User }
+            opponent_identity: 
+                sorting_key: 1
+                position: ObjectPositionIdentityContainer { owner: Opponent }
+            user_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: User }
+            opponent_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: Opponent }
+    cards: 
+        card_id: O0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Overlord Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+        card_id: C0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Champion Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false

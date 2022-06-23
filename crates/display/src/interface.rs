@@ -20,7 +20,7 @@ use ui::core::Component;
 
 use crate::prompts;
 
-/// Returns a [RenderInterfaceCommand] to render the interface state for the
+/// Returns a [InterfaceMainControls] to render the interface state for the
 /// provided `game`.
 pub fn render(game: &GameState, user_side: Side) -> Option<InterfaceMainControls> {
     if game.overlord.game_prompt.is_some() || game.champion.game_prompt.is_some() {

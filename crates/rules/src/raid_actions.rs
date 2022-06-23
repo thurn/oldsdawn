@@ -26,7 +26,7 @@ use data::primitives::{CardId, GameObjectId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, TargetedInteraction};
 use data::with_error::WithError;
 use data::{fail, utils, verify};
-use fallible_iterator::{FallibleIterator};
+use fallible_iterator::FallibleIterator;
 use tracing::{info, instrument};
 
 use crate::card_prompt::HandleCardPrompt;

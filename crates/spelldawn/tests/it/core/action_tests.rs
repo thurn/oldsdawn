@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use insta::assert_snapshot;
 use cards::test_cards::{ARTIFACT_COST, MANA_STORED, MANA_TAKEN, UNVEIL_COST};
 use data::card_name::CardName;
 use data::game::RaidPhase;
 use data::primitives::Side;
-
+use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
