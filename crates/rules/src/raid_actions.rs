@@ -23,7 +23,7 @@ use data::delegates::{
 use data::game::{GameState, RaidData, RaidPhase};
 use data::game_actions::{ContinueAction, EncounterAction, RoomActivationAction};
 use data::primitives::{CardId, GameObjectId, RaidId, RoomId, Side};
-use data::updates::{GameUpdate, TargetedInteraction};
+use data::updates::{GameUpdate, InitiatedBy, TargetedInteraction};
 use data::with_error::WithError;
 use data::{fail, utils, verify};
 use fallible_iterator::FallibleIterator;
@@ -46,7 +46,7 @@ pub fn initiate_raid_action(
         user_side
     );
     mutations::spend_action_points(game, user_side, 1)?;
-    initiate_raid(game, target_room, |_, _| {})?;
+    initiate_raid(game, target_room, InitiatedBy::GameAction, |_, _| {})?;
     Ok(())
 }
 
@@ -57,6 +57,7 @@ pub fn initiate_raid_action(
 pub fn initiate_raid(
     game: &mut GameState,
     target_room: RoomId,
+    initiated_by: InitiatedBy,
     on_begin: impl Fn(&mut GameState, RaidId),
 ) -> Result<()> {
     let raid_id = RaidId(game.data.next_raid_id);
@@ -71,7 +72,7 @@ pub fn initiate_raid(
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
     on_begin(game, raid_id);
-    game.record_update(|| GameUpdate::InitiateRaid(target_room));
+    game.record_update(|| GameUpdate::InitiateRaid(target_room, initiated_by));
 
     let phase = if game.defenders_unordered(target_room).any(CardState::is_face_down) {
         RaidPhase::Activation

@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 242
+assertion_line: 241
 expression: "Summary::run(&response)"
 ---
 
@@ -66,6 +66,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O45
         revealed_to_viewer: true
         is_face_up: false
@@ -81,6 +84,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 4
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -96,10 +102,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
-    VisitRoom: 
-        initiator: User
-        room_id: RoomA
-        visit_type: LevelUpRoom
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
     UpdateGameView: 
         user: 
             side: Overlord
@@ -161,6 +166,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O45
         revealed_to_viewer: true
         is_face_up: false
@@ -177,6 +185,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 4
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -192,6 +203,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
 channel_response: 
     UpdateGameView: 
         user: 
@@ -254,6 +268,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O45
         revealed_to_viewer: false
         is_face_up: false
@@ -275,6 +292,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
     VisitRoom: 
         initiator: Opponent
         room_id: RoomA
@@ -340,6 +360,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O45
         revealed_to_viewer: false
         is_face_up: false
@@ -362,3 +385,6 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging

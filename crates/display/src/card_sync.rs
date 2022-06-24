@@ -17,7 +17,7 @@ use data::card_definition::{AbilityType, CardDefinition, TargetRequirement};
 use data::card_state::CardState;
 use data::game::GameState;
 use data::game_actions::CardTarget;
-use data::primitives::{AbilityId, ManaValue, RoomId};
+use data::primitives::{AbilityId, CardType, ItemLocation, ManaValue, RoomId, RoomLocation};
 use enum_iterator::IntoEnumIterator;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::{
@@ -134,7 +134,19 @@ fn revealed_card_view(
             flags::enters_play_in_room(game, card.id),
             |target| flags::can_take_play_card_action(game, builder.user_side, card.id, target),
         )),
-        on_release_position: None,
+        on_release_position: Some(positions::for_card(
+            card,
+            match definition.card_type {
+                CardType::Weapon => positions::item(ItemLocation::Weapons),
+                CardType::Artifact => positions::item(ItemLocation::Artifacts),
+                CardType::OverlordSpell => positions::staging(),
+                CardType::ChampionSpell => positions::staging(),
+                CardType::Minion => positions::unspecified_room(RoomLocation::Defender),
+                CardType::Project => positions::unspecified_room(RoomLocation::Occupant),
+                CardType::Scheme => positions::unspecified_room(RoomLocation::Occupant),
+                CardType::Identity => positions::staging(),
+            },
+        )),
         supplemental_info: Some(rules_text::build_supplemental_info(game, card, None)),
     }
 }
@@ -158,7 +170,7 @@ fn revealed_ability_card_view(
         targeting: Some(card_targeting(target_requirement, false, |target| {
             flags::can_take_activate_ability_action(game, ability_id.side(), ability_id, target)
         })),
-        on_release_position: None,
+        on_release_position: Some(positions::for_ability(game, ability_id, positions::staging())),
         supplemental_info: Some(rules_text::build_supplemental_info(
             game,
             card,

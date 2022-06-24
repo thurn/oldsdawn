@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/create_game_tests.rs
-assertion_line: 171
+assertion_line: 168
 expression: "Summary::summarize(&response)"
 ---
 
@@ -66,6 +66,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: false
         is_face_up: false
@@ -111,6 +114,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: true
         is_face_up: false
@@ -127,6 +133,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 18
+                position: ObjectPositionStaging
         card_id: C17
         revealed_to_viewer: true
         is_face_up: false
@@ -143,6 +152,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 20
+                position: ObjectPositionStaging
         card_id: C23
         revealed_to_viewer: true
         is_face_up: false
@@ -159,6 +171,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 17
+                position: ObjectPositionStaging
         card_id: C29
         revealed_to_viewer: true
         is_face_up: false
@@ -175,6 +190,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 21
+                position: ObjectPositionStaging
         card_id: C43
         revealed_to_viewer: true
         is_face_up: false
@@ -191,6 +209,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 19
+                position: ObjectPositionStaging
     DisplayGameMessage: Dusk
     UpdateGameView: 
         user: 
@@ -253,6 +274,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: false
         is_face_up: false
@@ -304,6 +328,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: true
         is_face_up: false
@@ -320,6 +347,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 18
+                position: ObjectPositionStaging
         card_id: C17
         revealed_to_viewer: true
         is_face_up: false
@@ -336,6 +366,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 20
+                position: ObjectPositionStaging
         card_id: C23
         revealed_to_viewer: true
         is_face_up: false
@@ -352,6 +385,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 17
+                position: ObjectPositionStaging
         card_id: C29
         revealed_to_viewer: true
         is_face_up: false
@@ -368,6 +404,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 21
+                position: ObjectPositionStaging
         card_id: C43
         revealed_to_viewer: true
         is_face_up: false
@@ -384,6 +423,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 19
+                position: ObjectPositionStaging
     UpdateGameView: 
         user: 
             side: Champion
@@ -445,6 +487,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: false
         is_face_up: false
@@ -496,6 +541,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: true
         is_face_up: false
@@ -512,6 +560,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 18
+                position: ObjectPositionStaging
         card_id: C17
         revealed_to_viewer: true
         is_face_up: false
@@ -528,6 +579,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 20
+                position: ObjectPositionStaging
         card_id: C23
         revealed_to_viewer: true
         is_face_up: false
@@ -544,6 +598,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 17
+                position: ObjectPositionStaging
         card_id: C29
         revealed_to_viewer: true
         is_face_up: false
@@ -560,6 +617,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 21
+                position: ObjectPositionStaging
         card_id: C43
         revealed_to_viewer: true
         is_face_up: false
@@ -576,6 +636,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 19
+                position: ObjectPositionStaging
 channel_response: 
     UpdateGameView: 
         user: 
@@ -638,6 +701,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: true
         is_face_up: false
@@ -654,6 +720,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 7
+                position: ObjectPositionStaging
         card_id: O8
         revealed_to_viewer: true
         is_face_up: false
@@ -670,6 +739,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 10
+                position: ObjectPositionStaging
         card_id: O9
         revealed_to_viewer: true
         is_face_up: false
@@ -686,6 +758,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 11
+                position: ObjectPositionStaging
         card_id: O25
         revealed_to_viewer: true
         is_face_up: false
@@ -702,6 +777,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 8
+                position: ObjectPositionStaging
         card_id: O36
         revealed_to_viewer: true
         is_face_up: false
@@ -718,6 +796,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 9
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -733,6 +814,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: false
         is_face_up: false
@@ -825,6 +909,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: true
         is_face_up: false
@@ -841,6 +928,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 7
+                position: ObjectPositionStaging
         card_id: O8
         revealed_to_viewer: true
         is_face_up: false
@@ -857,6 +947,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 10
+                position: ObjectPositionStaging
         card_id: O9
         revealed_to_viewer: true
         is_face_up: false
@@ -873,6 +966,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 11
+                position: ObjectPositionStaging
         card_id: O18
         revealed_to_viewer: true
         is_face_up: false
@@ -889,6 +985,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 22
+                position: ObjectPositionStaging
         card_id: O25
         revealed_to_viewer: true
         is_face_up: false
@@ -905,6 +1004,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 8
+                position: ObjectPositionStaging
         card_id: O36
         revealed_to_viewer: true
         is_face_up: false
@@ -921,6 +1023,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 9
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -936,6 +1041,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: false
         is_face_up: false
@@ -1032,6 +1140,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: true
         is_face_up: false
@@ -1048,6 +1159,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 7
+                position: ObjectPositionStaging
         card_id: O8
         revealed_to_viewer: true
         is_face_up: false
@@ -1064,6 +1178,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 10
+                position: ObjectPositionStaging
         card_id: O9
         revealed_to_viewer: true
         is_face_up: false
@@ -1080,6 +1197,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 11
+                position: ObjectPositionStaging
         card_id: O18
         revealed_to_viewer: true
         is_face_up: false
@@ -1096,6 +1216,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 23
+                position: ObjectPositionStaging
         card_id: O25
         revealed_to_viewer: true
         is_face_up: false
@@ -1112,6 +1235,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 8
+                position: ObjectPositionStaging
         card_id: O36
         revealed_to_viewer: true
         is_face_up: false
@@ -1128,6 +1254,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 9
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -1143,6 +1272,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: false
         is_face_up: false

@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 285
+assertion_line: 284
 expression: "Summary::run(&response)"
 ---
 
@@ -66,6 +66,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -81,6 +84,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
     DisplayGameMessage: Dawn
     UpdateGameView: 
         user: 
@@ -143,6 +149,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -158,6 +167,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
         is_face_up: false
@@ -225,6 +237,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -240,6 +255,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
         is_face_up: false
@@ -308,6 +326,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -323,6 +344,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
     DisplayGameMessage: Dawn
     UpdateGameView: 
         user: 
@@ -385,6 +409,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -400,6 +427,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
         is_face_up: false
@@ -416,6 +446,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 2
+                position: ObjectPositionStaging
     MoveMultipleGameObjects: 
         id: C11
         position: 
@@ -482,6 +515,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -497,6 +533,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
         is_face_up: false
@@ -513,3 +552,6 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: true
+            on_release_position: 
+                sorting_key: 3
+                position: ObjectPositionStaging

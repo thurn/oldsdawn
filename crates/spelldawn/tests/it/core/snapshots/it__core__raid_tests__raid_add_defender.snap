@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 771
+assertion_line: 770
 expression: "Summary::summarize(&response)"
 ---
 
@@ -66,6 +66,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O24
         revealed_to_viewer: false
         is_face_up: false
@@ -95,6 +98,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 19
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O44
         revealed_to_viewer: true
         is_face_up: true
@@ -110,6 +116,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 14
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: O45
         revealed_to_viewer: true
         is_face_up: true
@@ -127,6 +136,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 4
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -142,6 +154,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
         is_face_up: false
@@ -158,6 +173,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 9
+                position: ObjectPositionStaging
         card_id: C15
         revealed_to_viewer: true
         is_face_up: false
@@ -174,6 +192,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 24
+                position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
         is_face_up: true
@@ -191,6 +212,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 12
+                position: ObjectPositionItem { item_location: Left }
     FireProjectile: 
         source_id: C45
         target_id: O45
@@ -270,6 +294,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O24
         revealed_to_viewer: false
         is_face_up: false
@@ -291,6 +318,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 22
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: O43
         revealed_to_viewer: true
         is_face_up: true
@@ -308,6 +338,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 19
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O44
         revealed_to_viewer: true
         is_face_up: true
@@ -323,6 +356,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 14
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: O45
         revealed_to_viewer: true
         is_face_up: true
@@ -340,6 +376,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 4
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -355,6 +394,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
         is_face_up: false
@@ -371,6 +413,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 9
+                position: ObjectPositionStaging
         card_id: C15
         revealed_to_viewer: true
         is_face_up: false
@@ -387,6 +432,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 24
+                position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
         is_face_up: true
@@ -404,6 +452,9 @@ command_list:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 12
+                position: ObjectPositionItem { item_location: Left }
 channel_response: 
     UpdateGameView: 
         user: 
@@ -466,6 +517,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O24
         revealed_to_viewer: true
         is_face_up: false
@@ -482,6 +536,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 16
+                position: ObjectPositionStaging
         card_id: O42
         revealed_to_viewer: true
         is_face_up: false
@@ -497,6 +554,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 22
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: O43
         revealed_to_viewer: true
         is_face_up: true
@@ -514,6 +574,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 19
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O44
         revealed_to_viewer: true
         is_face_up: true
@@ -529,6 +592,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 14
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: O45
         revealed_to_viewer: true
         is_face_up: true
@@ -546,6 +612,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 4
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -561,6 +630,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
         is_face_up: false
@@ -590,6 +662,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 12
+                position: ObjectPositionItem { item_location: Left }
     FireProjectile: 
         source_id: C45
         target_id: O45
@@ -661,6 +736,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O24
         revealed_to_viewer: true
         is_face_up: false
@@ -677,6 +755,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 16
+                position: ObjectPositionStaging
         card_id: O42
         revealed_to_viewer: true
         is_face_up: false
@@ -692,6 +773,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 22
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: O43
         revealed_to_viewer: true
         is_face_up: true
@@ -709,6 +793,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 19
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O44
         revealed_to_viewer: true
         is_face_up: true
@@ -724,6 +811,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 14
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: O45
         revealed_to_viewer: true
         is_face_up: true
@@ -741,6 +831,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
+            on_release_position: 
+                sorting_key: 4
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -756,6 +849,9 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
         is_face_up: false
@@ -785,3 +881,6 @@ channel_response:
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 12
+                position: ObjectPositionItem { item_location: Left }

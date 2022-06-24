@@ -30,6 +30,7 @@ using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
+using Random = UnityEngine.Random;
 
 namespace Spelldawn.Services
 {
@@ -283,7 +284,7 @@ namespace Spelldawn.Services
       }
       
       // Introduce simulated server delay
-      yield return new WaitForSeconds(0.3f);
+      yield return new WaitForSeconds(Random.Range(0f, 0.5f));
 
       // Send to server
       var request = new GameRequest

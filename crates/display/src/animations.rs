@@ -18,7 +18,7 @@ use data::primitives::{AbilityId, CardId, GameObjectId, RoomId, Side};
 use data::special_effects::{
     FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
 };
-use data::updates::{GameUpdate, TargetedInteraction};
+use data::updates::{GameUpdate, InitiatedBy, TargetedInteraction};
 use data::utils;
 use fallible_iterator::FallibleIterator;
 use protos::spelldawn::game_command::Command;
@@ -70,8 +70,20 @@ pub fn render(
                 show_cards(builder, &vec![*card_id])
             }
         }
-        GameUpdate::LevelUpRoom(room_id) => level_up_room(builder, *room_id),
-        GameUpdate::InitiateRaid(room_id) => initiate_raid(builder, *room_id),
+        GameUpdate::LevelUpRoom(room_id, initiated_by) => {
+            if *initiated_by == InitiatedBy::Card || builder.user_side == Side::Champion {
+                // Animation is not required for the Overlord's own 'level up room' action, it's
+                // handled by the client's optimistic animation system.
+                level_up_room(builder, *room_id)
+            }
+        }
+        GameUpdate::InitiateRaid(room_id, initiated_by) => {
+            if *initiated_by == InitiatedBy::Card || builder.user_side == Side::Overlord {
+                // Animation is not required for the Champion's own 'level up room' action, it's
+                // handled by the client's optimistic animation system.
+                initiate_raid(builder, *room_id)
+            }
+        }
         GameUpdate::TargetedInteraction(interaction) => {
             targeted_interaction(builder, snapshot, interaction)
         }

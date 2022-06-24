@@ -25,7 +25,7 @@ use protos::spelldawn::{
     ObjectPositionDiscardPile, ObjectPositionDiscardPileContainer, ObjectPositionHand,
     ObjectPositionIdentity, ObjectPositionIdentityContainer, ObjectPositionIntoCard,
     ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards, ObjectPositionRoom,
-    ObjectPositionStaging, RevealedCardsBrowserSize,
+    ObjectPositionStaging, RevealedCardsBrowserSize, RoomIdentifier,
 };
 use rules::queries;
 
@@ -55,6 +55,17 @@ pub fn for_sorting_key(sorting_key: u32, position: Position) -> ObjectPosition {
 pub fn room(room_id: RoomId, location: RoomLocation) -> Position {
     Position::Room(ObjectPositionRoom {
         room_id: adapters::room_identifier(room_id),
+        room_location: match location {
+            RoomLocation::Defender => ClientRoomLocation::Front,
+            RoomLocation::Occupant => ClientRoomLocation::Back,
+        }
+        .into(),
+    })
+}
+
+pub fn unspecified_room(location: RoomLocation) -> Position {
+    Position::Room(ObjectPositionRoom {
+        room_id: RoomIdentifier::Unspecified as i32,
         room_location: match location {
             RoomLocation::Defender => ClientRoomLocation::Front,
             RoomLocation::Occupant => ClientRoomLocation::Back,
@@ -173,7 +184,7 @@ fn adapt_position(
 /// area. We also animate spell cards to staging while resolving their effects.
 /// For other card types, we move them directly to their destination to make
 /// playing a card feel more responsive.
-fn card_release_position(
+pub fn card_release_position(
     builder: &ResponseBuilder,
     game: &GameState,
     side: Side,

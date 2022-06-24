@@ -24,6 +24,15 @@ pub struct TargetedInteraction {
     pub target: GameObjectId,
 }
 
+/// Identifies whether some game update was caused by a player taking an
+/// explicit game action such as the 'initiate raid' action, or by a card
+/// effect.
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum InitiatedBy {
+    GameAction,
+    Card,
+}
+
 /// Represents a change to the state of the game which should be translated
 /// into a client animation
 #[derive(Debug, Clone)]
@@ -45,9 +54,9 @@ pub enum GameUpdate {
     /// A minion card has been turned face-up.
     SummonMinion(CardId),
     /// The Overlord has leveled up a room
-    LevelUpRoom(RoomId),
+    LevelUpRoom(RoomId, InitiatedBy),
     /// The Champion has initiated a raid on a room
-    InitiateRaid(RoomId),
+    InitiateRaid(RoomId, InitiatedBy),
     /// See [TargetedInteraction].
     TargetedInteraction(TargetedInteraction),
     /// A player has scored a card

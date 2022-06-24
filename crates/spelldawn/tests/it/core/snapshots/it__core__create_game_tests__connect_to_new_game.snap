@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/create_game_tests.rs
-assertion_line: 77
+assertion_line: 74
 expression: "Summary::run(&response)"
 ---
 
@@ -70,6 +70,9 @@ expression: "Summary::run(&response)"
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: true
         is_face_up: false
@@ -86,6 +89,9 @@ expression: "Summary::run(&response)"
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 7
+                position: ObjectPositionStaging
         card_id: O8
         revealed_to_viewer: true
         is_face_up: false
@@ -102,6 +108,9 @@ expression: "Summary::run(&response)"
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 10
+                position: ObjectPositionStaging
         card_id: O9
         revealed_to_viewer: true
         is_face_up: false
@@ -118,6 +127,9 @@ expression: "Summary::run(&response)"
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 11
+                position: ObjectPositionStaging
         card_id: O25
         revealed_to_viewer: true
         is_face_up: false
@@ -134,6 +146,9 @@ expression: "Summary::run(&response)"
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 8
+                position: ObjectPositionStaging
         card_id: O36
         revealed_to_viewer: true
         is_face_up: false
@@ -150,6 +165,9 @@ expression: "Summary::run(&response)"
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 9
+                position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -165,6 +183,9 @@ expression: "Summary::run(&response)"
             rules_text: "<RulesText>"
             targeting: 
                 can_play: false
+            on_release_position: 
+                sorting_key: 1
+                position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: false
         is_face_up: false
