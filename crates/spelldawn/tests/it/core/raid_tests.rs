@@ -383,6 +383,7 @@ fn complete_raid() {
     );
 
     assert_snapshot!(Summary::summarize(&response));
+    create_test_recording(&g, "complete_raid");
 }
 
 #[test]

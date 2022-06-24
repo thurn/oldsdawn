@@ -23,6 +23,7 @@ pub mod summarize;
 pub mod test_games;
 
 use std::fmt::Debug;
+use std::fs;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use anyhow::Result;
@@ -35,9 +36,11 @@ use data::primitives::{
     ActionCount, Faction, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
 };
 use maplit::hashmap;
+use prost::Message;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::{
-    CardIdentifier, LevelUpRoomAction, RoomIdentifier, SpendActionPointAction,
+    CardIdentifier, CommandList, GameCommand, LevelUpRoomAction, RoomIdentifier,
+    SpendActionPointAction,
 };
 use rules::{dispatch, mana};
 
@@ -400,4 +403,24 @@ pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
 /// `index` of this `card_id`.
 pub fn ability_id(card_id: CardIdentifier, ability: u32) -> CardIdentifier {
     CardIdentifier { ability_id: Some(ability), ..card_id }
+}
+
+pub fn create_test_recording(session: &TestSession, name: &str) {
+    record_output_for_side(session, format!("{}_overlord", name), Side::Overlord).unwrap();
+    record_output_for_side(session, format!("{}_champion", name), Side::Champion).unwrap();
+}
+
+pub fn record_output_for_side(session: &TestSession, name: String, side: Side) -> Result<()> {
+    let commands = CommandList {
+        commands: session
+            .player_for_side(side)
+            .history
+            .iter()
+            .map(|c| GameCommand { command: Some(c.clone()) })
+            .collect(),
+    };
+    let encoded = commands.encode_length_delimited_to_vec();
+    fs::write(format!("../../Assets/Resources/TestRecordings/test_{}.bytes", name), encoded)?;
+
+    Ok(())
 }

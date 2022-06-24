@@ -416,6 +416,7 @@ pub struct TestClient {
     pub other_player: ClientPlayer,
     pub interface: ClientInterface,
     pub cards: ClientCards,
+    pub history: Vec<Command>,
 }
 
 impl TestClient {
@@ -427,6 +428,7 @@ impl TestClient {
             other_player: ClientPlayer::new(PlayerName::Opponent),
             interface: ClientInterface::default(),
             cards: ClientCards { player_id: id, card_map: HashMap::default() },
+            history: vec![],
         }
     }
 
@@ -440,6 +442,7 @@ impl TestClient {
         self.other_player.update(command.clone());
         self.interface.update(command.clone());
         self.cards.update(command.clone());
+        self.history.push(command.clone());
     }
 }
 

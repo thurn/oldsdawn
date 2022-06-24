@@ -26,10 +26,13 @@ run:
 test:
     cargo test
 
-e2e-message:
-    @ echo "\nRunning End-to-End Tests"
+screenshots-message:
+    @ echo "\nRunning Screenshot Tests"
+    @ sleep 1
     @ echo "\n(this would be a good time to grab a snack)"
+    @ sleep 1
     @ echo "\nPlease Stand By...\n"
+    @ sleep 3
 
 rsync:
     mkdir -p /tmp/spelldawn
@@ -61,38 +64,40 @@ screenshot_path := if os() == "macos" {
 
 # You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
 # before running end to end tests.
-run-e2e: e2e-message plugin rsync
+run-screenshots: screenshots-message plugin rsync
     rm -rf /tmp/spelldawn/out/
     mkdir -p /tmp/spelldawn/out/
     "{{unity}}" -batchMode -quit -projectPath "/tmp/spelldawn" {{build_flag}} "{{app_path}}"
     "{{bin_path}}" -test -screen-width 1334 -screen-height 750 -screen-quality "High" -screen-fullscreen 0
 
-e2e-screenshots: run-e2e
+finish-screenshots: run-screenshots
     #!/usr/bin/env sh
-    set -o xtrace
     for file in `ls "{{screenshot_path}}"`; do
         magick "{{screenshot_path}}/$file" -resize '50%' "{{screenshot_path}}/$file"
     done
 
-end-to-end: e2e-screenshots
+screenshot-tests: finish-screenshots
   #!/usr/bin/env sh
-  set -o xtrace
+  image_diffs="/tmp/spelldawn/image_diffs"
+  rm -r $image_diffs
+  mkdir $image_diffs
+  failed=0
   for file in `ls "{{screenshot_path}}"`; do
-    result=`magick compare -metric mse "{{screenshot_path}}/$file" "./EndToEndTests/$file" difference.png 2>&1`
+    result=`magick compare -metric mse "{{screenshot_path}}/$file" "./ScreenshotTests/$file" "$image_diffs/$file" 2>&1`
     difference=`echo $result | cut -f 1 -d ' ' -`
-    echo "\n>>> Image difference is $difference\n"
-    if awk "BEGIN {exit !($difference >= 5)}"; then
+    echo "Image difference is $difference for $file"
+    if awk "BEGIN {exit !($difference >= 1)}"; then
         echo "\n>>> Test Failed: $file\n"
-        open difference.png
-        exit 1
+        echo "See $image_diffs/$file"
+        failed=1
     fi
-    rm difference.png
   done
+  exit $failed
 
-record: e2e-screenshots
-    rm -rf EndToEndTests
-    mkdir -p EndToEndTests
-    cp "{{screenshot_path}}"/*.png EndToEndTests/
+record: finish-screenshots
+    rm -rf ScreenshotTests
+    mkdir -p ScreenshotTests
+    cp "{{screenshot_path}}"/*.png ScreenshotTests/
 
 plugin_out := "Assets/Plugins"
 target_arm := "aarch64-apple-darwin"
@@ -283,6 +288,13 @@ check-docs:
             -D rustdoc::missing-crate-level-docs \
             -D rustdoc::bare-urls;
     done
+
+# Need to run
+# rustup target add x86_64-unknown-linux-gnu
+# brew tap SergioBenitez/osxct
+# brew install x86_64-unknown-linux-gnu
+build-linux-from-osx:
+    CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-unknown-linux-gnu-gcc cargo build --target=x86_64-unknown-linux-gnu
 
 outdated:
     # Check for outdated dependencies, consider running 'cargo update' if this fails

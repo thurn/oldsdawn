@@ -35,7 +35,7 @@ namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
   {
-    static readonly string ServerAddress = "http://localhost:50052";
+    static readonly string ServerAddress = "http://spelldawn.com:50052";
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
@@ -57,9 +57,6 @@ namespace Spelldawn.Services
     [SerializeField] bool _currentlyHandlingAction;
     Clickable? _lastClicked;
 
-    /// <summary>Returns true if this service is currently not doing any work.</summary>
-    public bool Idle => _actionQueue.Count == 0 && !_currentlyHandlingAction;
-    
     public bool OfflineMode { get; private set; }
 
     public void Initialize()
@@ -239,13 +236,13 @@ namespace Spelldawn.Services
         Debug.Log("No active game");
         return;
       }
-      
+
       var request = new ConnectRequest
       {
         GameId = gameId,
         PlayerId = _registry.GameService.PlayerId,
       };
-      
+
       if (OfflineMode)
       {
         Debug.Log($"Connecting to Offline Game {request.GameId.Value}");
@@ -264,7 +261,7 @@ namespace Spelldawn.Services
             var commands = call.ResponseStream.Current;
             StartCoroutine(_registry.CommandService.HandleCommands(commands));
           }
-        }        
+        }
       }
     }
 
@@ -275,7 +272,7 @@ namespace Spelldawn.Services
       if (commands != null)
       {
         yield return _registry.CommandService.HandleCommands(commands);
-      }      
+      }
     }
 
     IEnumerator HandleActionAsync(GameAction action)
@@ -284,13 +281,13 @@ namespace Spelldawn.Services
       {
         yield return ApplyOptimisticResponse(action);
       }
-      
+
       if (IsClientOnlyAction(action))
-      { 
-        _currentlyHandlingAction = false; 
+      {
+        _currentlyHandlingAction = false;
         yield break;
-      }      
-      
+      }
+
       // StartCoroutine(ApplyOptimisticResponse(action));
       // Introduce simulated server delay
       // yield return new WaitForSeconds(Random.Range(0.5f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
@@ -309,6 +306,7 @@ namespace Spelldawn.Services
       }
       else
       {
+        var start = Time.time;
         var call = _client.PerformActionAsync(request);
         var task = call.GetAwaiter();
         yield return new WaitUntil(() => task.IsCompleted);
@@ -316,6 +314,7 @@ namespace Spelldawn.Services
         switch (call.GetStatus().StatusCode)
         {
           case StatusCode.OK:
+            Debug.Log($"HandleActionAsync: Finished server request in {Time.time - start} seconds");
             yield return _registry.CommandService.HandleCommands(task.GetResult());
             break;
           case StatusCode.Unavailable:
@@ -423,7 +422,10 @@ namespace Spelldawn.Services
     };
   }
 
-  /** You can use this type to log the size of server payloads before decompression. */
+  /// <summary>
+  /// You can use this type instead of 'GzipCompressionProvider' above to log the size of server payloads before
+  /// decompression.
+  /// </summary>
   // ReSharper disable once UnusedType.Global
   sealed class DebugGzipCompressionProvider : ICompressionProvider
   {

@@ -30,10 +30,7 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
     [SerializeField] bool _currentlyHandling;
     readonly Queue<CommandList> _queue = new();
-
-    /// <summary>Returns true if this service is currently not doing any work.</summary>
-    public bool Idle => _queue.Count == 0 && !_currentlyHandling;
-
+    
     public IEnumerator HandleCommands(IEnumerable<GameCommand> commands)
     {
       var list = new CommandList();
@@ -147,11 +144,6 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.None:
           default:
             break;
-        }
-
-        if (_registry.EndToEndTests && !isParallel)
-        {
-          yield return _registry.EndToEndTests!.OnCommandHandled(command);
         }
       }
 

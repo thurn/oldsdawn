@@ -14,15 +14,14 @@
 
 #nullable enable
 
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using Spelldawn.Masonry;
+using DG.Tweening;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using Spelldawn.Utils;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Directory = System.IO.Directory;
 
 namespace Spelldawn.Tests
@@ -32,12 +31,12 @@ namespace Spelldawn.Tests
   /// This originally used Unity's own screenshot testing tools, but I had a bunch of problems with them.
   public sealed class EndToEndTestService : MonoBehaviour
   {
+    // Set a filename here to pause the test before and after it runs
+    static readonly string? DebugPauseOn = null;
+    
     public Registry Registry { get; private set; } = null!;
-    int _imageNumber = 1000;
-    bool _sceneStart;
     string _directory = null!;
-    int? _testStep;
-    int _commandStep;
+    readonly List<Sequence> _sequences = new();
 
     public static EndToEndTestService Initialize(Registry registry, out bool runTests)
     {
@@ -63,9 +62,53 @@ namespace Spelldawn.Tests
 
     public void RunTests()
     {
-      StartCoroutine(RunOverlordTestGame.Run(this));
+      StartCoroutine(RunAsync(this));
+    }
+
+    public void OnAnimationStarted(Sequence sequence)
+    {
+      _sequences.Add(sequence);
     }
     
+    static IEnumerator RunAsync(EndToEndTestService service)
+    {
+      foreach (var asset in Resources.LoadAll<TextAsset>("TestRecordings"))
+      {
+        yield return RunTest(service, asset);
+      }
+      
+      yield return service.Finish();
+    }
+
+    static IEnumerator RunTest(EndToEndTestService service, TextAsset textAsset)
+    {
+      var list = CommandList.Parser.ParseDelimitedFrom(new MemoryStream(textAsset.bytes));
+
+      var count = 100;
+      foreach (var command in list.Commands)
+      {
+        var fileName = $"{textAsset.name}_{count}.png";
+        if (ShouldHandle(command.CommandCase) && ShouldPause(fileName))
+        {
+          Debug.Log($"Preparing to run {fileName}");
+          Debug.Break();
+        }
+        yield return service.Registry.CommandService.HandleCommands(command);
+        yield return service.WaitForAnimations();
+
+        if (ShouldHandle(command.CommandCase))
+        {
+          if (ShouldPause(fileName))
+          {
+            Debug.Log($"Saving Screenshot for {fileName}");
+            Debug.Break();
+          }
+          yield return service.Capture(fileName);
+          count++;
+        }
+      }
+    }
+
     void OnCreated()
     {
       DontDestroyOnLoad(gameObject);
@@ -91,116 +134,55 @@ namespace Spelldawn.Tests
       Registry.ActionDisplayForPlayer(PlayerName.User).DisableAnimation();
       Registry.ActionDisplayForPlayer(PlayerName.Opponent).DisableAnimation();
       Registry.Graphy.SetActive(false);
-      _sceneStart = true;
+      TweenUtils.EndToEndTests = this;
     }
-
-    public void StartStepping()
-    {
-      _testStep = _commandStep;
-    }
-
-    public IEnumerator Capture(string imageName)
+    
+    IEnumerator Capture(string imageName)
     {
       yield return new WaitForSeconds(0.3f);
-      var path = Path.Combine(_directory, $"{_imageNumber++}_{imageName}.png");
+      var path = Path.Combine(_directory, imageName);
       ScreenCapture.CaptureScreenshot(path);
     }
 
-    public IEnumerator StepCapture(string imageName, int steps = 1)
+    IEnumerator WaitForAnimations()
     {
-      var target = _commandStep + steps;
-      Debug.Log($"StepCapture: Waiting for {target} to capture {imageName}");
-      yield return new WaitUntil(() => _commandStep == target);
-      yield return Capture(imageName);
-      Debug.Log($"StepCapture Captured {imageName}: At {target}");
-      _testStep = target;
-    }
+      foreach (var sequence in _sequences)
+      {
+        if (sequence.IsActive())
+        {
+          yield return sequence.WaitForCompletion();
+        }
+      }
+      
+      _sequences.Clear();
 
-    public IEnumerator WaitUntilSceneStart()
-    {
-      _sceneStart = false;
-      yield return new WaitUntil(() => _sceneStart);
-      yield return WaitUntilIdle();
-    }
-
-    public IEnumerator WaitUntilIdle()
-    {
-      yield return new WaitUntil(() => Registry.CommandService.Idle && Registry.ActionService.Idle);
+      foreach (var system in FindObjectsOfType<ParticleSystem>())
+      {
+        if (system.isPlaying && !system.main.loop)
+        {
+          yield return new WaitUntil(() => !system.isPlaying);
+        }
+      }
+      
       yield return new WaitForEndOfFrame();
     }
 
-    public IEnumerator Finish()
+    IEnumerator Finish()
     {
       yield return new WaitForSeconds(1.0f);
       Quit(0);
-    }
-
-    public IEnumerator OnCommandHandled(GameCommand command)
+    }    
+    
+    static bool ShouldHandle(GameCommand.CommandOneofCase commandCase) => commandCase switch
     {
-      switch (command.CommandCase)
-      {
-        case GameCommand.CommandOneofCase.MoveGameObjects:
-        case GameCommand.CommandOneofCase.MoveObjectsAtPosition:
-        case GameCommand.CommandOneofCase.DisplayRewards:
-        case GameCommand.CommandOneofCase.FireProjectile:
-        case GameCommand.CommandOneofCase.PlayEffect:
-          _commandStep += 1;
-          break;
-        case GameCommand.CommandOneofCase.RunInParallel:
-          if (command.RunInParallel.Commands.Count > 0)
-          {
-            _commandStep += 1;
-          }
+      GameCommand.CommandOneofCase.UpdateGameView => true,
+      GameCommand.CommandOneofCase.MoveMultipleGameObjects => true,
+      _ => false
+    };
 
-          break;
-      }
+    static bool ShouldPause(string fileName) => DebugPauseOn is { } p && p == fileName;    
 
-      if (_testStep != null)
-      {
-        Debug.Log($"OnCommandHandled: Waiting at {_commandStep}, test step is {_testStep}");
-        yield return new WaitUntil(() => _testStep == _commandStep);        
-      }
-    }
-
-    public void ClickOn(string text)
-    {
-      var element = FindElementWithText(text);
-      while (element != null)
-      {
-        if (element is INodeCallbacks c && c.Callbacks.Value.HasCallback(Callbacks.Event.Click))
-        {
-          c.Callbacks.Value.OnClick(new ClickEvent());
-          return;
-        }
-
-        element = element.parent;
-      }
-
-      throw new InvalidOperationException($"Not found: {text}");
-    }
-
-    VisualElement? FindElementWithText(string text) =>
-      FindText(Registry.DocumentService.RootVisualElement, text);
-
-    VisualElement? FindText(VisualElement element, string text)
-    {
-      if (element is Label label && label.text.Contains(text))
-      {
-        return element;
-      }
-
-      foreach (var child in element.Children())
-      {
-        if (FindText(child, text) is { } result)
-        {
-          return result;
-        }
-      }
-
-      return null;
-    }
-
-    public void Quit(int code)
+    void Quit(int code)
     {
 #if UNITY_EDITOR
       Debug.Log("Done running end-to-end tests");
