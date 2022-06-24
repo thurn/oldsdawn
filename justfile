@@ -1,4 +1,4 @@
-code-review: git-status check-format build clippy test check-docs
+code-review: git-status check-format build clippy test check-docs screenshot-tests
 
 unity := if os() == "macos" {
     "/Applications/Unity/Hub/Editor/2021.3.3f1/Unity.app/Contents/MacOS/Unity"
