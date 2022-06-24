@@ -216,7 +216,7 @@ namespace Spelldawn.Game
       if (animate)
       {
         _animationRunning = true;
-        sequence = TweenUtils.Sequence($"{gameObject.name} MoveObjectsToPosition");
+        sequence = TweenUtils.Sequence($"{gameObject.name} MoveObjectsToPosition").SetEase(Ease.InOutSine);
       }
 
       const float duration = TweenUtils.MoveAnimationDurationSeconds;

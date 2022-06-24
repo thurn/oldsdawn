@@ -91,9 +91,7 @@ namespace Spelldawn.Game
     public Registry Registry { get; set; } = null!;
 
     public bool IsRevealed => _isRevealed;
-
-    public bool StagingAnimationComplete { get; set; }
-
+    
     bool InHand() => HasGameContext && GameContext == GameContext.Hand;
 
     public override float DefaultScale => CardScale;
@@ -163,7 +161,11 @@ namespace Spelldawn.Game
 
     void Update()
     {
-      _outline.gameObject.SetActive(CanPlay());
+      if (Registry.GlobalGameMode == GlobalGameMode.Default)
+      {
+        // Outline is too fiery for screenshot tests
+        _outline.gameObject.SetActive(CanPlay());
+      }
     }
 
     bool CanPlay() => _serverCanPlay == true && InHand() && Registry.ActionService.CanInitiateAction() && _isRevealed;

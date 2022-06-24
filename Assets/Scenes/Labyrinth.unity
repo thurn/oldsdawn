@@ -44341,7 +44341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8158c3a977b1c470db7268ea8637d804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _globalGameMode: 1
+  _globalGameMode: 0
   _mainCamera: {fileID: 963194227}
   _logViewer: {fileID: 950699554}
   _mainAudioSource: {fileID: 963194234}

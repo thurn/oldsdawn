@@ -25,7 +25,7 @@ namespace Spelldawn.Services
   public enum GlobalGameMode
   {
     Default,
-    EndToEndTest
+    ScreenshotTest
   }
 
   public sealed class Registry : MonoBehaviour
@@ -173,18 +173,18 @@ namespace Spelldawn.Services
     [SerializeField] GameObject _graphy = null!;
     public GameObject Graphy => _graphy;
 
-    public EndToEndTestService? EndToEndTests { get; private set; }
+    public ScreenshotTestService? ScreenshotTests { get; private set; }
 
     void Start()
     {
       Application.targetFrameRate = 60;
       var runTests = false;
 
-      if (_globalGameMode == GlobalGameMode.EndToEndTest ||
+      if (_globalGameMode == GlobalGameMode.ScreenshotTest ||
           System.Environment.GetCommandLineArgs().Any(arg => arg.Contains("test")))
       {
-        _globalGameMode = GlobalGameMode.EndToEndTest;
-        EndToEndTests = EndToEndTestService.Initialize(this, out runTests);
+        _globalGameMode = GlobalGameMode.ScreenshotTest;
+        ScreenshotTests = ScreenshotTestService.Initialize(this, out runTests);
       }
 
       ActionService.Initialize();
@@ -194,7 +194,7 @@ namespace Spelldawn.Services
 
       if (runTests)
       {
-        EndToEndTests!.RunTests();
+        ScreenshotTests!.RunTests();
       }
     }
   }

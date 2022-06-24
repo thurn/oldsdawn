@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Spelldawn.Game;
@@ -62,7 +61,12 @@ namespace Spelldawn.Services
       AddRoot("SupplementalCardInfo", out _supplementalCardInfo, out _supplementalCardInfoNode);
       AddRoot("Full Screen", out _fullScreen, out _fullScreenNode);
     }
-
+    
+    public void Print()
+    {
+      Debug.Log($"Print: reference dpi: {_document.panelSettings.referenceDpi}");
+    }
+    
     float ScreenPxToElementDip(float value) => value * _document.panelSettings.referenceDpi / Screen.dpi;
 
     /// <summary>

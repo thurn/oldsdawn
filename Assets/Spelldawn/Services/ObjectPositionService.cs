@@ -253,27 +253,6 @@ namespace Spelldawn.Services
       };
     }
 
-    public void PlayDrawCardAnimation(Card card)
-    {
-      var target = DeckSpawnPosition(PlayerName.User);
-      card.transform.position = target;
-      card.transform.rotation = _registry.DeckForPlayer(PlayerName.User).transform.rotation;
-      card.SetGameContext(GameContext.Staging);
-      var initialMoveTarget = new Vector3(
-        target.x - 4,
-        target.y + 2,
-        target.z - 8);
-
-      TweenUtils.Sequence("DeckToStaging")
-        .Insert(0,
-          card.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
-        .Insert(0, card.transform.DOLocalRotate(new Vector3(270, 0, 0), 0.5f))
-        .Insert(0.5f, card.transform.DOMove(_registry.CardStagingArea.position, 0.5f).SetEase(Ease.OutCubic))
-        .Insert(0.5f, card.transform.DORotateQuaternion(_registry.CardStagingArea.rotation, 1.0f).SetEase(Ease.Linear))
-        .InsertCallback(0.5f, () => _registry.StaticAssets.PlayDrawCardSound())
-        .AppendCallback(() => card.StagingAnimationComplete = true);
-    }
-
     public IEnumerator PlayCreateFromParentCardAnimation(Card card, CardIdentifier identifier,
       ObjectPosition createPosition)
     {
@@ -289,8 +268,5 @@ namespace Spelldawn.Services
 
       return MoveGameObject(card, createPosition);
     }
-
-    Vector3 DeckSpawnPosition(PlayerName playerName) =>
-      _registry.DeckForPlayer(playerName).transform.position + new Vector3(0f, 1f, 0f);
   }
 }

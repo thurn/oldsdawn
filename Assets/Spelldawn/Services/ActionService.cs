@@ -35,7 +35,7 @@ namespace Spelldawn.Services
 {
   public sealed class ActionService : MonoBehaviour
   {
-    static readonly string ServerAddress = "http://spelldawn.com:50052";
+    static readonly string ServerAddress = "http://localhost:50052";
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
@@ -229,8 +229,6 @@ namespace Spelldawn.Services
 
     async void ConnectToRulesEngine(GameIdentifier? gameId)
     {
-      // Remember you can do Edit > Clear All Player Prefs to reset 
-
       if (gameId == null)
       {
         Debug.Log("No active game");
@@ -277,20 +275,15 @@ namespace Spelldawn.Services
 
     IEnumerator HandleActionAsync(GameAction action)
     {
-      if (action.ActionCase is GameAction.ActionOneofCase.StandardAction or GameAction.ActionOneofCase.TogglePanel)
-      {
-        yield return ApplyOptimisticResponse(action);
-      }
-
+      StartCoroutine(ApplyOptimisticResponse(action));
       if (IsClientOnlyAction(action))
       {
         _currentlyHandlingAction = false;
         yield break;
       }
-
-      // StartCoroutine(ApplyOptimisticResponse(action));
+      
       // Introduce simulated server delay
-      // yield return new WaitForSeconds(Random.Range(0.5f, 1f) + (Random.Range(0f, 1f) < 0.1f ? 1f : 0));
+      yield return new WaitForSeconds(0.3f);
 
       // Send to server
       var request = new GameRequest
@@ -306,7 +299,6 @@ namespace Spelldawn.Services
       }
       else
       {
-        var start = Time.time;
         var call = _client.PerformActionAsync(request);
         var task = call.GetAwaiter();
         yield return new WaitUntil(() => task.IsCompleted);
@@ -314,7 +306,6 @@ namespace Spelldawn.Services
         switch (call.GetStatus().StatusCode)
         {
           case StatusCode.OK:
-            Debug.Log($"HandleActionAsync: Finished server request in {Time.time - start} seconds");
             yield return _registry.CommandService.HandleCommands(task.GetResult());
             break;
           case StatusCode.Unavailable:

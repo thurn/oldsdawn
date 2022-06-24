@@ -39,12 +39,14 @@ namespace Spelldawn.Services
     SpriteAddress _userCardBack = null!;
     SpriteAddress _opponentCardBack = null!;
 
+    readonly List<Sequence> _optimisticAnimations = new();
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
     readonly Dictionary<CardIdentifier, Card> _cards = new();
 
     public bool CurrentlyDragging { get; set; }
 
-    public IEnumerator Sync(List<CardView> views, GameObjectPositions? positions, bool animate = true, bool delete = true)
+    public IEnumerator Sync(List<CardView> views, GameObjectPositions? positions, bool animate = true,
+      bool delete = true)
     {
       var toDelete = _cards.Keys.ToHashSet();
       var coroutines = new List<Coroutine>();
@@ -53,9 +55,20 @@ namespace Spelldawn.Services
       {
         toDelete.Remove(view.CardId);
         Card card;
+        var optimistic = false;
+
         if (_cards.ContainsKey(view.CardId))
         {
           card = _cards[view.CardId];
+        }
+        else if (_optimisticCard)
+        {
+          // When a user takes the 'draw card' action, we start the animation before the server responds in
+          // order to make it feel smooth.
+          card = _optimisticCard!;
+          _optimisticCard = null;
+          _cards[view.CardId] = card;
+          optimistic = true;
         }
         else
         {
@@ -65,12 +78,15 @@ namespace Spelldawn.Services
           var position = view.CreatePosition ?? Errors.CheckNotNull(view.CardPosition);
           _registry.ObjectPositionService.MoveGameObjectImmediate(card, position);
         }
-        
+
         card.Render(view, animate: animate);
-        
-        // Need to update all cards in case sorting keys change
-        coroutines.Add(StartCoroutine(
-          _registry.ObjectPositionService.MoveGameObject(card, view.CardPosition, animate)));
+
+        if (!optimistic)
+        {
+          // Need to update all cards in case sorting keys change
+          coroutines.Add(StartCoroutine(
+            _registry.ObjectPositionService.MoveGameObject(card, view.CardPosition, animate)));
+        }
       }
 
       if (positions != null)
@@ -86,19 +102,26 @@ namespace Spelldawn.Services
         coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
           IdUtil.DiscardPileObjectId(PlayerName.User), positions.UserDiscard, animate)));
         coroutines.Add(StartCoroutine(_registry.ObjectPositionService.MoveByIdentifier(
-          IdUtil.DiscardPileObjectId(PlayerName.Opponent), positions.OpponentDiscard, animate)));              
+          IdUtil.DiscardPileObjectId(PlayerName.Opponent), positions.OpponentDiscard, animate)));
       }
 
       if (delete)
       {
         coroutines.AddRange(
-          toDelete.Select(cardId => StartCoroutine(HandleDestroyCard(cardId, animate))));        
+          toDelete.Select(cardId => StartCoroutine(HandleDestroyCard(cardId, animate))));
       }
 
       foreach (var coroutine in coroutines)
       {
         yield return coroutine;
       }
+
+      // Wait for optimistic animations to play out before continuing, to avoid jumping the card around.
+      foreach (var sequence in _optimisticAnimations.Where(s => s.IsActive()))
+      {
+        yield return sequence.WaitForCompletion();
+      }
+      yield return _registry.RevealedCardsBrowserSmall.WaitUntilIdle();
     }
 
     public void SetCardBacks(SpriteAddress? userCardBack, SpriteAddress? opponentCardBack)
@@ -135,7 +158,7 @@ namespace Spelldawn.Services
       _optimisticCard = InstantiateCardPrefab(CardPrefab.Standard);
       _optimisticCard.Render(new CardView { OwningPlayer = PlayerName.User }, GameContext.Staging);
       _optimisticCard.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
-      _registry.ObjectPositionService.PlayDrawCardAnimation(_optimisticCard);
+      PlayDrawCardAnimation(_optimisticCard);
     }
 
     public IEnumerator HandleCreateOrUpdateCardCommand(CreateOrUpdateCardCommand command)
@@ -191,7 +214,7 @@ namespace Spelldawn.Services
         switch (command.CreateAnimation)
         {
           case CardCreationAnimation.DrawCard:
-            _registry.ObjectPositionService.PlayDrawCardAnimation(card);
+            PlayDrawCardAnimation(card);
             waitForStaging = true;
             break;
           case CardCreationAnimation.FromParentCard:
@@ -205,7 +228,7 @@ namespace Spelldawn.Services
 
       if (waitForStaging)
       {
-        yield return new WaitUntil(() => card.IsRevealed && card.StagingAnimationComplete);
+        yield return new WaitUntil(() => card.IsRevealed /*&& card.StagingAnimationComplete*/);
         yield return new WaitForSeconds(0.5f);
       }
     }
@@ -272,14 +295,14 @@ namespace Spelldawn.Services
     {
       var card = FindCard(cardId);
       var sequence = card.TurnFaceDown(animate);
-      
+
       if (card.DestroyPosition != null)
       {
         yield return _registry.ObjectPositionService.MoveGameObject(card, card.DestroyPosition, animate);
       }
-      
+
       _cards.Remove(cardId);
-      
+
       if (card.Parent)
       {
         var parent = card.Parent;
@@ -290,9 +313,38 @@ namespace Spelldawn.Services
       {
         yield return sequence.WaitForCompletion();
       }
-      
+
       Destroy(card.gameObject);
     }
+
+
+    /// <summary>Plays a custom animation specifically for the 'Draw Card' action.</summary>
+    void PlayDrawCardAnimation(Card card)
+    {
+      var target = DeckSpawnPosition(PlayerName.User);
+      card.transform.position = target;
+      card.transform.rotation = _registry.DeckForPlayer(PlayerName.User).transform.rotation;
+      card.SetGameContext(GameContext.Staging);
+      var initialMoveTarget = new Vector3(
+        target.x - 4,
+        target.y + 2,
+        target.z - 8);
+      
+      var sequence = TweenUtils.Sequence("DrawCardAnimation")
+        .Insert(0,
+          card.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))
+        .Insert(0, card.transform.DOLocalRotate(new Vector3(270, 0, 0), 0.5f))
+        .InsertCallback(0.5f, () =>
+          {
+            _registry.StaticAssets.PlayDrawCardSound();
+            StartCoroutine(_registry.RevealedCardsBrowserSmall.AddObject(card));
+          }
+        );
+      _optimisticAnimations.Add(sequence);
+    }
+
+    Vector3 DeckSpawnPosition(PlayerName playerName) =>
+      _registry.DeckForPlayer(playerName).transform.position + new Vector3(0f, 1f, 0f);
 
     Card InstantiateCardPrefab(CardPrefab prefab)
     {

@@ -26,10 +26,10 @@ using Directory = System.IO.Directory;
 
 namespace Spelldawn.Tests
 {
-  /// <summary>Runs end-to-end screenshot tests.</summary>
+  /// <summary>Runs screenshot tests.</summary>
   ///
   /// This originally used Unity's own screenshot testing tools, but I had a bunch of problems with them.
-  public sealed class EndToEndTestService : MonoBehaviour
+  public sealed class ScreenshotTestService : MonoBehaviour
   {
     // Set a filename here to pause the test before and after it runs
     static readonly string? DebugPauseOn = null;
@@ -38,9 +38,9 @@ namespace Spelldawn.Tests
     string _directory = null!;
     readonly List<Sequence> _sequences = new();
 
-    public static EndToEndTestService Initialize(Registry registry, out bool runTests)
+    public static ScreenshotTestService Initialize(Registry registry, out bool runTests)
     {
-      var testService = FindObjectOfType<EndToEndTestService>();
+      var testService = FindObjectOfType<ScreenshotTestService>();
       if (testService)
       {
         testService.Registry = registry;
@@ -50,8 +50,8 @@ namespace Spelldawn.Tests
       }
       else
       {
-        var go = new GameObject("EndToEndTestService");
-        var result = go.AddComponent<EndToEndTestService>();
+        var go = new GameObject("ScreenshotTestService");
+        var result = go.AddComponent<ScreenshotTestService>();
         result.Registry = registry;
         result.OnCreated();
         result.OnSceneStart();
@@ -70,7 +70,7 @@ namespace Spelldawn.Tests
       _sequences.Add(sequence);
     }
     
-    static IEnumerator RunAsync(EndToEndTestService service)
+    static IEnumerator RunAsync(ScreenshotTestService service)
     {
       foreach (var asset in Resources.LoadAll<TextAsset>("TestRecordings"))
       {
@@ -80,7 +80,7 @@ namespace Spelldawn.Tests
       yield return service.Finish();
     }
 
-    static IEnumerator RunTest(EndToEndTestService service, TextAsset textAsset)
+    static IEnumerator RunTest(ScreenshotTestService service, TextAsset textAsset)
     {
       var list = CommandList.Parser.ParseDelimitedFrom(new MemoryStream(textAsset.bytes));
 
@@ -184,11 +184,9 @@ namespace Spelldawn.Tests
 
     void Quit(int code)
     {
-#if UNITY_EDITOR
-      Debug.Log("Done running end-to-end tests");
-#else
+      Debug.Log($"Done running end-to-end tests {Screen.dpi}, {Screen.width}");
+      Registry.DocumentService.Print();
       Application.Quit(code);
-#endif
     }
 
     void HandleException(string logString, string stackTrace, LogType type)
