@@ -218,10 +218,10 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
         Action::StandardAction(standard_action) => {
             handle_standard_action(database, player_id, game_id, standard_action)
         }
-        Action::TogglePanel(toggle_panel) => {
-            Ok(GameResponse::from_commands(vec![Command::RenderInterface(
-                panels::render_panel_command(toggle_panel.panel_address())?,
-            )]))
+        Action::FetchPanel(fetch_panel) => {
+            Ok(GameResponse::from_commands(vec![Command::UpdatePanels(panels::render_panel(
+                fetch_panel.panel_address.as_ref().with_error(|| "missing address")?,
+            )?)]))
         }
         Action::CreateNewGame(create_game) => create_new_game(database, player_id, create_game),
         Action::DrawCard(_) => handle_action(database, player_id, game_id, UserAction::DrawCard),
@@ -441,7 +441,7 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::RunInParallel(_) => "RunInParallel",
         Command::Delay(_) => "Delay",
         Command::ConnectToGame(_) => "ConnectToGame",
-        Command::RenderInterface(_) => "RenderInterface",
+        Command::UpdatePanels(_) => "UpdatePanels",
         Command::TogglePanel(_) => "TogglePanel",
         Command::UpdateGameView(_) => "UpdateGameView",
         Command::VisitRoom(_) => "VisitRoom",

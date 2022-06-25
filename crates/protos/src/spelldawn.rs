@@ -748,32 +748,23 @@ pub struct GameView {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StandardAction {
-    /// * Opaque payload to send to the server when invoked.
+    /// Opaque payload to send to the server when invoked.
     #[prost(bytes = "vec", tag = "1")]
     pub payload: ::prost::alloc::vec::Vec<u8>,
-    /// Immediate optimistic mutations to game state for this action.
+    /// Immediate optimistic mutations to state for this action.
     #[prost(message, optional, tag = "2")]
     pub update: ::core::option::Option<CommandList>,
-    /// Temporary payload for use in testing.
-    #[prost(message, optional, tag = "3")]
-    pub debug_payload: ::core::option::Option<::prost_types::Any>,
 }
-///
 /// Spend an action to gain 1 mana.
-///
 /// Optimistic: Mana is added immediately.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GainManaAction {}
-///
 /// Spend an action to draw a card.
-///
 /// Optimistic: Face-down card animates to reveal area.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DrawCardAction {}
-///
 /// Spend an action to level up a room.
-///
-/// Optimistic: Counter is added immediately
+/// Optimistic: Room visit animation plays
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LevelUpRoomAction {
     #[prost(enumeration = "RoomIdentifier", tag = "1")]
@@ -792,24 +783,10 @@ pub mod card_target {
         RoomId(i32),
     }
 }
-///
 /// Spend an action to play a card from hand.
-///
 /// Optimistic:
-///   - Mana and action cost is spent immediately, and 'can play' values for
-///     other cards in hand are optimistically updated
-///   - Other costs like 'sacrifice an artifact' are not optimistic and are
-///     handled like choices
-///   - Targeted cards select their *first* valid target (cards, rooms, players)
-///     optimistically. If additional targets are required, they're not handled
-///     optimistically, and this play pattern should possibly be avoided.
-///   - Cards that require a choice to be made before resolving do not display
-///     the options optimistically, instead they animate to the reveal card area
-///   - Item cards which don't require a choice to be made or target simply
-///     animate into the play area optimistically
-///   - Spell cards animate to the reveal card area and wait for their effects
-///     to be applied
-///   - Minion and Project cards animate to their selected room optimistically
+///   - Card animates to its 'on_release' position. If the RoomIdentifier is
+///     unspecified for a room position, the targeted room is used.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayCardAction {
     #[prost(message, optional, tag = "1")]
@@ -817,30 +794,18 @@ pub struct PlayCardAction {
     #[prost(message, optional, tag = "2")]
     pub target: ::core::option::Option<CardTarget>,
 }
-///
 /// Spend an action to initiate a raid on one of the overlord's rooms
-///
-/// Optimistic: Raid start animation plays
+/// Optimistic: Room visit animation plays
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InitiateRaidAction {
     #[prost(enumeration = "RoomIdentifier", tag = "1")]
     pub room_id: i32,
 }
-/// Open or close a given interface panel.
-///
-/// Behavior:
-///   - Open: If the panel with this address has already been downloaded, it
-///   is opened immediately. The server returns an updated view of the
-///   panel contents.
-///   - Close: The panel is closed immediately. No server response is
-///   provided.
+/// Fetch the contents of a given interface panel.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct TogglePanelAction {
-    #[prost(enumeration = "PanelAddress", tag = "1")]
-    pub panel_address: i32,
-    /// Should the panel be opened or closed?
-    #[prost(bool, tag = "2")]
-    pub open: bool,
+pub struct FetchPanelAction {
+    #[prost(message, optional, tag = "1")]
+    pub panel_address: ::core::option::Option<PanelAddress>,
 }
 /// Test/debug options for creating a game
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -856,6 +821,7 @@ pub struct CreateGameDebugOptions {
     #[prost(bool, tag = "3")]
     pub in_memory: bool,
 }
+/// Requests to create a new game playing against a given opponent
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateNewGameAction {
     #[prost(enumeration = "PlayerSide", tag = "1")]
@@ -865,11 +831,12 @@ pub struct CreateNewGameAction {
     #[prost(message, optional, tag = "3")]
     pub debug_options: ::core::option::Option<CreateGameDebugOptions>,
 }
-/// Action to spend an action point with no other effect, typically used for
+/// Spend an action point with no other effect, typically used for
 /// tests
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SpendActionPointAction {}
-/// Request a server sync with no other effects
+/// Request a server sync with no other effects, typically used for
+///// tests
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SyncAction {}
 /// Possible game actions taken by the user.
@@ -889,7 +856,7 @@ pub mod game_action {
         #[prost(message, tag = "1")]
         StandardAction(super::StandardAction),
         #[prost(message, tag = "2")]
-        TogglePanel(super::TogglePanelAction),
+        FetchPanel(super::FetchPanelAction),
         #[prost(message, tag = "3")]
         CreateNewGame(super::CreateNewGameAction),
         #[prost(message, tag = "4")]
@@ -965,10 +932,29 @@ pub struct ConnectToGameCommand {
     #[prost(string, tag = "2")]
     pub scene_name: ::prost::alloc::string::String,
 }
+/// Identifies an InterfacePanel.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PanelAddress {
+    #[prost(oneof = "panel_address::AddressType", tags = "1, 2")]
+    pub address_type: ::core::option::Option<panel_address::AddressType>,
+}
+/// Nested message and enum types in `PanelAddress`.
+pub mod panel_address {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum AddressType {
+        #[prost(bytes, tag = "1")]
+        Serialized(::prost::alloc::vec::Vec<u8>),
+        #[prost(enumeration = "super::KnownPanelAddress", tag = "2")]
+        KnownPanel(i32),
+    }
+}
+/// A 'panel' is an independently addressable block of UI. The contents
+/// of each known panel are cached and can then be opened immediately
+/// by the client, without waiting for a server response.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InterfacePanel {
-    #[prost(enumeration = "PanelAddress", tag = "1")]
-    pub address: i32,
+    #[prost(message, optional, tag = "1")]
+    pub address: ::core::option::Option<PanelAddress>,
     #[prost(message, optional, tag = "2")]
     pub node: ::core::option::Option<Node>,
 }
@@ -1005,22 +991,19 @@ pub struct InterfaceMainControls {
     #[prost(message, repeated, tag = "3")]
     pub card_anchor_nodes: ::prost::alloc::vec::Vec<CardAnchorNode>,
 }
-/// Updates the content of the user interface.
+/// Updates the contents of one or more user interface panels
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct RenderInterfaceCommand {
+pub struct UpdatePanelsCommand {
     /// List of panels to update.
-    ///
-    /// A 'panel' is an independently addressable block of UI. The contents
-    /// of each known panel are cached and can then be opened immediately
-    /// via TogglePanelAction, without waiting for a server response.
     #[prost(message, repeated, tag = "1")]
     pub panels: ::prost::alloc::vec::Vec<InterfacePanel>,
 }
-/// Opens or closes the given interface panel.
+/// Requests to open or close the given interface panel.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TogglePanelCommand {
-    #[prost(enumeration = "PanelAddress", tag = "1")]
-    pub panel_address: i32,
+    /// Panel to modify
+    #[prost(message, optional, tag = "1")]
+    pub panel_address: ::core::option::Option<PanelAddress>,
     /// Should the panel be opened or closed?
     #[prost(bool, tag = "2")]
     pub open: bool,
@@ -1310,7 +1293,7 @@ pub mod game_command {
         #[prost(message, tag = "4")]
         ConnectToGame(super::ConnectToGameCommand),
         #[prost(message, tag = "5")]
-        RenderInterface(super::RenderInterfaceCommand),
+        UpdatePanels(super::UpdatePanelsCommand),
         #[prost(message, tag = "6")]
         TogglePanel(super::TogglePanelCommand),
         #[prost(message, tag = "7")]
@@ -1595,12 +1578,14 @@ pub enum CardPrefab {
     Standard = 1,
     TokenCard = 2,
 }
+/// Panels that are directly fetched by client code.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum PanelAddress {
+pub enum KnownPanelAddress {
     Unspecified = 0,
     DebugPanel = 1,
 }
+/// Position on a card where a UI element should be anchored.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum CardNodeAnchorPosition {

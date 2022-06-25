@@ -100,13 +100,20 @@ namespace Spelldawn.Services
       }
 
       RenderPanels();
+      _registry.ActionService.HandleAction(new GameAction
+      {
+        FetchPanel = new FetchPanelAction
+        {
+          PanelAddress = address
+        }
+      });
     }
 
     public bool IsOpen(PanelAddress address) => _openPanels.Contains(address);
 
     public bool IsAnyPanelOpen() => _openPanels.Count > 0;
 
-    public void HandleRenderInterface(RenderInterfaceCommand command)
+    public void HandleUpdatePanels(UpdatePanelsCommand command)
     {
       foreach (var panel in command.Panels)
       {

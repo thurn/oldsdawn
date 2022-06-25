@@ -19,24 +19,36 @@ pub mod debug_panel;
 
 use anyhow::{bail, Result};
 use data::fail;
+use data::with_error::WithError;
 use protos::spelldawn::game_command::Command;
-use protos::spelldawn::{InterfacePanel, PanelAddress, RenderInterfaceCommand};
+use protos::spelldawn::panel_address::AddressType;
+use protos::spelldawn::{InterfacePanel, KnownPanelAddress, PanelAddress, UpdatePanelsCommand};
+use ui::core;
 
-/// Appends commands to `commands` to render commonly-used panels.
+/// Appends a command to `commands` to render commonly-used panels.
 pub fn render_standard_panels(commands: &mut Vec<Command>) -> Result<()> {
-    commands.push(Command::RenderInterface(render_panel_command(PanelAddress::DebugPanel)?));
+    commands.push(Command::UpdatePanels(render_known_panel(KnownPanelAddress::DebugPanel)?));
     Ok(())
 }
 
-/// Primary entry-point for panels. Given a [PanelAddress], creates its UI
+pub fn render_panel(address: &PanelAddress) -> Result<UpdatePanelsCommand> {
+    match address.address_type.as_ref().with_error(|| "missing address_type")? {
+        AddressType::Serialized(_) => fail!("Not yet implemented"),
+        AddressType::KnownPanel(known_panel) => render_known_panel(
+            KnownPanelAddress::from_i32(*known_panel).with_error(|| "invalid known panel")?,
+        ),
+    }
+}
+
+/// Primary entry-point for panels. Given a [KnownPanelAddress], creates its UI
 /// hierarchy.
-pub fn render_panel_command(address: PanelAddress) -> Result<RenderInterfaceCommand> {
-    Ok(RenderInterfaceCommand {
+pub fn render_known_panel(address: KnownPanelAddress) -> Result<UpdatePanelsCommand> {
+    Ok(UpdatePanelsCommand {
         panels: vec![InterfacePanel {
-            address: address.into(),
+            address: Some(core::known_address(address)),
             node: Some(match address {
-                PanelAddress::Unspecified => fail!("Invalid Panel Address"),
-                PanelAddress::DebugPanel => debug_panel::render(),
+                KnownPanelAddress::Unspecified => fail!("Invalid Panel Address"),
+                KnownPanelAddress::DebugPanel => debug_panel::render(),
             }),
         }],
     })

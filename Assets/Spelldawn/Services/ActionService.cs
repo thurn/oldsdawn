@@ -131,14 +131,14 @@ namespace Spelldawn.Services
         allowInOverlay: true,
         actionPointRequired: false,
         allowWithPanelOpen: true),
-      GameAction.ActionOneofCase.TogglePanel => true,
+      GameAction.ActionOneofCase.FetchPanel => true,
       GameAction.ActionOneofCase.CreateNewGame => true,
+      GameAction.ActionOneofCase.SyncAction => true,
       GameAction.ActionOneofCase.GainMana => CanAct(),
       GameAction.ActionOneofCase.DrawCard => CanAct(),
       GameAction.ActionOneofCase.PlayCard => CanAct(),
       GameAction.ActionOneofCase.LevelUpRoom => CanAct(),
       GameAction.ActionOneofCase.InitiateRaid => CanAct(),
-      GameAction.ActionOneofCase.SyncAction => true,
       _ => false
     };
 
@@ -277,12 +277,13 @@ namespace Spelldawn.Services
     IEnumerator HandleActionAsync(GameAction action)
     {
       StartCoroutine(ApplyOptimisticResponse(action));
-      if (IsClientOnlyAction(action))
+      if (action.ActionCase == GameAction.ActionOneofCase.StandardAction && action.StandardAction.Payload.Length == 0)
       {
+        // No need to send empty payload to server
         _currentlyHandlingAction = false;
         yield break;
       }
-      
+
       // Introduce simulated server delay
       yield return new WaitForSeconds(Random.Range(0f, 0.5f));
 
@@ -333,10 +334,6 @@ namespace Spelldawn.Services
             yield return _registry.CommandService.HandleCommands(update);
           }
 
-          break;
-        case GameAction.ActionOneofCase.TogglePanel:
-          _registry.StaticAssets.PlayButtonSound();
-          _registry.DocumentService.TogglePanel(action.TogglePanel.Open, action.TogglePanel.PanelAddress);
           break;
         case GameAction.ActionOneofCase.DrawCard:
           _registry.StaticAssets.PlayDrawCardStartSound();
@@ -404,14 +401,6 @@ namespace Spelldawn.Services
 
       yield return _registry.ObjectPositionService.MoveGameObject(card, position);
     }
-
-    static bool IsClientOnlyAction(GameAction action) => action.ActionCase switch
-    {
-      GameAction.ActionOneofCase.None => true,
-      GameAction.ActionOneofCase.StandardAction => action.StandardAction.Payload.Length == 0,
-      GameAction.ActionOneofCase.TogglePanel => !action.TogglePanel.Open,
-      _ => false
-    };
   }
 
   /// <summary>

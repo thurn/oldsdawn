@@ -22,7 +22,7 @@ use data::primitives::Side;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, Node, PanelAddress,
+    ClientDebugCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, KnownPanelAddress, Node,
     SetBooleanPreference, TogglePanelCommand,
 };
 use ui::components::{Button, Row};
@@ -33,7 +33,7 @@ use ui::{core, icons};
 /// Renders the debug panel
 pub fn render() -> Node {
     node(Panel {
-        address: PanelAddress::DebugPanel,
+        address: core::known_address(KnownPanelAddress::DebugPanel),
         title: Some("Debug Controls".to_string()),
         width: 1024.0,
         height: 600.0,
@@ -56,7 +56,6 @@ pub fn render() -> Node {
                 ),
                 debug_button("Join Game", UserAction::Debug(DebugAction::JoinGame)),
                 debug_button("Reset", UserAction::Debug(DebugAction::ResetGame)),
-                debug_button("Fetch UI", UserAction::Debug(DebugAction::FetchStandardPanels)),
                 client_debug_button(
                     "Show Logs",
                     vec![
@@ -64,7 +63,7 @@ pub fn render() -> Node {
                             debug_command: Some(DebugCommand::ShowLogs(())),
                         }),
                         Command::TogglePanel(TogglePanelCommand {
-                            panel_address: PanelAddress::DebugPanel.into(),
+                            panel_address: Some(core::known_address(KnownPanelAddress::DebugPanel)),
                             open: false,
                         }),
                     ],
@@ -81,24 +80,7 @@ pub fn render() -> Node {
                             )),
                         }),
                         Command::TogglePanel(TogglePanelCommand {
-                            panel_address: PanelAddress::DebugPanel.into(),
-                            open: false,
-                        }),
-                    ],
-                ),
-                client_debug_button(
-                    "Offline",
-                    vec![
-                        Command::Debug(ClientDebugCommand {
-                            debug_command: Some(DebugCommand::SetBooleanPreference(
-                                SetBooleanPreference {
-                                    key: "OfflineMode".to_string(),
-                                    value: true,
-                                },
-                            )),
-                        }),
-                        Command::TogglePanel(TogglePanelCommand {
-                            panel_address: PanelAddress::DebugPanel.into(),
+                            panel_address: Some(core::known_address(KnownPanelAddress::DebugPanel)),
                             open: false,
                         }),
                     ],

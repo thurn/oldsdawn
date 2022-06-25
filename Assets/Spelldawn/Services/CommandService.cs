@@ -78,8 +78,8 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.ConnectToGame:
             yield return ConnectToGame(command.ConnectToGame);
             break;
-          case GameCommand.CommandOneofCase.RenderInterface:
-            HandleRenderInterface(command.RenderInterface);
+          case GameCommand.CommandOneofCase.UpdatePanels:
+            _registry.DocumentService.HandleUpdatePanels(command.UpdatePanels);
             break;
           case GameCommand.CommandOneofCase.TogglePanel:
             _registry.DocumentService.TogglePanel(
@@ -168,11 +168,6 @@ namespace Spelldawn.Services
       {
         yield return coroutine;
       }
-    }
-
-    void HandleRenderInterface(RenderInterfaceCommand command)
-    {
-      _registry.DocumentService.HandleRenderInterface(command);
     }
 
     IEnumerator HandlePlayEffect(PlayEffectCommand command)

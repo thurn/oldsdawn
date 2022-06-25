@@ -29,8 +29,8 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     ClientDebugCommand, CommandList, ConnectToGameCommand, CreateGameDebugOptions,
-    CreateNewGameAction, GameAction, GameCommand, GameIdentifier, LoadSceneCommand, PanelAddress,
-    SceneLoadMode, SetPlayerIdentifierCommand,
+    CreateNewGameAction, GameAction, GameCommand, GameIdentifier, LoadSceneCommand, SceneLoadMode,
+    SetPlayerIdentifierCommand,
 };
 use rules::{dispatch, mana, mutations, queries};
 
@@ -100,11 +100,6 @@ pub fn handle_debug_action(
                     commands,
                 )),
             })
-        }
-        DebugAction::FetchStandardPanels => {
-            Ok(GameResponse::from_commands(vec![Command::RenderInterface(
-                panels::render_panel_command(PanelAddress::DebugPanel)?,
-            )]))
         }
         DebugAction::AddMana(amount) => {
             requests::handle_custom_action(database, player_id, game_id, |game, user_side| {

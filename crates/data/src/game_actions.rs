@@ -119,7 +119,6 @@ pub enum DebugAction {
     NewGame(Side),
     JoinGame,
     ResetGame,
-    FetchStandardPanels,
     AddMana(ManaValue),
     AddActionPoints(ActionCount),
     AddScore(PointsValue),

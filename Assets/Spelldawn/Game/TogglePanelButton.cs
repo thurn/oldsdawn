@@ -34,20 +34,24 @@ namespace Spelldawn.Game
 
     void OnMouseUpAsButton()
     {
-      var address = _panel switch
+      var address = new PanelAddress
       {
-        Panel.GameMenu => throw new NotImplementedException(),
-        Panel.Feedback => PanelAddress.DebugPanel,
-        _ => throw new ArgumentOutOfRangeException()
-      };
-      _registry.ActionService.HandleAction(new GameAction
-      {
-        TogglePanel = new TogglePanelAction
+        KnownPanel = _panel switch
         {
-          PanelAddress = address,
-          Open = !_registry.DocumentService.IsOpen(address)
+          Panel.GameMenu => throw new NotImplementedException(),
+          Panel.Feedback => KnownPanelAddress.DebugPanel,
+          _ => throw new ArgumentOutOfRangeException()
         }
-      });
+      };
+      
+      StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
+      {
+        TogglePanel = new TogglePanelCommand
+        {
+          Open = !_registry.DocumentService.IsOpen(address),
+          PanelAddress = address
+        }
+      }));
     }
   }
 }

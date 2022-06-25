@@ -19,10 +19,12 @@
 
 use data::game_actions::UserAction;
 use protos::spelldawn::game_command::Command;
+use protos::spelldawn::panel_address::AddressType;
 use protos::spelldawn::{
     game_action, BorderColor, BorderRadius, BorderWidth, CommandList, Dimension, DimensionGroup,
     DimensionUnit, EventHandlers, FlexColor, FlexRotate, FlexScale, FlexTranslate, FlexVector3,
-    GameAction, GameCommand, ImageSlice, Node, SpriteAddress, StandardAction, TimeValue,
+    GameAction, GameCommand, ImageSlice, KnownPanelAddress, Node, PanelAddress, SpriteAddress,
+    StandardAction, TimeValue,
 };
 use serde_json::ser;
 
@@ -60,9 +62,13 @@ pub fn action(action: Option<UserAction>, optimistic: Option<Vec<Command>>) -> O
             update: optimistic.map(|commands| CommandList {
                 commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
             }),
-            debug_payload: None,
         })),
     })
+}
+
+/// Converts a [KnownPanelAddress] into a [PanelAddress].
+pub fn known_address(known: KnownPanelAddress) -> PanelAddress {
+    PanelAddress { address_type: Some(AddressType::KnownPanel(known as i32)) }
 }
 
 /// A dimension in units of density-independent pixels. If you're familiar with

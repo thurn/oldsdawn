@@ -85,8 +85,8 @@ namespace Spelldawn.Services
       {
         switch (command.CommandCase)
         {
-          case GameCommand.CommandOneofCase.RenderInterface:
-            LoadRenderInterfaceAssets(requests, command.RenderInterface);
+          case GameCommand.CommandOneofCase.UpdatePanels:
+            LoadUpdatePanelsAssets(requests, command.UpdatePanels);
             break;
           case GameCommand.CommandOneofCase.UpdateGameView:
             LoadGameAssets(requests, command.UpdateGameView.Game);
@@ -144,7 +144,7 @@ namespace Spelldawn.Services
       }      
     }
 
-    void LoadRenderInterfaceAssets(IDictionary<string, ResourceRequest> requests, RenderInterfaceCommand command)
+    void LoadUpdatePanelsAssets(IDictionary<string, ResourceRequest> requests, UpdatePanelsCommand command)
     {
       foreach (var panel in command.Panels)
       {

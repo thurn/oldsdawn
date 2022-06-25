@@ -33,10 +33,10 @@ use protos::spelldawn::{
     MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MoveMultipleGameObjectsCommand,
     MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand,
     PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide,
-    PlayerView, ProjectileAddress, RenderInterfaceCommand, RevealedCardView, RoomIdentifier,
-    RoomVisitType, RulesText, RunInParallelCommand, SceneLoadMode, ScoreView,
-    SetGameObjectsEnabledCommand, SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress,
-    TimeValue, TogglePanelCommand, UpdateGameViewCommand, VisitRoomCommand,
+    PlayerView, ProjectileAddress, RevealedCardView, RoomIdentifier, RoomVisitType, RulesText,
+    RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand,
+    SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
+    UpdateGameViewCommand, UpdatePanelsCommand, VisitRoomCommand,
 };
 use server::requests::GameResponse;
 
@@ -263,7 +263,7 @@ impl Summarize for Command {
             Command::RunInParallel(v) => summary.child_node("RunInParallel", v),
             Command::Delay(v) => summary.child_node("Delay", v),
             Command::ConnectToGame(v) => summary.child_node("ConnectToGame", v),
-            Command::RenderInterface(v) => summary.child_node("RenderInterface", v),
+            Command::UpdatePanels(v) => summary.child_node("UpdatePanels", v),
             Command::TogglePanel(v) => summary.child_node("TogglePanel", v),
             Command::UpdateGameView(v) => summary.child_node("UpdateGameView", v),
             Command::VisitRoom(v) => summary.child_node("VisitRoom", v),
@@ -306,12 +306,11 @@ impl Summarize for ConnectToGameCommand {
 
 impl Summarize for TogglePanelCommand {
     fn summarize(self, summary: &mut Summary) {
-        summary.child_node("open", self.open);
-        summary.child("address", PanelAddress::from_i32(self.panel_address));
+        summary.primitive("<TogglePanelCommand>");
     }
 }
 
-impl Summarize for RenderInterfaceCommand {
+impl Summarize for UpdatePanelsCommand {
     fn summarize(self, summary: &mut Summary) {
         summary.children("panels", self.panels);
     }
@@ -319,13 +318,7 @@ impl Summarize for RenderInterfaceCommand {
 
 impl Summarize for InterfacePanel {
     fn summarize(self, summary: &mut Summary) {
-        let address = PanelAddress::from_i32(self.address);
-        if address == Some(PanelAddress::DebugPanel) {
-            summary.primitive("<DebugPanel>");
-        } else {
-            summary.child("address", address);
-            summary.child("node", self.node)
-        }
+        summary.primitive("<Panel>");
     }
 }
 

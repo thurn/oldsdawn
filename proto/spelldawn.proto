@@ -797,37 +797,26 @@ message GameView {
 
 
 message StandardAction {
-    /** Opaque payload to send to the server when invoked. */
+    // Opaque payload to send to the server when invoked.
     bytes payload = 1;
 
-    /* Immediate optimistic mutations to game state for this action. */
+    // Immediate optimistic mutations to state for this action.
     CommandList update = 2;
-
-    /* Temporary payload for use in testing. */
-    google.protobuf.Any debug_payload = 3;
 }
 
-/*
-* Spend an action to gain 1 mana.
-*
-* Optimistic: Mana is added immediately.
-*/
+// Spend an action to gain 1 mana.
+// Optimistic: Mana is added immediately.
 message GainManaAction {
 }
 
-/*
-* Spend an action to draw a card.
-*
-* Optimistic: Face-down card animates to reveal area.
-*/
+// Spend an action to draw a card.
+// Optimistic: Face-down card animates to reveal area.
 message DrawCardAction {
 }
 
-/*
-* Spend an action to level up a room.
-*
-* Optimistic: Counter is added immediately
-*/
+
+// Spend an action to level up a room.
+// Optimistic: Room visit animation plays
 message LevelUpRoomAction {
     RoomIdentifier room_id = 1;
 }
@@ -838,51 +827,24 @@ message CardTarget {
     }
 }
 
-/*
-* Spend an action to play a card from hand.
-*
-* Optimistic:
-*   - Mana and action cost is spent immediately, and 'can play' values for
-*     other cards in hand are optimistically updated
-*   - Other costs like 'sacrifice an artifact' are not optimistic and are
-*     handled like choices
-*   - Targeted cards select their *first* valid target (cards, rooms, players)
-*     optimistically. If additional targets are required, they're not handled
-*     optimistically, and this play pattern should possibly be avoided.
-*   - Cards that require a choice to be made before resolving do not display
-*     the options optimistically, instead they animate to the reveal card area
-*   - Item cards which don't require a choice to be made or target simply
-*     animate into the play area optimistically
-*   - Spell cards animate to the reveal card area and wait for their effects to
-*     be applied
-*   - Minion and Project cards animate to their selected room optimistically
-*/
+// Spend an action to play a card from hand.
+// Optimistic:
+//   - Card animates to its 'on_release' position. If the RoomIdentifier is
+//     unspecified for a room position, the targeted room is used.
 message PlayCardAction {
     CardIdentifier card_id = 1;
     CardTarget target = 2;
 }
 
-/*
-* Spend an action to initiate a raid on one of the overlord's rooms
-*
-* Optimistic: Raid start animation plays
-*/
+// Spend an action to initiate a raid on one of the overlord's rooms
+// Optimistic: Room visit animation plays
 message InitiateRaidAction {
     RoomIdentifier room_id = 1;
 }
 
-// Open or close a given interface panel.
-//
-// Behavior:
-//   - Open: If the panel with this address has already been downloaded, it
-//   is opened immediately. The server returns an updated view of the
-//   panel contents.
-//   - Close: The panel is closed immediately. No server response is
-//   provided.
-message TogglePanelAction {
+// Fetch the contents of a given interface panel.
+message FetchPanelAction {
     PanelAddress panel_address = 1;
-    // Should the panel be opened or closed?
-    bool open = 2;
 }
 
 // Test/debug options for creating a game
@@ -898,6 +860,7 @@ message CreateGameDebugOptions {
     bool in_memory = 3;
 }
 
+// Requests to create a new game playing against a given opponent
 message CreateNewGameAction {
     PlayerSide side = 1;
 
@@ -906,11 +869,12 @@ message CreateNewGameAction {
     CreateGameDebugOptions debug_options = 3;
 }
 
-// Action to spend an action point with no other effect, typically used for
+// Spend an action point with no other effect, typically used for
 // tests
 message SpendActionPointAction {}
 
-// Request a server sync with no other effects
+// Request a server sync with no other effects, typically used for
+//// tests
 message SyncAction {}
 
 // Possible game actions taken by the user.
@@ -921,7 +885,7 @@ message SyncAction {}
 message GameAction {
     oneof action {
         StandardAction standard_action = 1;
-        TogglePanelAction toggle_panel = 2;
+        FetchPanelAction fetch_panel = 2;
         CreateNewGameAction create_new_game = 3;
         GainManaAction gain_mana = 4;
         DrawCardAction draw_card = 5;
@@ -984,16 +948,29 @@ message ConnectToGameCommand {
     string scene_name = 2;
 }
 
-enum PanelAddress {
-    PANEL_ADDRESS_UNSPECIFIED = 0;
-    PANEL_ADDRESS_DEBUG_PANEL = 1;
+// Panels that are directly fetched by client code.
+enum KnownPanelAddress {
+    KNOWN_PANEL_ADDRESS_UNSPECIFIED = 0;
+    KNOWN_PANEL_ADDRESS_DEBUG_PANEL = 1;
 }
 
+// Identifies an InterfacePanel.
+message PanelAddress {
+    oneof address_type {
+        bytes serialized = 1;
+        KnownPanelAddress known_panel = 2;
+    }
+}
+
+// A 'panel' is an independently addressable block of UI. The contents
+// of each known panel are cached and can then be opened immediately
+// by the client, without waiting for a server response.
 message InterfacePanel {
     PanelAddress address = 1;
     Node node = 2;
 }
 
+// Position on a card where a UI element should be anchored.
 enum CardNodeAnchorPosition {
     CARD_NODE_ANCHOR_POSITION_UNSPECIFIED = 0;
 
@@ -1040,19 +1017,17 @@ message InterfaceMainControls {
     repeated CardAnchorNode card_anchor_nodes = 3;
 }
 
-// Updates the content of the user interface.
-message RenderInterfaceCommand {
+// Updates the contents of one or more user interface panels
+message UpdatePanelsCommand {
     // List of panels to update.
-    //
-    // A 'panel' is an independently addressable block of UI. The contents
-    // of each known panel are cached and can then be opened immediately
-    // via TogglePanelAction, without waiting for a server response.
     repeated InterfacePanel panels = 1;
 }
 
-// Opens or closes the given interface panel.
+// Requests to open or close the given interface panel.
 message TogglePanelCommand {
+    // Panel to modify
     PanelAddress panel_address = 1;
+
     // Should the panel be opened or closed?
     bool open = 2;
 }
@@ -1346,7 +1321,7 @@ message GameCommand {
         RunInParallelCommand run_in_parallel = 2;
         DelayCommand delay = 3;
         ConnectToGameCommand connect_to_game = 4;
-        RenderInterfaceCommand render_interface = 5;
+        UpdatePanelsCommand update_panels = 5;
         TogglePanelCommand toggle_panel = 6;
         UpdateGameViewCommand update_game_view = 7;
         VisitRoomCommand visit_room = 8;

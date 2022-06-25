@@ -92,5 +92,5 @@ expression: "Summary::run(&r3)"
             on_release_position: 
                 sorting_key: 1
                 position: ObjectPositionStaging
-    RenderInterface: 
-    panels: "<DebugPanel>"
+    UpdatePanels: 
+    panels: "<Panel>"
