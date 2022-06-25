@@ -233,7 +233,7 @@ command_list:
             on_release_position: 
                 sorting_key: 6
                 position: ObjectPositionStaging
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
         id: O45
         position: 
             sorting_key: 1
@@ -1102,7 +1102,7 @@ channel_response:
         card_icons: 
         arena_frame: "<SpriteAddress>"
         owning_player: Opponent
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
         id: O24
         position: 
             sorting_key: 1

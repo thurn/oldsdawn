@@ -171,12 +171,12 @@ namespace Spelldawn.Tests
     {
       yield return new WaitForSeconds(1.0f);
       Quit(0);
-    }    
+    }
     
     static bool ShouldHandle(GameCommand.CommandOneofCase commandCase) => commandCase switch
     {
       GameCommand.CommandOneofCase.UpdateGameView => true,
-      GameCommand.CommandOneofCase.MoveMultipleGameObjects => true,
+      GameCommand.CommandOneofCase.MoveGameObjects => true,
       _ => false
     };
 

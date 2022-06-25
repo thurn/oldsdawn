@@ -540,7 +540,7 @@ pub struct ObjectPosition {
     pub sorting_subkey: u32,
     #[prost(
         oneof = "object_position::Position",
-        tags = "3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18"
+        tags = "3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18"
     )]
     pub position: ::core::option::Option<object_position::Position>,
 }
@@ -566,8 +566,6 @@ pub mod object_position {
         DiscardPile(super::ObjectPositionDiscardPile),
         #[prost(message, tag = "11")]
         DiscardPileContainer(super::ObjectPositionDiscardPileContainer),
-        #[prost(message, tag = "12")]
-        ScoreAnimation(super::ObjectPositionScoreAnimation),
         #[prost(message, tag = "13")]
         Raid(super::ObjectPositionRaid),
         #[prost(message, tag = "14")]
@@ -835,10 +833,6 @@ pub struct CreateNewGameAction {
 /// tests
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SpendActionPointAction {}
-/// Request a server sync with no other effects, typically used for
-///// tests
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct SyncAction {}
 /// Possible game actions taken by the user.
 ///
 /// Actions have an associated 'optimistic' behavior to display while waiting
@@ -846,7 +840,7 @@ pub struct SyncAction {}
 /// same time -- interaction should be disabled while an action is pending.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameAction {
-    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10")]
+    #[prost(oneof = "game_action::Action", tags = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
     pub action: ::core::option::Option<game_action::Action>,
 }
 /// Nested message and enum types in `GameAction`.
@@ -871,8 +865,6 @@ pub mod game_action {
         InitiateRaid(super::InitiateRaidAction),
         #[prost(message, tag = "9")]
         SpendActionPoint(super::SpendActionPointAction),
-        #[prost(message, tag = "10")]
-        SyncAction(super::SyncAction),
     }
 }
 /// Initiate a play session. If a game_id is provided, connects to an ongoing
@@ -1046,59 +1038,6 @@ pub struct CreateTokenCardCommand {
     #[prost(bool, tag = "2")]
     pub animate: bool,
 }
-///
-/// Creates a new card, or updates an existing card if one is already present
-/// with the provided CardId.
-///
-/// When a user takes the 'draw card' game action, an optimistically-created
-/// card is constructed and animated to the staging area face down. If an
-/// optimistically-created card is found, that card is updated with the 'card'
-/// value here instead.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CreateOrUpdateCardCommand {
-    #[prost(message, optional, tag = "1")]
-    pub card: ::core::option::Option<CardView>,
-    ///
-    /// Optionally, a position in which to create this card. Ignored if the card
-    /// already exists, if a 'create_animation' is specified, or during
-    /// optimistic card draw.
-    #[prost(message, optional, tag = "2")]
-    pub create_position: ::core::option::Option<ObjectPosition>,
-    ///
-    /// Optionally, an animation to play after creating the card. Ignored if
-    /// the card already exists. Ignored during optimistic card draw.
-    #[prost(enumeration = "CardCreationAnimation", tag = "3")]
-    pub create_animation: i32,
-    ///
-    /// Disables the flip animation for this card, allowing it immediately
-    /// transition to a revealed state.
-    #[prost(bool, tag = "4")]
-    pub disable_flip_animation: bool,
-}
-///
-/// Requests to destroy a card game object.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct DestroyCardCommand {
-    #[prost(message, optional, tag = "1")]
-    pub card_id: ::core::option::Option<CardIdentifier>,
-}
-///
-/// Moves a list of GameObjects to a new position.
-///
-/// Objects already in the target position are skipped.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct MoveGameObjectsCommand {
-    #[prost(message, repeated, tag = "1")]
-    pub ids: ::prost::alloc::vec::Vec<GameObjectIdentifier>,
-    ///
-    /// Position at which to insert. If multiple ids are specified, each
-    /// additional object will be given a sorting key which is 1 greater than
-    /// the previous object's sorting key.
-    #[prost(message, optional, tag = "2")]
-    pub position: ::core::option::Option<ObjectPosition>,
-    #[prost(bool, tag = "3")]
-    pub disable_animation: bool,
-}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameObjectMove {
     #[prost(message, optional, tag = "1")]
@@ -1108,7 +1047,7 @@ pub struct GameObjectMove {
 }
 /// Move a list of game objects to new positions, in parallel
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct MoveMultipleGameObjectsCommand {
+pub struct MoveGameObjectsCommand {
     #[prost(message, repeated, tag = "1")]
     pub moves: ::prost::alloc::vec::Vec<GameObjectMove>,
     #[prost(bool, tag = "2")]
@@ -1116,18 +1055,6 @@ pub struct MoveMultipleGameObjectsCommand {
     /// A delay once the cards reach their destination
     #[prost(message, optional, tag = "3")]
     pub delay: ::core::option::Option<TimeValue>,
-}
-///
-/// Request to move all GameObjects located at a specific object position to
-/// another object position.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct MoveGameObjectsAtPositionCommand {
-    #[prost(message, optional, tag = "1")]
-    pub source_position: ::core::option::Option<ObjectPosition>,
-    #[prost(message, optional, tag = "2")]
-    pub target_position: ::core::option::Option<ObjectPosition>,
-    #[prost(bool, tag = "3")]
-    pub disable_animation: bool,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlaySoundCommand {
@@ -1276,7 +1203,7 @@ pub mod client_debug_command {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23"
+        tags = "1, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1286,8 +1213,6 @@ pub mod game_command {
     pub enum Command {
         #[prost(message, tag = "1")]
         Debug(super::ClientDebugCommand),
-        #[prost(message, tag = "2")]
-        RunInParallel(super::RunInParallelCommand),
         #[prost(message, tag = "3")]
         Delay(super::DelayCommand),
         #[prost(message, tag = "4")]
@@ -1300,14 +1225,6 @@ pub mod game_command {
         UpdateGameView(super::UpdateGameViewCommand),
         #[prost(message, tag = "8")]
         VisitRoom(super::VisitRoomCommand),
-        #[prost(message, tag = "9")]
-        CreateOrUpdateCard(super::CreateOrUpdateCardCommand),
-        #[prost(message, tag = "10")]
-        DestroyCard(super::DestroyCardCommand),
-        #[prost(message, tag = "11")]
-        MoveGameObjects(super::MoveGameObjectsCommand),
-        #[prost(message, tag = "12")]
-        MoveObjectsAtPosition(super::MoveGameObjectsAtPositionCommand),
         #[prost(message, tag = "13")]
         PlaySound(super::PlaySoundCommand),
         #[prost(message, tag = "14")]
@@ -1327,7 +1244,7 @@ pub mod game_command {
         #[prost(message, tag = "21")]
         SetPlayerId(super::SetPlayerIdentifierCommand),
         #[prost(message, tag = "22")]
-        MoveMultipleGameObjects(super::MoveMultipleGameObjectsCommand),
+        MoveGameObjects(super::MoveGameObjectsCommand),
         #[prost(message, tag = "23")]
         CreateTokenCard(super::CreateTokenCardCommand),
     }

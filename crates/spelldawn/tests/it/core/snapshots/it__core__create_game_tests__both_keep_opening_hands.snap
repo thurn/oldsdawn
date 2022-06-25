@@ -1074,7 +1074,7 @@ channel_response:
         card_icons: 
         arena_frame: "<SpriteAddress>"
         owning_player: Opponent
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
         id: O18
         position: 
             sorting_key: 1

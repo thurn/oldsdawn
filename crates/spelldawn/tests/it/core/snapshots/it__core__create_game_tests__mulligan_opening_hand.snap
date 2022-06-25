@@ -332,7 +332,7 @@ command_list:
         card_icons: 
         arena_frame: "<SpriteAddress>"
         owning_player: Opponent
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
         id: O26
         position: 
             sorting_key: 1

@@ -514,7 +514,7 @@ impl ClientGameData {
                 self.insert_position(discard_id(PlayerName::User), &non_card.user_discard);
                 self.insert_position(discard_id(PlayerName::Opponent), &non_card.opponent_deck);
             }
-            Command::MoveMultipleGameObjects(move_objects) => {
+            Command::MoveGameObjects(move_objects) => {
                 for move_object in move_objects.moves {
                     let p = move_object.position.as_ref().expect("ObjectPosition").clone();
                     self.object_positions.insert(move_object.id.expect("id"), p);
@@ -867,7 +867,7 @@ impl ClientCards {
                     self.card_map.insert(card.card_id.expect("card_id"), ClientCard::new(card));
                 }
             }
-            Command::MoveMultipleGameObjects(move_objects) => {
+            Command::MoveGameObjects(move_objects) => {
                 for move_object in move_objects.moves {
                     let p = move_object.position.as_ref().expect("ObjectPosition").clone();
                     let id = match move_object.id.expect("id").id.expect("id") {

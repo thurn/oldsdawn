@@ -249,7 +249,6 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
         Action::SpendActionPoint(_) => {
             handle_action(database, player_id, game_id, UserAction::SpendActionPoint)
         }
-        Action::SyncAction(_) => handle_action(database, player_id, game_id, UserAction::Sync),
     }?;
 
     let commands = response.command_list.commands.iter().map(command_name).collect::<Vec<_>>();
@@ -438,17 +437,13 @@ pub fn user_side(player_id: PlayerId, game: &GameState) -> Result<Side> {
 pub fn command_name(command: &GameCommand) -> &'static str {
     command.command.as_ref().map_or("None", |c| match c {
         Command::Debug(_) => "Debug",
-        Command::RunInParallel(_) => "RunInParallel",
         Command::Delay(_) => "Delay",
         Command::ConnectToGame(_) => "ConnectToGame",
         Command::UpdatePanels(_) => "UpdatePanels",
         Command::TogglePanel(_) => "TogglePanel",
         Command::UpdateGameView(_) => "UpdateGameView",
         Command::VisitRoom(_) => "VisitRoom",
-        Command::CreateOrUpdateCard(_) => "CreateOrUpdateCard",
-        Command::DestroyCard(_) => "DestroyCard",
         Command::MoveGameObjects(_) => "MoveGameObjects",
-        Command::MoveObjectsAtPosition(_) => "MoveObjectsAtPosition",
         Command::PlaySound(_) => "PlaySound",
         Command::SetMusic(_) => "SetMusic",
         Command::FireProjectile(_) => "FireProjectile",
@@ -458,7 +453,6 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::DisplayRewards(_) => "DisplayRewards",
         Command::LoadScene(_) => "LoadScene",
         Command::SetPlayerId(_) => "SetPlayerIdentifier",
-        Command::MoveMultipleGameObjects(_) => "MoveMultipleGameObjects",
         Command::CreateTokenCard(_) => "CreateTokenCard",
     })
 }

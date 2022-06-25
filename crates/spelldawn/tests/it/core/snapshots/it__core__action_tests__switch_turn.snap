@@ -449,7 +449,7 @@ channel_response:
             on_release_position: 
                 sorting_key: 2
                 position: ObjectPositionStaging
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
         id: C11
         position: 
             sorting_key: 1

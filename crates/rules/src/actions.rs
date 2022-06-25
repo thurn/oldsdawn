@@ -55,7 +55,6 @@ pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAct
         UserAction::InitiateRaid(room_id) => initiate_raid_action(game, user_side, room_id),
         UserAction::LevelUpRoom(room_id) => level_up_room_action(game, user_side, room_id),
         UserAction::SpendActionPoint => spend_action_point_action(game, user_side),
-        UserAction::Sync => Ok(()),
     }
 }
 

@@ -267,47 +267,5 @@ namespace Spelldawn.Services
       node.Style.Inset = inset;
       return node;
     }
-
-    public static Node ControlGroup(params Node[] nodes) => Row("ControlGroup",
-      new FlexStyle
-      {
-        JustifyContent = FlexJustify.Center,
-        FlexGrow = 1,
-        AlignItems = FlexAlign.Center,
-        Wrap = FlexWrap.WrapReverse,
-      },
-      nodes);
-
-    public static Node Button(string label, GameCommand? update, bool primary = false) => Row(
-      $"Button {label}",
-      new FlexStyle
-      {
-        Margin = AllDip(8),
-        Height = Dip(88),
-        MinWidth = Dip(132),
-        JustifyContent = FlexJustify.Center,
-        AlignItems = FlexAlign.Center,
-        FlexShrink = 0,
-        BackgroundImage = Sprite(primary
-          ? "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange"
-          : "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Gray"),
-        ImageSlice = ImageSlice(0, 16)
-      },
-      new EventHandlers
-      {
-        OnClick = new GameAction
-        {
-          SyncAction = new SyncAction()
-        }
-      },
-      Text(label, new FlexStyle
-      {
-        Margin = LeftRightDip(16),
-        Padding = AllDip(0),
-        Color = MakeColor(Color.white),
-        FontSize = Dip(32),
-        Font = Font("Fonts/Roboto"),
-        TextAlign = TextAlign.MiddleCenter
-      }));
   }
 }

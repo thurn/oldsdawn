@@ -15,9 +15,8 @@
 #nullable enable
 
 using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
-using Spelldawn.Services;
 using Spelldawn.Utils;
 using UnityEngine;
 
@@ -32,22 +31,14 @@ namespace Spelldawn.Game
 
     public IEnumerator BrowseCards(ObjectDisplay display)
     {
-      if (display.AllObjects.Count == 0)
+      var cards = display.AllObjects.OfType<Card>().Cast<Displayable>().ToList();
+      if (cards.Count == 0)
       {
         yield break;
-      }
-      
-      _display = display;
+      }      
+     
       DestroyAll();
-      var cards = new List<Displayable>();
-      foreach (var card in display.AllObjects)
-      {
-        if (card is Card c)
-        {
-          cards.Add(CardService.InfoCopy(c));
-        }
-      }
-
+      _display = display;
       yield return AddObjects(cards);
       _closeButton.SetActive(true);
     }

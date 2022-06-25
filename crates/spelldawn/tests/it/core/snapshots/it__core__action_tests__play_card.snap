@@ -309,7 +309,7 @@ channel_response:
             on_release_position: 
                 sorting_key: 3
                 position: ObjectPositionStaging
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
     UpdateGameView: 
         user: 
             side: Overlord

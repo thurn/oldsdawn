@@ -435,7 +435,7 @@ channel_response:
             on_release_position: 
                 sorting_key: 12
                 position: ObjectPositionItem { item_location: Left }
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
     UpdateGameView: 
         user: 
             side: Champion

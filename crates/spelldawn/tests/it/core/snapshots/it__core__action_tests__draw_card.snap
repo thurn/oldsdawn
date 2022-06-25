@@ -108,7 +108,7 @@ command_list:
             on_release_position: 
                 sorting_key: 1
                 position: ObjectPositionStaging
-    MoveMultipleGameObjects: 
+    MoveGameObjects: 
         id: O1
         position: 
             sorting_key: 1

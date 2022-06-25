@@ -15,7 +15,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using Spelldawn.Game;
 using Spelldawn.Protos;
@@ -97,33 +96,8 @@ namespace Spelldawn.Services
 
     public IEnumerator MoveByIdentifier(GameObjectIdentifier identifier, ObjectPosition position, bool animate) => 
       MoveGameObject(Find(identifier), position, animate);
-
+    
     public IEnumerator HandleMoveGameObjectsCommand(MoveGameObjectsCommand command)
-    {
-      if (!command.DisableAnimation)
-      {
-        _registry.StaticAssets.PlayCardSound();
-      }
-
-      return MoveGameObjects(command.Ids.Select(Find).ToList(),
-        command.Position,
-        !command.DisableAnimation);
-    }
-
-    public IEnumerator HandleMoveGameObjectsAtPosition(MoveGameObjectsAtPositionCommand command)
-    {
-      if (!command.DisableAnimation)
-      {
-        _registry.StaticAssets.PlayCardSound();
-      }
-
-      return MoveGameObjects(
-        ObjectDisplayForPosition(command.SourcePosition).AllObjects,
-        command.TargetPosition,
-        animate: !command.DisableAnimation);
-    }
-
-    public IEnumerator HandleMoveMultipleGameObjectsCommand(MoveMultipleGameObjectsCommand command)
     {
       if (!command.DisableAnimation)
       {
@@ -132,9 +106,8 @@ namespace Spelldawn.Services
 
       var coroutines = new List<Coroutine>();
 
-      for (var i = 0; i < command.Moves.Count; ++i)
+      foreach (var move in command.Moves)
       {
-        var move = command.Moves[i];
         coroutines.Add(
           StartCoroutine(
             MoveGameObject(Find(move.Id),
@@ -154,34 +127,15 @@ namespace Spelldawn.Services
       }
     }
 
-
     public IEnumerator MoveGameObject(
       Displayable displayable,
       ObjectPosition targetPosition,
       bool animate = true,
-      bool animateRemove = true) =>
-      MoveGameObjects(
-        new List<Displayable> { displayable },
-        targetPosition,
-        animate,
-        animateRemove);
-
-    public IEnumerator MoveGameObjects(
-      List<Displayable> list,
-      ObjectPosition targetPosition,
-      bool animate = true,
       bool animateRemove = true)
     {
-      var sortingKey = targetPosition.SortingKey;
-      var sortingSubkey = targetPosition.SortingSubkey;
-      foreach (var displayable in list)
-      {
-        displayable.SortingKey = sortingKey;
-        displayable.SortingSubkey = sortingSubkey;
-        sortingKey++;
-      }
-
-      yield return ObjectDisplayForPosition(targetPosition).AddObjects(list, animate, animateRemove);
+      displayable.SortingKey = targetPosition.SortingKey;
+      displayable.SortingSubkey = targetPosition.SortingSubkey;      
+      return ObjectDisplayForPosition(targetPosition).AddObject(displayable, animate, animateRemove);
     }
 
     public void MoveGameObjectImmediate(Displayable displayable, ObjectPosition targetPosition)
@@ -231,8 +185,6 @@ namespace Spelldawn.Services
           _registry.DiscardPileForPlayer(position.DiscardPile.Owner),
         ObjectPosition.PositionOneofCase.DiscardPileContainer =>
           _registry.DiscardPilePositionForPlayer(position.DiscardPileContainer.Owner),
-        ObjectPosition.PositionOneofCase.ScoreAnimation =>
-          _registry.CardScoring,
         ObjectPosition.PositionOneofCase.Raid =>
           _registry.RaidService.RaidParticipants,
         ObjectPosition.PositionOneofCase.Browser =>
@@ -251,22 +203,6 @@ namespace Spelldawn.Services
         },
         _ => throw new ArgumentOutOfRangeException()
       };
-    }
-
-    public IEnumerator PlayCreateFromParentCardAnimation(Card card, CardIdentifier identifier,
-      ObjectPosition createPosition)
-    {
-      var parentCard = _registry.CardService.FindCard(new CardIdentifier
-      {
-        Index = identifier.Index,
-        Side = identifier.Side
-      });
-
-      card.transform.localScale = Vector3.zero;
-      card.transform.position = parentCard.transform.position;
-      card.transform.rotation = parentCard.transform.rotation;
-
-      return MoveGameObject(card, createPosition);
     }
   }
 }

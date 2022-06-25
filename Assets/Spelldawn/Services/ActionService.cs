@@ -142,7 +142,6 @@ namespace Spelldawn.Services
         allowWithPanelOpen: true),
       GameAction.ActionOneofCase.FetchPanel => true,
       GameAction.ActionOneofCase.CreateNewGame => true,
-      GameAction.ActionOneofCase.SyncAction => true,
       GameAction.ActionOneofCase.GainMana => CanAct(),
       GameAction.ActionOneofCase.DrawCard => CanAct(),
       GameAction.ActionOneofCase.PlayCard => CanAct(),

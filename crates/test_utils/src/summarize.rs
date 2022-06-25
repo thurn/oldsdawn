@@ -23,19 +23,17 @@ use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::play_effect_position::EffectPosition;
 use protos::spelldawn::{
-    game_object_identifier, node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom,
-    AudioClipAddress, CardAnchor, CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons,
-    CardIdentifier, CardTargeting, CardTitle, CardView, CommandList, ConnectToGameCommand,
-    CreateOrUpdateCardCommand, CreateTokenCardCommand, DelayCommand, DestroyCardCommand,
+    node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom, AudioClipAddress, CardAnchor,
+    CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons, CardIdentifier, CardTargeting,
+    CardTitle, CardView, CommandList, ConnectToGameCommand, CreateTokenCardCommand, DelayCommand,
     DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand,
     GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameObjectPositions,
     GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView,
-    MoveGameObjectsAtPositionCommand, MoveGameObjectsCommand, MoveMultipleGameObjectsCommand,
-    MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress, PlayEffectCommand,
-    PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName, PlayerSide,
-    PlayerView, ProjectileAddress, RevealedCardView, RoomIdentifier, RoomVisitType, RulesText,
-    RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand, SetMusicCommand,
-    SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
+    MoveGameObjectsCommand, MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress,
+    PlayEffectCommand, PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName,
+    PlayerSide, PlayerView, ProjectileAddress, RevealedCardView, RoomIdentifier, RoomVisitType,
+    RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand,
+    SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
     UpdateGameViewCommand, UpdatePanelsCommand, VisitRoomCommand,
 };
 use server::requests::GameResponse;
@@ -190,7 +188,7 @@ impl Summarize for GameObjectIdentifier {
     }
 }
 
-impl Summarize for game_object_identifier::Id {
+impl Summarize for Id {
     fn summarize(self, summary: &mut Summary) {
         match self {
             Id::CardId(id) => summary.value_node(id),
@@ -260,17 +258,13 @@ impl Summarize for Command {
     fn summarize(self, summary: &mut Summary) {
         match self {
             Command::Debug(_) => summary.primitive("Debug!"),
-            Command::RunInParallel(v) => summary.child_node("RunInParallel", v),
             Command::Delay(v) => summary.child_node("Delay", v),
             Command::ConnectToGame(v) => summary.child_node("ConnectToGame", v),
             Command::UpdatePanels(v) => summary.child_node("UpdatePanels", v),
             Command::TogglePanel(v) => summary.child_node("TogglePanel", v),
             Command::UpdateGameView(v) => summary.child_node("UpdateGameView", v),
             Command::VisitRoom(v) => summary.child_node("VisitRoom", v),
-            Command::CreateOrUpdateCard(v) => summary.child_node("CreateOrUpdateCard", v),
-            Command::DestroyCard(v) => summary.child_node("DestroyCard", v),
             Command::MoveGameObjects(v) => summary.child_node("MoveGameObjects", v),
-            Command::MoveObjectsAtPosition(v) => summary.child_node("MoveObjectsAtPosition", v),
             Command::PlaySound(v) => summary.child_node("PlaySound", v),
             Command::SetMusic(v) => summary.child_node("SetMusic", v),
             Command::FireProjectile(v) => summary.child_node("FireProjectile", v),
@@ -280,7 +274,6 @@ impl Summarize for Command {
             Command::DisplayRewards(v) => summary.child_node("DisplayRewards", v),
             Command::LoadScene(v) => summary.child_node("LoadScene", v),
             Command::SetPlayerId(v) => summary.child_node("SetPlayerId", v),
-            Command::MoveMultipleGameObjects(v) => summary.child_node("MoveMultipleGameObjects", v),
             Command::CreateTokenCard(v) => summary.child_node("CreateTokenCard", v),
         }
     }
@@ -450,14 +443,6 @@ impl Summarize for RoomVisitType {
     }
 }
 
-impl Summarize for CreateOrUpdateCardCommand {
-    fn summarize(self, summary: &mut Summary) {
-        summary.child("card", self.card);
-        summary.child("create_position", self.create_position);
-        summary.child("create_animation", CardCreationAnimation::from_i32(self.create_animation));
-    }
-}
-
 impl Summarize for CardCreationAnimation {
     fn summarize(self, summary: &mut Summary) {
         summary.primitive(self)
@@ -572,7 +557,6 @@ impl Summarize for Position {
             Position::DeckContainer(v) => summary.primitive(v),
             Position::DiscardPile(v) => summary.primitive(v),
             Position::DiscardPileContainer(v) => summary.primitive(v),
-            Position::ScoreAnimation(v) => summary.primitive(v),
             Position::Raid(v) => summary.primitive(v),
             Position::Browser(v) => summary.primitive(v),
             Position::Identity(v) => summary.primitive(v),
@@ -580,30 +564,6 @@ impl Summarize for Position {
             Position::IntoCard(v) => summary.primitive(v),
             Position::Revealed(v) => summary.primitive(v),
         }
-    }
-}
-
-impl Summarize for DestroyCardCommand {
-    fn summarize(self, summary: &mut Summary) {
-        summary.child("card_id", self.card_id);
-    }
-}
-
-impl Summarize for MoveGameObjectsCommand {
-    fn summarize(self, summary: &mut Summary) {
-        if self.ids.len() == 1 {
-            summary.child_node("id", self.ids[0]);
-        } else {
-            summary.children("ids", self.ids);
-        }
-        summary.child("position", self.position);
-    }
-}
-
-impl Summarize for MoveGameObjectsAtPositionCommand {
-    fn summarize(self, summary: &mut Summary) {
-        summary.child("source_position", self.source_position);
-        summary.child("target_position", self.target_position);
     }
 }
 
@@ -701,7 +661,7 @@ impl Summarize for GameObjectMove {
     }
 }
 
-impl Summarize for MoveMultipleGameObjectsCommand {
+impl Summarize for MoveGameObjectsCommand {
     fn summarize(self, summary: &mut Summary) {
         summary.values(self.moves);
     }

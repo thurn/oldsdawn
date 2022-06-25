@@ -640,7 +640,6 @@ message ObjectPosition {
         ObjectPositionDeckContainer deck_container = 9;
         ObjectPositionDiscardPile discard_pile = 10;
         ObjectPositionDiscardPileContainer discard_pile_container = 11;
-        ObjectPositionScoreAnimation score_animation = 12;
         ObjectPositionRaid raid = 13;
         ObjectPositionBrowser browser = 14;
         ObjectPositionIdentity identity = 15;
@@ -873,10 +872,6 @@ message CreateNewGameAction {
 // tests
 message SpendActionPointAction {}
 
-// Request a server sync with no other effects, typically used for
-//// tests
-message SyncAction {}
-
 // Possible game actions taken by the user.
 //
 // Actions have an associated 'optimistic' behavior to display while waiting
@@ -893,7 +888,6 @@ message GameAction {
         LevelUpRoomAction level_up_room = 7;
         InitiateRaidAction initiate_raid = 8;
         SpendActionPointAction spend_action_point = 9;
-        SyncAction sync_action = 10;
     }
 }
 
@@ -1083,63 +1077,6 @@ message CreateTokenCardCommand {
     bool animate = 2;
 }
 
-/*
- * Creates a new card, or updates an existing card if one is already present
- * with the provided CardId.
- *
- * When a user takes the 'draw card' game action, an optimistically-created
- * card is constructed and animated to the staging area face down. If an
- * optimistically-created card is found, that card is updated with the 'card'
- * value here instead.
- */
-message CreateOrUpdateCardCommand {
-    CardView card = 1;
-
-    /*
-     * Optionally, a position in which to create this card. Ignored if the card
-     * already exists, if a 'create_animation' is specified, or during optimistic
-     * card draw.
-     */
-    ObjectPosition create_position = 2;
-
-    /*
-     * Optionally, an animation to play after creating the card. Ignored if
-     * the card already exists. Ignored during optimistic card draw.
-     */
-    CardCreationAnimation create_animation = 3;
-
-    /*
-    * Disables the flip animation for this card, allowing it immediately
-    * transition to a revealed state.
-    */
-    bool disable_flip_animation = 4;
-}
-
-/*
- * Requests to destroy a card game object.
- */
-message DestroyCardCommand {
-    CardIdentifier card_id = 1;
-}
-
-/*
- * Moves a list of GameObjects to a new position.
- *
- * Objects already in the target position are skipped.
- */
-message MoveGameObjectsCommand {
-    repeated GameObjectIdentifier ids = 1;
-
-    /*
-     * Position at which to insert. If multiple ids are specified, each
-     * additional object will be given a sorting key which is 1 greater than
-     * the previous object's sorting key.
-     */
-    ObjectPosition position = 2;
-
-    bool disable_animation = 3;
-}
-
 message GameObjectMove {
     GameObjectIdentifier id = 1;
 
@@ -1147,25 +1084,13 @@ message GameObjectMove {
 }
 
 // Move a list of game objects to new positions, in parallel
-message MoveMultipleGameObjectsCommand {
+message MoveGameObjectsCommand {
     repeated GameObjectMove moves = 1;
 
     bool disable_animation = 2;
 
     // A delay once the cards reach their destination
     TimeValue delay = 3;
-}
-
-/*
- * Request to move all GameObjects located at a specific object position to
- * another object position.
- */
-message MoveGameObjectsAtPositionCommand {
-    ObjectPosition source_position = 1;
-
-    ObjectPosition target_position = 2;
-
-    bool disable_animation = 3;
 }
 
 message PlaySoundCommand {
@@ -1318,17 +1243,12 @@ message ClientDebugCommand {
 message GameCommand {
     oneof command {
         ClientDebugCommand debug = 1;
-        RunInParallelCommand run_in_parallel = 2;
         DelayCommand delay = 3;
         ConnectToGameCommand connect_to_game = 4;
         UpdatePanelsCommand update_panels = 5;
         TogglePanelCommand toggle_panel = 6;
         UpdateGameViewCommand update_game_view = 7;
         VisitRoomCommand visit_room = 8;
-        CreateOrUpdateCardCommand create_or_update_card = 9;
-        DestroyCardCommand destroy_card = 10;
-        MoveGameObjectsCommand move_game_objects = 11;
-        MoveGameObjectsAtPositionCommand move_objects_at_position = 12;
         PlaySoundCommand play_sound = 13;
         SetMusicCommand set_music = 14;
         FireProjectileCommand fire_projectile = 15;
@@ -1338,7 +1258,7 @@ message GameCommand {
         DisplayRewardsCommand display_rewards = 19;
         LoadSceneCommand load_scene = 20;
         SetPlayerIdentifierCommand set_player_id = 21;
-        MoveMultipleGameObjectsCommand move_multiple_game_objects = 22;
+        MoveGameObjectsCommand move_game_objects = 22;
         CreateTokenCardCommand create_token_card = 23;
     }
 }

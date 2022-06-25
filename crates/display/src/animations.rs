@@ -26,8 +26,8 @@ use protos::spelldawn::object_position::Position;
 use protos::spelldawn::play_effect_position::EffectPosition;
 use protos::spelldawn::{
     CreateTokenCardCommand, DelayCommand, DisplayGameMessageCommand, DisplayRewardsCommand,
-    FireProjectileCommand, GameMessageType, GameObjectMove, MoveMultipleGameObjectsCommand,
-    MusicState, PlayEffectCommand, PlayEffectPosition, PlaySoundCommand, RoomVisitType,
+    FireProjectileCommand, GameMessageType, GameObjectMove, MoveGameObjectsCommand, MusicState,
+    PlayEffectCommand, PlayEffectPosition, PlaySoundCommand, RoomVisitType,
     SetGameObjectsEnabledCommand, SetMusicCommand, TimeValue, VisitRoomCommand,
 };
 
@@ -104,7 +104,7 @@ fn start_turn(builder: &mut ResponseBuilder, side: Side) {
 
 fn show_cards(builder: &mut ResponseBuilder, cards: &Vec<CardId>) {
     let is_large = cards.len() >= 4;
-    builder.push(Command::MoveMultipleGameObjects(MoveMultipleGameObjectsCommand {
+    builder.push(Command::MoveGameObjects(MoveGameObjectsCommand {
         moves: cards
             .iter()
             // Skip animation for cards that are already in a prominent interface position
@@ -131,11 +131,7 @@ fn in_display_position(builder: &ResponseBuilder, card_id: CardId) -> bool {
                 .get(&adapters::card_identifier(card_id))?
                 .position
                 .as_ref()?,
-            Position::Staging(_)
-                | Position::Raid(_)
-                | Position::Browser(_)
-                | Position::Revealed(_)
-                | Position::ScoreAnimation(_)
+            Position::Staging(_) | Position::Raid(_) | Position::Browser(_) | Position::Revealed(_)
         ))
     })
 }

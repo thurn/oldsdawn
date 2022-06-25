@@ -72,9 +72,6 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.Debug:
             HandleClientDebugCommand(command.Debug);
             break;
-          case GameCommand.CommandOneofCase.RunInParallel:
-            yield return HandleRunInParallel(command.RunInParallel);
-            break;
           case GameCommand.CommandOneofCase.ConnectToGame:
             yield return ConnectToGame(command.ConnectToGame);
             break;
@@ -93,18 +90,6 @@ namespace Spelldawn.Services
             break;
           case GameCommand.CommandOneofCase.VisitRoom:
             yield return _registry.ArenaService.HandleVisitRoom(command.VisitRoom);
-            break;
-          case GameCommand.CommandOneofCase.CreateOrUpdateCard:
-            yield return _registry.CardService.HandleCreateOrUpdateCardCommand(command.CreateOrUpdateCard);
-            break;
-          case GameCommand.CommandOneofCase.DestroyCard:
-            yield return _registry.CardService.HandleDestroyCard(command.DestroyCard.CardId, animate: true);
-            break;
-          case GameCommand.CommandOneofCase.MoveGameObjects:
-            yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(command.MoveGameObjects);
-            break;
-          case GameCommand.CommandOneofCase.MoveObjectsAtPosition:
-            yield return _registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(command.MoveObjectsAtPosition);
             break;
           case GameCommand.CommandOneofCase.PlaySound:
             _registry.MainAudioSource.PlayOneShot(_registry.AssetService.GetAudioClip(command.PlaySound.Sound));
@@ -134,9 +119,9 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.SetPlayerId:
             _registry.GameService.PlayerId = command.SetPlayerId.Id;
             break;
-          case GameCommand.CommandOneofCase.MoveMultipleGameObjects:
-            yield return _registry.ObjectPositionService.HandleMoveMultipleGameObjectsCommand(
-              command.MoveMultipleGameObjects);
+          case GameCommand.CommandOneofCase.MoveGameObjects:
+            yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(
+              command.MoveGameObjects);
             break;
           case GameCommand.CommandOneofCase.CreateTokenCard:
             yield return HandleCreateTokenCard(command.CreateTokenCard);
@@ -154,20 +139,6 @@ namespace Spelldawn.Services
     {
       _registry.GameService.CurrentGameId = command.GameId;
       yield return SceneManager.LoadSceneAsync(command.SceneName, LoadSceneMode.Single);
-    }
-
-    IEnumerator HandleRunInParallel(RunInParallelCommand command)
-    {
-      var coroutines = new List<Coroutine>();
-      foreach (var list in command.Commands)
-      {
-        coroutines.Add(StartCoroutine(HandleCommandsAsync(list, isParallel: true)));
-      }
-
-      foreach (var coroutine in coroutines)
-      {
-        yield return coroutine;
-      }
     }
 
     IEnumerator HandlePlayEffect(PlayEffectCommand command)

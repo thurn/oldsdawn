@@ -93,10 +93,7 @@ namespace Spelldawn.Services
     public CardBrowser CardBrowser => _cardBrowser;
 
     [SerializeField] LongPressCardBrowser _longPressBrowser = null!;
-    public LongPressCardBrowser LongPressCardBrowser => _longPressBrowser;    
-    
-    [SerializeField] StackObjectDisplay _cardScoring = null!;
-    public StackObjectDisplay CardScoring => _cardScoring;
+    public LongPressCardBrowser LongPressCardBrowser => _longPressBrowser;
 
     [SerializeField] GameMessage _gameMessage = null!;
     public GameMessage GameMessage => _gameMessage;
