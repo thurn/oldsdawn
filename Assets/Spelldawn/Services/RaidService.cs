@@ -38,12 +38,12 @@ namespace Spelldawn.Services
         {
           case true when !_raidActive:
             _registry.MusicService.SetMusicState(MusicState.Raid);
-            _registry.BackgroundOverlay.Enable(GameContext.ArenaRaidParticipant, translucent: true);
+            _registry.RaidOverlay.Enable(translucent: true);
             _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
             break;
           case false when _raidActive:
             _registry.MusicService.SetMusicState(MusicState.Gameplay);
-            _registry.BackgroundOverlay.Disable();
+            _registry.RaidOverlay.Disable();
             _registry.ArenaService.LeftItems.SetGameContext(GameContext.Arena);
             break;
         }

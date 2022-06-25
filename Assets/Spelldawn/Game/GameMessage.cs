@@ -88,7 +88,7 @@ namespace Spelldawn.Game
 
       if (moveToTop)
       {
-        _registry.BackgroundOverlay.Enable(GameContext.Interface, translucent: false);
+        _registry.InterfaceOverlay.Enable(translucent: false);
         yield return TweenUtils.Sequence("MoveToTop")
           .Insert(0, content.Text.transform.DOMove(_top.position, 0.3f))
           .Insert(0, content.Effect.transform.DOMove(_top.position, 0.3f))

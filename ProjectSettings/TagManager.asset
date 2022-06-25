@@ -89,6 +89,9 @@ TagManager:
   - name: UserMessage
     uniqueID: 2295498059
     locked: 0
+  - name: LongPressBrowser
+    uniqueID: 1175803663
+    locked: 0
   - name: RewardBrowser
     uniqueID: 1787654705
     locked: 0

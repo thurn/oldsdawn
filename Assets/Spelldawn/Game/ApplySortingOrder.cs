@@ -22,6 +22,7 @@ namespace Spelldawn.Game
   public sealed class ApplySortingOrder : MonoBehaviour
   {
     [SerializeField] GameContext _gameContext;
+    [SerializeField] int _key;
 
     void OnValidate()
     {
@@ -41,7 +42,7 @@ namespace Spelldawn.Game
         group = gameObject.AddComponent<SortingGroup>();
       }
 
-      SortingOrder.Create(_gameContext).ApplyTo(group);
+      SortingOrder.Create(_gameContext, _key).ApplyTo(group);
     }
   }
 }

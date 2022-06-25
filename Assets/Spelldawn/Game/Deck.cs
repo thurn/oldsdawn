@@ -47,13 +47,7 @@ namespace Spelldawn.Game
 
     protected override void LongPress()
     {
-      StartCoroutine(_registry.CardBrowser.BrowseCards(new ObjectPosition
-      {
-        Deck = new ObjectPositionDeck
-        {
-          Owner = _owner
-        }
-      }));
+      StartCoroutine(_registry.LongPressCardBrowser.BrowseCards(this));
     }
 
     void OnMouseUpAsButton()

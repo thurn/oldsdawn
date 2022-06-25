@@ -12,79 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections;
-using System.Collections.Generic;
-using Spelldawn.Protos;
-using Spelldawn.Services;
 using UnityEngine;
 
 #nullable enable
 
 namespace Spelldawn.Game
 {
-  public sealed class CardBrowser : CurveObjectDisplay
+  public class CardBrowser : CurveObjectDisplay
   {
     [SerializeField] bool _active;
 
-    static readonly ObjectPosition BrowserPosition = new()
-    {
-      Browser = new ObjectPositionBrowser()
-    };
+    protected virtual BackgroundOverlay BackgroundOverlay => Registry.InterfaceOverlay;
 
     protected override void OnUpdated()
     {
-      if (Registry.RaidService.RaidActive)
-      {
-        // If the browser is opened *during* a raid, do not update the overlay.
-        return;
-      }
-
       switch (ObjectCount)
       {
         case > 0 when !_active:
-          Registry.BackgroundOverlay.Enable(GameContext.Interface, translucent: true);
+          BackgroundOverlay.Enable(translucent: true);
           _active = true;
           break;
         case 0 when _active:
-          Registry.BackgroundOverlay.Disable();
-          _active = false;
+          BackgroundOverlay.Disable();
+            _active = false;
           break;
-      }
-    }
-
-    public IEnumerator BrowseCards(ObjectPosition atPosition)
-    {
-      if (Registry.ActionService.CanInitiateAction())
-      {
-        Registry.ArrowService.HideArrows();
-
-        yield return Registry.ObjectPositionService.HandleMoveGameObjectsAtPosition(
-          new MoveGameObjectsAtPositionCommand
-          {
-            SourcePosition = atPosition,
-            TargetPosition = BrowserPosition,
-          });
-        
-        var node = DocumentService.ControlGroup(DocumentService.Button("Close", new GameCommand
-        {
-          MoveObjectsAtPosition = new MoveGameObjectsAtPositionCommand
-          {
-            SourcePosition = BrowserPosition,
-            TargetPosition = atPosition
-          }
-        }));
-
-        // TODO: This is a weird hack where we do client-side interface rendering, get rid of this
-        var requests = new Dictionary<string, ResourceRequest>();
-        Registry.AssetService.LoadNodeAssets(requests, node);
-        yield return Registry.AssetService.WaitForRequests(requests);
-
-        Registry.DocumentService.RenderMainControls(
-          new InterfaceMainControls
-          {
-            Node = node
-          }
-        );
       }
     }
   }

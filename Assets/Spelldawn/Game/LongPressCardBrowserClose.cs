@@ -12,26 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Spelldawn.Protos;
-using Spelldawn.Services;
-using UnityEngine;
-
 #nullable enable
+
+using UnityEngine;
 
 namespace Spelldawn.Game
 {
-  public sealed class DiscardPile : StackObjectDisplay
+  public sealed class LongPressCardBrowserClose : MonoBehaviour
   {
-    [SerializeField] Registry _registry = null!;
-    [SerializeField] PlayerName _owner;
-
-    protected override Registry Registry => _registry;
-
-    protected override GameContext DefaultGameContext() => GameContext.DiscardPile;
-
-    protected override void LongPress()
+    [SerializeField] LongPressCardBrowser _browser = null!;
+    
+    void OnMouseUpAsButton()
     {
-      StartCoroutine(_registry.LongPressCardBrowser.BrowseCards(this));
+      _browser.Close();
+      gameObject.SetActive(false);
     }
   }
 }

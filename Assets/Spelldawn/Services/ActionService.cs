@@ -91,7 +91,7 @@ namespace Spelldawn.Services
     /// <summary>
     /// Can the user currently zoom a card that exists in the provided GameContext.
     /// </summary>
-    public bool CanInfoZoom(GameContext gameContext)
+    public bool CanInfoZoom(Displayable displayable, GameContext gameContext)
     {
       if (_registry.DocumentService.IsAnyPanelOpen())
       {
@@ -102,14 +102,19 @@ namespace Spelldawn.Services
       {
         case GameContext.ArenaRaidParticipant:
         case GameContext.RaidParticipant:
+          // If a card is a top-level raid participant, it can be info zoomed. However if a card is *part* of
+          // a parent display that is participating in a raid (e.g. it is part of the discard pile that is 
+          // being targeted), then it cannot be info zoomed and the long-press browser is used instead.
+          return displayable.Parent == _registry.RaidService.RaidParticipants;
         case GameContext.Browser:
         case GameContext.RewardBrowser:
+        case GameContext.LongPressBrowser:  
           return true;
         case GameContext.Deck:
         case GameContext.DiscardPile:
           return false;
         default:
-          return !_registry.BackgroundOverlay.Enabled;
+          return !AnyOverlayOpen();
       }
     }
 
@@ -119,9 +124,13 @@ namespace Spelldawn.Services
     /// <see cref="CanExecuteAction"/> below.
     /// </summary>
     public bool CanInitiateAction() => !_registry.CardService.CurrentlyDragging &&
-                                       !_registry.BackgroundOverlay.Enabled &&
+                                       !AnyOverlayOpen() &&
                                        !_registry.DocumentService.IsAnyPanelOpen();
 
+    public bool AnyOverlayOpen() => _registry.RaidOverlay.Enabled ||
+                                    _registry.InterfaceOverlay.Enabled ||
+                                    _registry.LongPressOverlay.Enabled;
+    
     /// <summary>
     /// Can the user currently perform a game action of the provided type?
     /// </summary>
@@ -145,7 +154,7 @@ namespace Spelldawn.Services
     bool CanAct(bool allowInOverlay = false, bool actionPointRequired = true, bool allowWithPanelOpen = false) =>
       !_registry.CardService.CurrentlyDragging &&
       (allowWithPanelOpen || !_registry.DocumentService.IsAnyPanelOpen()) &&
-      (allowInOverlay || !_registry.BackgroundOverlay.Enabled) &&
+      (allowInOverlay || !AnyOverlayOpen()) &&
       (allowInOverlay || !_registry.RaidService.RaidActive) &&
       (!actionPointRequired || _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0);
 
@@ -209,11 +218,7 @@ namespace Spelldawn.Services
         var clickable = hit.collider.GetComponent<Clickable>();
         if (clickable)
         {
-          if (fired)
-          {
-            Debug.LogWarning($"Ignoring click on {clickable}, already handled click on {fired}");
-          }
-          else
+          if (!fired)
           {
             var consumed = clickable.MouseDown();
             if (consumed)

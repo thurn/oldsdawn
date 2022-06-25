@@ -169,12 +169,7 @@ impl Component for ResponseButton {
         node(Button {
             label: self.label,
             variant: if self.primary { ButtonVariant::Primary } else { ButtonVariant::Secondary },
-            action: self.action.and_then(|a| {
-                action(
-                    Some(UserAction::GamePromptResponse(a)),
-                    None, //Some(ui::clear_main_controls_command()),
-                )
-            }),
+            action: self.action.and_then(|a| action(Some(UserAction::GamePromptResponse(a)), None)),
             lines: if self.two_lines { ButtonLines::TwoLines } else { ButtonLines::OneLine },
             style: FlexStyle {
                 margin: dimension_group_px(

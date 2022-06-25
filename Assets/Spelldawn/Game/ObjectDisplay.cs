@@ -58,7 +58,7 @@ namespace Spelldawn.Game
         MoveObjectsToPosition(_animateNextUpdate);
         _updateRequired = false;
       }
-      
+
       OnUpdated();
     }
 
@@ -74,14 +74,14 @@ namespace Spelldawn.Game
         yield return WaitUntilIdle();
       }
     }
-    
+
     /// <summary>Insert a Displayable into this container immediately, with no animation.</summary>
     public void AddObjectImmediate(Displayable displayable)
     {
       Insert(displayable, false);
       MoveObjectsToPosition(false);
       OnUpdated();
-    }    
+    }
 
     public IEnumerator AddObjects(
       List<Displayable> objects,
@@ -92,7 +92,7 @@ namespace Spelldawn.Game
       {
         yield break;
       }
-      
+
       var modified = false;
       foreach (var displayable in objects)
       {
@@ -115,7 +115,7 @@ namespace Spelldawn.Game
 
       if (_objects.Count > 0)
       {
-        MarkUpdateRequired(animate);        
+        MarkUpdateRequired(animate);
       }
     }
 
@@ -151,7 +151,7 @@ namespace Spelldawn.Game
     }
 
     public override bool IsContainer() => true;
-    
+
     public WaitUntil WaitUntilIdle() => new(() => !_animationRunning && !_updateRequired);
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext)
@@ -165,7 +165,7 @@ namespace Spelldawn.Game
     }
 
     protected abstract override GameContext DefaultGameContext();
-    
+
     protected abstract Vector3 CalculateObjectPosition(int index, int count);
 
     protected virtual Vector3? CalculateObjectRotation(int index, int count) => null;
@@ -193,12 +193,12 @@ namespace Spelldawn.Game
         {
           displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
         }
-        
+
         displayable.Parent = this;
         _objects.Add(displayable);
         modified = true;
       }
-      
+
       var sorted = _objects.OrderBy(o => o.SortingKey).ThenBy(o => o.SortingSubkey).ToList();
       if (!sorted.SequenceEqual(_objects))
       {
@@ -252,7 +252,6 @@ namespace Spelldawn.Game
           {
             sequence.Insert(atPosition: 0,
               displayable.transform.DOLocalRotate(vector, duration));
-            
           }
           else
           {

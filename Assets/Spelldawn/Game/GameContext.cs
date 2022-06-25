@@ -36,6 +36,7 @@ namespace Spelldawn.Game
     Effects = 8,
     Dragging = 9,
     UserMessage = 13,
+    LongPressBrowser = 19,
     RewardBrowser = 14,
     InfoZoom = 15
   }

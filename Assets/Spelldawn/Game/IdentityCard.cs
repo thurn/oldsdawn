@@ -90,13 +90,7 @@ namespace Spelldawn.Game
 
     protected override void LongPress()
     {
-      StartCoroutine(_registry.CardBrowser.BrowseCards(new ObjectPosition
-      {
-        Identity = new ObjectPositionIdentity
-        {
-          Owner = _owner
-        }
-      }));
+      StartCoroutine(_registry.LongPressCardBrowser.BrowseCards(this));
     }
 
     public void OnArrowMoved(Vector3 position)

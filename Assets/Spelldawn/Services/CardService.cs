@@ -267,10 +267,7 @@ namespace Spelldawn.Services
     {
       ClearInfoZoom();
 
-      var zoomed = card.Clone();
-      zoomed.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
-      zoomed.SetGameContext(GameContext.InfoZoom);
-      zoomed.gameObject.name = $"{card.name} InfoZoom";
+      var zoomed = InfoCopy(card);
       var container = worldMousePosition.x > 0 ? _infoZoomRight : _infoZoomLeft;
 
       yield return container.AddObject(zoomed, animate: false);
@@ -282,6 +279,18 @@ namespace Spelldawn.Services
           zoomed.SupplementalInfo,
           worldMousePosition.x < 0);
       }
+    }
+
+    /// <summary>
+    /// Creates a clone of a card for display at large size
+    /// </summary>
+    public static Card InfoCopy(Card card)
+    {
+      var zoomed = card.Clone();
+      zoomed.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
+      zoomed.SetGameContext(GameContext.InfoZoom);
+      zoomed.gameObject.name = $"{card.name} Info";
+      return zoomed;
     }
 
     public void ClearInfoZoom()

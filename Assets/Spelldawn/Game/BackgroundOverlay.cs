@@ -21,13 +21,14 @@ namespace Spelldawn.Game
 {
   public sealed class BackgroundOverlay : MonoBehaviour
   {
+    [SerializeField] GameContext _gameContext;
     [SerializeField] SpriteRenderer _renderer = null!;
 
     public bool Enabled => _renderer.enabled;
 
-    public void Enable(GameContext layer, bool translucent)
+    public void Enable(bool translucent)
     {
-      SortingOrder.Create(layer).ApplyTo(_renderer);
+      SortingOrder.Create(_gameContext, -1).ApplyTo(_renderer);
       _renderer.enabled = true;
       _renderer.color = Color.clear;
       _renderer.DOBlendableColor(translucent ? new Color(0, 0, 0, 0.5f) : Color.black, 0.3f);

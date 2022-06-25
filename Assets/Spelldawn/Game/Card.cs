@@ -235,7 +235,7 @@ namespace Spelldawn.Game
     {
       var result = false;
 
-      if (Registry.ActionService.CanInfoZoom(GameContext) && _isRevealed)
+      if (Registry.ActionService.CanInfoZoom(this, GameContext) && _isRevealed)
       {
         Registry.StaticAssets.PlayCardSound();
         Registry.CardService.DisplayInfoZoom(
