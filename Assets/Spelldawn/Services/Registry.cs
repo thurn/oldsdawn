@@ -30,8 +30,7 @@ namespace Spelldawn.Services
 
   public sealed class Registry : MonoBehaviour
   {
-    [SerializeField] GlobalGameMode _globalGameMode;
-    public GlobalGameMode GlobalGameMode => _globalGameMode;
+    public GlobalGameMode GlobalGameMode { get; set; } = GlobalGameMode.Default;
 
     [SerializeField] Camera _mainCamera = null!;
     public Camera MainCamera => _mainCamera;
@@ -189,17 +188,17 @@ namespace Spelldawn.Services
       Application.targetFrameRate = 60;
       var runTests = false;
 
-      if (_globalGameMode == GlobalGameMode.ScreenshotTest ||
+      if (GlobalGameMode == GlobalGameMode.ScreenshotTest ||
           System.Environment.GetCommandLineArgs().Any(arg => arg.Contains("test")))
       {
-        _globalGameMode = GlobalGameMode.ScreenshotTest;
+        GlobalGameMode = GlobalGameMode.ScreenshotTest;
         ScreenshotTests = ScreenshotTestService.Initialize(this, out runTests);
       }
 
       ActionService.Initialize();
       DocumentService.Initialize();
-      GameService.Initialize(_globalGameMode);
-      MusicService.Initialize(_globalGameMode);
+      GameService.Initialize(GlobalGameMode);
+      MusicService.Initialize(GlobalGameMode);
 
       if (runTests)
       {

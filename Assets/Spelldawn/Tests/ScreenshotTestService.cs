@@ -184,6 +184,7 @@ namespace Spelldawn.Tests
 
     void Quit(int code)
     {
+      Registry.GameService.CurrentGameId = null;
       Debug.Log($"Done running end-to-end tests {Screen.dpi}, {Screen.width}");
       Registry.DocumentService.Print();
       Application.Quit(code);
