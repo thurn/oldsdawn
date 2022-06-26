@@ -106,11 +106,10 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
         set_discard_pile(&mut game, user_side, args.discard);
         set_discard_pile(&mut game, user_side.opponent(), args.opponent_discard);
 
-        if let Some(raid) = args.raid {
+        if args.add_raid {
             game.data.raid = Some(RaidData {
                 raid_id: RAID_ID,
                 target: ROOM_ID,
-                phase: raid.phase,
                 state: RaidState::Begin,
                 encounter: None,
                 room_active: false,
@@ -192,7 +191,7 @@ pub struct Args {
     pub opponent_discard: Option<CardName>,
     /// Set up an active raid within the created game using [ROOM_ID] as the
     /// target and [RAID_ID] as the ID.    
-    pub raid: Option<TestRaid>,
+    pub add_raid: bool,
     /// If true, will create the game in the "resolve mulligans" phase instead
     /// of automatically advancing to the user's first turn. Defaults to
     /// false.
@@ -219,7 +218,7 @@ impl Default for Args {
             opponent_deck_top: None,
             discard: None,
             opponent_discard: None,
-            raid: None,
+            add_raid: false,
             resolve_mulligans: false,
             connect: true,
         }

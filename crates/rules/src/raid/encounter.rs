@@ -26,7 +26,7 @@ use data::with_error::WithError;
 
 use crate::mana::ManaPurpose;
 use crate::mutations::SummonMinion;
-use crate::raid::core::RaidStateNode;
+use crate::raid::core::{RaidDisplayState, RaidStateNode};
 use crate::raid::defenders;
 use crate::{card_prompt, dispatch, flags, mana, mutations, queries};
 
@@ -129,6 +129,11 @@ impl RaidStateNode<EncounterAction> for EncounterState {
         } else {
             Some(RaidState::Access)
         })
+    }
+
+    fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {
+        let defenders = game.defender_list(game.raid()?.target);
+        Ok(RaidDisplayState::Defenders(defenders[0..=game.raid_encounter()?].to_vec()))
     }
 }
 

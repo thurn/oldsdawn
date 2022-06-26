@@ -18,7 +18,7 @@ use data::game::{GameState, RaidState};
 use data::game_actions::{PromptAction, PromptContext, RoomActivationAction};
 use data::primitives::Side;
 
-use crate::raid::core::RaidStateNode;
+use crate::raid::core::{RaidDisplayState, RaidStateNode};
 use crate::raid::defenders;
 
 #[derive(Debug, Clone, Copy)]
@@ -60,6 +60,10 @@ impl RaidStateNode<RoomActivationAction> for ActivateState {
         } else {
             RaidState::Access
         }))
+    }
+
+    fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {
+        Ok(RaidDisplayState::Defenders(game.defender_list(game.raid()?.target)))
     }
 
     fn prompt_context(self) -> Option<PromptContext> {

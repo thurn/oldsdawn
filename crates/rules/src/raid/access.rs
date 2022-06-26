@@ -27,8 +27,8 @@ use data::updates::GameUpdate;
 use data::with_error::WithError;
 use data::{fail, random};
 
-use crate::raid::core::RaidStateNode;
-use crate::{dispatch, flags, mutations, queries};
+use crate::raid::core::{RaidDisplayState, RaidStateNode};
+use crate::{dispatch, mutations, queries};
 
 #[derive(Debug, Clone, Copy)]
 pub struct AccessState {}
@@ -87,6 +87,10 @@ impl RaidStateNode<AccessPhaseAction> for AccessState {
 
         Ok(None)
     }
+
+    fn display_state(self, _: &GameState) -> Result<RaidDisplayState> {
+        Ok(RaidDisplayState::Access)
+    }
 }
 
 /// Returns a vector of the cards accessed for the current raid target, mutating
@@ -128,11 +132,23 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
 fn access_action_for_card(game: &GameState, card_id: CardId) -> Option<AccessPhaseAction> {
     let definition = crate::card_definition(game, card_id);
     match definition.card_type {
-        CardType::Scheme if flags::can_score_during_raid(game, Side::Champion, card_id) => {
+        CardType::Scheme if can_score_card(game, Side::Champion, card_id) => {
             Some(AccessPhaseAction::ScoreCard(card_id))
         }
         _ => None,
     }
+}
+
+/// Can the provided player score the `card_id` card when accessed during a
+/// raid?
+fn can_score_card(game: &GameState, _side: Side, card_id: CardId) -> bool {
+    let raid = match &game.data.raid {
+        Some(r) => r,
+        None => return false,
+    };
+
+    raid.accessed.contains(&card_id)
+        && crate::card_definition(game, card_id).config.stats.scheme_points.is_some()
 }
 
 fn handle_score_card(game: &mut GameState, card_id: CardId) -> Result<()> {

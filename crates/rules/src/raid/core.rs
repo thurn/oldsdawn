@@ -13,9 +13,9 @@
 // limitations under the License.
 
 use anyhow::Result;
-use data::game::{GameState, RaidData, RaidJumpRequest, RaidPhase, RaidState};
+use data::game::{GameState, RaidData, RaidJumpRequest, RaidState};
 use data::game_actions::{GamePrompt, PromptAction, PromptContext};
-use data::primitives::{RaidId, RoomId, Side};
+use data::primitives::{CardId, RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
 use data::with_error::WithError;
 use data::{utils, verify};
@@ -27,6 +27,12 @@ use crate::raid::begin::BeginState;
 use crate::raid::continuation::ContinueState;
 use crate::raid::encounter::EncounterState;
 use crate::{flags, mutations, queries};
+
+pub enum RaidDisplayState {
+    None,
+    Defenders(Vec<CardId>),
+    Access,
+}
 
 pub trait RaidStateNode<T: Eq>: Copy {
     fn unwrap(action: PromptAction) -> Result<T>;
@@ -40,6 +46,8 @@ pub trait RaidStateNode<T: Eq>: Copy {
     fn active_side(self) -> Side;
 
     fn handle_action(self, game: &mut GameState, action: T) -> Result<Option<RaidState>>;
+
+    fn display_state(self, game: &GameState) -> Result<RaidDisplayState>;
 
     fn prompt_context(self) -> Option<PromptContext> {
         None
@@ -83,7 +91,6 @@ pub fn initiate(
     let raid = RaidData {
         target: target_room,
         raid_id,
-        phase: RaidPhase::Begin,
         state,
         encounter: None,
         room_active: false,
@@ -140,7 +147,6 @@ fn enter_state(game: &mut GameState, mut state: Option<RaidState>) -> Result<()>
     loop {
         if let Some(s) = state {
             game.raid_mut()?.state = s;
-            tmp_sync_state_to_phase(game)?;
             state = s.enter(game)?;
             state = apply_jump(game)?.or(state);
         } else {
@@ -163,20 +169,6 @@ fn apply_jump(game: &mut GameState) -> Result<Option<RaidState>> {
     }
 
     Ok(None)
-}
-
-fn tmp_sync_state_to_phase(game: &mut GameState) -> Result<()> {
-    match game.raid()?.state {
-        RaidState::Begin => game.raid_mut()?.phase = RaidPhase::Begin,
-        RaidState::Activation => game.raid_mut()?.phase = RaidPhase::Activation,
-        RaidState::Encounter => {
-            game.raid_mut()?.phase = RaidPhase::Encounter(game.raid_encounter()?)
-        }
-        RaidState::Continue => game.raid_mut()?.phase = RaidPhase::Continue(game.raid_encounter()?),
-        RaidState::Access => game.raid_mut()?.phase = RaidPhase::Access,
-    }
-
-    Ok(())
 }
 
 impl RaidStateNode<PromptAction> for RaidState {
@@ -229,6 +221,16 @@ impl RaidStateNode<PromptAction> for RaidState {
             Self::Encounter => EncounterState {}.handle_prompt(game, action),
             Self::Continue => ContinueState {}.handle_prompt(game, action),
             Self::Access => AccessState {}.handle_prompt(game, action),
+        }
+    }
+
+    fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {
+        match self {
+            Self::Activation => ActivateState {}.display_state(game),
+            Self::Begin => BeginState {}.display_state(game),
+            Self::Encounter => EncounterState {}.display_state(game),
+            Self::Continue => ContinueState {}.display_state(game),
+            Self::Access => AccessState {}.display_state(game),
         }
     }
 

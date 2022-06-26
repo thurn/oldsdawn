@@ -18,7 +18,6 @@ use cards::test_cards::{ARTIFACT_COST, MANA_STORED, MANA_TAKEN, UNVEIL_COST};
 use cards::{decklists, initialize};
 use data::agent_definition::AgentName;
 use data::card_name::CardName;
-use data::game::RaidPhase;
 use data::primitives::Side;
 use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
@@ -83,13 +82,7 @@ fn cannot_draw_when_out_of_action_points() {
 
 #[test]
 fn cannot_draw_during_raid() {
-    let mut g = new_game(
-        Side::Overlord,
-        Args {
-            raid: Some(TestRaid { phase: RaidPhase::Activation, active: false }),
-            ..Args::default()
-        },
-    );
+    let mut g = new_game(Side::Overlord, Args { add_raid: true, ..Args::default() });
     assert_error(g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id()));
 }
 
@@ -182,13 +175,7 @@ fn cannot_play_card_when_out_of_action_points() {
 
 #[test]
 fn cannot_play_card_during_raid() {
-    let mut g = new_game(
-        Side::Champion,
-        Args {
-            raid: Some(TestRaid { phase: RaidPhase::Activation, active: false }),
-            ..Args::default()
-        },
-    );
+    let mut g = new_game(Side::Champion, Args { add_raid: true, ..Args::default() });
     let card_id = g.add_to_hand(CardName::ArcaneRecovery);
     assert_error(g.perform_action(
         Action::PlayCard(PlayCardAction { card_id: Some(card_id), target: None }),
@@ -223,13 +210,7 @@ fn cannot_gain_mana_when_out_of_action_points() {
 
 #[test]
 fn cannot_gain_mana_during_raid() {
-    let mut g = new_game(
-        Side::Overlord,
-        Args {
-            raid: Some(TestRaid { phase: RaidPhase::Activation, active: false }),
-            ..Args::default()
-        },
-    );
+    let mut g = new_game(Side::Overlord, Args { add_raid: true, ..Args::default() });
     assert_error(g.perform_action(Action::GainMana(GainManaAction {}), g.user_id()));
 }
 

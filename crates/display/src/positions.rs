@@ -14,7 +14,7 @@
 
 use anyhow::Result;
 use data::card_state::{CardPosition, CardState};
-use data::game::{GamePhase, GameState, MulliganData, RaidData, RaidPhase};
+use data::game::{GamePhase, GameState, MulliganData, RaidData};
 use data::game_actions::CardTarget;
 use data::primitives::{AbilityId, CardId, GameObjectId, ItemLocation, RoomId, RoomLocation, Side};
 use data::{fail, utils};
@@ -28,6 +28,7 @@ use protos::spelldawn::{
     ObjectPositionStaging, RevealedCardsBrowserSize, RoomIdentifier,
 };
 use rules::queries;
+use rules::raid::core::{RaidDisplayState, RaidStateNode};
 
 use crate::adapters;
 use crate::response_builder::ResponseBuilder;
@@ -267,10 +268,14 @@ fn position_override(
 
 fn raid_position_override(game: &GameState, id: GameObjectId) -> Result<Option<ObjectPosition>> {
     Ok(if let Some(raid_data) = &game.data.raid {
-        if raid_data.phase == RaidPhase::Access {
-            browser_position(id, browser(), raid_access_browser(game, raid_data))
-        } else {
-            browser_position(id, raid(), raid_browser(game, raid_data)?)
+        match raid_data.state.display_state(game)? {
+            RaidDisplayState::None => None,
+            RaidDisplayState::Defenders(defenders) => {
+                browser_position(id, raid(), raid_browser(game, raid_data, defenders)?)
+            }
+            RaidDisplayState::Access => {
+                browser_position(id, browser(), raid_access_browser(game, raid_data))
+            }
         }
     } else {
         None
@@ -304,7 +309,11 @@ fn browser_position(
     })
 }
 
-fn raid_browser(game: &GameState, raid: &RaidData) -> Result<Vec<GameObjectId>> {
+fn raid_browser(
+    game: &GameState,
+    raid: &RaidData,
+    defenders: Vec<CardId>,
+) -> Result<Vec<GameObjectId>> {
     let mut result = Vec::new();
 
     match raid.target {
@@ -321,18 +330,7 @@ fn raid_browser(game: &GameState, raid: &RaidData) -> Result<Vec<GameObjectId>> 
     }
 
     result.extend(game.occupants(raid.target).map(|card| GameObjectId::CardId(card.id)));
-
-    let defenders = game.defender_list(raid.target);
-
-    let included = match raid.phase {
-        RaidPhase::Begin => return Ok(vec![]),
-        RaidPhase::Activation => &defenders,
-        RaidPhase::Encounter(_i) => &defenders[..=game.raid_encounter()?],
-        RaidPhase::Continue(_i) => &defenders[..=game.raid_encounter()?],
-        RaidPhase::Access => fail!("Expected raid to be in-flight"),
-    };
-
-    result.extend(included.iter().map(|card_id| GameObjectId::CardId(*card_id)));
+    result.extend(defenders.iter().map(|card_id| GameObjectId::CardId(*card_id)));
     result.push(GameObjectId::Identity(Side::Champion));
 
     Ok(result)

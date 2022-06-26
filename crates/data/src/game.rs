@@ -154,8 +154,6 @@ pub struct RaidData {
     pub raid_id: RaidId,
     /// Room being targeted by this raid
     pub target: RoomId,
-    /// Current phase within this raid
-    pub phase: RaidPhase,
     /// Current state of this raid
     pub state: RaidState,
     /// Current encounter position within this raid, if any

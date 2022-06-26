@@ -68,7 +68,7 @@ run-screenshots: screenshots-message rsync
     rm -rf /tmp/spelldawn/out/
     mkdir -p /tmp/spelldawn/out/
     "{{unity}}" -batchMode -quit -projectPath "/tmp/spelldawn" {{build_flag}} "{{app_path}}"
-    "{{bin_path}}" -test -screen-width 1334 -screen-height 750 -screen-quality "High" -screen-fullscreen 0
+    "{{bin_path}}" -test -monitor 2 -screen-width 1334 -screen-height 750 -screen-quality "High" -screen-fullscreen 0
 
 finish-screenshots: run-screenshots
     #!/usr/bin/env sh

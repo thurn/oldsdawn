@@ -20,7 +20,7 @@ use data::game_actions::{ContinueAction, PromptAction, PromptContext};
 use data::primitives::Side;
 
 use crate::mutations;
-use crate::raid::core::RaidStateNode;
+use crate::raid::core::{RaidDisplayState, RaidStateNode};
 
 #[derive(Debug, Clone, Copy)]
 pub struct ContinueState {}
@@ -61,6 +61,11 @@ impl RaidStateNode<ContinueAction> for ContinueState {
                 Ok(None)
             }
         }
+    }
+
+    fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {
+        let defenders = game.defender_list(game.raid()?.target);
+        Ok(RaidDisplayState::Defenders(defenders[0..=game.raid_encounter()?].to_vec()))
     }
 
     fn prompt_context(self) -> Option<PromptContext> {

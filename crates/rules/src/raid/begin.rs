@@ -21,7 +21,7 @@ use data::game_actions::PromptAction;
 use data::primitives::Side;
 
 use crate::dispatch;
-use crate::raid::core::RaidStateNode;
+use crate::raid::core::{RaidDisplayState, RaidStateNode};
 use crate::raid::defenders;
 
 #[derive(Debug, Clone, Copy)]
@@ -69,5 +69,9 @@ impl RaidStateNode<()> for BeginState {
 
     fn handle_action(self, _: &mut GameState, _: ()) -> Result<Option<RaidState>> {
         fail!("No actions for Begin State")
+    }
+
+    fn display_state(self, _: &GameState) -> Result<RaidDisplayState> {
+        Ok(RaidDisplayState::None)
     }
 }

@@ -16,14 +16,14 @@
 //! action can currently be taken
 
 use data::card_definition::{AbilityType, TargetRequirement};
-use data::card_state::{CardPosition, CardState};
+use data::card_state::CardPosition;
 use data::delegates::{
     CanActivateAbilityQuery, CanActivateWhileFaceDownQuery, CanDefeatTargetQuery,
     CanEncounterTargetQuery, CanInitiateRaidQuery, CanLevelUpCardQuery, CanLevelUpRoomQuery,
     CanPlayCardQuery, CanTakeDrawCardActionQuery, CanTakeGainManaActionQuery, CardEncounter, Flag,
 };
-use data::game::{GamePhase, GameState, RaidData, RaidPhase, RaidPhaseKind};
-use data::game_actions::{CardTarget, EncounterAction};
+use data::game::{GamePhase, GameState};
+use data::game_actions::CardTarget;
 use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
 use enum_iterator::IntoEnumIterator;
 
@@ -246,16 +246,6 @@ pub fn entered_play_this_turn(game: &GameState, card_id: CardId) -> bool {
     game.card(card_id).data.last_entered_play == Some(game.data.turn)
 }
 
-/// Whether a room can currently be activated
-pub fn can_take_room_activation_action(game: &GameState, side: Side) -> bool {
-    side == Side::Overlord
-        && matches!(
-            game.data.raid,
-            Some(RaidData { phase: RaidPhase::Activation, target, .. })
-            if game.defenders_unordered(target).any(CardState::is_face_down)
-        )
-}
-
 /// Whether the provided `source` card is able to target the `target` card with
 /// an encounter action. Typically used to determine whether a weapon can target
 /// a minion, e.g. based on faction.
@@ -298,67 +288,4 @@ pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bo
         Flag::new(can_defeat),
     )
     .into()
-}
-
-pub fn can_take_raid_encounter_action(
-    game: &GameState,
-    side: Side,
-    action: EncounterAction,
-) -> bool {
-    let raid = match &game.data.raid {
-        Some(r) => r,
-        None => return false,
-    };
-    let encounter_position = match raid.phase {
-        RaidPhase::Encounter(p) => p,
-        _ => return false,
-    };
-    let defenders = game.defender_list(raid.target);
-    let can_continue = side == Side::Champion && defenders.len() > encounter_position;
-
-    if let EncounterAction::UseWeaponAbility(source_id, target_id) = action {
-        can_continue
-            && defenders[encounter_position] == target_id
-            && can_defeat_target(game, source_id, target_id)
-    } else {
-        can_continue
-    }
-}
-
-/// Whether the `side` user can take a raid `ContinueAction`.
-pub fn can_take_continue_action(game: &GameState, side: Side) -> bool {
-    side == Side::Champion
-        && matches!(game.data.raid, Some(ref raid) if raid.phase.kind() == RaidPhaseKind::Continue)
-}
-
-/// Can the Champion player destroy the accessed card `card_id`?
-pub fn can_destroy_accessed_card(_game: &GameState, _card_id: CardId) -> bool {
-    false
-}
-
-pub fn can_take_raid_destroy_card_action(_game: &GameState, _side: Side, _card_id: CardId) -> bool {
-    true
-}
-
-/// Can the provided player score the `card_id` card when accessed during a
-/// raid?
-pub fn can_score_during_raid(game: &GameState, side: Side, card_id: CardId) -> bool {
-    let raid = match &game.data.raid {
-        Some(r) => r,
-        None => return false,
-    };
-
-    side == Side::Champion
-        && raid.phase == RaidPhase::Access
-        && raid.accessed.contains(&card_id)
-        && crate::card_definition(game, card_id).config.stats.scheme_points.is_some()
-}
-
-pub fn can_take_raid_end_action(game: &GameState, side: Side) -> bool {
-    let raid = match &game.data.raid {
-        Some(r) => r,
-        None => return false,
-    };
-
-    side == Side::Champion && raid.phase == RaidPhase::Access
 }
