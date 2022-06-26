@@ -14,6 +14,7 @@
 
 #nullable enable
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -113,6 +114,14 @@ namespace Spelldawn.Tests
     {
       DontDestroyOnLoad(gameObject);
       Application.logMessageReceived += HandleException;
+
+      if (Math.Abs(Screen.dpi - 255.0) > 0.1f)
+      {
+        Debug.LogError("ERROR: Screenshot tests can only run on a 255 dpi screen.");
+        Quit(1);
+        return;
+      }
+
       PlayerPrefs.DeleteAll();
       PlayerPrefs.SetInt(Preferences.InMemory, 1);
       _directory = Application.isEditor
@@ -185,8 +194,6 @@ namespace Spelldawn.Tests
     void Quit(int code)
     {
       Registry.GameService.CurrentGameId = null;
-      Debug.Log($"Done running end-to-end tests {Screen.dpi}, {Screen.width}");
-      Registry.DocumentService.Print();
       Application.Quit(code);
     }
 

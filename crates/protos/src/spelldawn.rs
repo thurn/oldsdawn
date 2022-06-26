@@ -261,19 +261,7 @@ pub struct FlexStyle {
     pub width: ::core::option::Option<Dimension>,
     #[prost(message, optional, tag = "54")]
     pub word_spacing: ::core::option::Option<Dimension>,
-    ///
-    /// Overwrites both 'width' and 'height' by multiplying the dimensions of
-    /// the provided 'background_image' (in units of raw pixels) by this
-    /// constant.
-    #[prost(message, optional, tag = "55")]
-    pub background_image_scale_multiplier: ::core::option::Option<f32>,
-    ///
-    /// Calculates the aspect ratio of the provided 'background_image' and uses
-    /// it to set dimensions. If 'width' is set, the 'height' will be set based
-    /// on the aspect ratio and vice versa. Does not support percentage values.
-    #[prost(bool, tag = "56")]
-    pub fixed_background_image_aspect_ratio: bool,
-    #[prost(enumeration = "FlexPickingMode", tag = "57")]
+    #[prost(enumeration = "FlexPickingMode", tag = "55")]
     pub picking_mode: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]

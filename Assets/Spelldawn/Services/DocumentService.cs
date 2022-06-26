@@ -19,6 +19,7 @@ using Spelldawn.Game;
 using Spelldawn.Masonry;
 using static Spelldawn.Masonry.MasonUtil;
 using Spelldawn.Protos;
+using Spelldawn.Tests;
 using Spelldawn.Utils;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -61,12 +62,7 @@ namespace Spelldawn.Services
       AddRoot("SupplementalCardInfo", out _supplementalCardInfo, out _supplementalCardInfoNode);
       AddRoot("Full Screen", out _fullScreen, out _fullScreenNode);
     }
-    
-    public void Print()
-    {
-      Debug.Log($"Print: reference dpi: {_document.panelSettings.referenceDpi}");
-    }
-    
+
     float ScreenPxToElementDip(float value) => value * _document.panelSettings.referenceDpi / Screen.dpi;
 
     /// <summary>

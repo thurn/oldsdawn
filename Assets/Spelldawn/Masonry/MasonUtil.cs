@@ -25,8 +25,6 @@ namespace Spelldawn.Masonry
 {
   public static class MasonUtil
   {
-    const float ReferenceDpi = 326f;
-
     public static Dimension Dip(float value) => new()
     {
       Unit = DimensionUnit.Pixels,
@@ -172,26 +170,6 @@ namespace Spelldawn.Masonry
       },
       Style = style,
     };
-
-    public static float ScreenPxToDip(float value) => value * ReferenceDpi / Screen.dpi;
-
-    public static float VMinToScreenPx(float vmin) => Screen.width < Screen.height
-      ? vmin * Screen.width / 100f
-      : vmin * Screen.height / 100f;
-
-    public static float VMinToDip(float vmin) => ScreenPxToDip(VMinToScreenPx(vmin));
-
-    /// <summary>
-    /// Given a value in units of screen pixels, returns a ratio x such that screenPixels * x = targetVMin
-    /// </summary>
-    public static float MultiplerForTargetVMin(float targetVMin, float screenPixels) =>
-      VMinToScreenPx(targetVMin) / screenPixels;
-
-    /// <summary>
-    /// Given a value in units of screen pixels, returns a ratio x such that screenPixels * x = targetDips
-    /// </summary>
-    public static float MultiplerForTargetDip(float targetDips, float screenPixels) =>
-      targetDips / ScreenPxToDip(screenPixels);
 
     public static FlexScale Scale(float amount) => Scale(amount, amount);
 

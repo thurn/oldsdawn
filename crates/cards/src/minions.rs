@@ -18,6 +18,7 @@ use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, Ca
 use data::card_name::CardName;
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, RaidOutcome};
+use data::game::RaidJumpRequest;
 use data::game_actions::CardPromptAction;
 use data::primitives::{
     CardType, ColdDamage, DamageType, Faction, Rarity, RoomLocation, School, Side,
@@ -106,7 +107,7 @@ pub fn temporal_vortex() -> CardDefinition {
                 }),
             ),
             simple_ability(
-                text![Keyword::Combat, "Summon a minion from the Sanctum or Crypts for free.",],
+                text![Keyword::Combat, "Summon a minion from the Sanctum or Crypts for free."],
                 combat(|g, s, _| {
                     let cards = g
                         .hand(Side::Overlord)
@@ -123,7 +124,8 @@ pub fn temporal_vortex() -> CardDefinition {
                         )?;
                         g.move_card_to_index(minion_id, index);
                         mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts)?;
-                        mutations::set_raid_encountering_minion(g, minion_id)?;
+                        g.raid_mut()?.jump_request =
+                            Some(RaidJumpRequest::EncounterMinion(minion_id));
                     }
                     Ok(())
                 }),

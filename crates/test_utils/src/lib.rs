@@ -115,6 +115,7 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
                 encounter: None,
                 room_active: false,
                 accessed: vec![],
+                jump_request: None,
             })
         }
     }

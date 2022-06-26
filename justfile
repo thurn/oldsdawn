@@ -64,7 +64,7 @@ screenshot_path := if os() == "macos" {
 
 # You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
 # before running end to end tests.
-run-screenshots: screenshots-message plugin rsync
+run-screenshots: screenshots-message rsync
     rm -rf /tmp/spelldawn/out/
     mkdir -p /tmp/spelldawn/out/
     "{{unity}}" -batchMode -quit -projectPath "/tmp/spelldawn" {{build_flag}} "{{app_path}}"

@@ -121,9 +121,6 @@ impl RaidStateNode<EncounterAction> for EncounterState {
         Ok(if game.data.raid.is_none() {
             // Abilities may have ended the raid
             None
-        } else if game.raid_encounter()? > 100 {
-            game.raid_mut()?.encounter = Some(game.raid_encounter()? - 999);
-            Some(RaidState::Continue)
         } else if let Some(encounter) =
             defenders::next_encounter(game, Some(game.raid_encounter()?))?
         {

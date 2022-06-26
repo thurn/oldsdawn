@@ -37,7 +37,6 @@ use data::primitives::{
     RoomLocation, Side, TurnNumber,
 };
 use data::updates::GameUpdate;
-use data::with_error::WithError;
 use data::{random, verify};
 use tracing::{info, instrument};
 
@@ -561,21 +560,5 @@ pub fn deal_damage(
         }),
     )?;
 
-    Ok(())
-}
-
-/// Mutates the phase of an ongoing raid to be encountering the `minion_id`
-/// minion.
-///
-/// Returns an error if no active raid is ongoing or if this minion is not in
-/// play.
-pub fn set_raid_encountering_minion(game: &mut GameState, minion_id: CardId) -> Result<()> {
-    let (_room_id, index) =
-        queries::minion_position(game, minion_id).with_error(|| "Minion has no position")?;
-    let raid = game.raid_mut()?;
-    // raid.target = room_id;
-    // raid.phase = RaidPhase::Encounter(index);
-    // TODO: Fix this
-    raid.encounter = Some(index + 999);
     Ok(())
 }

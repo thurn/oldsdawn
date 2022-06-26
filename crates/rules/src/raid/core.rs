@@ -13,10 +13,11 @@
 // limitations under the License.
 
 use anyhow::Result;
-use data::game::{GameState, RaidData, RaidPhase, RaidState};
+use data::game::{GameState, RaidData, RaidJumpRequest, RaidPhase, RaidState};
 use data::game_actions::{GamePrompt, PromptAction, PromptContext};
 use data::primitives::{RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
+use data::with_error::WithError;
 use data::{utils, verify};
 use fallible_iterator::FallibleIterator;
 
@@ -25,7 +26,7 @@ use crate::raid::activation::ActivateState;
 use crate::raid::begin::BeginState;
 use crate::raid::continuation::ContinueState;
 use crate::raid::encounter::EncounterState;
-use crate::{flags, mutations};
+use crate::{flags, mutations, queries};
 
 pub trait RaidStateNode<T: Eq>: Copy {
     fn unwrap(action: PromptAction) -> Result<T>;
@@ -87,6 +88,7 @@ pub fn initiate(
         encounter: None,
         room_active: false,
         accessed: vec![],
+        jump_request: None,
     };
 
     game.data.next_raid_id += 1;
@@ -102,7 +104,8 @@ pub fn handle_action(game: &mut GameState, user_side: Side, action: PromptAction
     let state = game.raid()?.state;
     verify!(state.active_side() == user_side, "Unexpected side");
     verify!(state.prompts(game)?.iter().any(|c| c == &action), "Unexpected action");
-    let new_state = state.handle_action(game, action)?;
+    let mut new_state = state.handle_action(game, action)?;
+    new_state = apply_jump(game)?.or(new_state);
 
     if game.data.raid.is_some() {
         enter_state(game, new_state)
@@ -111,21 +114,26 @@ pub fn handle_action(game: &mut GameState, user_side: Side, action: PromptAction
     }
 }
 
-pub fn current_prompt(game: &GameState, user_side: Side) -> Result<Option<GamePrompt>> {
+pub fn current_actions(game: &GameState, user_side: Side) -> Result<Option<Vec<PromptAction>>> {
     if let Some(raid) = &game.data.raid {
         let state = raid.state;
         if state.active_side() == user_side {
             let prompts = state.prompts(game)?;
             if !prompts.is_empty() {
-                return Ok(Some(GamePrompt {
-                    context: state.prompt_context(),
-                    responses: prompts,
-                }));
+                return Ok(Some(prompts));
             }
         }
     }
 
     Ok(None)
+}
+
+pub fn current_prompt(game: &GameState, user_side: Side) -> Result<Option<GamePrompt>> {
+    if let Some(actions) = current_actions(game, user_side)? {
+        Ok(Some(GamePrompt { context: game.raid()?.state.prompt_context(), responses: actions }))
+    } else {
+        Ok(None)
+    }
 }
 
 fn enter_state(game: &mut GameState, mut state: Option<RaidState>) -> Result<()> {
@@ -134,10 +142,27 @@ fn enter_state(game: &mut GameState, mut state: Option<RaidState>) -> Result<()>
             game.raid_mut()?.state = s;
             tmp_sync_state_to_phase(game)?;
             state = s.enter(game)?;
+            state = apply_jump(game)?.or(state);
         } else {
             return Ok(());
         }
     }
+}
+
+fn apply_jump(game: &mut GameState) -> Result<Option<RaidState>> {
+    if let Some(raid) = &game.data.raid {
+        if let Some(RaidJumpRequest::EncounterMinion(card_id)) = raid.jump_request {
+            let (room_id, index) =
+                queries::minion_position(game, card_id).with_error(|| "Minion not found")?;
+            let raid = game.raid_mut()?;
+            raid.target = room_id;
+            raid.encounter = Some(index);
+            raid.jump_request = None;
+            return Ok(Some(RaidState::Continue));
+        }
+    }
+
+    Ok(None)
 }
 
 fn tmp_sync_state_to_phase(game: &mut GameState) -> Result<()> {

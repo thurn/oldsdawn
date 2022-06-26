@@ -132,6 +132,21 @@ pub enum RaidState {
     Access,
 }
 
+/// Some card abilities completely change the state of a Raid, for example to
+/// target a different room or encounter a different minion. Setting a jump
+/// request on the [RaidData] asks the raid system to execute the related
+/// transformation when possible.
+///
+/// This always happens *after* processing the current raid state and only if
+/// the raid is still active, i.e. it cannot be used to stop the effects of a
+/// user action from happening.
+///
+/// Only one jump request is supported at a time, on a 'last write wins' basis.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum RaidJumpRequest {
+    EncounterMinion(CardId),
+}
+
 /// Data about an active raid
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RaidData {
@@ -151,6 +166,8 @@ pub struct RaidData {
     pub room_active: bool,
     /// Cards which have been accessed as part of this raid's Access phase.
     pub accessed: Vec<CardId>,
+    /// Requested new state for this raid. See [RaidJumpRequest] for details.
+    pub jump_request: Option<RaidJumpRequest>,
 }
 
 /// Describes options for this game & the set of rules it is using.

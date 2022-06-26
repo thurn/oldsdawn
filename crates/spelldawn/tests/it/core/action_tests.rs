@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use ai::tournament::run_tournament;
+use ai::tournament::run_tournament::RunGames;
 use cards::test_cards::{ARTIFACT_COST, MANA_STORED, MANA_TAKEN, UNVEIL_COST};
+use cards::{decklists, initialize};
+use data::agent_definition::AgentName;
 use data::card_name::CardName;
 use data::game::RaidPhase;
 use data::primitives::Side;
@@ -408,4 +412,18 @@ fn triggered_ability_take_all_mana() {
         Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::Opponent.into() }),
         g.opponent.cards.get(id).position()
     );
+}
+
+#[test]
+fn random_actions() {
+    initialize::run();
+    let mut game = decklists::canonical_game().unwrap();
+    run_tournament::run_games(
+        &mut game,
+        10,
+        AgentName::PickRandom,
+        AgentName::PickRandom,
+        RunGames::NoPrint,
+    )
+    .expect("Error running games");
 }

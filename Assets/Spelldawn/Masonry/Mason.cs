@@ -396,22 +396,6 @@ namespace Spelldawn.Masonry
       {
         var sprite = registry.AssetService.GetSprite(bi);
         e.style.backgroundImage = new StyleBackground(sprite);
-
-        if (input.BackgroundImageScaleMultiplier is { } multiplier && sprite && sprite != null)
-        {
-          e.style.width = MasonUtil.ScreenPxToDip(sprite.rect.width * multiplier);
-          e.style.height = MasonUtil.ScreenPxToDip(sprite.rect.height * multiplier);
-        }
-
-        switch (input.FixedBackgroundImageAspectRatio)
-        {
-          case true when input.Width is { } width && sprite && sprite != null:
-            e.style.height = AdaptDimensionNonNull(width, sprite.rect.height / sprite.rect.width);
-            break;
-          case true when input.Height is { } height && sprite && sprite != null:
-            e.style.width = AdaptDimensionNonNull(height, sprite.rect.width / sprite.rect.height);
-            break;
-        }
       }
       else
       {

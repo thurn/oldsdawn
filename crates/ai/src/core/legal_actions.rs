@@ -20,7 +20,7 @@ use data::game::{GamePhase, GameState};
 use data::game_actions::{CardTarget, CardTargetKind, UserAction};
 use data::primitives::{CardId, RoomId, Side};
 use enum_iterator::IntoEnumIterator;
-use rules::{flags, queries};
+use rules::{flags, queries, raid};
 
 /// Returns an iterator over currently-legal [UserAction]s for the `side` player
 /// in the given [GameState].
@@ -39,6 +39,10 @@ pub fn evaluate<'a>(game: &'a GameState, side: Side) -> Box<dyn Iterator<Item = 
         return Box::new(
             prompt.responses.iter().map(|prompt| UserAction::GamePromptResponse(*prompt)),
         );
+    }
+
+    if let Some(actions) = raid::core::current_actions(game, side).expect("Current Actions") {
+        return Box::new(actions.into_iter().map(UserAction::GamePromptResponse));
     }
 
     if queries::in_main_phase(game, side) {

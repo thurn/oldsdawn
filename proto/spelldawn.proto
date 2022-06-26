@@ -18,7 +18,6 @@ package spelldawn;
 option csharp_namespace = "Spelldawn.Protos";
 
 import "google/protobuf/wrappers.proto";
-import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 
 // ============================================================================
@@ -349,22 +348,7 @@ message FlexStyle {
     WhiteSpace white_space = 52;
     Dimension width = 53;
     Dimension word_spacing = 54;
-
-    /*
-    * Overwrites both 'width' and 'height' by multiplying the dimensions of
-    * the provided 'background_image' (in units of raw pixels) by this
-    * constant.
-    */
-    google.protobuf.FloatValue background_image_scale_multiplier = 55;
-
-    /*
-    * Calculates the aspect ratio of the provided 'background_image' and uses
-    * it to set dimensions. If 'width' is set, the 'height' will be set based
-    * on the aspect ratio and vice versa. Does not support percentage values.
-    */
-    bool fixed_background_image_aspect_ratio = 56;
-
-    FlexPickingMode picking_mode = 57;
+    FlexPickingMode picking_mode = 55;
 }
 
 message Flexbox {
