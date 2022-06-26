@@ -15,17 +15,19 @@
 use anyhow::Result;
 use data::delegates::RaidOutcome;
 use data::fail;
-use data::game::{GameState, RaidState};
+use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{ContinueAction, PromptAction, PromptContext};
 use data::primitives::Side;
 
 use crate::mutations;
-use crate::raid::core::{RaidDisplayState, RaidStateNode};
+use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 
 #[derive(Debug, Clone, Copy)]
-pub struct ContinueState {}
+pub struct ContinuePhase {}
 
-impl RaidStateNode<ContinueAction> for ContinueState {
+impl RaidPhaseImpl for ContinuePhase {
+    type Action = ContinueAction;
+
     fn unwrap(action: PromptAction) -> Result<ContinueAction> {
         match action {
             PromptAction::ContinueAction(action) => Ok(action),
@@ -37,7 +39,7 @@ impl RaidStateNode<ContinueAction> for ContinueState {
         Ok(PromptAction::ContinueAction(action))
     }
 
-    fn enter(self, _: &mut GameState) -> Result<Option<RaidState>> {
+    fn enter(self, _: &mut GameState) -> Result<Option<InternalRaidPhase>> {
         Ok(None)
     }
 
@@ -45,22 +47,22 @@ impl RaidStateNode<ContinueAction> for ContinueState {
         Ok(vec![ContinueAction::Advance, ContinueAction::Retreat])
     }
 
-    fn active_side(self) -> Side {
-        Side::Champion
-    }
-
     fn handle_action(
         self,
         game: &mut GameState,
         action: ContinueAction,
-    ) -> Result<Option<RaidState>> {
+    ) -> Result<Option<InternalRaidPhase>> {
         match action {
-            ContinueAction::Advance => Ok(Some(RaidState::Encounter)),
+            ContinueAction::Advance => Ok(Some(InternalRaidPhase::Encounter)),
             ContinueAction::Retreat => {
                 mutations::end_raid(game, RaidOutcome::Failure)?;
                 Ok(None)
             }
         }
+    }
+
+    fn active_side(self) -> Side {
+        Side::Champion
     }
 
     fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {

@@ -13,56 +13,34 @@
 // limitations under the License.
 
 use anyhow::Result;
-use data::game::{GameState, RaidData, RaidJumpRequest, RaidState};
-use data::game_actions::{GamePrompt, PromptAction, PromptContext};
-use data::primitives::{CardId, RaidId, RoomId, Side};
+use data::game::{GameState, InternalRaidPhase, RaidData, RaidJumpRequest};
+use data::game_actions::{GamePrompt, PromptAction};
+use data::primitives::{RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
+use data::verify;
 use data::with_error::WithError;
-use data::{utils, verify};
-use fallible_iterator::FallibleIterator;
 
-use crate::raid::access::AccessState;
-use crate::raid::activation::ActivateState;
-use crate::raid::begin::BeginState;
-use crate::raid::continuation::ContinueState;
-use crate::raid::encounter::EncounterState;
+use crate::raid::access::AccessPhase;
+use crate::raid::activation::ActivationPhase;
+use crate::raid::begin::BeginPhase;
+use crate::raid::continuation::ContinuePhase;
+use crate::raid::encounter::EncounterPhase;
+use crate::raid::traits::RaidPhase;
 use crate::{flags, mutations, queries};
 
-pub enum RaidDisplayState {
-    None,
-    Defenders(Vec<CardId>),
-    Access,
+pub trait RaidDataExt {
+    fn phase(&self) -> Box<dyn RaidPhase>;
 }
 
-pub trait RaidStateNode<T: Eq>: Copy {
-    fn unwrap(action: PromptAction) -> Result<T>;
-
-    fn wrap(action: T) -> Result<PromptAction>;
-
-    fn enter(self, game: &mut GameState) -> Result<Option<RaidState>>;
-
-    fn actions(self, game: &GameState) -> Result<Vec<T>>;
-
-    fn active_side(self) -> Side;
-
-    fn handle_action(self, game: &mut GameState, action: T) -> Result<Option<RaidState>>;
-
-    fn display_state(self, game: &GameState) -> Result<RaidDisplayState>;
-
-    fn prompt_context(self) -> Option<PromptContext> {
-        None
-    }
-
-    fn handle_prompt(
-        self,
-        game: &mut GameState,
-        action: PromptAction,
-    ) -> Result<Option<RaidState>> {
-        self.handle_action(game, Self::unwrap(action)?)
-    }
-
-    fn prompts(self, game: &GameState) -> Result<Vec<PromptAction>> {
-        utils::fallible(self.actions(game)?.into_iter()).map(Self::wrap).collect()
+impl RaidDataExt for RaidData {
+    fn phase(&self) -> Box<dyn RaidPhase> {
+        match self.internal_phase {
+            InternalRaidPhase::Begin => Box::new(BeginPhase {}),
+            InternalRaidPhase::Activation => Box::new(ActivationPhase {}),
+            InternalRaidPhase::Encounter => Box::new(EncounterPhase {}),
+            InternalRaidPhase::Continue => Box::new(ContinuePhase {}),
+            InternalRaidPhase::Access => Box::new(AccessPhase {}),
+        }
     }
 }
 
@@ -87,11 +65,11 @@ pub fn initiate(
     on_begin: impl Fn(&mut GameState, RaidId),
 ) -> Result<()> {
     let raid_id = RaidId(game.data.next_raid_id);
-    let state = RaidState::Begin;
+    let phase = InternalRaidPhase::Begin;
     let raid = RaidData {
         target: target_room,
         raid_id,
-        state,
+        internal_phase: phase,
         encounter: None,
         room_active: false,
         accessed: vec![],
@@ -102,20 +80,20 @@ pub fn initiate(
     game.data.raid = Some(raid);
     on_begin(game, raid_id);
     game.record_update(|| GameUpdate::InitiateRaid(target_room, initiated_by));
-    enter_state(game, Some(state))?;
+    enter_phase(game, Some(phase))?;
 
     Ok(())
 }
 
 pub fn handle_action(game: &mut GameState, user_side: Side, action: PromptAction) -> Result<()> {
-    let state = game.raid()?.state;
-    verify!(state.active_side() == user_side, "Unexpected side");
-    verify!(state.prompts(game)?.iter().any(|c| c == &action), "Unexpected action");
-    let mut new_state = state.handle_action(game, action)?;
+    let phase = game.raid()?.phase();
+    verify!(phase.active_side() == user_side, "Unexpected side");
+    verify!(phase.prompts(game)?.iter().any(|c| c == &action), "Unexpected action");
+    let mut new_state = phase.handle_prompt(game, action)?;
     new_state = apply_jump(game)?.or(new_state);
 
     if game.data.raid.is_some() {
-        enter_state(game, new_state)
+        enter_phase(game, new_state)
     } else {
         Ok(())
     }
@@ -123,9 +101,8 @@ pub fn handle_action(game: &mut GameState, user_side: Side, action: PromptAction
 
 pub fn current_actions(game: &GameState, user_side: Side) -> Result<Option<Vec<PromptAction>>> {
     if let Some(raid) = &game.data.raid {
-        let state = raid.state;
-        if state.active_side() == user_side {
-            let prompts = state.prompts(game)?;
+        if raid.phase().active_side() == user_side {
+            let prompts = raid.phase().prompts(game)?;
             if !prompts.is_empty() {
                 return Ok(Some(prompts));
             }
@@ -137,25 +114,25 @@ pub fn current_actions(game: &GameState, user_side: Side) -> Result<Option<Vec<P
 
 pub fn current_prompt(game: &GameState, user_side: Side) -> Result<Option<GamePrompt>> {
     if let Some(actions) = current_actions(game, user_side)? {
-        Ok(Some(GamePrompt { context: game.raid()?.state.prompt_context(), responses: actions }))
+        Ok(Some(GamePrompt { context: game.raid()?.phase().prompt_context(), responses: actions }))
     } else {
         Ok(None)
     }
 }
 
-fn enter_state(game: &mut GameState, mut state: Option<RaidState>) -> Result<()> {
+fn enter_phase(game: &mut GameState, mut phase: Option<InternalRaidPhase>) -> Result<()> {
     loop {
-        if let Some(s) = state {
-            game.raid_mut()?.state = s;
-            state = s.enter(game)?;
-            state = apply_jump(game)?.or(state);
+        if let Some(s) = phase {
+            game.raid_mut()?.internal_phase = s;
+            phase = game.raid()?.phase().enter(game)?;
+            phase = apply_jump(game)?.or(phase);
         } else {
             return Ok(());
         }
     }
 }
 
-fn apply_jump(game: &mut GameState) -> Result<Option<RaidState>> {
+fn apply_jump(game: &mut GameState) -> Result<Option<InternalRaidPhase>> {
     if let Some(raid) = &game.data.raid {
         if let Some(RaidJumpRequest::EncounterMinion(card_id)) = raid.jump_request {
             let (room_id, index) =
@@ -164,95 +141,9 @@ fn apply_jump(game: &mut GameState) -> Result<Option<RaidState>> {
             raid.target = room_id;
             raid.encounter = Some(index);
             raid.jump_request = None;
-            return Ok(Some(RaidState::Continue));
+            return Ok(Some(InternalRaidPhase::Continue));
         }
     }
 
     Ok(None)
-}
-
-impl RaidStateNode<PromptAction> for RaidState {
-    fn unwrap(action: PromptAction) -> Result<PromptAction> {
-        Ok(action)
-    }
-
-    fn wrap(action: PromptAction) -> Result<PromptAction> {
-        Ok(action)
-    }
-
-    fn enter(self, game: &mut GameState) -> Result<Option<RaidState>> {
-        match self {
-            Self::Activation => ActivateState {}.enter(game),
-            Self::Begin => BeginState {}.enter(game),
-            Self::Encounter => EncounterState {}.enter(game),
-            Self::Continue => ContinueState {}.enter(game),
-            Self::Access => AccessState {}.enter(game),
-        }
-    }
-
-    fn actions(self, game: &GameState) -> Result<Vec<PromptAction>> {
-        match self {
-            Self::Activation => ActivateState {}.prompts(game),
-            Self::Begin => BeginState {}.prompts(game),
-            Self::Encounter => EncounterState {}.prompts(game),
-            Self::Continue => ContinueState {}.prompts(game),
-            Self::Access => AccessState {}.prompts(game),
-        }
-    }
-
-    fn active_side(self) -> Side {
-        match self {
-            Self::Activation => ActivateState {}.active_side(),
-            Self::Begin => BeginState {}.active_side(),
-            Self::Encounter => EncounterState {}.active_side(),
-            Self::Continue => ContinueState {}.active_side(),
-            Self::Access => AccessState {}.active_side(),
-        }
-    }
-
-    fn handle_action(
-        self,
-        game: &mut GameState,
-        action: PromptAction,
-    ) -> Result<Option<RaidState>> {
-        match self {
-            Self::Activation => ActivateState {}.handle_prompt(game, action),
-            Self::Begin => BeginState {}.handle_prompt(game, action),
-            Self::Encounter => EncounterState {}.handle_prompt(game, action),
-            Self::Continue => ContinueState {}.handle_prompt(game, action),
-            Self::Access => AccessState {}.handle_prompt(game, action),
-        }
-    }
-
-    fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {
-        match self {
-            Self::Activation => ActivateState {}.display_state(game),
-            Self::Begin => BeginState {}.display_state(game),
-            Self::Encounter => EncounterState {}.display_state(game),
-            Self::Continue => ContinueState {}.display_state(game),
-            Self::Access => AccessState {}.display_state(game),
-        }
-    }
-
-    fn prompt_context(self) -> Option<PromptContext> {
-        match self {
-            Self::Activation => ActivateState {}.prompt_context(),
-            Self::Begin => BeginState {}.prompt_context(),
-            Self::Encounter => EncounterState {}.prompt_context(),
-            Self::Continue => ContinueState {}.prompt_context(),
-            Self::Access => AccessState {}.prompt_context(),
-        }
-    }
-
-    fn handle_prompt(
-        self,
-        game: &mut GameState,
-        action: PromptAction,
-    ) -> Result<Option<RaidState>> {
-        self.handle_action(game, action)
-    }
-
-    fn prompts(self, game: &GameState) -> Result<Vec<PromptAction>> {
-        self.actions(game)
-    }
 }

@@ -28,7 +28,8 @@ use protos::spelldawn::{
     ObjectPositionStaging, RevealedCardsBrowserSize, RoomIdentifier,
 };
 use rules::queries;
-use rules::raid::core::{RaidDisplayState, RaidStateNode};
+use rules::raid::core::RaidDataExt;
+use rules::raid::traits::RaidDisplayState;
 
 use crate::adapters;
 use crate::response_builder::ResponseBuilder;
@@ -268,7 +269,7 @@ fn position_override(
 
 fn raid_position_override(game: &GameState, id: GameObjectId) -> Result<Option<ObjectPosition>> {
     Ok(if let Some(raid_data) = &game.data.raid {
-        match raid_data.state.display_state(game)? {
+        match raid_data.phase().display_state(game)? {
             RaidDisplayState::None => None,
             RaidDisplayState::Defenders(defenders) => {
                 browser_position(id, raid(), raid_browser(game, raid_data, defenders)?)

@@ -18,7 +18,7 @@ use data::delegates::{
     UsedWeapon, UsedWeaponEvent,
 };
 use data::fail;
-use data::game::{GameState, RaidState};
+use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{EncounterAction, PromptAction};
 use data::primitives::{CardId, GameObjectId, Side};
 use data::updates::{GameUpdate, TargetedInteraction};
@@ -26,14 +26,16 @@ use data::with_error::WithError;
 
 use crate::mana::ManaPurpose;
 use crate::mutations::SummonMinion;
-use crate::raid::core::{RaidDisplayState, RaidStateNode};
 use crate::raid::defenders;
+use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 use crate::{card_prompt, dispatch, flags, mana, mutations, queries};
 
 #[derive(Debug, Clone, Copy)]
-pub struct EncounterState {}
+pub struct EncounterPhase {}
 
-impl RaidStateNode<EncounterAction> for EncounterState {
+impl RaidPhaseImpl for EncounterPhase {
+    type Action = EncounterAction;
+
     fn unwrap(action: PromptAction) -> Result<EncounterAction> {
         match action {
             PromptAction::EncounterAction(action) => Ok(action),
@@ -45,7 +47,7 @@ impl RaidStateNode<EncounterAction> for EncounterState {
         Ok(PromptAction::EncounterAction(action))
     }
 
-    fn enter(self, game: &mut GameState) -> Result<Option<RaidState>> {
+    fn enter(self, game: &mut GameState) -> Result<Option<InternalRaidPhase>> {
         if defenders::can_summon_defender(game, game.raid_defender()?)? {
             mutations::summon_minion(game, game.raid_defender()?, SummonMinion::PayCosts)?;
             if game.data.raid.is_none() {
@@ -67,15 +69,11 @@ impl RaidStateNode<EncounterAction> for EncounterState {
             .collect())
     }
 
-    fn active_side(self) -> Side {
-        Side::Champion
-    }
-
     fn handle_action(
         self,
         game: &mut GameState,
         action: EncounterAction,
-    ) -> Result<Option<RaidState>> {
+    ) -> Result<Option<InternalRaidPhase>> {
         match action {
             EncounterAction::UseWeaponAbility(source_id, target_id) => {
                 let cost = queries::cost_to_defeat_target(game, source_id, target_id).with_error(
@@ -125,10 +123,14 @@ impl RaidStateNode<EncounterAction> for EncounterState {
             defenders::next_encounter(game, Some(game.raid_encounter()?))?
         {
             game.raid_mut()?.encounter = Some(encounter);
-            Some(RaidState::Continue)
+            Some(InternalRaidPhase::Continue)
         } else {
-            Some(RaidState::Access)
+            Some(InternalRaidPhase::Access)
         })
+    }
+
+    fn active_side(self) -> Side {
+        Side::Champion
     }
 
     fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {

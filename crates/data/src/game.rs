@@ -124,7 +124,7 @@ impl RaidPhase {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
-pub enum RaidState {
+pub enum InternalRaidPhase {
     Begin,
     Activation,
     Encounter,
@@ -155,7 +155,7 @@ pub struct RaidData {
     /// Room being targeted by this raid
     pub target: RoomId,
     /// Current state of this raid
-    pub state: RaidState,
+    pub internal_phase: InternalRaidPhase,
     /// Current encounter position within this raid, if any
     pub encounter: Option<usize>,
     /// True if the Overlord activated this room in response to the raid.

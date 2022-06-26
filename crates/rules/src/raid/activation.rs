@@ -14,17 +14,19 @@
 
 use anyhow::Result;
 use data::fail;
-use data::game::{GameState, RaidState};
+use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{PromptAction, PromptContext, RoomActivationAction};
 use data::primitives::Side;
 
-use crate::raid::core::{RaidDisplayState, RaidStateNode};
 use crate::raid::defenders;
+use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 
 #[derive(Debug, Clone, Copy)]
-pub struct ActivateState {}
+pub struct ActivationPhase {}
 
-impl RaidStateNode<RoomActivationAction> for ActivateState {
+impl RaidPhaseImpl for ActivationPhase {
+    type Action = RoomActivationAction;
+
     fn unwrap(action: PromptAction) -> Result<RoomActivationAction> {
         match action {
             PromptAction::ActivateRoomAction(action) => Ok(action),
@@ -36,7 +38,7 @@ impl RaidStateNode<RoomActivationAction> for ActivateState {
         Ok(PromptAction::ActivateRoomAction(action))
     }
 
-    fn enter(self, _: &mut GameState) -> Result<Option<RaidState>> {
+    fn enter(self, _: &mut GameState) -> Result<Option<InternalRaidPhase>> {
         Ok(None)
     }
 
@@ -44,22 +46,22 @@ impl RaidStateNode<RoomActivationAction> for ActivateState {
         Ok(vec![RoomActivationAction::Activate, RoomActivationAction::Pass])
     }
 
-    fn active_side(self) -> Side {
-        Side::Overlord
-    }
-
     fn handle_action(
         self,
         game: &mut GameState,
         action: RoomActivationAction,
-    ) -> Result<Option<RaidState>> {
+    ) -> Result<Option<InternalRaidPhase>> {
         game.raid_mut()?.room_active = action == RoomActivationAction::Activate;
         Ok(Some(if let Some(encounter) = defenders::next_encounter(game, None)? {
             game.raid_mut()?.encounter = Some(encounter);
-            RaidState::Encounter
+            InternalRaidPhase::Encounter
         } else {
-            RaidState::Access
+            InternalRaidPhase::Access
         }))
+    }
+
+    fn active_side(self) -> Side {
+        Side::Overlord
     }
 
     fn display_state(self, game: &GameState) -> Result<RaidDisplayState> {

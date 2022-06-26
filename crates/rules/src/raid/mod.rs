@@ -13,6 +13,7 @@
 // limitations under the License.
 
 pub mod core;
+pub mod traits;
 
 mod access;
 mod activation;

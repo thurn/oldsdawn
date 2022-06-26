@@ -20,20 +20,22 @@ use data::delegates::{
     CardAccessEvent, ChampionScoreCardEvent, RaidAccessStartEvent, RaidOutcome, ScoreCard,
     ScoreCardEvent,
 };
-use data::game::{GameState, RaidState};
+use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{AccessPhaseAction, PromptAction};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::updates::GameUpdate;
 use data::with_error::WithError;
 use data::{fail, random};
 
-use crate::raid::core::{RaidDisplayState, RaidStateNode};
+use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 use crate::{dispatch, mutations, queries};
 
 #[derive(Debug, Clone, Copy)]
-pub struct AccessState {}
+pub struct AccessPhase {}
 
-impl RaidStateNode<AccessPhaseAction> for AccessState {
+impl RaidPhaseImpl for AccessPhase {
+    type Action = AccessPhaseAction;
+
     fn unwrap(action: PromptAction) -> Result<AccessPhaseAction> {
         match action {
             PromptAction::AccessPhaseAction(action) => Ok(action),
@@ -45,7 +47,7 @@ impl RaidStateNode<AccessPhaseAction> for AccessState {
         Ok(PromptAction::AccessPhaseAction(action))
     }
 
-    fn enter(self, game: &mut GameState) -> Result<Option<RaidState>> {
+    fn enter(self, game: &mut GameState) -> Result<Option<InternalRaidPhase>> {
         dispatch::invoke_event(game, RaidAccessStartEvent(game.raid()?.raid_id))?;
         if game.data.raid.is_none() {
             return Ok(None);
@@ -71,21 +73,21 @@ impl RaidStateNode<AccessPhaseAction> for AccessState {
             .collect())
     }
 
-    fn active_side(self) -> Side {
-        Side::Champion
-    }
-
     fn handle_action(
         self,
         game: &mut GameState,
         action: AccessPhaseAction,
-    ) -> Result<Option<RaidState>> {
+    ) -> Result<Option<InternalRaidPhase>> {
         match action {
             AccessPhaseAction::ScoreCard(card_id) => handle_score_card(game, card_id),
             AccessPhaseAction::EndRaid => mutations::end_raid(game, RaidOutcome::Success),
         }?;
 
         Ok(None)
+    }
+
+    fn active_side(self) -> Side {
+        Side::Champion
     }
 
     fn display_state(self, _: &GameState) -> Result<RaidDisplayState> {

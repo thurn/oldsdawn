@@ -30,7 +30,7 @@ use data::primitives::{
     ItemLocation, ManaValue, RoomId, RoomLocation, ShieldValue, Side,
 };
 
-use crate::raid::core::RaidStateNode;
+use crate::raid::core::RaidDataExt;
 use crate::{constants, dispatch};
 
 /// Returns true if the indicated player currently has a legal game action
@@ -43,7 +43,7 @@ pub fn can_take_action(game: &GameState, side: Side) -> bool {
     };
 
     match &game.data.raid {
-        Some(raid) => side == raid.state.active_side(),
+        Some(raid) => side == raid.phase().active_side(),
         None => side == game.data.turn.side,
     }
 }

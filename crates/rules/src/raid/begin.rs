@@ -16,27 +16,29 @@ use anyhow::Result;
 use data::card_state::CardState;
 use data::delegates::{RaidStart, RaidStartEvent};
 use data::fail;
-use data::game::{GameState, RaidState};
+use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::PromptAction;
 use data::primitives::Side;
 
 use crate::dispatch;
-use crate::raid::core::{RaidDisplayState, RaidStateNode};
 use crate::raid::defenders;
+use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 
 #[derive(Debug, Clone, Copy)]
-pub struct BeginState {}
+pub struct BeginPhase {}
 
-impl RaidStateNode<()> for BeginState {
+impl RaidPhaseImpl for BeginPhase {
+    type Action = ();
+
     fn unwrap(_: PromptAction) -> Result<()> {
-        fail!("No actions for Begin State")
+        fail!("No actions for Begin Phase")
     }
 
     fn wrap(_: ()) -> Result<PromptAction> {
-        fail!("No actions for Begin State")
+        fail!("No actions for Begin Phase")
     }
 
-    fn enter(self, game: &mut GameState) -> Result<Option<RaidState>> {
+    fn enter(self, game: &mut GameState) -> Result<Option<InternalRaidPhase>> {
         dispatch::invoke_event(
             game,
             RaidStartEvent(RaidStart {
@@ -50,12 +52,12 @@ impl RaidStateNode<()> for BeginState {
         }
 
         Ok(Some(if game.defenders_unordered(game.raid()?.target).any(CardState::is_face_down) {
-            RaidState::Activation
+            InternalRaidPhase::Activation
         } else if let Some(encounter) = defenders::next_encounter(game, None)? {
             game.raid_mut()?.encounter = Some(encounter);
-            RaidState::Encounter
+            InternalRaidPhase::Encounter
         } else {
-            RaidState::Access
+            InternalRaidPhase::Access
         }))
     }
 
@@ -63,12 +65,12 @@ impl RaidStateNode<()> for BeginState {
         Ok(vec![])
     }
 
-    fn active_side(self) -> Side {
-        Side::Champion
+    fn handle_action(self, _: &mut GameState, _: ()) -> Result<Option<InternalRaidPhase>> {
+        fail!("No actions for Begin Phase")
     }
 
-    fn handle_action(self, _: &mut GameState, _: ()) -> Result<Option<RaidState>> {
-        fail!("No actions for Begin State")
+    fn active_side(self) -> Side {
+        Side::Champion
     }
 
     fn display_state(self, _: &GameState) -> Result<RaidDisplayState> {
