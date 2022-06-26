@@ -36,7 +36,6 @@ use data::updates::{GameUpdate, InitiatedBy};
 use data::utils;
 
 use crate::mana::ManaPurpose;
-use crate::mutations::SetPrompt;
 use crate::{mana, mutations, queries, raid};
 
 pub fn add_number(number: impl Into<u32>) -> TextToken {
@@ -420,7 +419,6 @@ pub fn set_card_prompt(
     mutations::set_prompt(
         game,
         side,
-        SetPrompt::CardPrompt,
         GamePrompt::card_actions(actions.into_iter().flatten().collect()),
     )
 }

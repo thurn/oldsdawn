@@ -13,7 +13,8 @@
 // limitations under the License.
 
 use anyhow::Result;
-use data::game::GameState;
+use data::game::{GamePhase, GameState, MulliganDecision};
+use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::Side;
 use prompts::WaitingPrompt;
 use protos::spelldawn::InterfaceMainControls;
@@ -24,10 +25,10 @@ use crate::prompts;
 
 /// Returns a [InterfaceMainControls] to render the interface state for the
 /// provided `game`.
-pub fn render(game: &GameState, user_side: Side) -> Option<InterfaceMainControls> {
-    if let Some(prompt) = render_prompt(game, user_side).expect("todo") {
+pub fn render(game: &GameState, user_side: Side) -> Result<Option<InterfaceMainControls>> {
+    Ok(if let Some(prompt) = render_prompt(game, user_side)? {
         Some(prompt)
-    } else if render_prompt(game, user_side.opponent()).expect("todo").is_some() {
+    } else if render_prompt(game, user_side.opponent())?.is_some() {
         // If the opponent has a prompt, display a 'waiting' indicator
         Some(InterfaceMainControls {
             node: Some((WaitingPrompt {}).render()),
@@ -35,19 +36,30 @@ pub fn render(game: &GameState, user_side: Side) -> Option<InterfaceMainControls
         })
     } else {
         None
-    }
+    })
 }
 
 /// Renders prompt for a player when one is present
 fn render_prompt(game: &GameState, side: Side) -> Result<Option<InterfaceMainControls>> {
-    Ok(if let Some(prompt) = &game.player(side).card_prompt {
-        Some(prompts::action_prompt(game, side, prompt))
+    if let Some(prompt) = &game.player(side).prompt {
+        return Ok(prompts::action_prompt(game, side, prompt));
     } else if let Some(prompt) = raid::core::current_prompt(game, side)? {
-        Some(prompts::action_prompt(game, side, &prompt))
-    } else {
-        game.player(side)
-            .game_prompt
-            .as_ref()
-            .map(|prompt| prompts::action_prompt(game, side, prompt))
-    })
+        return Ok(prompts::action_prompt(game, side, &prompt));
+    } else if let GamePhase::ResolveMulligans(data) = &game.data.phase {
+        if data.decision(side).is_none() {
+            return Ok(prompts::action_prompt(
+                game,
+                side,
+                &GamePrompt {
+                    context: None,
+                    responses: vec![
+                        PromptAction::MulliganDecision(MulliganDecision::Keep),
+                        PromptAction::MulliganDecision(MulliganDecision::Mulligan),
+                    ],
+                },
+            ));
+        }
+    }
+
+    Ok(None)
 }

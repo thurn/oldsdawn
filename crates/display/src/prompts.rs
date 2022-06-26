@@ -31,7 +31,11 @@ use crate::adapters;
 
 /// Command to renders UI elements to display the provided [GamePrompt] for the
 /// `side` player.
-pub fn action_prompt(game: &GameState, side: Side, prompt: &GamePrompt) -> InterfaceMainControls {
+pub fn action_prompt(
+    game: &GameState,
+    side: Side,
+    prompt: &GamePrompt,
+) -> Option<InterfaceMainControls> {
     let mut main_controls = vec![];
     let mut card_anchor_nodes = vec![];
 
@@ -80,10 +84,10 @@ pub fn action_prompt(game: &GameState, side: Side, prompt: &GamePrompt) -> Inter
         }
     }
 
-    InterfaceMainControls {
+    Some(InterfaceMainControls {
         node: Some(node(PromptContainer { name: "Prompt", children: main_controls })),
         card_anchor_nodes,
-    }
+    })
 }
 
 /// Component to display a waiting message while the opponent is deciding on

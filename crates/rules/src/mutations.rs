@@ -30,8 +30,8 @@ use data::delegates::{
     RaidSuccessEvent, Scope, ScoreCard, ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
     UnveilProjectEvent,
 };
-use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
-use data::game_actions::{GamePrompt, PromptAction};
+use data::game::{GameOverData, GamePhase, GameState, TurnData};
+use data::game_actions::GamePrompt;
 use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
     RoomLocation, Side, TurnNumber,
@@ -228,29 +228,11 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: &T) -> Result<()> {
     Ok(())
 }
 
-pub enum SetPrompt {
-    GamePrompt,
-    CardPrompt,
-}
-
-/// Sets the current prompt of the [SetPrompt] type for the `side` player.
+/// Sets the current prompt for the `side` player.
 /// Returns an error if a prompt is already set for this player.
-pub fn set_prompt(
-    game: &mut GameState,
-    side: Side,
-    set_prompt: SetPrompt,
-    prompt: GamePrompt,
-) -> Result<()> {
-    match set_prompt {
-        SetPrompt::GamePrompt => {
-            verify!(game.player(side).game_prompt.is_none(), "Prompt already present");
-            game.player_mut(side).game_prompt = Some(prompt);
-        }
-        SetPrompt::CardPrompt => {
-            verify!(game.player(side).card_prompt.is_none(), "Prompt already present");
-            game.player_mut(side).card_prompt = Some(prompt);
-        }
-    }
+pub fn set_prompt(game: &mut GameState, side: Side, prompt: GamePrompt) -> Result<()> {
+    verify!(game.player(side).prompt.is_none(), "Prompt already present");
+    game.player_mut(side).prompt = Some(prompt);
     Ok(())
 }
 
@@ -273,17 +255,8 @@ pub fn end_raid(game: &mut GameState, outcome: RaidOutcome) -> Result<()> {
 #[instrument(skip(game))]
 pub fn deal_opening_hands(game: &mut GameState) -> Result<()> {
     info!("deal_opening_hands");
-    let prompt = GamePrompt {
-        context: None,
-        responses: vec![
-            PromptAction::MulliganDecision(MulliganDecision::Keep),
-            PromptAction::MulliganDecision(MulliganDecision::Mulligan),
-        ],
-    };
     draw_cards(game, Side::Overlord, constants::STARTING_HAND_SIZE)?;
-    set_prompt(game, Side::Overlord, SetPrompt::GamePrompt, prompt.clone())?;
     draw_cards(game, Side::Champion, constants::STARTING_HAND_SIZE)?;
-    set_prompt(game, Side::Champion, SetPrompt::GamePrompt, prompt)?;
     Ok(())
 }
 

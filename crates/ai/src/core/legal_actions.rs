@@ -29,13 +29,7 @@ pub fn evaluate<'a>(game: &'a GameState, side: Side) -> Box<dyn Iterator<Item = 
         return Box::new(iter::empty());
     }
 
-    if let Some(prompt) = &game.player(side).card_prompt {
-        return Box::new(
-            prompt.responses.iter().map(|prompt| UserAction::GamePromptResponse(*prompt)),
-        );
-    }
-
-    if let Some(prompt) = &game.player(side).game_prompt {
+    if let Some(prompt) = &game.player(side).prompt {
         return Box::new(
             prompt.responses.iter().map(|prompt| UserAction::GamePromptResponse(*prompt)),
         );

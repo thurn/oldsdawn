@@ -182,8 +182,8 @@ pub fn in_main_phase(game: &GameState, side: Side) -> bool {
         && matches!(&game.data.phase, GamePhase::Play)
         && game.data.turn.side == side
         && game.data.raid.is_none()
-        && game.overlord.game_prompt.is_none()
-        && game.champion.game_prompt.is_none()
+        && game.overlord.prompt.is_none()
+        && game.champion.prompt.is_none()
 }
 
 /// Look up the number of action points a player receives at the start of their

@@ -68,13 +68,9 @@ pub struct PlayerState {
     /// used to determine game actions instead of prompting for UI input.
     pub agent: Option<AgentData>,
 
-    /// A choice this player is currently facing. Automatically cleared when
-    /// a `PromptAction` response is received.
-    pub game_prompt: Option<GamePrompt>,
-
     /// A choice this player is facing in resolving a card ability. Takes
-    /// precedence over the current `game_prompt`, if any.
-    pub card_prompt: Option<GamePrompt>,
+    /// precedence over other choices such as raid actions.
+    pub prompt: Option<GamePrompt>,
 }
 
 impl PlayerState {
@@ -86,8 +82,7 @@ impl PlayerState {
             mana_state: ManaState::default(),
             actions: 0,
             score: 0,
-            game_prompt: None,
-            card_prompt: None,
+            prompt: None,
         }
     }
 }

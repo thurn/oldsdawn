@@ -48,7 +48,7 @@ pub fn run(builder: &mut ResponseBuilder, game: &GameState) -> Result<()> {
         main_controls: if builder.state.is_final_update {
             // Only include controls on final update to ensure interface doesn't show
             // previous UI after click.
-            interface::render(game, builder.user_side)
+            interface::render(game, builder.user_side)?
         } else {
             None
         },

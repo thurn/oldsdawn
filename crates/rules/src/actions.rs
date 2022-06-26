@@ -250,12 +250,9 @@ fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAct
         Ok(())
     }
 
-    if let Some(prompt) = &game.player(user_side).card_prompt {
+    if let Some(prompt) = &game.player(user_side).prompt {
         validate(prompt, &action)?;
-        game.player_mut(user_side).card_prompt = None;
-    } else if let Some(prompt) = &game.player(user_side).game_prompt {
-        validate(prompt, &action)?;
-        game.player_mut(user_side).game_prompt = None;
+        game.player_mut(user_side).prompt = None;
     }
 
     match action {
