@@ -31,6 +31,7 @@ pub enum RoomActivationAction {
     Activate,
     Pass,
 }
+
 #[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum EncounterAction {
     /// (source_id, target_id)
@@ -45,6 +46,12 @@ pub enum EncounterAction {
 pub enum ContinueAction {
     Advance,
     Retreat,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
+pub enum AccessPhaseAction {
+    ScoreCard(CardId),
+    EndRaid,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
@@ -84,11 +91,7 @@ pub enum PromptAction {
     /// Action to advance to the next encounter of a raid or retreat
     ContinueAction(ContinueAction),
     /// Action to target & destroy an accessed card
-    RaidDestroyCard(CardId),
-    /// Action to score an accessed card
-    RaidScoreCard(CardId),
-    /// Action to end a raid after the access phase
-    EndRaid,
+    AccessPhaseAction(AccessPhaseAction),
     /// Action to take as part of a card ability
     CardAction(CardPromptAction),
 }

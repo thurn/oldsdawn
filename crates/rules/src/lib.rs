@@ -33,8 +33,7 @@ pub mod helpers;
 pub mod mana;
 pub mod mutations;
 pub mod queries;
-pub mod raid_actions;
-pub mod raid_phases;
+pub mod raid;
 pub mod text_macro;
 
 pub static DEFINITIONS: Lazy<DashSet<fn() -> CardDefinition>> = Lazy::new(DashSet::new);

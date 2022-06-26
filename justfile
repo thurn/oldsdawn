@@ -88,7 +88,7 @@ screenshot-tests: finish-screenshots
     echo "Image difference is $difference for $file"
     if awk "BEGIN {exit !($difference >= 1)}"; then
         echo "\n>>> Test Failed: $file"
-        echo "See $image_diffs/$file\n{{screenshot_path}}/$file\n./ScreenshotTests/$file\n"
+        echo "See open $image_diffs/$file {{screenshot_path}}/$file ./ScreenshotTests/$file"
         failed=1
     fi
   done

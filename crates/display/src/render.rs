@@ -17,24 +17,26 @@ use data::game::GameState;
 use data::primitives::Side;
 use protos::spelldawn::game_command::Command;
 
-use crate::response_builder::ResponseBuilder;
+use crate::response_builder::{ResponseBuilder, ResponseState};
 use crate::{animations, sync};
 
 pub fn connect(game: &GameState, user_side: Side) -> Result<Vec<Command>> {
-    let mut builder = ResponseBuilder::new(user_side, false);
+    let mut builder =
+        ResponseBuilder::new(user_side, ResponseState { animate: false, is_final_update: true });
     sync::run(&mut builder, game)?;
     Ok(builder.commands)
 }
 
 pub fn render_updates(game: &GameState, user_side: Side) -> Result<Vec<Command>> {
-    let mut builder = ResponseBuilder::new(user_side, true);
+    let mut builder =
+        ResponseBuilder::new(user_side, ResponseState { animate: true, is_final_update: false });
 
     for step in &game.updates.steps {
         sync::run(&mut builder, &step.snapshot)?;
         animations::render(&mut builder, &step.update, &step.snapshot)?;
     }
 
-    // UpdateTracker does not contain the final state of the game
+    builder.state.is_final_update = true;
     sync::run(&mut builder, game)?;
 
     Ok(builder.commands)

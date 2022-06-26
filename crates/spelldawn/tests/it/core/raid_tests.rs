@@ -71,9 +71,9 @@ fn initiate_raid() {
         (2, Position::Raid(ObjectPositionRaid {}))
     );
 
-    assert!(g.user.interface.controls().has_text("Waiting"));
     assert!(g.opponent.interface.controls().has_text("Activate"));
     assert!(g.opponent.interface.controls().has_text("Pass"));
+    assert!(g.user.interface.controls().has_text("Waiting"));
 
     assert_snapshot!(Summary::run(&response));
 }

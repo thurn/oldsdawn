@@ -323,13 +323,15 @@ fn raid_browser(game: &GameState, raid: &RaidData) -> Result<Vec<GameObjectId>> 
     result.extend(game.occupants(raid.target).map(|card| GameObjectId::CardId(card.id)));
 
     let defenders = game.defender_list(raid.target);
+
     let included = match raid.phase {
         RaidPhase::Begin => return Ok(vec![]),
         RaidPhase::Activation => &defenders,
-        RaidPhase::Encounter(i) => &defenders[..=i],
-        RaidPhase::Continue(i) => &defenders[..=i],
+        RaidPhase::Encounter(_i) => &defenders[..=game.raid_encounter()?],
+        RaidPhase::Continue(_i) => &defenders[..=game.raid_encounter()?],
         RaidPhase::Access => fail!("Expected raid to be in-flight"),
     };
+
     result.extend(included.iter().map(|card_id| GameObjectId::CardId(*card_id)));
     result.push(GameObjectId::Identity(Side::Champion));
 

@@ -30,7 +30,7 @@ use data::delegates::{
     RaidSuccessEvent, Scope, ScoreCard, ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
     UnveilProjectEvent,
 };
-use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, RaidPhase, TurnData};
+use data::game::{GameOverData, GamePhase, GameState, MulliganDecision, TurnData};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
@@ -570,10 +570,12 @@ pub fn deal_damage(
 /// Returns an error if no active raid is ongoing or if this minion is not in
 /// play.
 pub fn set_raid_encountering_minion(game: &mut GameState, minion_id: CardId) -> Result<()> {
-    let (room_id, index) =
+    let (_room_id, index) =
         queries::minion_position(game, minion_id).with_error(|| "Minion has no position")?;
     let raid = game.raid_mut()?;
-    raid.target = room_id;
-    raid.phase = RaidPhase::Encounter(index);
+    // raid.target = room_id;
+    // raid.phase = RaidPhase::Encounter(index);
+    // TODO: Fix this
+    raid.encounter = Some(index + 999);
     Ok(())
 }

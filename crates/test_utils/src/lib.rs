@@ -31,7 +31,9 @@ use cards::initialize;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardPositionKind};
 use data::deck::Deck;
-use data::game::{GameConfiguration, GamePhase, GameState, RaidData, RaidPhase, TurnData};
+use data::game::{
+    GameConfiguration, GamePhase, GameState, RaidData, RaidPhase, RaidState, TurnData,
+};
 use data::primitives::{
     ActionCount, Faction, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
 };
@@ -109,6 +111,8 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
                 raid_id: RAID_ID,
                 target: ROOM_ID,
                 phase: raid.phase,
+                state: RaidState::Begin,
+                encounter: None,
                 room_active: false,
                 accessed: vec![],
             })

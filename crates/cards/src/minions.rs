@@ -123,7 +123,7 @@ pub fn temporal_vortex() -> CardDefinition {
                         )?;
                         g.move_card_to_index(minion_id, index);
                         mutations::summon_minion(g, minion_id, SummonMinion::IgnoreCosts)?;
-                        mutations::set_raid_encountering_minion(g, s.card_id())?;
+                        mutations::set_raid_encountering_minion(g, minion_id)?;
                     }
                     Ok(())
                 }),

@@ -123,6 +123,15 @@ impl RaidPhase {
     }
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+pub enum RaidState {
+    Begin,
+    Activation,
+    Encounter,
+    Continue,
+    Access,
+}
+
 /// Data about an active raid
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RaidData {
@@ -132,6 +141,10 @@ pub struct RaidData {
     pub target: RoomId,
     /// Current phase within this raid
     pub phase: RaidPhase,
+    /// Current state of this raid
+    pub state: RaidState,
+    /// Current encounter position within this raid, if any
+    pub encounter: Option<usize>,
     /// True if the Overlord activated this room in response to the raid.
     ///
     /// Initially false if the activation decision has not been made yet.
@@ -530,6 +543,22 @@ impl GameState {
     /// Mutable version of [Self::raid].
     pub fn raid_mut(&mut self) -> Result<&mut RaidData> {
         self.data.raid.as_mut().with_error(|| "Expected Raid")
+    }
+
+    /// Helper method to return the current raid encounter position or an error
+    /// when one is expected to exist.
+    pub fn raid_encounter(&self) -> Result<usize> {
+        self.raid()?.encounter.with_error(|| "Expected Active Encounter")
+    }
+
+    /// Helper method to return the defender currently being encountered during
+    /// a raid. Returns an error if there is no active raid or no defender is
+    /// being encountered.
+    pub fn raid_defender(&self) -> Result<CardId> {
+        Ok(*self
+            .defender_list(self.raid()?.target)
+            .get(self.raid_encounter()?)
+            .with_error(|| "Defender Not Found")?)
     }
 
     /// Retrieves the [AbilityState] for an [AbilityId]

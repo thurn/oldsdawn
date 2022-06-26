@@ -45,7 +45,13 @@ pub fn run(builder: &mut ResponseBuilder, game: &GameState) -> Result<()> {
         cards: cards?,
         raid_active: game.data.raid.is_some(),
         game_object_positions: Some(positions::game_object_positions(builder, game)?),
-        main_controls: interface::render(game, builder.user_side),
+        main_controls: if builder.state.is_final_update {
+            // Only include controls on final update to ensure interface doesn't show
+            // previous UI after click.
+            interface::render(game, builder.user_side)
+        } else {
+            None
+        },
     });
 
     Ok(())

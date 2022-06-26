@@ -51,7 +51,7 @@ pub fn card_view(
         )),
         owning_player: builder.to_player_name(definition.side),
         revealed_card: revealed.then(|| revealed_card_view(builder, game, card)),
-        create_position: if builder.animate {
+        create_position: if builder.state.animate {
             Some(positions::for_card(card, positions::deck(builder, card.side())))
         } else {
             None
@@ -103,7 +103,7 @@ pub fn ability_card_view(
             ability_id,
             target_requirement,
         )),
-        create_position: if builder.animate {
+        create_position: if builder.state.animate {
             Some(positions::for_ability(game, ability_id, positions::parent_card(ability_id)))
         } else {
             None

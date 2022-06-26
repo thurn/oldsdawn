@@ -31,10 +31,6 @@ command_list:
             score: 0
             can_take_action: false
         raid_active: true
-        controls: 
-            node: 
-                text: "End Raid"
-        card_anchor_nodes: 
         game_object_positions: 
             user_deck: 
                 sorting_key: 1
@@ -413,10 +409,6 @@ channel_response:
             score: 0
             can_take_action: true
         raid_active: true
-        controls: 
-            node: 
-                text: "Waiting for Opponent..."
-        card_anchor_nodes: 
         game_object_positions: 
             user_deck: 
                 sorting_key: 1

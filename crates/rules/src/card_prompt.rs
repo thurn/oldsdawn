@@ -21,20 +21,9 @@ use data::game_actions::CardPromptAction;
 use data::primitives::Side;
 
 use crate::mana::ManaPurpose;
-use crate::{mana, mutations, raid_phases};
+use crate::{mana, mutations};
 
-#[derive(Eq, PartialEq, Debug)]
-pub enum HandleCardPrompt {
-    ResetRaidPrompt,
-    NoAction,
-}
-
-pub fn handle(
-    game: &mut GameState,
-    side: Side,
-    action: CardPromptAction,
-    options: HandleCardPrompt,
-) -> Result<()> {
+pub fn handle(game: &mut GameState, _side: Side, action: CardPromptAction) -> Result<()> {
     match action {
         CardPromptAction::LoseMana(side, amount) => {
             mana::spend(game, side, ManaPurpose::PayForTriggeredAbility, amount)?;
@@ -52,14 +41,6 @@ pub fn handle(
             mutations::deal_damage(game, ability_id, damage_type, amount)?;
             mutations::end_raid(game, RaidOutcome::Failure)?;
         }
-    }
-
-    // Rebuild the raid prompt, if any.
-    // TODO: Prompts should probably be calculated on demand, not stored in game
-    // state?
-    game.player_mut(side).game_prompt = None;
-    if options == HandleCardPrompt::ResetRaidPrompt && game.data.raid.is_some() {
-        raid_phases::set_raid_prompt(game)?;
     }
     Ok(())
 }

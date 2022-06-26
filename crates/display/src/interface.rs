@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use anyhow::Result;
 use data::game::GameState;
 use data::primitives::Side;
 use prompts::WaitingPrompt;
 use protos::spelldawn::InterfaceMainControls;
+use rules::raid;
 use ui::core::Component;
 
 use crate::prompts;
@@ -23,20 +25,29 @@ use crate::prompts;
 /// Returns a [InterfaceMainControls] to render the interface state for the
 /// provided `game`.
 pub fn render(game: &GameState, user_side: Side) -> Option<InterfaceMainControls> {
-    if game.overlord.game_prompt.is_some() || game.champion.game_prompt.is_some() {
-        Some(render_prompt(game, user_side))
+    if let Some(prompt) = render_prompt(game, user_side).expect("todo") {
+        Some(prompt)
+    } else if render_prompt(game, user_side.opponent()).expect("todo").is_some() {
+        // If the opponent has a prompt, display a 'waiting' indicator
+        Some(InterfaceMainControls {
+            node: Some((WaitingPrompt {}).render()),
+            card_anchor_nodes: vec![],
+        })
     } else {
         None
     }
 }
 
 /// Renders prompt for a player when one is present
-fn render_prompt(game: &GameState, side: Side) -> InterfaceMainControls {
-    if let Some(prompt) = &game.player(side).card_prompt {
-        prompts::action_prompt(game, side, prompt)
-    } else if let Some(prompt) = &game.player(side).game_prompt {
-        prompts::action_prompt(game, side, prompt)
+fn render_prompt(game: &GameState, side: Side) -> Result<Option<InterfaceMainControls>> {
+    Ok(if let Some(prompt) = &game.player(side).card_prompt {
+        Some(prompts::action_prompt(game, side, prompt))
+    } else if let Some(prompt) = raid::core::current_prompt(game, side)? {
+        Some(prompts::action_prompt(game, side, &prompt))
     } else {
-        InterfaceMainControls { node: Some((WaitingPrompt {}).render()), card_anchor_nodes: vec![] }
-    }
+        game.player(side)
+            .game_prompt
+            .as_ref()
+            .map(|prompt| prompts::action_prompt(game, side, prompt))
+    })
 }

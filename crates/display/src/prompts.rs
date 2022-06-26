@@ -14,8 +14,8 @@
 
 use data::game::{GameState, MulliganDecision};
 use data::game_actions::{
-    CardPromptAction, ContinueAction, EncounterAction, GamePrompt, PromptAction, PromptContext,
-    RoomActivationAction, UserAction,
+    AccessPhaseAction, CardPromptAction, ContinueAction, EncounterAction, GamePrompt, PromptAction,
+    PromptContext, RoomActivationAction, UserAction,
 };
 use data::primitives::{CardId, Side};
 use protos::spelldawn::{
@@ -193,28 +193,18 @@ fn response_button(game: &GameState, side: Side, response: PromptAction) -> Resp
             encounter_action_button(game, side, encounter_action)
         }
         PromptAction::ContinueAction(advance_action) => advance_action_button(advance_action),
-        PromptAction::RaidScoreCard(card_id) => ResponseButton {
-            label: "Score!".to_string(),
-            anchor_to_card: Some(card_id),
-            ..ResponseButton::default()
-        },
-        PromptAction::RaidDestroyCard(card_id) => {
-            let cost = queries::shield(game, card_id);
-            ResponseButton {
-                label: if cost == 0 {
-                    "Raze".to_string()
-                } else {
-                    format!("{}{}: Raze", cost, icons::MANA)
-                },
+        PromptAction::AccessPhaseAction(action) => match action {
+            AccessPhaseAction::ScoreCard(card_id) => ResponseButton {
+                label: "Score!".to_string(),
                 anchor_to_card: Some(card_id),
                 ..ResponseButton::default()
-            }
-        }
-        PromptAction::EndRaid => ResponseButton {
-            label: "End Raid".to_string(),
-            primary: false,
-            shift_down: true,
-            ..ResponseButton::default()
+            },
+            AccessPhaseAction::EndRaid => ResponseButton {
+                label: "End Raid".to_string(),
+                primary: false,
+                shift_down: true,
+                ..ResponseButton::default()
+            },
         },
         PromptAction::CardAction(action) => card_response_button(side, action),
     };

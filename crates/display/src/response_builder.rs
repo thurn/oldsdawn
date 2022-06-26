@@ -20,9 +20,14 @@ use protos::spelldawn::{
     CardIdentifier, GameView, ObjectPosition, PlayerName, UpdateGameViewCommand,
 };
 
+pub struct ResponseState {
+    pub animate: bool,
+    pub is_final_update: bool,
+}
+
 pub struct ResponseBuilder {
     pub user_side: Side,
-    pub animate: bool,
+    pub state: ResponseState,
     pub commands: Vec<Command>,
 
     /// Tracks the positions of client cards as of the most recently-seen
@@ -31,8 +36,8 @@ pub struct ResponseBuilder {
 }
 
 impl ResponseBuilder {
-    pub fn new(user_side: Side, animate: bool) -> Self {
-        Self { user_side, animate, commands: vec![], last_snapshot_positions: HashMap::default() }
+    pub fn new(user_side: Side, state: ResponseState) -> Self {
+        Self { user_side, state, commands: vec![], last_snapshot_positions: HashMap::default() }
     }
 
     pub fn push(&mut self, command: Command) {
@@ -48,7 +53,7 @@ impl ResponseBuilder {
 
         self.commands.push(Command::UpdateGameView(UpdateGameViewCommand {
             game: Some(game),
-            animate: self.animate,
+            animate: self.state.animate,
         }));
     }
 

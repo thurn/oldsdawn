@@ -118,7 +118,7 @@ fn show_cards(builder: &mut ResponseBuilder, cards: &Vec<CardId>) {
                 )),
             })
             .collect(),
-        disable_animation: !builder.animate,
+        disable_animation: !builder.state.animate,
         delay: Some(adapters::milliseconds(if is_large { 2000 } else { 1000 })),
     }))
 }
@@ -142,7 +142,7 @@ fn show_ability(builder: &mut ResponseBuilder, snapshot: &GameState, ability_id:
 
     builder.push(Command::CreateTokenCard(CreateTokenCardCommand {
         card: Some(card),
-        animate: builder.animate,
+        animate: builder.state.animate,
     }));
 
     builder.push(delay(1500));

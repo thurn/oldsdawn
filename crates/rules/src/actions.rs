@@ -33,10 +33,8 @@ use data::with_error::WithError;
 use data::{fail, verify};
 use tracing::{info, instrument};
 
-use crate::card_prompt::HandleCardPrompt;
 use crate::mana::ManaPurpose;
-use crate::raid_actions::initiate_raid_action;
-use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid_actions};
+use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid};
 
 /// Top level dispatch function responsible for mutating [GameState] in response
 /// to all [UserAction]s
@@ -52,7 +50,9 @@ pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAct
         UserAction::ActivateAbility(ability_id, target) => {
             activate_ability_action(game, user_side, ability_id, target)
         }
-        UserAction::InitiateRaid(room_id) => initiate_raid_action(game, user_side, room_id),
+        UserAction::InitiateRaid(room_id) => {
+            raid::core::handle_initiate_action(game, user_side, room_id)
+        }
         UserAction::LevelUpRoom(room_id) => level_up_room_action(game, user_side, room_id),
         UserAction::SpendActionPoint => spend_action_point_action(game, user_side),
     }
@@ -256,30 +256,13 @@ fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAct
     } else if let Some(prompt) = &game.player(user_side).game_prompt {
         validate(prompt, &action)?;
         game.player_mut(user_side).game_prompt = None;
-    } else {
-        fail!("Not expecting a prompt response");
     }
 
     match action {
         PromptAction::MulliganDecision(mulligan) => {
             handle_mulligan_decision(game, user_side, mulligan)
         }
-        PromptAction::ActivateRoomAction(data) => {
-            raid_actions::room_activation_action(game, user_side, data)
-        }
-        PromptAction::EncounterAction(data) => {
-            raid_actions::encounter_action(game, user_side, data)
-        }
-        PromptAction::ContinueAction(data) => raid_actions::continue_action(game, user_side, data),
-        PromptAction::RaidDestroyCard(card_id) => {
-            raid_actions::destroy_card_action(game, user_side, card_id)
-        }
-        PromptAction::RaidScoreCard(card_id) => {
-            raid_actions::score_card_action(game, user_side, card_id)
-        }
-        PromptAction::EndRaid => raid_actions::raid_end_action(game, user_side),
-        PromptAction::CardAction(card_action) => {
-            card_prompt::handle(game, user_side, card_action, HandleCardPrompt::ResetRaidPrompt)
-        }
+        PromptAction::CardAction(card_action) => card_prompt::handle(game, user_side, card_action),
+        _ => raid::core::handle_action(game, user_side, action),
     }
 }
