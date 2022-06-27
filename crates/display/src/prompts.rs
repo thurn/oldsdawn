@@ -23,9 +23,9 @@ use protos::spelldawn::{
     FlexStyle, FlexWrap, InterfaceMainControls, Node,
 };
 use rules::queries;
-use ui::components::{Button, ButtonLines, ButtonVariant, Row, Text};
-use ui::core::*;
-use ui::{colors, font_sizes, fonts, icons};
+use oldui::components::{Button, ButtonLines, ButtonVariant, Row, Text};
+use oldui::core::*;
+use oldui::{colors, font_sizes, fonts, icons};
 
 use crate::adapters;
 

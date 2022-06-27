@@ -42,7 +42,7 @@ protos = { path = "../protos", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }
 server = { path = "../server", version = "0.0.0" }
 test_utils = { path = "../test_utils", version = "0.0.0" }
-ui = { path = "../ui", version = "0.0.0" }
+oldui = { path = "../oldui", version = "0.0.0" }
 
 [dev-dependencies]
 insta = "1.9.0"

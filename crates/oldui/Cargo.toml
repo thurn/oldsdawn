@@ -1,5 +1,5 @@
 [package]
-name = "ui"
+name = "oldui"
 version = "0.0.0"
 description = "Library for user interface rendering"
 license = "Apache-2.0"

@@ -412,11 +412,11 @@ dependencies = [
  "fallible-iterator",
  "if_chain",
  "itertools",
+ "oldui",
  "once_cell",
  "protos",
  "rules",
  "tracing",
- "ui",
 ]
 
 [[package]]
@@ -948,6 +948,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "oldui"
+version = "0.0.0"
+dependencies = [
+ "data",
+ "protos",
+ "rules",
+ "serde_json",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -975,10 +985,10 @@ dependencies = [
  "anyhow",
  "data",
  "display",
+ "oldui",
  "protos",
  "rules",
  "tracing",
- "ui",
 ]
 
 [[package]]
@@ -1114,6 +1124,7 @@ dependencies = [
  "cards",
  "data",
  "display",
+ "oldui",
  "panels",
  "prost",
  "prost-build",
@@ -1122,7 +1133,6 @@ dependencies = [
  "rules",
  "server",
  "test_utils",
- "ui",
 ]
 
 [[package]]
@@ -1556,6 +1566,7 @@ dependencies = [
  "display",
  "insta",
  "maplit",
+ "oldui",
  "once_cell",
  "panels",
  "plugin",
@@ -1575,7 +1586,6 @@ dependencies = [
  "tonic-web",
  "tracing",
  "tracing-subscriber",
- "ui",
 ]
 
 [[package]]
@@ -1931,16 +1941,6 @@ name = "try-lock"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
-
-[[package]]
-name = "ui"
-version = "0.0.0"
-dependencies = [
- "data",
- "protos",
- "rules",
- "serde_json",
-]
 
 [[package]]
 name = "unicode-segmentation"

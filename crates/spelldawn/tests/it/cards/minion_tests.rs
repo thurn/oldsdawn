@@ -18,7 +18,7 @@ use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{ClientRoomLocation, ObjectPositionRaid, PlayerName};
 use test_utils::client::HasText;
 use test_utils::*;
-use ui::icons;
+use oldui::icons;
 
 #[test]
 fn ice_dragon() {

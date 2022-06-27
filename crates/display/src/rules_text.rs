@@ -23,9 +23,9 @@ use data::text::{
     AbilityText, DamageWord, Keyword, KeywordKind, NumericOperator, Sentence, TextToken,
 };
 use protos::spelldawn::{Node, RulesText};
-use ui::card_info::SupplementalCardInfo;
-use ui::core::Component;
-use ui::icons;
+use oldui::card_info::SupplementalCardInfo;
+use oldui::core::Component;
+use oldui::icons;
 
 /// Primary function which turns the current state of a card into its client
 /// [RulesText] representation

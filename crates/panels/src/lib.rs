@@ -23,7 +23,7 @@ use data::with_error::WithError;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::panel_address::AddressType;
 use protos::spelldawn::{InterfacePanel, KnownPanelAddress, PanelAddress, UpdatePanelsCommand};
-use ui::core;
+use oldui::core;
 
 /// Appends a command to `commands` to render commonly-used panels.
 pub fn render_standard_panels(commands: &mut Vec<Command>) -> Result<()> {

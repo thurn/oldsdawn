@@ -19,7 +19,7 @@ use data::primitives::Side;
 use prompts::WaitingPrompt;
 use protos::spelldawn::InterfaceMainControls;
 use rules::raid;
-use ui::core::Component;
+use oldui::core::Component;
 
 use crate::prompts;
 

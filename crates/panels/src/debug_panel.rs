@@ -25,10 +25,10 @@ use protos::spelldawn::{
     ClientDebugCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, KnownPanelAddress, Node,
     SetBooleanPreference, TogglePanelCommand,
 };
-use ui::components::{Button, Row};
-use ui::core::{child, node};
-use ui::panel::Panel;
-use ui::{core, icons};
+use oldui::components::{Button, Row};
+use oldui::core::{child, node};
+use oldui::panel::Panel;
+use oldui::{core, icons};
 
 /// Renders the debug panel
 pub fn render() -> Node {
