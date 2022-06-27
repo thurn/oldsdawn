@@ -22,10 +22,10 @@ use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, Faction};
 use data::text::{
     AbilityText, DamageWord, Keyword, KeywordKind, NumericOperator, Sentence, TextToken,
 };
-use protos::spelldawn::{Node, RulesText};
 use oldui::card_info::SupplementalCardInfo;
 use oldui::core::Component;
 use oldui::icons;
+use protos::spelldawn::{Node, RulesText};
 
 /// Primary function which turns the current state of a card into its client
 /// [RulesText] representation

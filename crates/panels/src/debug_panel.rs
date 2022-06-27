@@ -19,16 +19,18 @@
 use data::agent_definition::{AgentName, GameStatePredictorName};
 use data::game_actions::{DebugAction, UserAction};
 use data::primitives::Side;
+use oldui::components::{Button, Row};
+use oldui::core::{child, node};
+use oldui::panel::Panel;
+use oldui::{core, icons};
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     ClientDebugCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, KnownPanelAddress, Node,
     SetBooleanPreference, TogglePanelCommand,
 };
-use oldui::components::{Button, Row};
-use oldui::core::{child, node};
-use oldui::panel::Panel;
-use oldui::{core, icons};
+use ui_core::prelude::*;
+use ui_core::{button, render};
 
 /// Renders the debug panel
 pub fn render() -> Node {
@@ -145,12 +147,9 @@ pub fn render() -> Node {
 }
 
 fn debug_button(label: impl Into<String>, action: UserAction) -> Option<Node> {
-    child(Button {
-        label: label.into(),
-        action: core::action(Some(action), None),
-        style: FlexStyle { margin: core::all_px(8.0), ..FlexStyle::default() },
-        ..Button::default()
-    })
+    Some(render::component(
+        button::Button::new(label).action(action).layout(Layout::new().margin(Edge::All, 8.px())),
+    ))
 }
 
 fn client_debug_button(label: impl Into<String>, commands: Vec<Command>) -> Option<Node> {

@@ -14,11 +14,11 @@
 
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
+use oldui::icons;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{ClientRoomLocation, ObjectPositionRaid, PlayerName};
 use test_utils::client::HasText;
 use test_utils::*;
-use oldui::icons;
 
 #[test]
 fn ice_dragon() {

@@ -16,10 +16,10 @@ use anyhow::Result;
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::Side;
+use oldui::core::Component;
 use prompts::WaitingPrompt;
 use protos::spelldawn::InterfaceMainControls;
 use rules::raid;
-use oldui::core::Component;
 
 use crate::prompts;
 
