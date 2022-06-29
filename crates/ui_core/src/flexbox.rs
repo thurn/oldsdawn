@@ -15,12 +15,9 @@
 use std::fmt::Debug;
 use std::marker::PhantomData;
 
-use data::game_actions::UserAction;
-use protos::spelldawn::{
-    game_action, EventHandlers, FlexDirection, GameAction, Node, StandardAction,
-};
-use serde_json::ser;
+use protos::spelldawn::{EventHandlers, FlexDirection, GameAction, Node};
 
+use crate::actions::InterfaceAction;
 use crate::component::{Component, RenderResult};
 use crate::style::Style;
 
@@ -116,16 +113,10 @@ pub trait HasRenderNode: Sized {
     }
 
     /// Action to invoke when this component is clicked/tapped
-    fn on_click(mut self, user_action: Option<UserAction>) -> Self {
-        if let Some(action) = user_action {
-            self.render_node().event_handlers = Some(EventHandlers {
-                on_click: Some(GameAction {
-                    action: Some(game_action::Action::StandardAction(StandardAction {
-                        payload: ser::to_vec(&action).expect("Serialization failed"),
-                        update: None,
-                    })),
-                }),
-            });
+    fn on_click(mut self, action: impl InterfaceAction + 'static) -> Self {
+        if let Some(action) = action.as_game_action() {
+            self.render_node().event_handlers =
+                Some(EventHandlers { on_click: Some(GameAction { action: Some(action) }) });
         }
         self
     }
@@ -163,13 +154,18 @@ impl<D: FlexboxDirection> Flexbox<D> {
         self
     }
 
+    pub fn child_boxed(mut self, child: Box<dyn Component>) -> Self {
+        self.children.push(child);
+        self
+    }
+
     pub fn render_node(&mut self) -> &mut Node {
         &mut self.render_node
     }
 }
 
 impl<D: FlexboxDirection> Component for Flexbox<D> {
-    fn render(self) -> RenderResult {
+    fn build(self) -> RenderResult {
         RenderResult::Container(Box::new(self.render_node), self.children)
     }
 }

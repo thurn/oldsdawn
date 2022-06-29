@@ -17,19 +17,21 @@ use protos::spelldawn::Node;
 use crate::component::{Component, RenderResult};
 
 /// Primary rendering function for turning a [Component] into a [Node].
-pub fn component(component: impl Component + 'static) -> Node {
+pub fn component(component: impl Component + 'static) -> Option<Node> {
     run(Box::new(component))
 }
 
-fn run(component: Box<dyn Component>) -> Node {
+fn run(component: Box<dyn Component>) -> Option<Node> {
     match component.render_boxed() {
-        RenderResult::Component(c) => run(c),
         RenderResult::Container(mut node, children) => {
             for child in children {
-                node.children.push(run(child));
+                if let Some(n) = run(child) {
+                    node.children.push(n);
+                }
             }
-            *node
+            Some(*node)
         }
-        RenderResult::Node(n) => *n,
+        RenderResult::Node(node) => Some(*node),
+        RenderResult::None => None,
     }
 }

@@ -147,9 +147,9 @@ pub fn render() -> Node {
 }
 
 fn debug_button(label: impl Into<String>, action: UserAction) -> Option<Node> {
-    Some(render::component(
+    render::component(
         button::Button::new(label).action(action).layout(Layout::new().margin(Edge::All, 8.px())),
-    ))
+    )
 }
 
 fn client_debug_button(label: impl Into<String>, commands: Vec<Command>) -> Option<Node> {

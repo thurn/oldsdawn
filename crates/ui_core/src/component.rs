@@ -25,20 +25,30 @@ use protos::spelldawn::Node;
 /// `build` method, or can create a UI node directly, as discussed in
 /// [RenderResult].
 pub trait Component: Debug + ComponentExt {
-    fn render(self) -> RenderResult;
+    fn build(self) -> RenderResult;
 }
 
-/// Return type of the `render` function. There are three types of components:
-///   * Wrapper components, which return a single child component
-///   * Container components, which create a UI node and have a list of child
-///     components
-///   * Leaf components, which create a UI node without children
-/// Typically you invoke the `build` method instead of creating this type
-/// directly.
+/// Return type of the `render` function, representing the nodes of the final UI
+/// hierarchy. Can be a single [Node] or a container with its own child
+/// components. Additionally, components can return `RenderResult::None` to
+/// request that they be excluded from the hierarchy.
+///
+/// Typically you invoke the `build` method of another component instead of
+/// creating this type directly.
 pub enum RenderResult {
-    Component(Box<dyn Component>),
     Container(Box<Node>, Vec<Box<dyn Component>>),
     Node(Box<Node>),
+    None,
+}
+
+impl<T: Component> Component for Option<T> {
+    fn build(self) -> RenderResult {
+        if let Some(c) = self {
+            c.build()
+        } else {
+            RenderResult::None
+        }
+    }
 }
 
 /// Helper trait to let components be moved into a `Box`.
@@ -48,16 +58,15 @@ pub trait ComponentExt {
 
 impl<T: Component> ComponentExt for T {
     fn render_boxed(self: Box<Self>) -> RenderResult {
-        self.render()
+        self.build()
     }
 }
 
-/// Implements a `build` method for all components, allowing them to be moved
-/// into a Box via a nice chainable syntax.
-pub trait Buildable: Component + Sized + 'static {
+#[derive(Debug)]
+pub struct EmptyComponent;
+
+impl Component for EmptyComponent {
     fn build(self) -> RenderResult {
-        RenderResult::Component(Box::new(self))
+        RenderResult::None
     }
 }
-
-impl<T: Component + 'static> Buildable for T {}

@@ -15,6 +15,6 @@
 //! Re-exports commonly-used types for UI rendering, intended to be used via
 //! wildcard import.
 
-pub use crate::component::{Buildable, Component, RenderResult};
+pub use crate::component::{Component, RenderResult};
 pub use crate::flexbox::{Column, HasRenderNode, Row};
 pub use crate::style::{DimensionExt, Edge, Layout, Style};

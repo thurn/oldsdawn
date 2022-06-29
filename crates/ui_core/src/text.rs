@@ -76,7 +76,7 @@ impl Text {
 }
 
 impl Component for Text {
-    fn render(self) -> RenderResult {
+    fn build(self) -> RenderResult {
         TextNode::new(self.text)
             .style(
                 self.layout
@@ -120,7 +120,7 @@ impl HasRenderNode for TextNode {
 }
 
 impl Component for TextNode {
-    fn render(self) -> RenderResult {
+    fn build(self) -> RenderResult {
         RenderResult::Node(Box::new(self.render_node))
     }
 }

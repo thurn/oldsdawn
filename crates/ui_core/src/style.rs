@@ -22,6 +22,7 @@ use protos::spelldawn::{
 
 /// Pixels unit. Not literally equivalent to screen pixels, Unity resizes these
 /// values based on its UI scaling mode.
+#[derive(Debug)]
 pub struct Pixels(f32);
 
 impl From<Pixels> for Dimension {
@@ -31,6 +32,7 @@ impl From<Pixels> for Dimension {
 }
 
 /// Percentage unit, typically based on parent container size.
+#[derive(Debug)]
 pub struct Percentage(f32);
 
 impl From<Percentage> for Dimension {
@@ -40,6 +42,7 @@ impl From<Percentage> for Dimension {
 }
 
 /// Angular unit, used for rotations
+#[derive(Debug)]
 pub struct Degrees(f32);
 
 /// Helper trait to create various dimensional units from numeric literals.

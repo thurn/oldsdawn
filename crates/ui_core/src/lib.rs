@@ -14,11 +14,13 @@
 
 //! Library for user interface rendering
 
+pub mod actions;
 pub mod button;
 pub mod component;
 pub mod design;
 pub mod flexbox;
 pub mod icons;
+pub mod panel;
 pub mod prelude;
 pub mod render;
 pub mod style;

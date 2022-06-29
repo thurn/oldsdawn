@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use data::game_actions::UserAction;
 use protos::spelldawn::{FlexAlign, FlexJustify, FlexPosition, TextAlign};
 
+use crate::actions::{InterfaceAction, NoAction};
 use crate::design::{Font, FontColor, FontSize};
 use crate::prelude::*;
 use crate::style;
@@ -40,7 +40,7 @@ pub struct Button {
     label: String,
     layout: Layout,
     button_type: ButtonType,
-    action: Option<UserAction>,
+    action: Box<dyn InterfaceAction>,
 }
 
 impl Button {
@@ -49,7 +49,7 @@ impl Button {
             label: label.into(),
             layout: Layout::default(),
             button_type: ButtonType::Primary,
-            action: None,
+            action: Box::new(NoAction {}),
         }
     }
 
@@ -63,14 +63,14 @@ impl Button {
         self
     }
 
-    pub fn action(mut self, action: UserAction) -> Self {
-        self.action = Some(action);
+    pub fn action(mut self, action: impl InterfaceAction + 'static) -> Self {
+        self.action = Box::new(action);
         self
     }
 }
 
 impl Component for Button {
-    fn render(self) -> RenderResult {
+    fn build(self) -> RenderResult {
         let background = style::sprite(match self.button_type {
             ButtonType::Primary => {
                 "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Rescaled/Button_Orange"
@@ -115,7 +115,7 @@ pub struct IconButton {
     icon: String,
     layout: Layout,
     button_type: IconButtonType,
-    action: Option<UserAction>,
+    action: Box<dyn InterfaceAction>,
 }
 
 impl IconButton {
@@ -124,7 +124,7 @@ impl IconButton {
             icon: icon.into(),
             layout: Layout::default(),
             button_type: IconButtonType::Close,
-            action: None,
+            action: Box::new(NoAction {}),
         }
     }
 
@@ -138,14 +138,14 @@ impl IconButton {
         self
     }
 
-    pub fn action(mut self, action: UserAction) -> Self {
-        self.action = Some(action);
+    pub fn action(mut self, action: impl InterfaceAction + 'static) -> Self {
+        self.action = Box::new(action);
         self
     }
 }
 
 impl Component for IconButton {
-    fn render(self) -> RenderResult {
+    fn build(self) -> RenderResult {
         let frame = style::sprite(
             "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/Buttons/Square/EPIC_silver_fr_s",
         );
