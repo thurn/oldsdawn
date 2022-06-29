@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Helpers for converting between server & client data formats.
+
+pub mod response_builder;
+
 use anyhow::Result;
 use data::fail;
 use data::primitives::{

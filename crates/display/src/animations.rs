@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use adapters;
+use adapters::response_builder::ResponseBuilder;
 use anyhow::Result;
 use data::game::GameState;
 use data::primitives::{AbilityId, CardId, GameObjectId, RoomId, Side};
@@ -31,8 +33,7 @@ use protos::spelldawn::{
     SetGameObjectsEnabledCommand, SetMusicCommand, TimeValue, VisitRoomCommand,
 };
 
-use crate::response_builder::ResponseBuilder;
-use crate::{adapters, assets, card_sync, positions};
+use crate::{assets, card_sync, positions};
 
 pub fn render(
     builder: &mut ResponseBuilder,

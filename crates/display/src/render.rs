@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use adapters::response_builder::{ResponseBuilder, ResponseState};
 use anyhow::Result;
 use data::game::GameState;
 use data::primitives::Side;
 use protos::spelldawn::game_command::Command;
 
-use crate::response_builder::{ResponseBuilder, ResponseState};
 use crate::{animations, sync};
 
 pub fn connect(game: &GameState, user_side: Side) -> Result<Vec<Command>> {

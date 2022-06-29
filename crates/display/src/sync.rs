@@ -14,6 +14,8 @@
 
 //! Converts a GameState into GameView updates
 
+use adapters;
+use adapters::response_builder::ResponseBuilder;
 use anyhow::Result;
 use data::game::GameState;
 use data::primitives::{RoomId, Side};
@@ -24,8 +26,7 @@ use protos::spelldawn::{
 use rules::mana::ManaPurpose;
 use rules::{flags, mana, queries};
 
-use crate::response_builder::ResponseBuilder;
-use crate::{adapters, assets, card_sync, interface, positions};
+use crate::{assets, card_sync, interface, positions};
 
 pub fn run(builder: &mut ResponseBuilder, game: &GameState) -> Result<()> {
     let cards: Result<Vec<CardView>> = game

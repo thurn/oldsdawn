@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use adapters;
+use adapters::response_builder::ResponseBuilder;
 use anyhow::Result;
 use data::card_state::{CardPosition, CardState};
 use data::game::{GamePhase, GameState, MulliganData, RaidData};
@@ -30,9 +32,6 @@ use protos::spelldawn::{
 use rules::queries;
 use rules::raid::core::RaidDataExt;
 use rules::raid::traits::RaidDisplayState;
-
-use crate::adapters;
-use crate::response_builder::ResponseBuilder;
 
 pub fn for_card(card: &CardState, position: Position) -> ObjectPosition {
     ObjectPosition {

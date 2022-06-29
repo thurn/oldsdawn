@@ -16,7 +16,6 @@ use cards::initialize;
 use data::card_name::CardName;
 use data::deck::Deck;
 use data::primitives::{GameId, PlayerId};
-use display::adapters;
 use insta::assert_snapshot;
 use maplit::hashmap;
 use protos::spelldawn::game_action::Action;

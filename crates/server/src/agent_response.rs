@@ -17,6 +17,7 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 
+use adapters;
 use anyhow::Result;
 use concurrent_queue::ConcurrentQueue;
 use data::agent_definition::AgentData;
@@ -24,7 +25,6 @@ use data::fail;
 use data::game::GameState;
 use data::primitives::{GameId, PlayerId, Side};
 use data::with_error::WithError;
-use display::adapters;
 use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};

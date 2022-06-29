@@ -12,16 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Converts internal game state representation into a format the client can
-//! understand
+//! Renders UI elements displayed during card game sessions
 
-pub mod animations;
-pub mod assets;
-pub mod card_sync;
-pub mod interface;
-pub mod positions;
-pub mod prompts;
-pub mod render;
-pub mod rexard_images;
-pub mod rules_text;
-pub mod sync;
+pub mod response_button;

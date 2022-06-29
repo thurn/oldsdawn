@@ -1,0 +1,16 @@
+[package]
+name = "adapters"
+version = "0.0.0"
+description = "Helpers for converting between server & client data formats"
+license = "Apache-2.0"
+edition = "2021"
+
+[lib]
+doctest = false
+test = false
+
+[dependencies]
+anyhow = "1.0.51"
+
+data = { path = "../data", version = "0.0.0" }
+protos = { path = "../protos", version = "0.0.0" }

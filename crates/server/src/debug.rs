@@ -14,6 +14,7 @@
 
 use std::collections::HashMap;
 
+use adapters;
 use anyhow::{bail, Result};
 use data::agent_definition::AgentData;
 use data::deck::Deck;
@@ -22,7 +23,6 @@ use data::game::GameState;
 use data::game_actions::DebugAction;
 use data::primitives::{GameId, PlayerId, Side};
 use data::with_error::WithError;
-use display::adapters;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;

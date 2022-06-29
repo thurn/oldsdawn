@@ -948,17 +948,6 @@ message InterfacePanel {
     Node node = 2;
 }
 
-// Position on a card where a UI element should be anchored.
-enum CardNodeAnchorPosition {
-    CARD_NODE_ANCHOR_POSITION_UNSPECIFIED = 0;
-
-    CARD_NODE_ANCHOR_POSITION_BOTTOM = 1;
-
-    CARD_NODE_ANCHOR_POSITION_LEFT = 2;
-
-    CARD_NODE_ANCHOR_POSITION_RIGHT = 3;
-}
-
 // Possible corners which can be anchored.
 enum AnchorCorner {
     ANCHOR_CORNER_UNSPECIFIED = 0;
@@ -979,12 +968,11 @@ message CardAnchor {
 message CardAnchorNode {
     CardIdentifier card_id = 1;
     Node node = 2;
-    CardNodeAnchorPosition anchor_position = 3;
 
     // Used to set the absolute position inset of 'node' to match corners of
     // the identified card. Later anchors in this list overwrite earlier
     // anchors in the case of a conflict.
-    repeated CardAnchor anchors = 4;
+    repeated CardAnchor anchors = 3;
 }
 
 message InterfaceMainControls {

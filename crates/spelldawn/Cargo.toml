@@ -32,6 +32,7 @@ tonic-web = "0.2"
 tracing = { version = "0.1.29" }
 tracing-subscriber = "0.3.3"
 
+adapters = { path = "../adapters", version = "0.0.0" }
 ai = { path = "../ai", version = "0.0.0" }
 cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }

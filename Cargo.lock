@@ -3,6 +3,15 @@
 version = 3
 
 [[package]]
+name = "adapters"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "data",
+ "protos",
+]
+
+[[package]]
 name = "adler"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -404,6 +413,7 @@ dependencies = [
 name = "display"
 version = "0.0.0"
 dependencies = [
+ "adapters",
  "anyhow",
  "bitflags",
  "dashmap",
@@ -1478,6 +1488,7 @@ dependencies = [
 name = "server"
 version = "0.0.0"
 dependencies = [
+ "adapters",
  "ai",
  "anyhow",
  "cards",
@@ -1558,6 +1569,7 @@ dependencies = [
 name = "spelldawn"
 version = "0.0.0"
 dependencies = [
+ "adapters",
  "ai",
  "anyhow",
  "cards",
@@ -1647,6 +1659,7 @@ dependencies = [
 name = "test_utils"
 version = "0.0.0"
 dependencies = [
+ "adapters",
  "anyhow",
  "cards",
  "data",
@@ -1951,6 +1964,17 @@ dependencies = [
  "protos",
  "rules",
  "serde_json",
+]
+
+[[package]]
+name = "ui_game"
+version = "0.0.0"
+dependencies = [
+ "data",
+ "protos",
+ "rules",
+ "serde_json",
+ "ui_core",
 ]
 
 [[package]]

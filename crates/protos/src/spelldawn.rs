@@ -954,12 +954,10 @@ pub struct CardAnchorNode {
     pub card_id: ::core::option::Option<CardIdentifier>,
     #[prost(message, optional, tag = "2")]
     pub node: ::core::option::Option<Node>,
-    #[prost(enumeration = "CardNodeAnchorPosition", tag = "3")]
-    pub anchor_position: i32,
     /// Used to set the absolute position inset of 'node' to match corners of
     /// the identified card. Later anchors in this list overwrite earlier
     /// anchors in the case of a conflict.
-    #[prost(message, repeated, tag = "4")]
+    #[prost(message, repeated, tag = "3")]
     pub anchors: ::prost::alloc::vec::Vec<CardAnchor>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1489,15 +1487,6 @@ pub enum CardPrefab {
 pub enum KnownPanelAddress {
     Unspecified = 0,
     DebugPanel = 1,
-}
-/// Position on a card where a UI element should be anchored.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum CardNodeAnchorPosition {
-    Unspecified = 0,
-    Bottom = 1,
-    Left = 2,
-    Right = 3,
 }
 /// Possible corners which can be anchored.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

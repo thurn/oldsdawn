@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use adapters;
 use data::game::{GameState, MulliganDecision};
 use data::game_actions::{
     AccessPhaseAction, CardPromptAction, ContinueAction, EncounterAction, GamePrompt, PromptAction,
@@ -22,12 +23,10 @@ use oldui::components::{Button, ButtonLines, ButtonVariant, Row, Text};
 use oldui::core::*;
 use oldui::{colors, font_sizes, fonts, icons};
 use protos::spelldawn::{
-    AnchorCorner, CardAnchor, CardAnchorNode, CardNodeAnchorPosition, FlexAlign, FlexJustify,
-    FlexStyle, FlexWrap, InterfaceMainControls, Node,
+    AnchorCorner, CardAnchor, CardAnchorNode, FlexAlign, FlexJustify, FlexStyle, FlexWrap,
+    InterfaceMainControls, Node,
 };
 use rules::queries;
-
-use crate::adapters;
 
 /// Command to renders UI elements to display the provided [GamePrompt] for the
 /// `side` player.
@@ -67,7 +66,6 @@ pub fn action_prompt(
                     }
                     .render(),
                 ),
-                anchor_position: CardNodeAnchorPosition::Unspecified.into(),
                 anchors: vec![
                     CardAnchor {
                         node_corner: AnchorCorner::TopLeft.into(),

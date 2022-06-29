@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use adapters;
+use adapters::response_builder::ResponseBuilder;
 use anyhow::Result;
 use data::card_definition::{AbilityType, CardDefinition, TargetRequirement};
 use data::card_state::CardState;
@@ -27,8 +29,7 @@ use protos::spelldawn::{
 use rules::{flags, queries};
 
 use crate::assets::CardIconType;
-use crate::response_builder::ResponseBuilder;
-use crate::{adapters, assets, positions, rules_text};
+use crate::{assets, positions, rules_text};
 
 pub fn card_view(
     builder: &ResponseBuilder,

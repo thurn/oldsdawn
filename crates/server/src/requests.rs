@@ -16,6 +16,7 @@
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
+use adapters::ServerCardId;
 use anyhow::{bail, ensure, Result};
 use dashmap::DashMap;
 use data::game::{GameConfiguration, GameState};
@@ -24,8 +25,7 @@ use data::primitives::{GameId, PlayerId, RoomId, Side};
 use data::updates::{UpdateTracker, Updates};
 use data::with_error::WithError;
 use data::{fail, game_actions, verify};
-use display::adapters::ServerCardId;
-use display::{adapters, render};
+use display::render;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
