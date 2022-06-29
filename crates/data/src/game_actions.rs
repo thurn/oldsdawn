@@ -125,7 +125,6 @@ pub enum DebugAction {
     AddMana(ManaValue),
     AddActionPoints(ActionCount),
     AddScore(PointsValue),
-    SwitchTurn,
     FlipViewpoint,
     SaveState(u64),
     LoadState(u64),

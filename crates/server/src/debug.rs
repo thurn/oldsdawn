@@ -17,7 +17,6 @@ use std::collections::HashMap;
 use anyhow::{bail, Result};
 use data::agent_definition::AgentData;
 use data::deck::Deck;
-use data::delegates::{DawnEvent, DuskEvent};
 use data::fail;
 use data::game::GameState;
 use data::game_actions::DebugAction;
@@ -32,7 +31,7 @@ use protos::spelldawn::{
     CreateNewGameAction, GameAction, GameCommand, GameIdentifier, LoadSceneCommand, SceneLoadMode,
     SetPlayerIdentifierCommand,
 };
-use rules::{dispatch, mana, mutations, queries};
+use rules::{dispatch, mana, mutations};
 
 use crate::database::Database;
 use crate::requests;
@@ -116,22 +115,6 @@ pub fn handle_debug_action(
         DebugAction::AddScore(amount) => {
             requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
                 game.player_mut(user_side).score += amount;
-                Ok(())
-            })
-        }
-        DebugAction::SwitchTurn => {
-            requests::handle_custom_action(database, player_id, game_id, |game, _| {
-                game.player_mut(game.data.turn.side).actions = 0;
-                let new_turn = game.data.turn.side.opponent();
-                game.data.turn.side = new_turn;
-                if new_turn == Side::Overlord {
-                    game.data.turn.turn_number += 1;
-                    dispatch::invoke_event(game, DuskEvent(game.data.turn.turn_number))?;
-                } else {
-                    dispatch::invoke_event(game, DawnEvent(game.data.turn.turn_number))?;
-                }
-                game.player_mut(new_turn).actions =
-                    queries::start_of_turn_action_count(game, new_turn);
                 Ok(())
             })
         }

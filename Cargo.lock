@@ -985,7 +985,6 @@ dependencies = [
  "anyhow",
  "data",
  "display",
- "oldui",
  "protos",
  "rules",
  "tracing",

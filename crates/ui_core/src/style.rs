@@ -37,7 +37,7 @@ pub struct Percentage(f32);
 
 impl From<Percentage> for Dimension {
     fn from(percentage: Percentage) -> Self {
-        Self { unit: DimensionUnit::Pixels as i32, value: percentage.0 }
+        Self { unit: DimensionUnit::Percentage as i32, value: percentage.0 }
     }
 }
 

@@ -36,7 +36,7 @@ screenshots-message:
 
 rsync:
     mkdir -p /tmp/spelldawn
-    rsync --delete -a . --exclude='{Temp,target,target,out}' /tmp/spelldawn
+    rsync -a . --delete --exclude=Temp --exclude=target --exclude=out /tmp/spelldawn
 
 build_flag := if os() == "macos" {
     "-buildOSXUniversalPlayer"

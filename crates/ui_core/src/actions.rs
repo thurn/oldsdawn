@@ -78,6 +78,15 @@ impl InterfaceAction for Command {
     }
 }
 
+impl InterfaceAction for Vec<Command> {
+    fn as_game_action(&self) -> Option<Action> {
+        Some(Action::StandardAction(StandardAction {
+            payload: vec![],
+            update: Some(command_list(self.clone())),
+        }))
+    }
+}
+
 fn payload(action: UserAction) -> Vec<u8> {
     ser::to_vec(&action).expect("Serialization failed")
 }

@@ -14,13 +14,25 @@
 
 #![allow(dead_code)]
 
-use protos::spelldawn::{FlexAlign, FlexJustify, FlexPosition, ImageScaleMode, PanelAddress};
+use protos::spelldawn::game_command::Command;
+use protos::spelldawn::panel_address::AddressType;
+use protos::spelldawn::{
+    FlexAlign, FlexJustify, FlexPosition, ImageScaleMode, KnownPanelAddress, PanelAddress,
+    TextAlign, TogglePanelCommand,
+};
 
 use crate::button::IconButton;
 use crate::component::EmptyComponent;
+use crate::design::{Font, FontColor, FontSize};
 use crate::prelude::*;
 use crate::style::Pixels;
+use crate::text::Text;
 use crate::{icons, style};
+
+/// Wraps a [KnownPanelAddress] in a [PanelAddress].
+pub fn known(address: KnownPanelAddress) -> PanelAddress {
+    PanelAddress { address_type: Some(AddressType::KnownPanel(address as i32)) }
+}
 
 #[derive(Debug)]
 pub struct Panel {
@@ -70,7 +82,7 @@ impl Panel {
 impl Component for Panel {
     fn build(self) -> RenderResult {
         let background = style::sprite("Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/QuarterSize/Basic_window_big_recolored");
-        Row::new("Panel")
+        Row::new(self.title.clone().unwrap_or_else(|| "Panel".to_string()))
             .style(
                 Style::new()
                     .position_type(FlexPosition::Absolute)
@@ -86,9 +98,21 @@ impl Component for Panel {
                     .background_image_scale_mode(ImageScaleMode::StretchToFill)
                     .image_slice(Edge::All, 128.px()),
             )
-            .child_boxed(self.content)
             .child(self.title.map(TitleBar::new))
-            .child(self.show_close_button.then(|| IconButton::new(icons::CLOSE)))
+            .child(self.show_close_button.then(|| {
+                IconButton::new(icons::CLOSE)
+                    .action(Command::TogglePanel(TogglePanelCommand {
+                        panel_address: Some(self.address),
+                        open: false,
+                    }))
+                    .layout(
+                        Layout::new()
+                            .position_type(FlexPosition::Absolute)
+                            .position(Edge::Right, (-20).px())
+                            .position(Edge::Top, (-20).px()),
+                    )
+            }))
+            .child_boxed(self.content)
             .build()
     }
 }
@@ -106,6 +130,34 @@ impl TitleBar {
 
 impl Component for TitleBar {
     fn build(self) -> RenderResult {
-        todo!()
+        let background = style::sprite(
+            "Poneti/ClassicFantasyRPG_UI/ARTWORKS/UIelements/QuarterSize/Basic_big_bar_512",
+        );
+        Row::new(format!("TitleBar {}", self.title))
+            .style(Style::new().position_type(FlexPosition::Absolute).position(Edge::All, 0.px()))
+            .child(
+                Row::new("TitleBarContent")
+                    .style(
+                        Style::new()
+                            .position_type(FlexPosition::Absolute)
+                            .position(Edge::Left, 50.pct())
+                            .position(Edge::Top, 0.pct())
+                            .translate((-50).pct(), (-50).pct())
+                            .align_items(FlexAlign::Center)
+                            .justify_content(FlexJustify::Center)
+                            .padding(Edge::Vertical, 16.px())
+                            .padding(Edge::Horizontal, 32.px())
+                            .background_image(background)
+                            .background_image_scale_mode(ImageScaleMode::StretchToFill)
+                            .image_slice(Edge::All, 64.px()),
+                    )
+                    .child(
+                        Text::new(self.title, FontSize::PanelTitle)
+                            .color(FontColor::PanelTitle)
+                            .font(Font::PanelTitle)
+                            .text_align(TextAlign::MiddleCenter),
+                    ),
+            )
+            .build()
     }
 }

@@ -17,146 +17,86 @@
 //! users.
 
 use data::agent_definition::{AgentName, GameStatePredictorName};
-use data::game_actions::{DebugAction, UserAction};
+use data::game_actions::DebugAction;
 use data::primitives::Side;
-use oldui::components::{Button, Row};
-use oldui::core::{child, node};
-use oldui::panel::Panel;
-use oldui::{core, icons};
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugCommand, FlexAlign, FlexJustify, FlexStyle, FlexWrap, KnownPanelAddress, Node,
-    SetBooleanPreference, TogglePanelCommand,
+    ClientDebugCommand, FlexAlign, FlexJustify, FlexWrap, KnownPanelAddress, TogglePanelCommand,
 };
+use ui_core::actions::InterfaceAction;
+use ui_core::button::Button;
+use ui_core::panel::Panel;
 use ui_core::prelude::*;
-use ui_core::{button, render};
+use ui_core::{icons, panel};
 
-/// Renders the debug panel
-pub fn render() -> Node {
-    node(Panel {
-        address: core::known_address(KnownPanelAddress::DebugPanel),
-        title: Some("Debug Controls".to_string()),
-        width: 1024.0,
-        height: 600.0,
-        content: Row {
-            name: "DebugButtons".to_string(),
-            style: FlexStyle {
-                wrap: FlexWrap::Wrap.into(),
-                align_items: FlexAlign::Center.into(),
-                justify_content: FlexJustify::Center.into(),
-                ..FlexStyle::default()
-            },
-            children: vec![
-                debug_button(
-                    "New Game (O)",
-                    UserAction::Debug(DebugAction::NewGame(Side::Overlord)),
-                ),
-                debug_button(
-                    "New Game (C)",
-                    UserAction::Debug(DebugAction::NewGame(Side::Champion)),
-                ),
-                debug_button("Join Game", UserAction::Debug(DebugAction::JoinGame)),
-                debug_button("Reset", UserAction::Debug(DebugAction::ResetGame)),
-                client_debug_button(
-                    "Show Logs",
-                    vec![
-                        Command::Debug(ClientDebugCommand {
-                            debug_command: Some(DebugCommand::ShowLogs(())),
-                        }),
-                        Command::TogglePanel(TogglePanelCommand {
-                            panel_address: Some(core::known_address(KnownPanelAddress::DebugPanel)),
-                            open: false,
-                        }),
-                    ],
-                ),
-                client_debug_button(
-                    "Online",
-                    vec![
-                        Command::Debug(ClientDebugCommand {
-                            debug_command: Some(DebugCommand::SetBooleanPreference(
-                                SetBooleanPreference {
-                                    key: "OfflineMode".to_string(),
-                                    value: false,
-                                },
-                            )),
-                        }),
-                        Command::TogglePanel(TogglePanelCommand {
-                            panel_address: Some(core::known_address(KnownPanelAddress::DebugPanel)),
-                            open: false,
-                        }),
-                    ],
-                ),
-                debug_button(
-                    format!("+10{}", icons::MANA),
-                    UserAction::Debug(DebugAction::AddMana(10)),
-                ),
-                debug_button(
-                    format!("+{}", icons::ACTION),
-                    UserAction::Debug(DebugAction::AddActionPoints(1)),
-                ),
-                debug_button("+ Point", UserAction::Debug(DebugAction::AddScore(1))),
-                debug_button("Turn", UserAction::Debug(DebugAction::SwitchTurn)),
-                debug_button("Flip View", UserAction::Debug(DebugAction::FlipViewpoint)),
-                debug_button(
-                    ">OverlordAI",
-                    UserAction::Debug(DebugAction::SetAgent(
-                        Side::Overlord,
-                        GameStatePredictorName::Omniscient,
-                        AgentName::AlphaBeta,
+#[derive(Debug)]
+pub struct DebugPanel {}
+
+impl Component for DebugPanel {
+    fn build(self) -> RenderResult {
+        let close = Command::TogglePanel(TogglePanelCommand {
+            panel_address: Some(panel::known(KnownPanelAddress::DebugPanel)),
+            open: false,
+        });
+
+        Panel::new(panel::known(KnownPanelAddress::DebugPanel), 1024.px(), 600.px())
+            .title("Debug Controls")
+            .show_close_button(true)
+            .content(
+                Row::new("DebugButtons")
+                    .style(
+                        Style::new()
+                            .align_items(FlexAlign::Center)
+                            .justify_content(FlexJustify::Center)
+                            .wrap(FlexWrap::Wrap),
+                    )
+                    .child(debug_button("New Game (O)", DebugAction::NewGame(Side::Overlord)))
+                    .child(debug_button("New Game (C)", DebugAction::NewGame(Side::Champion)))
+                    .child(debug_button("Join Game", DebugAction::JoinGame))
+                    .child(debug_button("Reset", DebugAction::ResetGame))
+                    .child(debug_button(
+                        "Show Logs",
+                        vec![close, debug_command(DebugCommand::ShowLogs(()))],
+                    ))
+                    .child(debug_button(format!("+10{}", icons::MANA), DebugAction::AddMana(10)))
+                    .child(debug_button(
+                        format!("+{}", icons::ACTION),
+                        DebugAction::AddActionPoints(1),
+                    ))
+                    .child(debug_button("+ Point", DebugAction::AddScore(1)))
+                    .child(debug_button("Flip View", DebugAction::FlipViewpoint))
+                    .child(debug_button(format!("{} 1", icons::SAVE), DebugAction::SaveState(1)))
+                    .child(debug_button(format!("{} 1", icons::RESTORE), DebugAction::LoadState(1)))
+                    .child(debug_button(format!("{} 1", icons::SAVE), DebugAction::SaveState(1)))
+                    .child(debug_button(format!("{} 1", icons::RESTORE), DebugAction::LoadState(1)))
+                    .child(debug_button(format!("{} 3", icons::SAVE), DebugAction::SaveState(3)))
+                    .child(debug_button(format!("{} 3", icons::RESTORE), DebugAction::LoadState(3)))
+                    .child(debug_button(
+                        "Overlord AI",
+                        DebugAction::SetAgent(
+                            Side::Overlord,
+                            GameStatePredictorName::Omniscient,
+                            AgentName::AlphaBeta,
+                        ),
+                    ))
+                    .child(debug_button(
+                        "Champion AI",
+                        DebugAction::SetAgent(
+                            Side::Champion,
+                            GameStatePredictorName::Omniscient,
+                            AgentName::AlphaBeta,
+                        ),
                     )),
-                ),
-                debug_button(
-                    ">ChampionAI",
-                    UserAction::Debug(DebugAction::SetAgent(
-                        Side::Champion,
-                        GameStatePredictorName::Omniscient,
-                        AgentName::AlphaBeta,
-                    )),
-                ),
-                debug_button(
-                    format!("{} 1", icons::SAVE),
-                    UserAction::Debug(DebugAction::SaveState(1)),
-                ),
-                debug_button(
-                    format!("{} 1", icons::RESTORE),
-                    UserAction::Debug(DebugAction::LoadState(1)),
-                ),
-                debug_button(
-                    format!("{} 2", icons::SAVE),
-                    UserAction::Debug(DebugAction::SaveState(2)),
-                ),
-                debug_button(
-                    format!("{} 2", icons::RESTORE),
-                    UserAction::Debug(DebugAction::LoadState(2)),
-                ),
-                debug_button(
-                    format!("{} 3", icons::SAVE),
-                    UserAction::Debug(DebugAction::SaveState(3)),
-                ),
-                debug_button(
-                    format!("{} 3", icons::RESTORE),
-                    UserAction::Debug(DebugAction::LoadState(3)),
-                ),
-            ],
-            ..Row::default()
-        },
-        show_close_button: true,
-        ..Panel::default()
-    })
+            )
+            .build()
+    }
 }
 
-fn debug_button(label: impl Into<String>, action: UserAction) -> Option<Node> {
-    render::component(
-        button::Button::new(label).action(action).layout(Layout::new().margin(Edge::All, 8.px())),
-    )
+fn debug_command(command: DebugCommand) -> Command {
+    Command::Debug(ClientDebugCommand { debug_command: Some(command) })
 }
 
-fn client_debug_button(label: impl Into<String>, commands: Vec<Command>) -> Option<Node> {
-    child(Button {
-        label: label.into(),
-        action: core::action(None, Some(commands)),
-        style: FlexStyle { margin: core::all_px(8.0), ..FlexStyle::default() },
-        ..Button::default()
-    })
+fn debug_button(label: impl Into<String>, action: impl InterfaceAction + 'static) -> Button {
+    Button::new(label).action(action).layout(Layout::new().margin(Edge::All, 8.px()))
 }

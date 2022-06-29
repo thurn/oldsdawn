@@ -28,6 +28,7 @@ const WHITE: FlexColor = color(1.0, 1.0, 1.0, 1.0);
 pub enum FontColor {
     PrimaryText,
     ButtonLabel,
+    PanelTitle,
 }
 
 impl From<FontColor> for FlexColor {
@@ -35,6 +36,7 @@ impl From<FontColor> for FlexColor {
         match color {
             FontColor::PrimaryText => WHITE,
             FontColor::ButtonLabel => WHITE,
+            FontColor::PanelTitle => WHITE,
         }
     }
 }
@@ -43,14 +45,18 @@ impl From<FontColor> for FlexColor {
 pub enum FontSize {
     ButtonLabel,
     ButtonIcon,
+    PanelTitle,
 }
 
 impl From<FontSize> for Dimension {
     fn from(size: FontSize) -> Self {
-        match size {
-            FontSize::ButtonLabel => 32.px().into(),
-            FontSize::ButtonIcon => 48.px().into(),
-        }
+        (match size {
+            FontSize::ButtonLabel => 32,
+            FontSize::ButtonIcon => 48,
+            FontSize::PanelTitle => 48,
+        })
+        .px()
+        .into()
     }
 }
 
@@ -65,7 +71,7 @@ fn bluu_next() -> FontAddress {
 #[derive(Debug, Clone, Copy)]
 pub enum Font {
     PrimaryText,
-    WindowTitle,
+    PanelTitle,
     ButtonLabel,
 }
 
@@ -73,7 +79,7 @@ impl From<Font> for FontAddress {
     fn from(font: Font) -> Self {
         match font {
             Font::PrimaryText => roboto(),
-            Font::WindowTitle => bluu_next(),
+            Font::PanelTitle => bluu_next(),
             Font::ButtonLabel => roboto(),
         }
     }
