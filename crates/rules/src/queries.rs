@@ -23,30 +23,14 @@ use data::delegates::{
     MinionCombatActionsQuery, SanctumAccessCountQuery, ShieldValueQuery, StartOfTurnActionsQuery,
     VaultAccessCountQuery,
 };
-use data::game::{GamePhase, GameState};
+use data::game::GameState;
 use data::game_actions::{CardTarget, CardTargetKind, EncounterAction, PromptAction};
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, BoostCount, BreachValue, CardId, CardType, HealthValue,
     ItemLocation, ManaValue, RoomId, RoomLocation, ShieldValue, Side,
 };
 
-use crate::raid::core::RaidDataExt;
 use crate::{constants, dispatch};
-
-/// Returns true if the indicated player currently has a legal game action
-/// available to them.
-pub fn can_take_action(game: &GameState, side: Side) -> bool {
-    match &game.data.phase {
-        GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
-        GamePhase::GameOver(_) => return false,
-        _ => {}
-    };
-
-    match &game.data.raid {
-        Some(raid) => side == raid.phase().active_side(),
-        None => side == game.data.turn.side,
-    }
-}
 
 /// Obtain the [CardStats] for a given card
 pub fn stats(game: &GameState, card_id: CardId) -> &CardStats {
@@ -173,17 +157,6 @@ pub fn cost_to_defeat_target(
     };
 
     result.map(|r| r + (shield(game, target_id).saturating_sub(breach(game, card_id))))
-}
-
-/// Returns true if the provided `side` player is currently in their Main phase
-/// with no pending prompt responses, and thus can take a primary game action.
-pub fn in_main_phase(game: &GameState, side: Side) -> bool {
-    game.player(side).actions > 0
-        && matches!(&game.data.phase, GamePhase::Play)
-        && game.data.turn.side == side
-        && game.data.raid.is_none()
-        && game.overlord.prompt.is_none()
-        && game.champion.prompt.is_none()
 }
 
 /// Look up the number of action points a player receives at the start of their

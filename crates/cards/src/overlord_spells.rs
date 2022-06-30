@@ -14,10 +14,10 @@
 
 //! Card definitions for the Spell card type & Overlord player
 
+use card_helpers::*;
 use data::card_definition::{CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
-use rules::helpers::*;
 use rules::text_macro::text;
 use rules::{flags, mana, mutations};
 

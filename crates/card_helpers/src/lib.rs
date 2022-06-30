@@ -15,6 +15,8 @@
 //! Helpers for defining card behaviors. This file is intended be be used via
 //! wildcard import in card definition files.
 
+pub mod abilities;
+
 use anyhow::Result;
 use data::card_definition::{
     Ability, AbilityType, AttackBoost, CardStats, Cost, CustomCost, SchemePoints, SpecialEffects,
@@ -34,9 +36,8 @@ use data::special_effects::Projectile;
 use data::text::{AbilityText, NumericOperator, TextToken};
 use data::updates::{GameUpdate, InitiatedBy};
 use data::utils;
-
-use crate::mana::ManaPurpose;
-use crate::{mana, mutations, queries, raid};
+use rules::mana::ManaPurpose;
+use rules::{mana, mutations, queries, raid};
 
 pub fn add_number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::Add, number.into())

@@ -20,7 +20,7 @@ use data::game::{GamePhase, GameState};
 use data::primitives::{PointsValue, Side, TurnNumber};
 use data::with_error::WithError;
 use enum_iterator::IntoEnumIterator;
-use rules::{actions, queries};
+use rules::{actions, flags};
 
 use crate::tournament::run_tournament::RunGames;
 
@@ -73,7 +73,7 @@ pub fn run(mut game: GameState, config: RunGames) -> Result<MatchOutcome> {
                 });
             }
 
-            if queries::can_take_action(&game, side) {
+            if flags::can_take_action(&game, side) {
                 let agent_data = game.player(side).agent.with_error(|| "Agent not found")?;
                 let agent = crate::core::get_agent(agent_data.name);
                 let state_predictor =

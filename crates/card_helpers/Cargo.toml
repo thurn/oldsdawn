@@ -1,0 +1,19 @@
+[package]
+name = "card_helpers"
+version = "0.0.0"
+description = "Utilities to simplify defining cards"
+license = "Apache-2.0"
+edition = "2021"
+
+[lib]
+doctest = false
+test = false
+
+[dependencies]
+anyhow = "1.0.51"
+enum-iterator = "0.7.0"
+fallible-iterator = "0.2.0"
+tracing = { version = "0.1.29", features = ["max_level_debug", "release_max_level_warn"] }
+
+data = { path = "../data", version = "0.0.0" }
+rules = { path = "../rules", version = "0.0.0" }

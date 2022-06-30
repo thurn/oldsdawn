@@ -14,13 +14,13 @@
 
 //! Card definitions for the Project card type
 
+use card_helpers::{abilities, *};
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::primitives::{CardType, DamageType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
-use rules::helpers::*;
 use rules::mutations::OnZeroStored;
-use rules::{abilities, mutations, text};
+use rules::{mutations, text};
 
 pub fn gold_mine() -> CardDefinition {
     CardDefinition {

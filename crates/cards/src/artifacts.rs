@@ -14,6 +14,7 @@
 
 //! Card definitions for the Weapon card type
 
+use card_helpers::{abilities, *};
 use data::card_definition::{
     Ability, AbilityType, CardConfig, CardDefinition, Cost, TargetRequirement,
 };
@@ -22,10 +23,9 @@ use data::delegates::{Delegate, EventDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use data::utils;
-use rules::helpers::*;
+use rules::mutations;
 use rules::mutations::OnZeroStored;
 use rules::text_macro::text;
-use rules::{abilities, mutations};
 
 pub fn lodestone() -> CardDefinition {
     CardDefinition {

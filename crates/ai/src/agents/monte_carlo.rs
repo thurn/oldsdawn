@@ -32,7 +32,7 @@ use petgraph::prelude::{EdgeRef, NodeIndex};
 use petgraph::{Direction, Graph};
 use rand::prelude::IteratorRandom;
 use rand::thread_rng;
-use rules::{actions, queries};
+use rules::{actions, flags};
 
 use crate::core::legal_actions;
 use crate::core::types::{notnan, StatePredictionIterator};
@@ -277,9 +277,9 @@ fn backup(
 }
 
 fn current_priority(game: &GameState) -> Result<Side> {
-    if queries::can_take_action(game, Side::Overlord) {
+    if flags::can_take_action(game, Side::Overlord) {
         Ok(Side::Overlord)
-    } else if queries::can_take_action(game, Side::Champion) {
+    } else if flags::can_take_action(game, Side::Champion) {
         Ok(Side::Champion)
     } else {
         fail!("No player can take action!")

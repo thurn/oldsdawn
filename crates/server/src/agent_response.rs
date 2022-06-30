@@ -28,7 +28,7 @@ use data::with_error::WithError;
 use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
-use rules::queries;
+use rules::flags;
 use tracing::warn;
 
 use crate::database::Database;
@@ -65,7 +65,7 @@ pub fn handle_request(database: impl Database + 'static, request: &GameRequest) 
 fn active_agent(game: &GameState) -> Option<(Side, AgentData)> {
     for side in Side::into_enum_iter() {
         if let Some(data) = game.player(side).agent {
-            if queries::can_take_action(game, side) {
+            if flags::can_take_action(game, side) {
                 return Some((side, data));
             }
         }
@@ -131,7 +131,7 @@ async fn run_deprecated_agent_loop(mut database: impl Database, game_id: GameId)
         for side in Side::into_enum_iter() {
             let game = database.game(game_id)?;
             if let Some(agent_data) = game.player(side).agent {
-                if queries::can_take_action(&game, side) {
+                if flags::can_take_action(&game, side) {
                     took_action = true;
                     let agent_name = agent_data.name;
                     let agent = ai::core::get_agent(agent_data.name);

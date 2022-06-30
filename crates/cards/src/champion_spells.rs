@@ -14,11 +14,11 @@
 
 //! Card definitions for the Spell card type & Champion player
 
+use card_helpers::*;
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
-use rules::helpers::*;
 use rules::text_macro::text;
 use rules::{flags, mana, mutations};
 

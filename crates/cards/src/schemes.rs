@@ -14,12 +14,12 @@
 
 //! Card definitions for the Scheme card type
 
+use card_helpers::*;
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, SchemePoints};
 use data::card_name::CardName;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
-use rules::helpers::*;
 use rules::mutations::SummonMinion;
 use rules::text_macro::text;
 use rules::{mana, mutations, queries};

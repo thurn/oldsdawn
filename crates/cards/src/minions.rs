@@ -14,6 +14,7 @@
 
 //! Card definitions for the Minion card type
 
+use card_helpers::{abilities, *};
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, CardStats};
 use data::card_name::CardName;
 use data::card_state::CardPosition;
@@ -27,10 +28,9 @@ use data::text::{DamageWord, Keyword};
 use data::with_error::WithError;
 use display::rexard_images;
 use display::rexard_images::RexardPack;
-use rules::helpers::*;
 use rules::mana::ManaPurpose;
 use rules::mutations::SummonMinion;
-use rules::{abilities, mana, mutations, queries, text};
+use rules::{mana, mutations, queries, text};
 
 pub fn ice_dragon() -> CardDefinition {
     CardDefinition {

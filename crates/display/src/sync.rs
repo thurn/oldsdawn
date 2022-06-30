@@ -24,7 +24,7 @@ use protos::spelldawn::{
     ActionTrackerView, CardView, GameView, ManaView, PlayerInfo, PlayerView, ScoreView,
 };
 use rules::mana::ManaPurpose;
-use rules::{flags, mana, queries};
+use rules::{flags, mana};
 
 use crate::{assets, card_sync, interface, positions};
 
@@ -86,6 +86,6 @@ fn player_view(game: &GameState, side: Side) -> Result<PlayerView> {
         action_tracker: Some(ActionTrackerView {
             available_action_count: game.player(side).actions,
         }),
-        can_take_action: queries::can_take_action(game, side),
+        can_take_action: flags::can_take_action(game, side),
     })
 }

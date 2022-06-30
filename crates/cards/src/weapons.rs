@@ -14,6 +14,7 @@
 
 //! Card definitions for the Weapon card type
 
+use card_helpers::{abilities, *};
 use data::card_definition::{
     Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, CardStats, SpecialEffects,
 };
@@ -25,9 +26,8 @@ use data::text::Keyword;
 use data::utils;
 use display::rexard_images;
 use display::rexard_images::RexardWeaponType;
-use rules::helpers::*;
 use rules::mutations::sacrifice_card;
-use rules::{abilities, text};
+use rules::text;
 
 pub fn greataxe() -> CardDefinition {
     CardDefinition {

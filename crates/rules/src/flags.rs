@@ -28,6 +28,7 @@ use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
 use enum_iterator::IntoEnumIterator;
 
 use crate::mana::ManaPurpose;
+use crate::raid::core::RaidDataExt;
 use crate::{dispatch, mana, queries};
 
 /// Returns whether a player can currently make a mulligan decision
@@ -56,7 +57,7 @@ pub fn can_take_play_card_action(
     card_id: CardId,
     target: CardTarget,
 ) -> bool {
-    let mut can_play = queries::in_main_phase(game, side)
+    let mut can_play = in_main_phase(game, side)
         && side == card_id.side
         && game.card(card_id).position() == CardPosition::Hand(side)
         && is_valid_target(game, card_id, target)
@@ -96,7 +97,7 @@ pub fn can_take_activate_ability_action(
         return false;
     }
 
-    let mut can_activate = queries::in_main_phase(game, side)
+    let mut can_activate = in_main_phase(game, side)
         && side == ability_id.card_id.side
         && cost.actions <= game.player(side).actions
         && card.position().in_play()
@@ -198,14 +199,14 @@ pub fn enters_play_in_room(game: &GameState, card_id: CardId) -> bool {
 /// Returns whether the indicated player can currently take the basic game
 /// action to draw a card.
 pub fn can_take_draw_card_action(game: &GameState, side: Side) -> bool {
-    let can_draw = queries::in_main_phase(game, side) && game.deck(side).next().is_some();
+    let can_draw = in_main_phase(game, side) && game.deck(side).next().is_some();
     dispatch::perform_query(game, CanTakeDrawCardActionQuery(side), Flag::new(can_draw)).into()
 }
 
 /// Returns whether the indicated player can currently take the basic game
 /// action to gain one mana.
 pub fn can_take_gain_mana_action(game: &GameState, side: Side) -> bool {
-    let can_gain_mana = queries::in_main_phase(game, side);
+    let can_gain_mana = in_main_phase(game, side);
     dispatch::perform_query(game, CanTakeGainManaActionQuery(side), Flag::new(can_gain_mana)).into()
 }
 
@@ -216,7 +217,7 @@ pub fn can_take_initiate_raid_action(game: &GameState, side: Side, target: RoomI
     let can_initiate = non_empty
         && side == Side::Champion
         && game.data.raid.is_none()
-        && queries::in_main_phase(game, side);
+        && in_main_phase(game, side);
     dispatch::perform_query(game, CanInitiateRaidQuery(side), Flag::new(can_initiate)).into()
 }
 
@@ -230,7 +231,7 @@ pub fn can_take_level_up_room_action(game: &GameState, side: Side, room_id: Room
     let can_level_up = has_level_card
         && side == Side::Overlord
         && mana::get(game, side, ManaPurpose::LevelUpRoom(room_id)) > 0
-        && queries::in_main_phase(game, side);
+        && in_main_phase(game, side);
     dispatch::perform_query(game, CanLevelUpRoomQuery(side), Flag::new(can_level_up)).into()
 }
 
@@ -288,4 +289,30 @@ pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bo
         Flag::new(can_defeat),
     )
     .into()
+}
+
+/// Returns true if the indicated player currently has a legal game action
+/// available to them.
+pub fn can_take_action(game: &GameState, side: Side) -> bool {
+    match &game.data.phase {
+        GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
+        GamePhase::GameOver(_) => return false,
+        _ => {}
+    };
+
+    match &game.data.raid {
+        Some(raid) => side == raid.phase().active_side(),
+        None => side == game.data.turn.side,
+    }
+}
+
+/// Returns true if the provided `side` player is currently in their Main phase
+/// with no pending prompt responses, and thus can take a primary game action.
+pub fn in_main_phase(game: &GameState, side: Side) -> bool {
+    game.player(side).actions > 0
+        && matches!(&game.data.phase, GamePhase::Play)
+        && game.data.turn.side == side
+        && game.data.raid.is_none()
+        && game.overlord.prompt.is_none()
+        && game.champion.prompt.is_none()
 }

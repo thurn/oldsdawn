@@ -39,7 +39,7 @@ pub fn evaluate<'a>(game: &'a GameState, side: Side) -> Box<dyn Iterator<Item = 
         return Box::new(actions.into_iter().map(UserAction::GamePromptResponse));
     }
 
-    if queries::in_main_phase(game, side) {
+    if flags::in_main_phase(game, side) {
         Box::new(
             RoomId::into_enum_iter()
                 .filter(move |room_id| flags::can_take_initiate_raid_action(game, side, *room_id))
