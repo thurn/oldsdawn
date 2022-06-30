@@ -22,10 +22,9 @@ use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, Faction};
 use data::text::{
     AbilityText, DamageWord, Keyword, KeywordKind, NumericOperator, Sentence, TextToken,
 };
-use oldui::card_info::SupplementalCardInfo;
-use oldui::core::Component;
-use oldui::icons;
 use protos::spelldawn::{Node, RulesText};
+use ui_core::{icons, render};
+use ui_game::card_info::SupplementalCardInfo;
 
 /// Primary function which turns the current state of a card into its client
 /// [RulesText] representation
@@ -70,7 +69,7 @@ pub fn build_supplemental_info(
     game: &GameState,
     card: &CardState,
     ability_index: Option<AbilityIndex>,
-) -> Node {
+) -> Option<Node> {
     let definition = rules::get(card.name);
     let mut result = vec![card_type_line(definition)];
     let mut keywords = vec![];
@@ -93,7 +92,7 @@ pub fn build_supplemental_info(
     }
 
     process_keywords(&mut keywords, &mut result);
-    SupplementalCardInfo { info: result }.render()
+    render::component(SupplementalCardInfo::new(result))
 }
 
 fn ability_cost_string(cost: &Cost<AbilityId>) -> String {

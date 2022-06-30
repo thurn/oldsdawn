@@ -148,7 +148,7 @@ fn revealed_card_view(
                 CardType::Identity => positions::staging(),
             },
         )),
-        supplemental_info: Some(rules_text::build_supplemental_info(game, card, None)),
+        supplemental_info: rules_text::build_supplemental_info(game, card, None),
     }
 }
 
@@ -172,11 +172,7 @@ fn revealed_ability_card_view(
             flags::can_take_activate_ability_action(game, ability_id.side(), ability_id, target)
         })),
         on_release_position: Some(positions::for_ability(game, ability_id, positions::staging())),
-        supplemental_info: Some(rules_text::build_supplemental_info(
-            game,
-            card,
-            Some(ability_id.index),
-        )),
+        supplemental_info: rules_text::build_supplemental_info(game, card, Some(ability_id.index)),
     }
 }
 

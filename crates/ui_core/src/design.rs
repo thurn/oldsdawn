@@ -23,6 +23,20 @@ const fn color(red: f32, green: f32, blue: f32, alpha: f32) -> FlexColor {
 }
 
 const WHITE: FlexColor = color(1.0, 1.0, 1.0, 1.0);
+pub const BLACK_ALPHA_75: FlexColor = color(0.0, 0.0, 0.0, 0.75);
+
+#[derive(Debug, Clone, Copy)]
+pub enum BackgroundColor {
+    CardInfo,
+}
+
+impl From<BackgroundColor> for FlexColor {
+    fn from(color: BackgroundColor) -> Self {
+        match color {
+            BackgroundColor::CardInfo => BLACK_ALPHA_75,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 pub enum FontColor {
@@ -47,6 +61,7 @@ pub enum FontSize {
     ButtonIcon,
     PanelTitle,
     PromptContext,
+    SupplementalInfo,
 }
 
 impl From<FontSize> for Dimension {
@@ -56,6 +71,7 @@ impl From<FontSize> for Dimension {
             FontSize::ButtonIcon => 48,
             FontSize::PanelTitle => 48,
             FontSize::PromptContext => 48,
+            FontSize::SupplementalInfo => 28,
         })
         .px()
         .into()
