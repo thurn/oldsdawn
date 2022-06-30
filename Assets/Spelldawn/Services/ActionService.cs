@@ -25,7 +25,6 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using Grpc.Net.Compression;
-using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
@@ -37,9 +36,7 @@ namespace Spelldawn.Services
   public sealed class ActionService : MonoBehaviour
   {
     static readonly string ServerAddress = "http://localhost:50052";
-
-    readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
-
+    
     readonly Protos.Spelldawn.SpelldawnClient _client = new(GrpcChannel.ForAddress(
       ServerAddress, new GrpcChannelOptions
       {
@@ -54,20 +51,13 @@ namespace Spelldawn.Services
     readonly Queue<GameAction> _actionQueue = new();
 
     [SerializeField] Registry _registry = null!;
-    [SerializeField] PlayerName _currentPriority;
     [SerializeField] bool _currentlyHandlingAction;
-    Clickable? _lastClicked;
 
     public bool OfflineMode { get; private set; }
 
     public void Initialize()
     {
       Plugin.Initialize(PlayerPrefs.GetInt(Preferences.InMemory) > 0);
-    }
-
-    public PlayerName CurrentPriority
-    {
-      set => _currentPriority = value;
     }
 
     public void Connect(GameIdentifier? gameIdentifier, bool offlineMode)
@@ -78,7 +68,7 @@ namespace Spelldawn.Services
 
     public void HandleAction(GameAction action)
     {
-      if (!CanExecuteAction(action.ActionCase))
+      if (!_registry.CapabilityService.CanExecuteAction(action.ActionCase))
       {
         var message = new StringBuilder();
         message.Append($"Error: User cannot currently perform action {action}");
@@ -88,75 +78,6 @@ namespace Spelldawn.Services
       _actionQueue.Enqueue(action);
     }
 
-    /// <summary>
-    /// Can the user currently zoom a card that exists in the provided GameContext.
-    /// </summary>
-    public bool CanInfoZoom(Displayable displayable, GameContext gameContext)
-    {
-      if (_registry.DocumentService.IsAnyPanelOpen())
-      {
-        return false;
-      }
-
-      switch (gameContext)
-      {
-        case GameContext.ArenaRaidParticipant:
-        case GameContext.RaidParticipant:
-          // If a card is a top-level raid participant, it can be info zoomed. However if a card is *part* of
-          // a parent display that is participating in a raid (e.g. it is part of the discard pile that is 
-          // being targeted), then it cannot be info zoomed and the long-press browser is used instead.
-          return displayable.Parent == _registry.RaidService.RaidParticipants;
-        case GameContext.Browser:
-        case GameContext.RewardBrowser:
-        case GameContext.LongPressBrowser:  
-          return true;
-        case GameContext.Deck:
-        case GameContext.DiscardPile:
-          return false;
-        default:
-          return !AnyOverlayOpen();
-      }
-    }
-
-    /// <summary>
-    /// Can the user *start* performing an action such as dragging a card out of their hand or dragging a raid arrow.
-    /// This is allowed more leniently than actually *performing* an action as defined by
-    /// <see cref="CanExecuteAction"/> below.
-    /// </summary>
-    public bool CanInitiateAction() => !_registry.CardService.CurrentlyDragging &&
-                                       !AnyOverlayOpen() &&
-                                       !_registry.DocumentService.IsAnyPanelOpen();
-
-    public bool AnyOverlayOpen() => _registry.RaidOverlay.Enabled ||
-                                    _registry.InterfaceOverlay.Enabled ||
-                                    _registry.LongPressOverlay.Enabled;
-    
-    /// <summary>
-    /// Can the user currently perform a game action of the provided type?
-    /// </summary>
-    public bool CanExecuteAction(GameAction.ActionOneofCase actionType) => actionType switch
-    {
-      GameAction.ActionOneofCase.StandardAction => CanAct(
-        allowInOverlay: true,
-        actionPointRequired: false,
-        allowWithPanelOpen: true),
-      GameAction.ActionOneofCase.FetchPanel => true,
-      GameAction.ActionOneofCase.CreateNewGame => true,
-      GameAction.ActionOneofCase.GainMana => CanAct(),
-      GameAction.ActionOneofCase.DrawCard => CanAct(),
-      GameAction.ActionOneofCase.PlayCard => CanAct(),
-      GameAction.ActionOneofCase.LevelUpRoom => CanAct(),
-      GameAction.ActionOneofCase.InitiateRaid => CanAct(),
-      _ => false
-    };
-
-    bool CanAct(bool allowInOverlay = false, bool actionPointRequired = true, bool allowWithPanelOpen = false) =>
-      !_registry.CardService.CurrentlyDragging &&
-      (allowWithPanelOpen || !_registry.DocumentService.IsAnyPanelOpen()) &&
-      (allowInOverlay || !AnyOverlayOpen()) &&
-      (allowInOverlay || !_registry.RaidService.RaidActive) &&
-      (!actionPointRequired || _registry.ActionDisplayForPlayer(PlayerName.User).AvailableActions > 0);
-
     void Update()
     {
       if (_actionQueue.Count > 0 && !_currentlyHandlingAction)
@@ -165,73 +86,13 @@ namespace Spelldawn.Services
         StartCoroutine(HandleActionAsync(_actionQueue.Dequeue()));
       }
 
-      var userLight = _registry.ActiveLightForPlayer(PlayerName.User);
-      var opponentLight = _registry.ActiveLightForPlayer(PlayerName.Opponent);
-
-      switch (_currentPriority)
-      {
-        case PlayerName.User when CanExecuteAction(GameAction.ActionOneofCase.PlayCard):
-          userLight.SetActive(true);
-          break;
-        case PlayerName.Opponent:
-          opponentLight.SetActive(true);
-          break;
-        case PlayerName.Unspecified:
-        default:
-          userLight.SetActive(false);
-          opponentLight.SetActive(false);
-          break;
-      }
-
-      switch (Input.GetMouseButton(0))
-      {
-        case true when _lastClicked:
-          _lastClicked!.MouseDrag();
-          break;
-        case true when !_lastClicked:
-          _lastClicked = FireMouseDown();
-          break;
-        case false when _lastClicked:
-          var last = _lastClicked;
-          _lastClicked = null; // Do this first in case MouseUp() throws
-          last!.MouseUp();
-          break;
-      }
-
       var pollCommands = Plugin.Poll();
       if (pollCommands != null)
       {
         StartCoroutine(_registry.CommandService.HandleCommands(pollCommands));
       }
     }
-
-    Clickable? FireMouseDown()
-    {
-      var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
-      var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
-      Clickable? fired = null;
-
-      for (var i = 0; i < hits; ++i)
-      {
-        var hit = _raycastHitsTempBuffer[i];
-        var clickable = hit.collider.GetComponent<Clickable>();
-        if (clickable)
-        {
-          if (!fired)
-          {
-            var consumed = clickable.MouseDown();
-            if (consumed)
-            {
-              fired = clickable;
-            }
-          }
-        }
-      }
-
-      Array.Clear(_raycastHitsTempBuffer, 0, _raycastHitsTempBuffer.Length);
-      return fired;
-    }
-
+    
     async void ConnectToRulesEngine(GameIdentifier? gameId)
     {
       if (gameId == null)

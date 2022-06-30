@@ -44783,6 +44783,8 @@ GameObject:
   - component: {fileID: 1445473043}
   - component: {fileID: 1445473051}
   - component: {fileID: 1445473054}
+  - component: {fileID: 1445473056}
+  - component: {fileID: 1445473057}
   m_Layer: 0
   m_Name: Registry
   m_TagString: Untagged
@@ -44830,7 +44832,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
-  _currentPriority: 0
   _currentlyHandlingAction: 0
 --- !u!114 &1445473046
 MonoBehaviour:
@@ -44877,6 +44878,7 @@ MonoBehaviour:
   _assetService: {fileID: 1445473047}
   _assetPoolService: {fileID: 1445473051}
   _actionService: {fileID: 1445473045}
+  _capabilityService: {fileID: 1445473056}
   _objectPositionService: {fileID: 1445473044}
   _cardService: {fileID: 1445473052}
   _commandService: {fileID: 1445473043}
@@ -45042,6 +45044,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0abe00566ce479b9191caf1ceea60a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 1445473048}
+--- !u!114 &1445473056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445473042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5211dc6c91d84e62868c794a2504cada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _registry: {fileID: 1445473048}
+--- !u!114 &1445473057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445473042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f848ca0eb9e947cb86bced53cb6dac75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}

@@ -168,7 +168,7 @@ namespace Spelldawn.Game
       }
     }
 
-    bool CanPlay() => _serverCanPlay == true && InHand() && Registry.ActionService.CanInitiateAction() && _isRevealed;
+    bool CanPlay() => _serverCanPlay == true && InHand() && Registry.CapabilityService.CanInitiateAction() && _isRevealed;
 
     public Card Clone()
     {
@@ -235,7 +235,7 @@ namespace Spelldawn.Game
     {
       var result = false;
 
-      if (Registry.ActionService.CanInfoZoom(this, GameContext) && _isRevealed)
+      if (Registry.CapabilityService.CanInfoZoom(this, GameContext) && _isRevealed)
       {
         Registry.StaticAssets.PlayCardSound();
         Registry.CardService.DisplayInfoZoom(
@@ -355,7 +355,7 @@ namespace Spelldawn.Game
 
     bool ShouldReturnToHandOnRelease()
     {
-      if (!Registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard))
+      if (!Registry.CapabilityService.CanExecuteAction(GameAction.ActionOneofCase.PlayCard))
       {
         return true;
       }

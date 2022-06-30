@@ -52,6 +52,9 @@ namespace Spelldawn.Services
 
     [SerializeField] ActionService _actionService = null!;
     public ActionService ActionService => _actionService;
+    
+    [SerializeField] CapabilityService _capabilityService = null!;
+    public CapabilityService CapabilityService => _capabilityService;
 
     [SerializeField] ObjectPositionService _objectPositionService = null!;
     public ObjectPositionService ObjectPositionService => _objectPositionService;

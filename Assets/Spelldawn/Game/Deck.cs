@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections;
 using Spelldawn.Protos;
 using Spelldawn.Services;
-using Spelldawn.Utils;
 using UnityEngine;
 
 #nullable enable
@@ -52,7 +50,7 @@ namespace Spelldawn.Game
 
     void OnMouseUpAsButton()
     {
-      if (_clickable && _registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.DrawCard))
+      if (_clickable && _registry.CapabilityService.CanExecuteAction(GameAction.ActionOneofCase.DrawCard))
       {
         _registry.ActionService.HandleAction(new GameAction
         {

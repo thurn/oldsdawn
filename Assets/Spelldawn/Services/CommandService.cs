@@ -226,7 +226,7 @@ namespace Spelldawn.Services
 
       if (playerView.CanTakeAction)
       {
-        _registry.ActionService.CurrentPriority = playerName;
+        _registry.CapabilityService.CurrentPriority = playerName;
       }
     }
 

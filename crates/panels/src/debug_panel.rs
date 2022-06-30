@@ -68,8 +68,8 @@ impl Component for DebugPanel {
                     .child(debug_button("Flip View", DebugAction::FlipViewpoint))
                     .child(debug_button(format!("{} 1", icons::SAVE), DebugAction::SaveState(1)))
                     .child(debug_button(format!("{} 1", icons::RESTORE), DebugAction::LoadState(1)))
-                    .child(debug_button(format!("{} 1", icons::SAVE), DebugAction::SaveState(1)))
-                    .child(debug_button(format!("{} 1", icons::RESTORE), DebugAction::LoadState(1)))
+                    .child(debug_button(format!("{} 2", icons::SAVE), DebugAction::SaveState(1)))
+                    .child(debug_button(format!("{} 2", icons::RESTORE), DebugAction::LoadState(1)))
                     .child(debug_button(format!("{} 3", icons::SAVE), DebugAction::SaveState(3)))
                     .child(debug_button(format!("{} 3", icons::RESTORE), DebugAction::LoadState(3)))
                     .child(debug_button(

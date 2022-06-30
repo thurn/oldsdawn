@@ -38,7 +38,7 @@ namespace Spelldawn.Game
     public uint CurrentMana => _currentMana;
 
     bool Clickable => _owner == PlayerName.User &&
-                      _registry.ActionService.CanExecuteAction(GameAction.ActionOneofCase.GainMana);
+                      _registry.CapabilityService.CanExecuteAction(GameAction.ActionOneofCase.GainMana);
 
     public void RenderManaDisplay(ManaView manaView)
     {

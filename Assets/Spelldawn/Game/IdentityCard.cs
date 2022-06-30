@@ -71,7 +71,7 @@ namespace Spelldawn.Game
     {
       base.MouseDown();
 
-      if (_owner == PlayerName.User && _registry.ActionService.CanInitiateAction())
+      if (_owner == PlayerName.User && _registry.CapabilityService.CanInitiateAction())
       {
         _registry.StaticAssets.PlayCardSound();
         switch (Side)
