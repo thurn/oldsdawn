@@ -62,6 +62,7 @@ impl<T: Component> ComponentExt for T {
     }
 }
 
+/// Empty component which never renders
 #[derive(Debug)]
 pub struct EmptyComponent;
 

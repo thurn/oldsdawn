@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use core_ui::prelude::*;
 use protos::spelldawn::{FlexAlign, FlexJustify, FlexWrap};
-use ui_core::prelude::*;
 
 #[derive(Debug, Default)]
 pub struct PromptContainer {

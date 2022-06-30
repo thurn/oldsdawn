@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use core_ui::icons;
 use data::game::{GameState, MulliganDecision};
 use data::game_actions::{
     AccessPhaseAction, CardPromptAction, ContinueAction, EncounterAction, PromptAction,
@@ -19,7 +20,6 @@ use data::game_actions::{
 };
 use data::primitives::Side;
 use rules::queries;
-use ui_core::icons;
 
 use crate::response_button::ResponseButton;
 

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ui_core::design::FontSize;
-use ui_core::prelude::*;
-use ui_core::text::Text;
+use core_ui::design::FontSize;
+use core_ui::prelude::*;
+use core_ui::text::Text;
 
 use crate::prompt_container::PromptContainer;
 

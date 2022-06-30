@@ -76,8 +76,8 @@ impl FlexboxDirection for ReverseColumnDirection {
     }
 }
 
-/// Marker trait for any type which directly renders a [Node] and be styled by
-/// [Style].
+/// Marker trait for any type which directly renders a [Node] and can be styled
+/// by [Style].
 pub trait HasRenderNode: Sized {
     fn render_node(&mut self) -> &mut Node;
 
@@ -162,10 +162,6 @@ impl<D: FlexboxDirection> Flexbox<D> {
     pub fn children(mut self, children: Vec<Box<dyn Component>>) -> Self {
         self.children.extend(children);
         self
-    }
-
-    pub fn internal_node(&mut self) -> &mut Node {
-        &mut self.render_node
     }
 }
 

@@ -20,6 +20,9 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{CommandList, GameCommand, StandardAction};
 use serde_json::ser;
 
+/// Represents an action that can be performed in the user interface. Initiating
+/// a server request and performing an immediate client update are both
+/// supported forms of action.
 pub trait InterfaceAction: Debug {
     fn as_game_action(&self) -> Option<Action>;
 }
@@ -36,6 +39,7 @@ impl<T: ?Sized + InterfaceAction> InterfaceAction for Box<T> {
     }
 }
 
+/// Marker struct for when no action is desired.
 #[derive(Debug)]
 pub struct NoAction {}
 

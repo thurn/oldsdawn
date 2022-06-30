@@ -22,6 +22,6 @@ pub mod flexbox;
 pub mod icons;
 pub mod panel;
 pub mod prelude;
-pub mod render;
+pub mod rendering;
 pub mod style;
 pub mod text;

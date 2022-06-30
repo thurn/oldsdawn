@@ -14,6 +14,7 @@
 
 //! Tools for rendering the text on a card
 
+use core_ui::{icons, rendering};
 use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
 use data::card_state::CardState;
 use data::delegates::Scope;
@@ -22,9 +23,8 @@ use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, Faction};
 use data::text::{
     AbilityText, DamageWord, Keyword, KeywordKind, NumericOperator, Sentence, TextToken,
 };
+use game_ui::card_info::SupplementalCardInfo;
 use protos::spelldawn::{Node, RulesText};
-use ui_core::{icons, render};
-use ui_game::card_info::SupplementalCardInfo;
 
 /// Primary function which turns the current state of a card into its client
 /// [RulesText] representation
@@ -92,7 +92,7 @@ pub fn build_supplemental_info(
     }
 
     process_keywords(&mut keywords, &mut result);
-    render::component(SupplementalCardInfo::new(result))
+    rendering::component(SupplementalCardInfo::new(result))
 }
 
 fn ability_cost_string(cost: &Cost<AbilityId>) -> String {

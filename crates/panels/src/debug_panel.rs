@@ -16,6 +16,11 @@
 //! development. Typically these options should not be available to production
 //! users.
 
+use core_ui::actions::InterfaceAction;
+use core_ui::button::Button;
+use core_ui::panel::Panel;
+use core_ui::prelude::*;
+use core_ui::{icons, panel};
 use data::agent_definition::{AgentName, GameStatePredictorName};
 use data::game_actions::DebugAction;
 use data::primitives::Side;
@@ -24,11 +29,6 @@ use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
     ClientDebugCommand, FlexAlign, FlexJustify, FlexWrap, KnownPanelAddress, TogglePanelCommand,
 };
-use ui_core::actions::InterfaceAction;
-use ui_core::button::Button;
-use ui_core::panel::Panel;
-use ui_core::prelude::*;
-use ui_core::{icons, panel};
 
 #[derive(Debug)]
 pub struct DebugPanel {}

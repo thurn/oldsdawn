@@ -13,14 +13,14 @@
 // limitations under the License.
 
 use anyhow::Result;
+use core_ui::design::FontSize;
+use core_ui::prelude::Component;
+use core_ui::rendering;
+use core_ui::text::Text;
 use data::game::GameState;
 use data::game_actions::{GamePrompt, PromptContext};
 use data::primitives::Side;
 use protos::spelldawn::InterfaceMainControls;
-use ui_core::design::FontSize;
-use ui_core::prelude::Component;
-use ui_core::render;
-use ui_core::text::Text;
 
 use crate::action_buttons;
 use crate::prompt_container::PromptContainer;
@@ -40,7 +40,7 @@ pub fn action_prompt(
 
     for response in &prompt.responses {
         let button = action_buttons::for_prompt(game, side, *response);
-        if button.should_anchor() {
+        if button.has_anchor() {
             card_anchor_nodes.push(button.render_to_card_anchor_node()?);
         } else {
             main_controls.push(Box::new(button));
@@ -48,7 +48,7 @@ pub fn action_prompt(
     }
 
     Ok(Some(InterfaceMainControls {
-        node: render::component(PromptContainer::new().children(main_controls)),
+        node: rendering::component(PromptContainer::new().children(main_controls)),
         card_anchor_nodes,
     }))
 }

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use core_ui::component::{Component, RenderResult};
+use core_ui::design::{BackgroundColor, FontSize};
+use core_ui::prelude::*;
+use core_ui::style::Corner;
+use core_ui::text::Text;
 use protos::spelldawn::{FlexAlign, FlexJustify, TextAlign, WhiteSpace};
-use ui_core::component::{Component, RenderResult};
-use ui_core::design::{BackgroundColor, FontSize};
-use ui_core::prelude::*;
-use ui_core::style::Corner;
-use ui_core::text::Text;
 
 #[derive(Debug)]
 pub struct SupplementalCardInfo {

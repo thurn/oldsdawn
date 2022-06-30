@@ -32,6 +32,8 @@ pub fn known(address: KnownPanelAddress) -> PanelAddress {
     PanelAddress { address_type: Some(AddressType::KnownPanel(address as i32)) }
 }
 
+/// A rectangular interface element that displays content centered on-screen,
+/// optionally including a title or close button.
 #[derive(Debug)]
 pub struct Panel {
     address: PanelAddress,

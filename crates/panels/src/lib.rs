@@ -18,13 +18,13 @@
 pub mod debug_panel;
 
 use anyhow::{bail, Result};
+use core_ui::{panel, rendering};
 use data::fail;
 use data::with_error::WithError;
 use debug_panel::DebugPanel;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::panel_address::AddressType;
 use protos::spelldawn::{InterfacePanel, KnownPanelAddress, PanelAddress, UpdatePanelsCommand};
-use ui_core::{panel, render};
 
 /// Appends a command to `commands` to render commonly-used panels.
 pub fn render_standard_panels(commands: &mut Vec<Command>) -> Result<()> {
@@ -49,7 +49,7 @@ pub fn render_known_panel(address: KnownPanelAddress) -> Result<UpdatePanelsComm
             address: Some(panel::known(address)),
             node: match address {
                 KnownPanelAddress::Unspecified => fail!("Invalid Panel Address"),
-                KnownPanelAddress::DebugPanel => render::component(DebugPanel {}),
+                KnownPanelAddress::DebugPanel => rendering::component(DebugPanel {}),
             },
         }],
     })

@@ -14,13 +14,13 @@
 
 use adapters;
 use anyhow::Result;
+use core_ui::actions::{InterfaceAction, NoAction};
+use core_ui::button::{Button, ButtonType};
+use core_ui::prelude::*;
+use core_ui::rendering;
 use data::primitives::CardId;
 use data::with_error::WithError;
 use protos::spelldawn::{AnchorCorner, CardAnchor, CardAnchorNode, FlexAlign, FlexJustify};
-use ui_core::actions::{InterfaceAction, NoAction};
-use ui_core::button::{Button, ButtonType};
-use ui_core::prelude::*;
-use ui_core::render;
 
 #[derive(Debug)]
 pub struct ResponseButton {
@@ -54,7 +54,10 @@ impl ResponseButton {
         self
     }
 
-    pub fn should_anchor(&self) -> bool {
+    /// Returns true if this button has been given a [CardId] to anchor to via
+    /// [Self::anchor_to] and thus should be rendered using
+    /// [Self::render_to_card_anchor_node].
+    pub fn has_anchor(&self) -> bool {
         self.anchor_to.is_some()
     }
 
@@ -78,7 +81,7 @@ impl ResponseButton {
             card_id: Some(adapters::card_identifier(
                 self.anchor_to.with_error(|| "Anchor not found")?,
             )),
-            node: render::component(
+            node: rendering::component(
                 Row::new(self.label.clone())
                     .style(
                         Style::new()

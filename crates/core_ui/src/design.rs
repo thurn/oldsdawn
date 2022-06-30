@@ -23,7 +23,7 @@ const fn color(red: f32, green: f32, blue: f32, alpha: f32) -> FlexColor {
 }
 
 const WHITE: FlexColor = color(1.0, 1.0, 1.0, 1.0);
-pub const BLACK_ALPHA_75: FlexColor = color(0.0, 0.0, 0.0, 0.75);
+const BLACK_ALPHA_75: FlexColor = color(0.0, 0.0, 0.0, 0.75);
 
 #[derive(Debug, Clone, Copy)]
 pub enum BackgroundColor {
