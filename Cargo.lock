@@ -427,6 +427,8 @@ dependencies = [
  "protos",
  "rules",
  "tracing",
+ "ui_core",
+ "ui_game",
 ]
 
 [[package]]
@@ -1970,6 +1972,8 @@ dependencies = [
 name = "ui_game"
 version = "0.0.0"
 dependencies = [
+ "adapters",
+ "anyhow",
  "data",
  "protos",
  "rules",

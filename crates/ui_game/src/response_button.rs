@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(dead_code)]
-
+use adapters;
+use anyhow::Result;
 use data::primitives::CardId;
+use data::with_error::WithError;
+use protos::spelldawn::{AnchorCorner, CardAnchor, CardAnchorNode, FlexAlign, FlexJustify};
 use ui_core::actions::{InterfaceAction, NoAction};
 use ui_core::button::{Button, ButtonType};
 use ui_core::prelude::*;
+use ui_core::render;
 
 #[derive(Debug)]
-struct ResponseButton {
+pub struct ResponseButton {
     label: String,
     layout: Layout,
     anchor_to: Option<CardId>,
@@ -51,6 +54,10 @@ impl ResponseButton {
         self
     }
 
+    pub fn should_anchor(&self) -> bool {
+        self.anchor_to.is_some()
+    }
+
     pub fn primary(mut self, primary: bool) -> Self {
         self.primary = primary;
         self
@@ -64,6 +71,34 @@ impl ResponseButton {
     pub fn shift_down(mut self, shift_down: bool) -> Self {
         self.shift_down = shift_down;
         self
+    }
+
+    pub fn render_to_card_anchor_node(self) -> Result<CardAnchorNode> {
+        Ok(CardAnchorNode {
+            card_id: Some(adapters::card_identifier(
+                self.anchor_to.with_error(|| "Anchor not found")?,
+            )),
+            node: render::component(
+                Row::new(self.label.clone())
+                    .style(
+                        Style::new()
+                            .padding(Edge::Top, 8.px())
+                            .justify_content(FlexJustify::Center)
+                            .align_items(FlexAlign::Center),
+                    )
+                    .child(self),
+            ),
+            anchors: vec![
+                CardAnchor {
+                    node_corner: AnchorCorner::TopLeft as i32,
+                    card_corner: AnchorCorner::BottomLeft as i32,
+                },
+                CardAnchor {
+                    node_corner: AnchorCorner::TopRight as i32,
+                    card_corner: AnchorCorner::BottomRight as i32,
+                },
+            ],
+        })
     }
 }
 

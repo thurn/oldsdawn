@@ -81,6 +81,7 @@ impl Component for Text {
             .style(
                 self.layout
                     .to_style()
+                    .padding(Edge::All, 0.px())
                     .font_size(self.size)
                     .color(self.color)
                     .font(self.font)

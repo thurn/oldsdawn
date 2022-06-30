@@ -12,10 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Renders UI elements displayed during card game sessions
+use ui_core::design::FontSize;
+use ui_core::prelude::*;
+use ui_core::text::Text;
 
-pub mod action_buttons;
-pub mod prompt_container;
-pub mod prompts;
-pub mod response_button;
-pub mod waiting_prompt;
+use crate::prompt_container::PromptContainer;
+
+#[derive(Debug)]
+pub struct WaitingPrompt;
+
+impl Component for WaitingPrompt {
+    fn build(self) -> RenderResult {
+        PromptContainer::new()
+            .child(
+                Text::new("Waiting for Opponent...", FontSize::PromptContext)
+                    .layout(Layout::new().margin(Edge::Horizontal, 16.px())),
+            )
+            .build()
+    }
+}

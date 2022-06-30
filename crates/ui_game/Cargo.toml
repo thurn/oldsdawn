@@ -10,8 +10,10 @@ doctest = false
 test = false
 
 [dependencies]
+anyhow = "1.0.51"
 serde_json = "1.0.81"
 
+adapters = {path = "../adapters", version = "0.0.0"}
 data = { path = "../data", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }

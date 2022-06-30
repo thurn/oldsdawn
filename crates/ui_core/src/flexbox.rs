@@ -159,7 +159,12 @@ impl<D: FlexboxDirection> Flexbox<D> {
         self
     }
 
-    pub fn render_node(&mut self) -> &mut Node {
+    pub fn children(mut self, children: Vec<Box<dyn Component>>) -> Self {
+        self.children.extend(children);
+        self
+    }
+
+    pub fn internal_node(&mut self) -> &mut Node {
         &mut self.render_node
     }
 }

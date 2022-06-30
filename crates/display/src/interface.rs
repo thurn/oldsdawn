@@ -16,12 +16,11 @@ use anyhow::Result;
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::Side;
-use oldui::core::Component;
-use prompts::WaitingPrompt;
 use protos::spelldawn::InterfaceMainControls;
 use rules::raid;
-
-use crate::prompts;
+use ui_core::render;
+use ui_game::prompts;
+use ui_game::waiting_prompt::WaitingPrompt;
 
 /// Returns a [InterfaceMainControls] to render the interface state for the
 /// provided `game`.
@@ -31,7 +30,7 @@ pub fn render(game: &GameState, user_side: Side) -> Result<Option<InterfaceMainC
     } else if render_prompt(game, user_side.opponent())?.is_some() {
         // If the opponent has a prompt, display a 'waiting' indicator
         Some(InterfaceMainControls {
-            node: Some((WaitingPrompt {}).render()),
+            node: render::component(WaitingPrompt {}),
             card_anchor_nodes: vec![],
         })
     } else {
@@ -42,12 +41,12 @@ pub fn render(game: &GameState, user_side: Side) -> Result<Option<InterfaceMainC
 /// Renders prompt for a player when one is present
 fn render_prompt(game: &GameState, side: Side) -> Result<Option<InterfaceMainControls>> {
     if let Some(prompt) = &game.player(side).prompt {
-        return Ok(prompts::action_prompt(game, side, prompt));
+        return prompts::action_prompt(game, side, prompt);
     } else if let Some(prompt) = raid::core::current_prompt(game, side)? {
-        return Ok(prompts::action_prompt(game, side, &prompt));
+        return prompts::action_prompt(game, side, &prompt);
     } else if let GamePhase::ResolveMulligans(data) = &game.data.phase {
         if data.decision(side).is_none() {
-            return Ok(prompts::action_prompt(
+            return prompts::action_prompt(
                 game,
                 side,
                 &GamePrompt {
@@ -57,7 +56,7 @@ fn render_prompt(game: &GameState, side: Side) -> Result<Option<InterfaceMainCon
                         PromptAction::MulliganDecision(MulliganDecision::Mulligan),
                     ],
                 },
-            ));
+            );
         }
     }
 
