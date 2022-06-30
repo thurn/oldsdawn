@@ -14,11 +14,14 @@
 
 #nullable enable
 
+using System;
+
 namespace Spelldawn.Game
 {
   public enum GameContext
   {
-    // Note: Enum numbers are serialized by Unity and cannot be changed
+    // Note: Enum numbers are serialized by Unity and cannot be changed. Keep
+    // in sync with 'SortOrder' below.
     Unspecified = 0,
     Hidden = 17,
     Arena = 1,
@@ -40,9 +43,34 @@ namespace Spelldawn.Game
     RewardBrowser = 14,
     InfoZoom = 15
   }
-
+  
   public static class GameContextUtil
   {
+    public static int SortOrder(this GameContext gameContext) => gameContext switch
+    {
+      GameContext.Unspecified => 0,
+      GameContext.Hidden => 1,
+      GameContext.Arena => 2,
+      GameContext.Deck => 3,
+      GameContext.DiscardPile => 4,
+      GameContext.Identity => 5,
+      GameContext.ArenaRaidParticipant => 6,
+      GameContext.RaidParticipant => 7,
+      GameContext.Hand => 8,
+      GameContext.Interface => 9,
+      GameContext.Browser => 10,
+      GameContext.Staging => 11,
+      GameContext.RevealedCardsBrowser => 12,
+      GameContext.Scored => 13,
+      GameContext.Effects => 14,
+      GameContext.Dragging => 15,
+      GameContext.UserMessage => 16,
+      GameContext.LongPressBrowser => 17,
+      GameContext.RewardBrowser => 18,
+      GameContext.InfoZoom => 19,
+      _ => throw new ArgumentOutOfRangeException(nameof(gameContext), gameContext, null)
+    };
+    
     public static bool IsArenaContext(this GameContext gameContext) => gameContext switch
     {
       GameContext.Arena => true,

@@ -20,7 +20,7 @@ using UnityEngine.Rendering;
 
 namespace Spelldawn.Game
 {
-  public abstract class Displayable : Clickable
+  public abstract class Displayable : MonoBehaviour
   {
     [Header("Displayable")] [SerializeField]
     ObjectDisplay? _parent;
@@ -31,9 +31,9 @@ namespace Spelldawn.Game
 
     /// <summary>Provided by the server, used to order items within a display.</summary>
     public uint SortingKey { get; set; }
-    
+
     /// <summary>Tie-breaker key in the case of sorting key ties.</summary>
-    public uint SortingSubkey { get; set; }    
+    public uint SortingSubkey { get; set; }
 
     public ObjectDisplay? Parent
     {
@@ -55,7 +55,39 @@ namespace Spelldawn.Game
       OnStart();
     }
 
-    protected virtual void OnStart() {}
+    /// <summary>
+    /// Should return true if this game object can currently handle a MouseDown event.
+    /// <see cref="MouseDown"/> method will only be invoked if this method returns true.
+    /// </summary>
+    public virtual bool CanHandleMouseDown() => false;
+
+    /// <summary>
+    /// Invoked on mouse down. Will only be invoked if <see cref="CanHandleMouseDown"/>
+    /// returns true and this is the topmost object hit by the on click raycast.
+    /// </summary>
+    public virtual void MouseDown()
+    {
+    }
+
+    /// <summary>
+    /// Sent every frame while the mouse button is held down to objects which received <see cref="MouseDown"/>
+    /// and returned true.
+    /// </summary>
+    public virtual void MouseDrag()
+    {
+    }
+
+    /// <summary>
+    /// Sent on *any* mouse up event, anywhere on screen, to objects which received a <see cref="MouseDown"/>
+    /// event and returned true.
+    /// </summary>
+    public virtual void MouseUp()
+    {
+    }
+
+    protected virtual void OnStart()
+    {
+    }
 
     /// <summary>Called on a child container when the parent is repositioned.</summary>
     public virtual void OnUpdateParentContainer()
@@ -71,11 +103,11 @@ namespace Spelldawn.Game
     public void SetGameContext(GameContext gameContext)
     {
       Errors.CheckNotDefault(gameContext);
-      
+
       if (_sortingGroup)
       {
         SortingOrder.Create(gameContext, (int)SortingKey, (int)SortingSubkey).ApplyTo(_sortingGroup!);
-      }      
+      }
 
       if (_gameContext != gameContext)
       {

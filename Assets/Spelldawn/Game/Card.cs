@@ -66,10 +66,11 @@ namespace Spelldawn.Game
     // Minor hack: we want to shift the image down to be centered within the card in the arena, so we store
     // the image position here to restore it later.
     [SerializeField] float _arenaCardYOffset;
-    
+
     // Desired size for the card image in px. Images in token cards are slightly smaller, so we customize this
     // for each prefab.
-    [FormerlySerializedAs("_referenceWidth")] [SerializeField] float _referenceImageWidth;
+    [FormerlySerializedAs("_referenceWidth")] [SerializeField]
+    float _referenceImageWidth;
 
     CardIdentifier? _cardId;
     bool? _serverCanPlay;
@@ -91,7 +92,7 @@ namespace Spelldawn.Game
     public Registry Registry { get; set; } = null!;
 
     public bool IsRevealed => _isRevealed;
-    
+
     bool InHand() => HasGameContext && GameContext == GameContext.Hand;
 
     public override float DefaultScale => CardScale;
@@ -168,7 +169,8 @@ namespace Spelldawn.Game
       }
     }
 
-    bool CanPlay() => _serverCanPlay == true && InHand() && Registry.CapabilityService.CanInitiateAction() && _isRevealed;
+    bool CanPlay() => _serverCanPlay == true && InHand() && Registry.CapabilityService.CanInitiateAction() &&
+                      _isRevealed;
 
     public Card Clone()
     {
@@ -231,17 +233,27 @@ namespace Spelldawn.Game
       UpdateRevealedToOpponent(GameContext.IsArenaContext());
     }
 
-    public override bool MouseDown()
+    public override bool CanHandleMouseDown()
     {
-      var result = false;
+      if (Registry.CapabilityService.CanInfoZoom(this, GameContext) && _isRevealed)
+      {
+        return true;
+      }
 
+      return InHand() && CanPlay();
+    }
+
+    // I originally did all of this using Unity's OnMouseDown events, but they were not reliable
+    // enough for me in testing and the UI sometimes get stuck. Some person on reddit told me it
+    // always works for them and my code is probably wrong... cool.
+    public override void MouseDown()
+    {
       if (Registry.CapabilityService.CanInfoZoom(this, GameContext) && _isRevealed)
       {
         Registry.StaticAssets.PlayCardSound();
         Registry.CardService.DisplayInfoZoom(
           WorldMousePosition(Registry, Registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z),
           this);
-        result = true;
       }
 
       if (InHand() && CanPlay())
@@ -255,10 +267,7 @@ namespace Spelldawn.Game
         _dragStartScreenZ = Registry.MainCamera.WorldToScreenPoint(gameObject.transform.position).z;
         _dragStartPosition = WorldMousePosition(Registry, _dragStartScreenZ);
         _dragOffset = gameObject.transform.position - _dragStartPosition;
-        result = true;
       }
-
-      return result;
     }
 
     public override void MouseDrag()

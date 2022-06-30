@@ -34,11 +34,12 @@ namespace Spelldawn.Game
 
     protected override Vector3? CalculateObjectRotation(int index, int count) => transform.rotation.eulerAngles;
 
-    public override bool MouseDown()
+    public override bool CanHandleMouseDown() => true;
+
+    public override void MouseDown()
     {
       _mouseDownPosition = Input.mousePosition;
       _mouseDownTime = Time.time;
-      return true;
     }
 
     public override void MouseDrag()

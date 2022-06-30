@@ -67,7 +67,9 @@ namespace Spelldawn.Game
       _scoreText.text = scoreView.Score.ToString();
     }
 
-    public override bool MouseDown()
+    public override bool CanHandleMouseDown() => true;
+
+    public override void MouseDown()
     {
       base.MouseDown();
 
@@ -84,8 +86,6 @@ namespace Spelldawn.Game
             break;
         }
       }
-
-      return true;
     }
 
     protected override void LongPress()

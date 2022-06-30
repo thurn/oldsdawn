@@ -15,6 +15,8 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Spelldawn.Game;
 using UnityEngine;
 
@@ -23,7 +25,7 @@ namespace Spelldawn.Services
   public sealed class InputService : MonoBehaviour
   {
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
-    Clickable? _lastClicked;
+    Displayable? _lastClicked;
     [SerializeField] Registry _registry = null!;
 
     void Update()
@@ -38,38 +40,40 @@ namespace Spelldawn.Services
           break;
         case false when _lastClicked:
           var last = _lastClicked;
-          _lastClicked = null; // Do this first in case MouseUp() throws
+          _lastClicked = null;
           last!.MouseUp();
           break;
-      }      
+      }
     }
-    
-    Clickable? FireMouseDown()
+
+    Displayable? FireMouseDown()
     {
       var ray = _registry.MainCamera.ScreenPointToRay(Input.mousePosition);
       var hits = Physics.RaycastNonAlloc(ray, _raycastHitsTempBuffer, 100);
-      Clickable? fired = null;
 
+      var candidates = new List<Displayable>();
       for (var i = 0; i < hits; ++i)
       {
         var hit = _raycastHitsTempBuffer[i];
-        var clickable = hit.collider.GetComponent<Clickable>();
-        if (clickable)
+        var displayable = hit.collider.GetComponent<Displayable>();
+        if (displayable && displayable.CanHandleMouseDown())
         {
-          if (!fired)
-          {
-            var consumed = clickable.MouseDown();
-            if (consumed)
-            {
-              fired = clickable;
-            }
-          }
+          candidates.Add(displayable);
         }
+      }
+
+      var fired = candidates
+        .OrderBy(c => c.GameContext.SortOrder())
+        .ThenBy(c => c.SortingKey)
+        .ThenBy(c => c.SortingSubkey)
+        .LastOrDefault();
+      if (fired)
+      {
+        fired!.MouseDown();
       }
 
       Array.Clear(_raycastHitsTempBuffer, 0, _raycastHitsTempBuffer.Length);
       return fired;
     }
-    
   }
 }
