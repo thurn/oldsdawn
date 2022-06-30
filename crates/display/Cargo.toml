@@ -23,7 +23,6 @@ tracing = { version = "0.1.29", features = ["max_level_debug", "release_max_leve
 adapters = { path = "../adapters", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
-oldui = { path = "../oldui", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
 ui_core = { path = "../ui_core", version = "0.0.0"}
 ui_game = { path = "../ui_game", version = "0.0.0" }

@@ -422,7 +422,6 @@ dependencies = [
  "fallible-iterator",
  "if_chain",
  "itertools",
- "oldui",
  "once_cell",
  "protos",
  "rules",
@@ -960,16 +959,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "oldui"
-version = "0.0.0"
-dependencies = [
- "data",
- "protos",
- "rules",
- "serde_json",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1136,7 +1125,6 @@ dependencies = [
  "cards",
  "data",
  "display",
- "oldui",
  "panels",
  "prost",
  "prost-build",
@@ -1580,7 +1568,6 @@ dependencies = [
  "display",
  "insta",
  "maplit",
- "oldui",
  "once_cell",
  "panels",
  "plugin",

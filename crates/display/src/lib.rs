@@ -20,7 +20,6 @@ pub mod assets;
 pub mod card_sync;
 pub mod interface;
 pub mod positions;
-pub mod prompts;
 pub mod render;
 pub mod rexard_images;
 pub mod rules_text;

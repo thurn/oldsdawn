@@ -14,7 +14,7 @@
 
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
-use oldui::icons;
+use ui_core::icons;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{ClientRoomLocation, ObjectPositionRaid, PlayerName};
 use test_utils::client::HasText;
