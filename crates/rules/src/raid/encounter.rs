@@ -30,6 +30,8 @@ use crate::raid::defenders;
 use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 use crate::{card_prompt, dispatch, flags, mana, mutations, queries};
 
+/// The primary combat phase of a raid, in which the Champion may use weapon
+/// abilities to attempt to defeat an active Overlord minion.
 #[derive(Debug, Clone, Copy)]
 pub struct EncounterPhase {}
 

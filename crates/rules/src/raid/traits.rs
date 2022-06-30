@@ -19,41 +19,71 @@ use data::primitives::{CardId, Side};
 use data::utils;
 use fallible_iterator::FallibleIterator;
 
+/// Represents how the current state of a raid should be represented in the user
+/// interface -- with no content, as a sequence of defenders, or by showing
+/// accessed cards.
 pub enum RaidDisplayState {
     None,
     Defenders(Vec<CardId>),
     Access,
 }
 
+/// Primary trait for nodes in the Raid state machine.
+///
+/// Each state machine node corresponds to the `internal_phase` of a raid.
+/// Typically external code should interact with these methods instead of
+/// inspecting the internal raid phase itself, since raid logic may change.
 pub trait RaidPhase {
+    /// Invoked whenever the state machine enters this phase. The implementation
+    /// may return a new [InternalRaidPhase] to immediately transition to, if no
+    /// action is required.
     fn enter(&self, game: &mut GameState) -> Result<Option<InternalRaidPhase>>;
 
+    /// Identifies the player who can currently act in the current phase.
     fn active_side(&self) -> Side;
 
+    /// Describes how the current phase should be represented in the UI.
     fn display_state(&self, game: &GameState) -> Result<RaidDisplayState>;
 
+    /// Provides UI context describing why a choice is being presented in the
+    /// current phase.
     fn prompt_context(&self) -> Option<PromptContext>;
 
+    /// Handles a user action in the current phase. This provided action is
+    /// matched against the possible actions returned by the `prompts`
+    /// function before invoking this method. May return a new
+    /// [InternalRaidPhase] to transition the state machine to a new phase.
     fn handle_prompt(
         &self,
         game: &mut GameState,
         action: PromptAction,
     ) -> Result<Option<InternalRaidPhase>>;
 
+    /// Provides a list of possible user actions for the `active_side` player in
+    /// the current phase.
     fn prompts(&self, game: &GameState) -> Result<Vec<PromptAction>>;
 }
 
+/// Strongly-typed implementation trait for [RaidPhase] which specified the type
+/// of game actions this phase operates on. This trait should be used when
+/// implementing phases, but should generally not be invoked by calling code.
+/// All structs which implement this struct also implement [RaidPhase] via
+/// blanket implementation.
 pub trait RaidPhaseImpl: RaidPhase + Sized + Copy {
     type Action;
 
+    /// Convert a [PromptAction] into this phase's action type.
     fn unwrap(action: PromptAction) -> Result<Self::Action>;
 
+    /// Convert this phase's action type in a [PromptAction].
     fn wrap(action: Self::Action) -> Result<PromptAction>;
 
     fn enter(self, game: &mut GameState) -> Result<Option<InternalRaidPhase>>;
 
+    /// Strongly-typed equivalent of `prompts`.
     fn actions(self, game: &GameState) -> Result<Vec<Self::Action>>;
 
+    /// Strongly-typed equivalent of `handle_prompt`.
     fn handle_action(
         self,
         game: &mut GameState,

@@ -24,6 +24,8 @@ use crate::dispatch;
 use crate::raid::defenders;
 use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 
+/// The starting state for all raids, fires 'raid start' events and determines
+/// the next state to move to.
 #[derive(Debug, Clone, Copy)]
 pub struct BeginPhase {}
 

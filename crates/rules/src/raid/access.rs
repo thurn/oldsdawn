@@ -30,6 +30,7 @@ use data::{fail, random};
 use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 use crate::{dispatch, mutations, queries};
 
+/// Final step of a raid, in which cards are accessed by the Champion
 #[derive(Debug, Clone, Copy)]
 pub struct AccessPhase {}
 

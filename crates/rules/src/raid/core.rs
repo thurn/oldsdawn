@@ -28,6 +28,8 @@ use crate::raid::encounter::EncounterPhase;
 use crate::raid::traits::RaidPhase;
 use crate::{flags, mutations, queries};
 
+/// Extension trait to add the `phase` method to [RaidData] without introducing
+/// cyclical crate dependencies.
 pub trait RaidDataExt {
     fn phase(&self) -> Box<dyn RaidPhase>;
 }
@@ -44,6 +46,8 @@ impl RaidDataExt for RaidData {
     }
 }
 
+/// Handle a client request to initiate a new raid. Deducts action points and
+/// then invokes [initiate].
 pub fn handle_initiate_action(
     game: &mut GameState,
     user_side: Side,
@@ -58,6 +62,10 @@ pub fn handle_initiate_action(
     initiate(game, target_room, InitiatedBy::GameAction, |_, _| {})
 }
 
+/// Starts a new raid, either as a result of an explicit game action or via a
+/// card effect (as differentiated by the [InitiatedBy] prop). Invokes the
+/// `on_begin` function immediately with the [RaidId] that will be used for this
+/// raid, before any other game logic runs.
 pub fn initiate(
     game: &mut GameState,
     target_room: RoomId,
@@ -85,6 +93,9 @@ pub fn initiate(
     Ok(())
 }
 
+/// Handles a [PromptAction] supplied by a user during a raid. Returns an error
+/// if no raid is currently active or if this action was not expected from this
+/// player.
 pub fn handle_action(game: &mut GameState, user_side: Side, action: PromptAction) -> Result<()> {
     let phase = game.raid()?.phase();
     verify!(phase.active_side() == user_side, "Unexpected side");
@@ -99,6 +110,8 @@ pub fn handle_action(game: &mut GameState, user_side: Side, action: PromptAction
     }
 }
 
+/// Returns a list of the user actions which are possible in the current raid
+/// state for the `side` player, or `None` if no such actions are possible.
 pub fn current_actions(game: &GameState, user_side: Side) -> Result<Option<Vec<PromptAction>>> {
     if let Some(raid) = &game.data.raid {
         if raid.phase().active_side() == user_side {
@@ -112,6 +125,8 @@ pub fn current_actions(game: &GameState, user_side: Side) -> Result<Option<Vec<P
     Ok(None)
 }
 
+/// Builds a [GamePrompt] representing the possible actions for the `side` user,
+/// as determined by the [current_actions] function.
 pub fn current_prompt(game: &GameState, user_side: Side) -> Result<Option<GamePrompt>> {
     if let Some(actions) = current_actions(game, user_side)? {
         Ok(Some(GamePrompt { context: game.raid()?.phase().prompt_context(), responses: actions }))
@@ -120,6 +135,7 @@ pub fn current_prompt(game: &GameState, user_side: Side) -> Result<Option<GamePr
     }
 }
 
+/// Sets the gam eto a new raid phase and invokes callbacks as needed.
 fn enter_phase(game: &mut GameState, mut phase: Option<InternalRaidPhase>) -> Result<()> {
     loop {
         if let Some(s) = phase {
@@ -132,6 +148,8 @@ fn enter_phase(game: &mut GameState, mut phase: Option<InternalRaidPhase>) -> Re
     }
 }
 
+/// Implements a [RaidJumpRequest], if one has been specified for the current
+/// raid.
 fn apply_jump(game: &mut GameState) -> Result<Option<InternalRaidPhase>> {
     if let Some(raid) = &game.data.raid {
         if let Some(RaidJumpRequest::EncounterMinion(card_id)) = raid.jump_request {

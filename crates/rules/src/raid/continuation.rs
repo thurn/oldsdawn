@@ -22,6 +22,8 @@ use data::primitives::Side;
 use crate::mutations;
 use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 
+/// After an encounter, the continuation phase allows the Champion to decide
+/// whether to proceed with the current raid or abandon it.
 #[derive(Debug, Clone, Copy)]
 pub struct ContinuePhase {}
 

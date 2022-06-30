@@ -26,7 +26,7 @@ use crate::{mana, queries};
 /// turned face up automatically by paying its mana cost.
 ///
 /// Returns an error if there is no active raid or if this is an invalid
-/// defender index.
+/// defender.
 pub fn can_summon_defender(game: &GameState, defender_id: CardId) -> Result<bool> {
     let raid = game.raid()?;
     let mut can_summon = raid.room_active && game.card(defender_id).is_face_down();

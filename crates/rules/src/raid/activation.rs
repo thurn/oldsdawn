@@ -21,6 +21,8 @@ use data::primitives::Side;
 use crate::raid::defenders;
 use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 
+/// Initial raid step in which the Overlord chooses whether minions in the
+/// targeted room of a raid should be summoned.
 #[derive(Debug, Clone, Copy)]
 pub struct ActivationPhase {}
 
