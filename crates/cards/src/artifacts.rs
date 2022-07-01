@@ -122,25 +122,15 @@ pub fn mystic_portal() -> CardDefinition {
                 ),
                 ability_type: AbilityType::Activated(
                     actions(1),
-                    TargetRequirement::TargetRoom(|g, ability_id, room_id| {
+                    TargetRequirement::TargetRoom(|g, _, room_id| {
                         is_inner_room(room_id)
                             && utils::is_false(|| {
-                                Some(
-                                    *g.ability_state(ability_id)?.room_turns.get(&room_id)?
-                                        == g.data.turn,
-                                )
+                                Some(g.room_state.get(&room_id)?.last_raided? == g.data.turn)
                             })
                     }),
                 ),
                 delegates: vec![
                     on_activated(|g, s, activated| initiate_raid(g, s, activated.target)),
-                    on_raid_start(always, |g, s, raid_start| {
-                        let turn = g.data.turn;
-                        g.ability_state_mut(s.ability_id())
-                            .room_turns
-                            .insert(raid_start.target, turn);
-                        Ok(())
-                    }),
                     on_raid_success(matching_raid, |g, s, _| {
                         mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice)
                             .map(|_| ())

@@ -244,6 +244,13 @@ pub struct GameData {
     pub config: GameConfiguration,
 }
 
+/// State for an individual room
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct RoomState {
+    /// When was a raid last initiated for this room?
+    pub last_raided: Option<TurnData>,
+}
+
 /// Stores the primary state for an ongoing game
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -269,6 +276,9 @@ pub struct GameState {
     /// State for abilities of cards in this game
     #[serde_as(as = "Vec<(_, _)>")]
     pub ability_state: HashMap<AbilityId, AbilityState>,
+    /// State for rooms
+    #[serde_as(as = "Vec<(_, _)>")]
+    pub room_state: HashMap<RoomId, RoomState>,
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::next_sorting_key] and [Self::move_card_internal].
     next_sorting_key: u32,
@@ -309,6 +319,7 @@ impl GameState {
             overlord: PlayerState::new(overlord_deck.owner_id),
             champion: PlayerState::new(champion_deck.owner_id),
             ability_state: HashMap::new(),
+            room_state: HashMap::new(),
             updates: UpdateTracker::new(if config.simulation {
                 Updates::Ignore
             } else {
@@ -337,6 +348,7 @@ impl GameState {
                 overlord: self.overlord.clone(),
                 champion: self.champion.clone(),
                 ability_state: self.ability_state.clone(),
+                room_state: self.room_state.clone(),
                 next_sorting_key: self.next_sorting_key,
                 rng: None,
                 delegate_cache: DelegateCache::default(),

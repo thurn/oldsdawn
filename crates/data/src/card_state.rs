@@ -17,7 +17,6 @@
 #![allow(clippy::use_self)] // Required to use EnumKind
 
 use std::cmp::Ordering;
-use std::collections::HashMap;
 
 use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
@@ -35,12 +34,9 @@ use crate::primitives::{
 #[serde_as]
 pub struct AbilityState {
     /// True if this ability is currently being resolved
-    #[serde(alias = "on_stack")]
     pub currently_resolving: bool,
     pub raid_id: Option<RaidId>,
     pub turn: Option<TurnData>,
-    #[serde_as(as = "Vec<(_, _)>")]
-    pub room_turns: HashMap<RoomId, TurnData>,
 }
 
 /// Identifies the location of a card during an active game

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use anyhow::Result;
-use data::game::{GameState, InternalRaidPhase, RaidData, RaidJumpRequest};
+use data::game::{GameState, InternalRaidPhase, RaidData, RaidJumpRequest, RoomState};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
@@ -86,6 +86,8 @@ pub fn initiate(
 
     game.data.next_raid_id += 1;
     game.data.raid = Some(raid);
+    game.room_state.entry(target_room).or_insert_with(RoomState::default).last_raided =
+        Some(game.data.turn);
     on_begin(game, raid_id);
     game.record_update(|| GameUpdate::InitiateRaid(target_room, initiated_by));
     enter_phase(game, Some(phase))?;
