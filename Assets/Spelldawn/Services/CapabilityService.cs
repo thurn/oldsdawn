@@ -25,7 +25,7 @@ namespace Spelldawn.Services
     [SerializeField] Registry _registry = null!;
 
     public PlayerName CurrentPriority { get; set; }
-    
+
     /// <summary>
     /// Can the user *start* performing an action such as dragging a card out of their hand or dragging a raid arrow.
     /// This is allowed more leniently than actually *performing* an action as defined by
@@ -37,9 +37,9 @@ namespace Spelldawn.Services
 
     public bool AnyOverlayOpen() => _registry.RaidOverlay.Enabled ||
                                     _registry.InterfaceOverlay.Enabled ||
-                                    _registry.LongPressOverlay.Enabled;    
-    
-    
+                                    _registry.LongPressOverlay.Enabled;
+
+
     /// <summary>
     /// Can the user currently zoom a card that exists in the provided GameContext.
     /// </summary>
@@ -57,11 +57,13 @@ namespace Spelldawn.Services
           // If a card is a top-level raid participant, it can be info zoomed. However if a card is *part* of
           // a parent display that is participating in a raid (e.g. it is part of the discard pile that is 
           // being targeted), then it cannot be info zoomed and the long-press browser is used instead.
-          return displayable.Parent == _registry.RaidService.RaidParticipants;
+          return displayable.Parent == _registry.RaidService.RaidParticipants ||
+                 displayable.Parent == _registry.ArenaService.LeftItems ||
+                 displayable.Parent == _registry.ArenaService.RightIems;
         case GameContext.Browser:
         case GameContext.RewardBrowser:
         case GameContext.LongPressBrowser:
-        case GameContext.RevealedCardsBrowser:  
+        case GameContext.RevealedCardsBrowser:
           return true;
         case GameContext.Deck:
         case GameContext.DiscardPile:
@@ -70,7 +72,7 @@ namespace Spelldawn.Services
           return !AnyOverlayOpen();
       }
     }
-    
+
 
     /// <summary>
     /// Can the user currently perform a game action of the provided type?
@@ -116,7 +118,7 @@ namespace Spelldawn.Services
           userLight.SetActive(false);
           opponentLight.SetActive(false);
           break;
-      }      
+      }
     }
   }
 }

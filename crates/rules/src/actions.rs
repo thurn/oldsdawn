@@ -26,7 +26,7 @@ use data::delegates::{
     AbilityActivated, ActivateAbilityEvent, CardPlayed, CastCardEvent, DrawCardActionEvent,
 };
 use data::game::{GamePhase, GameState, MulliganDecision};
-use data::game_actions::{CardTarget, GamePrompt, PromptAction, UserAction};
+use data::game_actions::{CardTarget, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
 use data::with_error::WithError;
@@ -41,7 +41,7 @@ use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid};
 pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAction) -> Result<()> {
     match action {
         UserAction::Debug(_) => fail!("Rules engine does not handle debug actions!"),
-        UserAction::GamePromptResponse(prompt_action) => {
+        UserAction::PromptAction(prompt_action) => {
             handle_prompt_action(game, user_side, prompt_action)
         }
         UserAction::GainMana => gain_mana_action(game, user_side),
@@ -237,17 +237,12 @@ fn spend_action_point_action(game: &mut GameState, user_side: Side) -> Result<()
 
 /// Handles a [PromptAction] for the `user_side` player. Clears active prompts.
 fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAction) -> Result<()> {
-    fn validate(prompt: &GamePrompt, action: &PromptAction) -> Result<()> {
+    if let Some(prompt) = &game.player(user_side).prompt {
         verify!(
-            prompt.responses.iter().any(|p| p == action),
+            prompt.responses.iter().any(|p| *p == action),
             "Unexpected action {:?} received",
             action
         );
-        Ok(())
-    }
-
-    if let Some(prompt) = &game.player(user_side).prompt {
-        validate(prompt, &action)?;
         game.player_mut(user_side).prompt = None;
     }
 

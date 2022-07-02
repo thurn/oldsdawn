@@ -27,7 +27,7 @@ use data::delegates::{
     RaidStart, RequirementFn, Scope, TransformationFn, UsedWeapon,
 };
 use data::game::GameState;
-use data::game_actions::{CardPromptAction, CardTarget, GamePrompt};
+use data::game_actions::{CardPromptAction, CardTarget};
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, CardId, DamageType, HasAbilityId, HasCardId, HealthValue,
     ManaValue, RaidId, RoomId, Side, Sprite, TurnNumber,
@@ -408,20 +408,6 @@ pub fn face_down_ability_cost() -> Delegate {
             }
         },
     })
-}
-
-/// Sets the card prompt for the `side` player to show the provided non-`None`
-/// `actions`.
-pub fn set_card_prompt(
-    game: &mut GameState,
-    side: Side,
-    actions: Vec<Option<CardPromptAction>>,
-) -> Result<()> {
-    mutations::set_prompt(
-        game,
-        side,
-        GamePrompt::card_actions(actions.into_iter().flatten().collect()),
-    )
 }
 
 /// A [CardPromptAction] for the `side` player to lose mana

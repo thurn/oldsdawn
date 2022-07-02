@@ -70,7 +70,7 @@ pub fn time_golem() -> CardDefinition {
                     actions_text(2)
                 ],
                 on_encountered(|g, _s, _| {
-                    set_card_prompt(
+                    mutations::set_prompt(
                         g,
                         Side::Champion,
                         vec![
@@ -259,12 +259,13 @@ pub fn stormcaller() -> CardDefinition {
             ],
             minion_combat_actions(|g, s, _, _| {
                 vec![
+                    // (must take this action even if it ends the game)
                     Some(CardPromptAction::TakeDamageEndRaid(
                         s.ability_id(),
                         DamageType::Lightning,
                         2,
                     )),
-                    take_damage_prompt(g, s.ability_id(), DamageType::Lightning, 4),
+                    take_damage_prompt(g, s, DamageType::Lightning, 4),
                 ]
             }),
         )],

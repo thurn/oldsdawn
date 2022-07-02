@@ -31,7 +31,7 @@ use data::delegates::{
     UnveilProjectEvent,
 };
 use data::game::{GameOverData, GamePhase, GameState, TurnData};
-use data::game_actions::GamePrompt;
+use data::game_actions::{CardPromptAction, GamePrompt};
 use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
     RoomLocation, Side, TurnNumber,
@@ -228,11 +228,18 @@ pub fn clear_boost<T>(game: &mut GameState, scope: Scope, _: &T) -> Result<()> {
     Ok(())
 }
 
-/// Sets the current prompt for the `side` player.
+/// Sets the current prompt for the `side` player to contain the non-`None`
+/// card actions in `actions`.
+///
 /// Returns an error if a prompt is already set for this player.
-pub fn set_prompt(game: &mut GameState, side: Side, prompt: GamePrompt) -> Result<()> {
+pub fn set_prompt(
+    game: &mut GameState,
+    side: Side,
+    actions: Vec<Option<CardPromptAction>>,
+) -> Result<()> {
     verify!(game.player(side).prompt.is_none(), "Prompt already present");
-    game.player_mut(side).prompt = Some(prompt);
+    game.player_mut(side).prompt =
+        Some(GamePrompt::card_actions(actions.into_iter().flatten().collect()));
     Ok(())
 }
 

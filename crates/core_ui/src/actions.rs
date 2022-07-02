@@ -67,7 +67,7 @@ impl InterfaceAction for UserAction {
 impl InterfaceAction for PromptAction {
     fn as_game_action(&self) -> Option<Action> {
         Some(Action::StandardAction(StandardAction {
-            payload: payload(UserAction::GamePromptResponse(*self)),
+            payload: payload(UserAction::PromptAction(*self)),
             update: None,
         }))
     }

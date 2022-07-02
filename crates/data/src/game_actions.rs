@@ -158,7 +158,7 @@ impl CardTarget {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum UserAction {
     Debug(DebugAction),
-    GamePromptResponse(PromptAction),
+    PromptAction(PromptAction),
     GainMana,
     DrawCard,
     PlayCard(CardId, CardTarget),

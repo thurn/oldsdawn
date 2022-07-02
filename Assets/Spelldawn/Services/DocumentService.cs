@@ -94,7 +94,7 @@ namespace Spelldawn.Services
           {
             PanelAddress = address
           }
-        });        
+        });
       }
       else
       {

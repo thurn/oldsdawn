@@ -35,12 +35,12 @@ pub fn evaluate<'a>(
 
     if let Some(prompt) = &game.player(side).prompt {
         return Ok(Box::new(
-            prompt.responses.iter().map(|prompt| UserAction::GamePromptResponse(*prompt)),
+            prompt.responses.iter().map(|prompt| UserAction::PromptAction(*prompt)),
         ));
     }
 
     if let Some(actions) = raid::core::current_actions(game, side).expect("Current Actions") {
-        return Ok(Box::new(actions.into_iter().map(UserAction::GamePromptResponse)));
+        return Ok(Box::new(actions.into_iter().map(UserAction::PromptAction)));
     }
 
     if flags::in_main_phase(game, side) {

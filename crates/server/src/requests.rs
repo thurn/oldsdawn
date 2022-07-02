@@ -356,8 +356,7 @@ pub fn handle_custom_action(
     game_id: Option<GameId>,
     function: impl Fn(&mut GameState, Side) -> Result<()>,
 ) -> Result<GameResponse> {
-    // TODO: Acquire some kind of lock to prevent concurrent updates from
-    // overwriting the game
+    // TODO: Use transactions here
     let mut game = find_game(database, game_id)?;
     let user_side = user_side(player_id, &game)?;
     function(&mut game, user_side)?;

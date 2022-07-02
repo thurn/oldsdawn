@@ -50,7 +50,7 @@ pub fn handle_request(database: impl Database + 'static, request: &GameRequest) 
 
     let game = database.game(game_id)?;
 
-    if active_agent(&game).is_some() && !AGENT_RUNNING.fetch_nand(false, Ordering::Relaxed) {
+    if active_agent(&game).is_some() && !AGENT_RUNNING.swap(true, Ordering::Relaxed) {
         thread::spawn(move || {
             run_agent_loop(database, game_id, respond_to).expect("Error running agent");
             AGENT_RUNNING.store(false, Ordering::Relaxed);

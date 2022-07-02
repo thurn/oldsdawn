@@ -94,12 +94,12 @@ pub fn canonical_game() -> Result<GameState> {
     actions::handle_user_action(
         &mut game,
         Side::Overlord,
-        UserAction::GamePromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
+        UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Keep)),
     )?;
     actions::handle_user_action(
         &mut game,
         Side::Champion,
-        UserAction::GamePromptResponse(PromptAction::MulliganDecision(MulliganDecision::Keep)),
+        UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Keep)),
     )?;
 
     Ok(game)
