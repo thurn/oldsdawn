@@ -31,7 +31,7 @@ namespace Spelldawn.Game
 
     public IEnumerator BrowseCards(ObjectDisplay display)
     {
-      var cards = display.AllObjects.OfType<Card>().Cast<Displayable>().ToList();
+      var cards = display.AllObjects.OfType<Card>().Select(c => c.Clone()).Cast<Displayable>().ToList();
       if (cards.Count == 0)
       {
         yield break;

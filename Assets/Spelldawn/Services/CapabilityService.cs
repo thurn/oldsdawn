@@ -60,7 +60,8 @@ namespace Spelldawn.Services
           return displayable.Parent == _registry.RaidService.RaidParticipants;
         case GameContext.Browser:
         case GameContext.RewardBrowser:
-        case GameContext.LongPressBrowser:  
+        case GameContext.LongPressBrowser:
+        case GameContext.RevealedCardsBrowser:  
           return true;
         case GameContext.Deck:
         case GameContext.DiscardPile:
