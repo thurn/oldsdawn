@@ -36,7 +36,7 @@ pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAc
 pub fn run_search(game: &GameState, side: Side, depth: u32) -> Result<UserAction> {
     let mut best_score = notnan(-f64::INFINITY);
     let mut best_action = None;
-    for action in legal_actions::evaluate(game, side) {
+    for action in legal_actions::evaluate(game, side)? {
         // I worry about the performance of .clone() here, but so far it's never shown
         // up in profiling as an issue compared to the cost of
         // `handle_user_action`.
@@ -74,7 +74,7 @@ fn alpha_beta(
 
     if maximizing_side == current_side {
         let mut value = notnan(-f64::INFINITY);
-        for action in legal_actions::evaluate(game, current_side) {
+        for action in legal_actions::evaluate(game, current_side)? {
             let mut child = game.clone();
             actions::handle_user_action(&mut child, current_side, action)?;
             value = cmp::max(
@@ -89,7 +89,7 @@ fn alpha_beta(
         Ok(value)
     } else {
         let mut value = notnan(f64::INFINITY);
-        for action in legal_actions::evaluate(game, current_side) {
+        for action in legal_actions::evaluate(game, current_side)? {
             let mut child = game.clone();
             actions::handle_user_action(&mut child, current_side, action)?;
             value = cmp::min(

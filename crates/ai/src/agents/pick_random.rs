@@ -25,6 +25,6 @@ use crate::core::types::StatePredictionIterator;
 
 pub fn execute(mut states: StatePredictionIterator, side: Side) -> Result<UserAction> {
     let mut game = states.next().with_error(|| "Expected at least one GameState")?.state;
-    let collected = legal_actions::evaluate(&game, side).collect::<Vec<_>>();
+    let collected = legal_actions::evaluate(&game, side)?.collect::<Vec<_>>();
     random::choose(&mut game, collected.into_iter()).with_error(|| "Expected at least one action")
 }

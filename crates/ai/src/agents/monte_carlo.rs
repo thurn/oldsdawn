@@ -96,7 +96,7 @@ pub fn uct_search(game_state: &GameState, side: Side, simulation_steps: u32) -> 
     }
 
     let (action, _) =
-        best_child(&graph, root, legal_actions::evaluate(game_state, side).collect(), 0.0)?;
+        best_child(&graph, root, legal_actions::evaluate(game_state, side)?.collect(), 0.0)?;
     Ok(action)
 }
 
@@ -135,7 +135,7 @@ fn tree_policy(
 ) -> Result<NodeIndex> {
     while !matches!(game.data.phase, GamePhase::GameOver(_)) {
         let actions =
-            legal_actions::evaluate(game, current_priority(game)?).collect::<HashSet<_>>();
+            legal_actions::evaluate(game, current_priority(game)?)?.collect::<HashSet<_>>();
         let explored = graph.edges(node).map(|e| e.weight().action).collect::<HashSet<_>>();
         if let Some(action) = actions.iter().find(|a| !explored.contains(a)) {
             // An action exists which has not yet been tried
@@ -238,7 +238,7 @@ fn default_policy(mut game: GameState, side: Side) -> Result<RewardValue> {
         }
 
         let side = current_priority(&game)?;
-        let action = legal_actions::evaluate(&game, side)
+        let action = legal_actions::evaluate(&game, side)?
             .choose(&mut thread_rng())
             .with_error(|| "No actions found")?;
         actions::handle_user_action(&mut game, side, action)?;

@@ -16,6 +16,7 @@
 
 use std::iter;
 
+use anyhow::Result;
 use data::game::{GamePhase, GameState};
 use data::game_actions::{CardTarget, CardTargetKind, UserAction};
 use data::primitives::{CardId, RoomId, Side};
@@ -24,23 +25,26 @@ use rules::{flags, queries, raid};
 
 /// Returns an iterator over currently-legal [UserAction]s for the `side` player
 /// in the given [GameState].
-pub fn evaluate<'a>(game: &'a GameState, side: Side) -> Box<dyn Iterator<Item = UserAction> + 'a> {
+pub fn evaluate<'a>(
+    game: &'a GameState,
+    side: Side,
+) -> Result<Box<dyn Iterator<Item = UserAction> + 'a>> {
     if let GamePhase::GameOver(_) = &game.data.phase {
-        return Box::new(iter::empty());
+        return Ok(Box::new(iter::empty()));
     }
 
     if let Some(prompt) = &game.player(side).prompt {
-        return Box::new(
+        return Ok(Box::new(
             prompt.responses.iter().map(|prompt| UserAction::GamePromptResponse(*prompt)),
-        );
+        ));
     }
 
     if let Some(actions) = raid::core::current_actions(game, side).expect("Current Actions") {
-        return Box::new(actions.into_iter().map(UserAction::GamePromptResponse));
+        return Ok(Box::new(actions.into_iter().map(UserAction::GamePromptResponse)));
     }
 
     if flags::in_main_phase(game, side) {
-        Box::new(
+        Ok(Box::new(
             RoomId::into_enum_iter()
                 .filter(move |room_id| flags::can_take_initiate_raid_action(game, side, *room_id))
                 .map(UserAction::InitiateRaid)
@@ -54,9 +58,9 @@ pub fn evaluate<'a>(game: &'a GameState, side: Side) -> Box<dyn Iterator<Item = 
                 .chain(game.hand(side).flat_map(move |c| legal_card_actions(game, side, c.id)))
                 .chain(flags::can_take_draw_card_action(game, side).then(|| UserAction::DrawCard))
                 .chain(flags::can_take_gain_mana_action(game, side).then(|| UserAction::GainMana)),
-        )
+        ))
     } else {
-        Box::new(iter::empty())
+        Ok(Box::new(iter::empty()))
     }
 }
 
