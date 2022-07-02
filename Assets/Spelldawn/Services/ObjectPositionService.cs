@@ -85,7 +85,7 @@ namespace Spelldawn.Services
 
       if (command.JumpToPosition != null)
       {
-        yield return MoveGameObject(target, command.JumpToPosition, animate: false, animateRemove: true);
+        yield return MoveGameObject(target, command.JumpToPosition, animate: true);
       }
 
       if (throwSequence.IsActive())
@@ -130,12 +130,11 @@ namespace Spelldawn.Services
     public IEnumerator MoveGameObject(
       Displayable displayable,
       ObjectPosition targetPosition,
-      bool animate = true,
-      bool animateRemove = true)
+      bool animate = true)
     {
       displayable.SortingKey = targetPosition.SortingKey;
       displayable.SortingSubkey = targetPosition.SortingSubkey;      
-      return ObjectDisplayForPosition(targetPosition).AddObject(displayable, animate, animateRemove);
+      return ObjectDisplayForPosition(targetPosition).AddObject(displayable, animate);
     }
 
     public void MoveGameObjectImmediate(Displayable displayable, ObjectPosition targetPosition)

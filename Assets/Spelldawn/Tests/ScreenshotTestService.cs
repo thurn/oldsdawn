@@ -23,6 +23,7 @@ using Spelldawn.Protos;
 using Spelldawn.Services;
 using Spelldawn.Utils;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Directory = System.IO.Directory;
 
 namespace Spelldawn.Tests
@@ -38,6 +39,7 @@ namespace Spelldawn.Tests
     public Registry Registry { get; private set; } = null!;
     string _directory = null!;
     readonly List<Sequence> _sequences = new();
+    bool _sceneLoaded;
 
     public static ScreenshotTestService Initialize(Registry registry, out bool runTests)
     {
@@ -63,7 +65,7 @@ namespace Spelldawn.Tests
 
     public void RunTests()
     {
-      StartCoroutine(RunAsync(this));
+      StartCoroutine(RunAsync());
     }
 
     public void OnAnimationStarted(Sequence sequence)
@@ -71,17 +73,23 @@ namespace Spelldawn.Tests
       _sequences.Add(sequence);
     }
     
-    static IEnumerator RunAsync(ScreenshotTestService service)
+    IEnumerator RunAsync()
     {
       foreach (var asset in Resources.LoadAll<TextAsset>("TestRecordings"))
       {
-        yield return RunTest(service, asset);
+        yield return RunTest(asset);
+        yield return WaitForAnimations();
+        _sceneLoaded = false;
+        SceneManager.LoadSceneAsync("Labyrinth");
+        yield return new WaitUntil(() => _sceneLoaded);
+        _sequences.Clear();
+        yield return new WaitForEndOfFrame();
       }
       
-      yield return service.Finish();
+      yield return Finish();
     }
 
-    static IEnumerator RunTest(ScreenshotTestService service, TextAsset textAsset)
+    IEnumerator RunTest(TextAsset textAsset)
     {
       var list = CommandList.Parser.ParseDelimitedFrom(new MemoryStream(textAsset.bytes));
 
@@ -94,8 +102,8 @@ namespace Spelldawn.Tests
           Debug.Log($"Preparing to run {fileName}");
           Debug.Break();
         }
-        yield return service.Registry.CommandService.HandleCommands(command);
-        yield return service.WaitForAnimations();
+        yield return Registry.CommandService.HandleCommands(command);
+        yield return WaitForAnimations();
 
         if (ShouldHandle(command.CommandCase))
         {
@@ -104,7 +112,7 @@ namespace Spelldawn.Tests
             Debug.Log($"Saving Screenshot for {fileName}");
             Debug.Break();
           }
-          yield return service.Capture(fileName);
+          yield return Capture(fileName);
           count++;
         }
       }
@@ -115,9 +123,9 @@ namespace Spelldawn.Tests
       DontDestroyOnLoad(gameObject);
       Application.logMessageReceived += HandleException;
 
-      if (Math.Abs(Screen.dpi - 255.0) > 0.1f)
+      if (Math.Abs(Screen.dpi - 255.0) > 0.1f && !Application.isEditor)
       {
-        Debug.LogError("ERROR: Screenshot tests can only run on a 255 dpi screen.");
+        Debug.LogError($"ERROR: DPI is {Screen.dpi}, screenshot tests can only run on a 255 dpi screen.");
         Quit(1);
         return;
       }
@@ -142,8 +150,11 @@ namespace Spelldawn.Tests
       Registry.ManaDisplayForPlayer(PlayerName.Opponent).DisableAnimation();
       Registry.ActionDisplayForPlayer(PlayerName.User).DisableAnimation();
       Registry.ActionDisplayForPlayer(PlayerName.Opponent).DisableAnimation();
+      Registry.IdentityCardForPlayer(PlayerName.User).DisableAnimation();
+      Registry.IdentityCardForPlayer(PlayerName.Opponent).DisableAnimation();
       Registry.Graphy.SetActive(false);
       TweenUtils.EndToEndTests = this;
+      _sceneLoaded = true;
     }
     
     IEnumerator Capture(string imageName)

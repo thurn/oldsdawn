@@ -64,6 +64,7 @@ namespace Spelldawn.Game
     int Position()
     {
       var position = _subkey + (_key * 100);
+      // Unity inexplicably uses 'int' for this type despite only allowing sorting keys below 32k
       Errors.CheckState(position < 32767, "Position overflow");
       return position;
     }

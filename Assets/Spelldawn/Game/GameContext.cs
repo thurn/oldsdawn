@@ -18,6 +18,10 @@ using System;
 
 namespace Spelldawn.Game
 {
+  /// <summary>
+  /// Represents the current location and z position of a GameObject. Maps to sorting layers in
+  /// Unity, keep in sync with those.
+  /// </summary>
   public enum GameContext
   {
     // Note: Enum numbers are serialized by Unity and cannot be changed. Keep
@@ -43,7 +47,7 @@ namespace Spelldawn.Game
     RewardBrowser = 14,
     InfoZoom = 15
   }
-  
+
   public static class GameContextUtil
   {
     public static int SortOrder(this GameContext gameContext) => gameContext switch
@@ -70,7 +74,7 @@ namespace Spelldawn.Game
       GameContext.InfoZoom => 19,
       _ => throw new ArgumentOutOfRangeException(nameof(gameContext), gameContext, null)
     };
-    
+
     public static bool IsArenaContext(this GameContext gameContext) => gameContext switch
     {
       GameContext.Arena => true,

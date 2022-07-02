@@ -55,6 +55,13 @@ namespace Spelldawn.Game
       }
     }
 
+    public void DisableAnimation()
+    {
+      var text = ComponentUtils.GetComponent<TextMeshPro>(_raidSymbol);
+      text.fontMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
+      text.color = new Color(1.0f, 0.435f, 0.0f);
+    }
+
     public void RenderPlayerInfo(PlayerInfo playerInfo)
     {
       _validRoomsToVisit = playerInfo.ValidRoomsToVisit.ToHashSet();

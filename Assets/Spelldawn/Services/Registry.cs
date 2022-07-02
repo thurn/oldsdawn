@@ -187,8 +187,10 @@ namespace Spelldawn.Services
     {
       Application.targetFrameRate = 60;
       var runTests = false;
+      var testService = FindObjectOfType<ScreenshotTestService>();
 
       if (GlobalGameMode == GlobalGameMode.ScreenshotTest ||
+          testService ||
           System.Environment.GetCommandLineArgs().Any(arg => arg.Contains("test")))
       {
         GlobalGameMode = GlobalGameMode.ScreenshotTest;

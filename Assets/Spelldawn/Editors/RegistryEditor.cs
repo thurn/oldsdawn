@@ -28,12 +28,7 @@ namespace Spelldawn.Editors
       if (GUILayout.Button("Run Tests"))
       {
         EditorApplication.isPlaying = true;
-        Debug.Log($"OnInspectorGUI: {target}");
         ((Registry)target).GlobalGameMode = GlobalGameMode.ScreenshotTest;
-        EditorApplication.delayCall += () =>
-        {
-          Debug.Log($"Delay Call");
-        };
       }
       
       DrawDefaultInspector();

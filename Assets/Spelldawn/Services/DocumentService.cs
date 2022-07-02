@@ -19,7 +19,6 @@ using Spelldawn.Game;
 using Spelldawn.Masonry;
 using static Spelldawn.Masonry.MasonUtil;
 using Spelldawn.Protos;
-using Spelldawn.Tests;
 using Spelldawn.Utils;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -89,6 +88,13 @@ namespace Spelldawn.Services
       if (open)
       {
         _openPanels.Add(address);
+        _registry.ActionService.HandleAction(new GameAction
+        {
+          FetchPanel = new FetchPanelAction
+          {
+            PanelAddress = address
+          }
+        });        
       }
       else
       {
@@ -96,13 +102,6 @@ namespace Spelldawn.Services
       }
 
       RenderPanels();
-      _registry.ActionService.HandleAction(new GameAction
-      {
-        FetchPanel = new FetchPanelAction
-        {
-          PanelAddress = address
-        }
-      });
     }
 
     public bool IsOpen(PanelAddress address) => _openPanels.Contains(address);

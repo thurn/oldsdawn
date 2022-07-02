@@ -278,6 +278,7 @@ pub struct GameState {
     pub ability_state: HashMap<AbilityId, AbilityState>,
     /// State for rooms
     #[serde_as(as = "Vec<(_, _)>")]
+    #[serde(default)]
     pub room_state: HashMap<RoomId, RoomState>,
     /// Next sorting key to use for card moves. Automatically updated by
     /// [Self::next_sorting_key] and [Self::move_card_internal].

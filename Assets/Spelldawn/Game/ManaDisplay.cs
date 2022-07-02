@@ -49,6 +49,7 @@ namespace Spelldawn.Game
     public void DisableAnimation()
     {
       _manaSymbol.fontMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
+      _manaSymbol.color = new Color(0.15f, 0.78f, 0.85f);
       _animationDisabled = true;
     }
 

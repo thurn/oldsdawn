@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,48 +61,37 @@ namespace Spelldawn.Game
       OnUpdated();
     }
 
-    public IEnumerator AddObject(
-      Displayable displayable,
-      bool animate = true,
-      bool animateRemove = true)
+    public IEnumerator AddObject(Displayable displayable, bool animate = true)
     {
-      var modified = Insert(displayable, animateRemove);
-      if (modified)
+      if (animate)
       {
-        MarkUpdateRequired(animate);
+        Insert(displayable, animate: true);
+        MarkUpdateRequired(animate: true);
         yield return WaitUntilIdle();
+      }
+      else
+      {
+        AddObjectImmediate(displayable);
       }
     }
 
     /// <summary>Insert a Displayable into this container immediately, with no animation.</summary>
     public void AddObjectImmediate(Displayable displayable)
     {
-      Insert(displayable, false);
-      MoveObjectsToPosition(false);
+      Insert(displayable, animate: false);
+      MoveObjectsToPosition(animate: false);
       OnUpdated();
     }
 
-    public IEnumerator AddObjects(
-      List<Displayable> objects,
-      bool animate = true,
-      bool animateRemove = true)
+    public IEnumerator AddObjects(List<Displayable> objects)
     {
-      if (objects.Count == 0)
-      {
-        yield break;
-      }
-
-      var modified = false;
       foreach (var displayable in objects)
       {
-        modified |= Insert(displayable, animateRemove);
+        Insert(displayable, animate: true);
       }
-
-      if (modified)
-      {
-        MarkUpdateRequired(animate);
-        yield return WaitUntilIdle();
-      }
+      
+      MarkUpdateRequired(animate: true);
+      yield return WaitUntilIdle();
     }
 
     public void RemoveObject(Displayable displayable, bool animate = true)
@@ -112,11 +100,7 @@ namespace Spelldawn.Game
       Errors.CheckNonNegative(index);
       _objects.RemoveAt(index);
       displayable.Parent = null;
-
-      if (_objects.Count > 0)
-      {
-        MarkUpdateRequired(animate);
-      }
+      MarkUpdateRequired(animate);
     }
 
     /// <summary>Tries to remove an object from this ObjectDisplay, returning true if the object was removed.</summary>
@@ -182,32 +166,23 @@ namespace Spelldawn.Game
       _animateNextUpdate |= animate;
     }
 
-    bool Insert(Displayable displayable, bool animateRemove)
+    void Insert(Displayable displayable, bool animate = true)
     {
       Errors.CheckNotNull(displayable);
-      var modified = false;
 
       if (!_objects.Contains(displayable))
       {
         if (displayable.Parent)
         {
-          displayable.Parent!.RemoveObjectIfPresent(displayable, animateRemove);
+          displayable.Parent!.RemoveObjectIfPresent(displayable, animate);
         }
 
         displayable.Parent = this;
         _objects.Add(displayable);
-        modified = true;
       }
 
-      var sorted = _objects.OrderBy(o => o.SortingKey).ThenBy(o => o.SortingSubkey).ToList();
-      if (!sorted.SequenceEqual(_objects))
-      {
-        // Even if the object is already present, the sorting order of elements might have changed.
-        _objects = sorted;
-        modified = true;
-      }
-
-      return modified;
+      // Even if the object is already present, the sorting order of elements might have changed.
+      _objects = _objects.OrderBy(o => o.SortingKey).ThenBy(o => o.SortingSubkey).ToList();
     }
 
     void MoveObjectsToPosition(bool animate)

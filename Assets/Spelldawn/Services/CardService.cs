@@ -121,6 +121,8 @@ namespace Spelldawn.Services
       {
         yield return sequence.WaitForCompletion();
       }
+      
+      // Wait for the browser which the optimistic card gets added to
       yield return _registry.RevealedCardsBrowserSmall.WaitUntilIdle();
     }
 
