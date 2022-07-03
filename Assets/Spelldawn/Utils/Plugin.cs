@@ -27,12 +27,12 @@ namespace Spelldawn.Utils
     const int BufferSize = 32_768;
     static readonly byte[] PollBuffer = new byte[BufferSize];
 
-    public static void Initialize(bool inMemory)
+    public static void Initialize()
     {
       var path = $"{Application.persistentDataPath}/db";
       Debug.Log($"##### Setting database path to {path} #####");
       var encoded = Encoding.UTF8.GetBytes(path);
-      Errors.CheckNonNegative(spelldawn_initialize(encoded, encoded.Length, inMemory));
+      Errors.CheckNonNegative(spelldawn_initialize(encoded, encoded.Length));
     }
 
     public static CommandList? Connect(ConnectRequest request)
@@ -62,7 +62,7 @@ namespace Spelldawn.Utils
 #else
     [DllImport("plugin")]
 #endif
-    public static extern int spelldawn_initialize(byte[] path, int pathLength, bool inMemory);
+    public static extern int spelldawn_initialize(byte[] path, int pathLength);
 
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_WEBGL)
     [DllImport("__Internal")]

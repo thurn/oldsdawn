@@ -131,7 +131,6 @@ namespace Spelldawn.Tests
       }
 
       PlayerPrefs.DeleteAll();
-      PlayerPrefs.SetInt(Preferences.InMemory, 1);
       _directory = Application.isEditor
         ? "/tmp/spelldawn/Screenshots"
         : Path.Combine(Application.dataPath, "Screenshots");

@@ -34,14 +34,18 @@ use tracing::warn;
 use crate::database::Database;
 use crate::requests;
 
-/// Queue of agent responses that need to be sent to the client
+/// Queue of agent responses that need to be sent to the client, used in offline
+/// mode
 pub static RESPONSES: Lazy<ConcurrentQueue<CommandList>> = Lazy::new(ConcurrentQueue::unbounded);
 
-// This feels safe-ish, should be able to ignore everything after an agent is
-// active?
+// This feels safe-ish?
 static AGENT_RUNNING: AtomicBool = AtomicBool::new(false);
 
-pub fn handle_request(database: impl Database + 'static, request: &GameRequest) -> Result<()> {
+pub fn handle_request(
+    database: impl Database + 'static,
+    request: &GameRequest,
+    // callback: impl Fn(CommandList) -> Result<()> + Send + 'static,
+) -> Result<()> {
     let game_id = match request.game_id.map(adapters::game_id) {
         None => return Ok(()),
         Some(game_id) => game_id,
@@ -52,7 +56,10 @@ pub fn handle_request(database: impl Database + 'static, request: &GameRequest) 
 
     if active_agent(&game).is_some() && !AGENT_RUNNING.swap(true, Ordering::Relaxed) {
         thread::spawn(move || {
-            run_agent_loop(database, game_id, respond_to).expect("Error running agent");
+            run_agent_loop(database, game_id, respond_to, |response| {
+                RESPONSES.push(response).with_error(|| "Error pushing response")
+            })
+            .expect("Error running agent");
             AGENT_RUNNING.store(false, Ordering::Relaxed);
         });
     }
@@ -94,6 +101,7 @@ fn run_agent_loop(
     mut database: impl Database,
     game_id: GameId,
     respond_to: PlayerId,
+    callback: impl Fn(CommandList) -> Result<()>,
 ) -> Result<()> {
     loop {
         let game = database.game(game_id)?;
@@ -110,10 +118,12 @@ fn run_agent_loop(
 
             match response.opponent_response {
                 Some((oid, response)) if oid == respond_to => {
-                    RESPONSES.push(response)?;
+                    callback(response)?;
+                    //RESPONSES.push(response)?;
                 }
                 _ if game.player(side).id == respond_to => {
-                    RESPONSES.push(response.command_list)?;
+                    callback(response.command_list)?;
+                    //RESPONSES.push(response.command_list)?;
                 }
                 _ => {
                     fail!("Unknown PlayerId {:?}", respond_to);

@@ -57,7 +57,7 @@ namespace Spelldawn.Services
 
     public void Initialize()
     {
-      Plugin.Initialize(PlayerPrefs.GetInt(Preferences.InMemory) > 0);
+      Plugin.Initialize();
     }
 
     public void Connect(GameIdentifier? gameIdentifier, bool offlineMode)

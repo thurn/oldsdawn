@@ -14,8 +14,6 @@
 
 //! Top-level server request handling
 
-use std::sync::atomic::{AtomicBool, Ordering};
-
 use adapters::ServerCardId;
 use anyhow::{bail, ensure, Result};
 use dashmap::DashMap;
@@ -43,7 +41,6 @@ use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
 
 use crate::database::{Database, SledDatabase};
-use crate::in_memory_database::InMemoryDatabase;
 use crate::{agent_response, debug};
 
 /// Stores active channels for each user.
@@ -51,10 +48,6 @@ use crate::{agent_response, debug};
 /// TODO: How do you clean these up if a user disconnects?
 static CHANNELS: Lazy<DashMap<PlayerId, Sender<Result<CommandList, Status>>>> =
     Lazy::new(DashMap::new);
-
-/// Should requests be handled entirely in-memory, without ever writing to the
-/// database?
-pub static IN_MEMORY: AtomicBool = AtomicBool::new(false);
 
 pub type ResponseInterceptor = fn(&CommandList);
 
@@ -81,11 +74,8 @@ impl Spelldawn for GameService {
 
         let (tx, rx) = mpsc::channel(4);
 
-        let result = if in_memory() {
-            handle_connect(&mut InMemoryDatabase, player_id, game_id)
-        } else {
-            handle_connect(&mut SledDatabase { flush_on_write: false }, player_id, game_id)
-        };
+        let result =
+            handle_connect(&mut SledDatabase { flush_on_write: false }, player_id, game_id);
         match result {
             Ok(commands) => {
                 let names = commands.commands.iter().map(command_name).collect::<Vec<_>>();
@@ -110,11 +100,8 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        let response = if in_memory() {
-            handle_request(&mut InMemoryDatabase, request.get_ref())
-        } else {
-            handle_request(&mut SledDatabase { flush_on_write: false }, request.get_ref())
-        };
+        let response =
+            handle_request(&mut SledDatabase { flush_on_write: false }, request.get_ref());
         match response {
             Ok(response) => {
                 if let Some(interceptor) = self.response_interceptor {
@@ -122,17 +109,10 @@ impl Spelldawn for GameService {
                 }
 
                 send_player_response(response.opponent_response).await;
-                if in_memory() {
-                    agent_response::deprecated_check_for_agent_response(
-                        InMemoryDatabase,
-                        request.get_ref(),
-                    )
-                } else {
-                    agent_response::deprecated_check_for_agent_response(
-                        SledDatabase { flush_on_write: false },
-                        request.get_ref(),
-                    )
-                }
+                agent_response::deprecated_check_for_agent_response(
+                    SledDatabase { flush_on_write: false },
+                    request.get_ref(),
+                )
                 .expect("TODO make this a server error");
                 Ok(Response::new(response.command_list))
             }
@@ -148,28 +128,15 @@ impl Spelldawn for GameService {
 pub fn connect(message: ConnectRequest) -> Result<CommandList> {
     let game_id = message.game_id.map(adapters::game_id);
     let player_id = adapters::player_id(message.player_id.with_error(|| "PlayerId is required")?);
-    if in_memory() {
-        handle_connect(&mut InMemoryDatabase, player_id, game_id)
-    } else {
-        handle_connect(&mut SledDatabase { flush_on_write: true }, player_id, game_id)
-    }
+    handle_connect(&mut SledDatabase { flush_on_write: true }, player_id, game_id)
 }
 
 /// Helper to perform an action from the unity plugin
 pub fn perform_action(request: GameRequest) -> Result<CommandList> {
-    let result = if in_memory() {
-        let mut db = InMemoryDatabase;
-        let response = handle_request(&mut db, &request)?;
-        agent_response::handle_request(db, &request)?;
-        response
-    } else {
-        let mut db = SledDatabase { flush_on_write: true };
-        let response = handle_request(&mut db, &request)?;
-        agent_response::handle_request(db, &request)?;
-        response
-    };
-
-    Ok(result.command_list)
+    let mut db = SledDatabase { flush_on_write: true };
+    let response = handle_request(&mut db, &request)?;
+    agent_response::handle_request(db, &request)?;
+    Ok(response.command_list)
 }
 
 /// A response to a given [GameRequest].
@@ -356,7 +323,7 @@ pub fn handle_custom_action(
     game_id: Option<GameId>,
     function: impl Fn(&mut GameState, Side) -> Result<()>,
 ) -> Result<GameResponse> {
-    // TODO: Use transactions here
+    // TODO: Use transactions?
     let mut game = find_game(database, game_id)?;
     let user_side = user_side(player_id, &game)?;
     function(&mut game, user_side)?;
@@ -485,8 +452,4 @@ fn to_server_room_id(room_id: Option<RoomIdentifier>) -> Option<RoomId> {
         Some(RoomIdentifier::RoomD) => Some(RoomId::RoomD),
         Some(RoomIdentifier::RoomE) => Some(RoomId::RoomE),
     }
-}
-
-fn in_memory() -> bool {
-    IN_MEMORY.load(Ordering::Relaxed)
 }
