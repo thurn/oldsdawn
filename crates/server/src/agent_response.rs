@@ -15,7 +15,6 @@
 //! Functions  for providing AI responses to the user
 
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::thread;
 
 use adapters;
 use anyhow::Result;
@@ -29,22 +28,30 @@ use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
 use rules::flags;
-use tracing::warn;
 
 use crate::database::Database;
 use crate::requests;
+
+// This feels safe-ish?
+static AGENT_RUNNING: AtomicBool = AtomicBool::new(false);
 
 /// Queue of agent responses that need to be sent to the client, used in offline
 /// mode
 pub static RESPONSES: Lazy<ConcurrentQueue<CommandList>> = Lazy::new(ConcurrentQueue::unbounded);
 
-// This feels safe-ish?
-static AGENT_RUNNING: AtomicBool = AtomicBool::new(false);
+/// What to do with responses produced by the agent.
+pub enum HandleRequest {
+    /// Send each response to the the player who initiated the `GameRequest`.
+    SendToPlayer,
+
+    /// Store each response in the [RESPONSES] queue for use by the plugin.
+    PushQueue,
+}
 
 pub fn handle_request(
     database: impl Database + 'static,
     request: &GameRequest,
-    // callback: impl Fn(CommandList) -> Result<()> + Send + 'static,
+    handle_request: HandleRequest,
 ) -> Result<()> {
     let game_id = match request.game_id.map(adapters::game_id) {
         None => return Ok(()),
@@ -55,15 +62,13 @@ pub fn handle_request(
     let game = database.game(game_id)?;
 
     if active_agent(&game).is_some() && !AGENT_RUNNING.swap(true, Ordering::Relaxed) {
-        thread::spawn(move || {
-            run_agent_loop(database, game_id, respond_to, |response| {
-                RESPONSES.push(response).with_error(|| "Error pushing response")
-            })
-            .expect("Error running agent");
+        tokio::spawn(async move {
+            run_agent_loop(database, game_id, respond_to, handle_request)
+                .await
+                .expect("Error running agent");
             AGENT_RUNNING.store(false, Ordering::Relaxed);
         });
     }
-
     Ok(())
 }
 
@@ -80,28 +85,11 @@ fn active_agent(game: &GameState) -> Option<(Side, AgentData)> {
     None
 }
 
-/// Checks if an AI response is required for the game described by `request`, if
-/// any, and applies AI actions if needed.
-pub fn deprecated_check_for_agent_response(
-    database: impl Database + 'static,
-    request: &GameRequest,
-) -> Result<()> {
-    if let Some(game_id) = request.game_id.map(adapters::game_id) {
-        if database.has_game(game_id)? {
-            tokio::spawn(async move {
-                run_deprecated_agent_loop(database, game_id).await.expect("Agent error");
-            });
-        }
-    }
-
-    Ok(())
-}
-
-fn run_agent_loop(
+async fn run_agent_loop(
     mut database: impl Database,
     game_id: GameId,
     respond_to: PlayerId,
-    callback: impl Fn(CommandList) -> Result<()>,
+    handle_request: HandleRequest,
 ) -> Result<()> {
     loop {
         let game = database.game(game_id)?;
@@ -116,57 +104,23 @@ fn run_agent_loop(
                 action,
             )?;
 
-            match response.opponent_response {
-                Some((oid, response)) if oid == respond_to => {
-                    callback(response)?;
-                    //RESPONSES.push(response)?;
-                }
-                _ if game.player(side).id == respond_to => {
-                    callback(response.command_list)?;
-                    //RESPONSES.push(response.command_list)?;
-                }
+            let commands = match response.opponent_response {
+                Some((oid, response)) if oid == respond_to => response,
+                _ if game.player(side).id == respond_to => response.command_list,
                 _ => {
                     fail!("Unknown PlayerId {:?}", respond_to);
                 }
-            }
-        } else {
-            return Ok(());
-        }
-    }
-}
+            };
 
-async fn run_deprecated_agent_loop(mut database: impl Database, game_id: GameId) -> Result<()> {
-    loop {
-        let mut took_action = false;
-        for side in Side::into_enum_iter() {
-            let game = database.game(game_id)?;
-            if let Some(agent_data) = game.player(side).agent {
-                if flags::can_take_action(&game, side) {
-                    took_action = true;
-                    let agent_name = agent_data.name;
-                    let agent = ai::core::get_agent(agent_data.name);
-                    let state_predictor =
-                        ai::core::get_game_state_predictor(agent_data.state_predictor);
-                    warn!(?side, ?agent_name, "running agent");
-                    let action = agent(state_predictor(&game, side), side)?;
-                    warn!(?side, ?action, "applying agent action");
-                    let response = requests::handle_action(
-                        &mut database,
-                        game.player(side).id,
-                        Some(game_id),
-                        action,
-                    )?;
-                    requests::send_player_response(response.opponent_response).await;
-                    requests::send_player_response(Some((
-                        game.player(side).id,
-                        response.command_list,
-                    )))
-                    .await
+            match handle_request {
+                HandleRequest::SendToPlayer => {
+                    requests::send_player_response(Some((respond_to, commands))).await;
+                }
+                HandleRequest::PushQueue => {
+                    RESPONSES.push(commands)?;
                 }
             }
-        }
-
-        if !took_action {
+        } else {
             return Ok(());
         }
     }

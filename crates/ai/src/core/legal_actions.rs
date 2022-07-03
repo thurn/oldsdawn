@@ -17,8 +17,8 @@
 use std::iter;
 
 use anyhow::Result;
-use data::game::{GamePhase, GameState};
-use data::game_actions::{CardTarget, CardTargetKind, UserAction};
+use data::game::{GamePhase, GameState, MulliganDecision};
+use data::game_actions::{CardTarget, CardTargetKind, PromptAction, UserAction};
 use data::primitives::{CardId, RoomId, Side};
 use enum_iterator::IntoEnumIterator;
 use rules::{flags, queries, raid};
@@ -31,6 +31,25 @@ pub fn evaluate<'a>(
 ) -> Result<Box<dyn Iterator<Item = UserAction> + 'a>> {
     if let GamePhase::GameOver(_) = &game.data.phase {
         return Ok(Box::new(iter::empty()));
+    }
+
+    match &game.data.phase {
+        GamePhase::ResolveMulligans(data) => {
+            return Ok(if data.decision(side).is_some() {
+                Box::new(iter::empty())
+            } else {
+                Box::new(
+                    iter::once(UserAction::PromptAction(PromptAction::MulliganDecision(
+                        MulliganDecision::Keep,
+                    )))
+                    .chain(iter::once(UserAction::PromptAction(
+                        PromptAction::MulliganDecision(MulliganDecision::Mulligan),
+                    ))),
+                )
+            });
+        }
+        GamePhase::Play => {}
+        GamePhase::GameOver(_) => return Ok(Box::new(iter::empty())),
     }
 
     if let Some(prompt) = &game.player(side).prompt {

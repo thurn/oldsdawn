@@ -145,7 +145,7 @@ pub fn handle_debug_action(
             })]))
         }
         DebugAction::SetAgent(side, state_predictor, agent) => {
-            requests::handle_custom_action(database, player_id, game_id, |game, _user_side| {
+            requests::handle_custom_action(database, player_id, game_id, |game, _| {
                 game.player_mut(side).agent = Some(AgentData { name: agent, state_predictor });
                 Ok(())
             })

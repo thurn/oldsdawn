@@ -40,6 +40,7 @@ use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
 
+use crate::agent_response::HandleRequest;
 use crate::database::{Database, SledDatabase};
 use crate::{agent_response, debug};
 
@@ -100,8 +101,8 @@ impl Spelldawn for GameService {
         &self,
         request: Request<GameRequest>,
     ) -> Result<Response<CommandList>, Status> {
-        let response =
-            handle_request(&mut SledDatabase { flush_on_write: false }, request.get_ref());
+        let mut db = SledDatabase { flush_on_write: false };
+        let response = handle_request(&mut db, request.get_ref());
         match response {
             Ok(response) => {
                 if let Some(interceptor) = self.response_interceptor {
@@ -109,11 +110,14 @@ impl Spelldawn for GameService {
                 }
 
                 send_player_response(response.opponent_response).await;
-                agent_response::deprecated_check_for_agent_response(
-                    SledDatabase { flush_on_write: false },
+                let result = agent_response::handle_request(
+                    db,
                     request.get_ref(),
-                )
-                .expect("TODO make this a server error");
+                    HandleRequest::SendToPlayer,
+                );
+                if let Err(error) = result {
+                    return Err(Status::internal(format!("Agent Error: {:#}", error)));
+                }
                 Ok(Response::new(response.command_list))
             }
             Err(error) => {
@@ -135,7 +139,7 @@ pub fn connect(message: ConnectRequest) -> Result<CommandList> {
 pub fn perform_action(request: GameRequest) -> Result<CommandList> {
     let mut db = SledDatabase { flush_on_write: true };
     let response = handle_request(&mut db, &request)?;
-    agent_response::handle_request(db, &request)?;
+    agent_response::handle_request(db, &request, HandleRequest::PushQueue)?;
     Ok(response.command_list)
 }
 

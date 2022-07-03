@@ -18,11 +18,14 @@ use std::fmt::Display;
 
 use anyhow::{Context, Error};
 
+/// Should the system panic when an error is encountered?
+pub const ERROR_PANIC: bool = false;
+
 /// Wrapper around [anyhow::ensure] which can be configured to panic on error.
 #[macro_export]
 macro_rules! verify {
     ($($tts:tt)*) => {
-        if cfg!(errorpanic) {
+        if data::with_error::ERROR_PANIC {
             assert!($($tts)*);
         } else {
             use anyhow::ensure;
@@ -35,7 +38,7 @@ macro_rules! verify {
 #[macro_export]
 macro_rules! fail {
     ($($tts:tt)*) => {
-        if cfg!(errorpanic) {
+        if data::with_error::ERROR_PANIC {
             panic!($($tts)*);
         } else {
             use anyhow::bail;
@@ -61,7 +64,7 @@ impl<T> WithError<T, Infallible> for Option<T> {
         F: FnOnce() -> C,
     {
         #[allow(unreachable_code)]
-        if cfg!(errorpanic) {
+        if ERROR_PANIC {
             self.with_context(|| {
                 panic!("Error: {}", context());
                 ""
@@ -82,7 +85,7 @@ where
         F: FnOnce() -> C,
     {
         #[allow(unreachable_code)]
-        if cfg!(errorpanic) {
+        if ERROR_PANIC {
             self.with_context(|| {
                 panic!("Error: {}", context());
                 ""

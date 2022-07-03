@@ -1,4 +1,4 @@
-code-review: git-status check-format build clippy test check-docs git-status screenshot-tests
+code-review: git-status disallowed check-format build clippy test check-docs git-status screenshot-tests
 
 unity := if os() == "macos" {
     "/Applications/Unity/Hub/Editor/2021.3.3f1/Unity.app/Contents/MacOS/Unity"
@@ -25,6 +25,9 @@ run:
 
 test:
     cargo test
+
+disallowed:
+    ! grep -r --include '*.rs' 'ERROR_PANIC: bool = true'
 
 screenshots-message:
     @ echo "\nRunning Screenshot Tests"
