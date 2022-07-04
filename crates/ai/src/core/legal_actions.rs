@@ -17,9 +17,10 @@
 use std::iter;
 
 use anyhow::Result;
+use data::card_definition::{AbilityType, TargetRequirement};
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, CardTargetKind, PromptAction, UserAction};
-use data::primitives::{CardId, RoomId, Side};
+use data::primitives::{AbilityId, CardId, RoomId, Side};
 use enum_iterator::IntoEnumIterator;
 use rules::{flags, queries, raid};
 
@@ -114,19 +115,49 @@ fn legal_card_actions(
         None
     };
 
-    let activate_abilities =
-        rules::card_definition(game, card_id).ability_ids(card_id).filter_map(move |ability_id| {
-            if flags::can_take_activate_ability_action(game, side, ability_id, CardTarget::None) {
-                // TODO: Handle targeted abilities
-                Some(UserAction::ActivateAbility(ability_id, CardTarget::None))
-            } else {
-                None
-            }
-        });
+    let activated = rules::card_definition(game, card_id)
+        .ability_ids(card_id)
+        .flat_map(move |ability_id| legal_ability_actions(game, side, ability_id));
 
-    play_in_room
-        .into_iter()
-        .flatten()
-        .chain(play_card.into_iter().flatten())
-        .chain(activate_abilities.into_iter())
+    play_in_room.into_iter().flatten().chain(play_card.into_iter().flatten()).chain(activated)
+}
+
+/// Builds an iterator over all possible 'activate ability' actions for the
+/// provided card.
+fn legal_ability_actions(
+    game: &GameState,
+    side: Side,
+    ability_id: AbilityId,
+) -> impl Iterator<Item = UserAction> + '_ {
+    let ability = rules::ability_definition(game, ability_id);
+    let mut activate = None;
+    let mut target_rooms = None;
+
+    if let AbilityType::Activated(_, targeting) = &ability.ability_type {
+        match targeting {
+            TargetRequirement::None => {
+                if flags::can_take_activate_ability_action(game, side, ability_id, CardTarget::None)
+                {
+                    activate =
+                        Some(iter::once(UserAction::ActivateAbility(ability_id, CardTarget::None)))
+                }
+            }
+            TargetRequirement::TargetRoom(_) => {
+                target_rooms = Some(RoomId::into_enum_iter().filter_map(move |room_id| {
+                    if flags::can_take_activate_ability_action(
+                        game,
+                        side,
+                        ability_id,
+                        CardTarget::Room(room_id),
+                    ) {
+                        Some(UserAction::ActivateAbility(ability_id, CardTarget::Room(room_id)))
+                    } else {
+                        None
+                    }
+                }))
+            }
+        }
+    }
+
+    activate.into_iter().flatten().chain(target_rooms.into_iter().flatten())
 }

@@ -15,7 +15,7 @@
 //! Core functions for querying the current state of a game
 
 use anyhow::Result;
-use data::card_definition::{AbilityType, AttackBoost, CardStats};
+use data::card_definition::{AbilityType, AttackBoost, CardStats, TargetRequirement};
 use data::card_state::{CardPosition, CardState};
 use data::delegates::{
     AbilityManaCostQuery, ActionCostQuery, AttackBoostQuery, AttackValueQuery, BoostCountQuery,
@@ -180,7 +180,15 @@ pub fn sanctum_access_count(game: &GameState) -> Result<u32> {
 
 /// Looks up what type of target a given card requires
 pub fn card_target_kind(game: &GameState, card_id: CardId) -> CardTargetKind {
-    match crate::get(game.card(card_id).name).card_type {
+    let definition = crate::card_definition(game, card_id);
+    if let Some(targeting) = &definition.config.custom_targeting {
+        return match targeting {
+            TargetRequirement::None => CardTargetKind::None,
+            TargetRequirement::TargetRoom(_) => CardTargetKind::Room,
+        };
+    }
+
+    match definition.card_type {
         CardType::Minion | CardType::Project | CardType::Scheme => CardTargetKind::Room,
         _ => CardTargetKind::None,
     }
