@@ -15,6 +15,7 @@
 use std::time::Duration;
 
 use ai::agents::{alpha_beta, monte_carlo};
+use ai::core::legal_actions;
 use ai::tournament::run_tournament;
 use ai::tournament::run_tournament::RunGames;
 use cards::{decklists, initialize};
@@ -23,15 +24,32 @@ use criterion::{criterion_group, criterion_main, BenchmarkGroup, Criterion};
 use data::agent_definition::AgentName;
 use data::primitives::Side;
 
-criterion_group!(benches, random_actions, uct_search, alpha_beta_search);
+criterion_group!(benches, legal_actions, random_actions, uct_search, alpha_beta_search);
 criterion_main!(benches);
 
 fn configure(group: &mut BenchmarkGroup<WallTime>) {
+    initialize::run();
     group.confidence_level(0.99).noise_threshold(0.025).measurement_time(Duration::from_secs(60));
 }
 
+pub fn legal_actions(c: &mut Criterion) {
+    let mut group = c.benchmark_group("legal_actions");
+    configure(&mut group);
+    let game = decklists::canonical_game().unwrap();
+    group.bench_function("legal_actions", |b| {
+        b.iter(|| {
+            let _actions =
+                legal_actions::evaluate(&game, Side::Overlord).unwrap().collect::<Vec<_>>();
+        })
+    });
+    group.finish();
+}
+
 pub fn random_actions(c: &mut Criterion) {
-    initialize::run();
+    // NOTE: Keep in mind that if the definition of legal_actions() changes, you
+    // can't meaningfully compare benchmark results before and after. The games will
+    // take a completely different path, meaning the games might end more quickly
+    // even if all the code is slower.
     let mut group = c.benchmark_group("random_actions");
     configure(&mut group);
     group.bench_function("random_actions", |b| {
@@ -51,7 +69,6 @@ pub fn random_actions(c: &mut Criterion) {
 }
 
 pub fn uct_search(c: &mut Criterion) {
-    initialize::run();
     let mut group = c.benchmark_group("uct_search");
     configure(&mut group);
     let game = decklists::canonical_game().unwrap();
@@ -61,7 +78,6 @@ pub fn uct_search(c: &mut Criterion) {
 }
 
 pub fn alpha_beta_search(c: &mut Criterion) {
-    initialize::run();
     let mut group = c.benchmark_group("alpha_beta_search");
     configure(&mut group);
     let game = decklists::canonical_game().unwrap();
