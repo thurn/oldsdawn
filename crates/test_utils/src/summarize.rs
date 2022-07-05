@@ -25,7 +25,7 @@ use protos::spelldawn::play_effect_position::EffectPosition;
 use protos::spelldawn::{
     node_type, ActionTrackerView, AnchorCorner, ArrowTargetRoom, AudioClipAddress, CardAnchor,
     CardAnchorNode, CardCreationAnimation, CardIcon, CardIcons, CardIdentifier, CardTargeting,
-    CardTitle, CardView, CommandList, ConnectToGameCommand, CreateTokenCardCommand, DelayCommand,
+    CardTitle, CardView, CommandList, CreateTokenCardCommand, DelayCommand,
     DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand,
     GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameObjectPositions,
     GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView,
@@ -258,7 +258,6 @@ impl Summarize for Command {
         match self {
             Command::Debug(_) => summary.primitive("Debug!"),
             Command::Delay(v) => summary.child_node("Delay", v),
-            Command::ConnectToGame(v) => summary.child_node("ConnectToGame", v),
             Command::UpdatePanels(v) => summary.child_node("UpdatePanels", v),
             Command::TogglePanel(v) => summary.child_node("TogglePanel", v),
             Command::UpdateGameView(v) => summary.child_node("UpdateGameView", v),
@@ -286,12 +285,6 @@ impl Summarize for RunInParallelCommand {
 impl Summarize for DelayCommand {
     fn summarize(self, summary: &mut Summary) {
         summary.value(self.duration)
-    }
-}
-
-impl Summarize for ConnectToGameCommand {
-    fn summarize(self, summary: &mut Summary) {
-        summary.child_node("scene_name", self.scene_name);
     }
 }
 

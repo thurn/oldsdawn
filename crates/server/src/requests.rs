@@ -33,8 +33,8 @@ use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
-    card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand, GameCommand,
-    GameRequest, NewGameAction, PlayerIdentifier, StandardAction,
+    card_target, CardTarget, CommandList, ConnectRequest, GameCommand, GameRequest,
+    LoadSceneCommand, NewGameAction, PlayerIdentifier, SceneLoadMode, StandardAction,
 };
 use rules::{actions, dispatch, mutations};
 use serde_json::de;
@@ -304,8 +304,9 @@ fn handle_new_game(
         database.write_player(&opponent)?;
     }
 
-    let commands = command_list(vec![Command::ConnectToGame(ConnectToGameCommand {
+    let commands = command_list(vec![Command::LoadScene(LoadSceneCommand {
         scene_name: "Labyrinth".to_string(),
+        mode: SceneLoadMode::Single as i32,
     })]);
 
     Ok(GameResponse {
@@ -449,7 +450,6 @@ pub fn command_name(command: &GameCommand) -> &'static str {
     command.command.as_ref().map_or("None", |c| match c {
         Command::Debug(_) => "Debug",
         Command::Delay(_) => "Delay",
-        Command::ConnectToGame(_) => "ConnectToGame",
         Command::UpdatePanels(_) => "UpdatePanels",
         Command::TogglePanel(_) => "TogglePanel",
         Command::UpdateGameView(_) => "UpdateGameView",

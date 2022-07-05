@@ -207,7 +207,7 @@ fn initiate_game(session: &mut TestSession) {
 
     assert!(matches!(
         action2.command_list.commands[0].command.as_ref().unwrap(),
-        Command::ConnectToGame(_)
+        Command::LoadScene(_)
     ));
 
     session.connect(session.user_id()).unwrap();

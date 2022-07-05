@@ -916,13 +916,6 @@ pub struct DelayCommand {
     #[prost(message, optional, tag = "1")]
     pub duration: ::core::option::Option<TimeValue>,
 }
-/// Instructs the client to load a given scene and then connect to the indicated
-/// game.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ConnectToGameCommand {
-    #[prost(string, tag = "1")]
-    pub scene_name: ::prost::alloc::string::String,
-}
 /// Identifies an InterfacePanel.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PanelAddress {
@@ -1194,7 +1187,7 @@ pub mod client_debug_command {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
+        tags = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1204,37 +1197,35 @@ pub mod game_command {
     pub enum Command {
         #[prost(message, tag = "1")]
         Debug(super::ClientDebugCommand),
-        #[prost(message, tag = "3")]
+        #[prost(message, tag = "2")]
         Delay(super::DelayCommand),
-        #[prost(message, tag = "4")]
-        ConnectToGame(super::ConnectToGameCommand),
-        #[prost(message, tag = "5")]
+        #[prost(message, tag = "3")]
         UpdatePanels(super::UpdatePanelsCommand),
-        #[prost(message, tag = "6")]
+        #[prost(message, tag = "4")]
         TogglePanel(super::TogglePanelCommand),
-        #[prost(message, tag = "7")]
+        #[prost(message, tag = "5")]
         UpdateGameView(super::UpdateGameViewCommand),
-        #[prost(message, tag = "8")]
+        #[prost(message, tag = "6")]
         VisitRoom(super::VisitRoomCommand),
-        #[prost(message, tag = "13")]
+        #[prost(message, tag = "7")]
         PlaySound(super::PlaySoundCommand),
-        #[prost(message, tag = "14")]
+        #[prost(message, tag = "8")]
         SetMusic(super::SetMusicCommand),
-        #[prost(message, tag = "15")]
+        #[prost(message, tag = "9")]
         FireProjectile(super::FireProjectileCommand),
-        #[prost(message, tag = "16")]
+        #[prost(message, tag = "10")]
         PlayEffect(super::PlayEffectCommand),
-        #[prost(message, tag = "17")]
+        #[prost(message, tag = "11")]
         DisplayGameMessage(super::DisplayGameMessageCommand),
-        #[prost(message, tag = "18")]
+        #[prost(message, tag = "12")]
         SetGameObjectsEnabled(super::SetGameObjectsEnabledCommand),
-        #[prost(message, tag = "19")]
+        #[prost(message, tag = "13")]
         DisplayRewards(super::DisplayRewardsCommand),
-        #[prost(message, tag = "20")]
+        #[prost(message, tag = "14")]
         LoadScene(super::LoadSceneCommand),
-        #[prost(message, tag = "21")]
+        #[prost(message, tag = "15")]
         MoveGameObjects(super::MoveGameObjectsCommand),
-        #[prost(message, tag = "22")]
+        #[prost(message, tag = "16")]
         CreateTokenCard(super::CreateTokenCardCommand),
     }
 }

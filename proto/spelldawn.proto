@@ -924,12 +924,6 @@ message DelayCommand {
     TimeValue duration = 1;
 }
 
-// Instructs the client to load a given scene and then connect to the indicated
-// game.
-message ConnectToGameCommand {
-    string scene_name = 1;
-}
-
 // Panels that are directly fetched by client code.
 enum KnownPanelAddress {
     KNOWN_PANEL_ADDRESS_UNSPECIFIED = 0;
@@ -1214,22 +1208,21 @@ message ClientDebugCommand {
 message GameCommand {
     oneof command {
         ClientDebugCommand debug = 1;
-        DelayCommand delay = 3;
-        ConnectToGameCommand connect_to_game = 4;
-        UpdatePanelsCommand update_panels = 5;
-        TogglePanelCommand toggle_panel = 6;
-        UpdateGameViewCommand update_game_view = 7;
-        VisitRoomCommand visit_room = 8;
-        PlaySoundCommand play_sound = 13;
-        SetMusicCommand set_music = 14;
-        FireProjectileCommand fire_projectile = 15;
-        PlayEffectCommand play_effect = 16;
-        DisplayGameMessageCommand display_game_message = 17;
-        SetGameObjectsEnabledCommand set_game_objects_enabled = 18;
-        DisplayRewardsCommand display_rewards = 19;
-        LoadSceneCommand load_scene = 20;
-        MoveGameObjectsCommand move_game_objects = 21;
-        CreateTokenCardCommand create_token_card = 22;
+        DelayCommand delay = 2;
+        UpdatePanelsCommand update_panels = 3;
+        TogglePanelCommand toggle_panel = 4;
+        UpdateGameViewCommand update_game_view = 5;
+        VisitRoomCommand visit_room = 6;
+        PlaySoundCommand play_sound = 7;
+        SetMusicCommand set_music = 8;
+        FireProjectileCommand fire_projectile = 9;
+        PlayEffectCommand play_effect = 10;
+        DisplayGameMessageCommand display_game_message = 11;
+        SetGameObjectsEnabledCommand set_game_objects_enabled = 12;
+        DisplayRewardsCommand display_rewards = 13;
+        LoadSceneCommand load_scene = 14;
+        MoveGameObjectsCommand move_game_objects = 15;
+        CreateTokenCardCommand create_token_card = 16;
     }
 }
 

@@ -75,9 +75,6 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.Debug:
             HandleClientDebugCommand(command.Debug);
             break;
-          case GameCommand.CommandOneofCase.ConnectToGame:
-            yield return ConnectToGame(command.ConnectToGame);
-            break;
           case GameCommand.CommandOneofCase.UpdatePanels:
             _registry.DocumentService.HandleUpdatePanels(command.UpdatePanels);
             break;
@@ -133,11 +130,6 @@ namespace Spelldawn.Services
       }
 
       onComplete?.Invoke();
-    }
-
-    IEnumerator ConnectToGame(ConnectToGameCommand command)
-    {
-      yield return SceneManager.LoadSceneAsync(command.SceneName, LoadSceneMode.Single);
     }
 
     IEnumerator HandlePlayEffect(PlayEffectCommand command)
