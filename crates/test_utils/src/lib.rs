@@ -34,8 +34,10 @@ use data::deck::Deck;
 use data::game::{
     GameConfiguration, GamePhase, GameState, InternalRaidPhase, RaidData, RaidPhase, TurnData,
 };
+use data::player_data::{CurrentGame, PlayerData};
+use data::player_name::PlayerId;
 use data::primitives::{
-    ActionCount, Faction, GameId, ManaValue, PlayerId, PointsValue, RaidId, RoomId, Side,
+    ActionCount, Faction, GameId, ManaValue, PointsValue, RaidId, RoomId, Side,
 };
 use maplit::hashmap;
 use prost::Message;
@@ -75,55 +77,70 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
         Side::Champion => (opponent_id, user_id),
     };
 
+    let overlord_deck = Deck {
+        owner_id: overlord_user,
+        side: Side::Overlord,
+        identity: CardName::TestOverlordIdentity,
+        cards: hashmap! {CardName::TestOverlordSpell => 45},
+    };
+    let champion_deck = Deck {
+        owner_id: champion_user,
+        side: Side::Champion,
+        identity: CardName::TestChampionIdentity,
+        cards: hashmap! {CardName::TestChampionSpell => 45},
+    };
+
     let mut game = GameState::new(
         game_id,
-        Deck {
-            owner_id: overlord_user,
-            identity: CardName::TestOverlordIdentity,
-            cards: hashmap! {CardName::TestOverlordSpell => 45},
-        },
-        Deck {
-            owner_id: champion_user,
-            identity: CardName::TestChampionIdentity,
-            cards: hashmap! {CardName::TestChampionSpell => 45},
-        },
+        overlord_deck,
+        champion_deck,
         GameConfiguration { deterministic: true, ..GameConfiguration::default() },
     );
     dispatch::populate_delegate_cache(&mut game);
 
-    if !args.resolve_mulligans {
-        let turn_side = args.turn.unwrap_or(user_side);
-        game.data.phase = GamePhase::Play;
-        game.data.turn = TurnData { side: turn_side, turn_number: 0 };
-        mana::set(&mut game, user_side, args.mana);
-        game.player_mut(user_side).score = args.score;
-        mana::set(&mut game, user_side.opponent(), args.opponent_mana);
-        game.player_mut(user_side.opponent()).score = args.opponent_score;
-        game.player_mut(turn_side).actions = args.actions;
+    let turn_side = args.turn.unwrap_or(user_side);
+    game.data.phase = GamePhase::Play;
+    game.data.turn = TurnData { side: turn_side, turn_number: 0 };
+    mana::set(&mut game, user_side, args.mana);
+    game.player_mut(user_side).score = args.score;
+    mana::set(&mut game, user_side.opponent(), args.opponent_mana);
+    game.player_mut(user_side.opponent()).score = args.opponent_score;
+    game.player_mut(turn_side).actions = args.actions;
 
-        set_deck_top(&mut game, user_side, args.deck_top);
-        set_deck_top(&mut game, user_side.opponent(), args.opponent_deck_top);
-        set_discard_pile(&mut game, user_side, args.discard);
-        set_discard_pile(&mut game, user_side.opponent(), args.opponent_discard);
+    set_deck_top(&mut game, user_side, args.deck_top);
+    set_deck_top(&mut game, user_side.opponent(), args.opponent_deck_top);
+    set_discard_pile(&mut game, user_side, args.discard);
+    set_discard_pile(&mut game, user_side.opponent(), args.opponent_discard);
 
-        if args.add_raid {
-            game.data.raid = Some(RaidData {
-                raid_id: RAID_ID,
-                target: ROOM_ID,
-                internal_phase: InternalRaidPhase::Begin,
-                encounter: None,
-                room_active: false,
-                accessed: vec![],
-                jump_request: None,
-            })
-        }
+    if args.add_raid {
+        game.data.raid = Some(RaidData {
+            raid_id: RAID_ID,
+            target: ROOM_ID,
+            internal_phase: InternalRaidPhase::Begin,
+            encounter: None,
+            room_active: false,
+            accessed: vec![],
+            jump_request: None,
+        })
     }
 
     let database = FakeDatabase {
         generated_game_id: None,
         game: Some(game),
-        overlord_deck: None,
-        champion_deck: None,
+        players: hashmap! {
+            overlord_user => PlayerData {
+                id: overlord_user,
+                current_game: Some(CurrentGame::Playing(game_id)),
+                decks: vec![],
+                collection: hashmap! {}
+            },
+            champion_user => PlayerData {
+                id: champion_user,
+                current_game: Some(CurrentGame::Playing(game_id)),
+                decks: vec![],
+                collection: hashmap! {}
+            }
+        },
     };
 
     let mut session = TestSession::new(database, user_id, opponent_id);
@@ -141,15 +158,15 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
     }
 
     if args.connect {
-        session.connect(user_id, Some(game_id)).expect("Connection failed");
-        session.connect(opponent_id, Some(game_id)).expect("Connection failed");
+        session.connect(user_id).expect("Connection failed");
+        session.connect(opponent_id).expect("Connection failed");
     }
     session
 }
 
 pub fn generate_ids() -> (GameId, PlayerId, PlayerId) {
     let next_id = NEXT_ID.fetch_add(2, Ordering::SeqCst);
-    (GameId::new(next_id), PlayerId::new(next_id), PlayerId::new(next_id + 1))
+    (GameId::new(next_id), PlayerId::Database(next_id), PlayerId::Database(next_id + 1))
 }
 
 /// Arguments to [new_game]
@@ -192,12 +209,6 @@ pub struct Args {
     /// Set up an active raid within the created game using [ROOM_ID] as the
     /// target and [RAID_ID] as the ID.    
     pub add_raid: bool,
-    /// If true, will create the game in the "resolve mulligans" phase instead
-    /// of automatically advancing to the user's first turn. Defaults to
-    /// false.
-    ///
-    /// If specified all game state configuration options are silently ignored.
-    pub resolve_mulligans: bool,
     /// If false, will not attempt to automatically connect to this game.
     /// Defaults to true.
     pub connect: bool,
@@ -219,7 +230,6 @@ impl Default for Args {
             discard: None,
             opponent_discard: None,
             add_raid: false,
-            resolve_mulligans: false,
             connect: true,
         }
     }

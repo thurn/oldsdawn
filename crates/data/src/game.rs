@@ -30,9 +30,10 @@ use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState}
 use crate::deck::Deck;
 use crate::delegates::DelegateCache;
 use crate::game_actions::GamePrompt;
+use crate::player_name::PlayerId;
 use crate::primitives::{
-    AbilityId, ActionCount, CardId, GameId, HasAbilityId, ItemLocation, ManaValue, PlayerId,
-    PointsValue, RaidId, RoomId, RoomLocation, Side, TurnNumber,
+    AbilityId, ActionCount, CardId, GameId, HasAbilityId, ItemLocation, ManaValue, PointsValue,
+    RaidId, RoomId, RoomLocation, Side, TurnNumber,
 };
 use crate::updates::{GameUpdate, UpdateStep, UpdateTracker, Updates};
 use crate::with_error::WithError;
@@ -614,6 +615,8 @@ mod tests {
 
     use super::*;
     use crate::card_name::CardName;
+    use crate::player_name::NamedPlayer;
+
     #[test]
     fn insert_at_index() {
         let (abyssal, infernal, mortal) = (
@@ -665,12 +668,14 @@ mod tests {
         GameState::new(
             GameId::new(0),
             Deck {
-                owner_id: PlayerId::new(0),
+                side: Side::Overlord,
+                owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
                 identity: CardName::TestOverlordIdentity,
                 cards: overlord.into_iter().map(|name| (name, 1)).collect(),
             },
             Deck {
-                owner_id: PlayerId::new(0),
+                side: Side::Champion,
+                owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
                 identity: CardName::TestOverlordIdentity,
                 cards: champion.into_iter().map(|name| (name, 1)).collect(),
             },

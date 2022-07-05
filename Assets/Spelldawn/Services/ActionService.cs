@@ -48,11 +48,10 @@ namespace Spelldawn.Services
         }
       }));
 
-    readonly Queue<GameAction> _actionQueue = new();
-
     [SerializeField] Registry _registry = null!;
-    [SerializeField] bool _currentlyHandlingAction;
-
+    [SerializeField] bool _currentlyHandlingAction;    
+    readonly Queue<GameAction> _actionQueue = new();
+    PlayerIdentifier? _playerIdentifier;
     public bool OfflineMode { get; private set; }
 
     public void Initialize()
@@ -60,10 +59,11 @@ namespace Spelldawn.Services
       Plugin.Initialize();
     }
 
-    public void Connect(GameIdentifier? gameIdentifier, bool offlineMode)
+    public void Connect(PlayerIdentifier playerIdentifier, bool offlineMode)
     {
+      _playerIdentifier = playerIdentifier;
       OfflineMode = offlineMode;
-      ConnectToRulesEngine(gameIdentifier);
+      ConnectToRulesEngine();
     }
 
     public void HandleAction(GameAction action)
@@ -93,29 +93,22 @@ namespace Spelldawn.Services
       }
     }
     
-    async void ConnectToRulesEngine(GameIdentifier? gameId)
+    async void ConnectToRulesEngine()
     {
-      if (gameId == null)
-      {
-        Debug.Log("No active game");
-        return;
-      }
-
       var request = new ConnectRequest
       {
-        GameId = gameId,
-        PlayerId = _registry.GameService.PlayerId,
+        PlayerId = Errors.CheckNotNull(_playerIdentifier),
       };
 
       if (OfflineMode)
       {
-        Debug.Log($"Connecting to Offline Game {request.GameId.Value}");
+        Debug.Log($"Connecting to Offline Game");
         StartCoroutine(ConnectToOfflineGame(request));
       }
       else
       {
         // TODO: Android in particular seems to hang for multiple minutes when the server can't be reached?
-        Debug.Log($"Connecting to {ServerAddress} with game {request.GameId.Value}");
+        Debug.Log($"Connecting to {ServerAddress} with {request}");
         using var call = _client.Connect(request);
 
         while (await call.ResponseStream.MoveNext())
@@ -156,8 +149,7 @@ namespace Spelldawn.Services
       var request = new GameRequest
       {
         Action = action,
-        GameId = _registry.GameService.CurrentGameId,
-        PlayerId = _registry.GameService.PlayerId,
+        PlayerId = Errors.CheckNotNull(_playerIdentifier),
       };
 
       if (OfflineMode)

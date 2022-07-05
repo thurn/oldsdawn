@@ -119,9 +119,6 @@ namespace Spelldawn.Services
           case GameCommand.CommandOneofCase.LoadScene:
             yield return HandleLoadScene(command.LoadScene);
             break;
-          case GameCommand.CommandOneofCase.SetPlayerId:
-            _registry.GameService.PlayerId = command.SetPlayerId.Id;
-            break;
           case GameCommand.CommandOneofCase.MoveGameObjects:
             yield return _registry.ObjectPositionService.HandleMoveGameObjectsCommand(
               command.MoveGameObjects);
@@ -140,7 +137,6 @@ namespace Spelldawn.Services
 
     IEnumerator ConnectToGame(ConnectToGameCommand command)
     {
-      _registry.GameService.CurrentGameId = command.GameId;
       yield return SceneManager.LoadSceneAsync(command.SceneName, LoadSceneMode.Single);
     }
 
@@ -171,11 +167,6 @@ namespace Spelldawn.Services
 
     IEnumerator HandleUpdateGameView(GameView game, bool animate)
     {
-      if (game.GameId != null)
-      {
-        _registry.GameService.CurrentGameId = game.GameId;
-      }
-
       _registry.CardService.SetCardBacks(game.User?.PlayerInfo?.CardBack, game.Opponent?.PlayerInfo?.CardBack);
 
       if (game.User != null)

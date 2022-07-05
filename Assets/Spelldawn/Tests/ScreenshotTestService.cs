@@ -203,7 +203,6 @@ namespace Spelldawn.Tests
 
     void Quit(int code)
     {
-      Registry.GameService.CurrentGameId = null;
       Application.Quit(code);
     }
 

@@ -15,23 +15,23 @@
 use std::collections::HashMap;
 
 use adapters;
-use anyhow::{bail, Result};
+use anyhow::Result;
+use cards::decklists;
 use data::agent_definition::AgentData;
-use data::deck::Deck;
-use data::fail;
 use data::game::GameState;
 use data::game_actions::DebugAction;
-use data::primitives::{GameId, PlayerId, Side};
+use data::player_data::{CurrentGame, PlayerData};
+use data::player_name::{NamedPlayer, PlayerId};
+use data::primitives::{DeckId, GameId, Side};
 use data::with_error::WithError;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugCommand, CommandList, ConnectToGameCommand, CreateGameDebugOptions,
-    CreateNewGameAction, GameAction, GameCommand, GameIdentifier, LoadSceneCommand, SceneLoadMode,
-    SetPlayerIdentifierCommand,
+    ClientDebugCommand, CommandList, GameAction, GameCommand, GameIdentifier, LoadSceneCommand,
+    NewGameAction, NewGameDebugOptions, SceneLoadMode,
 };
-use rules::{dispatch, mana, mutations};
+use rules::mana;
 
 use crate::database::Database;
 use crate::requests;
@@ -44,60 +44,56 @@ pub fn handle_debug_action(
     action: DebugAction,
 ) -> Result<GameResponse> {
     match action {
-        DebugAction::NewGame(side) => Ok(GameResponse {
-            command_list: CommandList {
-                commands: vec![GameCommand {
-                    command: Some(Command::Debug(ClientDebugCommand {
-                        debug_command: Some(DebugCommand::InvokeAction(GameAction {
-                            action: Some(Action::CreateNewGame(CreateNewGameAction {
-                                side: adapters::player_side(side),
-                                opponent_id: Some(adapters::player_identifier(
-                                    if player_id.value == 1 {
-                                        PlayerId::new(2)
-                                    } else {
-                                        PlayerId::new(1)
-                                    },
-                                )),
-                                debug_options: Some(CreateGameDebugOptions {
-                                    deterministic: false,
-                                    override_game_identifier: Some(GameIdentifier { value: 0 }),
-                                    in_memory: false,
-                                }),
+        DebugAction::NewGame(side) => {
+            const OVERLORD_DECK_ID: DeckId = DeckId { value: 0 };
+            const CHAMPION_DECK_ID: DeckId = DeckId { value: 1 };
+            write_default_player(database, player_id, None)?;
+            Ok(GameResponse {
+                command_list: CommandList {
+                    commands: vec![GameCommand {
+                        command: Some(Command::Debug(ClientDebugCommand {
+                            debug_command: Some(DebugCommand::InvokeAction(GameAction {
+                                action: Some(Action::NewGame(NewGameAction {
+                                    opponent_id: Some(adapters::named_player_identifier(
+                                        NamedPlayer::TestCanonicalDeckNoAction,
+                                    )?),
+                                    deck: Some(adapters::deck_identifier(match side {
+                                        Side::Overlord => OVERLORD_DECK_ID,
+                                        Side::Champion => CHAMPION_DECK_ID,
+                                    })),
+                                    debug_options: Some(NewGameDebugOptions {
+                                        deterministic: false,
+                                        override_game_identifier: Some(GameIdentifier { value: 0 }),
+                                    }),
+                                })),
                             })),
                         })),
-                    })),
-                }],
-            },
-            opponent_response: None,
-        }),
-        DebugAction::JoinGame => Ok(GameResponse {
-            command_list: CommandList {
-                commands: vec![GameCommand {
-                    command: Some(Command::ConnectToGame(ConnectToGameCommand {
-                        game_id: Some(GameIdentifier { value: 0 }),
-                        scene_name: "Labyrinth".to_string(),
-                    })),
-                }],
-            },
-            opponent_response: None,
-        }),
-        DebugAction::ResetGame => {
-            let game = load_game(database, game_id)?;
-            reset_game(database, game_id)?;
-            let commands = CommandList {
-                commands: vec![GameCommand {
-                    command: Some(Command::LoadScene(LoadSceneCommand {
-                        scene_name: "Labyrinth".to_string(),
-                        mode: SceneLoadMode::Single.into(),
-                    })),
-                }],
-            };
-            Ok(GameResponse {
-                command_list: commands.clone(),
-                opponent_response: Some((
-                    if player_id == game.overlord.id { game.champion.id } else { game.overlord.id },
-                    commands,
-                )),
+                    }],
+                },
+                opponent_response: None,
+            })
+        }
+        DebugAction::JoinGame => {
+            let mut game = requests::find_game(database, Some(GameId::new(0)))?;
+            if matches!(game.overlord.id, PlayerId::Named(_)) {
+                game.overlord.id = player_id;
+            } else {
+                game.champion.id = player_id;
+            }
+            database.write_game(&game)?;
+            write_default_player(database, player_id, Some(CurrentGame::Playing(GameId::new(0))))?;
+
+            Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
+                scene_name: "Labyrinth".to_string(),
+                mode: SceneLoadMode::Single as i32,
+            })]))
+        }
+        DebugAction::FlipViewpoint => {
+            requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
+                let opponent_id = game.player(user_side.opponent()).id;
+                game.player_mut(user_side.opponent()).id = player_id;
+                game.player_mut(user_side).id = opponent_id;
+                Ok(())
             })
         }
         DebugAction::AddMana(amount) => {
@@ -118,17 +114,6 @@ pub fn handle_debug_action(
                 Ok(())
             })
         }
-        DebugAction::FlipViewpoint => Ok(GameResponse::from_commands(vec![
-            Command::SetPlayerId(SetPlayerIdentifierCommand {
-                id: Some(adapters::player_identifier(opponent_player_id(
-                    database, player_id, game_id,
-                )?)),
-            }),
-            Command::LoadScene(LoadSceneCommand {
-                scene_name: "Labyrinth".to_string(),
-                mode: SceneLoadMode::Single.into(),
-            }),
-        ])),
         DebugAction::SaveState(index) => {
             let mut game = load_game(database, game_id)?;
             game.id = GameId::new(u64::MAX - index);
@@ -153,59 +138,20 @@ pub fn handle_debug_action(
     }
 }
 
-fn reset_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<()> {
-    let current_game = load_game(database, game_id)?;
-    let mut new_game = GameState::new(
-        current_game.id,
-        Deck {
-            owner_id: current_game.overlord.id,
-            identity: current_game.some_identity(Side::Overlord).expect("identity").name,
-            cards: current_game
-                .overlord_cards
-                .iter()
-                .filter(|c| {
-                    c.id != current_game.some_identity(Side::Overlord).expect("identity").id
-                })
-                .fold(HashMap::new(), |mut acc, card| {
-                    *acc.entry(card.name).or_insert(0) += 1;
-                    acc
-                }),
-        },
-        Deck {
-            owner_id: current_game.champion.id,
-            identity: current_game.some_identity(Side::Champion).expect("identity").name,
-            cards: current_game
-                .champion_cards
-                .iter()
-                .filter(|c| {
-                    c.id != current_game.some_identity(Side::Champion).expect("identity").id
-                })
-                .fold(HashMap::new(), |mut acc, card| {
-                    *acc.entry(card.name).or_insert(0) += 1;
-                    acc
-                }),
-        },
-        current_game.data.config,
-    );
-    dispatch::populate_delegate_cache(&mut new_game);
-    mutations::deal_opening_hands(&mut new_game)?;
-    database.write_game(&new_game)?;
-    Ok(())
-}
-
-fn opponent_player_id(
+fn write_default_player(
     database: &mut impl Database,
     player_id: PlayerId,
-    game_id: Option<GameId>,
-) -> Result<PlayerId> {
-    let game = load_game(database, game_id)?;
-    if player_id == game.overlord.id {
-        Ok(game.champion.id)
-    } else if player_id == game.champion.id {
-        Ok(game.overlord.id)
-    } else {
-        fail!("ID must be present in game")
-    }
+    current_game: Option<CurrentGame>,
+) -> Result<()> {
+    database.write_player(&PlayerData {
+        id: player_id,
+        current_game,
+        decks: vec![
+            decklists::canonical_deck(player_id, Side::Overlord),
+            decklists::canonical_deck(player_id, Side::Champion),
+        ],
+        collection: HashMap::default(),
+    })
 }
 
 fn load_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<GameState> {

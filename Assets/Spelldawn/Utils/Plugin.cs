@@ -30,7 +30,6 @@ namespace Spelldawn.Utils
     public static void Initialize()
     {
       var path = $"{Application.persistentDataPath}/db";
-      Debug.Log($"##### Setting database path to {path} #####");
       var encoded = Encoding.UTF8.GetBytes(path);
       Errors.CheckNonNegative(spelldawn_initialize(encoded, encoded.Length));
     }

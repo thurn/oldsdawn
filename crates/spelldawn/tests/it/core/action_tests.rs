@@ -32,8 +32,7 @@ use test_utils::*;
 #[test]
 fn connect() {
     let mut g = new_game(Side::Overlord, Args { connect: false, ..Args::default() });
-    let response = g.connect(g.user_id(), Some(g.game_id()));
-    let _summary = Summary::run(&response);
+    let response = g.connect(g.user_id());
     assert_snapshot!(Summary::run(&response));
 }
 
@@ -43,12 +42,12 @@ fn connect_to_ongoing() {
         Side::Overlord,
         Args { actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
     );
-    let r1 = g.connect(g.user_id(), Some(g.game_id()));
+    let r1 = g.connect(g.user_id());
     assert_ok(&r1);
     let r2 = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
     assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
     assert_ok(&r2);
-    let r3 = g.connect(g.opponent_id(), Some(g.game_id()));
+    let r3 = g.connect(g.opponent_id());
 
     assert_snapshot!(Summary::run(&r3));
 }

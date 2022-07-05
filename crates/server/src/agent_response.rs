@@ -16,14 +16,13 @@
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use adapters;
 use anyhow::Result;
 use concurrent_queue::ConcurrentQueue;
 use data::agent_definition::AgentData;
-use data::fail;
 use data::game::GameState;
-use data::primitives::{GameId, PlayerId, Side};
-use data::with_error::WithError;
+use data::player_name::PlayerId;
+use data::primitives::{GameId, Side};
+use data::{fail, player_data};
 use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
@@ -49,16 +48,15 @@ pub enum HandleRequest {
 }
 
 pub fn handle_request(
-    database: impl Database + 'static,
+    mut database: impl Database + 'static,
     request: &GameRequest,
     handle_request: HandleRequest,
 ) -> Result<()> {
-    let game_id = match request.game_id.map(adapters::game_id) {
-        None => return Ok(()),
+    let respond_to = requests::player_id(&mut database, &request.player_id)?;
+    let game_id = match player_data::current_game_id(database.player(respond_to)?) {
         Some(game_id) => game_id,
+        _ => return Ok(()),
     };
-    let respond_to = adapters::player_id(request.player_id.with_error(|| "PlayerId is required")?);
-
     let game = database.game(game_id)?;
 
     if active_agent(&game).is_some() && !AGENT_RUNNING.swap(true, Ordering::Relaxed) {

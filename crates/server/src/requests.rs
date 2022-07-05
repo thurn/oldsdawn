@@ -16,21 +16,25 @@
 
 use adapters::ServerCardId;
 use anyhow::{bail, ensure, Result};
+use cards::decklists;
 use dashmap::DashMap;
+use data::deck::Deck;
 use data::game::{GameConfiguration, GameState};
 use data::game_actions::UserAction;
-use data::primitives::{GameId, PlayerId, RoomId, Side};
+use data::player_data::{CurrentGame, NewGameRequest};
+use data::player_name::PlayerId;
+use data::primitives::{GameId, Side};
 use data::updates::{UpdateTracker, Updates};
 use data::with_error::WithError;
-use data::{fail, game_actions, verify};
+use data::{fail, game_actions, player_data, verify};
 use display::render;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::spelldawn_server::Spelldawn;
 use protos::spelldawn::{
-    card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand,
-    CreateNewGameAction, GameCommand, GameRequest, RoomIdentifier, StandardAction,
+    card_target, CardTarget, CommandList, ConnectRequest, ConnectToGameCommand, GameCommand,
+    GameRequest, NewGameAction, PlayerIdentifier, StandardAction,
 };
 use rules::{actions, dispatch, mutations};
 use serde_json::de;
@@ -65,30 +69,29 @@ impl Spelldawn for GameService {
         &self,
         request: Request<ConnectRequest>,
     ) -> Result<Response<Self::ConnectStream>, Status> {
+        let mut db = SledDatabase { flush_on_write: false };
         let message = request.get_ref();
-        let game_id = message.game_id.map(adapters::game_id);
-        let player_id = match message.player_id.map(adapters::player_id) {
-            Some(player_id) => player_id,
+        let player_id = match player_id(&mut db, &message.player_id) {
+            Ok(player_id) => player_id,
             _ => return Err(Status::unauthenticated("PlayerId is required")),
         };
-        warn!(?player_id, ?game_id, "received_connection");
+        warn!(?player_id, "received_connection");
 
         let (tx, rx) = mpsc::channel(4);
 
-        let result =
-            handle_connect(&mut SledDatabase { flush_on_write: false }, player_id, game_id);
+        let result = handle_connect(&mut db, player_id);
         match result {
             Ok(commands) => {
                 let names = commands.commands.iter().map(command_name).collect::<Vec<_>>();
                 info!(?player_id, ?names, "sending_connection_response");
 
                 if let Err(error) = tx.send(Ok(commands)).await {
-                    error!(?player_id, ?game_id, ?error, "Send Error!");
+                    error!(?player_id, ?error, "Send Error!");
                     return Err(Status::internal(format!("Send Error: {:#}", error)));
                 }
             }
             Err(error) => {
-                error!(?player_id, ?game_id, ?error, "Connection Error!");
+                error!(?player_id, ?error, "Connection Error!");
                 return Err(Status::internal(format!("Connection Error: {:#}", error)));
             }
         }
@@ -130,9 +133,9 @@ impl Spelldawn for GameService {
 
 /// Helper to perform the connect action from the unity plugin
 pub fn connect(message: ConnectRequest) -> Result<CommandList> {
-    let game_id = message.game_id.map(adapters::game_id);
-    let player_id = adapters::player_id(message.player_id.with_error(|| "PlayerId is required")?);
-    handle_connect(&mut SledDatabase { flush_on_write: true }, player_id, game_id)
+    let mut db = SledDatabase { flush_on_write: true };
+    let player_id = player_id(&mut db, &message.player_id)?;
+    handle_connect(&mut db, player_id)
 }
 
 /// Helper to perform an action from the unity plugin
@@ -172,8 +175,8 @@ impl GameResponse {
 /// Processes an incoming client request and returns a [GameResponse] describing
 /// required updates to send to connected users.
 pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Result<GameResponse> {
-    let game_id = request.game_id.map(adapters::game_id);
-    let player_id = adapters::player_id(request.player_id.with_error(|| "PlayerId is Required")?);
+    let player_id = player_id(database, &request.player_id)?;
+    let game_id = player_data::current_game_id(database.player(player_id)?);
     let game_action = request
         .action
         .as_ref()
@@ -194,7 +197,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
                 fetch_panel.panel_address.as_ref().with_error(|| "missing address")?,
             )?)]))
         }
-        Action::CreateNewGame(create_game) => create_new_game(database, player_id, create_game),
+        Action::NewGame(create_game) => handle_new_game(database, player_id, create_game),
         Action::DrawCard(_) => handle_action(database, player_id, game_id, UserAction::DrawCard),
         Action::PlayCard(action) => {
             let action =
@@ -229,14 +232,9 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
     Ok(response)
 }
 
-/// Sets up the game state for a game connection request, connecting to
-/// the `game_id` game.
-pub fn handle_connect(
-    database: &mut impl Database,
-    player_id: PlayerId,
-    game_id: Option<GameId>,
-) -> Result<CommandList> {
-    if let Some(game_id) = game_id {
+/// Sets up the game state for a game connection request.
+pub fn handle_connect(database: &mut impl Database, player_id: PlayerId) -> Result<CommandList> {
+    if let Some(game_id) = player_data::current_game_id(database.player(player_id)?) {
         if database.has_game(game_id)? {
             let game = database.game(game_id)?;
             let side = user_side(player_id, &game)?;
@@ -253,27 +251,35 @@ pub fn handle_connect(
 
 /// Creates a new default [GameState], deals opening hands, and writes its value
 /// to the database.
-fn create_new_game(
+fn handle_new_game(
     database: &mut impl Database,
     user_id: PlayerId,
-    action: &CreateNewGameAction,
+    action: &NewGameAction,
 ) -> Result<GameResponse> {
     let debug_options = action.debug_options.clone().unwrap_or_default();
+    let opponent_id = player_id(database, &action.opponent_id)?;
+    let deck_id = adapters::deck_id(action.deck.with_error(|| "Expected Deck ID")?);
+    let mut user = database.player(user_id)?.with_error(|| "User not found")?;
+    let user_deck = user.deck(deck_id).clone();
+    let opponent_deck =
+        if let Some(deck) = requested_deck(database, opponent_id, user_deck.side.opponent())? {
+            deck
+        } else {
+            user.current_game = Some(CurrentGame::Requested(NewGameRequest { deck_id }));
+            database.write_player(&user)?;
+            // TODO: Implement some kind of waiting UI here
+            return Ok(GameResponse::from_commands(vec![]));
+        };
+
+    let (overlord_deck, champion_deck) = match (user_deck.side, opponent_deck.side) {
+        (Side::Overlord, Side::Champion) => (user_deck, opponent_deck),
+        (Side::Champion, Side::Overlord) => (opponent_deck, user_deck),
+        _ => fail!("Deck side mismatch!"),
+    };
     let game_id = debug_options
         .override_game_identifier
         .map_or(database.generate_game_id()?, adapters::game_id);
     info!(?game_id, "create_new_game");
-    let opponent_id =
-        action.opponent_id.map(adapters::player_id).with_error(|| "Expected opponent ID")?;
-    let user_side = adapters::side(action.side)?;
-    let (overlord_deck, champion_deck) = match user_side {
-        Side::Overlord => {
-            (database.deck(user_id, Side::Overlord)?, database.deck(opponent_id, Side::Champion)?)
-        }
-        Side::Champion => {
-            (database.deck(opponent_id, Side::Overlord)?, database.deck(user_id, Side::Champion)?)
-        }
-    };
 
     let mut game = GameState::new(
         game_id,
@@ -288,14 +294,39 @@ fn create_new_game(
     dispatch::populate_delegate_cache(&mut game);
     mutations::deal_opening_hands(&mut game)?;
     database.write_game(&game)?;
+
+    user.current_game = Some(CurrentGame::Playing(game_id));
+    database.write_player(&user)?;
+
+    if let PlayerId::Database(_) = opponent_id {
+        let mut opponent = database.player(opponent_id)?.with_error(|| "Opponent not found")?;
+        opponent.current_game = Some(CurrentGame::Playing(game_id));
+        database.write_player(&opponent)?;
+    }
+
     let commands = command_list(vec![Command::ConnectToGame(ConnectToGameCommand {
-        game_id: Some(adapters::game_identifier(game.id)),
         scene_name: "Labyrinth".to_string(),
     })]);
 
     Ok(GameResponse {
         command_list: commands.clone(),
         opponent_response: Some((opponent_id, commands)),
+    })
+}
+
+/// Looks up the deck the `player_id` player has requested to use for a new game
+fn requested_deck(
+    database: &impl Database,
+    player_id: PlayerId,
+    side: Side,
+) -> Result<Option<Deck>> {
+    Ok(match player_id {
+        PlayerId::Database(_) => {
+            let player = database.player(player_id)?.with_error(|| "Player not found")?;
+            player.requested_deck_id().map(|deck_id| player.deck(deck_id).clone())
+        }
+        // TODO: Each named player should have their own decklist
+        PlayerId::Named(_) => Some(decklists::canonical_deck(player_id, side)),
     })
 }
 
@@ -380,7 +411,7 @@ fn handle_standard_action(
 
 /// Look up the state for a game which is expected to exist and assigns an
 /// [UpdateTracker] to it for the duration of this request.
-fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameState> {
+pub fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameState> {
     let id = game_id.as_ref().with_error(|| "GameId not provided!")?;
     let mut game = database.game(*id)?;
     game.updates = UpdateTracker::new(if game.data.config.simulation {
@@ -390,6 +421,16 @@ fn find_game(database: &impl Database, game_id: Option<GameId>) -> Result<GameSt
     });
 
     Ok(game)
+}
+
+/// Turns an `&Option<PlayerIdentifier>` into a [PlayerId], or returns an error
+/// if the input is `None`.
+pub fn player_id(
+    database: &mut impl Database,
+    identifier: &Option<PlayerIdentifier>,
+) -> Result<PlayerId> {
+    database
+        .adapt_player_identifier(identifier.as_ref().with_error(|| "Expected player identifier")?)
 }
 
 /// Returns the [Side] the indicated user is representing in this game
@@ -422,7 +463,6 @@ pub fn command_name(command: &GameCommand) -> &'static str {
         Command::SetGameObjectsEnabled(_) => "SetGameObjectsEnabled",
         Command::DisplayRewards(_) => "DisplayRewards",
         Command::LoadScene(_) => "LoadScene",
-        Command::SetPlayerId(_) => "SetPlayerIdentifier",
         Command::CreateTokenCard(_) => "CreateTokenCard",
     })
 }
@@ -430,10 +470,8 @@ pub fn command_name(command: &GameCommand) -> &'static str {
 fn card_target(target: &Option<CardTarget>) -> game_actions::CardTarget {
     target.as_ref().map_or(game_actions::CardTarget::None, |t| {
         t.card_target.as_ref().map_or(game_actions::CardTarget::None, |t2| match t2 {
-            card_target::CardTarget::RoomId(room_id) => {
-                to_server_room_id(RoomIdentifier::from_i32(*room_id))
-                    .map_or(game_actions::CardTarget::None, game_actions::CardTarget::Room)
-            }
+            card_target::CardTarget::RoomId(room_id) => adapters::room_id(*room_id)
+                .map_or(game_actions::CardTarget::None, game_actions::CardTarget::Room),
         })
     })
 }
@@ -441,19 +479,5 @@ fn card_target(target: &Option<CardTarget>) -> game_actions::CardTarget {
 fn command_list(commands: Vec<Command>) -> CommandList {
     CommandList {
         commands: commands.into_iter().map(|c| GameCommand { command: Some(c) }).collect(),
-    }
-}
-
-fn to_server_room_id(room_id: Option<RoomIdentifier>) -> Option<RoomId> {
-    match room_id {
-        None | Some(RoomIdentifier::Unspecified) => None,
-        Some(RoomIdentifier::Vault) => Some(RoomId::Vault),
-        Some(RoomIdentifier::Sanctum) => Some(RoomId::Sanctum),
-        Some(RoomIdentifier::Crypts) => Some(RoomId::Crypts),
-        Some(RoomIdentifier::RoomA) => Some(RoomId::RoomA),
-        Some(RoomIdentifier::RoomB) => Some(RoomId::RoomB),
-        Some(RoomIdentifier::RoomC) => Some(RoomId::RoomC),
-        Some(RoomIdentifier::RoomD) => Some(RoomId::RoomD),
-        Some(RoomIdentifier::RoomE) => Some(RoomId::RoomE),
     }
 }

@@ -47,6 +47,19 @@ macro_rules! fail {
     }
 }
 
+// TODO: Remove this or move it to its own crate
+#[macro_export]
+macro_rules! fail_tmp {
+    ($($tts:tt)*) => {
+        if crate::with_error::ERROR_PANIC {
+            panic!($($tts)*);
+        } else {
+            use anyhow::bail;
+            bail!($($tts)*);
+        }
+    }
+}
+
 pub trait WithError<T, E> {
     /// Wrapper around anyhow::with_context. Wraps the error value with
     /// additional context that is evaluated lazily only once an error does

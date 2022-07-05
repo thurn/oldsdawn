@@ -17,17 +17,25 @@
 use std::collections::HashMap;
 use std::iter;
 
+use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
+
 use crate::card_name::CardName;
-use crate::primitives::PlayerId;
+use crate::player_name::PlayerId;
+use crate::primitives::Side;
 
 /// Represents a player deck outside of an active game
-#[derive(Debug, Clone)]
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Deck {
     /// Identifies the user who owns this deck
     pub owner_id: PlayerId,
+    /// Identifies which side this deck plays as.
+    pub side: Side,
     /// Identity card for this deck
     pub identity: CardName,
     /// How many (non-identity) cards with each name are present in this deck?
+    #[serde_as(as = "Vec<(_, _)>")]
     pub cards: HashMap<CardName, u32>,
 }
 

@@ -9,6 +9,7 @@ dependencies = [
  "anyhow",
  "data",
  "protos",
+ "serde_json",
 ]
 
 [[package]]

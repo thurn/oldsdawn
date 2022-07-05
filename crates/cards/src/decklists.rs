@@ -17,14 +17,16 @@ use data::card_name::CardName;
 use data::deck::Deck;
 use data::game::{GameConfiguration, GameState, MulliganDecision};
 use data::game_actions::{PromptAction, UserAction};
-use data::primitives::{GameId, PlayerId, Side};
+use data::player_name::{NamedPlayer, PlayerId};
+use data::primitives::{GameId, Side};
 use maplit::hashmap;
 use once_cell::sync::Lazy;
 use rules::{actions, dispatch, mutations};
 
 /// Standard Overlord deck for use in tests
 pub static CANONICAL_OVERLORD: Lazy<Deck> = Lazy::new(|| Deck {
-    owner_id: PlayerId::new(1),
+    owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
+    side: Side::Overlord,
     identity: CardName::TestOverlordIdentity,
     cards: hashmap! {
         CardName::DungeonAnnex => 3,
@@ -48,7 +50,8 @@ pub static CANONICAL_OVERLORD: Lazy<Deck> = Lazy::new(|| Deck {
 
 /// Standard Champion deck for use in tests
 pub static CANONICAL_CHAMPION: Lazy<Deck> = Lazy::new(|| Deck {
-    owner_id: PlayerId::new(2),
+    owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
+    side: Side::Champion,
     identity: CardName::TestChampionIdentity,
     cards: hashmap! {
         CardName::Meditation => 2,

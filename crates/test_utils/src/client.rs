@@ -23,8 +23,9 @@ use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
 use data::game::GameState;
+use data::player_name::PlayerId;
 use data::primitives::{
-    ActionCount, CardId, CardType, GameId, ManaValue, PlayerId, PointsValue, RoomId, Side,
+    ActionCount, CardId, CardType, GameId, ManaValue, PointsValue, RoomId, Side,
 };
 use data::with_error::WithError;
 use protos::spelldawn::card_targeting::Targeting;
@@ -34,7 +35,7 @@ use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     card_target, node_type, ArrowTargetRoom, CardAnchorNode, CardIdentifier, CardTarget, CardView,
-    ClientItemLocation, ClientRoomLocation, CommandList, EventHandlers, GameAction, GameIdentifier,
+    ClientItemLocation, ClientRoomLocation, CommandList, EventHandlers, GameAction,
     GameMessageType, GameObjectIdentifier, GameRequest, InitiateRaidAction, NoTargeting, Node,
     NodeType, ObjectPosition, ObjectPositionBrowser, ObjectPositionDiscardPile, ObjectPositionHand,
     ObjectPositionItem, ObjectPositionRevealedCards, ObjectPositionRoom, PlayCardAction,
@@ -45,7 +46,7 @@ use server::requests;
 use server::requests::GameResponse;
 
 use crate::fake_database::FakeDatabase;
-use crate::ROOM_ID;
+use crate::{fake_database, ROOM_ID};
 
 /// A helper for interacting with a database and server calls during testing.
 ///
@@ -104,11 +105,11 @@ impl TestSession {
         &self.opponent.this_player
     }
 
-    /// Simulates a client connecting to the server, either creating a new game
-    /// or connecting to an existing game. Returns the commands which would
-    /// be sent to the client when connected.
-    pub fn connect(&mut self, user_id: PlayerId, game_id: Option<GameId>) -> Result<CommandList> {
-        let result = requests::handle_connect(&mut self.database, user_id, game_id)?;
+    /// Simulates a client connecting to the server.
+    ///
+    /// Returns the commands which would be sent to the client when connected.
+    pub fn connect(&mut self, user_id: PlayerId) -> Result<CommandList> {
+        let result = requests::handle_connect(&mut self.database, user_id)?;
         let to_update = match () {
             _ if user_id == self.user.id => &mut self.user,
             _ if user_id == self.opponent.id => &mut self.opponent,
@@ -131,24 +132,11 @@ impl TestSession {
     /// Returns the [GameResponse] for this action or an error if the server
     /// request failed.
     pub fn perform_action(&mut self, action: Action, player_id: PlayerId) -> Result<GameResponse> {
-        let game_id = adapters::game_identifier(self.game_id());
-        self.perform_action_with_game_id(action, player_id, Some(game_id))
-    }
-
-    /// Equivalent to [Self::perform_action] which allows the game id to be
-    /// specified.
-    pub fn perform_action_with_game_id(
-        &mut self,
-        action: Action,
-        player_id: PlayerId,
-        game_id: Option<GameIdentifier>,
-    ) -> Result<GameResponse> {
         let response = requests::handle_request(
             &mut self.database,
             &GameRequest {
                 action: Some(GameAction { action: Some(action) }),
-                game_id,
-                player_id: Some(adapters::player_identifier(player_id)),
+                player_id: Some(fake_database::to_player_identifier(player_id)),
             },
         )?;
 
@@ -213,9 +201,8 @@ impl TestSession {
         self.database.game_mut().move_card_internal(card_id, CardPosition::Hand(side));
         self.database.game_mut().card_mut(card_id).set_revealed_to(card_id.side, true);
 
-        self.connect(self.user.id, Some(self.database.game().id)).expect("User connection error");
-        self.connect(self.opponent.id, Some(self.database.game().id))
-            .expect("Opponent connection error");
+        self.connect(self.user.id).expect("User connection error");
+        self.connect(self.opponent.id).expect("Opponent connection error");
 
         adapters::card_identifier(card_id)
     }

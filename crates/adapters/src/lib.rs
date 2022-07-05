@@ -18,24 +18,19 @@ pub mod response_builder;
 
 use anyhow::Result;
 use data::fail;
+use data::player_name::{NamedPlayer, PlayerId};
 use data::primitives::{
-    AbilityId, AbilityIndex, CardId, GameId, GameObjectId, PlayerId, RoomId, Side, Sprite,
+    AbilityId, AbilityIndex, CardId, DeckId, GameId, GameObjectId, RoomId, Side, Sprite,
 };
 use protos::spelldawn::game_object_identifier::Id;
+use protos::spelldawn::player_identifier::PlayerIdentifierType;
 use protos::spelldawn::{
-    CardIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier, PlayerSide,
-    RoomIdentifier, SpriteAddress, TimeValue,
+    CardIdentifier, DeckIdentifier, GameIdentifier, GameObjectIdentifier, PlayerIdentifier,
+    PlayerSide, RoomIdentifier, SpriteAddress, TimeValue,
 };
+use serde_json::{de, ser};
 
 use crate::response_builder::ResponseBuilder;
-
-pub fn player_identifier(player_id: PlayerId) -> PlayerIdentifier {
-    PlayerIdentifier { value: player_id.value }
-}
-
-pub fn player_id(player_id: PlayerIdentifier) -> PlayerId {
-    PlayerId { value: player_id.value }
-}
 
 pub fn game_identifier(game_id: GameId) -> GameIdentifier {
     GameIdentifier { value: game_id.value }
@@ -92,6 +87,26 @@ pub fn server_card_id(card_id: CardIdentifier) -> Result<ServerCardId> {
             index: AbilityIndex(index as usize),
         }))
     })
+}
+
+pub fn deck_id(identifier: DeckIdentifier) -> DeckId {
+    DeckId { value: identifier.value }
+}
+
+pub fn deck_identifier(id: DeckId) -> DeckIdentifier {
+    DeckIdentifier { value: id.value }
+}
+
+pub fn named_player_identifier(player_name: NamedPlayer) -> Result<PlayerIdentifier> {
+    Ok(PlayerIdentifier {
+        player_identifier_type: Some(PlayerIdentifierType::ServerIdentifier(ser::to_vec(
+            &player_name,
+        )?)),
+    })
+}
+
+pub fn named_player_id(payload: &[u8]) -> Result<PlayerId> {
+    Ok(PlayerId::Named(de::from_slice(payload)?))
 }
 
 pub fn player_side(side: Side) -> i32 {

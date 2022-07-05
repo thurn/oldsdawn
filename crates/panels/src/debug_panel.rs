@@ -54,7 +54,6 @@ impl Component for DebugPanel {
                     .child(debug_button("New Game (O)", DebugAction::NewGame(Side::Overlord)))
                     .child(debug_button("New Game (C)", DebugAction::NewGame(Side::Champion)))
                     .child(debug_button("Join Game", DebugAction::JoinGame))
-                    .child(debug_button("Reset", DebugAction::ResetGame))
                     .child(debug_button(
                         "Show Logs",
                         vec![close, debug_command(DebugCommand::ShowLogs(()))],

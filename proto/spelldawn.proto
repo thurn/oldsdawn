@@ -397,6 +397,17 @@ message Node {
 // ============================================================================
 
 message PlayerIdentifier {
+    oneof player_identifier_type {
+        // An identifier from Unity's social API: Social.localUser.id
+        string social_identifier = 1;
+        // An identifier for a device: SystemInfo.deviceUniqueIdentifier
+        string device_identifier = 2;
+        // An opaque identifier specified on the server, e.g. for an AI player
+        bytes server_identifier = 3;
+    }
+}
+
+message DeckIdentifier {
     uint64 value = 1;
 }
 
@@ -753,24 +764,23 @@ message GameObjectPositions {
 }
 
 message GameView {
-    GameIdentifier game_id = 1;
-    PlayerView user = 2;
-    PlayerView opponent = 3;
+    PlayerView user = 1;
+    PlayerView opponent = 2;
 
     // Updated values for the cards in this game. Any cards which have changed
     // position should be moved to their new positions in parallel. Cards which
     // do not exist in this list must be destroyed.
-    repeated CardView cards = 4;
+    repeated CardView cards = 3;
 
     // Whether a raid is currently active. If true, the raid overlay will be
     // displayed, the raid music will be played, etc.
-    bool raid_active = 5;
+    bool raid_active = 4;
 
     // Positions of non-Card game objects.
-    GameObjectPositions game_object_positions = 6;
+    GameObjectPositions game_object_positions = 5;
 
     // Controls for game actions such as interface prompts
-    InterfaceMainControls main_controls = 7;
+    InterfaceMainControls main_controls = 6;
 }
 
 
@@ -830,26 +840,28 @@ message FetchPanelAction {
     PanelAddress panel_address = 1;
 }
 
-// Test/debug options for creating a game
-message CreateGameDebugOptions {
+// Test/debug options for the new game action
+message NewGameDebugOptions {
     // If true, all game events will be non-random.
     bool deterministic = 1;
 
     // Force the created game to use a specific identifier
     GameIdentifier override_game_identifier = 2;
-
-    // If true, this game's state will be stored in memory instead of being
-    // written to disk.
-    bool in_memory = 3;
 }
 
-// Requests to create a new game playing against a given opponent
-message CreateNewGameAction {
-    PlayerSide side = 1;
+// Requests to create or join a new game. If the indicated opponent
+// has already submitted their own matching NewGameAction (or the
+// opponent is e.g. an AI player), the game starts immediately.
+// Otherwise, transitions the caller to a 'waiting' state until the
+// invitation is accepted.
+message NewGameAction {
+    /// Deck you would like to use for this game
+    DeckIdentifier deck = 1;
 
+    /// Opponent to play against.
     PlayerIdentifier opponent_id = 2;
 
-    CreateGameDebugOptions debug_options = 3;
+    NewGameDebugOptions debug_options = 3;
 }
 
 // Spend an action point with no other effect, typically used for
@@ -865,7 +877,7 @@ message GameAction {
     oneof action {
         StandardAction standard_action = 1;
         FetchPanelAction fetch_panel = 2;
-        CreateNewGameAction create_new_game = 3;
+        NewGameAction new_game = 3;
         GainManaAction gain_mana = 4;
         DrawCardAction draw_card = 5;
         PlayCardAction play_card = 6;
@@ -875,27 +887,20 @@ message GameAction {
     }
 }
 
-// Initiate a play session. If a game_id is provided, connects to an ongoing
-// game. Otherwise, creates a new game. This must be sent from an empty game
-// scene.
+// Initiate a play session and download the current state for the
+// provided player.
 message ConnectRequest {
-    //Target game to connect to
-    GameIdentifier game_id = 1;
-
     // User making this request.
-    PlayerIdentifier player_id = 2;
+    PlayerIdentifier player_id = 1;
 }
 
 message GameRequest {
     GameAction action = 1;
 
-    // Current game_id, if a game is currently ongoing.
-    GameIdentifier game_id = 2;
-
     // Identifies the user making this request. At some point I'm going to
     // figure out how to set up authentication, but currently we operate on
     // the honor system :)
-    PlayerIdentifier player_id = 3;
+    PlayerIdentifier player_id = 2;
 }
 
 // ============================================================================
@@ -922,8 +927,7 @@ message DelayCommand {
 // Instructs the client to load a given scene and then connect to the indicated
 // game.
 message ConnectToGameCommand {
-    GameIdentifier game_id = 1;
-    string scene_name = 2;
+    string scene_name = 1;
 }
 
 // Panels that are directly fetched by client code.
@@ -1177,11 +1181,6 @@ message LoadSceneCommand {
     SceneLoadMode mode = 2;
 }
 
-// Writes the PlayerIdentifier for the client to storage
-message SetPlayerIdentifierCommand {
-    PlayerIdentifier id = 1;
-}
-
 // Sets a client-side boolean player preference
 message SetBooleanPreference {
     string key = 1;
@@ -1229,9 +1228,8 @@ message GameCommand {
         SetGameObjectsEnabledCommand set_game_objects_enabled = 18;
         DisplayRewardsCommand display_rewards = 19;
         LoadSceneCommand load_scene = 20;
-        SetPlayerIdentifierCommand set_player_id = 21;
-        MoveGameObjectsCommand move_game_objects = 22;
-        CreateTokenCardCommand create_token_card = 23;
+        MoveGameObjectsCommand move_game_objects = 21;
+        CreateTokenCardCommand create_token_card = 22;
     }
 }
 

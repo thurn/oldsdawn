@@ -18,8 +18,6 @@ namespace Spelldawn.Utils
 {
   public static class Preferences
   {
-    public const string PlayerId = "PlayerId";
-    public const string CurrentGameId = "CurrentGameId";
     public const string MusicVolume = "MusicVolume";
   }
 }

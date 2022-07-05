@@ -199,8 +199,8 @@ namespace Spelldawn.Services
 
       ActionService.Initialize();
       DocumentService.Initialize();
-      GameService.Initialize(GlobalGameMode);
       MusicService.Initialize(GlobalGameMode);
+      GameService.Initialize(GlobalGameMode);
 
       if (runTests)
       {

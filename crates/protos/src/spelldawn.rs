@@ -317,8 +317,28 @@ pub struct Node {
 // Game Primitives
 // ============================================================================
 
-#[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PlayerIdentifier {
+    #[prost(oneof = "player_identifier::PlayerIdentifierType", tags = "1, 2, 3")]
+    pub player_identifier_type: ::core::option::Option<player_identifier::PlayerIdentifierType>,
+}
+/// Nested message and enum types in `PlayerIdentifier`.
+pub mod player_identifier {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum PlayerIdentifierType {
+        /// An identifier from Unity's social API: Social.localUser.id
+        #[prost(string, tag = "1")]
+        SocialIdentifier(::prost::alloc::string::String),
+        /// An identifier for a device: SystemInfo.deviceUniqueIdentifier
+        #[prost(string, tag = "2")]
+        DeviceIdentifier(::prost::alloc::string::String),
+        /// An opaque identifier specified on the server, e.g. for an AI player
+        #[prost(bytes, tag = "3")]
+        ServerIdentifier(::prost::alloc::vec::Vec<u8>),
+    }
+}
+#[derive(Eq, Hash, Copy, Ord, PartialOrd, Clone, PartialEq, ::prost::Message)]
+pub struct DeckIdentifier {
     #[prost(uint64, tag = "1")]
     pub value: u64,
 }
@@ -707,25 +727,23 @@ pub struct GameObjectPositions {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameView {
     #[prost(message, optional, tag = "1")]
-    pub game_id: ::core::option::Option<GameIdentifier>,
-    #[prost(message, optional, tag = "2")]
     pub user: ::core::option::Option<PlayerView>,
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "2")]
     pub opponent: ::core::option::Option<PlayerView>,
     /// Updated values for the cards in this game. Any cards which have changed
     /// position should be moved to their new positions in parallel. Cards which
     /// do not exist in this list must be destroyed.
-    #[prost(message, repeated, tag = "4")]
+    #[prost(message, repeated, tag = "3")]
     pub cards: ::prost::alloc::vec::Vec<CardView>,
     /// Whether a raid is currently active. If true, the raid overlay will be
     /// displayed, the raid music will be played, etc.
-    #[prost(bool, tag = "5")]
+    #[prost(bool, tag = "4")]
     pub raid_active: bool,
     /// Positions of non-Card game objects.
-    #[prost(message, optional, tag = "6")]
+    #[prost(message, optional, tag = "5")]
     pub game_object_positions: ::core::option::Option<GameObjectPositions>,
     /// Controls for game actions such as interface prompts
-    #[prost(message, optional, tag = "7")]
+    #[prost(message, optional, tag = "6")]
     pub main_controls: ::core::option::Option<InterfaceMainControls>,
 }
 // ============================================================================
@@ -793,29 +811,31 @@ pub struct FetchPanelAction {
     #[prost(message, optional, tag = "1")]
     pub panel_address: ::core::option::Option<PanelAddress>,
 }
-/// Test/debug options for creating a game
+/// Test/debug options for the new game action
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CreateGameDebugOptions {
+pub struct NewGameDebugOptions {
     /// If true, all game events will be non-random.
     #[prost(bool, tag = "1")]
     pub deterministic: bool,
     /// Force the created game to use a specific identifier
     #[prost(message, optional, tag = "2")]
     pub override_game_identifier: ::core::option::Option<GameIdentifier>,
-    /// If true, this game's state will be stored in memory instead of being
-    /// written to disk.
-    #[prost(bool, tag = "3")]
-    pub in_memory: bool,
 }
-/// Requests to create a new game playing against a given opponent
+/// Requests to create or join a new game. If the indicated opponent
+/// has already submitted their own matching NewGameAction (or the
+/// opponent is e.g. an AI player), the game starts immediately.
+/// Otherwise, transitions the caller to a 'waiting' state until the
+/// invitation is accepted.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CreateNewGameAction {
-    #[prost(enumeration = "PlayerSide", tag = "1")]
-    pub side: i32,
+pub struct NewGameAction {
+    //// Deck you would like to use for this game
+    #[prost(message, optional, tag = "1")]
+    pub deck: ::core::option::Option<DeckIdentifier>,
+    //// Opponent to play against.
     #[prost(message, optional, tag = "2")]
     pub opponent_id: ::core::option::Option<PlayerIdentifier>,
     #[prost(message, optional, tag = "3")]
-    pub debug_options: ::core::option::Option<CreateGameDebugOptions>,
+    pub debug_options: ::core::option::Option<NewGameDebugOptions>,
 }
 /// Spend an action point with no other effect, typically used for
 /// tests
@@ -840,7 +860,7 @@ pub mod game_action {
         #[prost(message, tag = "2")]
         FetchPanel(super::FetchPanelAction),
         #[prost(message, tag = "3")]
-        CreateNewGame(super::CreateNewGameAction),
+        NewGame(super::NewGameAction),
         #[prost(message, tag = "4")]
         GainMana(super::GainManaAction),
         #[prost(message, tag = "5")]
@@ -855,29 +875,22 @@ pub mod game_action {
         SpendActionPoint(super::SpendActionPointAction),
     }
 }
-/// Initiate a play session. If a game_id is provided, connects to an ongoing
-/// game. Otherwise, creates a new game. This must be sent from an empty game
-/// scene.
+/// Initiate a play session and download the current state for the
+/// provided player.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ConnectRequest {
-    ///Target game to connect to
-    #[prost(message, optional, tag = "1")]
-    pub game_id: ::core::option::Option<GameIdentifier>,
     /// User making this request.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag = "1")]
     pub player_id: ::core::option::Option<PlayerIdentifier>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameRequest {
     #[prost(message, optional, tag = "1")]
     pub action: ::core::option::Option<GameAction>,
-    /// Current game_id, if a game is currently ongoing.
-    #[prost(message, optional, tag = "2")]
-    pub game_id: ::core::option::Option<GameIdentifier>,
     /// Identifies the user making this request. At some point I'm going to
     /// figure out how to set up authentication, but currently we operate on
     /// the honor system :)
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "2")]
     pub player_id: ::core::option::Option<PlayerIdentifier>,
 }
 // ============================================================================
@@ -907,9 +920,7 @@ pub struct DelayCommand {
 /// game.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ConnectToGameCommand {
-    #[prost(message, optional, tag = "1")]
-    pub game_id: ::core::option::Option<GameIdentifier>,
-    #[prost(string, tag = "2")]
+    #[prost(string, tag = "1")]
     pub scene_name: ::prost::alloc::string::String,
 }
 /// Identifies an InterfacePanel.
@@ -1143,12 +1154,6 @@ pub struct LoadSceneCommand {
     #[prost(enumeration = "SceneLoadMode", tag = "2")]
     pub mode: i32,
 }
-/// Writes the PlayerIdentifier for the client to storage
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct SetPlayerIdentifierCommand {
-    #[prost(message, optional, tag = "1")]
-    pub id: ::core::option::Option<PlayerIdentifier>,
-}
 /// Sets a client-side boolean player preference
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SetBooleanPreference {
@@ -1189,7 +1194,7 @@ pub mod client_debug_command {
 pub struct GameCommand {
     #[prost(
         oneof = "game_command::Command",
-        tags = "1, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23"
+        tags = "1, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22"
     )]
     pub command: ::core::option::Option<game_command::Command>,
 }
@@ -1228,10 +1233,8 @@ pub mod game_command {
         #[prost(message, tag = "20")]
         LoadScene(super::LoadSceneCommand),
         #[prost(message, tag = "21")]
-        SetPlayerId(super::SetPlayerIdentifierCommand),
-        #[prost(message, tag = "22")]
         MoveGameObjects(super::MoveGameObjectsCommand),
-        #[prost(message, tag = "23")]
+        #[prost(message, tag = "22")]
         CreateTokenCard(super::CreateTokenCardCommand),
     }
 }

@@ -25,11 +25,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Building rust protocol buffers");
     tonic_build::configure()
         .build_client(false)
-        .type_attribute("spelldawn.PlayerIdentifier", "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]")
         .type_attribute(
             "spelldawn.GameObjectIdentifier",
             "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]",
         )
+        .type_attribute("spelldawn.DeckIdentifier", "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]")
         .type_attribute("spelldawn.GameIdentifier", "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]")
         .type_attribute("spelldawn.CardIdentifier", "#[derive(Eq, Hash, Copy, Ord, PartialOrd)]")
         .type_attribute(

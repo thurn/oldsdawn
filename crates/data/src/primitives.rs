@@ -33,26 +33,21 @@ pub type BreachValue = u32;
 pub type BoostCount = u32;
 pub type LevelValue = u32;
 
-/// Identifies a player across different games
+/// Identifies a deck owned by a given player
 #[derive(Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
-pub struct PlayerId {
+pub struct DeckId {
     pub value: u64,
 }
 
-impl PlayerId {
+impl DeckId {
     pub fn new(value: u64) -> Self {
         Self { value }
     }
-
-    /// Byte array representation of this ID
-    pub fn key(&self) -> [u8; 8] {
-        self.value.to_be_bytes()
-    }
 }
 
-impl fmt::Debug for PlayerId {
+impl fmt::Debug for DeckId {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.value)
+        write!(f, "Deck{}", self.value)
     }
 }
 

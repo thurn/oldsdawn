@@ -11,6 +11,7 @@ test = false
 
 [dependencies]
 anyhow = "1.0.51"
+serde_json = "1.0.81"
 
 data = { path = "../data", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }

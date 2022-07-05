@@ -1,12 +1,7 @@
 ---
 source: crates/spelldawn/tests/it/core/create_game_tests.rs
-assertion_line: 49
+assertion_line: 52
 expression: "Summary::run(&response)"
 ---
 
 command_list: 
-    ConnectToGame: 
-        scene_name: "Labyrinth"
-channel_response: 
-    ConnectToGame: 
-        scene_name: "Labyrinth"

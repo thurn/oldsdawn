@@ -33,8 +33,8 @@ use protos::spelldawn::{
     PlayEffectCommand, PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName,
     PlayerSide, PlayerView, ProjectileAddress, RevealedCardView, RoomIdentifier, RoomVisitType,
     RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand,
-    SetMusicCommand, SetPlayerIdentifierCommand, SpriteAddress, TimeValue, TogglePanelCommand,
-    UpdateGameViewCommand, UpdatePanelsCommand, VisitRoomCommand,
+    SetMusicCommand, SpriteAddress, TimeValue, TogglePanelCommand, UpdateGameViewCommand,
+    UpdatePanelsCommand, VisitRoomCommand,
 };
 use server::requests::GameResponse;
 
@@ -62,10 +62,9 @@ impl Summary {
 
     pub fn run(response: &Result<impl Clone + Summarize>) -> String {
         let mut summary = Self::default();
-        if let Ok(v) = response {
-            v.clone().summarize(&mut summary);
-        } else {
-            panic!("Error in response")
+        match response {
+            Ok(v) => v.clone().summarize(&mut summary),
+            Err(err) => panic!("Error: {:?}", err),
         }
         summary.value
     }
@@ -273,7 +272,6 @@ impl Summarize for Command {
             Command::SetGameObjectsEnabled(v) => summary.child_node("SetGameObjectsEnabled", v),
             Command::DisplayRewards(v) => summary.child_node("DisplayRewards", v),
             Command::LoadScene(v) => summary.child_node("LoadScene", v),
-            Command::SetPlayerId(v) => summary.child_node("SetPlayerId", v),
             Command::CreateTokenCard(v) => summary.child_node("CreateTokenCard", v),
         }
     }
@@ -648,10 +646,6 @@ impl Summarize for SceneLoadMode {
     fn summarize(self, summary: &mut Summary) {
         summary.primitive(self)
     }
-}
-
-impl Summarize for SetPlayerIdentifierCommand {
-    fn summarize(self, _: &mut Summary) {}
 }
 
 impl Summarize for GameObjectMove {
