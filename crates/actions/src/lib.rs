@@ -15,9 +15,6 @@
 //! Contains functions for responding to user-initiated game actions received
 //! from the client. The `handle_user_action` function is the primary
 //! entry-point into the rules engine.
-//!
-//! By convention, functions in this module are responsible for validating the
-//! legality of requests and returning [Result] accordingly.
 
 use anyhow::Result;
 use data::card_definition::AbilityType;
@@ -29,11 +26,10 @@ use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
+use rules::mana::ManaPurpose;
+use rules::{card_prompt, dispatch, flags, mana, mutations, queries, raid};
 use tracing::{info, instrument};
 use with_error::{fail, verify, WithError};
-
-use crate::mana::ManaPurpose;
-use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid};
 
 /// Top level dispatch function responsible for mutating [GameState] in response
 /// to all [UserAction]s
@@ -132,7 +128,7 @@ fn play_card_action(
     );
 
     let card = game.card(card_id);
-    let definition = crate::get(card.name);
+    let definition = rules::get(card.name);
     mutations::move_card(game, card_id, CardPosition::Played(user_side, target))?;
 
     mutations::spend_action_points(game, user_side, definition.cost.actions)?;
@@ -175,7 +171,7 @@ fn activate_ability_action(
 
     game.ability_state.entry(ability_id).or_default().currently_resolving = true;
     let card = game.card(ability_id.card_id);
-    let cost = match &crate::get(card.name).ability(ability_id.index).ability_type {
+    let cost = match &rules::get(card.name).ability(ability_id.index).ability_type {
         AbilityType::Activated(cost, _) => cost,
         _ => fail!("Ability is not an activated ability"),
     };

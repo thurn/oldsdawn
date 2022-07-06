@@ -14,12 +14,13 @@
 
 use std::cmp;
 
+use actions;
 use anyhow::{bail, Result};
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
 use ordered_float::NotNan;
-use rules::{actions, raid};
+use rules::raid;
 use with_error::{fail, WithError};
 
 use crate::core::legal_actions;

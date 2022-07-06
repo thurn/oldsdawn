@@ -1,7 +1,7 @@
 [package]
-name = "ai"
+name = "actions"
 version = "0.0.0"
-description = "Contains different implementations of Game AI"
+description = "Top-level routing for user actions"
 license = "Apache-2.0"
 edition = "2021"
 
@@ -9,20 +9,14 @@ edition = "2021"
 doctest = false
 test = false
 
-[[bin]]
-name = "tournament"
-path = "src/tournament/main.rs"
-test = false
-
 [dependencies]
 anyhow = "1.0.58"
-rand = "0.8.5"
+dashmap = "5.3.4"
 enum-iterator = "1.1.3"
-ordered-float = "3.0.0"
-petgraph = "0.6.2"
+fallible-iterator = "0.2.0"
+once_cell = "1.13.0"
+tracing = { version = "0.1.35", features = ["max_level_debug", "release_max_level_warn"] }
 
-actions = { path = "../actions", version = "0.0.0" }
-cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }
 with_error = { path = "../with_error", version = "0.0.0" }

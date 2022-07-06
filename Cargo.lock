@@ -3,6 +3,21 @@
 version = 3
 
 [[package]]
+name = "actions"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "dashmap",
+ "data",
+ "enum-iterator",
+ "fallible-iterator",
+ "once_cell",
+ "rules",
+ "tracing",
+ "with_error",
+]
+
+[[package]]
 name = "adapters"
 version = "0.0.0"
 dependencies = [
@@ -32,6 +47,7 @@ dependencies = [
 name = "ai"
 version = "0.0.0"
 dependencies = [
+ "actions",
  "anyhow",
  "cards",
  "data",
@@ -211,6 +227,7 @@ dependencies = [
 name = "cards"
 version = "0.0.0"
 dependencies = [
+ "actions",
  "anyhow",
  "card_helpers",
  "data",
@@ -1521,6 +1538,7 @@ dependencies = [
 name = "server"
 version = "0.0.0"
 dependencies = [
+ "actions",
  "adapters",
  "ai",
  "anyhow",

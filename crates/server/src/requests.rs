@@ -14,6 +14,7 @@
 
 //! Top-level server request handling
 
+use actions;
 use adapters::ServerCardId;
 use anyhow::Result;
 use cards::decklists;
@@ -35,7 +36,7 @@ use protos::spelldawn::{
     card_target, CardTarget, CommandList, ConnectRequest, GameCommand, GameRequest,
     LoadSceneCommand, NewGameAction, PlayerIdentifier, SceneLoadMode, StandardAction,
 };
-use rules::{actions, dispatch, mutations};
+use rules::{dispatch, mutations};
 use serde_json::de;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;

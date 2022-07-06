@@ -26,7 +26,7 @@ use data::text::Keyword;
 use data::utils;
 use display::rexard_images;
 use display::rexard_images::RexardWeaponType;
-use rules::mutations::sacrifice_card;
+use rules::mutations;
 
 pub fn greataxe() -> CardDefinition {
     CardDefinition {
@@ -140,7 +140,7 @@ pub fn ethereal_blade() -> CardDefinition {
                         |g, s, used_weapon| save_raid_id(g, s, &used_weapon.raid_id),
                     ),
                     on_raid_ended(matching_raid, |g, s, _| {
-                        sacrifice_card(g, s.card_id())?;
+                        mutations::sacrifice_card(g, s.card_id())?;
                         alert(g, s);
                         Ok(())
                     }),

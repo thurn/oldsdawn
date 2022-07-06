@@ -21,6 +21,7 @@
 use std::collections::HashSet;
 use std::f64::consts;
 
+use actions;
 use anyhow::Result;
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
@@ -30,7 +31,7 @@ use petgraph::prelude::{EdgeRef, NodeIndex};
 use petgraph::{Direction, Graph};
 use rand::prelude::IteratorRandom;
 use rand::thread_rng;
-use rules::{actions, raid};
+use rules::raid;
 use with_error::{fail, WithError};
 
 use crate::core::legal_actions;

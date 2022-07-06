@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use actions;
 use anyhow::Result;
 use data::card_name::CardName;
 use data::deck::Deck;
@@ -21,7 +22,7 @@ use data::player_name::{NamedPlayer, PlayerId};
 use data::primitives::{GameId, Side};
 use maplit::hashmap;
 use once_cell::sync::Lazy;
-use rules::{actions, dispatch, mutations};
+use rules::{dispatch, mutations};
 
 /// Standard Overlord deck for use in tests
 pub static CANONICAL_OVERLORD: Lazy<Deck> = Lazy::new(|| Deck {
