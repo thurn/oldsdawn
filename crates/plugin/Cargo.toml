@@ -11,9 +11,9 @@ test = false
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
+anyhow = "1.0.58"
+prost = "0.10.4"
+
 cards = { path = "../cards", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
 server = { path = "../server", version = "0.0.0" }
-
-anyhow = "1.0.58"
-prost = "0.10.4"

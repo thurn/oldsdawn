@@ -17,8 +17,7 @@ use data::game::{GameState, InternalRaidPhase, RaidData, RaidJumpRequest, RoomSt
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
-use data::verify;
-use data::with_error::WithError;
+use with_error::{verify, WithError};
 
 use crate::raid::access::AccessPhase;
 use crate::raid::activation::ActivationPhase;

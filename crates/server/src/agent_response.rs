@@ -20,12 +20,13 @@ use anyhow::Result;
 use concurrent_queue::ConcurrentQueue;
 use data::agent_definition::AgentData;
 use data::game::GameState;
+use data::player_data;
 use data::player_name::PlayerId;
 use data::primitives::{GameId, Side};
-use data::{fail, player_data};
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
 use rules::flags;
+use with_error::fail;
 
 use crate::database::Database;
 use crate::requests;

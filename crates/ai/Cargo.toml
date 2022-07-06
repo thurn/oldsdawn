@@ -24,3 +24,4 @@ petgraph = "0.6.2"
 cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }
+with_error = { path = "../with_error", version = "0.0.0" }

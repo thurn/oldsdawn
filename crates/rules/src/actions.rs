@@ -19,7 +19,7 @@
 //! By convention, functions in this module are responsible for validating the
 //! legality of requests and returning [Result] accordingly.
 
-use anyhow::{bail, ensure, Result};
+use anyhow::Result;
 use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
 use data::delegates::{
@@ -29,9 +29,8 @@ use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
-use data::with_error::WithError;
-use data::{fail, verify};
 use tracing::{info, instrument};
+use with_error::{fail, verify, WithError};
 
 use crate::mana::ManaPurpose;
 use crate::{card_prompt, dispatch, flags, mana, mutations, queries, raid};

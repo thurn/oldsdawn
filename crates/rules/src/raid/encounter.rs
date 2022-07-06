@@ -17,12 +17,11 @@ use data::delegates::{
     EncounterMinionEvent, MinionCombatAbilityEvent, MinionCombatActionsQuery, MinionDefeatedEvent,
     UsedWeapon, UsedWeaponEvent,
 };
-use data::fail;
 use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{EncounterAction, PromptAction};
 use data::primitives::{CardId, GameObjectId, Side};
 use data::updates::{GameUpdate, TargetedInteraction};
-use data::with_error::WithError;
+use with_error::{fail, WithError};
 
 use crate::mana::ManaPurpose;
 use crate::mutations::SummonMinion;

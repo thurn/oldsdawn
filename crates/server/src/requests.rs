@@ -15,7 +15,7 @@
 //! Top-level server request handling
 
 use adapters::ServerCardId;
-use anyhow::{bail, ensure, Result};
+use anyhow::Result;
 use cards::decklists;
 use dashmap::DashMap;
 use data::deck::Deck;
@@ -25,8 +25,7 @@ use data::player_data::{CurrentGame, NewGameRequest};
 use data::player_name::PlayerId;
 use data::primitives::{GameId, Side};
 use data::updates::{UpdateTracker, Updates};
-use data::with_error::WithError;
-use data::{fail, game_actions, player_data, verify};
+use data::{game_actions, player_data};
 use display::render;
 use once_cell::sync::Lazy;
 use protos::spelldawn::game_action::Action;
@@ -43,6 +42,7 @@ use tokio::sync::mpsc::Sender;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, warn, warn_span};
+use with_error::{fail, verify, WithError};
 
 use crate::agent_response::HandleRequest;
 use crate::database::{Database, SledDatabase};

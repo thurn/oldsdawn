@@ -27,7 +27,6 @@ use data::player_name::PlayerId;
 use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PointsValue, RoomId, Side,
 };
-use data::with_error::WithError;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -44,6 +43,7 @@ use protos::spelldawn::{
 use rules::dispatch;
 use server::requests;
 use server::requests::GameResponse;
+use with_error::WithError;
 
 use crate::fake_database::FakeDatabase;
 use crate::{fake_database, ROOM_ID};

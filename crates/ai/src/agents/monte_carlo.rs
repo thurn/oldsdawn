@@ -22,17 +22,16 @@ use std::collections::HashSet;
 use std::f64::consts;
 
 use anyhow::Result;
-use data::fail;
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
-use data::with_error::WithError;
 use ordered_float::NotNan;
 use petgraph::prelude::{EdgeRef, NodeIndex};
 use petgraph::{Direction, Graph};
 use rand::prelude::IteratorRandom;
 use rand::thread_rng;
 use rules::{actions, flags};
+use with_error::{fail, WithError};
 
 use crate::core::legal_actions;
 use crate::core::types::{notnan, StatePredictionIterator};

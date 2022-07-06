@@ -234,8 +234,7 @@ namespace Spelldawn.Services
           _registry.LogViewer.DoShow();
           break;
         case ClientDebugCommand.DebugCommandOneofCase.InvokeAction:
-          // TODO: Enqueue actions
-          StartCoroutine(HandleActionAsync(command.InvokeAction));
+          _registry.ActionService.HandleAction(command.InvokeAction);
           break;
         case ClientDebugCommand.DebugCommandOneofCase.LogMessage:
           switch (command.LogMessage.Level)
@@ -261,12 +260,6 @@ namespace Spelldawn.Services
     IEnumerator HandleCreateTokenCard(CreateTokenCardCommand command)
     {
       return _registry.CardService.Sync(new List<CardView> { command.Card }, null, command.Animate, delete: false);
-    }
-
-    IEnumerator HandleActionAsync(GameAction action)
-    {
-      yield return new WaitForSeconds(0.5f);
-      _registry.ActionService.HandleAction(action);
     }
   }
 }

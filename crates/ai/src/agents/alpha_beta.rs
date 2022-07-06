@@ -15,13 +15,12 @@
 use std::cmp;
 
 use anyhow::{bail, Result};
-use data::fail;
 use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
-use data::with_error::WithError;
 use ordered_float::NotNan;
 use rules::{actions, flags};
+use with_error::{fail, WithError};
 
 use crate::core::legal_actions;
 use crate::core::types::{notnan, StatePredictionIterator};

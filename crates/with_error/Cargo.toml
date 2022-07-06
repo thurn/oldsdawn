@@ -1,0 +1,12 @@
+[package]
+name = "with_error"
+version = "0.0.0"
+description = "Error handlers which can be configured to panic on error"
+license = "Apache-2.0"
+edition = "2021"
+
+[lib]
+doctest = false
+
+[dependencies]
+anyhow = "1.0.58"

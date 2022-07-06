@@ -10,6 +10,7 @@ dependencies = [
  "data",
  "protos",
  "serde_json",
+ "with_error",
 ]
 
 [[package]]
@@ -39,6 +40,7 @@ dependencies = [
  "petgraph",
  "rand",
  "rules",
+ "with_error",
 ]
 
 [[package]]
@@ -218,6 +220,7 @@ dependencies = [
  "regex",
  "rules",
  "walkdir",
+ "with_error",
 ]
 
 [[package]]
@@ -481,6 +484,7 @@ dependencies = [
  "serde",
  "serde_with",
  "strum_macros",
+ "with_error",
 ]
 
 [[package]]
@@ -496,6 +500,7 @@ dependencies = [
  "game_ui",
  "protos",
  "rules",
+ "with_error",
 ]
 
 [[package]]
@@ -662,6 +667,7 @@ dependencies = [
  "data",
  "protos",
  "rules",
+ "with_error",
 ]
 
 [[package]]
@@ -1035,6 +1041,7 @@ dependencies = [
  "core_ui",
  "data",
  "protos",
+ "with_error",
 ]
 
 [[package]]
@@ -1378,6 +1385,7 @@ dependencies = [
  "fallible-iterator",
  "once_cell",
  "tracing",
+ "with_error",
 ]
 
 [[package]]
@@ -1533,6 +1541,7 @@ dependencies = [
  "tokio-stream",
  "tonic",
  "tracing",
+ "with_error",
 ]
 
 [[package]]
@@ -1683,6 +1692,7 @@ dependencies = [
  "protos",
  "rules",
  "server",
+ "with_error",
 ]
 
 [[package]]
@@ -2169,6 +2179,13 @@ name = "windows_x86_64_msvc"
 version = "0.36.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c811ca4a8c853ef420abd8592ba53ddbbac90410fab6903b3e79972a631f7680"
+
+[[package]]
+name = "with_error"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+]
 
 [[package]]
 name = "yaml-rust"

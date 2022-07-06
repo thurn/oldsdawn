@@ -18,7 +18,7 @@ use anyhow::Result;
 use data::game_actions::UserAction;
 use data::primitives::Side;
 use data::random;
-use data::with_error::WithError;
+use with_error::WithError;
 
 use crate::core::legal_actions;
 use crate::core::types::StatePredictionIterator;

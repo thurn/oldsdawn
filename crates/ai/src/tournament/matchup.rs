@@ -18,8 +18,8 @@ use anyhow::Result;
 use data::agent_definition::AgentName;
 use data::game::{GamePhase, GameState};
 use data::primitives::{PointsValue, Side, TurnNumber};
-use data::with_error::WithError;
 use rules::{actions, flags};
+use with_error::WithError;
 
 use crate::tournament::run_tournament::RunGames;
 

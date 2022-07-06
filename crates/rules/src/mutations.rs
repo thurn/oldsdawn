@@ -36,9 +36,10 @@ use data::primitives::{
     ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
     RoomLocation, Side, TurnNumber,
 };
+use data::random;
 use data::updates::GameUpdate;
-use data::{random, verify};
 use tracing::{info, instrument};
+use with_error::verify;
 
 use crate::mana::ManaPurpose;
 use crate::{constants, dispatch, flags, mana, queries};

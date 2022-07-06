@@ -22,9 +22,6 @@ namespace Spelldawn.Utils
 {
   public static class CollectionUtils
   {
-    public static IEnumerable<T> Interleave<T>(this IEnumerable<T> first, IEnumerable<T> second) =>
-      first.Zip(second, (f, s) => new[] { f, s }).SelectMany(f => f);
-
     public static IEnumerator<YieldInstruction> Yield()
     {
       yield break;

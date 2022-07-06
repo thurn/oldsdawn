@@ -23,9 +23,9 @@ use data::delegates::{
 use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{AccessPhaseAction, PromptAction};
 use data::primitives::{CardId, CardType, RoomId, Side};
+use data::random;
 use data::updates::GameUpdate;
-use data::with_error::WithError;
-use data::{fail, random};
+use with_error::{fail, WithError};
 
 use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
 use crate::{dispatch, mutations, queries};

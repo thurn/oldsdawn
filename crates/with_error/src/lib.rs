@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Error handlers which can be configured to panic on error
+
 use std::convert::Infallible;
 use std::error;
 use std::fmt::Display;
@@ -25,7 +27,7 @@ pub const ERROR_PANIC: bool = false;
 #[macro_export]
 macro_rules! verify {
     ($($tts:tt)*) => {
-        if data::with_error::ERROR_PANIC {
+        if with_error::ERROR_PANIC {
             assert!($($tts)*);
         } else {
             use anyhow::ensure;
@@ -38,20 +40,7 @@ macro_rules! verify {
 #[macro_export]
 macro_rules! fail {
     ($($tts:tt)*) => {
-        if data::with_error::ERROR_PANIC {
-            panic!($($tts)*);
-        } else {
-            use anyhow::bail;
-            bail!($($tts)*);
-        }
-    }
-}
-
-// TODO: Remove this or move it to its own crate
-#[macro_export]
-macro_rules! fail_tmp {
-    ($($tts:tt)*) => {
-        if crate::with_error::ERROR_PANIC {
+        if with_error::ERROR_PANIC {
             panic!($($tts)*);
         } else {
             use anyhow::bail;

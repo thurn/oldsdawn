@@ -306,8 +306,10 @@ outdated:
 upgrade:
     cargo upgrade --workspace
 
-remove-unused-deps:
+machete:
     cargo machete --fix
+
+remove-unused-deps: machete
 
 time-passes: clean
     cargo +nightly rustc -p spelldawn --bin spelldawn -- -Z time-passes

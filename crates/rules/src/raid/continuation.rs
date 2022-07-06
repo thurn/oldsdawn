@@ -14,10 +14,10 @@
 
 use anyhow::Result;
 use data::delegates::RaidOutcome;
-use data::fail;
 use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{ContinueAction, PromptAction, PromptContext};
 use data::primitives::Side;
+use with_error::fail;
 
 use crate::mutations;
 use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};

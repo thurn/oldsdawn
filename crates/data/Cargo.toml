@@ -21,3 +21,4 @@ serde_with = "1.14.0"
 strum_macros = "0.24.2"
 
 macros = { path = "../macros", version = "0.0.0" }
+with_error = { path = "../with_error", version = "0.0.0" }

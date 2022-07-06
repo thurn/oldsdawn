@@ -17,7 +17,6 @@
 pub mod response_builder;
 
 use anyhow::Result;
-use data::fail;
 use data::player_name::{NamedPlayer, PlayerId};
 use data::primitives::{
     AbilityId, AbilityIndex, CardId, DeckId, GameId, GameObjectId, RoomId, Side, Sprite,
@@ -29,6 +28,7 @@ use protos::spelldawn::{
     PlayerSide, RoomIdentifier, SpriteAddress, TimeValue,
 };
 use serde_json::{de, ser};
+use with_error::fail;
 
 use crate::response_builder::ResponseBuilder;
 

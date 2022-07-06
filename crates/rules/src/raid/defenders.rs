@@ -16,8 +16,8 @@ use anyhow::Result;
 use data::game::GameState;
 use data::primitives::{CardId, RoomId, Side};
 use data::utils;
-use data::with_error::WithError;
 use fallible_iterator::FallibleIterator;
+use with_error::WithError;
 
 use crate::mana::ManaPurpose;
 use crate::{mana, queries};

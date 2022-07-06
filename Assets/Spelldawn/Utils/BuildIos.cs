@@ -38,7 +38,7 @@ public class BuildIos
     // libz.tbd for grpc ios build
     project.AddFrameworkToProject(targetGuid, "libz.tbd", false);
 
-    // bitode is disabled for libgrpc_csharp_ext, so need to disable it for the whole project
+    // bitcode is disabled for libgrpc_csharp_ext, so need to disable it for the whole project
     project.SetBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");
 
     File.WriteAllText(projectPath, project.WriteToString());

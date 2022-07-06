@@ -19,8 +19,8 @@ use core_ui::button::{Button, ButtonType};
 use core_ui::prelude::*;
 use core_ui::rendering;
 use data::primitives::CardId;
-use data::with_error::WithError;
 use protos::spelldawn::{AnchorCorner, CardAnchor, CardAnchorNode, FlexAlign, FlexJustify};
+use with_error::WithError;
 
 #[derive(Debug)]
 pub struct ResponseButton {

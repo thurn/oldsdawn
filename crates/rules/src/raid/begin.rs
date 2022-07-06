@@ -15,10 +15,10 @@
 use anyhow::Result;
 use data::card_state::CardState;
 use data::delegates::{RaidStart, RaidStartEvent};
-use data::fail;
 use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::PromptAction;
 use data::primitives::Side;
+use with_error::fail;
 
 use crate::dispatch;
 use crate::raid::defenders;

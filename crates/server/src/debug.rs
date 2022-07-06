@@ -23,7 +23,6 @@ use data::game_actions::DebugAction;
 use data::player_data::{CurrentGame, PlayerData};
 use data::player_name::{NamedPlayer, PlayerId};
 use data::primitives::{DeckId, GameId, Side};
-use data::with_error::WithError;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_command::Command;
@@ -32,6 +31,7 @@ use protos::spelldawn::{
     NewGameAction, NewGameDebugOptions, SceneLoadMode,
 };
 use rules::mana;
+use with_error::WithError;
 
 use crate::database::Database;
 use crate::requests;

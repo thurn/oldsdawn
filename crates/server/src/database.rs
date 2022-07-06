@@ -21,7 +21,6 @@ use data::game::GameState;
 use data::player_data::PlayerData;
 use data::player_name::PlayerId;
 use data::primitives::GameId;
-use data::with_error::WithError;
 use once_cell::sync::Lazy;
 use prost::Message;
 use protos::spelldawn::player_identifier::PlayerIdentifierType;
@@ -29,6 +28,7 @@ use protos::spelldawn::PlayerIdentifier;
 use rules::dispatch;
 use serde_json::{de, ser};
 use sled::{Db, Tree};
+use with_error::WithError;
 
 static DATABASE_PATH: Lazy<Mutex<Option<String>>> = Lazy::new(|| Mutex::new(None));
 

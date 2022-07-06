@@ -19,12 +19,11 @@ pub mod debug_panel;
 
 use anyhow::{bail, Result};
 use core_ui::{panel, rendering};
-use data::fail;
-use data::with_error::WithError;
 use debug_panel::DebugPanel;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::panel_address::AddressType;
 use protos::spelldawn::{InterfacePanel, KnownPanelAddress, PanelAddress, UpdatePanelsCommand};
+use with_error::{fail, WithError};
 
 /// Appends a command to `commands` to render commonly-used panels.
 pub fn render_standard_panels(commands: &mut Vec<Command>) -> Result<()> {

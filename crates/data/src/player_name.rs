@@ -14,8 +14,7 @@
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-
-use crate::fail_tmp;
+use with_error::fail;
 
 /// Identifies a player across different games
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, Serialize, Deserialize)]
@@ -32,7 +31,7 @@ impl PlayerId {
     pub fn database_key(&self) -> Result<[u8; 8]> {
         match self {
             PlayerId::Database(key) => Ok(key.to_be_bytes()),
-            _ => fail_tmp!("Expected PlayerId::Database"),
+            _ => fail!("Expected PlayerId::Database"),
         }
     }
 }

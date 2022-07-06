@@ -24,6 +24,7 @@ use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+use with_error::WithError;
 
 use crate::agent_definition::AgentData;
 use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState};
@@ -36,7 +37,6 @@ use crate::primitives::{
     RaidId, RoomId, RoomLocation, Side, TurnNumber,
 };
 use crate::updates::{GameUpdate, UpdateStep, UpdateTracker, Updates};
-use crate::with_error::WithError;
 
 /// Mana to be spent only during the `raid_id` raid
 #[derive(Debug, Clone, Serialize, Deserialize)]
