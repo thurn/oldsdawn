@@ -19,7 +19,7 @@ use data::game::{GamePhase, GameState};
 use data::game_actions::UserAction;
 use data::primitives::Side;
 use ordered_float::NotNan;
-use rules::{actions, flags};
+use rules::{actions, raid};
 use with_error::{fail, WithError};
 
 use crate::core::legal_actions;
@@ -105,9 +105,9 @@ fn alpha_beta(
 }
 
 fn current_priority(game: &GameState) -> Result<Side> {
-    if flags::can_take_action(game, Side::Overlord) {
+    if raid::core::can_take_action(game, Side::Overlord) {
         Ok(Side::Overlord)
-    } else if flags::can_take_action(game, Side::Champion) {
+    } else if raid::core::can_take_action(game, Side::Champion) {
         Ok(Side::Champion)
     } else {
         fail!("No player can take action!");

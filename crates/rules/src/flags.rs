@@ -27,7 +27,6 @@ use data::game_actions::CardTarget;
 use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
 
 use crate::mana::ManaPurpose;
-use crate::raid::core::RaidDataExt;
 use crate::{dispatch, mana, queries};
 
 /// Returns whether a player can currently make a mulligan decision
@@ -288,21 +287,6 @@ pub fn can_defeat_target(game: &GameState, source: CardId, target: CardId) -> bo
         Flag::new(can_defeat),
     )
     .into()
-}
-
-/// Returns true if the indicated player currently has a legal game action
-/// available to them.
-pub fn can_take_action(game: &GameState, side: Side) -> bool {
-    match &game.data.phase {
-        GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
-        GamePhase::GameOver(_) => return false,
-        _ => {}
-    };
-
-    match &game.data.raid {
-        Some(raid) => side == raid.phase().active_side(),
-        None => side == game.data.turn.side,
-    }
 }
 
 /// Returns true if the provided `side` player is currently in their Main phase

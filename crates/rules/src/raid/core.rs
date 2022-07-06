@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use anyhow::Result;
-use data::game::{GameState, InternalRaidPhase, RaidData, RaidJumpRequest, RoomState};
+use data::game::{GamePhase, GameState, InternalRaidPhase, RaidData, RaidJumpRequest, RoomState};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
@@ -133,6 +133,21 @@ pub fn current_prompt(game: &GameState, user_side: Side) -> Result<Option<GamePr
         Ok(Some(GamePrompt { context: game.raid()?.phase().prompt_context(), responses: actions }))
     } else {
         Ok(None)
+    }
+}
+
+/// Returns true if the indicated player currently has a legal game action
+/// available to them.
+pub fn can_take_action(game: &GameState, side: Side) -> bool {
+    match &game.data.phase {
+        GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
+        GamePhase::GameOver(_) => return false,
+        _ => {}
+    };
+
+    match &game.data.raid {
+        Some(raid) => side == raid.phase().active_side(),
+        None => side == game.data.turn.side,
     }
 }
 

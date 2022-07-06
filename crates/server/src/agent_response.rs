@@ -25,7 +25,7 @@ use data::player_name::PlayerId;
 use data::primitives::{GameId, Side};
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
-use rules::flags;
+use rules::raid;
 use with_error::fail;
 
 use crate::database::Database;
@@ -75,7 +75,7 @@ pub fn handle_request(
 fn active_agent(game: &GameState) -> Option<(Side, AgentData)> {
     for side in enum_iterator::all::<Side>() {
         if let Some(data) = game.player(side).agent {
-            if flags::can_take_action(game, side) {
+            if raid::core::can_take_action(game, side) {
                 return Some((side, data));
             }
         }

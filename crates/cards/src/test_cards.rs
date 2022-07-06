@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use card_helpers::{abilities, *};
+use card_helpers::{abilities, text, *};
 use data::card_definition::{
     Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, CardStats, SchemePoints,
 };
@@ -21,8 +21,8 @@ use data::primitives::{
     CardType, ColdDamage, Faction, HealthValue, ManaValue, Rarity, School, Side,
 };
 use data::text::{Keyword, Sentence};
+use rules::mutations;
 use rules::mutations::OnZeroStored;
-use rules::{mutations, text};
 
 pub const MINION_COST: ManaValue = 3;
 pub const WEAPON_COST: ManaValue = 3;

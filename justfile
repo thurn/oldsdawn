@@ -315,7 +315,7 @@ time-passes: clean
     cargo +nightly rustc -p spelldawn --bin spelldawn -- -Z time-passes
 
 timings: clean
-    cargo +nightly build -p spelldawn --bin spelldawn -Z timings --release
+    cargo build --timings
 
 # Builds .gcda files used for code coverage
 gen-gcda: clean

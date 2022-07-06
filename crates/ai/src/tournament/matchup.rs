@@ -18,7 +18,7 @@ use anyhow::Result;
 use data::agent_definition::AgentName;
 use data::game::{GamePhase, GameState};
 use data::primitives::{PointsValue, Side, TurnNumber};
-use rules::{actions, flags};
+use rules::{actions, raid};
 use with_error::WithError;
 
 use crate::tournament::run_tournament::RunGames;
@@ -72,7 +72,7 @@ pub fn run(mut game: GameState, config: RunGames) -> Result<MatchOutcome> {
                 });
             }
 
-            if flags::can_take_action(&game, side) {
+            if raid::core::can_take_action(&game, side) {
                 let agent_data = game.player(side).agent.with_error(|| "Agent not found")?;
                 let agent = crate::core::get_agent(agent_data.name);
                 let state_predictor =

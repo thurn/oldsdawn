@@ -16,6 +16,7 @@
 //! wildcard import in card definition files.
 
 pub mod abilities;
+pub mod text_macro;
 
 use anyhow::Result;
 use data::card_definition::{

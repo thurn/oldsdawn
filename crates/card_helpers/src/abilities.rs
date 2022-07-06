@@ -20,10 +20,11 @@ use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope
 use data::game::GameState;
 use data::primitives::{AbilityId, AttackValue, CardId, DamageTypeTrait, ManaValue};
 use data::text::{AbilityText, DamageWord, Keyword, Sentence, TextToken};
-use rules::text_macro::text;
+use rules::mutations::OnZeroStored;
+use rules::{mutations, queries};
 
-use crate::mutations::OnZeroStored;
-use crate::{mutations, queries, *};
+use crate::text_macro::text;
+use crate::*;
 
 /// The standard weapon ability; applies an attack boost for the duration of a
 /// single encounter.

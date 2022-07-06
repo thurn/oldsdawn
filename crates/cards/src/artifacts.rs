@@ -14,6 +14,7 @@
 
 //! Card definitions for the Weapon card type
 
+use card_helpers::text_macro::text;
 use card_helpers::{abilities, *};
 use data::card_definition::{
     Ability, AbilityType, CardConfig, CardDefinition, Cost, TargetRequirement,
@@ -25,7 +26,6 @@ use data::text::{Keyword, Sentence};
 use data::utils;
 use rules::mutations;
 use rules::mutations::OnZeroStored;
-use rules::text_macro::text;
 
 pub fn lodestone() -> CardDefinition {
     CardDefinition {
