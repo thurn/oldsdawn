@@ -13,4 +13,5 @@ test = false
 anyhow = "1.0.58"
 
 data = { path = "../data", version = "0.0.0" }
+raids = { path = "../raids", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }

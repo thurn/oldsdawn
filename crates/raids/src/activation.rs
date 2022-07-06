@@ -18,8 +18,8 @@ use data::game_actions::{PromptAction, PromptContext, RoomActivationAction};
 use data::primitives::Side;
 use with_error::fail;
 
-use crate::raid::defenders;
-use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
+use crate::defenders;
+use crate::traits::{RaidDisplayState, RaidPhaseImpl};
 
 /// Initial raid step in which the Overlord chooses whether minions in the
 /// targeted room of a raid should be summoned.

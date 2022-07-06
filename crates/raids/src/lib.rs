@@ -12,20 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Implements state machine model for handling raids"
+
+pub mod traits;
+
+mod access;
+mod activation;
+mod begin;
+mod continuation;
+mod defenders;
+mod encounter;
+
 use anyhow::Result;
-use data::game::{GamePhase, GameState, InternalRaidPhase, RaidData, RaidJumpRequest, RoomState};
+use data::game::{GameState, InternalRaidPhase, RaidData, RaidJumpRequest, RoomState};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::{RaidId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
+use rules::{flags, mutations, queries};
 use with_error::{verify, WithError};
 
-use crate::raid::access::AccessPhase;
-use crate::raid::activation::ActivationPhase;
-use crate::raid::begin::BeginPhase;
-use crate::raid::continuation::ContinuePhase;
-use crate::raid::encounter::EncounterPhase;
-use crate::raid::traits::RaidPhase;
-use crate::{flags, mutations, queries};
+use crate::access::AccessPhase;
+use crate::activation::ActivationPhase;
+use crate::begin::BeginPhase;
+use crate::continuation::ContinuePhase;
+use crate::encounter::EncounterPhase;
+use crate::traits::RaidPhase;
 
 /// Extension trait to add the `phase` method to [RaidData] without introducing
 /// cyclical crate dependencies.
@@ -133,21 +144,6 @@ pub fn current_prompt(game: &GameState, user_side: Side) -> Result<Option<GamePr
         Ok(Some(GamePrompt { context: game.raid()?.phase().prompt_context(), responses: actions }))
     } else {
         Ok(None)
-    }
-}
-
-/// Returns true if the indicated player currently has a legal game action
-/// available to them.
-pub fn can_take_action(game: &GameState, side: Side) -> bool {
-    match &game.data.phase {
-        GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
-        GamePhase::GameOver(_) => return false,
-        _ => {}
-    };
-
-    match &game.data.raid {
-        Some(raid) => side == raid.phase().active_side(),
-        None => side == game.data.turn.side,
     }
 }
 

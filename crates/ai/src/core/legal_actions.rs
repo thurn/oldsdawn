@@ -21,7 +21,7 @@ use data::card_definition::{AbilityType, TargetRequirement};
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, CardTargetKind, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
-use rules::{flags, queries, raid};
+use rules::{flags, queries};
 
 /// Returns an iterator over currently-legal [UserAction]s for the `side` player
 /// in the given [GameState].
@@ -58,7 +58,7 @@ pub fn evaluate<'a>(
         ));
     }
 
-    if let Some(actions) = raid::core::current_actions(game, side).expect("Current Actions") {
+    if let Some(actions) = raids::current_actions(game, side).expect("Current Actions") {
         return Ok(Box::new(actions.into_iter().map(UserAction::PromptAction)));
     }
 

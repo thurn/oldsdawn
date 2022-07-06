@@ -25,10 +25,10 @@ use data::game_actions::{AccessPhaseAction, PromptAction};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::random;
 use data::updates::GameUpdate;
+use rules::{dispatch, mutations, queries};
 use with_error::{fail, WithError};
 
-use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
-use crate::{dispatch, mutations, queries};
+use crate::traits::{RaidDisplayState, RaidPhaseImpl};
 
 /// Final step of a raid, in which cards are accessed by the Champion
 #[derive(Debug, Clone, Copy)]
@@ -133,7 +133,7 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
 /// Returns an [AccessPhaseAction] for the Champion to access the provided
 /// `card_id`, if any action can be taken.
 fn access_action_for_card(game: &GameState, card_id: CardId) -> Option<AccessPhaseAction> {
-    let definition = crate::card_definition(game, card_id);
+    let definition = rules::card_definition(game, card_id);
     match definition.card_type {
         CardType::Scheme if can_score_card(game, Side::Champion, card_id) => {
             Some(AccessPhaseAction::ScoreCard(card_id))
@@ -151,7 +151,7 @@ fn can_score_card(game: &GameState, _side: Side, card_id: CardId) -> bool {
     };
 
     raid.accessed.contains(&card_id)
-        && crate::card_definition(game, card_id).config.stats.scheme_points.is_some()
+        && rules::card_definition(game, card_id).config.stats.scheme_points.is_some()
 }
 
 fn handle_score_card(game: &mut GameState, card_id: CardId) -> Result<()> {
@@ -164,7 +164,7 @@ fn handle_score_card(game: &mut GameState, card_id: CardId) -> Result<()> {
     dispatch::invoke_event(game, ChampionScoreCardEvent(card_id))?;
     dispatch::invoke_event(game, ScoreCardEvent(ScoreCard { player: Side::Champion, card_id }))?;
 
-    let scheme_points = crate::card_definition(game, card_id)
+    let scheme_points = rules::card_definition(game, card_id)
         .config
         .stats
         .scheme_points

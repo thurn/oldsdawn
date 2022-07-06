@@ -30,7 +30,6 @@ pub mod flags;
 pub mod mana;
 pub mod mutations;
 pub mod queries;
-pub mod raid;
 
 pub static DEFINITIONS: Lazy<DashSet<fn() -> CardDefinition>> = Lazy::new(DashSet::new);
 

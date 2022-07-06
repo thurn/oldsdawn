@@ -17,10 +17,10 @@ use data::delegates::RaidOutcome;
 use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{ContinueAction, PromptAction, PromptContext};
 use data::primitives::Side;
+use rules::mutations;
 use with_error::fail;
 
-use crate::mutations;
-use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
+use crate::traits::{RaidDisplayState, RaidPhaseImpl};
 
 /// After an encounter, the continuation phase allows the Champion to decide
 /// whether to proceed with the current raid or abandon it.

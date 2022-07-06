@@ -38,7 +38,7 @@ use data::text::{AbilityText, NumericOperator, TextToken};
 use data::updates::{GameUpdate, InitiatedBy};
 use data::utils;
 use rules::mana::ManaPurpose;
-use rules::{mana, mutations, queries, raid};
+use rules::{mana, mutations, queries};
 
 pub fn add_number(number: impl Into<u32>) -> TextToken {
     TextToken::Number(NumericOperator::Add, number.into())
@@ -323,7 +323,7 @@ pub fn initiate_raid_with_callback(
     target: CardTarget,
     on_begin: impl Fn(&mut GameState, RaidId),
 ) -> Result<()> {
-    raid::core::initiate(game, target.room_id()?, InitiatedBy::Card, |game, raid_id| {
+    raids::initiate(game, target.room_id()?, InitiatedBy::Card, |game, raid_id| {
         game.ability_state_mut(scope.ability_id()).raid_id = Some(raid_id);
         on_begin(game, raid_id);
     })

@@ -18,11 +18,11 @@ use data::delegates::{RaidStart, RaidStartEvent};
 use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::PromptAction;
 use data::primitives::Side;
+use rules::dispatch;
 use with_error::fail;
 
-use crate::dispatch;
-use crate::raid::defenders;
-use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
+use crate::defenders;
+use crate::traits::{RaidDisplayState, RaidPhaseImpl};
 
 /// The starting state for all raids, fires 'raid start' events and determines
 /// the next state to move to.

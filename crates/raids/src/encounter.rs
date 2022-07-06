@@ -21,13 +21,13 @@ use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::{EncounterAction, PromptAction};
 use data::primitives::{CardId, GameObjectId, Side};
 use data::updates::{GameUpdate, TargetedInteraction};
+use rules::mana::ManaPurpose;
+use rules::{card_prompt, dispatch, flags, mana, mutations, queries};
 use with_error::{fail, WithError};
 
-use crate::mana::ManaPurpose;
+use crate::defenders;
 use crate::mutations::SummonMinion;
-use crate::raid::defenders;
-use crate::raid::traits::{RaidDisplayState, RaidPhaseImpl};
-use crate::{card_prompt, dispatch, flags, mana, mutations, queries};
+use crate::traits::{RaidDisplayState, RaidPhaseImpl};
 
 /// The primary combat phase of a raid, in which the Champion may use weapon
 /// abilities to attempt to defeat an active Overlord minion.

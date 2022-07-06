@@ -20,7 +20,6 @@ use data::primitives::Side;
 use game_ui::prompts;
 use game_ui::waiting_prompt::WaitingPrompt;
 use protos::spelldawn::InterfaceMainControls;
-use rules::raid;
 
 /// Returns a [InterfaceMainControls] to render the interface state for the
 /// provided `game`.
@@ -42,7 +41,7 @@ pub fn render(game: &GameState, user_side: Side) -> Result<Option<InterfaceMainC
 fn render_prompt(game: &GameState, side: Side) -> Result<Option<InterfaceMainControls>> {
     if let Some(prompt) = &game.player(side).prompt {
         return prompts::action_prompt(game, side, prompt);
-    } else if let Some(prompt) = raid::core::current_prompt(game, side)? {
+    } else if let Some(prompt) = raids::current_prompt(game, side)? {
         return prompts::action_prompt(game, side, &prompt);
     } else if let GamePhase::ResolveMulligans(data) = &game.data.phase {
         if data.decision(side).is_none() {

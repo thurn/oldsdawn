@@ -26,8 +26,9 @@ use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
 use data::updates::{GameUpdate, InitiatedBy};
+use raids::RaidDataExt;
 use rules::mana::ManaPurpose;
-use rules::{card_prompt, dispatch, flags, mana, mutations, queries, raid};
+use rules::{card_prompt, dispatch, flags, mana, mutations, queries};
 use tracing::{info, instrument};
 use with_error::{fail, verify, WithError};
 
@@ -46,10 +47,25 @@ pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAct
             activate_ability_action(game, user_side, ability_id, target)
         }
         UserAction::InitiateRaid(room_id) => {
-            raid::core::handle_initiate_action(game, user_side, room_id)
+            raids::handle_initiate_action(game, user_side, room_id)
         }
         UserAction::LevelUpRoom(room_id) => level_up_room_action(game, user_side, room_id),
         UserAction::SpendActionPoint => spend_action_point_action(game, user_side),
+    }
+}
+
+/// Returns true if the indicated player currently has a legal game action
+/// available to them.
+pub fn can_take_action(game: &GameState, side: Side) -> bool {
+    match &game.data.phase {
+        GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
+        GamePhase::GameOver(_) => return false,
+        _ => {}
+    };
+
+    match &game.data.raid {
+        Some(raid) => side == raid.phase().active_side(),
+        None => side == game.data.turn.side,
     }
 }
 
@@ -246,6 +262,6 @@ fn handle_prompt_action(game: &mut GameState, user_side: Side, action: PromptAct
             handle_mulligan_decision(game, user_side, mulligan)
         }
         PromptAction::CardAction(card_action) => card_prompt::handle(game, user_side, card_action),
-        _ => raid::core::handle_action(game, user_side, action),
+        _ => raids::handle_action(game, user_side, action),
     }
 }

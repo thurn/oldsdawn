@@ -7,11 +7,8 @@ name = "actions"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "dashmap",
  "data",
- "enum-iterator",
- "fallible-iterator",
- "once_cell",
+ "raids",
  "rules",
  "tracing",
  "with_error",
@@ -54,6 +51,7 @@ dependencies = [
  "enum-iterator",
  "ordered-float",
  "petgraph",
+ "raids",
  "rand",
  "rules",
  "with_error",
@@ -220,6 +218,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "data",
+ "raids",
  "rules",
 ]
 
@@ -508,6 +507,7 @@ dependencies = [
 name = "display"
 version = "0.0.0"
 dependencies = [
+ "actions",
  "adapters",
  "anyhow",
  "core_ui",
@@ -516,6 +516,7 @@ dependencies = [
  "fallible-iterator",
  "game_ui",
  "protos",
+ "raids",
  "rules",
  "with_error",
 ]
@@ -1285,6 +1286,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "raids"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "data",
+ "fallible-iterator",
+ "rules",
+ "with_error",
+]
+
+[[package]]
 name = "rand"
 version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1399,7 +1411,6 @@ dependencies = [
  "dashmap",
  "data",
  "enum-iterator",
- "fallible-iterator",
  "once_cell",
  "tracing",
  "with_error",

@@ -29,9 +29,9 @@ use protos::spelldawn::{
     ObjectPositionItem, ObjectPositionRaid, ObjectPositionRevealedCards, ObjectPositionRoom,
     ObjectPositionStaging, RevealedCardsBrowserSize, RoomIdentifier,
 };
+use raids::traits::RaidDisplayState;
+use raids::RaidDataExt;
 use rules::queries;
-use rules::raid::core::RaidDataExt;
-use rules::raid::traits::RaidDisplayState;
 use with_error::fail;
 
 pub fn for_card(card: &CardState, position: Position) -> ObjectPosition {

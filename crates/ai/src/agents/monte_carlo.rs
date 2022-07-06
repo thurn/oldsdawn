@@ -31,7 +31,6 @@ use petgraph::prelude::{EdgeRef, NodeIndex};
 use petgraph::{Direction, Graph};
 use rand::prelude::IteratorRandom;
 use rand::thread_rng;
-use rules::raid;
 use with_error::{fail, WithError};
 
 use crate::core::legal_actions;
@@ -277,9 +276,9 @@ fn backup(
 }
 
 fn current_priority(game: &GameState) -> Result<Side> {
-    if raid::core::can_take_action(game, Side::Overlord) {
+    if actions::can_take_action(game, Side::Overlord) {
         Ok(Side::Overlord)
-    } else if raid::core::can_take_action(game, Side::Champion) {
+    } else if actions::can_take_action(game, Side::Champion) {
         Ok(Side::Champion)
     } else {
         fail!("No player can take action!")
