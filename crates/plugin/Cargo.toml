@@ -11,17 +11,9 @@ test = false
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-ai = { path = "../ai", version = "0.0.0" }
 cards = { path = "../cards", version = "0.0.0" }
-data = { path = "../data", version = "0.0.0" }
-display = { path = "../display", version = "0.0.0" }
-panels = { path = "../panels", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
-rules = { path = "../rules", version = "0.0.0" }
 server = { path = "../server", version = "0.0.0" }
-test_utils = { path = "../test_utils", version = "0.0.0" }
 
 anyhow = "1.0.58"
 prost = "0.10.4"
-prost-build = "0.10.4"
-prost-types = "0.10.1"

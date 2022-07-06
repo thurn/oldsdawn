@@ -13,13 +13,10 @@ test = false
 anyhow = "1.0.58"
 maplit = "1.0.2"
 prost = "0.10.4"
-prost-types = "0.10.1"
 
 adapters = { path = "../adapters", version = "0.0.0" }
 cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
-panels = { path = "../panels", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
 rules = { path = "../rules", version = "0.0.0" }
-display = { path = "../display", version = "0.0.0" }
 server = { path = "../server", version = "0.0.0" }

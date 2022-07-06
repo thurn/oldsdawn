@@ -11,10 +11,7 @@ test = false
 
 [dependencies]
 anyhow = "1.0.58"
-tracing = { version = "0.1.35", features = ["max_level_debug", "release_max_level_warn"] }
 
 data = { path = "../data", version = "0.0.0" }
-display = { path = "../display", version = "0.0.0" }
-rules = { path = "../rules", version = "0.0.0" }
 core_ui = { path = "../core_ui", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }

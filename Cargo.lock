@@ -35,13 +35,10 @@ dependencies = [
  "cards",
  "data",
  "enum-iterator",
- "enum-kinds",
- "once_cell",
  "ordered-float",
  "petgraph",
  "rand",
  "rules",
- "serde",
 ]
 
 [[package]]
@@ -205,10 +202,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "data",
- "enum-iterator",
- "fallible-iterator",
  "rules",
- "tracing",
 ]
 
 [[package]]
@@ -221,7 +215,6 @@ dependencies = [
  "display",
  "maplit",
  "once_cell",
- "rand",
  "regex",
  "rules",
  "walkdir",
@@ -311,7 +304,6 @@ version = "0.0.0"
 dependencies = [
  "data",
  "protos",
- "rules",
  "serde_json",
 ]
 
@@ -483,7 +475,6 @@ dependencies = [
  "enum-iterator",
  "enum-kinds",
  "fallible-iterator",
- "itertools",
  "macros",
  "rand",
  "rand_xoshiro",
@@ -498,19 +489,13 @@ version = "0.0.0"
 dependencies = [
  "adapters",
  "anyhow",
- "bitflags",
  "core_ui",
- "dashmap",
  "data",
  "enum-iterator",
  "fallible-iterator",
  "game_ui",
- "if_chain",
- "itertools",
- "once_cell",
  "protos",
  "rules",
- "tracing",
 ]
 
 [[package]]
@@ -677,7 +662,6 @@ dependencies = [
  "data",
  "protos",
  "rules",
- "serde_json",
 ]
 
 [[package]]
@@ -827,12 +811,6 @@ name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
-
-[[package]]
-name = "if_chain"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb56e1aa765b4b4f3aadfab769793b7087bb03a4ea4920644a6d238e2df5b9ed"
 
 [[package]]
 name = "indexmap"
@@ -1056,10 +1034,7 @@ dependencies = [
  "anyhow",
  "core_ui",
  "data",
- "display",
  "protos",
- "rules",
- "tracing",
 ]
 
 [[package]]
@@ -1180,19 +1155,11 @@ dependencies = [
 name = "plugin"
 version = "0.0.0"
 dependencies = [
- "ai",
  "anyhow",
  "cards",
- "data",
- "display",
- "panels",
  "prost",
- "prost-build",
- "prost-types",
  "protos",
- "rules",
  "server",
- "test_utils",
 ]
 
 [[package]]
@@ -1280,8 +1247,6 @@ name = "protos"
 version = "0.0.0"
 dependencies = [
  "prost",
- "prost-build",
- "prost-types",
  "tonic",
  "tonic-build",
 ]
@@ -1411,9 +1376,7 @@ dependencies = [
  "data",
  "enum-iterator",
  "fallible-iterator",
- "if_chain",
  "once_cell",
- "rand",
  "tracing",
 ]
 
@@ -1559,11 +1522,9 @@ dependencies = [
  "data",
  "display",
  "enum-iterator",
- "maplit",
  "once_cell",
  "panels",
  "prost",
- "prost-types",
  "protos",
  "rules",
  "serde_json",
@@ -1631,31 +1592,18 @@ dependencies = [
 name = "spelldawn"
 version = "0.0.0"
 dependencies = [
- "adapters",
  "ai",
- "anyhow",
  "cards",
  "core_ui",
  "criterion",
  "data",
- "display",
  "insta",
  "maplit",
- "once_cell",
- "panels",
- "plugin",
- "prost",
- "prost-types",
  "protos",
- "rand",
- "rules",
  "rusty-hook",
- "serde",
  "server",
- "sled",
  "test_utils",
  "tokio",
- "tokio-stream",
  "tonic",
  "tonic-web",
  "tracing",
@@ -1730,11 +1678,8 @@ dependencies = [
  "anyhow",
  "cards",
  "data",
- "display",
  "maplit",
- "panels",
  "prost",
- "prost-types",
  "protos",
  "rules",
  "server",

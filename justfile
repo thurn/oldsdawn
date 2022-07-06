@@ -306,9 +306,8 @@ outdated:
 upgrade:
     cargo upgrade --workspace
 
-udeps: clean
-    # Currently seems to panic if you don't clean first
-    cargo +nightly udeps
+remove-unused-deps:
+    cargo machete --fix
 
 time-passes: clean
     cargo +nightly rustc -p spelldawn --bin spelldawn -- -Z time-passes

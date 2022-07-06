@@ -11,7 +11,6 @@ test = false
 
 [dependencies]
 anyhow = "1.0.58"
-serde_json = "1.0.82"
 
 adapters = {path = "../adapters", version = "0.0.0"}
 data = { path = "../data", version = "0.0.0" }
