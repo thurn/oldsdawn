@@ -300,8 +300,11 @@ build-linux-from-osx:
     CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-unknown-linux-gnu-gcc cargo build --target=x86_64-unknown-linux-gnu
 
 outdated:
-    # Check for outdated dependencies, consider running 'cargo update' if this fails
+    # Check for outdated dependencies, consider installing cargo-edit and running 'cargo upgrade' if this fails
     cargo outdated --exit-code 1
+
+upgrade:
+    cargo upgrade --workspace
 
 udeps: clean
     # Currently seems to panic if you don't clean first

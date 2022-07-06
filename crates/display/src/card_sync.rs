@@ -20,7 +20,6 @@ use data::card_state::CardState;
 use data::game::GameState;
 use data::game_actions::CardTarget;
 use data::primitives::{AbilityId, CardType, ItemLocation, ManaValue, RoomId, RoomLocation};
-use enum_iterator::IntoEnumIterator;
 use protos::spelldawn::card_targeting::Targeting;
 use protos::spelldawn::{
     ArrowTargetRoom, CardIcon, CardIcons, CardPrefab, CardTargeting, CardTitle, CardView,
@@ -187,7 +186,7 @@ fn card_targeting<T>(
                 Targeting::NoTargeting(NoTargeting { can_play: can_play(CardTarget::None) })
             }
             (None, true) | (Some(TargetRequirement::TargetRoom(_)), _) => {
-                let valid = RoomId::into_enum_iter()
+                let valid = enum_iterator::all::<RoomId>()
                     .filter(|room_id| can_play(CardTarget::Room(*room_id)))
                     .map(adapters::room_identifier)
                     .collect();

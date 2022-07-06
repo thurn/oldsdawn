@@ -15,8 +15,8 @@ path = "src/gen_protos.rs"
 test = false
 
 [dependencies]
-prost = "0.9.0"
-prost-build = "0.9.0"
-prost-types = "0.9.0"
-tonic = {version = "0.6.1", features = ["compression"]}
-tonic-build = {version = "0.6.0", features = ["compression"]}
+prost = "0.10.4"
+prost-build = "0.10.4"
+prost-types = "0.10.1"
+tonic = { version = "0.7.2", features = ["compression"] }
+tonic-build = { version = "0.7.2", features = ["compression"] }

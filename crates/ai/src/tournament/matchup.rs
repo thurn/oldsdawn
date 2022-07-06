@@ -19,7 +19,6 @@ use data::agent_definition::AgentName;
 use data::game::{GamePhase, GameState};
 use data::primitives::{PointsValue, Side, TurnNumber};
 use data::with_error::WithError;
-use enum_iterator::IntoEnumIterator;
 use rules::{actions, flags};
 
 use crate::tournament::run_tournament::RunGames;
@@ -56,7 +55,7 @@ impl Display for MatchOutcome {
 /// The game must be configured to use Agents for both players.
 pub fn run(mut game: GameState, config: RunGames) -> Result<MatchOutcome> {
     loop {
-        for side in Side::into_enum_iter() {
+        for side in enum_iterator::all::<Side>() {
             if let GamePhase::GameOver(data) = &game.data.phase {
                 return Ok(MatchOutcome {
                     winner: OutcomePlayer {

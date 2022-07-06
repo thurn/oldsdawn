@@ -19,7 +19,7 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
 
 pub type TurnNumber = u32;
@@ -75,9 +75,7 @@ impl fmt::Debug for GameId {
 }
 
 /// The two players in a game: Overlord & Champion
-#[derive(
-    PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd, IntoEnumIterator,
-)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Serialize, Deserialize, Ord, PartialOrd, Sequence)]
 pub enum Side {
     Overlord,
     Champion,
@@ -259,17 +257,7 @@ pub enum School {
 
 /// The possible Rooms in which the Overlord player may play their cards.
 #[derive(
-    Copy,
-    Clone,
-    Eq,
-    PartialEq,
-    Hash,
-    Debug,
-    Serialize,
-    Deserialize,
-    IntoEnumIterator,
-    Ord,
-    PartialOrd,
+    Copy, Clone, Eq, PartialEq, Hash, Debug, Serialize, Deserialize, Sequence, Ord, PartialOrd,
 )]
 pub enum RoomId {
     /// The Overlord's deck

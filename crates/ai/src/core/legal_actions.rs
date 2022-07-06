@@ -21,7 +21,6 @@ use data::card_definition::{AbilityType, TargetRequirement};
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, CardTargetKind, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
-use enum_iterator::IntoEnumIterator;
 use rules::{flags, queries, raid};
 
 /// Returns an iterator over currently-legal [UserAction]s for the `side` player
@@ -65,11 +64,11 @@ pub fn evaluate<'a>(
 
     if flags::in_main_phase(game, side) {
         Ok(Box::new(
-            RoomId::into_enum_iter()
+            enum_iterator::all::<RoomId>()
                 .filter(move |room_id| flags::can_take_initiate_raid_action(game, side, *room_id))
                 .map(UserAction::InitiateRaid)
                 .chain(
-                    RoomId::into_enum_iter()
+                    enum_iterator::all::<RoomId>()
                         .filter(move |room_id| {
                             flags::can_take_level_up_room_action(game, side, *room_id)
                         })
@@ -96,7 +95,7 @@ fn legal_card_actions(
     // Iterator combining pattern suggested by *the* Niko Matsakis
     // https://stackoverflow.com/a/52064434/298036
     let play_in_room = if target_kind == CardTargetKind::Room {
-        Some(RoomId::into_enum_iter().filter_map(move |room_id| {
+        Some(enum_iterator::all::<RoomId>().filter_map(move |room_id| {
             if flags::can_take_play_card_action(game, side, card_id, CardTarget::Room(room_id)) {
                 Some(UserAction::PlayCard(card_id, CardTarget::Room(room_id)))
             } else {
@@ -143,7 +142,7 @@ fn legal_ability_actions(
                 }
             }
             TargetRequirement::TargetRoom(_) => {
-                target_rooms = Some(RoomId::into_enum_iter().filter_map(move |room_id| {
+                target_rooms = Some(enum_iterator::all::<RoomId>().filter_map(move |room_id| {
                     if flags::can_take_activate_ability_action(
                         game,
                         side,

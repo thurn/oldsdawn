@@ -23,7 +23,6 @@ use data::game::GameState;
 use data::player_name::PlayerId;
 use data::primitives::{GameId, Side};
 use data::{fail, player_data};
-use enum_iterator::IntoEnumIterator;
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
 use rules::flags;
@@ -73,7 +72,7 @@ pub fn handle_request(
 /// Returns a ([Side], [AgentData]) tuple for an agent that can currently act in
 /// this game, if one exists.
 fn active_agent(game: &GameState) -> Option<(Side, AgentData)> {
-    for side in Side::into_enum_iter() {
+    for side in enum_iterator::all::<Side>() {
         if let Some(data) = game.player(side).agent {
             if flags::can_take_action(game, side) {
                 return Some((side, data));

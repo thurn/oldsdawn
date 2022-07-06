@@ -25,7 +25,6 @@ use data::delegates::{
 use data::game::{GamePhase, GameState};
 use data::game_actions::CardTarget;
 use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
-use enum_iterator::IntoEnumIterator;
 
 use crate::mana::ManaPurpose;
 use crate::raid::core::RaidDataExt;
@@ -127,7 +126,7 @@ pub fn activated_ability_has_valid_targets(
             TargetRequirement::None => {
                 can_take_activate_ability_action(game, side, ability_id, CardTarget::None)
             }
-            TargetRequirement::TargetRoom(_) => RoomId::into_enum_iter().any(|room_id| {
+            TargetRequirement::TargetRoom(_) => enum_iterator::all::<RoomId>().any(|room_id| {
                 can_take_activate_ability_action(game, side, ability_id, CardTarget::Room(room_id))
             }),
         },

@@ -10,8 +10,8 @@ doctest = false
 test = false
 
 [dependencies]
-anyhow = "1.0.51"
-tracing = { version = "0.1.29", features = ["max_level_debug", "release_max_level_warn"] }
+anyhow = "1.0.58"
+tracing = { version = "0.1.35", features = ["max_level_debug", "release_max_level_warn"] }
 
 data = { path = "../data", version = "0.0.0" }
 display = { path = "../display", version = "0.0.0" }

@@ -1544,23 +1544,24 @@ pub enum LogMessageLevel {
     Warning = 2,
     Error = 3,
 }
-#[doc = r" Generated server implementations."]
+/// Generated server implementations.
 pub mod spelldawn_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    #[doc = "Generated trait containing gRPC methods that should be implemented for use with SpelldawnServer."]
+    ///Generated trait containing gRPC methods that should be implemented for
+    /// use with SpelldawnServer.
     #[async_trait]
     pub trait Spelldawn: Send + Sync + 'static {
-        #[doc = "Server streaming response type for the Connect method."]
+        ///Server streaming response type for the Connect method.
         type ConnectStream: futures_core::Stream<Item = Result<super::CommandList, tonic::Status>>
             + Send
             + 'static;
-        #[doc = " Initiate a new server connection. "]
+        /// Initiate a new server connection.
         async fn connect(
             &self,
             request: tonic::Request<super::ConnectRequest>,
         ) -> Result<tonic::Response<Self::ConnectStream>, tonic::Status>;
-        #[doc = " Perform a game action. "]
+        /// Perform a game action.
         async fn perform_action(
             &self,
             request: tonic::Request<super::GameRequest>,
@@ -1575,7 +1576,10 @@ pub mod spelldawn_server {
     struct _Inner<T>(Arc<T>);
     impl<T: Spelldawn> SpelldawnServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -1591,13 +1595,15 @@ pub mod spelldawn_server {
             InterceptedService::new(Self::new(inner), interceptor)
         }
 
-        #[doc = r" Enable decompressing requests with `gzip`."]
+        /// Enable decompressing requests with `gzip`.
+        #[must_use]
         pub fn accept_gzip(mut self) -> Self {
             self.accept_compression_encodings.enable_gzip();
             self
         }
 
-        #[doc = r" Compress responses with `gzip`, if the client supports it."]
+        /// Compress responses with `gzip`, if the client supports it.
+        #[must_use]
         pub fn send_gzip(mut self) -> Self {
             self.send_compression_encodings.enable_gzip();
             self
@@ -1609,7 +1615,7 @@ pub mod spelldawn_server {
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
         type Response = http::Response<tonic::body::BoxBody>;
 
