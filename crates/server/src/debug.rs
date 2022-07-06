@@ -82,11 +82,7 @@ pub fn handle_debug_action(
             }
             database.write_game(&game)?;
             write_default_player(database, player_id, Some(CurrentGame::Playing(GameId::new(0))))?;
-
-            Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
-                scene_name: "Labyrinth".to_string(),
-                mode: SceneLoadMode::Single as i32,
-            })]))
+            load_scene()
         }
         DebugAction::FlipViewpoint => {
             requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
@@ -94,7 +90,8 @@ pub fn handle_debug_action(
                 game.player_mut(user_side.opponent()).id = player_id;
                 game.player_mut(user_side).id = opponent_id;
                 Ok(())
-            })
+            })?;
+            load_scene()
         }
         DebugAction::AddMana(amount) => {
             requests::handle_custom_action(database, player_id, game_id, |game, user_side| {
@@ -152,6 +149,13 @@ fn write_default_player(
         ],
         collection: HashMap::default(),
     })
+}
+
+fn load_scene() -> Result<GameResponse> {
+    Ok(GameResponse::from_commands(vec![Command::LoadScene(LoadSceneCommand {
+        scene_name: "Labyrinth".to_string(),
+        mode: SceneLoadMode::Single as i32,
+    })]))
 }
 
 fn load_game(database: &mut impl Database, game_id: Option<GameId>) -> Result<GameState> {

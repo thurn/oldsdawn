@@ -523,17 +523,14 @@ namespace Spelldawn.Game
     void SetCardIcon(Icon icon, CardIcon? cardIcon, bool show)
     {
       var iconContainer = icon.Background.transform.parent;
-      if (cardIcon == null || !show)
+      if (cardIcon != null)
       {
-        iconContainer.gameObject.SetActive(false);
-      }
-      else
-      {
-        iconContainer.gameObject.SetActive(true);
         Registry.AssetService.AssignSprite(icon.Background, cardIcon.Background);
         icon.Background.transform.localScale = (cardIcon.BackgroundScale ?? 1.0f) * Vector3.one;
         icon.Text.text = cardIcon.Text;
       }
+      
+      iconContainer.gameObject.SetActive(show);
     }
 
     void SetTitle(string? title)
