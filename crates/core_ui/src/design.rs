@@ -58,6 +58,7 @@ impl From<FontColor> for FlexColor {
 #[derive(Debug, Clone, Copy)]
 pub enum FontSize {
     ButtonLabel,
+    ButtonLabelTwoLines,
     ButtonIcon,
     PanelTitle,
     PromptContext,
@@ -68,6 +69,7 @@ impl From<FontSize> for Dimension {
     fn from(size: FontSize) -> Self {
         (match size {
             FontSize::ButtonLabel => 32,
+            FontSize::ButtonLabelTwoLines => 28,
             FontSize::ButtonIcon => 48,
             FontSize::PanelTitle => 48,
             FontSize::PromptContext => 48,

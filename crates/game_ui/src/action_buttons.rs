@@ -59,7 +59,8 @@ fn encounter_action_button(
             let label = rules::card_definition(game, source_id).name.displayed_name();
             if let Some(cost) = queries::cost_to_defeat_target(game, source_id, target_id) {
                 if cost > 0 {
-                    return ResponseButton::new(format!("{}\n{}{}", label, cost, icons::MANA));
+                    return ResponseButton::new(format!("{}\n{}{}", label, cost, icons::MANA))
+                        .two_lines(true);
                 }
             }
             ResponseButton::new(label)
@@ -79,6 +80,11 @@ fn advance_action_button(advance_action: ContinueAction) -> ResponseButton {
 fn access_button(access: AccessPhaseAction) -> ResponseButton {
     match access {
         AccessPhaseAction::ScoreCard(card_id) => ResponseButton::new("Score!").anchor_to(card_id),
+        AccessPhaseAction::DestroyCard(card_id, mana) => {
+            ResponseButton::new(format!("Destroy\n{}{}", mana, icons::MANA))
+                .two_lines(true)
+                .anchor_to(card_id)
+        }
         AccessPhaseAction::EndRaid => {
             ResponseButton::new("End Raid").primary(false).shift_down(true)
         }

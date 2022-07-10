@@ -51,6 +51,7 @@ pub enum ContinueAction {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
 pub enum AccessPhaseAction {
     ScoreCard(CardId),
+    DestroyCard(CardId, ManaValue),
     EndRaid,
 }
 

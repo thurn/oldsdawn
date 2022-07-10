@@ -30,6 +30,7 @@ pub struct ResponseButton {
     primary: bool,
     action: Box<dyn InterfaceAction>,
     shift_down: bool,
+    two_lines: bool,
 }
 
 impl ResponseButton {
@@ -41,6 +42,7 @@ impl ResponseButton {
             primary: true,
             action: Box::new(NoAction {}),
             shift_down: false,
+            two_lines: false,
         }
     }
 
@@ -76,13 +78,18 @@ impl ResponseButton {
         self
     }
 
+    pub fn two_lines(mut self, is_two_lines: bool) -> Self {
+        self.two_lines = is_two_lines;
+        self
+    }
+
     pub fn render_to_card_anchor_node(self) -> Result<CardAnchorNode> {
         Ok(CardAnchorNode {
             card_id: Some(adapters::card_identifier(
                 self.anchor_to.with_error(|| "Anchor not found")?,
             )),
             node: rendering::component(
-                Row::new(self.label.clone())
+                Row::new("CardAnchorButton")
                     .style(
                         Style::new()
                             .padding(Edge::Top, 8.px())
@@ -110,6 +117,7 @@ impl Component for ResponseButton {
         Button::new(self.label)
             .button_type(if self.primary { ButtonType::Primary } else { ButtonType::Secondary })
             .action(self.action)
+            .two_lines(self.two_lines)
             .layout(
                 self.layout
                     .margin(Edge::Horizontal, 16.px())

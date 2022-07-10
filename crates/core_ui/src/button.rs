@@ -41,6 +41,7 @@ pub struct Button {
     layout: Layout,
     button_type: ButtonType,
     action: Box<dyn InterfaceAction>,
+    two_lines: bool,
 }
 
 impl Button {
@@ -50,6 +51,7 @@ impl Button {
             layout: Layout::default(),
             button_type: ButtonType::Primary,
             action: Box::new(NoAction {}),
+            two_lines: false,
         }
     }
 
@@ -65,6 +67,11 @@ impl Button {
 
     pub fn action(mut self, action: impl InterfaceAction + 'static) -> Self {
         self.action = Box::new(action);
+        self
+    }
+
+    pub fn two_lines(mut self, is_two_lines: bool) -> Self {
+        self.two_lines = is_two_lines;
         self
     }
 }
@@ -94,11 +101,21 @@ impl Component for Button {
             )
             .on_click(self.action)
             .child(
-                Text::new(self.label, FontSize::ButtonLabel)
-                    .color(FontColor::ButtonLabel)
-                    .font(Font::ButtonLabel)
-                    .text_align(TextAlign::MiddleCenter)
-                    .layout(Layout::new().margin(Edge::Horizontal, 16.px())),
+                Text::new(
+                    self.label,
+                    if self.two_lines {
+                        FontSize::ButtonLabelTwoLines
+                    } else {
+                        FontSize::ButtonLabel
+                    },
+                )
+                .color(FontColor::ButtonLabel)
+                .font(Font::ButtonLabel)
+                .text_align(TextAlign::MiddleCenter)
+                .layout(
+                    Layout::new()
+                        .margin(Edge::Horizontal, if self.two_lines { 32.px() } else { 16.px() }),
+                ),
             )
             .build()
     }

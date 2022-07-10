@@ -25,7 +25,8 @@ use data::game_actions::{AccessPhaseAction, PromptAction};
 use data::primitives::{CardId, CardType, RoomId, Side};
 use data::random;
 use data::updates::GameUpdate;
-use rules::{dispatch, mutations, queries};
+use rules::mana::ManaPurpose;
+use rules::{dispatch, mana, mutations, queries};
 use with_error::{fail, WithError};
 
 use crate::traits::{RaidDisplayState, RaidPhaseImpl};
@@ -81,6 +82,7 @@ impl RaidPhaseImpl for AccessPhase {
     ) -> Result<Option<InternalRaidPhase>> {
         match action {
             AccessPhaseAction::ScoreCard(card_id) => handle_score_card(game, card_id),
+            AccessPhaseAction::DestroyCard(card_id, _) => handle_destroy_card(game, card_id),
             AccessPhaseAction::EndRaid => mutations::end_raid(game, RaidOutcome::Success),
         }?;
 
@@ -135,16 +137,19 @@ fn accessed_cards(game: &mut GameState) -> Result<Vec<CardId>> {
 fn access_action_for_card(game: &GameState, card_id: CardId) -> Option<AccessPhaseAction> {
     let definition = rules::card_definition(game, card_id);
     match definition.card_type {
-        CardType::Scheme if can_score_card(game, Side::Champion, card_id) => {
+        CardType::Scheme if can_score_card(game, card_id) => {
             Some(AccessPhaseAction::ScoreCard(card_id))
         }
+        CardType::Project if can_destroy_card(game, card_id) => Some(
+            AccessPhaseAction::DestroyCard(card_id, queries::mana_cost(game, card_id).unwrap_or(0)),
+        ),
         _ => None,
     }
 }
 
-/// Can the provided player score the `card_id` card when accessed during a
+/// Can the Champion player score the `card_id` card when accessed during a
 /// raid?
-fn can_score_card(game: &GameState, _side: Side, card_id: CardId) -> bool {
+fn can_score_card(game: &GameState, card_id: CardId) -> bool {
     let raid = match &game.data.raid {
         Some(r) => r,
         None => return false,
@@ -152,6 +157,13 @@ fn can_score_card(game: &GameState, _side: Side, card_id: CardId) -> bool {
 
     raid.accessed.contains(&card_id)
         && rules::card_definition(game, card_id).config.stats.scheme_points.is_some()
+}
+
+/// Can the Champion player destroy the `card_id` card when accessed during a
+/// raid?
+fn can_destroy_card(game: &GameState, card_id: CardId) -> bool {
+    queries::mana_cost(game, card_id).unwrap_or(0)
+        <= mana::get(game, Side::Champion, ManaPurpose::DestroyCard(card_id))
 }
 
 fn handle_score_card(game: &mut GameState, card_id: CardId) -> Result<()> {
@@ -172,5 +184,17 @@ fn handle_score_card(game: &mut GameState, card_id: CardId) -> Result<()> {
     mutations::score_points(game, Side::Champion, scheme_points.points)?;
 
     mutations::move_card(game, card_id, CardPosition::Scored(Side::Champion))?;
+    Ok(())
+}
+
+fn handle_destroy_card(game: &mut GameState, card_id: CardId) -> Result<()> {
+    mana::spend(
+        game,
+        Side::Champion,
+        ManaPurpose::DestroyCard(card_id),
+        queries::mana_cost(game, card_id).unwrap_or(0),
+    )?;
+    mutations::move_card(game, card_id, CardPosition::DiscardPile(Side::Overlord))?;
+    game.raid_mut()?.accessed.retain(|c| *c != card_id);
     Ok(())
 }
