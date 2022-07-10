@@ -92,6 +92,16 @@ pub fn test_scheme_31() -> CardDefinition {
     }
 }
 
+pub fn test_project_2_cost() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestProject2Cost,
+        cost: cost(2),
+        card_type: CardType::Project,
+        config: CardConfig::default(),
+        ..test_overlord_spell()
+    }
+}
+
 pub fn test_minion_end_raid() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionEndRaid,

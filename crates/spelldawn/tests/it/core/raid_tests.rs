@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use cards::test_cards::WEAPON_COST;
+use core_ui::icons;
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
 use insta::assert_snapshot;
@@ -21,8 +22,8 @@ use protos::spelldawn::game_object_identifier::Id;
 use protos::spelldawn::object_position::Position;
 use protos::spelldawn::{
     ClientRoomLocation, GainManaAction, InitiateRaidAction, ObjectPositionBrowser,
-    ObjectPositionIdentity, ObjectPositionIdentityContainer, ObjectPositionRaid,
-    ObjectPositionRoom, PlayerName,
+    ObjectPositionDiscardPile, ObjectPositionIdentity, ObjectPositionIdentityContainer,
+    ObjectPositionRaid, ObjectPositionRoom, PlayerName,
 };
 use test_utils::client::HasText;
 use test_utils::summarize::Summary;
@@ -403,6 +404,31 @@ fn no_activate() {
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.user.interface.controls().has_text("End Raid"));
     assert!(g.opponent.interface.controls().has_text("Waiting"));
+    assert_snapshot!(Summary::summarize(&response));
+}
+
+#[test]
+fn destroy_project() {
+    let mut g = new_game(Side::Champion, Args { turn: Some(Side::Overlord), ..Args::default() });
+    let project_id = g.play_from_hand(CardName::TestProject2Cost);
+    spend_actions_until_turn_over(&mut g, Side::Overlord);
+    g.initiate_raid(ROOM_ID);
+
+    assert!(g.user.interface.controls().has_text("Destroy"));
+    assert!(g.user.interface.controls().has_text(format!("2{}", icons::MANA)));
+
+    let response = g.click_on(g.user_id(), "Destroy");
+    assert_eq!(
+        g.user.data.object_position(Id::CardId(project_id)),
+        Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::Opponent.into() })
+    );
+    assert_eq!(
+        g.opponent.data.object_position(Id::CardId(project_id)),
+        Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::User.into() })
+    );
+    assert_eq!(g.me().mana(), STARTING_MANA - 2);
+    assert!(g.user.interface.controls().has_text("End Raid"));
+
     assert_snapshot!(Summary::summarize(&response));
 }
 

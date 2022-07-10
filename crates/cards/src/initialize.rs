@@ -43,6 +43,7 @@ pub fn run() {
     DEFINITIONS.insert(test_cards::test_overlord_spell);
     DEFINITIONS.insert(test_cards::test_champion_spell);
     DEFINITIONS.insert(test_cards::test_scheme_31);
+    DEFINITIONS.insert(test_cards::test_project_2_cost);
     DEFINITIONS.insert(test_cards::test_minion_end_raid);
     DEFINITIONS.insert(test_cards::test_minion_shield_1);
     DEFINITIONS.insert(test_cards::test_minion_shield_2_abyssal);
