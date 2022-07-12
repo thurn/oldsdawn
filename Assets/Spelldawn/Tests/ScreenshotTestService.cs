@@ -182,6 +182,9 @@ namespace Spelldawn.Tests
           yield return new WaitUntil(() => !system.isPlaying);
         }
       }
+
+      yield return new WaitUntil(() => !Registry.ActionDisplayForPlayer(PlayerName.User).IsAnimating);
+      yield return new WaitUntil(() => !Registry.ActionDisplayForPlayer(PlayerName.Opponent).IsAnimating);      
       
       yield return new WaitForEndOfFrame();
     }

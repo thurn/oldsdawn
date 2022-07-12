@@ -29,7 +29,7 @@ namespace Spelldawn.Editors
 
       if (GUILayout.Button("Flip"))
       {
-        ((SceneBackground)target).Flip();
+        ((SceneBackground)target).FlipForEditor();
       }
     }
   }

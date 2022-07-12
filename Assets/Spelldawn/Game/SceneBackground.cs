@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using UnityEngine;
-using UnityEngine.Serialization;
 
 #nullable enable
 
@@ -21,9 +20,9 @@ namespace Spelldawn.Game
 {
   public sealed class SceneBackground : MonoBehaviour
   {
-    [FormerlySerializedAs("_flipped")] [SerializeField] bool _roomsOnBottom;
+    [SerializeField] bool _roomsOnBottom;
 
-    public void Flip()
+    public void FlipForEditor()
     {
       SetRoomsOnBottom(!_roomsOnBottom);
     }
