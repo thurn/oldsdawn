@@ -34,6 +34,8 @@ namespace Spelldawn.Game
 
     void OnMouseUpAsButton()
     {
+      _registry.StaticAssets.PlayButtonSound();
+
       var address = new PanelAddress
       {
         KnownPanel = _panel switch
@@ -44,14 +46,7 @@ namespace Spelldawn.Game
         }
       };
       
-      StartCoroutine(_registry.CommandService.HandleCommands(new GameCommand
-      {
-        TogglePanel = new TogglePanelCommand
-        {
-          Open = !_registry.DocumentService.IsOpen(address),
-          PanelAddress = address
-        }
-      }));
+      _registry.DocumentService.TogglePanel(!_registry.DocumentService.IsOpen(address), address);
     }
   }
 }

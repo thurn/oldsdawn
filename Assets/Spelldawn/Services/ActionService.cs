@@ -36,7 +36,7 @@ namespace Spelldawn.Services
   public sealed class ActionService : MonoBehaviour
   {
     static readonly string ServerAddress = "http://localhost:50052";
-    
+
     readonly Protos.Spelldawn.SpelldawnClient _client = new(GrpcChannel.ForAddress(
       ServerAddress, new GrpcChannelOptions
       {
@@ -49,7 +49,7 @@ namespace Spelldawn.Services
       }));
 
     [SerializeField] Registry _registry = null!;
-    [SerializeField] bool _currentlyHandlingAction;    
+    [SerializeField] bool _currentlyHandlingAction;
     readonly Queue<GameAction> _actionQueue = new();
     PlayerIdentifier? _playerIdentifier;
     public bool OfflineMode { get; private set; }
@@ -75,6 +75,7 @@ namespace Spelldawn.Services
         throw new InvalidOperationException(message.ToString());
       }
 
+      ApplyImmediateResponse(action);
       _actionQueue.Enqueue(action);
     }
 
@@ -92,7 +93,7 @@ namespace Spelldawn.Services
         StartCoroutine(_registry.CommandService.HandleCommands(pollCommands));
       }
     }
-    
+
     async void ConnectToRulesEngine()
     {
       var request = new ConnectRequest
@@ -180,12 +181,37 @@ namespace Spelldawn.Services
       _currentlyHandlingAction = false;
     }
 
-    IEnumerator ApplyOptimisticResponse(GameAction action)
+    /// <summary>
+    /// Immediate action handling, without waiting for the queue. This is needed to avoid things that feel
+    /// broken, like waiting for animations before closing a panel.
+    /// </summary>
+    void ApplyImmediateResponse(GameAction action)
     {
       switch (action.ActionCase)
       {
         case GameAction.ActionOneofCase.StandardAction:
           _registry.StaticAssets.PlayButtonSound();
+          if (action.StandardAction.Update is { } update)
+          {
+            foreach (var command in update.Commands)
+            {
+              switch (command.CommandCase)
+              {
+                case GameCommand.CommandOneofCase.TogglePanel:
+                  _registry.DocumentService.TogglePanel(command.TogglePanel.Open, command.TogglePanel.PanelAddress);                  
+                  break;
+              }
+            }
+          }
+          break;
+      }
+    }
+
+    IEnumerator ApplyOptimisticResponse(GameAction action)
+    {
+      switch (action.ActionCase)
+      {
+        case GameAction.ActionOneofCase.StandardAction:
           if (action.StandardAction.Update is { } update)
           {
             yield return _registry.CommandService.HandleCommands(update);
