@@ -7983,6 +7983,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 0
   _zRotationMultiplier: -1
   _sortingGameContext: 19
   _controlPoint1: {fileID: 1837130829}
@@ -9359,6 +9360,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 0
   _zRotationMultiplier: -1
   _sortingGameContext: 5
   _controlPoint1: {fileID: 1807845830}
@@ -13570,6 +13572,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 0
   _zRotationMultiplier: 0
   _sortingGameContext: 7
   _controlPoint1: {fileID: 1036108766}
@@ -21075,6 +21078,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 0
   _zRotationMultiplier: -1
   _sortingGameContext: 14
   _controlPoint1: {fileID: 983233655}
@@ -34283,6 +34287,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 180
   _zRotationMultiplier: 1
   _sortingGameContext: 5
   _controlPoint1: {fileID: 1943111019}
@@ -34513,6 +34518,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 0
   _zRotationMultiplier: 0
   _sortingGameContext: 7
   _controlPoint1: {fileID: 545354813}
@@ -45179,6 +45185,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 0
   _zRotationMultiplier: -1
   _sortingGameContext: 12
   _controlPoint1: {fileID: 184216717}
@@ -52320,6 +52327,7 @@ MonoBehaviour:
   _updateRequired: 0
   _animateNextUpdate: 0
   _animationRunning: 0
+  _zRotationAddition: 0
   _zRotationMultiplier: -1
   _sortingGameContext: 12
   _controlPoint1: {fileID: 1690657433}
@@ -85926,8 +85934,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _availableActions: 3
-  _activeMaterial: {fileID: 2100000, guid: 3913f29c5b03d42d0ba4a5f8f3591a71, type: 2}
-  _inactiveMaterial: {fileID: 2100000, guid: bd3982a546fed4ce489787980ed0aea7, type: 2}
   _number: {fileID: 1838682654}
   _left: {fileID: 2005925927}
   _center: {fileID: 1729070131}
@@ -112043,8 +112049,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _availableActions: 3
-  _activeMaterial: {fileID: 2100000, guid: 3913f29c5b03d42d0ba4a5f8f3591a71, type: 2}
-  _inactiveMaterial: {fileID: 2100000, guid: bd3982a546fed4ce489787980ed0aea7, type: 2}
   _number: {fileID: 619043547}
   _left: {fileID: 2058690229}
   _center: {fileID: 1708415864}

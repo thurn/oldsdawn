@@ -22,6 +22,7 @@ namespace Spelldawn.Game
 {
   public class CurveObjectDisplay : ObjectDisplay
   {
+    [SerializeField] int _zRotationAddition;
     [SerializeField] int _zRotationMultiplier;
     [SerializeField] GameContext _sortingGameContext;
     [SerializeField] Transform _controlPoint1 = null!;
@@ -45,7 +46,7 @@ namespace Spelldawn.Game
     protected override Vector3? CalculateObjectRotation(int index, int count)
     {
       var curvePosition = CalculateCurvePosition(index, count);
-      return new Vector3(x: 280, y: 0, _zRotationMultiplier * CalculateZRotation(curvePosition));
+      return new Vector3(x: 280, y: 0, _zRotationAddition + _zRotationMultiplier * CalculateZRotation(curvePosition));
     }
 
     protected override float? CalculateObjectScale(int index, int count) => _objectScale == 0.0 ? null : _objectScale;
