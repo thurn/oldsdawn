@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 343
+assertion_line: 344
 expression: "Summary::summarize(&response)"
 ---
 
@@ -93,6 +93,8 @@ command_list:
         revealed_to_viewer: true
         is_face_up: true
         card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "1"
         arena_frame: "<SpriteAddress>"
         owning_player: Opponent
         revealed_card: 
@@ -271,6 +273,8 @@ command_list:
         revealed_to_viewer: true
         is_face_up: true
         card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "1"
         arena_frame: "<SpriteAddress>"
         owning_player: Opponent
         revealed_card: 
@@ -431,6 +435,8 @@ channel_response:
         revealed_to_viewer: true
         is_face_up: true
         card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "1"
         arena_frame: "<SpriteAddress>"
         owning_player: User
         revealed_card: 
@@ -596,6 +602,8 @@ channel_response:
         revealed_to_viewer: true
         is_face_up: true
         card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "1"
         arena_frame: "<SpriteAddress>"
         owning_player: User
         revealed_card: 

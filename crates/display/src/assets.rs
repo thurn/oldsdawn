@@ -27,6 +27,8 @@ pub enum CardIconType {
     Health,
     Attack,
     Shield,
+    LevelRequirement,
+    Points,
 }
 
 /// Returns the background scale multiplier to use for a [CardIconType]
@@ -35,6 +37,8 @@ pub fn background_scale(icon_type: CardIconType) -> Option<f32> {
         CardIconType::Health => 1.5,
         CardIconType::Attack => 1.75,
         CardIconType::Shield => 1.1,
+        CardIconType::LevelRequirement => 0.9,
+        CardIconType::Points => 0.35,
         _ => 1.0,
     })
 }
@@ -57,6 +61,12 @@ pub fn card_icon(icon_type: CardIconType) -> SpriteAddress {
             }
             CardIconType::Shield => {
                 "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Icons/Number_Icons_Color_6"
+            }
+            CardIconType::LevelRequirement => {
+                "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Back/Number_Back_Color_3"
+            }
+            CardIconType::Points => {
+                "LittleSweetDaemon/TCG_Card_Elemental_Design/Card_Color_07/Back_Card_Color_07/Back_Card_Color_07_Logo_Crystal"
             }
         }
         .to_string(),

@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 241
+assertion_line: 225
 expression: "Summary::run(&response)"
 ---
 
@@ -73,6 +73,8 @@ command_list:
         revealed_to_viewer: true
         is_face_up: false
         card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "1"
         arena_frame: "<SpriteAddress>"
         owning_player: User
         revealed_card: 
@@ -173,6 +175,8 @@ command_list:
         revealed_to_viewer: true
         is_face_up: false
         card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "1"
             arena_icon: "1"
         arena_frame: "<SpriteAddress>"
         owning_player: User

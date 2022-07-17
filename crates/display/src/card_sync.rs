@@ -229,7 +229,13 @@ fn card_icons(
     }
 
     if revealed {
-        icons.top_left_icon = queries::mana_cost(game, card.id).map(mana_card_icon);
+        icons.top_left_icon = queries::mana_cost(game, card.id).map(mana_card_icon).or_else(|| {
+            definition.config.stats.scheme_points.map(|points| CardIcon {
+                background: Some(assets::card_icon(CardIconType::LevelRequirement)),
+                text: Some(points.level_requirement.to_string()),
+                background_scale: assets::background_scale(CardIconType::LevelRequirement),
+            })
+        });
         icons.bottom_right_icon = definition
             .config
             .stats
@@ -244,6 +250,13 @@ fn card_icons(
                     background: Some(assets::card_icon(CardIconType::Health)),
                     text: Some(queries::health(game, card.id).to_string()),
                     background_scale: assets::background_scale(CardIconType::Health),
+                })
+            })
+            .or_else(|| {
+                definition.config.stats.scheme_points.map(|points| CardIcon {
+                    background: Some(assets::card_icon(CardIconType::Points)),
+                    text: Some(points.points.to_string()),
+                    background_scale: assets::background_scale(CardIconType::Points),
                 })
             });
         let shield = queries::shield(game, card.id);
