@@ -48,6 +48,11 @@ namespace Spelldawn.Game
         // Animation already running
         return;
       }
+
+      if (filled)
+      {
+        gameObject.SetActive(true);
+      }
       
       switch (filled)
       {

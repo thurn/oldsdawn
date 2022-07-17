@@ -35,9 +35,18 @@ namespace Spelldawn.Game
 
     public void ClearSubject()
     {
+      if (!Application.isPlaying)
+      {
+        Debug.LogError("NOT PLAYING?!");
+        return;
+      }
+
       if (_subject)
       {
-        Destroy(_subject);
+        if (Application.isPlaying)
+        {
+          Destroy(_subject);
+        }
       }
     }
 

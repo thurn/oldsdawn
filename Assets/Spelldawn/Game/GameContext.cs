@@ -79,6 +79,7 @@ namespace Spelldawn.Game
     {
       GameContext.Arena => true,
       GameContext.ArenaRaidParticipant => true,
+      GameContext.RaidParticipant => true,
       _ => false
     };
   }

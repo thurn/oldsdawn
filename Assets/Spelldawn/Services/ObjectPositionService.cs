@@ -38,7 +38,7 @@ namespace Spelldawn.Services
       var originalPosition = source.transform.position;
       var originalRotation = source.transform.rotation.eulerAngles;
 
-      if (source.GameContext.IsArenaContext())
+      if (source.GameContext is GameContext.Arena or GameContext.ArenaRaidParticipant)
       {
         // Enlarge before firing
         yield return TweenUtils.Sequence("EnlargeBeforeFiring")

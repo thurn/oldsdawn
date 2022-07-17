@@ -425,6 +425,7 @@ namespace Spelldawn.Game
     void RenderRevealedCard(RevealedCardView revealed)
     {
       _isRevealed = true;
+      _arenaCardBack.SetActive(false);
 
       if (revealed.Title?.Text != null)
       {
