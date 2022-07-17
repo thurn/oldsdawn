@@ -318,8 +318,6 @@ namespace Spelldawn.Game
         Registry.ArrowService.HideArrows();
       }
 
-      Registry.CardService.ClearInfoZoom();
-
       if (!Registry.CardService.CurrentlyDragging)
       {
         Registry.StaticAssets.PlayCardSound();

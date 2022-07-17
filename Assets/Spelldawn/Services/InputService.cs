@@ -41,6 +41,7 @@ namespace Spelldawn.Services
         case false when _lastClicked:
           var last = _lastClicked;
           _lastClicked = null;
+          _registry.CardService.ClearInfoZoom();
           last!.MouseUp();
           break;
       }
