@@ -493,6 +493,8 @@ message CardIcons {
 
 message CardTitle {
     string text = 1;
+
+    FlexColor text_color = 2;
 }
 
 message RulesText {

@@ -430,6 +430,8 @@ pub struct CardIcons {
 pub struct CardTitle {
     #[prost(string, tag = "1")]
     pub text: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "2")]
+    pub text_color: ::core::option::Option<FlexColor>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RulesText {

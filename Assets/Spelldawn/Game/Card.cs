@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using Spelldawn.Masonry;
 using Spelldawn.Protos;
 using Spelldawn.Services;
 using Spelldawn.Utils;
@@ -424,12 +425,7 @@ namespace Spelldawn.Game
     {
       _isRevealed = true;
       _arenaCardBack.SetActive(false);
-
-      if (revealed.Title?.Text != null)
-      {
-        gameObject.name = revealed.Title.Text + IdString();
-      }
-
+      gameObject.name = revealed.Title.Text + IdString();
       _validRoomTargets = null;
       _serverCanPlay = false;
       _arrowOnDrag = null;
@@ -477,7 +473,8 @@ namespace Spelldawn.Game
       _image.gameObject.SetActive(true);
       Registry.AssetService.AssignSprite(_frame, revealed.CardFrame);
       Registry.AssetService.AssignSprite(_titleBackground, revealed.TitleBackground);
-      SetTitle(revealed.Title?.Text);
+      _title.text = revealed.Title.Text;
+      _title.color = Mason.ToUnityColor(revealed.Title.TextColor);
       if (revealed.RulesText?.Text != null)
       {
         _rulesText.text = revealed.RulesText.Text;
@@ -531,16 +528,6 @@ namespace Spelldawn.Game
       }
       
       iconContainer.gameObject.SetActive(show);
-    }
-
-    void SetTitle(string? title)
-    {
-      if (title == null)
-      {
-        return;
-      }
-
-      _title.text = title;
     }
 
     public void OnArrowMoved(Vector3 position)

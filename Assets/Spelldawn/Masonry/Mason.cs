@@ -141,11 +141,10 @@ namespace Spelldawn.Masonry
       label.text = text.Label;
     }
 
-    static Color AdaptColorNonNull(FlexColor color) =>
-      new(color.Red, color.Green, color.Blue, color.Alpha);
+    public static Color ToUnityColor(FlexColor color) => new(color.Red, color.Green, color.Blue, color.Alpha);
 
     static StyleColor AdaptColor(FlexColor? color) =>
-      color == null ? new StyleColor(StyleKeyword.Null) : AdaptColorNonNull(color);
+      color == null ? new StyleColor(StyleKeyword.Null) : ToUnityColor(color);
 
     static StyleFloat AdaptFloat(float? input) => input ?? new StyleFloat(StyleKeyword.Null);
 
@@ -284,7 +283,7 @@ namespace Spelldawn.Masonry
         {
           offset = AdaptVector2(ts.Offset),
           blurRadius = ts.BlurRadius,
-          color = AdaptColorNonNull(ts.Color)
+          color = ToUnityColor(ts.Color)
         }
         : new StyleTextShadow(StyleKeyword.Null);
       e.style.transformOrigin = input.TransformOrigin is { } to

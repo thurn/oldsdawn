@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 130721607593628071}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8000004, z: 0}
+  m_LocalPosition: {x: 0, y: 1.8, z: 0}
   m_LocalScale: {x: 0.15, y: 0.13, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -318,7 +318,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3126067664937594705, guid: d94ddeafd339c4b3cad4a7200a77c0d4, type: 2}
+  - {fileID: -2042571357381589264, guid: e8d824296972849ada380c04843ad550, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -362,15 +362,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: Card Title
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d94ddeafd339c4b3cad4a7200a77c0d4, type: 2}
-  m_sharedMaterial: {fileID: -3126067664937594705, guid: d94ddeafd339c4b3cad4a7200a77c0d4, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e8d824296972849ada380c04843ad550, type: 2}
+  m_sharedMaterial: {fileID: -2042571357381589264, guid: e8d824296972849ada380c04843ad550, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281811037
-  m_fontColor: {r: 0.3647059, g: 0.2509804, b: 0.21568628, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -393,11 +393,11 @@ MonoBehaviour:
   m_enableAutoSizing: 1
   m_fontSizeMin: 12
   m_fontSizeMax: 24
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 2
+  m_characterSpacing: -5
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -839,7 +839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2085476032902578303
 Transform:
   m_ObjectHideFlags: 0
@@ -1570,7 +1570,7 @@ MonoBehaviour:
   _previousParent: {fileID: 0}
   _containedObjectsDisplay: {fileID: 3331682006952615536}
   _arenaCardYOffset: 0.6
-  _referenceWidth: 243.3
+  _referenceImageWidth: 243.3
 --- !u!210 &6859622998180740047
 SortingGroup:
   m_ObjectHideFlags: 0

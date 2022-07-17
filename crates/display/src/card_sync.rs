@@ -127,7 +127,10 @@ fn revealed_card_view(
         title_background: Some(assets::title_background(definition.config.faction)),
         jewel: Some(assets::jewel(definition.rarity)),
         image: Some(adapters::sprite(&definition.image)),
-        title: Some(CardTitle { text: definition.name.displayed_name() }),
+        title: Some(CardTitle {
+            text: definition.name.displayed_name(),
+            text_color: Some(assets::title_color(definition.config.faction)),
+        }),
         rules_text: Some(rules_text::build(game, card, definition)),
         targeting: Some(card_targeting(
             definition.config.custom_targeting.as_ref(),
@@ -165,7 +168,10 @@ fn revealed_ability_card_view(
         title_background: Some(assets::title_background(None)),
         jewel: None,
         image: Some(adapters::sprite(&definition.image)),
-        title: Some(CardTitle { text: definition.name.displayed_name() }),
+        title: Some(CardTitle {
+            text: definition.name.displayed_name(),
+            text_color: Some(assets::title_color(None)),
+        }),
         rules_text: Some(RulesText { text: rules_text::ability_text(game, ability_id, ability) }),
         targeting: Some(card_targeting(target_requirement, false, |target| {
             flags::can_take_activate_ability_action(game, ability_id.side(), ability_id, target)

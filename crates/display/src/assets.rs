@@ -14,11 +14,14 @@
 
 //! Helper functions for constructing resource URLs used during a game
 
+use core_ui::design::FontColor;
 use data::primitives::{CardType, Faction, Rarity, School, Side};
 use data::special_effects::{
     FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
 };
-use protos::spelldawn::{AudioClipAddress, EffectAddress, ProjectileAddress, SpriteAddress};
+use protos::spelldawn::{
+    AudioClipAddress, EffectAddress, FlexColor, ProjectileAddress, SpriteAddress,
+};
 
 /// Possible types of icons which can appear on a card
 pub enum CardIconType {
@@ -138,35 +141,25 @@ pub fn ability_card_frame(side: Side) -> SpriteAddress {
     }
 }
 
+/// Title font color to use for a given [Faction].
+pub fn title_color(faction: Option<Faction>) -> FlexColor {
+    match faction {
+        None => FontColor::NormalCardTitle,
+        Some(Faction::Mortal) => FontColor::MortalCardTitle,
+        Some(Faction::Infernal) => FontColor::InfernalCardTitle,
+        Some(Faction::Abyssal) => FontColor::AbyssalCardTitle,
+        Some(Faction::Prismatic) => FontColor::PrismaticCardTitle,
+        Some(Faction::Construct) => FontColor::ConstructCardTitle,
+    }
+    .into()
+}
+
 /// Address for an image to display as a background for a card of the given
 /// [Faction].
-pub fn title_background(faction: Option<Faction>) -> SpriteAddress {
-    faction.map_or_else(
-        || SpriteAddress {
-            address: "LittleSweetDaemon/TCG_Card_Design/Warrior_Card/Warrior_Card Face_Tape"
-                .to_string(),
-        },
-        |f| SpriteAddress {
-            address: match f {
-                Faction::Prismatic => {
-                    "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape"
-                }
-                Faction::Mortal => {
-                    "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape"
-                }
-                Faction::Abyssal => {
-                    "LittleSweetDaemon/TCG_Card_Design/Magic_Card/Magic_Card_Face_Tape"
-                }
-                Faction::Infernal => {
-                    "LittleSweetDaemon/TCG_Card_Design/Animal_Card/Animal_Card_Face_Tape"
-                }
-                Faction::Construct => {
-                    "LittleSweetDaemon/TCG_Card_Design/Nautical_Card/Nautical_Card_Face_Tape"
-                }
-            }
-            .to_string(),
-        },
-    )
+pub fn title_background(_: Option<Faction>) -> SpriteAddress {
+    SpriteAddress {
+        address: "LittleSweetDaemon/TCG_Card_Design/Custom/Title/BlackWhiteFaceTape".to_string(),
+    }
 }
 
 /// Address for the frame of a card in the arena
