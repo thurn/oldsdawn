@@ -64,6 +64,7 @@ namespace Spelldawn.Services
         case GameContext.RewardBrowser:
         case GameContext.LongPressBrowser:
         case GameContext.RevealedCardsBrowser:
+        case GameContext.Hand:
           return true;
         case GameContext.Deck:
         case GameContext.DiscardPile:

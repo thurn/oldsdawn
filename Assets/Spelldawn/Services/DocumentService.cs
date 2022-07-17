@@ -48,8 +48,8 @@ namespace Spelldawn.Services
     Node _mainControlsNode = null!;
     VisualElement _cardControls = null!;
     Node _cardControlsNode = null!;
-    VisualElement _supplementalCardInfo = null!;
-    Node _supplementalCardInfoNode = null!;
+    VisualElement _infoZoom = null!;
+    Node _infoZoomNode = null!;
 
     public VisualElement RootVisualElement => _document.rootVisualElement;
 
@@ -58,7 +58,7 @@ namespace Spelldawn.Services
       _document.rootVisualElement.Clear();
       AddRoot("Main Controls", out _mainControls, out _mainControlsNode);
       AddRoot("Card Controls", out _cardControls, out _cardControlsNode);
-      AddRoot("SupplementalCardInfo", out _supplementalCardInfo, out _supplementalCardInfoNode);
+      AddRoot("InfoZoom", out _infoZoom, out _infoZoomNode);
       AddRoot("Full Screen", out _fullScreen, out _fullScreenNode);
     }
 
@@ -120,15 +120,15 @@ namespace Spelldawn.Services
 
     public void RenderMainControls(InterfaceMainControls? mainControls)
     {
-        Reconcile(
-          ref _mainControlsNode,
-          ref _mainControls,
-          MainControls(mainControls?.Node));
+      Reconcile(
+        ref _mainControlsNode,
+        ref _mainControls,
+        MainControls(mainControls?.Node));
 
-        Reconcile(
-          ref _cardControlsNode,
-          ref _cardControls,
-          CardAnchors(mainControls?.CardAnchorNodes ?? Enumerable.Empty<CardAnchorNode>()));
+      Reconcile(
+        ref _cardControlsNode,
+        ref _cardControls,
+        CardAnchors(mainControls?.CardAnchorNodes ?? Enumerable.Empty<CardAnchorNode>()));
     }
 
     void RenderPanels()
@@ -151,27 +151,14 @@ namespace Spelldawn.Services
       previousNode = newNode;
     }
 
-    public void ClearSupplementalCardInfo()
+    public void ClearInfoZoom()
     {
-      Reconcile(
-        ref _supplementalCardInfoNode,
-        ref _supplementalCardInfo,
-        new Node());
+      Reconcile(ref _infoZoomNode, ref _infoZoom, new Node());
     }
 
-    public void RenderSupplementalCardInfo(Card card, Node node, bool nodeLeft)
+    public void RenderInfoZoom(Node node)
     {
-      Reconcile(
-        ref _supplementalCardInfoNode,
-        ref _supplementalCardInfo,
-        AnchorToCard(card, node, new List<CardAnchor>
-        {
-          new()
-          {
-            CardCorner = nodeLeft ? AnchorCorner.TopRight : AnchorCorner.TopLeft,
-            NodeCorner = nodeLeft ? AnchorCorner.TopLeft : AnchorCorner.TopRight
-          }
-        }));
+      Reconcile(ref _infoZoomNode, ref _infoZoom, node);
     }
 
     void AddRoot(string elementName, out VisualElement element, out Node node)
@@ -197,12 +184,12 @@ namespace Spelldawn.Services
       Row("MainControls", new FlexStyle
       {
         Position = FlexPosition.Absolute,
-        Height = Dip(125),
+        Height = Px(125),
         Inset = new DimensionGroup
         {
-          Left = Dip(0),
-          Right = Dip(0),
-          Bottom = Dip(160)
+          Left = Px(0),
+          Right = Px(0),
+          Bottom = Px(160)
         }
       }, content);
 
@@ -239,20 +226,20 @@ namespace Spelldawn.Services
         switch (anchor.NodeCorner)
         {
           case AnchorCorner.TopLeft:
-            inset.Left = Dip(position.Left);
-            inset.Top = Dip(position.Top);
+            inset.Left = Px(position.Left);
+            inset.Top = Px(position.Top);
             break;
           case AnchorCorner.TopRight:
-            inset.Right = Dip(position.Right);
-            inset.Top = Dip(position.Top);
+            inset.Right = Px(position.Right);
+            inset.Top = Px(position.Top);
             break;
           case AnchorCorner.BottomLeft:
-            inset.Left = Dip(position.Left);
-            inset.Bottom = Dip(position.Bottom);
+            inset.Left = Px(position.Left);
+            inset.Bottom = Px(position.Bottom);
             break;
           case AnchorCorner.BottomRight:
-            inset.Right = Dip(position.Right);
-            inset.Bottom = Dip(position.Bottom);
+            inset.Right = Px(position.Right);
+            inset.Bottom = Px(position.Bottom);
             break;
           default:
             throw new ArgumentOutOfRangeException();

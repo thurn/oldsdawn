@@ -394,8 +394,17 @@ namespace Spelldawn.Masonry
 
       if (input.BackgroundImage is { } bi)
       {
-        var sprite = registry.AssetService.GetSprite(bi);
-        e.style.backgroundImage = new StyleBackground(sprite);
+        switch (bi.BackgroundAddressCase)
+        {
+          case NodeBackground.BackgroundAddressOneofCase.Sprite:
+            var sprite = registry.AssetService.GetSprite(bi.Sprite);
+            e.style.backgroundImage = new StyleBackground(sprite);            
+            break;
+          case NodeBackground.BackgroundAddressOneofCase.RenderTexture:
+            var renderTexture = registry.AssetService.Get<RenderTexture>(bi.RenderTexture.Address);
+            e.style.backgroundImage = new StyleBackground(new Background { renderTexture = renderTexture});               
+            break;
+        }
       }
       else
       {

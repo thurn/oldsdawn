@@ -25,7 +25,7 @@ namespace Spelldawn.Masonry
 {
   public static class MasonUtil
   {
-    public static Dimension Dip(float value) => new()
+    public static Dimension Px(float value) => new()
     {
       Unit = DimensionUnit.Pixels,
       Value = value
@@ -55,10 +55,10 @@ namespace Spelldawn.Masonry
 
     public static DimensionGroup GroupDip(float top, float right, float bottom, float left) => new()
     {
-      Top = Dip(top),
-      Right = Dip(right),
-      Bottom = Dip(bottom),
-      Left = Dip(left)
+      Top = Px(top),
+      Right = Px(right),
+      Bottom = Px(bottom),
+      Left = Px(left)
     };
 
     public static FlexColor MakeColor(string hexString)
@@ -99,10 +99,10 @@ namespace Spelldawn.Masonry
 
     public static BorderRadius AllBordersRadiusDip(float radius) => new()
     {
-      TopLeft = Dip(radius),
-      TopRight = Dip(radius),
-      BottomRight = Dip(radius),
-      BottomLeft = Dip(radius)
+      TopLeft = Px(radius),
+      TopRight = Px(radius),
+      BottomRight = Px(radius),
+      BottomLeft = Px(radius)
     };
 
     public static SpriteAddress Sprite(string address) => new()
@@ -190,8 +190,8 @@ namespace Spelldawn.Masonry
 
     public static FlexTranslate TranslateDip(float x, float y, float z = 0) => new()
     {
-      X = Dip(x),
-      Y = Dip(y),
+      X = Px(x),
+      Y = Px(y),
       Z = z
     };
 

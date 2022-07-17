@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using Spelldawn.Game;
+using Spelldawn.Masonry;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
@@ -32,8 +33,6 @@ namespace Spelldawn.Services
     [SerializeField] BoxCollider _playCardArea = null!;
     [SerializeField] Card _cardPrefab = null!;
     [SerializeField] Card _tokenCardPrefab = null!;
-    [SerializeField] ObjectDisplay _infoZoomLeft = null!;
-    [SerializeField] ObjectDisplay _infoZoomRight = null!;
 
     Card? _optimisticCard;
     SpriteAddress _userCardBack = null!;
@@ -121,7 +120,7 @@ namespace Spelldawn.Services
       {
         yield return sequence.WaitForCompletion();
       }
-      
+
       // Wait for the browser which the optimistic card gets added to
       yield return _registry.RevealedCardsBrowserSmall.WaitUntilIdle();
     }
@@ -196,27 +195,57 @@ namespace Spelldawn.Services
     IEnumerator InfoZoom(Vector3 worldMousePosition, Card card)
     {
       ClearInfoZoom();
-
       var zoomed = InfoCopy(card);
-      var container = worldMousePosition.x > 0 ? _infoZoomRight : _infoZoomLeft;
-
-      yield return container.AddObject(zoomed, animate: false);
-
       if (zoomed.SupplementalInfo != null)
       {
-        _registry.DocumentService.RenderSupplementalCardInfo(
-          zoomed,
-          zoomed.SupplementalInfo,
-          worldMousePosition.x < 0);
+        zoomed.SupplementalInfo.Style.Margin = MasonUtil.GroupDip(32f, -120f, 0f, -120f);
+        zoomed.SupplementalInfo.Style.AlignItems = worldMousePosition.x < 0 ? FlexAlign.FlexStart : FlexAlign.FlexEnd;
       }
+
+      var node = MasonUtil.Row("InfoZoom",
+        new FlexStyle
+        {
+          Position = FlexPosition.Absolute,
+          Inset = new DimensionGroup
+          {
+            Left = worldMousePosition.x < 0 ? MasonUtil.Px(0) : null,
+            Right = worldMousePosition.x < 0 ? null : MasonUtil.Px(0)
+          }
+        },
+        worldMousePosition.x < 0 ? null : zoomed.SupplementalInfo,
+        MasonUtil.Column("Image",
+          new FlexStyle
+          {
+            Width = MasonUtil.Px(625),
+            Height = MasonUtil.Px(625),
+            BackgroundImage = new NodeBackground
+            {
+              RenderTexture = new RenderTextureAddress
+              {
+                Address = _registry.Studio.TextureAddress
+              }
+            }
+          }),
+        worldMousePosition.x < 0 ? zoomed.SupplementalInfo : null
+      );
+
+      yield return _registry.AssetService.LoadAssetsForNode(node);
+
+
+      // Always do this second because LoadAssetsForNode takes 1 frame minimum
+      _registry.Studio.SetSubject(zoomed.gameObject);
+
+      _registry.DocumentService.RenderInfoZoom(node);
     }
 
     /// <summary>
     /// Creates a clone of a card for display at large size
     /// </summary>
-    public static Card InfoCopy(Card card)
+    static Card InfoCopy(Card card)
     {
       var zoomed = card.Clone();
+      zoomed.Parent = null;
+      zoomed.transform.position = Vector3.zero;
       zoomed.transform.localScale = new Vector3(Card.CardScale, Card.CardScale, 1f);
       zoomed.SetGameContext(GameContext.InfoZoom);
       zoomed.gameObject.name = $"{card.name} Info";
@@ -225,9 +254,8 @@ namespace Spelldawn.Services
 
     public void ClearInfoZoom()
     {
-      _registry.DocumentService.ClearSupplementalCardInfo();
-      _infoZoomLeft.DestroyAll();
-      _infoZoomRight.DestroyAll();
+      _registry.DocumentService.ClearInfoZoom();
+      _registry.Studio.ClearSubject();
     }
 
     public IEnumerator HandleDestroyCard(CardIdentifier cardId, bool animate)
@@ -268,7 +296,7 @@ namespace Spelldawn.Services
         target.x - 4,
         target.y + 2,
         target.z - 8);
-      
+
       var sequence = TweenUtils.Sequence("DrawCardAnimation")
         .Insert(0,
           card.transform.DOMove(initialMoveTarget, 0.5f).SetEase(Ease.OutCubic))

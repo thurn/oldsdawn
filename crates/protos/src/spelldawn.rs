@@ -21,6 +21,26 @@ pub struct SpriteAddress {
     pub address: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RenderTextureAddress {
+    #[prost(string, tag = "1")]
+    pub address: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NodeBackground {
+    #[prost(oneof = "node_background::BackgroundAddress", tags = "1, 2")]
+    pub background_address: ::core::option::Option<node_background::BackgroundAddress>,
+}
+/// Nested message and enum types in `NodeBackground`.
+pub mod node_background {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum BackgroundAddress {
+        #[prost(message, tag = "1")]
+        Sprite(super::SpriteAddress),
+        #[prost(message, tag = "2")]
+        RenderTexture(super::RenderTextureAddress),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FontAddress {
     #[prost(string, tag = "1")]
     pub address: ::prost::alloc::string::String,
@@ -162,7 +182,7 @@ pub struct FlexStyle {
     #[prost(message, optional, tag = "4")]
     pub background_color: ::core::option::Option<FlexColor>,
     #[prost(message, optional, tag = "5")]
-    pub background_image: ::core::option::Option<SpriteAddress>,
+    pub background_image: ::core::option::Option<NodeBackground>,
     #[prost(message, optional, tag = "6")]
     pub border_color: ::core::option::Option<BorderColor>,
     #[prost(message, optional, tag = "7")]

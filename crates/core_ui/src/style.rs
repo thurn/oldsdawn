@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use protos::spelldawn::node_background::BackgroundAddress;
 use protos::spelldawn::{
     Dimension, DimensionGroup, DimensionUnit, EasingMode, FlexAlign, FlexColor, FlexDirection,
     FlexDisplayStyle, FlexJustify, FlexOverflow, FlexPickingMode, FlexPosition, FlexRotate,
     FlexScale, FlexStyle, FlexTranslate, FlexVector3, FlexVisibility, FlexWrap, FontAddress,
-    FontStyle, ImageScaleMode, OverflowClipBox, SpriteAddress, TextAlign, TextOverflow,
-    TextOverflowPosition, TextShadow, TimeValue, WhiteSpace,
+    FontStyle, ImageScaleMode, NodeBackground, OverflowClipBox, SpriteAddress, TextAlign,
+    TextOverflow, TextOverflowPosition, TextShadow, TimeValue, WhiteSpace,
 };
 
 /// Pixels unit. Not literally equivalent to screen pixels, Unity resizes these
@@ -155,8 +156,9 @@ impl Style {
         self
     }
 
-    pub fn background_image(mut self, image: SpriteAddress) -> Self {
-        self.wrapped_style.background_image = Some(image);
+    pub fn background_image(mut self, sprite: SpriteAddress) -> Self {
+        self.wrapped_style.background_image =
+            Some(NodeBackground { background_address: Some(BackgroundAddress::Sprite(sprite)) });
         self
     }
 

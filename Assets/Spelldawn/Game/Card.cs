@@ -176,6 +176,7 @@ namespace Spelldawn.Game
     {
       var result = ComponentUtils.GetComponent<Card>(Instantiate(gameObject));
       result._cardId = _cardId;
+      result._outline.enabled = false;
       result._serverCanPlay = _serverCanPlay;
       result._serverRevealedInArena = _serverRevealedInArena;
       result._validRoomTargets = _validRoomTargets;

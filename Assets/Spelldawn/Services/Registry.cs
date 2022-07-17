@@ -181,6 +181,9 @@ namespace Spelldawn.Services
     [SerializeField] GameObject _graphy = null!;
     public GameObject Graphy => _graphy;
 
+    [SerializeField] Studio _studio = null!;
+    public Studio Studio => _studio;
+
     public ScreenshotTestService? ScreenshotTests { get; private set; }
 
     void Start()

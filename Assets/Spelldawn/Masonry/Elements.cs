@@ -130,4 +130,11 @@ namespace Spelldawn.Masonry
     readonly Lazy<Callbacks> _callbacks = new();
     public Lazy<Callbacks> Callbacks => _callbacks;
   }
+  
+  public sealed class NodeImage : Image, INodeCallbacks
+  {
+    public VisualElement Self => this;
+    readonly Lazy<Callbacks> _callbacks = new();
+    public Lazy<Callbacks> Callbacks => _callbacks;
+  }  
 }

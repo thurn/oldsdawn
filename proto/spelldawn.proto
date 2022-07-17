@@ -183,6 +183,17 @@ message SpriteAddress {
     string address = 1;
 }
 
+message RenderTextureAddress {
+    string address = 1;
+}
+
+message NodeBackground {
+    oneof background_address {
+        SpriteAddress sprite = 1;
+        RenderTextureAddress render_texture = 2;
+    }
+}
+
 message FontAddress {
     string address = 1;
 }
@@ -298,7 +309,7 @@ message FlexStyle {
     FlexAlign align_items = 2;
     FlexAlign align_self = 3;
     FlexColor background_color = 4;
-    SpriteAddress background_image = 5;
+    NodeBackground background_image = 5;
     BorderColor border_color = 6;
     BorderRadius border_radius = 7;
     BorderWidth border_width = 8;
