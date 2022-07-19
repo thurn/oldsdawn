@@ -241,7 +241,7 @@ namespace Spelldawn.Services
     /// <summary>
     /// Creates a clone of a card for display at large size
     /// </summary>
-    static Card InfoCopy(Card card)
+    Card InfoCopy(Card card)
     {
       var zoomed = card.Clone();
       zoomed.Parent = null;

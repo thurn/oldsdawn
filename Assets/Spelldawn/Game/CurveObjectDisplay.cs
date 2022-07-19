@@ -84,10 +84,10 @@ namespace Spelldawn.Game
     float CalculateZRotation(float t) => -10.0f * t + 5.0f;
 
     Vector3 CalculateBezierPosition(float t) =>
-      Mathf.Pow(1 - t, p: 3) * _controlPoint1.position +
-      3 * Mathf.Pow(1 - t, p: 2) * t * _controlPoint2.position +
-      3 * (1 - t) * Mathf.Pow(t, p: 2) * _controlPoint3.position +
-      Mathf.Pow(t, p: 3) * _controlPoint4.position;
+      Mathf.Pow(1 - t, 3) * _controlPoint1.position +
+      3 * Mathf.Pow(1 - t, 2) * t * _controlPoint2.position +
+      3 * (1 - t) * Mathf.Pow(t, 2) * _controlPoint3.position +
+      Mathf.Pow(t, 3) * _controlPoint4.position;
 
     void OnDrawGizmosSelected()
     {

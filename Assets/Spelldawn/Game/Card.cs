@@ -42,6 +42,7 @@ namespace Spelldawn.Game
     [SerializeField] SpriteRenderer _titleBackground = null!;
     [SerializeField] MeshRenderer _outline = null!;
     [SerializeField] TextMeshPro _title = null!;
+    [SerializeField] WarpText _warpText = null!;
     [SerializeField] TextMeshPro _rulesText = null!;
     [SerializeField] SpriteRenderer? _jewel;
     [SerializeField] SpriteRenderer _arenaFrame = null!;
@@ -473,7 +474,8 @@ namespace Spelldawn.Game
       _image.gameObject.SetActive(true);
       Registry.AssetService.AssignSprite(_frame, revealed.CardFrame);
       Registry.AssetService.AssignSprite(_titleBackground, revealed.TitleBackground);
-      _title.text = revealed.Title.Text;
+      SetTitle(revealed.Title.Text);
+      
       _title.color = Mason.ToUnityColor(revealed.Title.TextColor);
       if (revealed.RulesText?.Text != null)
       {
@@ -483,6 +485,15 @@ namespace Spelldawn.Game
       if (_jewel)
       {
         Registry.AssetService.AssignSprite(_jewel!, revealed.Jewel);
+      }
+    }
+
+    void SetTitle(string title)
+    {
+      if (_title.text != title)
+      {
+        _title.text = title;
+        StartCoroutine(_warpText.Warp());            
       }
     }
 
