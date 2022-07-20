@@ -14,7 +14,8 @@
 
 //! Tools for rendering the text on a card
 
-use core_ui::{icons, rendering};
+use core_ui::design::FontColor;
+use core_ui::{design, icons, rendering};
 use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
 use data::card_state::CardState;
 use data::delegates::Scope;
@@ -203,13 +204,15 @@ fn card_type_line(definition: &CardDefinition) -> String {
 
     if let Some(faction) = definition.config.faction {
         result.push_str(" • ");
-        result.push_str(match faction {
-            Faction::Prismatic => "Prismatic",
-            Faction::Construct => "Construct",
-            Faction::Mortal => "Mortal",
-            Faction::Abyssal => "Abyssal",
-            Faction::Infernal => "Infernal",
-        });
+        let (faction, color) = match faction {
+            Faction::Prismatic => ("Prismatic", FontColor::PrismaticCardTitle),
+            Faction::Construct => ("Construct", FontColor::ConstructCardTitle),
+            Faction::Mortal => ("Mortal", FontColor::MortalCardTitle),
+            Faction::Abyssal => ("Abyssal", FontColor::AbyssalCardTitle),
+            Faction::Infernal => ("Infernal", FontColor::InfernalCardTitle),
+        };
+        let string = format!("<color={}>{}</color>", design::as_hex(color.into()), faction);
+        result.push_str(&string);
     }
 
     for subtype in &definition.config.subtypes {
