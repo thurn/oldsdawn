@@ -193,7 +193,7 @@ namespace Spelldawn.Game
 
     protected override void OnSetGameContext(GameContext oldContext, GameContext newContext)
     {
-      if (newContext.IsArenaContext())
+      if (newContext.RenderArenaCard())
       {
         _arenaCardBack.SetActive(!_isRevealed);
         _cardBack.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
@@ -232,8 +232,8 @@ namespace Spelldawn.Game
         _arenaCard.localPosition = new Vector3(0, _arenaCardYOffset, 0);
       }
 
-      UpdateIcons(null, GameContext.IsArenaContext());
-      UpdateRevealedToOpponent(GameContext.IsArenaContext());
+      UpdateIcons(null, GameContext.RenderArenaCard());
+      UpdateRevealedToOpponent(GameContext.RenderArenaCard());
     }
 
     public override bool CanHandleMouseDown()
@@ -418,8 +418,8 @@ namespace Spelldawn.Game
         RenderHiddenCard();
       }
 
-      UpdateIcons(card.CardIcons, GameContext.IsArenaContext());
-      UpdateRevealedToOpponent(GameContext.IsArenaContext());
+      UpdateIcons(card.CardIcons, GameContext.RenderArenaCard());
+      UpdateRevealedToOpponent(GameContext.RenderArenaCard());
     }
 
     void RenderRevealedCard(RevealedCardView revealed)

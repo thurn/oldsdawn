@@ -40,11 +40,14 @@ namespace Spelldawn.Services
 
     public ObjectDisplay LeftItems => _leftItems;
     public ObjectDisplay RightIems => _rightItems;
+    
+    public bool RoomsOnBottom { get; private set; }
 
     readonly RaycastHit[] _raycastHitsTempBuffer = new RaycastHit[8];
 
     public void UpdateViewForSide(PlayerSide side)
     {
+      RoomsOnBottom = side == PlayerSide.Overlord;
       _sceneBackground.SetRoomsOnBottom(side == PlayerSide.Overlord);
     }
 

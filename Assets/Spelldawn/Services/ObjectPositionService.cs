@@ -57,7 +57,7 @@ namespace Spelldawn.Services
         .Insert(0, source.transform.DOMove(Vector3.Lerp(startPosition, target.transform.position, 0.1f), 0.1f))
         .Insert(0.1f, source.transform.DOMove(startPosition, 0.1f));
 
-      if (source.GameContext.IsArenaContext())
+      if (source.GameContext.RenderArenaCard())
       {
         throwSequence
           .Insert(0.8f, source.transform.DOMove(originalPosition, 0.1f))

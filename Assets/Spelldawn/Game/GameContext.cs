@@ -75,11 +75,10 @@ namespace Spelldawn.Game
       _ => throw new ArgumentOutOfRangeException(nameof(gameContext), gameContext, null)
     };
 
-    public static bool IsArenaContext(this GameContext gameContext) => gameContext switch
+    public static bool RenderArenaCard(this GameContext gameContext) => gameContext switch
     {
       GameContext.Arena => true,
       GameContext.ArenaRaidParticipant => true,
-      GameContext.RaidParticipant => true,
       _ => false
     };
   }

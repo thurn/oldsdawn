@@ -505,9 +505,9 @@ pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion)
         }
     }
 
-    game.record_update(|| GameUpdate::SummonMinion(card_id));
     dispatch::invoke_event(game, SummonMinionEvent(card_id))?;
     game.card_mut(card_id).turn_face_up();
+    game.record_update(|| GameUpdate::SummonMinion(card_id));
     Ok(())
 }
 

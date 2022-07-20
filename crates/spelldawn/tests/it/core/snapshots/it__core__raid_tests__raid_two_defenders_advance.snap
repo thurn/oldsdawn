@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 640
+assertion_line: 632
 expression: "Summary::summarize(&response)"
 ---
 
@@ -96,11 +96,25 @@ command_list:
                 sorting_key: 8
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
-        revealed_to_viewer: false
-        is_face_up: false
+        revealed_to_viewer: true
+        is_face_up: true
         card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "5"
         arena_frame: "<SpriteAddress>"
         owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Minion End Raid"
+            rules_text: "<RulesText>"
+            targeting: 
+            valid_rooms: 
+            on_release_position: 
+                sorting_key: 5
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
         is_face_up: false
@@ -424,7 +438,7 @@ channel_response:
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: true
-        is_face_up: false
+        is_face_up: true
         card_icons: 
             top_left_icon: "3"
             bottom_right_icon: "5"

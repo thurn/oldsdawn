@@ -24,6 +24,8 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] ObjectDisplay _participants = null!;
+    [SerializeField] float _roomsTopZ;
+    [SerializeField] float _roomsBottomZ;
     [SerializeField] bool _raidActive;
     RoomIdentifier? _currentRoom;
 
@@ -37,6 +39,11 @@ namespace Spelldawn.Services
         switch (value)
         {
           case true when !_raidActive:
+            // Shift the raid display around based on room position in order to let weapons be visible
+            transform.position = new Vector3(
+              transform.position.x,
+              transform.position.y,
+              _registry.ArenaService.RoomsOnBottom ? _roomsBottomZ : _roomsTopZ);
             _registry.MusicService.SetMusicState(MusicState.Raid);
             _registry.RaidOverlay.Enable(translucent: true);
             _registry.ArenaService.LeftItems.SetGameContext(GameContext.ArenaRaidParticipant);
