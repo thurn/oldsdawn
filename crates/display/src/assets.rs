@@ -78,15 +78,14 @@ pub fn card_icon(icon_type: CardIconType) -> SpriteAddress {
 
 /// Address for the frame of a player's identity card image
 pub fn identity_card_frame(side: Side) -> SpriteAddress {
-    SpriteAddress { address: identity_card_frame_string(side) }
+    SpriteAddress { address: identity_card_frame_string(side).to_string() }
 }
 
-fn identity_card_frame_string(side: Side) -> String {
+fn identity_card_frame_string(side: Side) -> &'static str {
     match side {
         Side::Overlord => "SpriteWay/Icons/Fantasy Player Frames/50002",
         Side::Champion => "SpriteWay/Icons/Fantasy Player Frames/50003",
     }
-    .to_string()
 }
 
 /// Address for the back of a card of a given [School]
@@ -164,29 +163,23 @@ pub fn title_background(_: Option<Faction>) -> SpriteAddress {
 
 /// Address for the frame of a card in the arena
 pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) -> SpriteAddress {
-    faction.map_or_else(
-        || SpriteAddress {
-            address: match card_type {
-                CardType::OverlordSpell | CardType::ChampionSpell | CardType::Minion => {
-                    "SpriteWay/Icons/Clean Frames/9020".to_string()
-                }
-                CardType::Weapon | CardType::Artifact | CardType::Project | CardType::Scheme => {
-                    "SpriteWay/Icons/Clean Frames/9047".to_string()
-                }
+    SpriteAddress {
+        address: match faction {
+            Some(Faction::Mortal) => "SpriteWay/Icons/Clean Frames/9048",
+            Some(Faction::Infernal) => "SpriteWay/Icons/Clean Frames/9054",
+            Some(Faction::Abyssal) => "SpriteWay/Icons/Clean Frames/9020",
+            Some(Faction::Prismatic) => "SpriteWay/Icons/Clean Frames/9047",
+            Some(Faction::Construct) => "SpriteWay/Icons/Clean Frames/9003",
+            None => match card_type {
                 CardType::Identity => identity_card_frame_string(side),
+                CardType::Artifact => "SpriteWay/Icons/Clean Frames/9013",
+                CardType::Scheme => "SpriteWay/Icons/Clean Frames/9032",
+                CardType::Project => "SpriteWay/Icons/Clean Frames/9025",
+                _ => "SpriteWay/Icons/Clean Frames/9062",
             },
-        },
-        |f| SpriteAddress {
-            address: match f {
-                Faction::Prismatic => "SpriteWay/Icons/Clean Frames/9048",
-                Faction::Mortal => "SpriteWay/Icons/Clean Frames/9048",
-                Faction::Abyssal => "SpriteWay/Icons/Clean Frames/9055",
-                Faction::Infernal => "SpriteWay/Icons/Clean Frames/9054",
-                Faction::Construct => "SpriteWay/Icons/Clean Frames/9020",
-            }
-            .to_string(),
-        },
-    )
+        }
+        .to_string(),
+    }
 }
 
 /// Address for the rarity jewel to display on a card

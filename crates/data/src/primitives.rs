@@ -300,11 +300,11 @@ pub enum ItemLocation {
 /// damaged by weapons from the same faction, or by Prismatic weapons.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Faction {
+    Mortal,
+    Infernal,
+    Abyssal,
     Prismatic,
     Construct,
-    Mortal,
-    Abyssal,
-    Infernal,
 }
 
 /// Rarity of a card, used to determine how likely it is to appear in randomized
