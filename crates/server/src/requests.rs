@@ -51,7 +51,10 @@ use crate::{agent_response, debug};
 
 /// Stores active channels for each user.
 ///
-/// TODO: How do you clean these up if a user disconnects?
+/// TODO: Clean this up on disconnect. This is quite easy to do with 'real' gRPC
+/// but I haven't figured out how to do it with gRPC-web (which is just
+/// fake-streaming over HTTP1). Unity doesn't support HTTP2 natively, but it's
+/// possible to do it via a third party networking stack.
 static CHANNELS: Lazy<DashMap<PlayerId, Sender<Result<CommandList, Status>>>> =
     Lazy::new(DashMap::new);
 
