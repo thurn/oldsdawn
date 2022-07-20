@@ -13,32 +13,15 @@
 // limitations under the License.
 
 use anyhow::Result;
-use core_ui::rendering;
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::Side;
 use game_ui::prompts;
-use game_ui::waiting_prompt::WaitingPrompt;
 use protos::spelldawn::InterfaceMainControls;
 
 /// Returns a [InterfaceMainControls] to render the interface state for the
 /// provided `game`.
-pub fn render(game: &GameState, user_side: Side) -> Result<Option<InterfaceMainControls>> {
-    Ok(if let Some(prompt) = render_prompt(game, user_side)? {
-        Some(prompt)
-    } else if render_prompt(game, user_side.opponent())?.is_some() {
-        // If the opponent has a prompt, display a 'waiting' indicator
-        Some(InterfaceMainControls {
-            node: rendering::component(WaitingPrompt {}),
-            card_anchor_nodes: vec![],
-        })
-    } else {
-        None
-    })
-}
-
-/// Renders prompt for a player when one is present
-fn render_prompt(game: &GameState, side: Side) -> Result<Option<InterfaceMainControls>> {
+pub fn render(game: &GameState, side: Side) -> Result<Option<InterfaceMainControls>> {
     if let Some(prompt) = &game.player(side).prompt {
         return prompts::action_prompt(game, side, prompt);
     } else if let Some(prompt) = raids::current_prompt(game, side)? {

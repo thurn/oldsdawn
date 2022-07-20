@@ -19,4 +19,3 @@ pub mod card_info;
 pub mod prompt_container;
 pub mod prompts;
 pub mod response_button;
-pub mod waiting_prompt;

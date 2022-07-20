@@ -74,7 +74,6 @@ fn keep_opening_hand() {
     initiate_game(&mut session);
 
     let response = session.click_on(overlord_id, "Keep");
-    assert!(session.user.interface.controls().has_text("Waiting"));
     assert_eq!(0, session.user.cards.revealed_cards().len());
     assert_eq!(5, session.user.cards.hand(PlayerName::User).len());
     assert_eq!(5, session.user.cards.hand(PlayerName::Opponent).len());
@@ -95,7 +94,6 @@ fn mulligan_opening_hand() {
     let response = session.click_on(overlord_id, "Mulligan");
     assert_snapshot!(Summary::summarize(&response));
 
-    assert!(session.user.interface.controls().has_text("Waiting"));
     assert_eq!(0, session.user.cards.revealed_cards().len());
     assert_eq!(5, session.user.cards.hand(PlayerName::User).len());
     assert_eq!(5, session.user.cards.hand(PlayerName::Opponent).len());

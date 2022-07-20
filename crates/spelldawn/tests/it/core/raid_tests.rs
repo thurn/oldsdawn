@@ -74,7 +74,6 @@ fn initiate_raid() {
 
     assert!(g.opponent.interface.controls().has_text("Activate"));
     assert!(g.opponent.interface.controls().has_text("Pass"));
-    assert!(g.user.interface.controls().has_text("Waiting"));
 
     assert_snapshot!(Summary::run(&response));
 }
@@ -99,7 +98,6 @@ fn activate_room() {
     assert!(g.opponent.cards.get(ids.minion_id).revealed_to_me());
     assert!(g.user.this_player.can_take_action());
     assert!(g.opponent.other_player.can_take_action());
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("Test Weapon"));
     assert!(g.user.interface.controls().has_text("1\u{f06d}"));
     assert!(g.user.interface.controls().has_text("Continue"));
@@ -132,7 +130,6 @@ fn activate_room_weapon_2() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(!g.user.interface.controls().has_text("Test Weapon"));
     assert!(g.user.interface.controls().has_text("Continue"));
 }
@@ -150,7 +147,6 @@ fn activate_room_weapon_2_12() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("Test Weapon"));
     assert!(g.user.interface.controls().has_text("2\u{f06d}"));
     assert!(g.user.interface.controls().has_text("Continue"));
@@ -169,7 +165,6 @@ fn activate_room_weapon_4_12() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("Test Weapon"));
     assert!(g.user.interface.controls().has_text("1\u{f06d}"));
     assert!(g.user.interface.controls().has_text("Continue"));
@@ -188,7 +183,6 @@ fn activate_room_weapon_5() {
         g.user_id(),
     );
     g.click_on(g.opponent_id(), "Activate");
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("Test Weapon"));
     assert!(!g.user.interface.controls().has_text("\u{f06d}"));
     assert!(g.user.interface.controls().has_text("Continue"));
@@ -215,7 +209,6 @@ fn use_weapon() {
     assert!(g.opponent.cards.get(ids.scheme_id).revealed_to_me());
     assert!(g.user.this_player.can_take_action());
     assert!(g.opponent.other_player.can_take_action());
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.card_anchor_nodes().has_text("Score!"));
     assert!(g.user.interface.controls().has_text("End Raid"));
 
@@ -327,7 +320,6 @@ fn score_scheme_card() {
     assert!(g.opponent.other_player.can_take_action());
     assert!(g.user.data.raid_active()); // Raid still active
     assert!(g.opponent.data.raid_active());
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("End Raid"));
 
     assert_eq!(
@@ -403,7 +395,6 @@ fn no_activate() {
 
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.user.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -451,7 +442,6 @@ fn raid_vault() {
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     // TODO: Deck top should not be revealed to overlord
     assert_snapshot!(Summary::summarize(&response));
 }
@@ -471,7 +461,6 @@ fn raid_sanctum() {
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -495,7 +484,6 @@ fn raid_crypts() {
 
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert!(g.user.interface.controls().has_text("Score"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -529,7 +517,6 @@ fn raid_vault_twice() {
     assert_eq!(g.you().mana(), STARTING_MANA - 3);
 
     // Should skip Activation phase:
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("Test Weapon"));
     g.click_on(g.user_id(), "Test Weapon");
 
@@ -538,7 +525,6 @@ fn raid_vault_twice() {
     assert_eq!(g.you().mana(), STARTING_MANA - 3);
 
     // Scheme should not longer be on top for second raid
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert!(g.user.interface.controls().has_text("End Raid"));
     assert!(!g.user.interface.controls().has_text("Score"));
 }
@@ -555,7 +541,6 @@ fn raid_no_defenders() {
     // Should immediately jump to the Score action
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.user.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -570,7 +555,6 @@ fn raid_vault_no_defenders() {
     // Should immediately jump to the Score action
     assert!(g.user.interface.controls().has_text("Score"));
     assert!(g.user.interface.controls().has_text("End Raid"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
 }
 
 #[test]
@@ -622,7 +606,6 @@ fn raid_two_defenders() {
 
     assert!(g.user.interface.controls().has_text("Advance"));
     assert!(g.user.interface.controls().has_text("Retreat"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -646,8 +629,6 @@ fn raid_two_defenders_advance() {
     g.click_on(g.user_id(), "Test Weapon");
     let response = g.click_on(g.user_id(), "Advance");
     assert!(g.user.interface.controls().has_text("Test Weapon"));
-    assert!(g.opponent.interface.controls().has_text("Waiting"));
-
     assert_snapshot!(Summary::summarize(&response));
 }
 

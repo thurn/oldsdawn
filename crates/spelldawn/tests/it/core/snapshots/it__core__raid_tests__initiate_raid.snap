@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 79
+assertion_line: 78
 expression: "Summary::run(&response)"
 ---
 
@@ -164,10 +164,6 @@ command_list:
             score: 0
             can_take_action: true
         raid_active: true
-        controls: 
-            node: 
-                text: "Waiting for Opponent..."
-        card_anchor_nodes: 
         game_object_positions: 
             user_deck: 
                 sorting_key: 1
