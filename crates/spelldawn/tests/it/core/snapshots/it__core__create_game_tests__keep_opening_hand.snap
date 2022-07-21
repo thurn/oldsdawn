@@ -67,7 +67,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: true
@@ -86,7 +86,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 7
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O8
         revealed_to_viewer: true
@@ -105,7 +105,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 10
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O9
         revealed_to_viewer: true
@@ -124,7 +124,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 11
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O25
         revealed_to_viewer: true
@@ -143,7 +143,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 8
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O36
         revealed_to_viewer: true
@@ -162,7 +162,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 9
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -180,7 +180,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: false
@@ -280,7 +280,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O4
         revealed_to_viewer: false
@@ -328,7 +328,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C10
         revealed_to_viewer: true
@@ -347,7 +347,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 18
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C17
         revealed_to_viewer: true
@@ -366,7 +366,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 20
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C23
         revealed_to_viewer: true
@@ -385,7 +385,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 17
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C29
         revealed_to_viewer: true
@@ -404,7 +404,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 21
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C43
         revealed_to_viewer: true
@@ -423,5 +423,5 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 19
+                sorting_key: 101
                 position: ObjectPositionStaging

@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 50
+assertion_line: 52
 expression: "Summary::run(&r3)"
 ---
 
@@ -66,7 +66,7 @@ expression: "Summary::run(&r3)"
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O1
         revealed_to_viewer: false
@@ -90,7 +90,7 @@ expression: "Summary::run(&r3)"
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
     UpdatePanels: 
     panels: "<Panel>"

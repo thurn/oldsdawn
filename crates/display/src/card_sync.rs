@@ -137,8 +137,8 @@ fn revealed_card_view(
             flags::enters_play_in_room(game, card.id),
             |target| flags::can_take_play_card_action(game, builder.user_side, card.id, target),
         )),
-        on_release_position: Some(positions::for_card(
-            card,
+        on_release_position: Some(positions::for_sorting_key(
+            positions::RELEASE_SORTING_KEY,
             match definition.card_type {
                 CardType::Weapon => positions::item(ItemLocation::Weapons),
                 CardType::Artifact => positions::item(ItemLocation::Artifacts),

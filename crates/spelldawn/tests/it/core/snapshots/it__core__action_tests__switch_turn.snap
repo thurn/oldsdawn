@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 284
+assertion_line: 268
 expression: "Summary::run(&response)"
 ---
 
@@ -67,7 +67,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -85,7 +85,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
     DisplayGameMessage: Dawn
     UpdateGameView: 
@@ -150,7 +150,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -168,7 +168,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
@@ -238,7 +238,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -256,7 +256,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
@@ -327,7 +327,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -345,7 +345,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
     DisplayGameMessage: Dawn
     UpdateGameView: 
@@ -410,7 +410,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -428,7 +428,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
@@ -447,7 +447,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 2
+                sorting_key: 101
                 position: ObjectPositionStaging
     MoveGameObjects: 
         id: C11
@@ -516,7 +516,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -534,7 +534,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
@@ -553,5 +553,5 @@ channel_response:
             targeting: 
                 can_play: true
             on_release_position: 
-                sorting_key: 3
+                sorting_key: 101
                 position: ObjectPositionStaging

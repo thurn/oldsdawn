@@ -67,7 +67,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O1
         revealed_to_viewer: false
@@ -93,7 +93,7 @@ command_list:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 8
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: true
@@ -113,7 +113,7 @@ command_list:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 5
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
@@ -131,7 +131,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
@@ -150,7 +150,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 10
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -170,7 +170,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 13
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }
     MoveGameObjects: 
     UpdateGameView: 
@@ -240,7 +240,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O1
         revealed_to_viewer: false
@@ -266,7 +266,7 @@ command_list:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 8
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: true
@@ -286,7 +286,7 @@ command_list:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 5
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
@@ -304,7 +304,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
@@ -323,7 +323,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 10
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -343,7 +343,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 13
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }
 channel_response: 
     UpdateGameView: 
@@ -408,7 +408,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O1
         revealed_to_viewer: false
@@ -434,7 +434,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 8
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: true
@@ -454,7 +454,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 5
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
@@ -472,7 +472,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
@@ -498,7 +498,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 13
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }
     UpdateGameView: 
         user: 
@@ -562,7 +562,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O1
         revealed_to_viewer: false
@@ -588,7 +588,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 8
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: true
@@ -608,7 +608,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 5
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: C0
         revealed_to_viewer: true
@@ -626,7 +626,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
@@ -652,5 +652,5 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 13
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }

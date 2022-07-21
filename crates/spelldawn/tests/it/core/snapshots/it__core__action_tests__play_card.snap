@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 120
+assertion_line: 116
 expression: "Summary::run(&response)"
 ---
 
@@ -67,7 +67,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -85,7 +85,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -104,7 +104,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 3
+                sorting_key: 101
                 position: ObjectPositionStaging
     UpdateGameView: 
         user: 
@@ -168,7 +168,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -186,7 +186,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -205,7 +205,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 4
+                sorting_key: 101
                 position: ObjectPositionStaging
 channel_response: 
     UpdateGameView: 
@@ -270,7 +270,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -288,7 +288,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -307,7 +307,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 3
+                sorting_key: 101
                 position: ObjectPositionStaging
     MoveGameObjects: 
     UpdateGameView: 
@@ -372,7 +372,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C0
         revealed_to_viewer: true
@@ -390,7 +390,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -409,5 +409,5 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 4
+                sorting_key: 101
                 position: ObjectPositionStaging

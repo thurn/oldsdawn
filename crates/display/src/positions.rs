@@ -34,6 +34,8 @@ use raids::RaidDataExt;
 use rules::queries;
 use with_error::fail;
 
+pub const RELEASE_SORTING_KEY: u32 = 100;
+
 pub fn for_card(card: &CardState, position: Position) -> ObjectPosition {
     ObjectPosition {
         position: Some(position),

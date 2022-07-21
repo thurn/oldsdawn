@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 305
+assertion_line: 298
 expression: "Summary::summarize(&response)"
 ---
 
@@ -67,7 +67,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O44
         revealed_to_viewer: true
@@ -87,7 +87,7 @@ command_list:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 7
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: false
@@ -111,7 +111,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
@@ -130,7 +130,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 9
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -150,7 +150,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 12
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }
     FireProjectile: 
         source_id: O44
@@ -220,7 +220,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O44
         revealed_to_viewer: true
@@ -240,7 +240,7 @@ command_list:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 7
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: false
@@ -264,7 +264,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: true
@@ -283,7 +283,7 @@ command_list:
             targeting: 
                 can_play: true
             on_release_position: 
-                sorting_key: 9
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C45
         revealed_to_viewer: true
@@ -303,7 +303,7 @@ command_list:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 12
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }
 channel_response: 
     UpdateGameView: 
@@ -368,7 +368,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O44
         revealed_to_viewer: true
@@ -388,7 +388,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 7
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: true
@@ -408,7 +408,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 4
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: C0
         revealed_to_viewer: true
@@ -426,7 +426,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
@@ -452,7 +452,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 12
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }
     FireProjectile: 
         source_id: O44
@@ -522,7 +522,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: O44
         revealed_to_viewer: true
@@ -542,7 +542,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 7
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: true
@@ -562,7 +562,7 @@ channel_response:
             targeting: 
             valid_rooms: 
             on_release_position: 
-                sorting_key: 4
+                sorting_key: 101
                 position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
         card_id: C0
         revealed_to_viewer: true
@@ -580,7 +580,7 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 1
+                sorting_key: 101
                 position: ObjectPositionStaging
         card_id: C11
         revealed_to_viewer: false
@@ -606,5 +606,5 @@ channel_response:
             targeting: 
                 can_play: false
             on_release_position: 
-                sorting_key: 12
+                sorting_key: 101
                 position: ObjectPositionItem { item_location: Left }
