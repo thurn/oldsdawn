@@ -31,9 +31,7 @@ use cards::initialize;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardPositionKind};
 use data::deck::Deck;
-use data::game::{
-    GameConfiguration, GamePhase, GameState, InternalRaidPhase, RaidData, RaidPhase, TurnData,
-};
+use data::game::{GameConfiguration, GamePhase, GameState, InternalRaidPhase, RaidData, TurnData};
 use data::player_data::{CurrentGame, PlayerData};
 use data::player_name::PlayerId;
 use data::primitives::{
@@ -233,13 +231,6 @@ impl Default for Args {
             connect: true,
         }
     }
-}
-
-/// Options for a test raid
-#[derive(Clone, Debug)]
-pub struct TestRaid {
-    pub phase: RaidPhase,
-    pub active: bool,
 }
 
 fn set_deck_top(game: &mut GameState, side: Side, deck_top: Option<CardName>) {

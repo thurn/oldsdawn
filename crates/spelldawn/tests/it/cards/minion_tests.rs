@@ -116,8 +116,7 @@ fn temporal_vortex_pay_actions() {
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
     );
     assert_eq!(0, g.user.cards.hand(PlayerName::User).len());
-    assert!(g.opponent.interface.controls().has_text("Advance"));
-    assert!(g.opponent.interface.controls().has_text("Retreat"));
+    assert!(g.opponent.interface.controls().has_text("Continue"));
 }
 
 #[test]

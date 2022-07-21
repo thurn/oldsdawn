@@ -19,7 +19,6 @@
 use std::collections::HashMap;
 
 use anyhow::Result;
-use enum_kinds::EnumKind;
 use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
 use serde::{Deserialize, Serialize};
@@ -88,43 +87,20 @@ impl PlayerState {
     }
 }
 
-/// Identifies steps within a raid.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, EnumKind)]
-#[enum_kind(RaidPhaseKind)]
-pub enum RaidPhase {
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+pub enum InternalRaidPhase {
     /// Raid has been created but does not have a phase yet
     Begin,
     /// The raid has started and the Overlord is deciding whether to activate
     /// the target room.
     Activation,
-    /// The defender with the provided ordinal position is currently being
+    /// The defender with the provided index position is currently being
     /// encountered. The Champion is deciding which weapons, if any, to employ.
     ///
     /// Note that defenders are encountered in decreasing position order.
-    Encounter(usize),
-    /// The Champion has defeated the previous defender and is deciding whether
-    /// to continue to encounter the next defender, which has the provided
-    /// ordinal position, or retreat.
-    ///
-    /// Note that defenders are encountered in decreasing position order.
-    Continue(usize),
+    Encounter,
     /// The Champion has bypassed all of the defenders for this room and is now
     /// accessing its contents
-    Access,
-}
-
-impl RaidPhase {
-    pub fn kind(&self) -> RaidPhaseKind {
-        self.into()
-    }
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
-pub enum InternalRaidPhase {
-    Begin,
-    Activation,
-    Encounter,
-    Continue,
     Access,
 }
 

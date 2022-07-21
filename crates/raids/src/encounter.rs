@@ -124,7 +124,7 @@ impl RaidPhaseImpl for EncounterPhase {
             defenders::next_encounter(game, Some(game.raid_encounter()?))?
         {
             game.raid_mut()?.encounter = Some(encounter);
-            Some(InternalRaidPhase::Continue)
+            Some(InternalRaidPhase::Encounter)
         } else {
             Some(InternalRaidPhase::Access)
         })

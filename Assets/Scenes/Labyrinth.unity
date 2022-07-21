@@ -3506,7 +3506,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _registry: {fileID: 1445473048}
   _participants: {fileID: 1192066000}
-  _roomsTopZ: 51
+  _roomsTopZ: 50
   _roomsBottomZ: 52
   _raidActive: 0
 --- !u!1 &142239664

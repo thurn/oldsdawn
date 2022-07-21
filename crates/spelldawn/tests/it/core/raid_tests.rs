@@ -604,64 +604,7 @@ fn raid_two_defenders() {
     g.click_on(g.opponent_id(), "Activate");
     let response = g.click_on(g.user_id(), "Test Weapon");
 
-    assert!(g.user.interface.controls().has_text("Advance"));
-    assert!(g.user.interface.controls().has_text("Retreat"));
-    assert_snapshot!(Summary::summarize(&response));
-}
-
-#[test]
-fn raid_two_defenders_advance() {
-    let mut g = new_game(
-        Side::Champion,
-        Args {
-            turn: Some(Side::Overlord),
-            actions: 2,
-            opponent_deck_top: Some(CardName::TestScheme31),
-            ..Args::default()
-        },
-    );
-
-    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
-    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
-    g.initiate_raid(RoomId::Vault);
-    g.click_on(g.opponent_id(), "Activate");
-    g.click_on(g.user_id(), "Test Weapon");
-    let response = g.click_on(g.user_id(), "Advance");
-    assert!(g.user.interface.controls().has_text("Test Weapon"));
-    assert_snapshot!(Summary::summarize(&response));
-}
-
-#[test]
-fn raid_two_defenders_retreat() {
-    let mut g = new_game(
-        Side::Champion,
-        Args {
-            turn: Some(Side::Overlord),
-            actions: 2,
-            opponent_deck_top: Some(CardName::TestScheme31),
-            ..Args::default()
-        },
-    );
-
-    g.play_with_target_room(CardName::TestMinionEndRaid, RoomId::Vault);
-    g.play_with_target_room(CardName::TestMinionDealDamage, RoomId::Vault);
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
-    g.initiate_raid(RoomId::Vault);
-    g.click_on(g.opponent_id(), "Activate");
-    g.click_on(g.user_id(), "Test Weapon");
-    let response = g.click_on(g.user_id(), "Retreat");
-    assert!(!g.user.data.raid_active());
-    assert!(!g.opponent.data.raid_active());
-    assert_eq!(g.opponent.interface.main_controls_option(), None);
-    assert_eq!(g.user.interface.main_controls_option(), None);
-    assert_eq!(
-        g.user.data.object_position(Id::Identity(PlayerName::User.into())),
-        Position::IdentityContainer(ObjectPositionIdentityContainer {
-            owner: PlayerName::User.into()
-        })
-    );
-
+    assert!(g.user.interface.controls().has_text("Continue"));
     assert_snapshot!(Summary::summarize(&response));
 }
 
@@ -683,7 +626,6 @@ fn raid_two_defenders_full_raid() {
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.opponent_id(), "Activate");
     g.click_on(g.user_id(), "Test Weapon");
-    g.click_on(g.user_id(), "Advance");
     g.click_on(g.user_id(), "Test Weapon");
     let response = g.click_on(g.user_id(), "Score");
     assert_eq!(g.me().mana(), STARTING_MANA - 5);
@@ -704,7 +646,6 @@ fn raid_deal_damage_game_over() {
     g.initiate_raid(RoomId::Vault);
     g.click_on(g.user_id(), "Activate");
     g.click_on(g.opponent_id(), "Continue");
-    g.click_on(g.opponent_id(), "Advance");
     g.click_on(g.opponent_id(), "Continue");
 
     assert!(g.is_victory_for_player(Side::Overlord));
@@ -772,7 +713,6 @@ fn raid_add_defender() {
     g.initiate_raid(ROOM_ID);
     g.click_on(g.opponent_id(), "Activate");
     g.click_on(g.user_id(), "Test Weapon");
-    g.click_on(g.user_id(), "Advance");
     let response = g.click_on(g.user_id(), "Test Weapon");
     assert_snapshot!(Summary::summarize(&response));
 }

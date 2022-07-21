@@ -19,7 +19,6 @@ pub mod traits;
 mod access;
 mod activation;
 mod begin;
-mod continuation;
 mod defenders;
 mod encounter;
 
@@ -34,7 +33,6 @@ use with_error::{verify, WithError};
 use crate::access::AccessPhase;
 use crate::activation::ActivationPhase;
 use crate::begin::BeginPhase;
-use crate::continuation::ContinuePhase;
 use crate::encounter::EncounterPhase;
 use crate::traits::RaidPhase;
 
@@ -50,7 +48,6 @@ impl RaidDataExt for RaidData {
             InternalRaidPhase::Begin => Box::new(BeginPhase {}),
             InternalRaidPhase::Activation => Box::new(ActivationPhase {}),
             InternalRaidPhase::Encounter => Box::new(EncounterPhase {}),
-            InternalRaidPhase::Continue => Box::new(ContinuePhase {}),
             InternalRaidPhase::Access => Box::new(AccessPhase {}),
         }
     }
@@ -171,7 +168,7 @@ fn apply_jump(game: &mut GameState) -> Result<Option<InternalRaidPhase>> {
             raid.target = room_id;
             raid.encounter = Some(index);
             raid.jump_request = None;
-            return Ok(Some(InternalRaidPhase::Continue));
+            return Ok(Some(InternalRaidPhase::Encounter));
         }
     }
 
