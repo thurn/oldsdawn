@@ -18,7 +18,7 @@ use data::card_definition::{Ability, AbilityType, Cost, TargetRequirement};
 use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate, RaidOutcome, Scope};
 use data::game::GameState;
-use data::primitives::{AbilityId, AttackValue, CardId, DamageTypeTrait, ManaValue};
+use data::primitives::{AbilityId, AttackValue, CardId, ManaValue};
 use data::text::{AbilityText, DamageWord, Keyword, Sentence, TextToken};
 use rules::mutations::OnZeroStored;
 use rules::{mutations, queries};
@@ -84,15 +84,11 @@ pub fn activated_take_mana<const N: ManaValue>(cost: Cost<AbilityId>) -> Ability
 /// Minion combat ability which deals damage to the Champion player during
 /// combat, causing them to discard `N` random cards and lose the game if they
 /// cannot.
-pub fn combat_deal_damage<TDamage: DamageTypeTrait, const N: u32>() -> Ability {
+pub fn combat_deal_damage<const N: u32>() -> Ability {
     Ability {
-        text: text![
-            Keyword::Combat,
-            Keyword::DealDamage(DamageWord::DealStart, N, TDamage::damage_type()),
-            "."
-        ],
+        text: text![Keyword::Combat, Keyword::DealDamage(DamageWord::DealStart, N), "."],
         ability_type: AbilityType::Standard,
-        delegates: vec![combat(|g, s, _| mutations::deal_damage(g, s, TDamage::damage_type(), N))],
+        delegates: vec![combat(|g, s, _| mutations::deal_damage(g, s, N))],
     }
 }
 

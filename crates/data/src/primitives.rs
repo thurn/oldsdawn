@@ -17,7 +17,7 @@
 #![allow(clippy::copy_iterator)] // Suppress IntoEnumIterator warning
 
 use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::Formatter;
 
 use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
@@ -357,61 +357,5 @@ pub struct BoostData {
 impl HasCardId for BoostData {
     fn card_id(&self) -> CardId {
         self.card_id
-    }
-}
-
-/// Possible tags for minion damage
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum DamageType {
-    Physical,
-    Fire,
-    Lightning,
-    Cold,
-}
-
-impl Display for DamageType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                DamageType::Physical => "physical damage",
-                DamageType::Fire => "fire damage",
-                DamageType::Lightning => "lightning damage",
-                DamageType::Cold => "cold damage",
-            }
-        )
-    }
-}
-
-pub trait DamageTypeTrait {
-    fn damage_type() -> DamageType;
-}
-
-pub struct PhysicalDamage {}
-impl DamageTypeTrait for PhysicalDamage {
-    fn damage_type() -> DamageType {
-        DamageType::Physical
-    }
-}
-
-pub struct FireDamage {}
-impl DamageTypeTrait for FireDamage {
-    fn damage_type() -> DamageType {
-        DamageType::Fire
-    }
-}
-
-pub struct LightningDamage {}
-impl DamageTypeTrait for LightningDamage {
-    fn damage_type() -> DamageType {
-        DamageType::Lightning
-    }
-}
-
-pub struct ColdDamage {}
-impl DamageTypeTrait for ColdDamage {
-    fn damage_type() -> DamageType {
-        DamageType::Cold
     }
 }

@@ -33,8 +33,8 @@ use data::delegates::{
 use data::game::{GameOverData, GamePhase, GameState, TurnData};
 use data::game_actions::{CardPromptAction, GamePrompt};
 use data::primitives::{
-    ActionCount, BoostData, CardId, DamageType, HasAbilityId, ManaValue, PointsValue, RoomId,
-    RoomLocation, Side, TurnNumber,
+    ActionCount, BoostData, CardId, HasAbilityId, ManaValue, PointsValue, RoomId, RoomLocation,
+    Side, TurnNumber,
 };
 use data::random;
 use data::updates::GameUpdate;
@@ -513,12 +513,7 @@ pub fn summon_minion(game: &mut GameState, card_id: CardId, costs: SummonMinion)
 
 /// Deals damage. Discards random card from the hand of the Champion player. If
 /// no cards remain, this player loses the game.
-pub fn deal_damage(
-    game: &mut GameState,
-    source: impl HasAbilityId,
-    damage_type: DamageType,
-    amount: u32,
-) -> Result<()> {
+pub fn deal_damage(game: &mut GameState, source: impl HasAbilityId, amount: u32) -> Result<()> {
     let mut discarded = vec![];
     for _ in 0..amount {
         if let Some(card_id) =
@@ -533,12 +528,7 @@ pub fn deal_damage(
 
     dispatch::invoke_event(
         game,
-        DealtDamageEvent(DealtDamage {
-            source: source.ability_id(),
-            amount,
-            damage_type,
-            discarded,
-        }),
+        DealtDamageEvent(DealtDamage { source: source.ability_id(), amount, discarded }),
     )?;
 
     Ok(())

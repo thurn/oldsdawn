@@ -34,11 +34,11 @@ pub fn handle(game: &mut GameState, _side: Side, action: CardPromptAction) -> Re
         CardPromptAction::EndRaid => {
             mutations::end_raid(game, RaidOutcome::Failure)?;
         }
-        CardPromptAction::TakeDamage(ability_id, damage_type, amount) => {
-            mutations::deal_damage(game, ability_id, damage_type, amount)?;
+        CardPromptAction::TakeDamage(ability_id, amount) => {
+            mutations::deal_damage(game, ability_id, amount)?;
         }
-        CardPromptAction::TakeDamageEndRaid(ability_id, damage_type, amount) => {
-            mutations::deal_damage(game, ability_id, damage_type, amount)?;
+        CardPromptAction::TakeDamageEndRaid(ability_id, amount) => {
+            mutations::deal_damage(game, ability_id, amount)?;
             mutations::end_raid(game, RaidOutcome::Failure)?;
         }
     }

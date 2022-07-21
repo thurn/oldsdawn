@@ -78,8 +78,8 @@ use crate::card_state::{CardData, CardPosition};
 use crate::game::GameState;
 use crate::game_actions::{CardPromptAction, CardTarget, PromptAction};
 use crate::primitives::{
-    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, BreachValue, CardId, DamageType,
-    HasAbilityId, HasCardId, HealthValue, ManaValue, RaidId, RoomId, ShieldValue, Side, TurnNumber,
+    AbilityId, ActionCount, AttackValue, BoostCount, BoostData, BreachValue, CardId, HasAbilityId,
+    HasCardId, HealthValue, ManaValue, RaidId, RoomId, ShieldValue, Side, TurnNumber,
 };
 
 /// Identifies the context for a given request to a delegate: which player,
@@ -318,7 +318,6 @@ impl From<RaidEnded> for RaidId {
 pub struct DealtDamage {
     pub source: AbilityId,
     pub amount: u32,
-    pub damage_type: DamageType,
     pub discarded: Vec<CardId>,
 }
 

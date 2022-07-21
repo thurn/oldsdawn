@@ -156,8 +156,8 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                     n,
                     icons::MANA
                 ),
-                Keyword::DealDamage(word, amount, damage_type) => format!(
-                    "{} {} {}",
+                Keyword::DealDamage(word, amount) => format!(
+                    "{} {}",
                     match word {
                         DamageWord::DealStart => "Deal",
                         DamageWord::DealInternal => "deal",
@@ -165,7 +165,6 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                         DamageWord::TakeInternal => "take",
                     },
                     amount,
-                    damage_type
                 ),
                 Keyword::InnerRoom(sentence_position) => match sentence_position {
                     Sentence::Start => "Inner room",

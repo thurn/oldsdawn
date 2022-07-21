@@ -30,8 +30,8 @@ use data::delegates::{
 use data::game::GameState;
 use data::game_actions::{CardPromptAction, CardTarget};
 use data::primitives::{
-    AbilityId, ActionCount, AttackValue, CardId, DamageType, HasAbilityId, HasCardId, HealthValue,
-    ManaValue, RaidId, RoomId, Side, Sprite, TurnNumber,
+    AbilityId, ActionCount, AttackValue, CardId, HasAbilityId, HasCardId, HealthValue, ManaValue,
+    RaidId, RoomId, Side, Sprite, TurnNumber,
 };
 use data::special_effects::Projectile;
 use data::text::{AbilityText, NumericOperator, TextToken};
@@ -442,11 +442,10 @@ pub fn lose_actions_prompt(
 pub fn take_damage_prompt(
     game: &GameState,
     ability_id: impl HasAbilityId,
-    damage_type: DamageType,
     amount: u32,
 ) -> Option<CardPromptAction> {
     if game.hand(Side::Champion).count() >= amount as usize {
-        Some(CardPromptAction::TakeDamage(ability_id.ability_id(), damage_type, amount))
+        Some(CardPromptAction::TakeDamage(ability_id.ability_id(), amount))
     } else {
         None
     }

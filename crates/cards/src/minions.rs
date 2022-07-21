@@ -21,9 +21,7 @@ use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, RaidOutcome};
 use data::game::RaidJumpRequest;
 use data::game_actions::CardPromptAction;
-use data::primitives::{
-    CardType, ColdDamage, DamageType, Faction, Rarity, RoomLocation, School, Side,
-};
+use data::primitives::{CardType, Faction, Rarity, RoomLocation, School, Side};
 use data::text::{DamageWord, Keyword};
 use display::rexard_images;
 use display::rexard_images::RexardPack;
@@ -41,7 +39,7 @@ pub fn ice_dragon() -> CardDefinition {
         side: Side::Overlord,
         school: School::Time,
         rarity: Rarity::Common,
-        abilities: vec![abilities::combat_deal_damage::<ColdDamage, 1>(), abilities::end_raid()],
+        abilities: vec![abilities::combat_deal_damage::<1>(), abilities::end_raid()],
         config: CardConfig {
             stats: CardStats { health: Some(5), shield: Some(1), ..CardStats::default() },
             faction: Some(Faction::Infernal),
@@ -178,13 +176,13 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
         abilities: vec![Ability {
             text: text![
                 Keyword::Combat,
-                Keyword::DealDamage(DamageWord::DealStart, 1, DamageType::Cold),
+                Keyword::DealDamage(DamageWord::DealStart, 1),
                 ".",
                 "If a card with an odd mana cost is discarded, end the raid."
             ],
             ability_type: AbilityType::Standard,
             delegates: vec![
-                combat(|g, s, _| mutations::deal_damage(g, s, DamageType::Cold, 1)),
+                combat(|g, s, _| mutations::deal_damage(g, s, 1)),
                 Delegate::DealtDamage(EventDelegate {
                     requirement: |g, s, data| {
                         s.ability_id() == data.source
@@ -252,20 +250,16 @@ pub fn stormcaller() -> CardDefinition {
             text![
                 Keyword::Combat,
                 "The Champion must end the raid and",
-                Keyword::DealDamage(DamageWord::TakeInternal, 2, DamageType::Lightning),
+                Keyword::DealDamage(DamageWord::TakeInternal, 2),
                 "or",
-                Keyword::DealDamage(DamageWord::TakeInternal, 4, DamageType::Lightning),
+                Keyword::DealDamage(DamageWord::TakeInternal, 4),
                 "."
             ],
             minion_combat_actions(|g, s, _, _| {
                 vec![
                     // (must take this action even if it ends the game)
-                    Some(CardPromptAction::TakeDamageEndRaid(
-                        s.ability_id(),
-                        DamageType::Lightning,
-                        2,
-                    )),
-                    take_damage_prompt(g, s, DamageType::Lightning, 4),
+                    Some(CardPromptAction::TakeDamageEndRaid(s.ability_id(), 2)),
+                    take_damage_prompt(g, s, 4),
                 ]
             }),
         )],
@@ -289,14 +283,14 @@ pub fn fire_goblin() -> CardDefinition {
         abilities: vec![simple_ability(
             text![
                 Keyword::Combat,
-                Keyword::DealDamage(DamageWord::DealStart, 1, DamageType::Fire),
+                Keyword::DealDamage(DamageWord::DealStart, 1),
                 ".",
                 "Gain",
                 mana_text(1),
                 "."
             ],
             combat(|g, s, _| {
-                mutations::deal_damage(g, s, DamageType::Fire, 1)?;
+                mutations::deal_damage(g, s, 1)?;
                 mana::gain(g, Side::Overlord, 1);
                 Ok(())
             }),

@@ -17,9 +17,7 @@ use data::card_definition::{
     Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, CardStats, SchemePoints,
 };
 use data::card_name::CardName;
-use data::primitives::{
-    CardType, ColdDamage, Faction, HealthValue, ManaValue, Rarity, School, Side,
-};
+use data::primitives::{CardType, Faction, HealthValue, ManaValue, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use rules::mutations;
 use rules::mutations::OnZeroStored;
@@ -159,7 +157,7 @@ pub fn test_minion_deal_damage() -> CardDefinition {
     CardDefinition {
         name: CardName::TestMinionDealDamage,
         cost: cost(1),
-        abilities: vec![abilities::combat_deal_damage::<ColdDamage, 1>()],
+        abilities: vec![abilities::combat_deal_damage::<1>()],
         card_type: CardType::Minion,
         config: CardConfig {
             stats: health(MINION_HEALTH),

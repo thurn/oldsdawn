@@ -17,7 +17,7 @@
 use card_helpers::{abilities, text, *};
 use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
-use data::primitives::{CardType, DamageType, Rarity, School, Side};
+use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use rules::mutations;
 use rules::mutations::OnZeroStored;
@@ -141,12 +141,7 @@ pub fn pit_trap() -> CardDefinition {
                 ],
                 on_accessed(|g, s, _| {
                     if g.card(s.card_id()).position().in_play() {
-                        mutations::deal_damage(
-                            g,
-                            s,
-                            DamageType::Physical,
-                            2 + g.card(s.card_id()).data.card_level,
-                        )?;
+                        mutations::deal_damage(g, s, 2 + g.card(s.card_id()).data.card_level)?;
                         alert(g, s);
                     }
 
