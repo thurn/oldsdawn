@@ -68,7 +68,6 @@ fn charged_strike() {
     assert_eq!(STARTING_MANA - 4, g.me().mana());
     assert_eq!(5, g.user.this_player.bonus_mana());
     assert_eq!(5, g.opponent.other_player.bonus_mana());
-    click_on_activate(&mut g);
     g.click_on(g.user_id(), "Test Weapon");
     assert_eq!(STARTING_MANA - 4, g.me().mana());
     assert_eq!(4, g.user.this_player.bonus_mana());
@@ -79,9 +78,8 @@ fn charged_strike() {
 fn stealth_mission() {
     let mut g = new_game(Side::Champion, Args::default());
     setup_raid_target(&mut g, minion_for_faction(TEST_FACTION));
-    g.play_with_target_room(CardName::StealthMission, ROOM_ID);
     assert_eq!(STARTING_MANA, g.opponent.this_player.mana());
-    click_on_activate(&mut g);
+    g.play_with_target_room(CardName::StealthMission, ROOM_ID);
     assert_eq!(STARTING_MANA - MINION_COST - 3, g.opponent.this_player.mana());
 }
 

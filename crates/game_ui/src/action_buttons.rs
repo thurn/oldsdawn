@@ -14,10 +14,7 @@
 
 use core_ui::icons;
 use data::game::{GameState, MulliganDecision};
-use data::game_actions::{
-    AccessPhaseAction, CardPromptAction, ContinueAction, EncounterAction, PromptAction,
-    RoomActivationAction,
-};
+use data::game_actions::{AccessPhaseAction, CardPromptAction, EncounterAction, PromptAction};
 use data::primitives::Side;
 use rules::queries;
 
@@ -26,9 +23,7 @@ use crate::response_button::ResponseButton;
 pub fn for_prompt(game: &GameState, side: Side, action: PromptAction) -> ResponseButton {
     match action {
         PromptAction::MulliganDecision(data) => mulligan_button(data),
-        PromptAction::ActivateRoomAction(data) => activate_button(data),
         PromptAction::EncounterAction(data) => encounter_action_button(game, side, data),
-        PromptAction::ContinueAction(data) => advance_action_button(data),
         PromptAction::AccessPhaseAction(data) => access_button(data),
         PromptAction::CardAction(data) => card_response_button(side, data),
     }
@@ -39,13 +34,6 @@ fn mulligan_button(mulligan: MulliganDecision) -> ResponseButton {
     match mulligan {
         MulliganDecision::Keep => ResponseButton::new("Keep"),
         MulliganDecision::Mulligan => ResponseButton::new("Mulligan").primary(false),
-    }
-}
-
-fn activate_button(activate: RoomActivationAction) -> ResponseButton {
-    match activate {
-        RoomActivationAction::Activate => ResponseButton::new("Activate"),
-        RoomActivationAction::Pass => ResponseButton::new("Pass").primary(false),
     }
 }
 
@@ -67,13 +55,6 @@ fn encounter_action_button(
         }
         EncounterAction::NoWeapon => ResponseButton::new("Continue").primary(false),
         EncounterAction::CardAction(action) => card_response_button(side, action),
-    }
-}
-
-fn advance_action_button(advance_action: ContinueAction) -> ResponseButton {
-    match advance_action {
-        ContinueAction::Advance => ResponseButton::new("Advance"),
-        ContinueAction::Retreat => ResponseButton::new("Retreat").primary(false),
     }
 }
 

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 use anyhow::Result;
-use data::card_state::CardState;
 use data::delegates::{RaidStart, RaidStartEvent};
 use data::game::{GameState, InternalRaidPhase};
 use data::game_actions::PromptAction;
@@ -53,9 +52,7 @@ impl RaidPhaseImpl for BeginPhase {
             return Ok(None);
         }
 
-        Ok(Some(if game.defenders_unordered(game.raid()?.target).any(CardState::is_face_down) {
-            InternalRaidPhase::Activation
-        } else if let Some(encounter) = defenders::next_encounter(game, None)? {
+        Ok(Some(if let Some(encounter) = defenders::next_encounter(game, None)? {
             game.raid_mut()?.encounter = Some(encounter);
             InternalRaidPhase::Encounter
         } else {

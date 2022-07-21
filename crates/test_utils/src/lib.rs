@@ -116,7 +116,6 @@ pub fn new_game(user_side: Side, args: Args) -> TestSession {
             target: ROOM_ID,
             internal_phase: InternalRaidPhase::Begin,
             encounter: None,
-            room_active: false,
             accessed: vec![],
             jump_request: None,
         })
@@ -299,7 +298,6 @@ pub fn level_up_room(session: &mut TestSession, times: u32) {
 /// - Plays a test Scheme card
 ///  - Ends the Overlord turn
 ///  - Initiates a raid on the [ROOM_ID] room
-///  - Activates the room
 ///
 /// NOTE: This causes the Champion player to draw a card for their turn!
 pub fn set_up_minion_combat(session: &mut TestSession) {
@@ -317,7 +315,6 @@ pub fn set_up_minion_combat_with_action(
     assert!(session.dawn());
     action(session);
     session.initiate_raid(ROOM_ID);
-    click_on_activate(session);
 }
 
 pub fn minion_for_faction(faction: Faction) -> CardName {
@@ -337,26 +334,24 @@ pub fn minion_for_faction(faction: Faction) -> CardName {
 /// - Plays the selected minion in the [ROOM_ID] room.
 /// - Ends the Overlord turn.
 ///
+/// Returns a tuple of (scheme_id, minion_id).
+///
 /// WARNING: This causes both players to draw cards for their turns!
-pub fn setup_raid_target(session: &mut TestSession, card_name: CardName) {
+pub fn setup_raid_target(
+    session: &mut TestSession,
+    card_name: CardName,
+) -> (CardIdentifier, CardIdentifier) {
     spend_actions_until_turn_over(session, Side::Champion);
     assert!(session.dusk());
-    session.play_from_hand(CardName::TestScheme31);
-    session.play_from_hand(card_name);
+    let scheme_id = session.play_from_hand(CardName::TestScheme31);
+    let minion_id = session.play_from_hand(card_name);
     spend_actions_until_turn_over(session, Side::Overlord);
     assert!(session.dawn());
-}
-
-pub fn click_on_activate(session: &mut TestSession) {
-    session.click_on(session.player_id_for_side(Side::Overlord), "Activate");
+    (scheme_id, minion_id)
 }
 
 pub fn click_on_continue(session: &mut TestSession) {
     session.click_on(session.player_id_for_side(Side::Champion), "Continue");
-}
-
-pub fn click_on_advance(session: &mut TestSession) {
-    session.click_on(session.player_id_for_side(Side::Champion), "Advance");
 }
 
 pub fn click_on_score(session: &mut TestSession) {
@@ -383,7 +378,6 @@ pub fn fire_weapon_combat_abilities(
 ) {
     setup_raid_target(session, minion_for_faction(faction));
     session.initiate_raid(ROOM_ID);
-    click_on_activate(session);
     session.click_on(session.player_id_for_side(Side::Champion), name);
 }
 

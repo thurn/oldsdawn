@@ -87,13 +87,12 @@ impl PlayerState {
     }
 }
 
+/// Current internal state of the raid state machine. Use the methods of the
+/// `RaidPhase` trait to interact with an ongoing raid.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum InternalRaidPhase {
-    /// Raid has been created but does not have a phase yet
+    /// Raid has been created
     Begin,
-    /// The raid has started and the Overlord is deciding whether to activate
-    /// the target room.
-    Activation,
     /// The defender with the provided index position is currently being
     /// encountered. The Champion is deciding which weapons, if any, to employ.
     ///
@@ -126,14 +125,11 @@ pub struct RaidData {
     pub raid_id: RaidId,
     /// Room being targeted by this raid
     pub target: RoomId,
-    /// Current state of this raid
+    /// Current state of this raid. Please use the `.phase()` method of the
+    /// `RaidDataExt` trait instead of examining this directly.
     pub internal_phase: InternalRaidPhase,
     /// Current encounter position within this raid, if any
     pub encounter: Option<usize>,
-    /// True if the Overlord activated this room in response to the raid.
-    ///
-    /// Initially false if the activation decision has not been made yet.
-    pub room_active: bool,
     /// Cards which have been accessed as part of this raid's Access phase.
     pub accessed: Vec<CardId>,
     /// Requested new state for this raid. See [RaidJumpRequest] for details.

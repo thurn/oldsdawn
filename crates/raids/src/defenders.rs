@@ -27,8 +27,7 @@ use with_error::WithError;
 /// Returns an error if there is no active raid or if this is an invalid
 /// defender.
 pub fn can_summon_defender(game: &GameState, defender_id: CardId) -> Result<bool> {
-    let raid = game.raid()?;
-    let mut can_summon = raid.room_active && game.card(defender_id).is_face_down();
+    let mut can_summon = game.card(defender_id).is_face_down();
 
     if let Some(cost) = queries::mana_cost(game, defender_id) {
         can_summon &= cost <= mana::get(game, Side::Overlord, ManaPurpose::PayForCard(defender_id))

@@ -52,7 +52,6 @@ fn time_golem_defeat() {
     spend_actions_until_turn_over(&mut g, Side::Overlord);
     g.play_from_hand(CardName::TestWeapon5Attack);
     g.initiate_raid(ROOM_ID);
-    click_on_activate(&mut g);
     g.click_on(g.opponent_id(), format!("Pay 5{}", icons::MANA));
     g.click_on(g.opponent_id(), "Test Weapon");
     assert_eq!(vec!["Time Golem"], g.user.cards.discard_pile(PlayerName::User));

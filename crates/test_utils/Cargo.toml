@@ -14,6 +14,7 @@ anyhow = "1.0.58"
 maplit = "1.0.2"
 prost = "0.10.4"
 
+ai = { path = "../ai", version = "0.0.0" }
 adapters = { path = "../adapters", version = "0.0.0" }
 cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }

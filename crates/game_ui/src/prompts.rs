@@ -55,7 +55,6 @@ pub fn action_prompt(
 
 fn prompt_context(context: Option<PromptContext>) -> Option<String> {
     context.map(|context| match context {
-        PromptContext::ActivateRoom => "Raid:".to_string(),
         PromptContext::RaidAdvance => "Continue?".to_string(),
     })
 }

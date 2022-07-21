@@ -50,7 +50,6 @@ fn keen_halberd() {
     g.play_from_hand(CardName::KeenHalberd);
     setup_raid_target(&mut g, CardName::TestMinionShield2Abyssal);
     g.initiate_raid(ROOM_ID);
-    click_on_activate(&mut g);
     g.click_on(g.user_id(), "Keen Halberd");
     assert_eq!(
         STARTING_MANA - card_cost - (2 * activation_cost) - 1, /* remaining shield */

@@ -25,12 +25,6 @@ use crate::game::MulliganDecision;
 use crate::primitives::{AbilityId, ActionCount, CardId, ManaValue, PointsValue, RoomId, Side};
 
 #[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum RoomActivationAction {
-    Activate,
-    Pass,
-}
-
-#[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum EncounterAction {
     /// (source_id, target_id)
     UseWeaponAbility(CardId, CardId),
@@ -38,12 +32,6 @@ pub enum EncounterAction {
     /// Custom card action, resolved and then treated equivalently to 'no
     /// weapon'
     CardAction(CardPromptAction),
-}
-
-#[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum ContinueAction {
-    Advance,
-    Retreat,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
@@ -55,7 +43,6 @@ pub enum AccessPhaseAction {
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum PromptContext {
-    ActivateRoom,
     RaidAdvance,
 }
 
@@ -83,12 +70,8 @@ pub enum CardPromptAction {
 pub enum PromptAction {
     /// Action to keep or mulligan opening hand
     MulliganDecision(MulliganDecision),
-    /// Action for the Overlord to activate the room currently being raided
-    ActivateRoomAction(RoomActivationAction),
     /// Champion action in response to a raid encounter
     EncounterAction(EncounterAction),
-    /// Action to advance to the next encounter of a raid or retreat
-    ContinueAction(ContinueAction),
     /// Action to target & destroy an accessed card
     AccessPhaseAction(AccessPhaseAction),
     /// Action to take as part of a card ability

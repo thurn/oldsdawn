@@ -1713,6 +1713,7 @@ name = "test_utils"
 version = "0.0.0"
 dependencies = [
  "adapters",
+ "ai",
  "anyhow",
  "cards",
  "data",

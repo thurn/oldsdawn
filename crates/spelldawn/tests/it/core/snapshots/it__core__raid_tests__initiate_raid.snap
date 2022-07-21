@@ -1,7 +1,7 @@
 ---
 source: crates/spelldawn/tests/it/core/raid_tests.rs
-assertion_line: 78
-expression: "Summary::run(&response)"
+assertion_line: 75
+expression: "Summary::summarize(&response)"
 ---
 
 command_list: 
@@ -15,7 +15,7 @@ command_list:
                 card_back: "<SpriteAddress>"
             valid_rooms_to_visit: 
             mana: 996
-            action_tracker: 1
+            action_tracker: 2
             score: 0
             can_take_action: true
         opponent: 
@@ -69,6 +69,12 @@ command_list:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
+        card_id: O11
+        revealed_to_viewer: false
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
         card_id: O44
         revealed_to_viewer: false
         is_face_up: false
@@ -99,7 +105,7 @@ command_list:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
-        card_id: C11
+        card_id: C24
         revealed_to_viewer: true
         is_face_up: false
         card_icons: 
@@ -148,9 +154,9 @@ command_list:
                 card_back: "<SpriteAddress>"
             valid_rooms_to_visit: 
             mana: 996
-            action_tracker: 1
+            action_tracker: 2
             score: 0
-            can_take_action: false
+            can_take_action: true
         opponent: 
             side: Overlord
             player_info: 
@@ -159,10 +165,10 @@ command_list:
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
             valid_rooms_to_visit: 
-            mana: 999
+            mana: 996
             action_tracker: 0
             score: 0
-            can_take_action: true
+            can_take_action: false
         raid_active: true
         game_object_positions: 
             user_deck: 
@@ -202,12 +208,32 @@ command_list:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
-        card_id: O44
+        card_id: O11
         revealed_to_viewer: false
         is_face_up: false
         card_icons: 
         arena_frame: "<SpriteAddress>"
         owning_player: Opponent
+        card_id: O44
+        revealed_to_viewer: true
+        is_face_up: true
+        card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "5"
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Minion End Raid"
+            rules_text: "<RulesText>"
+            targeting: 
+            valid_rooms: 
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
         card_id: O45
         revealed_to_viewer: false
         is_face_up: false
@@ -232,7 +258,166 @@ command_list:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
-        card_id: C11
+        card_id: C24
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+            top_left_icon: "1"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Champion Spell"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
+        card_id: C45
+        revealed_to_viewer: true
+        is_face_up: true
+        card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "3"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Weapon 3 Attack 12 Boost 3 Cost"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionItem { item_location: Left }
+    MoveGameObjects: 
+    UpdateGameView: 
+        user: 
+            side: Champion
+            player_info: 
+                name: "Test Champion Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 996
+            action_tracker: 2
+            score: 0
+            can_take_action: true
+        opponent: 
+            side: Overlord
+            player_info: 
+                name: "Test Overlord Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 996
+            action_tracker: 0
+            score: 0
+            can_take_action: false
+        raid_active: true
+        controls: 
+            node: 
+                text: "Test Weapon 3 Attack 12 Boost 3 Cost\n1\u{f06d}"
+                text: "Continue"
+        card_anchor_nodes: 
+        game_object_positions: 
+            user_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: User }
+            opponent_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: Opponent }
+            user_identity: 
+                sorting_key: 2
+                position: ObjectPositionRaid
+            opponent_identity: 
+                sorting_key: 1
+                position: ObjectPositionIdentityContainer { owner: Opponent }
+            user_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: User }
+            opponent_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: Opponent }
+    cards: 
+        card_id: O0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Overlord Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
+        card_id: O11
+        revealed_to_viewer: false
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        card_id: O44
+        revealed_to_viewer: true
+        is_face_up: true
+        card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "5"
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Minion End Raid"
+            rules_text: "<RulesText>"
+            targeting: 
+            valid_rooms: 
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
+        card_id: O45
+        revealed_to_viewer: false
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        card_id: C0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Champion Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
+        card_id: C24
         revealed_to_viewer: true
         is_face_up: false
         card_icons: 
@@ -294,7 +479,7 @@ channel_response:
                 card_back: "<SpriteAddress>"
             valid_rooms_to_visit: 
             mana: 996
-            action_tracker: 1
+            action_tracker: 2
             score: 0
             can_take_action: true
         raid_active: true
@@ -336,6 +521,25 @@ channel_response:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
+        card_id: O11
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+            top_left_icon: "1"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Overlord Spell"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
         card_id: O44
         revealed_to_viewer: true
         is_face_up: false
@@ -394,7 +598,7 @@ channel_response:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
-        card_id: C11
+        card_id: C24
         revealed_to_viewer: false
         is_face_up: false
         card_icons: 
@@ -433,10 +637,10 @@ channel_response:
                 portrait_frame: "<SpriteAddress>"
                 card_back: "<SpriteAddress>"
             valid_rooms_to_visit: 
-            mana: 999
+            mana: 996
             action_tracker: 0
             score: 0
-            can_take_action: true
+            can_take_action: false
         opponent: 
             side: Champion
             player_info: 
@@ -446,16 +650,10 @@ channel_response:
                 card_back: "<SpriteAddress>"
             valid_rooms_to_visit: 
             mana: 996
-            action_tracker: 1
+            action_tracker: 2
             score: 0
-            can_take_action: false
+            can_take_action: true
         raid_active: true
-        controls: 
-            node: 
-                text: "Raid:"
-                text: "Activate"
-                text: "Pass"
-        card_anchor_nodes: 
         game_object_positions: 
             user_deck: 
                 sorting_key: 1
@@ -494,9 +692,28 @@ channel_response:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
-        card_id: O44
+        card_id: O11
         revealed_to_viewer: true
         is_face_up: false
+        card_icons: 
+            top_left_icon: "1"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Overlord Spell"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
+        card_id: O44
+        revealed_to_viewer: true
+        is_face_up: true
         card_icons: 
             top_left_icon: "3"
             bottom_right_icon: "5"
@@ -552,7 +769,174 @@ channel_response:
             on_release_position: 
                 sorting_key: 101
                 position: ObjectPositionStaging
-        card_id: C11
+        card_id: C24
+        revealed_to_viewer: false
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        card_id: C45
+        revealed_to_viewer: true
+        is_face_up: true
+        card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "3"
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Weapon 3 Attack 12 Boost 3 Cost"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionItem { item_location: Left }
+    UpdateGameView: 
+        user: 
+            side: Overlord
+            player_info: 
+                name: "Test Overlord Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 996
+            action_tracker: 0
+            score: 0
+            can_take_action: false
+        opponent: 
+            side: Champion
+            player_info: 
+                name: "Test Champion Identity"
+                portrait: "<SpriteAddress>"
+                portrait_frame: "<SpriteAddress>"
+                card_back: "<SpriteAddress>"
+            valid_rooms_to_visit: 
+            mana: 996
+            action_tracker: 2
+            score: 0
+            can_take_action: true
+        raid_active: true
+        game_object_positions: 
+            user_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: User }
+            opponent_deck: 
+                sorting_key: 1
+                position: ObjectPositionDeckContainer { owner: Opponent }
+            user_identity: 
+                sorting_key: 1
+                position: ObjectPositionIdentityContainer { owner: User }
+            opponent_identity: 
+                sorting_key: 2
+                position: ObjectPositionRaid
+            user_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: User }
+            opponent_discard: 
+                sorting_key: 1
+                position: ObjectPositionDiscardPileContainer { owner: Opponent }
+    cards: 
+        card_id: O0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Overlord Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
+        card_id: O11
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+            top_left_icon: "1"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Overlord Spell"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
+        card_id: O44
+        revealed_to_viewer: true
+        is_face_up: true
+        card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "5"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Minion End Raid"
+            rules_text: "<RulesText>"
+            targeting: 
+            valid_rooms: 
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Front }
+        card_id: O45
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+            top_left_icon: "3"
+            bottom_right_icon: "1"
+        arena_frame: "<SpriteAddress>"
+        owning_player: User
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Scheme 31"
+            rules_text: "<RulesText>"
+            targeting: 
+            valid_rooms: 
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionRoom { room_id: Unspecified, room_location: Back }
+        card_id: C0
+        revealed_to_viewer: true
+        is_face_up: false
+        card_icons: 
+        arena_frame: "<SpriteAddress>"
+        owning_player: Opponent
+        revealed_card: 
+            card_frame: "<SpriteAddress>"
+            title_background: "<SpriteAddress>"
+            jewel: "<SpriteAddress>"
+            image: "<SpriteAddress>"
+            title: "Test Champion Identity"
+            rules_text: "<RulesText>"
+            targeting: 
+                can_play: false
+            on_release_position: 
+                sorting_key: 101
+                position: ObjectPositionStaging
+        card_id: C24
         revealed_to_viewer: false
         is_face_up: false
         card_icons: 

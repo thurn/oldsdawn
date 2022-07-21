@@ -17,7 +17,6 @@
 pub mod traits;
 
 mod access;
-mod activation;
 mod begin;
 mod defenders;
 mod encounter;
@@ -31,7 +30,6 @@ use rules::{flags, mutations, queries};
 use with_error::{verify, WithError};
 
 use crate::access::AccessPhase;
-use crate::activation::ActivationPhase;
 use crate::begin::BeginPhase;
 use crate::encounter::EncounterPhase;
 use crate::traits::RaidPhase;
@@ -46,7 +44,6 @@ impl RaidDataExt for RaidData {
     fn phase(&self) -> Box<dyn RaidPhase> {
         match self.internal_phase {
             InternalRaidPhase::Begin => Box::new(BeginPhase {}),
-            InternalRaidPhase::Activation => Box::new(ActivationPhase {}),
             InternalRaidPhase::Encounter => Box::new(EncounterPhase {}),
             InternalRaidPhase::Access => Box::new(AccessPhase {}),
         }
@@ -86,7 +83,6 @@ pub fn initiate(
         raid_id,
         internal_phase: phase,
         encounter: None,
-        room_active: false,
         accessed: vec![],
         jump_request: None,
     };

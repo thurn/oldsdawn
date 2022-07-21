@@ -19,10 +19,12 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use adapters;
+use ai::core::legal_actions;
 use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
 use data::game::GameState;
+use data::game_actions::UserAction;
 use data::player_name::PlayerId;
 use data::primitives::{
     ActionCount, CardId, CardType, GameId, ManaValue, PointsValue, RoomId, Side,
@@ -335,6 +337,13 @@ impl TestSession {
         target: RoomId,
     ) {
         self.activate_ability_impl(card_id, index, Some(target))
+    }
+
+    /// Evaluates legal actions for the [Side] player in the current game state.
+    pub fn legal_actions(&self, side: Side) -> Vec<UserAction> {
+        legal_actions::evaluate(self.database.game.as_ref().expect("game"), side)
+            .expect("Error evaluating legal actions")
+            .collect()
     }
 
     fn activate_ability_impl(
