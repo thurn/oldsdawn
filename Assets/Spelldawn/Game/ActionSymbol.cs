@@ -73,6 +73,9 @@ namespace Spelldawn.Game
     {
       _text.fontMaterial = material;
       _activeMaterial = material;
+      var inactive = Instantiate(material);
+      inactive.SetColor(ShaderUtilities.ID_FaceColor, Color.black);
+      _inactiveMaterial = inactive;
     }
 
     void Update()

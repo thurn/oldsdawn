@@ -14,3 +14,4 @@
 
 pub static STARTING_HAND_SIZE: u32 = 5;
 pub static STARTING_MAXIMUM_HAND_SIZE: u32 = 7;
+pub static MAXIMUM_MINIONS_IN_ROOM: usize = 4;

@@ -73,6 +73,10 @@ pub fn move_card(game: &mut GameState, card_id: CardId, new_position: CardPositi
         clear_counters(game, card_id);
     }
 
+    if let CardPosition::Room(room_id, RoomLocation::Defender) = new_position {
+        check_minion_limit(game, room_id)?;
+    }
+
     Ok(())
 }
 
@@ -315,6 +319,15 @@ pub fn realize_top_of_deck(game: &mut GameState, side: Side, count: u32) -> Resu
     }
 
     Ok(result)
+}
+
+/// Checks if the maximum number of minions in a room has been exceeded
+fn check_minion_limit(game: &mut GameState, room_id: RoomId) -> Result<()> {
+    if game.defenders_unordered(room_id).count() > constants::MAXIMUM_MINIONS_IN_ROOM {
+        let first = game.defender_list(room_id)[0];
+        move_card(game, first, CardPosition::DiscardPile(Side::Overlord))?;
+    }
+    Ok(())
 }
 
 /// Invoked after taking a game action to check if the turn should be switched

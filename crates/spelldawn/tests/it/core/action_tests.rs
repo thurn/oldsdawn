@@ -230,6 +230,19 @@ fn level_up_room() {
 }
 
 #[test]
+fn minion_limit() {
+    let mut g = new_game(Side::Overlord, Args { actions: 6, ..Args::default() });
+    g.play_from_hand(CardName::TestMinionEndRaid);
+    g.play_from_hand(CardName::TestInfernalMinion);
+    g.play_from_hand(CardName::TestAbyssalMinion);
+    g.play_from_hand(CardName::TestMortalMinion);
+    assert_eq!(g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front).len(), 4);
+    g.play_from_hand(CardName::TestMinionDealDamage);
+    assert_eq!(g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front).len(), 4);
+    assert_eq!(g.user.cards.discard_pile(PlayerName::User), vec!["Test Minion End Raid"]);
+}
+
+#[test]
 fn score_overlord_card() {
     let mut g = new_game(Side::Overlord, Args { mana: 10, actions: 5, ..Args::default() });
     let scheme_id = g.play_from_hand(CardName::TestScheme31);
