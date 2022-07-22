@@ -16,7 +16,7 @@ use cards::test_cards::WEAPON_COST;
 use core_ui::icons;
 use data::card_name::CardName;
 use data::game_actions::{AccessPhaseAction, EncounterAction, PromptAction, UserAction};
-use data::primitives::{CardId, RoomId, Side};
+use data::primitives::{RoomId, Side};
 use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::game_object_identifier::Id;
@@ -33,7 +33,7 @@ use test_utils::*;
 #[test]
 fn initiate_raid() {
     let mut g = new_game(Side::Champion, Args::default());
-    g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
+    let weapon_id = g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     let (scheme_id, minion_id) = setup_raid_target(&mut g, CardName::TestMinionEndRaid);
 
     let response = g.initiate_raid(ROOM_ID);
@@ -78,8 +78,8 @@ fn initiate_raid() {
         vec![
             UserAction::PromptAction(PromptAction::EncounterAction(
                 EncounterAction::UseWeaponAbility(
-                    CardId { side: Side::Champion, index: 45 },
-                    CardId { side: Side::Overlord, index: 44 }
+                    server_card_id(weapon_id),
+                    server_card_id(minion_id)
                 )
             )),
             UserAction::PromptAction(PromptAction::EncounterAction(EncounterAction::NoWeapon))
@@ -195,7 +195,7 @@ fn score_scheme_card() {
         g.legal_actions(Side::Champion),
         vec![
             UserAction::PromptAction(PromptAction::AccessPhaseAction(
-                AccessPhaseAction::ScoreCard(CardId { side: Side::Overlord, index: 45 })
+                AccessPhaseAction::ScoreCard(server_card_id(scheme_id))
             )),
             UserAction::PromptAction(PromptAction::AccessPhaseAction(AccessPhaseAction::EndRaid))
         ]

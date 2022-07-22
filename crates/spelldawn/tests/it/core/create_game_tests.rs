@@ -15,6 +15,8 @@
 use cards::initialize;
 use data::card_name::CardName;
 use data::deck::Deck;
+use data::game::MulliganDecision;
+use data::game_actions::{PromptAction, UserAction};
 use data::player_data::PlayerData;
 use data::player_name::PlayerId;
 use data::primitives::{GameId, Side};
@@ -65,6 +67,38 @@ fn connect_to_new_game() {
     assert_eq!(5, session.user.cards.hand(PlayerName::Opponent).len());
 
     assert_snapshot!(Summary::run(&response));
+}
+
+#[test]
+fn mulligan_legal_actions() {
+    let (game_id, overlord_id, champion_id) = generate_ids();
+    let mut session = make_overlord_test_session(game_id, overlord_id, champion_id);
+    initiate_game(&mut session);
+
+    assert_contents_equal(
+        session.legal_actions(Side::Overlord),
+        vec![
+            UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Mulligan)),
+            UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Keep)),
+        ],
+    );
+    assert_contents_equal(
+        session.legal_actions(Side::Champion),
+        vec![
+            UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Mulligan)),
+            UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Keep)),
+        ],
+    );
+
+    session.click_on(overlord_id, "Keep");
+    assert_contents_equal(session.legal_actions(Side::Overlord), vec![]);
+    assert_contents_equal(
+        session.legal_actions(Side::Champion),
+        vec![
+            UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Mulligan)),
+            UserAction::PromptAction(PromptAction::MulliganDecision(MulliganDecision::Keep)),
+        ],
+    );
 }
 
 #[test]

@@ -22,10 +22,13 @@ pub mod fake_database;
 pub mod summarize;
 pub mod test_games;
 
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::fs;
+use std::hash::Hash;
 use std::sync::atomic::{AtomicU64, Ordering};
 
+use adapters::ServerCardId;
 use anyhow::Result;
 use cards::initialize;
 use data::card_name::CardName;
@@ -35,7 +38,7 @@ use data::game::{GameConfiguration, GamePhase, GameState, InternalRaidPhase, Rai
 use data::player_data::{CurrentGame, PlayerData};
 use data::player_name::PlayerId;
 use data::primitives::{
-    ActionCount, Faction, GameId, ManaValue, PointsValue, RaidId, RoomId, Side,
+    ActionCount, CardId, Faction, GameId, ManaValue, PointsValue, RaidId, RoomId, Side,
 };
 use maplit::hashmap;
 use prost::Message;
@@ -388,6 +391,17 @@ pub fn assert_identical(expected: Vec<CardName>, actual: Vec<String>) {
     assert_eq!(set, actual);
 }
 
+/// Asserts two vectors contain the same elements in any order
+pub fn assert_contents_equal<T: Eq + Hash + Debug>(left: Vec<T>, right: Vec<T>) {
+    let left_count = left.len();
+    let right_count = right.len();
+    let left_set: HashSet<T> = left.into_iter().collect();
+    let right_set: HashSet<T> = right.into_iter().collect();
+    assert_eq!(left_set.len(), left_count);
+    assert_eq!(right_set.len(), right_count);
+    assert_eq!(left_set, right_set);
+}
+
 /// Asserts that a [Result] is not an error
 pub fn assert_ok<T: Debug, E: Debug>(result: &Result<T, E>) {
     assert!(result.is_ok(), "Unexpected error, got {:?}", result)
@@ -402,6 +416,14 @@ pub fn assert_error<T: Debug, E: Debug>(result: Result<T, E>) {
 /// `index` of this `card_id`.
 pub fn ability_id(card_id: CardIdentifier, ability: u32) -> CardIdentifier {
     CardIdentifier { ability_id: Some(ability), ..card_id }
+}
+
+/// Converts a [CardIdentifier] into a [CardId].
+pub fn server_card_id(card_id: CardIdentifier) -> CardId {
+    match adapters::server_card_id(card_id) {
+        Ok(ServerCardId::CardId(id)) => id,
+        _ => panic!("Expected server card id"),
+    }
 }
 
 pub fn create_test_recording(session: &TestSession, name: &str) {

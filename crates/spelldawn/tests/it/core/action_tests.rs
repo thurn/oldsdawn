@@ -18,7 +18,9 @@ use cards::test_cards::{ARTIFACT_COST, MANA_STORED, MANA_TAKEN, UNVEIL_COST};
 use cards::{decklists, initialize};
 use data::agent_definition::AgentName;
 use data::card_name::CardName;
-use data::primitives::Side;
+use data::game_actions;
+use data::game_actions::UserAction;
+use data::primitives::{RoomId, Side};
 use insta::assert_snapshot;
 use protos::spelldawn::game_action::Action;
 use protos::spelldawn::object_position::Position;
@@ -391,6 +393,72 @@ fn triggered_ability_take_all_mana() {
     assert_eq!(
         Position::DiscardPile(ObjectPositionDiscardPile { owner: PlayerName::Opponent.into() }),
         g.opponent.cards.get(id).position()
+    );
+}
+
+#[test]
+fn legal_actions() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    assert_eq!(g.legal_actions(Side::Champion), vec![]);
+    assert_contents_equal(
+        g.legal_actions(Side::Overlord),
+        vec![UserAction::GainMana, UserAction::DrawCard],
+    );
+
+    let spell_id = server_card_id(g.add_to_hand(CardName::TestOverlordSpell));
+
+    assert_contents_equal(
+        g.legal_actions(Side::Overlord),
+        vec![
+            UserAction::GainMana,
+            UserAction::DrawCard,
+            UserAction::PlayCard(spell_id, game_actions::CardTarget::None),
+        ],
+    );
+
+    let minion_id = server_card_id(g.add_to_hand(CardName::TestMinionEndRaid));
+
+    assert_contents_equal(
+        g.legal_actions(Side::Overlord),
+        vec![
+            UserAction::GainMana,
+            UserAction::DrawCard,
+            UserAction::PlayCard(spell_id, game_actions::CardTarget::None),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::Sanctum)),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::Vault)),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::Crypts)),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::RoomA)),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::RoomB)),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::RoomC)),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::RoomD)),
+            UserAction::PlayCard(minion_id, game_actions::CardTarget::Room(RoomId::RoomE)),
+        ],
+    );
+}
+
+#[test]
+fn legal_actions_level_up_room() {
+    let mut g = new_game(Side::Overlord, Args::default());
+    g.play_from_hand(CardName::TestScheme31);
+    assert_contents_equal(
+        g.legal_actions(Side::Overlord),
+        vec![UserAction::GainMana, UserAction::DrawCard, UserAction::LevelUpRoom(RoomId::RoomA)],
+    );
+}
+
+#[test]
+fn champion_legal_actions() {
+    let g = new_game(Side::Champion, Args::default());
+    assert_eq!(g.legal_actions(Side::Overlord), vec![]);
+    assert_contents_equal(
+        g.legal_actions(Side::Champion),
+        vec![
+            UserAction::GainMana,
+            UserAction::DrawCard,
+            UserAction::InitiateRaid(RoomId::Sanctum),
+            UserAction::InitiateRaid(RoomId::Vault),
+            UserAction::InitiateRaid(RoomId::Crypts),
+        ],
     );
 }
 
