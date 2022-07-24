@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 62
+assertion_line: 64
 expression: "Summary::run(&response)"
 ---
 
@@ -83,7 +83,7 @@ command_list:
             title_background: "<SpriteAddress>"
             jewel: "<SpriteAddress>"
             image: "<SpriteAddress>"
-            title: "Ice Dragon"
+            title: "Test Minion Deal Damage End Raid"
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 
@@ -191,7 +191,7 @@ command_list:
             title_background: "<SpriteAddress>"
             jewel: "<SpriteAddress>"
             image: "<SpriteAddress>"
-            title: "Ice Dragon"
+            title: "Test Minion Deal Damage End Raid"
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: VaultSanctumCryptsRoomARoomBRoomCRoomDRoomE

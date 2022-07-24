@@ -32,16 +32,20 @@ namespace Spelldawn.Services
     public TResult Get<TResult>(string address) where TResult: Object
     {
       Errors.CheckNotNull(address, "Address is null");
-      Errors.CheckArgument(_assets.ContainsKey(address), $"Asset not found: {address}");
-      return (TResult)_assets[address];
+      if (_assets.ContainsKey(address))
+      {
+        return (TResult)_assets[address];
+      }
+      else
+      {
+        Debug.LogError($"Asset not found: {address}");
+        return null!;
+      }
     }    
 
     public Sprite GetSprite(SpriteAddress address)
     {
       return Get<Sprite>(address.Address);
-      // Errors.CheckNotNull(address, "Address is null");
-      // Errors.CheckArgument(_assets.ContainsKey(address.Address), $"Asset not found: {address}");
-      // return (Sprite)_assets[address.Address];
     }
 
     public void AssignSprite(SpriteRenderer spriteRenderer, SpriteAddress? address, float? referenceWidth = null)

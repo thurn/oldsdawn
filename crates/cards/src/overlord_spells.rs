@@ -18,13 +18,14 @@ use card_helpers::{text, *};
 use data::card_definition::{CardConfig, CardDefinition, TargetRequirement};
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
+use display::rexard_images;
 use rules::{flags, mana, mutations};
 
 pub fn gathering_dark() -> CardDefinition {
     CardDefinition {
         name: CardName::GatheringDark,
         cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
+        image: rexard_images::spell(1, "SpellBook01_88"),
         card_type: CardType::OverlordSpell,
         side: Side::Overlord,
         school: School::Time,
@@ -44,7 +45,7 @@ pub fn overwhelming_power() -> CardDefinition {
     CardDefinition {
         name: CardName::OverwhelmingPower,
         cost: cost(10),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_46"),
+        image: rexard_images::spell(1, "SpellBook01_92"),
         card_type: CardType::OverlordSpell,
         side: Side::Overlord,
         school: School::Time,
@@ -64,7 +65,7 @@ pub fn forced_march() -> CardDefinition {
     CardDefinition {
         name: CardName::ForcedMarch,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_47"),
+        image: rexard_images::spell(3, "SpellBook03_04"),
         card_type: CardType::OverlordSpell,
         side: Side::Overlord,
         school: School::Time,

@@ -24,6 +24,8 @@ use data::delegates::{Delegate, EventDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
 use data::utils;
+use display::rexard_images;
+use display::rexard_images::{RexardArtifactType, RexardPack};
 use rules::mutations;
 use rules::mutations::OnZeroStored;
 
@@ -31,7 +33,7 @@ pub fn lodestone() -> CardDefinition {
     CardDefinition {
         name: CardName::Lodestone,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_78"),
+        image: rexard_images::get(RexardPack::MagicItems, "orb_04_b"),
         card_type: CardType::Artifact,
         side: Side::Champion,
         school: School::Time,
@@ -44,11 +46,11 @@ pub fn lodestone() -> CardDefinition {
     }
 }
 
-pub fn sanctum_passage() -> CardDefinition {
+pub fn invisibility_ring() -> CardDefinition {
     CardDefinition {
-        name: CardName::SanctumPassage,
+        name: CardName::InvisibilityRing,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_77"),
+        image: rexard_images::get(RexardPack::JeweleryRings, "rn_b_03"),
         card_type: CardType::Artifact,
         side: Side::Champion,
         school: School::Time,
@@ -73,7 +75,7 @@ pub fn accumulator() -> CardDefinition {
     CardDefinition {
         name: CardName::Accumulator,
         cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_76"),
+        image: rexard_images::get(RexardPack::JeweleryNecklaces, "07_ob"),
         card_type: CardType::Artifact,
         side: Side::Champion,
         school: School::Time,
@@ -101,11 +103,11 @@ pub fn accumulator() -> CardDefinition {
     }
 }
 
-pub fn mystic_portal() -> CardDefinition {
+pub fn mage_gloves() -> CardDefinition {
     CardDefinition {
-        name: CardName::MysticPortal,
+        name: CardName::MageGloves,
         cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_75"),
+        image: rexard_images::artifact(RexardArtifactType::Gloves, "gloves_20"),
         card_type: CardType::Artifact,
         side: Side::Champion,
         school: School::Time,
@@ -142,11 +144,11 @@ pub fn mystic_portal() -> CardDefinition {
     }
 }
 
-pub fn storage_crystal() -> CardDefinition {
+pub fn skys_reach() -> CardDefinition {
     CardDefinition {
-        name: CardName::StorageCrystal,
+        name: CardName::SkysReach,
         cost: cost(0),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_74"),
+        image: rexard_images::artifact(RexardArtifactType::Belts, "belts_11"),
         card_type: CardType::Artifact,
         side: Side::Champion,
         school: School::Time,
@@ -178,7 +180,7 @@ pub fn magical_resonator() -> CardDefinition {
     CardDefinition {
         name: CardName::MagicalResonator,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_73"),
+        image: rexard_images::artifact(RexardArtifactType::Bracers, "bracers_2"),
         card_type: CardType::Artifact,
         side: Side::Champion,
         school: School::Time,
@@ -209,7 +211,7 @@ pub fn dark_grimoire() -> CardDefinition {
     CardDefinition {
         name: CardName::DarkGrimoire,
         cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_72"),
+        image: rexard_images::get(RexardPack::MagicItems, "book_06_b"),
         card_type: CardType::Artifact,
         side: Side::Champion,
         school: School::Time,

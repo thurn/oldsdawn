@@ -40,6 +40,24 @@ pub struct Deck {
 }
 
 impl Deck {
+    pub fn single_card_champion(owner_id: PlayerId, card_name: CardName) -> Deck {
+        Deck {
+            owner_id,
+            side: Side::Champion,
+            identity: CardName::TestChampionIdentity,
+            cards: iter::once((card_name, 45)).collect(),
+        }
+    }
+
+    pub fn single_card_overlord(owner_id: PlayerId, card_name: CardName) -> Deck {
+        Deck {
+            owner_id,
+            side: Side::Overlord,
+            identity: CardName::TestOverlordIdentity,
+            cards: iter::once((card_name, 45)).collect(),
+        }
+    }
+
     /// Returns a vector which repeats each [CardName] in [Self::cards] in
     /// alphabetical order a number of times equal to its deck count. Note: The
     /// returned vector does *not* contain [Self::identity].

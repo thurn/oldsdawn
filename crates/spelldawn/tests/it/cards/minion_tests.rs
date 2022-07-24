@@ -21,9 +21,9 @@ use test_utils::client::HasText;
 use test_utils::*;
 
 #[test]
-fn ice_dragon() {
+fn test_minion_deal_damage_end_raid() {
     let mut g = new_game(Side::Overlord, Args { opponent_hand_size: 5, ..Args::default() });
-    g.play_from_hand(CardName::IceDragon);
+    g.play_from_hand(CardName::TestMinionDealDamageEndRaid);
     set_up_minion_combat(&mut g);
     click_on_continue(&mut g);
     assert!(!g.user.data.raid_active());
@@ -81,16 +81,16 @@ fn time_golem_end_raid() {
 }
 
 #[test]
-fn temporal_vortex_end_raid() {
+fn temporal_stalker_end_raid() {
     let mut g = new_game(Side::Overlord, Args::default());
     g.add_to_hand(CardName::TestMinionEndRaid);
-    g.play_from_hand(CardName::TemporalVortex);
+    g.play_from_hand(CardName::TemporalStalker);
     set_up_minion_combat(&mut g);
     assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
     g.click_on(g.opponent_id(), "End Raid");
     assert!(!g.user.data.raid_active());
     assert_eq!(
-        vec!["Temporal Vortex", "Test Minion End Raid"],
+        vec!["Temporal Stalker", "Test Minion End Raid"],
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
     );
     assert_eq!(0, g.user.cards.hand(PlayerName::User).len());
@@ -98,10 +98,10 @@ fn temporal_vortex_end_raid() {
 }
 
 #[test]
-fn temporal_vortex_pay_actions() {
+fn temporal_stalker_pay_actions() {
     let mut g = new_game(Side::Overlord, Args::default());
     g.add_to_hand(CardName::TestMinionEndRaid);
-    g.play_from_hand(CardName::TemporalVortex);
+    g.play_from_hand(CardName::TemporalStalker);
     set_up_minion_combat(&mut g);
     g.click_on(g.opponent_id(), format!("Pay 2{}", icons::ACTION));
     assert_eq!(0, g.opponent.this_player.actions());
@@ -111,7 +111,7 @@ fn temporal_vortex_pay_actions() {
         g.user.cards.names_in_position(Position::Raid(ObjectPositionRaid {}))
     );
     assert_eq!(
-        vec!["Temporal Vortex"],
+        vec!["Temporal Stalker"],
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
     );
     assert_eq!(0, g.user.cards.hand(PlayerName::User).len());
@@ -119,17 +119,17 @@ fn temporal_vortex_pay_actions() {
 }
 
 #[test]
-fn temporal_vortex_defeat() {
+fn temporal_stalker_defeat() {
     let mut g = new_game(Side::Overlord, Args::default());
     g.add_to_hand(CardName::TestMinionEndRaid);
-    g.play_from_hand(CardName::TemporalVortex);
+    g.play_from_hand(CardName::TemporalStalker);
     set_up_minion_combat_with_action(&mut g, |g| {
         g.play_from_hand(CardName::TestWeaponAbyssal);
     });
     g.click_on(g.opponent_id(), "Test Weapon");
     assert_eq!(1, g.user.cards.hand(PlayerName::User).len());
     assert_eq!(
-        vec!["Temporal Vortex"],
+        vec!["Temporal Stalker"],
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Front)
     );
     assert!(g.opponent.interface.controls().has_text("Score"));

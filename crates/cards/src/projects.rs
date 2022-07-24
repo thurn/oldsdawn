@@ -19,42 +19,16 @@ use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, Ta
 use data::card_name::CardName;
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::{Keyword, Sentence};
+use display::rexard_images;
+use display::rexard_images::RexardPack;
 use rules::mutations;
 use rules::mutations::OnZeroStored;
-
-pub fn gold_mine() -> CardDefinition {
-    CardDefinition {
-        name: CardName::GoldMine,
-        cost: cost(4),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_32"),
-        card_type: CardType::Project,
-        side: Side::Overlord,
-        school: School::Time,
-        rarity: Rarity::Common,
-        abilities: vec![
-            Ability {
-                text: text![Keyword::Unveil, "at Dusk, then", Keyword::Store(Sentence::Start, 12)],
-                ability_type: AbilityType::Standard,
-                delegates: vec![unveil_at_dusk(), store_mana_on_unveil::<12>()],
-            },
-            simple_ability(
-                text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
-                at_dusk(|g, s, _| {
-                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice)?;
-                    alert(g, s);
-                    Ok(())
-                }),
-            ),
-        ],
-        config: CardConfig::default(),
-    }
-}
 
 pub fn gemcarver() -> CardDefinition {
     CardDefinition {
         name: CardName::Gemcarver,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_33"),
+        image: rexard_images::get(RexardPack::MiningIcons, "MiningIcons_30_b"),
         card_type: CardType::Project,
         side: Side::Overlord,
         school: School::Time,
@@ -92,7 +66,7 @@ pub fn coinery() -> CardDefinition {
     CardDefinition {
         name: CardName::Coinery,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_33"),
+        image: rexard_images::get(RexardPack::LootIcons, "coins_b_03"),
         card_type: CardType::Project,
         side: Side::Overlord,
         school: School::Time,
@@ -123,11 +97,11 @@ pub fn coinery() -> CardDefinition {
     }
 }
 
-pub fn pit_trap() -> CardDefinition {
+pub fn spike_trap() -> CardDefinition {
     CardDefinition {
-        name: CardName::PitTrap,
+        name: CardName::SpikeTrap,
         cost: cost(2),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_34"),
+        image: rexard_images::get(RexardPack::MiningIcons, "MiningIcons_45_b"),
         card_type: CardType::Project,
         side: Side::Overlord,
         school: School::Time,

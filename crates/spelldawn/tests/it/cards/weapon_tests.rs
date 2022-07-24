@@ -19,12 +19,12 @@ use test_utils::client::HasText;
 use test_utils::*;
 
 #[test]
-fn greataxe() {
+fn test_attack_weapon() {
     let card_cost = 3;
     let ability_cost = 1;
     let mut g = new_game(Side::Champion, Args::default());
-    g.play_from_hand(CardName::Greataxe);
-    fire_weapon_combat_abilities(&mut g, Faction::Infernal, "Greataxe");
+    g.play_from_hand(CardName::TestAttackWeapon);
+    fire_weapon_combat_abilities(&mut g, Faction::Infernal, "Test Attack Weapon");
     assert_eq!(STARTING_MANA - card_cost - ability_cost, g.me().mana());
     assert!(g.user.data.raid_active());
     assert!(g.user.interface.controls().has_text("End Raid"));

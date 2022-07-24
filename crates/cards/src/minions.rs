@@ -30,24 +30,6 @@ use rules::mutations::SummonMinion;
 use rules::{mana, mutations, queries};
 use with_error::WithError;
 
-pub fn ice_dragon() -> CardDefinition {
-    CardDefinition {
-        name: CardName::IceDragon,
-        cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_44"),
-        card_type: CardType::Minion,
-        side: Side::Overlord,
-        school: School::Time,
-        rarity: Rarity::Common,
-        abilities: vec![abilities::combat_deal_damage::<1>(), abilities::end_raid()],
-        config: CardConfig {
-            stats: CardStats { health: Some(5), shield: Some(1), ..CardStats::default() },
-            faction: Some(Faction::Infernal),
-            ..CardConfig::default()
-        },
-    }
-}
-
 pub fn time_golem() -> CardDefinition {
     CardDefinition {
         name: CardName::TimeGolem,
@@ -88,9 +70,9 @@ pub fn time_golem() -> CardDefinition {
     }
 }
 
-pub fn temporal_vortex() -> CardDefinition {
+pub fn temporal_stalker() -> CardDefinition {
     CardDefinition {
-        name: CardName::TemporalVortex,
+        name: CardName::TemporalStalker,
         cost: cost(6),
         image: rexard_images::get(RexardPack::MonstersAvatars, "87"),
         card_type: CardType::Minion,

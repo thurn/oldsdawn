@@ -21,8 +21,7 @@ pub fn get(pack: RexardPack, name: impl Into<String>) -> Sprite {
     Sprite { address: vec!["Rexard".to_string(), pack.path(), name.into()].join("/") }
 }
 
-/// Builds a sprite URL for a given card image
-pub fn get_weapon(weapon_type: RexardWeaponType, name: impl Into<String>) -> Sprite {
+pub fn weapon(weapon_type: RexardWeaponType, name: impl Into<String>) -> Sprite {
     Sprite {
         address: vec![
             "Rexard/FantasyIconsMegaPack/WeaponsIcons/WeaponsIcons_png/black".to_string(),
@@ -33,14 +32,39 @@ pub fn get_weapon(weapon_type: RexardWeaponType, name: impl Into<String>) -> Spr
     }
 }
 
+pub fn artifact(armor_type: RexardArtifactType, name: impl Into<String>) -> Sprite {
+    Sprite {
+        address: vec![
+            "Rexard/FantasyIconsMegaPack/ArmorIcons/ArmorIcons_png/black".to_string(),
+            armor_type.path(),
+            name.into(),
+        ]
+        .join("/"),
+    }
+}
+
+pub fn spell(page: u32, name: impl Into<String>) -> Sprite {
+    Sprite { address: format!("Rexard/SpellBookMegapack/SpellBookPage0{}/{}", page, name.into()) }
+}
+
 pub enum RexardPack {
     MonstersAvatars,
+    MagicItems,
+    JeweleryRings,
+    JeweleryNecklaces,
+    MiningIcons,
+    LootIcons,
 }
 
 impl RexardPack {
     fn path(&self) -> String {
         match self {
             Self::MonstersAvatars => "MonstersAvatarIcons/png",
+            Self::MagicItems => "FantasyIconsMegaPack/MagicItems/MagicItems_png/bg",
+            Self::JeweleryRings => "FairytaleIconsMegapack/JewelryIcons/bg/rings",
+            Self::JeweleryNecklaces => "FairytaleIconsMegapack/JewelryIcons/bg/necklaces",
+            Self::MiningIcons => "FairytaleIconsMegapack/MiningIcons/MiningIcons_bg",
+            Self::LootIcons => "FantasyIconsMegaPack/LootIcons/LootIcons_png/black",
         }
         .to_string()
     }
@@ -78,6 +102,41 @@ impl RexardWeaponType {
             Self::Staves => "staves",
             Self::Swords => "swords",
             Self::ThrowingWeapons => "throwing_weapons",
+        }
+        .to_string()
+    }
+}
+
+pub enum RexardArtifactType {
+    Addons,
+    Armor,
+    Belts,
+    Boots,
+    Bracers,
+    Cloaks,
+    Gloves,
+    Helmets,
+    Necklace,
+    Pants,
+    Rings,
+    Shoulders,
+}
+
+impl RexardArtifactType {
+    fn path(&self) -> String {
+        match self {
+            Self::Addons => "addons",
+            Self::Armor => "armor",
+            Self::Belts => "belts",
+            Self::Boots => "boots",
+            Self::Bracers => "bracers",
+            Self::Cloaks => "cloaks",
+            Self::Gloves => "gloves",
+            Self::Helmets => "helmets",
+            Self::Necklace => "necklace",
+            Self::Pants => "pants",
+            Self::Rings => "rings",
+            Self::Shoulders => "shoulders",
         }
         .to_string()
     }

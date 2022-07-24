@@ -25,6 +25,8 @@ use strum_macros::Display;
 /// This enum is used to connect the state of a card to its game rules.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Display, Serialize, Deserialize)]
 pub enum CardName {
+    // When renaming a card, add  #[serde(alias = "OldName")] to preserve serialization
+
     // Cards for use in tests
     TestChampionIdentity,
     TestOverlordIdentity,
@@ -77,22 +79,23 @@ pub enum CardName {
     Test0CostChampionSpell,
     /// Champion spell with a mana cost of 1
     Test1CostChampionSpell,
+    TestMinionDealDamageEndRaid,
+    TestCardStoredMana,
+    TestAttackWeapon,
 
+    // Playtest 0
     ArcaneRecovery,
-    Greataxe,
     Lodestone,
     GoldMine,
-    IceDragon,
-    DungeonAnnex,
     Meditation,
     CoupDeGrace,
     ChargedStrike,
     StealthMission,
     Preparation,
-    SanctumPassage,
+    InvisibilityRing,
     Accumulator,
-    MysticPortal,
-    StorageCrystal,
+    MageGloves,
+    SkysReach,
     MagicalResonator,
     DarkGrimoire,
     MaraudersAxe,
@@ -103,13 +106,13 @@ pub enum CardName {
     ResearchProject,
     Gemcarver,
     Coinery,
-    PitTrap,
+    SpikeTrap,
     GatheringDark,
     OverwhelmingPower,
     ForcedMarch,
     RuneWall,
     TimeGolem,
-    TemporalVortex,
+    TemporalStalker,
     ShadowLurker,
     SphinxOfWintersBreath,
     BridgeTroll,
@@ -123,6 +126,7 @@ impl CardName {
         match self {
             Self::MaraudersAxe => "Marauder's Axe".to_string(),
             Self::SphinxOfWintersBreath => "Sphinx of Winter's Breath".to_string(),
+            Self::SkysReach => "Sky's Reach".to_string(),
             _ => format!("{}", self).from_case(Case::Pascal).to_case(Case::Title),
         }
     }

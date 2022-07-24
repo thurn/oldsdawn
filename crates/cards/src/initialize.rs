@@ -8,10 +8,10 @@ use crate::{
 
 pub fn run() {
     DEFINITIONS.insert(artifacts::lodestone);
-    DEFINITIONS.insert(artifacts::sanctum_passage);
+    DEFINITIONS.insert(artifacts::invisibility_ring);
     DEFINITIONS.insert(artifacts::accumulator);
-    DEFINITIONS.insert(artifacts::mystic_portal);
-    DEFINITIONS.insert(artifacts::storage_crystal);
+    DEFINITIONS.insert(artifacts::mage_gloves);
+    DEFINITIONS.insert(artifacts::skys_reach);
     DEFINITIONS.insert(artifacts::magical_resonator);
     DEFINITIONS.insert(artifacts::dark_grimoire);
     DEFINITIONS.insert(champion_spells::arcane_recovery);
@@ -20,9 +20,9 @@ pub fn run() {
     DEFINITIONS.insert(champion_spells::charged_strike);
     DEFINITIONS.insert(champion_spells::stealth_mission);
     DEFINITIONS.insert(champion_spells::preparation);
-    DEFINITIONS.insert(minions::ice_dragon);
+    DEFINITIONS.insert(test_cards::deal_damage_end_raid);
     DEFINITIONS.insert(minions::time_golem);
-    DEFINITIONS.insert(minions::temporal_vortex);
+    DEFINITIONS.insert(minions::temporal_stalker);
     DEFINITIONS.insert(minions::shadow_lurker);
     DEFINITIONS.insert(minions::sphinx_of_winters_breath);
     DEFINITIONS.insert(minions::bridge_troll);
@@ -31,11 +31,11 @@ pub fn run() {
     DEFINITIONS.insert(overlord_spells::gathering_dark);
     DEFINITIONS.insert(overlord_spells::overwhelming_power);
     DEFINITIONS.insert(overlord_spells::forced_march);
-    DEFINITIONS.insert(projects::gold_mine);
+    DEFINITIONS.insert(test_cards::test_card_stored_mana);
     DEFINITIONS.insert(projects::gemcarver);
     DEFINITIONS.insert(projects::coinery);
-    DEFINITIONS.insert(projects::pit_trap);
-    DEFINITIONS.insert(schemes::dungeon_annex);
+    DEFINITIONS.insert(projects::spike_trap);
+    DEFINITIONS.insert(schemes::gold_mine);
     DEFINITIONS.insert(schemes::activate_reinforcements);
     DEFINITIONS.insert(schemes::research_project);
     DEFINITIONS.insert(test_cards::test_overlord_identity);
@@ -63,7 +63,7 @@ pub fn run() {
     DEFINITIONS.insert(test_cards::triggered_ability_take_mana);
     DEFINITIONS.insert(test_cards::test_0_cost_champion_spell);
     DEFINITIONS.insert(test_cards::test_1_cost_champion_spell);
-    DEFINITIONS.insert(weapons::greataxe);
+    DEFINITIONS.insert(test_cards::test_attack_weapon);
     DEFINITIONS.insert(weapons::marauders_axe);
     DEFINITIONS.insert(weapons::keen_halberd);
     DEFINITIONS.insert(weapons::ethereal_blade);

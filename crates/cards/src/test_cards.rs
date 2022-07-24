@@ -15,9 +15,11 @@
 use card_helpers::{abilities, text, *};
 use data::card_definition::{
     Ability, AbilityType, AttackBoost, CardConfig, CardDefinition, CardStats, SchemePoints,
+    SpecialEffects,
 };
 use data::card_name::CardName;
-use data::primitives::{CardType, Faction, HealthValue, ManaValue, Rarity, School, Side};
+use data::primitives::{CardType, Faction, HealthValue, ManaValue, Rarity, School, Side, Sprite};
+use data::special_effects::{Projectile, TimedEffect};
 use data::text::{Keyword, Sentence};
 use rules::mutations;
 use rules::mutations::OnZeroStored;
@@ -35,7 +37,7 @@ pub fn test_overlord_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestOverlordIdentity,
         cost: identity_cost(),
-        image: sprite("Enixion/Fantasy Art Pack 2/Resized/3"),
+        image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/3"),
         card_type: CardType::Identity,
         side: Side::Overlord,
         school: School::Time,
@@ -49,7 +51,7 @@ pub fn test_champion_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestChampionIdentity,
         cost: identity_cost(),
-        image: sprite("Enixion/Fantasy Art Pack 2/Resized/2"),
+        image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/2"),
         card_type: CardType::Identity,
         side: Side::Champion,
         school: School::Nature,
@@ -369,6 +371,74 @@ pub fn test_1_cost_champion_spell() -> CardDefinition {
     CardDefinition {
         name: CardName::Test1CostChampionSpell,
         cost: cost(1),
+        ..test_champion_spell()
+    }
+}
+
+pub fn deal_damage_end_raid() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestMinionDealDamageEndRaid,
+        cost: cost(3),
+        card_type: CardType::Minion,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![abilities::combat_deal_damage::<1>(), abilities::end_raid()],
+        config: CardConfig {
+            stats: CardStats { health: Some(5), shield: Some(1), ..CardStats::default() },
+            faction: Some(Faction::Infernal),
+            ..CardConfig::default()
+        },
+        ..test_overlord_spell()
+    }
+}
+
+pub fn test_card_stored_mana() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestCardStoredMana,
+        cost: cost(4),
+        card_type: CardType::Project,
+        side: Side::Overlord,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![
+            Ability {
+                text: text![Keyword::Unveil, "at Dusk, then", Keyword::Store(Sentence::Start, 12)],
+                ability_type: AbilityType::Standard,
+                delegates: vec![unveil_at_dusk(), store_mana_on_unveil::<12>()],
+            },
+            simple_ability(
+                text![Keyword::Dusk, Keyword::Take(Sentence::Start, 3)],
+                at_dusk(|g, s, _| {
+                    mutations::take_stored_mana(g, s.card_id(), 3, OnZeroStored::Sacrifice)?;
+                    alert(g, s);
+                    Ok(())
+                }),
+            ),
+        ],
+        config: CardConfig::default(),
+        ..test_overlord_spell()
+    }
+}
+
+pub fn test_attack_weapon() -> CardDefinition {
+    CardDefinition {
+        name: CardName::TestAttackWeapon,
+        cost: cost(3),
+        card_type: CardType::Weapon,
+        side: Side::Champion,
+        school: School::Time,
+        rarity: Rarity::Common,
+        abilities: vec![abilities::encounter_boost()],
+        config: CardConfig {
+            stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
+            faction: Some(Faction::Infernal),
+            special_effects: SpecialEffects {
+                projectile: Some(Projectile::Hovl(8)),
+                additional_hit: Some(TimedEffect::HovlSwordSlash(1)),
+            },
+            ..CardConfig::default()
+        },
         ..test_champion_spell()
     }
 }

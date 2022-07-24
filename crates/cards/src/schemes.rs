@@ -20,14 +20,16 @@ use data::card_name::CardName;
 use data::delegates::{Delegate, EventDelegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, School, Side};
 use data::text::Keyword;
+use display::rexard_images;
+use display::rexard_images::RexardPack;
 use rules::mutations::SummonMinion;
 use rules::{mana, mutations, queries};
 
-pub fn dungeon_annex() -> CardDefinition {
+pub fn gold_mine() -> CardDefinition {
     CardDefinition {
-        name: CardName::DungeonAnnex,
+        name: CardName::GoldMine,
         cost: scheme_cost(),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_45"),
+        image: rexard_images::get(RexardPack::MiningIcons, "MiningIcons_08_b"),
         card_type: CardType::Scheme,
         side: Side::Overlord,
         school: School::Time,
@@ -51,7 +53,7 @@ pub fn activate_reinforcements() -> CardDefinition {
     CardDefinition {
         name: CardName::ActivateReinforcements,
         cost: scheme_cost(),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_15"),
+        image: rexard_images::spell(1, "SpellBook01_01"),
         card_type: CardType::Scheme,
         side: Side::Overlord,
         school: School::Time,
@@ -84,7 +86,7 @@ pub fn research_project() -> CardDefinition {
     CardDefinition {
         name: CardName::ResearchProject,
         cost: scheme_cost(),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_16"),
+        image: rexard_images::spell(1, "SpellBook01_03"),
         card_type: CardType::Scheme,
         side: Side::Overlord,
         school: School::Time,

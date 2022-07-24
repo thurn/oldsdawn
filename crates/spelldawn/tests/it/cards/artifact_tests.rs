@@ -31,12 +31,12 @@ fn lodestone() {
 }
 
 #[test]
-fn sanctum_passage() {
+fn invisibility_ring() {
     let mut g = new_game(Side::Champion, Args::default());
     g.add_to_hand(CardName::TestScheme31);
     g.add_to_hand(CardName::TestScheme31);
 
-    g.play_from_hand(CardName::SanctumPassage);
+    g.play_from_hand(CardName::InvisibilityRing);
     g.initiate_raid(RoomId::Sanctum);
     assert_eq!(2, g.user.interface.card_anchor_nodes().len());
     assert_eq!(vec!["Score!"], g.user.interface.card_anchor_nodes()[0].get_text());
@@ -60,10 +60,10 @@ fn accumulator() {
 }
 
 #[test]
-fn mystic_portal() {
+fn mage_gloves() {
     let card_cost = 5;
     let mut g = new_game(Side::Champion, Args::default());
-    let id = g.play_from_hand(CardName::MysticPortal);
+    let id = g.play_from_hand(CardName::MageGloves);
     assert_eq!("12", g.user.get_card(id).arena_icon());
     assert_eq!(
         vec![RoomIdentifier::Vault, RoomIdentifier::Sanctum, RoomIdentifier::Crypts],
@@ -80,9 +80,9 @@ fn mystic_portal() {
 }
 
 #[test]
-fn mystic_portal_play_after_raid() {
+fn mage_gloves_play_after_raid() {
     let mut g = new_game(Side::Champion, Args::default());
-    let id = g.add_to_hand(CardName::MysticPortal);
+    let id = g.add_to_hand(CardName::MageGloves);
     g.initiate_raid(RoomId::Sanctum);
     click_on_end_raid(&mut g);
     g.play_card(id, g.user_id(), None);
@@ -95,19 +95,19 @@ fn mystic_portal_play_after_raid() {
 
 #[test]
 #[should_panic]
-fn mystic_portal_repeat_panic() {
+fn mage_gloves_repeat_panic() {
     let mut g = new_game(Side::Champion, Args::default());
-    let id = g.play_from_hand(CardName::MysticPortal);
+    let id = g.play_from_hand(CardName::MageGloves);
     g.activate_ability_with_target(id, 1, RoomId::Crypts);
     click_on_end_raid(&mut g);
     g.activate_ability_with_target(id, 1, RoomId::Crypts);
 }
 
 #[test]
-fn storage_crystal() {
+fn skys_reach() {
     let card_cost = 0;
     let mut g = new_game(Side::Champion, Args::default());
-    let id = g.play_from_hand(CardName::StorageCrystal);
+    let id = g.play_from_hand(CardName::SkysReach);
     g.activate_ability(id, 1);
     spend_actions_until_turn_over(&mut g, Side::Champion);
     spend_actions_until_turn_over(&mut g, Side::Overlord);

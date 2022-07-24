@@ -1,6 +1,6 @@
 ---
 source: crates/spelldawn/tests/it/core/action_tests.rs
-assertion_line: 142
+assertion_line: 144
 expression: "Summary::run(&response)"
 ---
 
@@ -82,7 +82,7 @@ command_list:
             title_background: "<SpriteAddress>"
             jewel: "<SpriteAddress>"
             image: "<SpriteAddress>"
-            title: "Dungeon Annex"
+            title: "Gold Mine"
             rules_text: "<RulesText>"
             targeting: 
             valid_rooms: 

@@ -19,13 +19,14 @@ use data::card_definition::{Ability, AbilityType, CardConfig, CardDefinition, Ta
 use data::card_name::CardName;
 use data::delegates::{Delegate, QueryDelegate};
 use data::primitives::{CardType, Rarity, RoomId, School, Side};
+use display::rexard_images;
 use rules::{flags, mana, mutations};
 
 pub fn arcane_recovery() -> CardDefinition {
     CardDefinition {
         name: CardName::ArcaneRecovery,
         cost: cost(5),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_25"),
+        image: rexard_images::spell(1, "SpellBook01_24"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
         school: School::Time,
@@ -45,7 +46,7 @@ pub fn meditation() -> CardDefinition {
     CardDefinition {
         name: CardName::Meditation,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_24"),
+        image: rexard_images::spell(1, "SpellBook01_98"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
         school: School::Time,
@@ -65,7 +66,7 @@ pub fn coup_de_grace() -> CardDefinition {
     CardDefinition {
         name: CardName::CoupDeGrace,
         cost: cost(0),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_26"),
+        image: rexard_images::spell(1, "SpellBook01_76"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
         school: School::Time,
@@ -99,7 +100,7 @@ pub fn charged_strike() -> CardDefinition {
     CardDefinition {
         name: CardName::ChargedStrike,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_27"),
+        image: rexard_images::spell(1, "SpellBook01_67"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
         school: School::Time,
@@ -125,7 +126,7 @@ pub fn stealth_mission() -> CardDefinition {
     CardDefinition {
         name: CardName::StealthMission,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_28"),
+        image: rexard_images::spell(1, "SpellBook01_89"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
         school: School::Time,
@@ -165,7 +166,7 @@ pub fn preparation() -> CardDefinition {
     CardDefinition {
         name: CardName::Preparation,
         cost: cost(1),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_29"),
+        image: rexard_images::spell(1, "SpellBook01_79"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
         school: School::Time,

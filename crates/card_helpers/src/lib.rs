@@ -31,7 +31,7 @@ use data::game::GameState;
 use data::game_actions::{CardPromptAction, CardTarget};
 use data::primitives::{
     AbilityId, ActionCount, AttackValue, CardId, HasAbilityId, HasCardId, HealthValue, ManaValue,
-    RaidId, RoomId, Side, Sprite, TurnNumber,
+    RaidId, RoomId, Side, TurnNumber,
 };
 use data::special_effects::Projectile;
 use data::text::{AbilityText, NumericOperator, TextToken};
@@ -95,11 +95,6 @@ pub fn once_per_turn_cost() -> Option<CustomCost<AbilityId>> {
             Ok(())
         },
     })
-}
-
-/// Provides an image for a card
-pub fn sprite(text: &str) -> Sprite {
-    Sprite::new(text.to_string())
 }
 
 /// Creates a standard [Ability] with a single [Delegate].

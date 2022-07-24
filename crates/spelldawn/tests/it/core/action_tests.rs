@@ -42,12 +42,19 @@ fn connect() {
 fn connect_to_ongoing() {
     let mut g = new_game(
         Side::Overlord,
-        Args { actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
+        Args {
+            actions: 3,
+            deck_top: Some(CardName::TestMinionDealDamageEndRaid),
+            ..Args::default()
+        },
     );
     let r1 = g.connect(g.user_id());
     assert_ok(&r1);
     let r2 = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
-    assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
+    assert_identical(
+        vec![CardName::TestMinionDealDamageEndRaid],
+        g.user.cards.hand(PlayerName::User),
+    );
     assert_ok(&r2);
     let r3 = g.connect(g.opponent_id());
 
@@ -58,12 +65,19 @@ fn connect_to_ongoing() {
 fn draw_card() {
     let mut g = new_game(
         Side::Overlord,
-        Args { actions: 3, deck_top: Some(CardName::IceDragon), ..Args::default() },
+        Args {
+            actions: 3,
+            deck_top: Some(CardName::TestMinionDealDamageEndRaid),
+            ..Args::default()
+        },
     );
     let response = g.perform_action(Action::DrawCard(DrawCardAction {}), g.user_id());
     assert_snapshot!(Summary::run(&response));
 
-    assert_identical(vec![CardName::IceDragon], g.user.cards.hand(PlayerName::User));
+    assert_identical(
+        vec![CardName::TestMinionDealDamageEndRaid],
+        g.user.cards.hand(PlayerName::User),
+    );
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.hand(PlayerName::Opponent));
     assert_eq!(2, g.me().actions());
     assert_eq!(2, g.opponent.other_player.actions());
@@ -131,7 +145,7 @@ fn play_card() {
 #[test]
 fn play_hidden_card() {
     let mut g = new_game(Side::Overlord, Args { actions: 3, mana: 0, ..Args::default() });
-    let card_id = g.add_to_hand(CardName::DungeonAnnex);
+    let card_id = g.add_to_hand(CardName::GoldMine);
     let response = g.perform_action(
         Action::PlayCard(PlayCardAction {
             card_id: Some(card_id),
@@ -148,7 +162,7 @@ fn play_hidden_card() {
     assert_eq!(0, g.me().mana());
     assert_eq!(0, g.opponent.other_player.mana());
     assert_identical(
-        vec![CardName::DungeonAnnex],
+        vec![CardName::GoldMine],
         g.user.cards.room_cards(ROOM_ID, ClientRoomLocation::Back),
     );
     assert_eq!(vec![HIDDEN_CARD], g.opponent.cards.room_cards(ROOM_ID, ClientRoomLocation::Back));

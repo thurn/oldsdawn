@@ -18,9 +18,9 @@ use protos::spelldawn::PlayerName;
 use test_utils::*;
 
 #[test]
-fn gold_mine() {
+fn test_card_stored_mana() {
     let mut g = new_game(Side::Overlord, Args::default());
-    let id = g.play_from_hand(CardName::GoldMine);
+    let id = g.play_from_hand(CardName::TestCardStoredMana);
     spend_actions_until_turn_over(&mut g, Side::Overlord);
     assert!(g.dawn());
     assert_eq!(STARTING_MANA, g.me().mana());
@@ -61,9 +61,9 @@ fn coinery() {
 }
 
 #[test]
-fn pit_trap() {
+fn spike_trap() {
     let mut g = new_game(Side::Overlord, Args { opponent_hand_size: 5, ..Args::default() });
-    g.play_from_hand(CardName::PitTrap);
+    g.play_from_hand(CardName::SpikeTrap);
     level_up_room(&mut g, 2);
     assert!(g.dawn());
     assert_eq!(6, g.user.cards.hand(PlayerName::Opponent).len());
@@ -72,9 +72,9 @@ fn pit_trap() {
 }
 
 #[test]
-fn pit_trap_no_counters() {
+fn spike_trap_no_counters() {
     let mut g = new_game(Side::Overlord, Args { opponent_hand_size: 5, ..Args::default() });
-    g.play_from_hand(CardName::PitTrap);
+    g.play_from_hand(CardName::SpikeTrap);
     spend_actions_until_turn_over(&mut g, Side::Overlord);
     assert!(g.dawn());
     assert_eq!(6, g.user.cards.hand(PlayerName::Opponent).len());
@@ -83,9 +83,9 @@ fn pit_trap_no_counters() {
 }
 
 #[test]
-fn pit_trap_victory() {
+fn spike_trap_victory() {
     let mut g = new_game(Side::Overlord, Args::default());
-    g.play_from_hand(CardName::PitTrap);
+    g.play_from_hand(CardName::SpikeTrap);
     level_up_room(&mut g, 2);
     assert!(g.dawn());
     g.initiate_raid(ROOM_ID);

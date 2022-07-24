@@ -28,33 +28,11 @@ use display::rexard_images;
 use display::rexard_images::RexardWeaponType;
 use rules::mutations;
 
-pub fn greataxe() -> CardDefinition {
-    CardDefinition {
-        name: CardName::Greataxe,
-        cost: cost(3),
-        image: sprite("Rexard/SpellBookPage01/SpellBookPage01_png/SpellBook01_42"),
-        card_type: CardType::Weapon,
-        side: Side::Champion,
-        school: School::Time,
-        rarity: Rarity::Common,
-        abilities: vec![abilities::encounter_boost()],
-        config: CardConfig {
-            stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Infernal),
-            special_effects: SpecialEffects {
-                projectile: Some(Projectile::Hovl(8)),
-                additional_hit: Some(TimedEffect::HovlSwordSlash(1)),
-            },
-            ..CardConfig::default()
-        },
-    }
-}
-
 pub fn marauders_axe() -> CardDefinition {
     CardDefinition {
         name: CardName::MaraudersAxe,
         cost: cost(5),
-        image: rexard_images::get_weapon(RexardWeaponType::Axes, "a_n_b_01"),
+        image: rexard_images::weapon(RexardWeaponType::Axes, "a_n_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
@@ -90,7 +68,10 @@ pub fn marauders_axe() -> CardDefinition {
         config: CardConfig {
             stats: attack(2, AttackBoost { cost: 2, bonus: 3 }),
             faction: Some(Faction::Infernal),
-            special_effects: projectile(Projectile::Hovl(1)),
+            special_effects: SpecialEffects {
+                projectile: Some(Projectile::Hovl(8)),
+                additional_hit: Some(TimedEffect::HovlSwordSlash(1)),
+            },
             ..CardConfig::default()
         },
     }
@@ -100,7 +81,7 @@ pub fn keen_halberd() -> CardDefinition {
     CardDefinition {
         name: CardName::KeenHalberd,
         cost: cost(3),
-        image: rexard_images::get_weapon(RexardWeaponType::Polearms, "sp_b_04"),
+        image: rexard_images::weapon(RexardWeaponType::Polearms, "sp_b_04"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
@@ -124,7 +105,7 @@ pub fn ethereal_blade() -> CardDefinition {
     CardDefinition {
         name: CardName::EtherealBlade,
         cost: cost(1),
-        image: rexard_images::get_weapon(RexardWeaponType::Swords, "sv_b_01"),
+        image: rexard_images::weapon(RexardWeaponType::Swords, "sv_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,
@@ -160,7 +141,7 @@ pub fn bow_of_the_alliance() -> CardDefinition {
     CardDefinition {
         name: CardName::BowOfTheAlliance,
         cost: cost(3),
-        image: rexard_images::get_weapon(RexardWeaponType::Bows, "b_b_01"),
+        image: rexard_images::weapon(RexardWeaponType::Bows, "b_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
         school: School::Time,

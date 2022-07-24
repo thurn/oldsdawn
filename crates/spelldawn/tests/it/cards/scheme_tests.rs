@@ -20,9 +20,9 @@ use protos::spelldawn::{DrawCardAction, ObjectPositionIdentity, PlayerName};
 use test_utils::*;
 
 #[test]
-fn dungeon_annex() {
+fn gold_mine() {
     let mut g = new_game(Side::Overlord, Args::default());
-    let id = g.play_from_hand(CardName::DungeonAnnex);
+    let id = g.play_from_hand(CardName::GoldMine);
     level_up_room(&mut g, 4);
     assert_eq!(g.me().score(), 2);
     assert_eq!(STARTING_MANA - 4 /* level cost */ + 7 /* gained */, g.me().mana());
