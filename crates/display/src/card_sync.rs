@@ -47,7 +47,7 @@ pub fn card_view(
         arena_frame: Some(assets::arena_frame(
             definition.side,
             definition.card_type,
-            definition.config.faction,
+            definition.config.lineage,
         )),
         owning_player: builder.to_player_name(definition.side),
         revealed_card: revealed.then(|| revealed_card_view(builder, game, card)),
@@ -124,12 +124,12 @@ fn revealed_card_view(
     let definition = rules::get(card.name);
     RevealedCardView {
         card_frame: Some(assets::card_frame(definition.school)),
-        title_background: Some(assets::title_background(definition.config.faction)),
+        title_background: Some(assets::title_background(definition.config.lineage)),
         jewel: Some(assets::jewel(definition.rarity)),
         image: Some(adapters::sprite(&definition.image)),
         title: Some(CardTitle {
             text: definition.name.displayed_name(),
-            text_color: Some(assets::title_color(definition.config.faction)),
+            text_color: Some(assets::title_color(definition.config.lineage)),
         }),
         rules_text: Some(rules_text::build(game, card, definition)),
         targeting: Some(card_targeting(

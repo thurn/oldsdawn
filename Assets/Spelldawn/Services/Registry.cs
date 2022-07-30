@@ -200,7 +200,6 @@ namespace Spelldawn.Services
         ScreenshotTests = ScreenshotTestService.Initialize(this, out runTests);
       }
 
-      ActionService.Initialize();
       DocumentService.Initialize();
       MusicService.Initialize(GlobalGameMode);
       GameService.Initialize(GlobalGameMode);

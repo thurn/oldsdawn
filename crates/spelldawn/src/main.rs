@@ -42,5 +42,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     warn!("Server listening on {}.", address);
     Server::builder().accept_http1(true).add_service(service).serve(address).await?;
+
     Ok(())
 }

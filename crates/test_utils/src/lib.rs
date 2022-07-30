@@ -38,7 +38,7 @@ use data::game::{GameConfiguration, GamePhase, GameState, InternalRaidPhase, Rai
 use data::player_data::{CurrentGame, PlayerData};
 use data::player_name::PlayerId;
 use data::primitives::{
-    ActionCount, CardId, Faction, GameId, ManaValue, PointsValue, RaidId, RoomId, Side,
+    ActionCount, CardId, GameId, Lineage, ManaValue, PointsValue, RaidId, RoomId, Side,
 };
 use maplit::hashmap;
 use prost::Message;
@@ -320,11 +320,11 @@ pub fn set_up_minion_combat_with_action(
     session.initiate_raid(ROOM_ID);
 }
 
-pub fn minion_for_faction(faction: Faction) -> CardName {
-    match faction {
-        Faction::Mortal => CardName::TestMortalMinion,
-        Faction::Abyssal => CardName::TestAbyssalMinion,
-        Faction::Infernal => CardName::TestInfernalMinion,
+pub fn minion_for_lineage(lineage: Lineage) -> CardName {
+    match lineage {
+        Lineage::Mortal => CardName::TestMortalMinion,
+        Lineage::Abyssal => CardName::TestAbyssalMinion,
+        Lineage::Infernal => CardName::TestInfernalMinion,
         _ => panic!("Unsupported"),
     }
 }
@@ -376,10 +376,10 @@ pub fn click_on_end_raid(session: &mut TestSession) {
 /// WARNING: This causes both players to draw cards for their turns!
 pub fn fire_weapon_combat_abilities(
     session: &mut TestSession,
-    faction: Faction,
+    lineage: Lineage,
     name: &'static str,
 ) {
-    setup_raid_target(session, minion_for_faction(faction));
+    setup_raid_target(session, minion_for_lineage(lineage));
     session.initiate_raid(ROOM_ID);
     session.click_on(session.player_id_for_side(Side::Champion), name);
 }

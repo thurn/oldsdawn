@@ -20,7 +20,7 @@ use data::card_definition::{
 };
 use data::card_name::CardName;
 use data::delegates::{Delegate, QueryDelegate};
-use data::primitives::{CardType, Faction, Rarity, School, Side};
+use data::primitives::{CardType, Lineage, Rarity, School, Side};
 use data::special_effects::{Projectile, TimedEffect};
 use data::text::Keyword;
 use data::utils;
@@ -35,7 +35,7 @@ pub fn marauders_axe() -> CardDefinition {
         image: rexard_images::weapon(RexardWeaponType::Axes, "a_n_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             Ability {
@@ -67,7 +67,7 @@ pub fn marauders_axe() -> CardDefinition {
         ],
         config: CardConfig {
             stats: attack(2, AttackBoost { cost: 2, bonus: 3 }),
-            faction: Some(Faction::Infernal),
+            lineage: Some(Lineage::Infernal),
             special_effects: SpecialEffects {
                 projectile: Some(Projectile::Hovl(8)),
                 additional_hit: Some(TimedEffect::HovlSwordSlash(1)),
@@ -84,7 +84,7 @@ pub fn keen_halberd() -> CardDefinition {
         image: rexard_images::weapon(RexardWeaponType::Polearms, "sp_b_04"),
         card_type: CardType::Weapon,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
@@ -94,7 +94,7 @@ pub fn keen_halberd() -> CardDefinition {
                 breach: Some(1),
                 ..CardStats::default()
             },
-            faction: Some(Faction::Abyssal),
+            lineage: Some(Lineage::Abyssal),
             special_effects: projectile(Projectile::Hovl(2)),
             ..CardConfig::default()
         },
@@ -108,7 +108,7 @@ pub fn ethereal_blade() -> CardDefinition {
         image: rexard_images::weapon(RexardWeaponType::Swords, "sv_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             abilities::encounter_boost(),
@@ -130,7 +130,7 @@ pub fn ethereal_blade() -> CardDefinition {
         ],
         config: CardConfig {
             stats: attack(1, AttackBoost { cost: 1, bonus: 1 }),
-            faction: Some(Faction::Prismatic),
+            lineage: Some(Lineage::Prismatic),
             special_effects: projectile(Projectile::Hovl(3)),
             ..CardConfig::default()
         },
@@ -144,7 +144,7 @@ pub fn bow_of_the_alliance() -> CardDefinition {
         image: rexard_images::weapon(RexardWeaponType::Bows, "b_b_01"),
         card_type: CardType::Weapon,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             abilities::encounter_boost(),
@@ -161,7 +161,7 @@ pub fn bow_of_the_alliance() -> CardDefinition {
         ],
         config: CardConfig {
             stats: attack(1, AttackBoost { cost: 1, bonus: 0 }),
-            faction: Some(Faction::Mortal),
+            lineage: Some(Lineage::Mortal),
             special_effects: projectile(Projectile::Hovl(4)),
             ..CardConfig::default()
         },

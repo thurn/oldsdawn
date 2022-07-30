@@ -31,7 +31,7 @@ pub fn gemcarver() -> CardDefinition {
         image: rexard_images::get(RexardPack::MiningIcons, "MiningIcons_30_b"),
         card_type: CardType::Project,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             Ability {
@@ -69,7 +69,7 @@ pub fn coinery() -> CardDefinition {
         image: rexard_images::get(RexardPack::LootIcons, "coins_b_03"),
         card_type: CardType::Project,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             text_only_ability(text![
@@ -104,7 +104,7 @@ pub fn spike_trap() -> CardDefinition {
         image: rexard_images::get(RexardPack::MiningIcons, "MiningIcons_45_b"),
         card_type: CardType::Project,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             abilities::level_up(),

@@ -18,7 +18,7 @@ use data::card_definition::{
     SpecialEffects,
 };
 use data::card_name::CardName;
-use data::primitives::{CardType, Faction, HealthValue, ManaValue, Rarity, School, Side, Sprite};
+use data::primitives::{CardType, HealthValue, Lineage, ManaValue, Rarity, School, Side, Sprite};
 use data::special_effects::{Projectile, TimedEffect};
 use data::text::{Keyword, Sentence};
 use rules::mutations;
@@ -31,7 +31,7 @@ pub const UNVEIL_COST: ManaValue = 3;
 pub const MANA_STORED: ManaValue = 10;
 pub const MANA_TAKEN: ManaValue = 2;
 pub const MINION_HEALTH: HealthValue = 5;
-pub const TEST_FACTION: Faction = Faction::Infernal;
+pub const TEST_LINEAGE: Lineage = Lineage::Infernal;
 
 pub fn test_overlord_identity() -> CardDefinition {
     CardDefinition {
@@ -40,7 +40,7 @@ pub fn test_overlord_identity() -> CardDefinition {
         image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/3"),
         card_type: CardType::Identity,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::None,
         abilities: vec![],
         config: CardConfig::default(),
@@ -54,7 +54,7 @@ pub fn test_champion_identity() -> CardDefinition {
         image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/2"),
         card_type: CardType::Identity,
         side: Side::Champion,
-        school: School::Nature,
+        school: School::Primal,
         rarity: Rarity::None,
         abilities: vec![],
         config: CardConfig::default(),
@@ -110,7 +110,7 @@ pub fn test_minion_end_raid() -> CardDefinition {
         card_type: CardType::Minion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
@@ -129,7 +129,7 @@ pub fn test_minion_shield_1() -> CardDefinition {
                 shield: Some(1),
                 ..CardStats::default()
             },
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
@@ -148,7 +148,7 @@ pub fn test_minion_shield_2_abyssal() -> CardDefinition {
                 shield: Some(2),
                 ..CardStats::default()
             },
-            faction: Some(Faction::Abyssal),
+            lineage: Some(Lineage::Abyssal),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
@@ -163,7 +163,7 @@ pub fn test_minion_deal_damage() -> CardDefinition {
         card_type: CardType::Minion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
@@ -175,7 +175,7 @@ pub fn test_minion_infernal() -> CardDefinition {
         name: CardName::TestInfernalMinion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_minion_end_raid()
@@ -187,7 +187,7 @@ pub fn test_minion_abyssal() -> CardDefinition {
         name: CardName::TestAbyssalMinion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(Faction::Abyssal),
+            lineage: Some(Lineage::Abyssal),
             ..CardConfig::default()
         },
         ..test_minion_end_raid()
@@ -199,7 +199,7 @@ pub fn test_minion_mortal() -> CardDefinition {
         name: CardName::TestMortalMinion,
         config: CardConfig {
             stats: health(MINION_HEALTH),
-            faction: Some(Faction::Mortal),
+            lineage: Some(Lineage::Mortal),
             ..CardConfig::default()
         },
         ..test_minion_end_raid()
@@ -213,7 +213,7 @@ pub fn test_weapon_2_attack() -> CardDefinition {
         card_type: CardType::Weapon,
         config: CardConfig {
             stats: base_attack(2),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_champion_spell()
@@ -226,7 +226,7 @@ pub fn test_weapon_2_attack_12_boost() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(2, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -239,7 +239,7 @@ pub fn test_weapon_3_attack_12_boost() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -252,7 +252,7 @@ pub fn test_weapon_4_attack_12_boost() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(4, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -265,7 +265,7 @@ pub fn test_weapon_abyssal() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Abyssal),
+            lineage: Some(Lineage::Abyssal),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -278,7 +278,7 @@ pub fn test_weapon_infernal() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Infernal),
+            lineage: Some(Lineage::Infernal),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -291,7 +291,7 @@ pub fn test_weapon_mortal() -> CardDefinition {
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Mortal),
+            lineage: Some(Lineage::Mortal),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -303,7 +303,7 @@ pub fn test_weapon_5_attack() -> CardDefinition {
         name: CardName::TestWeapon5Attack,
         config: CardConfig {
             stats: base_attack(5),
-            faction: Some(TEST_FACTION),
+            lineage: Some(TEST_LINEAGE),
             ..CardConfig::default()
         },
         ..test_weapon_2_attack()
@@ -381,12 +381,12 @@ pub fn deal_damage_end_raid() -> CardDefinition {
         cost: cost(3),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![abilities::combat_deal_damage::<1>(), abilities::end_raid()],
         config: CardConfig {
             stats: CardStats { health: Some(5), shield: Some(1), ..CardStats::default() },
-            faction: Some(Faction::Infernal),
+            lineage: Some(Lineage::Infernal),
             ..CardConfig::default()
         },
         ..test_overlord_spell()
@@ -399,7 +399,7 @@ pub fn test_card_stored_mana() -> CardDefinition {
         cost: cost(4),
         card_type: CardType::Project,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             Ability {
@@ -427,12 +427,12 @@ pub fn test_attack_weapon() -> CardDefinition {
         cost: cost(3),
         card_type: CardType::Weapon,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![abilities::encounter_boost()],
         config: CardConfig {
             stats: attack(3, AttackBoost { cost: 1, bonus: 2 }),
-            faction: Some(Faction::Infernal),
+            lineage: Some(Lineage::Infernal),
             special_effects: SpecialEffects {
                 projectile: Some(Projectile::Hovl(8)),
                 additional_hit: Some(TimedEffect::HovlSwordSlash(1)),

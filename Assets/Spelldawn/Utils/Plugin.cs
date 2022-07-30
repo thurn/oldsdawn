@@ -26,16 +26,18 @@ namespace Spelldawn.Utils
   {
     const int BufferSize = 32_768;
     static readonly byte[] PollBuffer = new byte[BufferSize];
-
-    public static void Initialize()
-    {
-      var path = $"{Application.persistentDataPath}/db";
-      var encoded = Encoding.UTF8.GetBytes(path);
-      Errors.CheckNonNegative(spelldawn_initialize(encoded, encoded.Length));
-    }
+    static bool _initialized;
 
     public static CommandList? Connect(ConnectRequest request)
     {
+      if (!_initialized)
+      {
+        var path = $"{Application.persistentDataPath}/db";
+        var encoded = Encoding.UTF8.GetBytes(path);
+        Errors.CheckNonNegative(spelldawn_initialize(encoded, encoded.Length));
+        _initialized = true;
+      }
+
       var input = request.ToByteArray();
       var output = new byte[BufferSize];
       var responseSize = Errors.CheckNonNegative(spelldawn_connect(input, input.Length, output, output.Length));

@@ -250,9 +250,9 @@ impl Sprite {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum School {
     Neutral,
+    Law,
     Shadow,
-    Nature,
-    Time,
+    Primal,
 }
 
 /// The possible Rooms in which the Overlord player may play their cards.
@@ -296,10 +296,10 @@ pub enum ItemLocation {
     Artifacts,
 }
 
-/// The Possible factions of weapons and minions. Minions can only be
-/// damaged by weapons from the same faction, or by Prismatic weapons.
+/// The Possible lineages of weapons and minions. Minions can only be
+/// damaged by weapons from the same lineage, or by Prismatic weapons.
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
-pub enum Faction {
+pub enum Lineage {
     Mortal,
     Infernal,
     Abyssal,

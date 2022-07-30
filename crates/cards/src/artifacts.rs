@@ -36,7 +36,7 @@ pub fn lodestone() -> CardDefinition {
         image: rexard_images::get(RexardPack::MagicItems, "orb_04_b"),
         card_type: CardType::Artifact,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             abilities::store_mana_on_play::<12>(),
@@ -53,7 +53,7 @@ pub fn invisibility_ring() -> CardDefinition {
         image: rexard_images::get(RexardPack::JeweleryRings, "rn_b_03"),
         card_type: CardType::Artifact,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text!(
@@ -78,7 +78,7 @@ pub fn accumulator() -> CardDefinition {
         image: rexard_images::get(RexardPack::JeweleryNecklaces, "07_ob"),
         card_type: CardType::Artifact,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             simple_ability(
@@ -110,7 +110,7 @@ pub fn mage_gloves() -> CardDefinition {
         image: rexard_images::artifact(RexardArtifactType::Gloves, "gloves_20"),
         card_type: CardType::Artifact,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             abilities::store_mana_on_play::<12>(),
@@ -151,7 +151,7 @@ pub fn skys_reach() -> CardDefinition {
         image: rexard_images::artifact(RexardArtifactType::Belts, "belts_11"),
         card_type: CardType::Artifact,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             simple_ability(
@@ -183,7 +183,7 @@ pub fn magical_resonator() -> CardDefinition {
         image: rexard_images::artifact(RexardArtifactType::Bracers, "bracers_2"),
         card_type: CardType::Artifact,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             abilities::store_mana_on_play::<9>(),
@@ -214,7 +214,7 @@ pub fn dark_grimoire() -> CardDefinition {
         image: rexard_images::get(RexardPack::MagicItems, "book_06_b"),
         card_type: CardType::Artifact,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!["The first time each turn you take the 'draw card' action, draw another card."],

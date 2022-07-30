@@ -41,7 +41,7 @@ namespace Spelldawn.Services
       {
         DeviceIdentifier = (Application.isEditor ? "Editor/" : "") + SystemInfo.deviceUniqueIdentifier
       };
-      _registry.ActionService.Connect(identifier, offlineMode: Application.isMobilePlatform);
+      _registry.ActionService.Connect(identifier, offlineMode: false);
     }
   }
 }

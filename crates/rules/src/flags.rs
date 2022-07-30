@@ -24,7 +24,7 @@ use data::delegates::{
 };
 use data::game::{GamePhase, GameState};
 use data::game_actions::CardTarget;
-use data::primitives::{AbilityId, CardId, CardType, Faction, RoomId, Side};
+use data::primitives::{AbilityId, CardId, CardType, Lineage, RoomId, Side};
 
 use crate::mana::ManaPurpose;
 use crate::{dispatch, mana, queries};
@@ -247,17 +247,17 @@ pub fn entered_play_this_turn(game: &GameState, card_id: CardId) -> bool {
 
 /// Whether the provided `source` card is able to target the `target` card with
 /// an encounter action. Typically used to determine whether a weapon can target
-/// a minion, e.g. based on faction.
+/// a minion, e.g. based on lineage.
 pub fn can_encounter_target(game: &GameState, source: CardId, target: CardId) -> bool {
     let can_encounter = matches!(
         (
-            crate::card_definition(game, source).config.faction,
-            crate::card_definition(game, target).config.faction
+            crate::card_definition(game, source).config.lineage,
+            crate::card_definition(game, target).config.lineage
         ),
-        (Some(source_faction), Some(target_faction))
-        if source_faction == Faction::Prismatic ||
-            target_faction == Faction::Construct ||
-            source_faction == target_faction
+        (Some(source_lineage), Some(target_lineage))
+        if source_lineage == Lineage::Prismatic ||
+            target_lineage == Lineage::Construct ||
+            source_lineage == target_lineage
     );
 
     dispatch::perform_query(

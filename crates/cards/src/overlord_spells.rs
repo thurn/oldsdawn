@@ -28,7 +28,7 @@ pub fn gathering_dark() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_88"),
         card_type: CardType::OverlordSpell,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Gain", mana_text(9)),
@@ -48,7 +48,7 @@ pub fn overwhelming_power() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_92"),
         card_type: CardType::OverlordSpell,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Gain", mana_text(15)),
@@ -68,7 +68,7 @@ pub fn forced_march() -> CardDefinition {
         image: rexard_images::spell(3, "SpellBook03_04"),
         card_type: CardType::OverlordSpell,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!(

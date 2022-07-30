@@ -21,7 +21,7 @@ use data::card_state::CardPosition;
 use data::delegates::{Delegate, EventDelegate, RaidOutcome};
 use data::game::RaidJumpRequest;
 use data::game_actions::CardPromptAction;
-use data::primitives::{CardType, Faction, Rarity, RoomLocation, School, Side};
+use data::primitives::{CardType, Lineage, Rarity, RoomLocation, School, Side};
 use data::text::{DamageWord, Keyword};
 use display::rexard_images;
 use display::rexard_images::RexardPack;
@@ -37,7 +37,7 @@ pub fn time_golem() -> CardDefinition {
         image: rexard_images::get(RexardPack::MonstersAvatars, "10"),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             abilities::construct(),
@@ -64,7 +64,7 @@ pub fn time_golem() -> CardDefinition {
         ],
         config: CardConfig {
             stats: health(3),
-            faction: Some(Faction::Construct),
+            lineage: Some(Lineage::Construct),
             ..CardConfig::default()
         },
     }
@@ -77,7 +77,7 @@ pub fn temporal_stalker() -> CardDefinition {
         image: rexard_images::get(RexardPack::MonstersAvatars, "87"),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             simple_ability(
@@ -113,7 +113,7 @@ pub fn temporal_stalker() -> CardDefinition {
         ],
         config: CardConfig {
             stats: CardStats { health: Some(6), shield: Some(3), ..CardStats::default() },
-            faction: Some(Faction::Abyssal),
+            lineage: Some(Lineage::Abyssal),
             ..CardConfig::default()
         },
     }
@@ -126,7 +126,7 @@ pub fn shadow_lurker() -> CardDefinition {
         image: rexard_images::get(RexardPack::MonstersAvatars, "80"),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![
             simple_ability(
@@ -140,7 +140,7 @@ pub fn shadow_lurker() -> CardDefinition {
         ],
         config: CardConfig {
             stats: CardStats { health: Some(2), shield: Some(1), ..CardStats::default() },
-            faction: Some(Faction::Abyssal),
+            lineage: Some(Lineage::Abyssal),
             ..CardConfig::default()
         },
     }
@@ -153,7 +153,7 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
         image: rexard_images::get(RexardPack::MonstersAvatars, "17"),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text![
@@ -178,7 +178,7 @@ pub fn sphinx_of_winters_breath() -> CardDefinition {
         }],
         config: CardConfig {
             stats: CardStats { health: Some(3), shield: Some(1), ..CardStats::default() },
-            faction: Some(Faction::Mortal),
+            lineage: Some(Lineage::Mortal),
             ..CardConfig::default()
         },
     }
@@ -191,7 +191,7 @@ pub fn bridge_troll() -> CardDefinition {
         image: rexard_images::get(RexardPack::MonstersAvatars, "29"),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text![
@@ -213,7 +213,7 @@ pub fn bridge_troll() -> CardDefinition {
         )],
         config: CardConfig {
             stats: CardStats { health: Some(0), shield: Some(2), ..CardStats::default() },
-            faction: Some(Faction::Mortal),
+            lineage: Some(Lineage::Mortal),
             ..CardConfig::default()
         },
     }
@@ -226,7 +226,7 @@ pub fn stormcaller() -> CardDefinition {
         image: rexard_images::get(RexardPack::MonstersAvatars, "53"),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text![
@@ -247,7 +247,7 @@ pub fn stormcaller() -> CardDefinition {
         )],
         config: CardConfig {
             stats: CardStats { health: Some(3), shield: Some(2), ..CardStats::default() },
-            faction: Some(Faction::Infernal),
+            lineage: Some(Lineage::Infernal),
             ..CardConfig::default()
         },
     }
@@ -260,7 +260,7 @@ pub fn fire_goblin() -> CardDefinition {
         image: rexard_images::get(RexardPack::MonstersAvatars, "70"),
         card_type: CardType::Minion,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text![
@@ -279,7 +279,7 @@ pub fn fire_goblin() -> CardDefinition {
         )],
         config: CardConfig {
             stats: CardStats { health: Some(1), shield: Some(2), ..CardStats::default() },
-            faction: Some(Faction::Infernal),
+            lineage: Some(Lineage::Infernal),
             ..CardConfig::default()
         },
     }

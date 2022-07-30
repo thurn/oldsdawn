@@ -20,7 +20,7 @@ use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
 use data::card_state::CardState;
 use data::delegates::Scope;
 use data::game::GameState;
-use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, Faction};
+use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, Lineage};
 use data::text::{
     AbilityText, DamageWord, Keyword, KeywordKind, NumericOperator, Sentence, TextToken,
 };
@@ -157,7 +157,7 @@ fn process_text_tokens(tokens: &[TextToken]) -> String {
                     icons::MANA
                 ),
                 Keyword::DealDamage(word, amount) => format!(
-                    "{} {}",
+                    "{} {} damage",
                     match word {
                         DamageWord::DealStart => "Deal",
                         DamageWord::DealInternal => "deal",
@@ -201,16 +201,16 @@ fn card_type_line(definition: &CardDefinition) -> String {
         CardType::Identity => "Identity",
     });
 
-    if let Some(faction) = definition.config.faction {
+    if let Some(lineage) = definition.config.lineage {
         result.push_str(" • ");
-        let (faction, color) = match faction {
-            Faction::Prismatic => ("Prismatic", FontColor::PrismaticCardTitle),
-            Faction::Construct => ("Construct", FontColor::ConstructCardTitle),
-            Faction::Mortal => ("Mortal", FontColor::MortalCardTitle),
-            Faction::Abyssal => ("Abyssal", FontColor::AbyssalCardTitle),
-            Faction::Infernal => ("Infernal", FontColor::InfernalCardTitle),
+        let (lineage, color) = match lineage {
+            Lineage::Prismatic => ("Prismatic", FontColor::PrismaticCardTitle),
+            Lineage::Construct => ("Construct", FontColor::ConstructCardTitle),
+            Lineage::Mortal => ("Mortal", FontColor::MortalCardTitle),
+            Lineage::Abyssal => ("Abyssal", FontColor::AbyssalCardTitle),
+            Lineage::Infernal => ("Infernal", FontColor::InfernalCardTitle),
         };
-        let string = format!("<color={}>{}</color>", design::as_hex(color.into()), faction);
+        let string = format!("<color={}>{}</color>", design::as_hex(color.into()), lineage);
         result.push_str(&string);
     }
 

@@ -163,14 +163,21 @@ android-plugin:
     # You see, standalone osx builds *don't* want the lib prefix but android fails *without* it...
     cp target/{{target_android}}/release/libplugin.so {{plugin_out}}/Android/ARM64/
 
+target_x86_sim := "x86_64-apple-ios"
+
+ios-simulator-plugin:
+    cargo build -p plugin --release --target={{target_x86_sim}}
+    mkdir -p {{plugin_out}}/iOS/Simulator
+    cp target/{{target_x86_sim}}/release/libplugin.a {{plugin_out}}/iOS/Simulator
+
 target_ios := "aarch64-apple-ios"
 
 ios-plugin:
     cargo build -p plugin --release --target={{target_ios}}
-    mkdir -p {{plugin_out}}/iOS/
-    cp target/{{target_ios}}/release/libplugin.a {{plugin_out}}/iOS/
+    mkdir -p {{plugin_out}}/iOS/Device
+    cp target/{{target_ios}}/release/libplugin.a {{plugin_out}}/iOS/Device
 
-plugin: mac-plugin windows-plugin ios-plugin android-plugin
+plugin: mac-plugin windows-plugin ios-plugin ios-simulator-plugin android-plugin
 
 test-backtrace:
     # Use +nightly in order to get backtraces for anyhow errors

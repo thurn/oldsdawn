@@ -28,7 +28,7 @@ use crate::delegates::Delegate;
 use crate::game::GameState;
 use crate::primitives::{
     AbilityId, AbilityIndex, ActionCount, AttackValue, BreachValue, CardId, CardSubtype, CardType,
-    Faction, HealthValue, LevelValue, ManaValue, PointsValue, Rarity, RoomId, School, ShieldValue,
+    HealthValue, LevelValue, Lineage, ManaValue, PointsValue, Rarity, RoomId, School, ShieldValue,
     Side, Sprite,
 };
 use crate::special_effects::{Projectile, TimedEffect};
@@ -173,7 +173,7 @@ pub struct SpecialEffects {
 #[derive(Debug, Default)]
 pub struct CardConfig {
     pub stats: CardStats,
-    pub faction: Option<Faction>,
+    pub lineage: Option<Lineage>,
     pub subtypes: Vec<CardSubtype>,
     pub custom_targeting: Option<TargetRequirement<CardId>>,
     pub special_effects: SpecialEffects,

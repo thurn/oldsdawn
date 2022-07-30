@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use cards::test_cards::{MINION_COST, TEST_FACTION};
+use cards::test_cards::{MINION_COST, TEST_LINEAGE};
 use data::card_name::CardName;
 use data::primitives::{RoomId, Side};
 use protos::spelldawn::object_position::Position;
@@ -60,7 +60,7 @@ fn coup_de_grace_invalid_room() {
 #[test]
 fn charged_strike() {
     let mut g = new_game(Side::Champion, Args::default());
-    setup_raid_target(&mut g, minion_for_faction(TEST_FACTION));
+    setup_raid_target(&mut g, minion_for_lineage(TEST_LINEAGE));
     g.play_from_hand(CardName::TestWeapon3Attack12Boost3Cost);
     assert_eq!(STARTING_MANA - 3, g.me().mana());
     g.play_with_target_room(CardName::ChargedStrike, ROOM_ID);
@@ -77,7 +77,7 @@ fn charged_strike() {
 #[test]
 fn stealth_mission() {
     let mut g = new_game(Side::Champion, Args::default());
-    setup_raid_target(&mut g, minion_for_faction(TEST_FACTION));
+    setup_raid_target(&mut g, minion_for_lineage(TEST_LINEAGE));
     assert_eq!(STARTING_MANA, g.opponent.this_player.mana());
     g.play_with_target_room(CardName::StealthMission, ROOM_ID);
     assert_eq!(STARTING_MANA - MINION_COST - 3, g.opponent.this_player.mana());

@@ -40,17 +40,17 @@ pub enum CardName {
     TestMinionEndRaid,
     /// Equivalent to `TestMinionEndRaid` with 1 shield point.
     TestMinionShield1Infernal,
-    /// Equivalent to `TestMinionEndRaid` with 2 shield point & abyssal faction
+    /// Equivalent to `TestMinionEndRaid` with 2 shield point & abyssal lineage
     TestMinionShield2Abyssal,
     /// Minion with 5 health, 1 mana cost, and a "deal 1 damage" ability.
     TestMinionDealDamage,
-    /// Minion with the 'infernal' faction, MINION_HEALTH health, and an 'end
+    /// Minion with the 'infernal' lineage, MINION_HEALTH health, and an 'end
     /// raid' ability.
     TestInfernalMinion,
-    /// Minion with the 'abyssal' faction, MINION_HEALTH health, and an 'end
+    /// Minion with the 'abyssal' lineage, MINION_HEALTH health, and an 'end
     /// raid' ability.
     TestAbyssalMinion,
-    /// Minion with the 'mortal' faction, MINION_HEALTH health, and an 'end
+    /// Minion with the 'mortal' lineage, MINION_HEALTH health, and an 'end
     /// raid' ability.
     TestMortalMinion,
     /// Weapon with 2 attack and no boost.

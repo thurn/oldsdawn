@@ -15,7 +15,7 @@
 //! Helper functions for constructing resource URLs used during a game
 
 use core_ui::design::FontColor;
-use data::primitives::{CardType, Faction, Rarity, School, Side};
+use data::primitives::{CardType, Lineage, Rarity, School, Side};
 use data::special_effects::{
     FantasyEventSounds, FireworksSound, Projectile, SoundEffect, TimedEffect,
 };
@@ -92,7 +92,7 @@ fn identity_card_frame_string(side: Side) -> &'static str {
 pub fn card_back(school: School) -> SpriteAddress {
     SpriteAddress {
         address: match school {
-            School::Time => {
+            School::Law => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"
             }
             School::Neutral => {
@@ -101,7 +101,7 @@ pub fn card_back(school: School) -> SpriteAddress {
             School::Shadow => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Daemon_Style_Color_1"
             }
-            School::Nature => {
+            School::Primal => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"
             }
         }
@@ -113,7 +113,7 @@ pub fn card_back(school: School) -> SpriteAddress {
 pub fn card_frame(school: School) -> SpriteAddress {
     SpriteAddress {
         address: match school {
-            School::Time => {
+            School::Law => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"
             }
             School::Neutral => {
@@ -122,7 +122,7 @@ pub fn card_frame(school: School) -> SpriteAddress {
             School::Shadow => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Daemon_Style_Color_1"
             }
-            School::Nature => {
+            School::Primal => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Elf_Style_Color_1"
             }
         }
@@ -140,36 +140,36 @@ pub fn ability_card_frame(side: Side) -> SpriteAddress {
     }
 }
 
-/// Title font color to use for a given [Faction].
-pub fn title_color(faction: Option<Faction>) -> FlexColor {
-    match faction {
+/// Title font color to use for a given [Lineage].
+pub fn title_color(lineage: Option<Lineage>) -> FlexColor {
+    match lineage {
         None => FontColor::NormalCardTitle,
-        Some(Faction::Mortal) => FontColor::MortalCardTitle,
-        Some(Faction::Infernal) => FontColor::InfernalCardTitle,
-        Some(Faction::Abyssal) => FontColor::AbyssalCardTitle,
-        Some(Faction::Prismatic) => FontColor::PrismaticCardTitle,
-        Some(Faction::Construct) => FontColor::ConstructCardTitle,
+        Some(Lineage::Mortal) => FontColor::MortalCardTitle,
+        Some(Lineage::Infernal) => FontColor::InfernalCardTitle,
+        Some(Lineage::Abyssal) => FontColor::AbyssalCardTitle,
+        Some(Lineage::Prismatic) => FontColor::PrismaticCardTitle,
+        Some(Lineage::Construct) => FontColor::ConstructCardTitle,
     }
     .into()
 }
 
 /// Address for an image to display as a background for a card of the given
-/// [Faction].
-pub fn title_background(_: Option<Faction>) -> SpriteAddress {
+/// [Lineage].
+pub fn title_background(_: Option<Lineage>) -> SpriteAddress {
     SpriteAddress {
         address: "LittleSweetDaemon/TCG_Card_Design/Custom/Title/BlackWhiteFaceTape".to_string(),
     }
 }
 
 /// Address for the frame of a card in the arena
-pub fn arena_frame(side: Side, card_type: CardType, faction: Option<Faction>) -> SpriteAddress {
+pub fn arena_frame(side: Side, card_type: CardType, lineage: Option<Lineage>) -> SpriteAddress {
     SpriteAddress {
-        address: match faction {
-            Some(Faction::Mortal) => "SpriteWay/Icons/Clean Frames/9048",
-            Some(Faction::Infernal) => "SpriteWay/Icons/Clean Frames/9054",
-            Some(Faction::Abyssal) => "SpriteWay/Icons/Clean Frames/9020",
-            Some(Faction::Prismatic) => "SpriteWay/Icons/Clean Frames/9047",
-            Some(Faction::Construct) => "SpriteWay/Icons/Clean Frames/9003",
+        address: match lineage {
+            Some(Lineage::Mortal) => "SpriteWay/Icons/Clean Frames/9048",
+            Some(Lineage::Infernal) => "SpriteWay/Icons/Clean Frames/9054",
+            Some(Lineage::Abyssal) => "SpriteWay/Icons/Clean Frames/9020",
+            Some(Lineage::Prismatic) => "SpriteWay/Icons/Clean Frames/9047",
+            Some(Lineage::Construct) => "SpriteWay/Icons/Clean Frames/9003",
             None => match card_type {
                 CardType::Identity => identity_card_frame_string(side),
                 CardType::Artifact => "SpriteWay/Icons/Clean Frames/9013",

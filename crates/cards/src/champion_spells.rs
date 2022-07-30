@@ -29,7 +29,7 @@ pub fn arcane_recovery() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_24"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Gain", mana_text(9)),
@@ -49,7 +49,7 @@ pub fn meditation() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_98"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Gain", mana_text(5), ".", "Lose", actions_text(1), reminder("(if able).")),
@@ -69,7 +69,7 @@ pub fn coup_de_grace() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_76"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text!(
@@ -103,7 +103,7 @@ pub fn charged_strike() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_67"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Initiate a raid.", "Gain", mana_text(5), "to spend during that raid."),
@@ -129,7 +129,7 @@ pub fn stealth_mission() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_89"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text!(
@@ -169,7 +169,7 @@ pub fn preparation() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_79"),
         card_type: CardType::ChampionSpell,
         side: Side::Champion,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![simple_ability(
             text!("Draw 4 cards.", "Lose", actions_text(1), reminder("(if able).")),

@@ -32,7 +32,7 @@ pub fn gold_mine() -> CardDefinition {
         image: rexard_images::get(RexardPack::MiningIcons, "MiningIcons_08_b"),
         card_type: CardType::Scheme,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text![Keyword::Score, "Gain", mana_text(7)],
@@ -56,7 +56,7 @@ pub fn activate_reinforcements() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_01"),
         card_type: CardType::Scheme,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text![
@@ -89,7 +89,7 @@ pub fn research_project() -> CardDefinition {
         image: rexard_images::spell(1, "SpellBook01_03"),
         card_type: CardType::Scheme,
         side: Side::Overlord,
-        school: School::Time,
+        school: School::Law,
         rarity: Rarity::Common,
         abilities: vec![Ability {
             text: text![Keyword::Score, "Draw 2 cards.", "You get +2 maximum hand size."],

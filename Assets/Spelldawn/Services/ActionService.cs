@@ -54,11 +54,6 @@ namespace Spelldawn.Services
     PlayerIdentifier? _playerIdentifier;
     public bool OfflineMode { get; private set; }
 
-    public void Initialize()
-    {
-      Plugin.Initialize();
-    }
-
     public void Connect(PlayerIdentifier playerIdentifier, bool offlineMode)
     {
       _playerIdentifier = playerIdentifier;
