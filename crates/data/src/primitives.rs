@@ -312,8 +312,8 @@ pub enum Lineage {
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Rarity {
     Common,
-    Uncommon,
     Rare,
+    Exalted,
     Epic,
 
     /// Card cannot be obtained via random rewards

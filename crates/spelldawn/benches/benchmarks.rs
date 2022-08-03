@@ -18,13 +18,16 @@ use ai::agents::{alpha_beta, monte_carlo};
 use ai::core::legal_actions;
 use ai::tournament::run_tournament;
 use ai::tournament::run_tournament::RunGames;
+use ai_core::agent::{Agent, AgentData};
+use ai_testing::nim::{NimState, NimWinLossEvaluator};
+use ai_tree_search::minimax::MinimaxAlgorithm;
 use cards::{decklists, initialize};
 use criterion::measurement::WallTime;
 use criterion::{criterion_group, criterion_main, BenchmarkGroup, Criterion};
 use data::agent_definition::AgentName;
 use data::primitives::Side;
 
-criterion_group!(benches, legal_actions, random_actions, uct_search, alpha_beta_search);
+criterion_group!(benches, legal_actions, random_actions, minimax, uct_search, alpha_beta_search);
 criterion_main!(benches);
 
 fn configure(group: &mut BenchmarkGroup<WallTime>) {
@@ -63,6 +66,24 @@ pub fn random_actions(c: &mut Criterion) {
                 RunGames::NoPrint,
             )
             .expect("Error running games");
+        })
+    });
+    group.finish();
+}
+
+pub fn minimax(c: &mut Criterion) {
+    let mut group = c.benchmark_group("minimax");
+    configure(&mut group);
+    let state = NimState::new(4);
+    let agent = AgentData::omniscient(
+        "MINIMAX",
+        MinimaxAlgorithm { search_depth: 25 },
+        NimWinLossEvaluator {},
+    );
+
+    group.bench_function("minimax", |b| {
+        b.iter(|| {
+            agent.pick_action(&state).expect("Error running agent");
         })
     });
     group.finish();

@@ -50,6 +50,7 @@ sysinfo.txt
 
 .vscode
 **/.DS_Store
+.criterion/
 
 Assets/src/.lsp
 Temp

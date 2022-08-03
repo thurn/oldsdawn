@@ -12,6 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod ai;
-mod cards;
-mod core;
+pub mod minimax_tests;

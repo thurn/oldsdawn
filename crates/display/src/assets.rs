@@ -189,10 +189,12 @@ pub fn jewel(rarity: Rarity) -> SpriteAddress {
             Rarity::Common | Rarity::None => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01"
             }
-            Rarity::Uncommon => {
+            Rarity::Rare => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"
             }
-            Rarity::Rare => "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_02",
+            Rarity::Exalted => {
+                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_02"
+            }
             Rarity::Epic => {
                 "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_02"
             }

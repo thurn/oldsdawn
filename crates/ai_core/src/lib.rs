@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod ai;
-mod cards;
-mod core;
+//! Core data types and functions for AI system
+
+pub mod agent;
+pub mod game_state_node;
+pub mod selection_algorithm;
+pub mod state_combiner;
+pub mod state_evaluator;
+pub mod state_predictor;

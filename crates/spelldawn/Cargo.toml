@@ -26,6 +26,9 @@ tracing = "0.1.35"
 tracing-subscriber = "0.3.14"
 
 ai = { path = "../ai", version = "0.0.0" }
+ai_core = { path = "../ai_core", version = "0.0.0" }
+ai_testing = { path = "../ai_testing", version = "0.0.0" }
+ai_tree_search = { path = "../ai_tree_search", version = "0.0.0" }
 cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }

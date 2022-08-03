@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod ai;
-mod cards;
-mod core;
+//! Tools for testing AI implementations
+
+pub mod nim;
+pub mod nim_agents;

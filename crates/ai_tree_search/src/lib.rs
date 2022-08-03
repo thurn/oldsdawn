@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod ai;
-mod cards;
-mod core;
+//! Algorithms for tree-search AI, e.g. minimax
+
+pub mod minimax;
+pub mod scored_action;
+pub mod single_level;
