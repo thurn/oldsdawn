@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::time::Instant;
+
 use ai_core::game_state_node::GameStateNode;
 use ai_core::selection_algorithm::SelectionAlgorithm;
 use ai_core::state_evaluator::StateEvaluator;
@@ -23,7 +25,13 @@ use with_error::WithError;
 pub struct SingleLevel {}
 
 impl SelectionAlgorithm for SingleLevel {
-    fn pick_action<N, E>(&self, node: &N, evaluator: &E, player: N::PlayerName) -> Result<N::Action>
+    fn pick_action<N, E>(
+        &self,
+        _deadline: Instant,
+        node: &N,
+        evaluator: &E,
+        player: N::PlayerName,
+    ) -> Result<N::Action>
     where
         N: GameStateNode,
         E: StateEvaluator<N>,

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::time::{Duration, Instant};
+
 use anyhow::Result;
 use with_error::WithError;
 
@@ -21,6 +23,11 @@ use crate::state_combiner::StateCombiner;
 use crate::state_evaluator::StateEvaluator;
 use crate::state_predictor::StatePredictor;
 use crate::{state_combiner, state_predictor};
+
+/// Create a new agent deadline `seconds` seconds from now.
+pub fn deadline(seconds: u64) -> Instant {
+    Instant::now() + Duration::from_secs(seconds)
+}
 
 /// An AI Agent for a given game state, any system capable of selecting valid
 /// game actions for a player.
@@ -36,8 +43,8 @@ where
     fn name(&self) -> &'static str;
 
     /// Select an action for the current player to take in the `node` game
-    /// state.
-    fn pick_action(&self, node: &TNode) -> Result<TNode::Action>;
+    /// state. Should attempt to return a result before time `deadline`.
+    fn pick_action(&self, deadline: Instant, node: &TNode) -> Result<TNode::Action>;
 }
 
 /// A tuple of various pieces needed to perform agent action selection.
@@ -101,9 +108,9 @@ where
         self.name
     }
 
-    fn pick_action(&self, node: &TNode) -> Result<TNode::Action> {
+    fn pick_action(&self, deadline: Instant, node: &TNode) -> Result<TNode::Action> {
         let player = node.current_turn().with_error(|| "Game is over")?;
         let node = (self.combiner)(node, self.predictor, &self.evaluator)?;
-        self.selector.pick_action(&node, &self.evaluator, player)
+        self.selector.pick_action(deadline, &node, &self.evaluator, player)
     }
 }

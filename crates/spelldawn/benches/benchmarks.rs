@@ -18,6 +18,7 @@ use ai::agents::{alpha_beta, monte_carlo};
 use ai::core::legal_actions;
 use ai::tournament::run_tournament;
 use ai::tournament::run_tournament::RunGames;
+use ai_core::agent;
 use ai_core::agent::{Agent, AgentData};
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
 use ai_tree_search::minimax::MinimaxAlgorithm;
@@ -83,7 +84,7 @@ pub fn minimax(c: &mut Criterion) {
 
     group.bench_function("minimax", |b| {
         b.iter(|| {
-            agent.pick_action(&state).expect("Error running agent");
+            agent.pick_action(agent::deadline(10), &state).expect("Error running agent");
         })
     });
     group.finish();

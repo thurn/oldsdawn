@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use std::io;
+use std::time::{Duration, Instant};
 
 use ai_core::agent::Agent;
 use ai_core::game_state_node::GameStateNode;
@@ -29,6 +30,10 @@ pub struct Args {
     pub player_one: NimAgentName,
     #[clap(arg_enum, value_parser)]
     pub player_two: NimAgentName,
+    #[clap(long, value_parser, default_value_t = 5)]
+    pub stack_size: u32,
+    #[clap(long, value_parser, default_value_t = 5)]
+    pub move_time: u64,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ArgEnum)]
@@ -41,8 +46,8 @@ pub enum NimAgentName {
 pub fn main() -> Result<()> {
     let args = Args::parse();
     println!("Welcome to the Game of Nim");
-    let nim = NimState::new(4);
-    run_game_loop(nim, get_agent(args.player_one), get_agent(args.player_two))
+    let nim = NimState::new(args.stack_size);
+    run_game_loop(nim, args.move_time, get_agent(args.player_one), get_agent(args.player_two))
 }
 
 fn get_agent(name: NimAgentName) -> Box<dyn Agent<NimState>> {
@@ -55,13 +60,14 @@ fn get_agent(name: NimAgentName) -> Box<dyn Agent<NimState>> {
 
 fn run_game_loop(
     mut nim: NimState,
+    move_time: u64,
     player_one: Box<dyn Agent<NimState>>,
     player_two: Box<dyn Agent<NimState>>,
 ) -> Result<()> {
     loop {
         print_optimal_action(&nim, player_one.name())?;
         println!("{}", nim);
-        let p1_action = player_one.pick_action(&nim)?;
+        let p1_action = player_one.pick_action(deadline(move_time), &nim)?;
         println!("<<{}>> takes {} from {}", player_one.name(), p1_action.amount, p1_action.pile);
         nim.execute_action(NimPlayer::One, p1_action)?;
         check_game_over(&nim, player_one.name(), player_two.name());
@@ -69,18 +75,22 @@ fn run_game_loop(
         print_optimal_action(&nim, player_two.name())?;
         println!("{}", nim);
 
-        let p2_action = player_two.pick_action(&nim)?;
+        let p2_action = player_two.pick_action(deadline(move_time), &nim)?;
         println!("<<{}>> takes {} from {}", player_two.name(), p2_action.amount, p2_action.pile);
         nim.execute_action(NimPlayer::Two, p2_action)?;
         check_game_over(&nim, player_one.name(), player_two.name());
     }
 }
 
+fn deadline(move_time: u64) -> Instant {
+    Instant::now() + Duration::from_secs(move_time)
+}
+
 fn print_optimal_action(state: &NimState, player_name: &str) -> Result<()> {
     if nim_sum(state) == 0 {
         println!("  (Game is unwinnable for {} with optimal play)", player_name);
     } else {
-        let action = NIM_PERFECT_AGENT.pick_action(state)?;
+        let action = NIM_PERFECT_AGENT.pick_action(deadline(5), state)?;
         println!("  (Optimal play for {} is {} take {})", player_name, action.pile, action.amount);
     }
 
@@ -104,7 +114,7 @@ impl Agent<NimState> for NimHumanAgent {
         "HUMAN"
     }
 
-    fn pick_action(&self, state: &NimState) -> Result<NimAction> {
+    fn pick_action(&self, _deadline: Instant, state: &NimState) -> Result<NimAction> {
         println!("\n>>> Input your action, e.g. 'a2' or 'b3'");
 
         let mut input_text = String::new();

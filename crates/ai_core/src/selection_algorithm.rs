@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::time::Instant;
+
 use anyhow::Result;
 
 use crate::game_state_node::GameStateNode;
@@ -23,8 +25,12 @@ pub trait SelectionAlgorithm {
     /// Should return the best action action for the current player `player`
     /// to take in the provided `node` game state, using the provided
     /// `evaluator` to evaluate different game outcomes.
+    ///
+    /// Implementations are expected to return a result before the `deadline`
+    /// time by periodically comparing it to `Instant::now()`.
     fn pick_action<N, E>(
         &self,
+        deadline: Instant,
         node: &N,
         evaluator: &E,
         player: N::PlayerName,

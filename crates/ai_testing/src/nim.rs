@@ -15,6 +15,7 @@
 use std::collections::HashMap;
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::time::{Duration, Instant};
 
 use ai_core::agent::Agent;
 use ai_core::game_state_node::GameStateNode;
@@ -27,8 +28,15 @@ use crate::nim_agents::NIM_PERFECT_AGENT;
 /// Asserts that a given `agent` picks an optimal game action for the provided
 /// game state.
 pub fn assert_perfect(state: &NimState, agent: &impl Agent<NimState>) {
-    let result = agent.pick_action(state).expect("Error running agent");
-    assert_eq!(result, NIM_PERFECT_AGENT.pick_action(state).expect("Error running NIM_PERFECT"));
+    let result = agent
+        .pick_action(Instant::now() + Duration::from_secs(60), state)
+        .expect("Error running agent");
+    assert_eq!(
+        result,
+        NIM_PERFECT_AGENT
+            .pick_action(Instant::now() + Duration::from_secs(60), state)
+            .expect("Error running NIM_PERFECT")
+    );
 }
 
 /// Evaluator which returns -1 for a loss, 1 for a win, and 0 otherwise
