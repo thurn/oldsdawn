@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::cmp;
 use std::time::Instant;
 
 use ai_core::game_state_node::GameStateNode;
@@ -21,14 +22,17 @@ use anyhow::Result;
 
 use crate::scored_action::ScoredAction;
 
-/// The Minimax search algorithm, one of the simplest tree search algorithms.
+/// Implements alpha-beta pruning over minimax tree search.
 ///
-/// See <https://en.wikipedia.org/wiki/Minimax>
-pub struct MinimaxAlgorithm {
+/// This is a 'fail soft' implementation per wikipedia. I have not been able to
+/// detect any performance or gameplay difference with the 'fail hard' version.
+///
+/// See <https://en.wikipedia.org/wiki/Alpha-beta_pruning>
+pub struct AlphaBetaAlgorithm {
     pub search_depth: u32,
 }
 
-impl SelectionAlgorithm for MinimaxAlgorithm {
+impl SelectionAlgorithm for AlphaBetaAlgorithm {
     fn pick_action<N, E>(
         &self,
         deadline: Instant,
@@ -40,7 +44,8 @@ impl SelectionAlgorithm for MinimaxAlgorithm {
         N: GameStateNode,
         E: StateEvaluator<N>,
     {
-        run_internal(deadline, node, evaluator, self.search_depth, player)?.action()
+        run_internal(deadline, node, evaluator, self.search_depth, player, i64::MIN, i64::MAX)?
+            .action()
     }
 }
 
@@ -50,6 +55,8 @@ fn run_internal<N, E>(
     evaluator: &E,
     depth: u32,
     player: N::PlayerName,
+    mut alpha: i64,
+    mut beta: i64,
 ) -> Result<ScoredAction<N::Action>>
 where
     N: GameStateNode,
@@ -60,19 +67,20 @@ where
         None => ScoredAction::new(evaluator.evaluate(node, player)),
         Some(current) if current == player => {
             let mut result = ScoredAction::new(i64::MIN);
-            // I was worried about creating a ScoredAction and tracking the action
-            // unnecessarily for children, but it makes no performance
-            // difference in benchmark tests.
             for action in node.legal_actions()? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
                 let mut child = node.make_copy();
                 child.execute_action(current, action)?;
-                result.insert_max(
-                    action,
-                    run_internal(deadline, &child, evaluator, depth - 1, player)?.score(),
-                );
+                let score =
+                    run_internal(deadline, &child, evaluator, depth - 1, player, alpha, beta)?
+                        .score();
+                alpha = cmp::max(alpha, score);
+                result.insert_max(action, score);
+                if score >= beta {
+                    break; // Beta cutoff
+                }
             }
             result
         }
@@ -84,10 +92,14 @@ where
                 }
                 let mut child = node.make_copy();
                 child.execute_action(current, action)?;
-                result.insert_min(
-                    action,
-                    run_internal(deadline, &child, evaluator, depth - 1, player)?.score(),
-                );
+                let score =
+                    run_internal(deadline, &child, evaluator, depth - 1, player, alpha, beta)?
+                        .score();
+                beta = cmp::min(beta, score);
+                result.insert_min(action, score);
+                if score <= alpha {
+                    break; // Alpha cutoff
+                }
             }
             result
         }

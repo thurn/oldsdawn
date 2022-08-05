@@ -14,13 +14,13 @@
 
 use std::time::Duration;
 
-use ai::agents::{alpha_beta, monte_carlo};
 use ai::core::legal_actions;
 use ai::tournament::run_tournament;
 use ai::tournament::run_tournament::RunGames;
 use ai_core::agent;
 use ai_core::agent::{Agent, AgentData};
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
+use ai_tree_search::alpha_beta::AlphaBetaAlgorithm;
 use ai_tree_search::minimax::MinimaxAlgorithm;
 use cards::{decklists, initialize};
 use criterion::measurement::WallTime;
@@ -28,7 +28,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkGroup, Criterion};
 use data::agent_definition::AgentName;
 use data::primitives::Side;
 
-criterion_group!(benches, legal_actions, random_actions, minimax, uct_search, alpha_beta_search);
+criterion_group!(benches, legal_actions, random_actions, minimax_nim, alpha_beta_nim);
 criterion_main!(benches);
 
 fn configure(group: &mut BenchmarkGroup<WallTime>) {
@@ -72,7 +72,7 @@ pub fn random_actions(c: &mut Criterion) {
     group.finish();
 }
 
-pub fn minimax(c: &mut Criterion) {
+pub fn minimax_nim(c: &mut Criterion) {
     let mut group = c.benchmark_group("minimax");
     configure(&mut group);
     let state = NimState::new(4);
@@ -90,20 +90,38 @@ pub fn minimax(c: &mut Criterion) {
     group.finish();
 }
 
-pub fn uct_search(c: &mut Criterion) {
-    let mut group = c.benchmark_group("uct_search");
+pub fn alpha_beta_nim(c: &mut Criterion) {
+    let mut group = c.benchmark_group("alpha_beta");
     configure(&mut group);
-    let game = decklists::canonical_game().unwrap();
-    group.bench_function("uct_search", |b| {
-        b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 1000))
+    let state = NimState::new(5);
+    let agent = AgentData::omniscient(
+        "ALPHA_BETA",
+        AlphaBetaAlgorithm { search_depth: 25 },
+        NimWinLossEvaluator {},
+    );
+
+    group.bench_function("alpha_beta", |b| {
+        b.iter(|| {
+            agent.pick_action(agent::deadline(10), &state).expect("Error running agent");
+        })
     });
+    group.finish();
 }
 
-pub fn alpha_beta_search(c: &mut Criterion) {
-    let mut group = c.benchmark_group("alpha_beta_search");
-    configure(&mut group);
-    let game = decklists::canonical_game().unwrap();
-    group.bench_function("alpha_beta_search", |b| {
-        b.iter(|| alpha_beta::run_search(&game, Side::Overlord, 4).unwrap())
-    });
-}
+// pub fn uct_search(c: &mut Criterion) {
+//     let mut group = c.benchmark_group("uct_search");
+//     configure(&mut group);
+//     let game = decklists::canonical_game().unwrap();
+//     group.bench_function("uct_search", |b| {
+//         b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 1000))
+//     });
+// }
+//
+// pub fn alpha_beta_search(c: &mut Criterion) {
+//     let mut group = c.benchmark_group("alpha_beta_search");
+//     configure(&mut group);
+//     let game = decklists::canonical_game().unwrap();
+//     group.bench_function("alpha_beta_search", |b| {
+//         b.iter(|| alpha_beta::run_search(&game, Side::Overlord, 4).unwrap())
+//     });
+// }

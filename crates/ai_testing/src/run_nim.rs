@@ -18,7 +18,7 @@ use std::time::{Duration, Instant};
 use ai_core::agent::Agent;
 use ai_core::game_state_node::GameStateNode;
 use ai_testing::nim::{nim_sum, NimAction, NimPile, NimPlayer, NimState};
-use ai_testing::nim_agents::{NIM_MINIMAX_AGENT, NIM_PERFECT_AGENT};
+use ai_testing::nim_agents::{NIM_ALPHA_BETA_AGENT, NIM_MINIMAX_AGENT, NIM_PERFECT_AGENT};
 use anyhow::Result;
 use clap::{ArgEnum, Parser};
 use with_error::WithError;
@@ -41,6 +41,7 @@ pub enum NimAgentName {
     Human,
     Perfect,
     Minimax,
+    AlphaBeta,
 }
 
 pub fn main() -> Result<()> {
@@ -55,6 +56,7 @@ fn get_agent(name: NimAgentName) -> Box<dyn Agent<NimState>> {
         NimAgentName::Human => Box::new(NimHumanAgent {}),
         NimAgentName::Perfect => Box::new(NIM_PERFECT_AGENT),
         NimAgentName::Minimax => Box::new(NIM_MINIMAX_AGENT),
+        NimAgentName::AlphaBeta => Box::new(NIM_ALPHA_BETA_AGENT),
     }
 }
 

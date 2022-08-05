@@ -31,11 +31,21 @@ where
     }
 
     pub fn action(&self) -> Result<T> {
-        self.action.with_error(|| "Expected action")
+        self.action.with_error(|| "No action found for ScoredAction")
     }
 
     pub fn score(&self) -> i64 {
         self.score
+    }
+
+    /// Returns this ScoredAction, populating `action` as its action if there is
+    /// not currently a saved action.
+    pub fn with_fallback_action(self, action: T) -> Self {
+        if self.action.is_none() {
+            Self { action: Some(action), ..self }
+        } else {
+            self
+        }
     }
 
     /// Insert this action & score if they are greater than the current score.

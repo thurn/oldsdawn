@@ -16,6 +16,7 @@ use ai_core::agent;
 use ai_core::agent::{Agent, AgentData};
 use ai_testing::nim;
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
+use ai_tree_search::alpha_beta::AlphaBetaAlgorithm;
 use ai_tree_search::minimax::MinimaxAlgorithm;
 use tokio::time::Instant;
 
@@ -41,6 +42,38 @@ pub fn minimax_deadline_exceeded() {
     let agent = AgentData::omniscient(
         "MINIMAX",
         MinimaxAlgorithm { search_depth: 25 },
+        NimWinLossEvaluator {},
+    );
+    let state = NimState::new(100);
+    let start_time = Instant::now();
+    let action = agent.pick_action(agent::deadline(1), &state);
+    assert!(action.is_ok());
+    assert!(start_time.elapsed().as_secs() < 2);
+}
+
+#[test]
+pub fn alpha_beta() {
+    let agent = AgentData::omniscient(
+        "ALPHA_BETA",
+        AlphaBetaAlgorithm { search_depth: 25 },
+        NimWinLossEvaluator {},
+    );
+
+    nim::assert_perfect(&NimState::new(1), &agent);
+    nim::assert_perfect(&NimState::new_with_piles(1, 2, 3), &agent);
+    nim::assert_perfect(&NimState::new(2), &agent);
+    nim::assert_perfect(&NimState::new_with_piles(2, 2, 3), &agent);
+    nim::assert_perfect(&NimState::new(3), &agent);
+    nim::assert_perfect(&NimState::new_with_piles(1, 1, 3), &agent);
+    nim::assert_perfect(&NimState::new_with_piles(4, 3, 2), &agent);
+    nim::assert_perfect(&NimState::new(5), &agent);
+}
+
+#[test]
+pub fn alpha_beta_deadline_exceeded() {
+    let agent = AgentData::omniscient(
+        "ALPHA_BETA",
+        AlphaBetaAlgorithm { search_depth: 25 },
         NimWinLossEvaluator {},
     );
     let state = NimState::new(100);
