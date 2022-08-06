@@ -36,13 +36,13 @@ impl SelectionAlgorithm for SingleLevel {
         N: GameStateNode,
         E: StateEvaluator<N>,
     {
-        let mut best_score = i64::MIN;
+        let mut best_score = i32::MIN;
         let mut best_action: Option<N::Action> = None;
 
         for action in node.legal_actions()? {
             let mut child = node.make_copy();
             child.execute_action(player, action)?;
-            let score = evaluator.evaluate(&child, player);
+            let score = evaluator.evaluate(&child, player)?;
             if score > best_score {
                 best_score = score;
                 best_action = Some(action);

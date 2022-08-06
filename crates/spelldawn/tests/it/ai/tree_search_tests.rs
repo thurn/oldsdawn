@@ -29,7 +29,6 @@ pub fn minimax() {
     );
 
     nim::assert_perfect(&NimState::new(1), &agent);
-    nim::assert_perfect(&NimState::new_with_piles(1, 2, 3), &agent);
     nim::assert_perfect(&NimState::new(2), &agent);
     nim::assert_perfect(&NimState::new_with_piles(2, 2, 3), &agent);
     nim::assert_perfect(&NimState::new(3), &agent);
@@ -60,7 +59,6 @@ pub fn alpha_beta() {
     );
 
     nim::assert_perfect(&NimState::new(1), &agent);
-    nim::assert_perfect(&NimState::new_with_piles(1, 2, 3), &agent);
     nim::assert_perfect(&NimState::new(2), &agent);
     nim::assert_perfect(&NimState::new_with_piles(2, 2, 3), &agent);
     nim::assert_perfect(&NimState::new(3), &agent);

@@ -31,8 +31,8 @@ pub type StatePredictor<TNode> = fn(&TNode) -> Box<dyn Iterator<Item = TNode>>;
 /// A [StatePredictor] which returns the actual canonical game state as the only
 /// state prediction.
 ///
-/// In other words, this creates an agent with perfect information about hidden
-/// game state, i.e. one who cheats.
+/// This creates an agent with perfect information about hidden game state, i.e.
+/// one who cheats.
 pub fn omniscient<N: 'static>(node: &N) -> Box<dyn Iterator<Item = N>>
 where
     N: GameStateNode,

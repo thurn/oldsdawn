@@ -18,39 +18,44 @@ use std::fmt::{Display, Formatter};
 use std::time::{Duration, Instant};
 
 use ai_core::agent::Agent;
-use ai_core::game_state_node::GameStateNode;
+use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_core::state_evaluator::StateEvaluator;
 use anyhow::Result;
 use with_error::verify;
 
-use crate::nim_agents::NIM_PERFECT_AGENT;
-
 /// Asserts that a given `agent` picks an optimal game action for the provided
 /// game state.
 pub fn assert_perfect(state: &NimState, agent: &impl Agent<NimState>) {
+    assert_perfect_in_seconds(state, agent, 60)
+}
+
+/// Equivalent to [assert_perfect] with a short timeout in seconds.
+pub fn assert_perfect_short(state: &NimState, agent: &impl Agent<NimState>) {
+    assert_perfect_in_seconds(state, agent, 1)
+}
+
+/// Equivalent to [assert_perfect] with a manually-specified deadline in
+/// seconds.
+pub fn assert_perfect_in_seconds(state: &NimState, agent: &impl Agent<NimState>, seconds: u64) {
+    let current = state.current_turn().unwrap();
     let result = agent
-        .pick_action(Instant::now() + Duration::from_secs(60), state)
+        .pick_action(Instant::now() + Duration::from_secs(seconds), state)
         .expect("Error running agent");
-    assert_eq!(
-        result,
-        NIM_PERFECT_AGENT
-            .pick_action(Instant::now() + Duration::from_secs(60), state)
-            .expect("Error running NIM_PERFECT")
-    );
+    let mut copy = state.make_copy();
+    copy.execute_action(current, result).unwrap();
+    assert_eq!(1, NimPerfectEvaluator {}.evaluate(&copy, current).unwrap());
 }
 
 /// Evaluator which returns -1 for a loss, 1 for a win, and 0 otherwise
 pub struct NimWinLossEvaluator {}
 
 impl StateEvaluator<NimState> for NimWinLossEvaluator {
-    fn evaluate(&self, state: &NimState, player: NimPlayer) -> i64 {
-        if state.current_turn().is_some() {
-            0
-        } else if state.turn == player {
-            -1
-        } else {
-            1
-        }
+    fn evaluate(&self, state: &NimState, player: NimPlayer) -> Result<i32> {
+        Ok(match state.status() {
+            GameStatus::InProgress { .. } => 0,
+            GameStatus::Completed { winner } if winner == player => 1,
+            _ => -1,
+        })
     }
 }
 
@@ -59,9 +64,9 @@ impl StateEvaluator<NimState> for NimWinLossEvaluator {
 pub struct NimPerfectEvaluator {}
 
 impl StateEvaluator<NimState> for NimPerfectEvaluator {
-    fn evaluate(&self, state: &NimState, player: NimPlayer) -> i64 {
+    fn evaluate(&self, state: &NimState, player: NimPlayer) -> Result<i32> {
         let count = nim_sum(state);
-        if player == state.turn {
+        Ok(if player == state.turn {
             if count == 0 {
                 -1
             } else {
@@ -71,11 +76,11 @@ impl StateEvaluator<NimState> for NimPerfectEvaluator {
             1
         } else {
             -1
-        }
+        })
     }
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum NimPlayer {
     One,
     Two,
@@ -102,7 +107,7 @@ impl Display for NimPile {
     }
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub struct NimAction {
     pub pile: NimPile,
     pub amount: u32,
@@ -156,11 +161,16 @@ impl GameStateNode for NimState {
         self.clone()
     }
 
-    fn current_turn(&self) -> Option<NimPlayer> {
+    fn status(&self) -> GameStatus<NimPlayer> {
         if all_piles().iter().all(|pile| self.piles[pile] == 0) {
-            None
+            GameStatus::Completed {
+                winner: match self.turn {
+                    NimPlayer::One => NimPlayer::Two,
+                    NimPlayer::Two => NimPlayer::One,
+                },
+            }
         } else {
-            Some(self.turn)
+            GameStatus::InProgress { current_turn: self.turn }
         }
     }
 
@@ -171,7 +181,8 @@ impl GameStateNode for NimState {
     }
 
     fn execute_action(&mut self, player: NimPlayer, action: NimAction) -> Result<()> {
-        verify!(self.current_turn() == Some(player));
+        assert_eq!(self.status(), GameStatus::InProgress { current_turn: player });
+        verify!(self.status() == GameStatus::InProgress { current_turn: player });
         verify!(action.amount <= self.piles[&action.pile]);
         self.piles.entry(action.pile).and_modify(|amount| *amount -= action.amount);
         self.turn = match player {

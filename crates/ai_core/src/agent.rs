@@ -15,9 +15,9 @@
 use std::time::{Duration, Instant};
 
 use anyhow::Result;
-use with_error::WithError;
+use with_error::fail;
 
-use crate::game_state_node::GameStateNode;
+use crate::game_state_node::{GameStateNode, GameStatus};
 use crate::selection_algorithm::SelectionAlgorithm;
 use crate::state_combiner::StateCombiner;
 use crate::state_evaluator::StateEvaluator;
@@ -109,7 +109,10 @@ where
     }
 
     fn pick_action(&self, deadline: Instant, node: &TNode) -> Result<TNode::Action> {
-        let player = node.current_turn().with_error(|| "Game is over")?;
+        let player = match node.status() {
+            GameStatus::InProgress { current_turn } => current_turn,
+            _ => fail!("Game is over"),
+        };
         let node = (self.combiner)(node, self.predictor, &self.evaluator)?;
         self.selector.pick_action(deadline, &node, &self.evaluator, player)
     }

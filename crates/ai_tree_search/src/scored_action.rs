@@ -18,7 +18,7 @@ use with_error::WithError;
 /// Helper which keeps track of an evaluator score and the action that produced
 /// it.
 pub struct ScoredAction<T> {
-    score: i64,
+    score: i32,
     action: Option<T>,
 }
 
@@ -26,7 +26,7 @@ impl<T> ScoredAction<T>
 where
     T: Copy,
 {
-    pub fn new(score: i64) -> Self {
+    pub fn new(score: i32) -> Self {
         Self { score, action: None }
     }
 
@@ -34,7 +34,7 @@ where
         self.action.with_error(|| "No action found for ScoredAction")
     }
 
-    pub fn score(&self) -> i64 {
+    pub fn score(&self) -> i32 {
         self.score
     }
 
@@ -49,7 +49,7 @@ where
     }
 
     /// Insert this action & score if they are greater than the current score.
-    pub fn insert_max(&mut self, action: T, score: i64) {
+    pub fn insert_max(&mut self, action: T, score: i32) {
         if score > self.score {
             self.score = score;
             self.action = Some(action);
@@ -57,7 +57,7 @@ where
     }
 
     /// Insert this action & score if they are lower than the current score.
-    pub fn insert_min(&mut self, action: T, score: i64) {
+    pub fn insert_min(&mut self, action: T, score: i32) {
         if score < self.score {
             self.score = score;
             self.action = Some(action);

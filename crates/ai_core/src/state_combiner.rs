@@ -13,9 +13,9 @@
 // limitations under the License.
 
 use anyhow::Result;
-use with_error::WithError;
+use with_error::{fail, WithError};
 
-use crate::game_state_node::GameStateNode;
+use crate::game_state_node::{GameStateNode, GameStatus};
 use crate::state_evaluator::StateEvaluator;
 use crate::state_predictor::StatePredictor;
 
@@ -37,11 +37,14 @@ where
     TEvaluator: StateEvaluator<TNode>,
     TNode: GameStateNode,
 {
-    let player = node.current_turn().with_error(|| "Game is over")?;
-    let mut worst = i64::MAX;
+    let player = match node.status() {
+        GameStatus::InProgress { current_turn } => current_turn,
+        _ => fail!("Game is over"),
+    };
+    let mut worst = i32::MAX;
     let mut worst_state: Option<TNode> = None;
     for state in predictor(node) {
-        let evaluation = evaluator.evaluate(&state, player);
+        let evaluation = evaluator.evaluate(&state, player)?;
         if evaluation < worst {
             worst = evaluation;
             worst_state = Some(state);

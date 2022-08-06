@@ -19,6 +19,8 @@ use ai::tournament::run_tournament;
 use ai::tournament::run_tournament::RunGames;
 use ai_core::agent;
 use ai_core::agent::{Agent, AgentData};
+use ai_monte_carlo::monte_carlo;
+use ai_monte_carlo::monte_carlo::RandomPlayoutEvaluator;
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
 use ai_tree_search::alpha_beta::AlphaBetaAlgorithm;
 use ai_tree_search::minimax::MinimaxAlgorithm;
@@ -28,7 +30,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkGroup, Criterion};
 use data::agent_definition::AgentName;
 use data::primitives::Side;
 
-criterion_group!(benches, legal_actions, random_actions, minimax_nim, alpha_beta_nim);
+criterion_group!(benches, legal_actions, random_actions, minimax_nim, alpha_beta_nim, uct1_nim);
 criterion_main!(benches);
 
 fn configure(group: &mut BenchmarkGroup<WallTime>) {
@@ -50,7 +52,7 @@ pub fn legal_actions(c: &mut Criterion) {
 }
 
 pub fn random_actions(c: &mut Criterion) {
-    // NOTE: Keep in mind that if the definition of legal_actions() changes, you
+    // NOTE: Keep in mind that if the behavior of legal_actions() changes, you
     // can't meaningfully compare benchmark results before and after. The games will
     // take a completely different path, meaning the games might end more quickly
     // even if all the code is slower.
@@ -73,7 +75,7 @@ pub fn random_actions(c: &mut Criterion) {
 }
 
 pub fn minimax_nim(c: &mut Criterion) {
-    let mut group = c.benchmark_group("minimax");
+    let mut group = c.benchmark_group("minimax_nim");
     configure(&mut group);
     let state = NimState::new(4);
     let agent = AgentData::omniscient(
@@ -82,7 +84,7 @@ pub fn minimax_nim(c: &mut Criterion) {
         NimWinLossEvaluator {},
     );
 
-    group.bench_function("minimax", |b| {
+    group.bench_function("minimax_nim", |b| {
         b.iter(|| {
             agent.pick_action(agent::deadline(10), &state).expect("Error running agent");
         })
@@ -91,7 +93,7 @@ pub fn minimax_nim(c: &mut Criterion) {
 }
 
 pub fn alpha_beta_nim(c: &mut Criterion) {
-    let mut group = c.benchmark_group("alpha_beta");
+    let mut group = c.benchmark_group("alpha_beta_nim");
     configure(&mut group);
     let state = NimState::new(5);
     let agent = AgentData::omniscient(
@@ -100,9 +102,25 @@ pub fn alpha_beta_nim(c: &mut Criterion) {
         NimWinLossEvaluator {},
     );
 
-    group.bench_function("alpha_beta", |b| {
+    group.bench_function("alpha_beta_nim", |b| {
         b.iter(|| {
             agent.pick_action(agent::deadline(10), &state).expect("Error running agent");
+        })
+    });
+    group.finish();
+}
+
+pub fn uct1_nim(c: &mut Criterion) {
+    let mut group = c.benchmark_group("uct1_nim");
+    configure(&mut group);
+    let state = NimState::new(5);
+    let evaluator = RandomPlayoutEvaluator {};
+    let player = state.turn;
+
+    group.bench_function("uct1_nim", |b| {
+        b.iter(|| {
+            monte_carlo::run_search(|i| i == 10_000, &state, &evaluator, player)
+                .expect("run_search() Error");
         })
     });
     group.finish();

@@ -75,11 +75,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "ai_monte_carlo"
+version = "0.0.0"
+dependencies = [
+ "actions",
+ "ai_core",
+ "anyhow",
+ "cards",
+ "data",
+ "enum-iterator",
+ "petgraph",
+ "raids",
+ "rand",
+ "rules",
+ "with_error",
+]
+
+[[package]]
 name = "ai_testing"
 version = "0.0.0"
 dependencies = [
  "actions",
  "ai_core",
+ "ai_monte_carlo",
  "ai_tree_search",
  "anyhow",
  "cards",
@@ -1766,6 +1784,7 @@ version = "0.0.0"
 dependencies = [
  "ai",
  "ai_core",
+ "ai_monte_carlo",
  "ai_testing",
  "ai_tree_search",
  "cards",

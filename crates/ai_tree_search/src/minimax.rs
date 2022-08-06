@@ -14,7 +14,7 @@
 
 use std::time::Instant;
 
-use ai_core::game_state_node::GameStateNode;
+use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_core::selection_algorithm::SelectionAlgorithm;
 use ai_core::state_evaluator::StateEvaluator;
 use anyhow::Result;
@@ -55,11 +55,11 @@ where
     N: GameStateNode,
     E: StateEvaluator<N>,
 {
-    Ok(match node.current_turn() {
-        _ if depth == 0 => ScoredAction::new(evaluator.evaluate(node, player)),
-        None => ScoredAction::new(evaluator.evaluate(node, player)),
-        Some(current) if current == player => {
-            let mut result = ScoredAction::new(i64::MIN);
+    Ok(match node.status() {
+        _ if depth == 0 => ScoredAction::new(evaluator.evaluate(node, player)?),
+        GameStatus::Completed { .. } => ScoredAction::new(evaluator.evaluate(node, player)?),
+        GameStatus::InProgress { current_turn } if current_turn == player => {
+            let mut result = ScoredAction::new(i32::MIN);
             // I was worried about creating a ScoredAction and tracking the action
             // unnecessarily for children, but it makes no performance
             // difference in benchmark tests.
@@ -68,7 +68,7 @@ where
                     return Ok(result.with_fallback_action(action));
                 }
                 let mut child = node.make_copy();
-                child.execute_action(current, action)?;
+                child.execute_action(current_turn, action)?;
                 result.insert_max(
                     action,
                     run_internal(deadline, &child, evaluator, depth - 1, player)?.score(),
@@ -76,14 +76,14 @@ where
             }
             result
         }
-        Some(current) => {
-            let mut result = ScoredAction::new(i64::MAX);
+        GameStatus::InProgress { current_turn } => {
+            let mut result = ScoredAction::new(i32::MAX);
             for action in node.legal_actions()? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
                 let mut child = node.make_copy();
-                child.execute_action(current, action)?;
+                child.execute_action(current_turn, action)?;
                 result.insert_min(
                     action,
                     run_internal(deadline, &child, evaluator, depth - 1, player)?.score(),

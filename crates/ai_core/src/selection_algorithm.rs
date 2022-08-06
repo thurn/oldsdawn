@@ -28,14 +28,14 @@ pub trait SelectionAlgorithm {
     ///
     /// Implementations are expected to return a result before the `deadline`
     /// time by periodically comparing it to `Instant::now()`.
-    fn pick_action<N, E>(
+    fn pick_action<TStateNode, TEvaluator>(
         &self,
         deadline: Instant,
-        node: &N,
-        evaluator: &E,
-        player: N::PlayerName,
-    ) -> Result<N::Action>
+        node: &TStateNode,
+        evaluator: &TEvaluator,
+        player: TStateNode::PlayerName,
+    ) -> Result<TStateNode::Action>
     where
-        N: GameStateNode,
-        E: StateEvaluator<N>;
+        TStateNode: GameStateNode,
+        TEvaluator: StateEvaluator<TStateNode>;
 }

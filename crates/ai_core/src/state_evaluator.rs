@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use anyhow::Result;
+
 use crate::game_state_node::GameStateNode;
 
 /// A trait implementation for producing a 'score' for a given game state.
@@ -29,14 +31,14 @@ where
     /// For example, the simplest evaluator might return 0 for all in-progress
     /// game states and 1 or -1 based on whether the indicated player won
     /// the game.
-    fn evaluate(&self, node: &N, player: N::PlayerName) -> i64;
+    fn evaluate(&self, node: &N, player: N::PlayerName) -> Result<i32>;
 }
 
 /// An evaluator which always returns 0.
 pub struct ZeroEvaluator {}
 
 impl<N: GameStateNode> StateEvaluator<N> for ZeroEvaluator {
-    fn evaluate(&self, _: &N, _: N::PlayerName) -> i64 {
-        0
+    fn evaluate(&self, _: &N, _: N::PlayerName) -> Result<i32> {
+        Ok(0)
     }
 }

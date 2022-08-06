@@ -16,9 +16,11 @@ use std::io;
 use std::time::{Duration, Instant};
 
 use ai_core::agent::Agent;
-use ai_core::game_state_node::GameStateNode;
+use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_testing::nim::{nim_sum, NimAction, NimPile, NimPlayer, NimState};
-use ai_testing::nim_agents::{NIM_ALPHA_BETA_AGENT, NIM_MINIMAX_AGENT, NIM_PERFECT_AGENT};
+use ai_testing::nim_agents::{
+    NIM_ALPHA_BETA_AGENT, NIM_MINIMAX_AGENT, NIM_PERFECT_AGENT, NIM_UCT1_AGENT,
+};
 use anyhow::Result;
 use clap::{ArgEnum, Parser};
 use with_error::WithError;
@@ -42,6 +44,7 @@ pub enum NimAgentName {
     Perfect,
     Minimax,
     AlphaBeta,
+    UCT1,
 }
 
 pub fn main() -> Result<()> {
@@ -57,6 +60,7 @@ fn get_agent(name: NimAgentName) -> Box<dyn Agent<NimState>> {
         NimAgentName::Perfect => Box::new(NIM_PERFECT_AGENT),
         NimAgentName::Minimax => Box::new(NIM_MINIMAX_AGENT),
         NimAgentName::AlphaBeta => Box::new(NIM_ALPHA_BETA_AGENT),
+        NimAgentName::UCT1 => Box::new(NIM_UCT1_AGENT),
     }
 }
 
@@ -99,12 +103,15 @@ fn print_optimal_action(state: &NimState, player_name: &str) -> Result<()> {
     Ok(())
 }
 
-fn check_game_over(state: &NimState, p1_name: &str, p2_name: &str) {
-    if state.current_turn().is_none() {
-        match state.turn {
-            NimPlayer::One => println!("Game Over. {} wins!", p2_name),
-            NimPlayer::Two => println!("Game Over. {} wins!", p1_name),
-        }
+fn check_game_over(game: &NimState, p1_name: &str, p2_name: &str) {
+    if let GameStatus::Completed { winner } = game.status() {
+        println!(
+            "Game Over. {} wins!",
+            match winner {
+                NimPlayer::One => p1_name,
+                NimPlayer::Two => p2_name,
+            }
+        );
         std::process::exit(0)
     }
 }

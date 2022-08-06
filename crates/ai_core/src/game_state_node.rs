@@ -12,7 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::hash::Hash;
+
 use anyhow::Result;
+use with_error::fail;
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum GameStatus<TPlayer: Eq> {
+    /// Game is still ongoing, it is TPlayer's turn.
+    InProgress { current_turn: TPlayer },
+    /// Game has ended, TPlayer has won.
+    Completed { winner: TPlayer },
+}
 
 /// A generic game state used by an AI algorithm.
 ///
@@ -25,7 +36,7 @@ pub trait GameStateNode {
     type PlayerName: Eq + Copy;
 
     /// A game action to transition the game to a new state.
-    type Action: Copy;
+    type Action: Eq + Copy + Hash;
 
     /// Create a copy of this search node to be mutated by selection algorithms.
     /// A basic implementation of this would be to simply call `.clone()`, but
@@ -33,9 +44,18 @@ pub trait GameStateNode {
     /// relevant for selection algorithms.
     fn make_copy(&self) -> Self;
 
-    /// Returns player whose turn it is currently, or `None` if the game has
-    /// ended.
-    fn current_turn(&self) -> Option<Self::PlayerName>;
+    /// Returns the status for the game, either the player whose turn it is or
+    /// the player who won.
+    fn status(&self) -> GameStatus<Self::PlayerName>;
+
+    /// Returns the player whose turn it currently is, or an error if the game
+    /// has ended.
+    fn current_turn(&self) -> Result<Self::PlayerName> {
+        match self.status() {
+            GameStatus::InProgress { current_turn } => Ok(current_turn),
+            GameStatus::Completed { .. } => fail!("Error: Game is over"),
+        }
+    }
 
     /// Returns an iterator over actions that the current player can legally
     /// take in the current game state.

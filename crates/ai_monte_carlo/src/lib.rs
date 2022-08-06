@@ -12,5 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod monte_carlo_tests;
-pub mod tree_search_tests;
+//! Random search AI algorithms.
+
+pub mod monte_carlo;

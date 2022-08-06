@@ -15,7 +15,7 @@
 use std::cmp;
 use std::time::Instant;
 
-use ai_core::game_state_node::GameStateNode;
+use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_core::selection_algorithm::SelectionAlgorithm;
 use ai_core::state_evaluator::StateEvaluator;
 use anyhow::Result;
@@ -44,7 +44,7 @@ impl SelectionAlgorithm for AlphaBetaAlgorithm {
         N: GameStateNode,
         E: StateEvaluator<N>,
     {
-        run_internal(deadline, node, evaluator, self.search_depth, player, i64::MIN, i64::MAX)?
+        run_internal(deadline, node, evaluator, self.search_depth, player, i32::MIN, i32::MAX)?
             .action()
     }
 }
@@ -55,24 +55,24 @@ fn run_internal<N, E>(
     evaluator: &E,
     depth: u32,
     player: N::PlayerName,
-    mut alpha: i64,
-    mut beta: i64,
+    mut alpha: i32,
+    mut beta: i32,
 ) -> Result<ScoredAction<N::Action>>
 where
     N: GameStateNode,
     E: StateEvaluator<N>,
 {
-    Ok(match node.current_turn() {
-        _ if depth == 0 => ScoredAction::new(evaluator.evaluate(node, player)),
-        None => ScoredAction::new(evaluator.evaluate(node, player)),
-        Some(current) if current == player => {
-            let mut result = ScoredAction::new(i64::MIN);
+    Ok(match node.status() {
+        _ if depth == 0 => ScoredAction::new(evaluator.evaluate(node, player)?),
+        GameStatus::Completed { .. } => ScoredAction::new(evaluator.evaluate(node, player)?),
+        GameStatus::InProgress { current_turn } if current_turn == player => {
+            let mut result = ScoredAction::new(i32::MIN);
             for action in node.legal_actions()? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
                 let mut child = node.make_copy();
-                child.execute_action(current, action)?;
+                child.execute_action(current_turn, action)?;
                 let score =
                     run_internal(deadline, &child, evaluator, depth - 1, player, alpha, beta)?
                         .score();
@@ -84,14 +84,14 @@ where
             }
             result
         }
-        Some(current) => {
-            let mut result = ScoredAction::new(i64::MAX);
+        GameStatus::InProgress { current_turn } => {
+            let mut result = ScoredAction::new(i32::MAX);
             for action in node.legal_actions()? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
                 let mut child = node.make_copy();
-                child.execute_action(current, action)?;
+                child.execute_action(current_turn, action)?;
                 let score =
                     run_internal(deadline, &child, evaluator, depth - 1, player, alpha, beta)?
                         .score();
