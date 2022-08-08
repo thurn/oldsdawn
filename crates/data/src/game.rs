@@ -186,19 +186,12 @@ pub struct TurnData {
     pub turn_number: TurnNumber,
 }
 
-/// Describes the final outcome of a game
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GameOverData {
-    /// Player who won the game
-    pub winner: Side,
-}
-
 /// High level status of a game, including e.g. whose turn it is
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GamePhase {
     ResolveMulligans(MulliganData),
     Play,
-    GameOver(GameOverData),
+    GameOver { winner: Side },
 }
 
 /// State and configuration of the overall game, including whose turn it is and
@@ -329,6 +322,25 @@ impl GameState {
             };
 
             self.updates.steps.push(UpdateStep { snapshot: clone, update: update() });
+        }
+    }
+
+    /// Makes a clone of the game state without including the [UpdateTracker]
+    /// data.
+    pub fn clone_without_updates(&self) -> Self {
+        Self {
+            id: self.id,
+            data: self.data.clone(),
+            updates: UpdateTracker::default(),
+            overlord_cards: self.overlord_cards.clone(),
+            champion_cards: self.champion_cards.clone(),
+            overlord: self.overlord.clone(),
+            champion: self.champion.clone(),
+            ability_state: self.ability_state.clone(),
+            room_state: self.room_state.clone(),
+            next_sorting_key: self.next_sorting_key,
+            rng: self.rng.clone(),
+            delegate_cache: self.delegate_cache.clone(),
         }
     }
 

@@ -39,7 +39,7 @@ impl SelectionAlgorithm for SingleLevel {
         let mut best_score = i32::MIN;
         let mut best_action: Option<N::Action> = None;
 
-        for action in node.legal_actions()? {
+        for action in node.legal_actions(player)? {
             let mut child = node.make_copy();
             child.execute_action(player, action)?;
             let score = evaluator.evaluate(&child, player)?;

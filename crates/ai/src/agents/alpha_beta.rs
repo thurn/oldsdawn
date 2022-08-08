@@ -66,7 +66,7 @@ fn alpha_beta(
     mut alpha: NotNan<f64>,
     mut beta: NotNan<f64>,
 ) -> Result<NotNan<f64>> {
-    if depth == 0 || matches!(game.data.phase, GamePhase::GameOver(_)) {
+    if depth == 0 || matches!(game.data.phase, GamePhase::GameOver { .. }) {
         return Ok(evaluator(game, maximizing_side));
     }
     let current_side = current_priority(game)?;

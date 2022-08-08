@@ -54,7 +54,7 @@ impl<TState: GameStateNode> StateEvaluator<TState> for RandomPlayoutEvaluator {
                 }
                 GameStatus::InProgress { current_turn } => {
                     let action = game
-                        .legal_actions()?
+                        .legal_actions(current_turn)?
                         .choose(&mut rand::thread_rng())
                         .with_error(|| "No actions found")?;
                     game.execute_action(current_turn, action)?;
@@ -147,8 +147,12 @@ impl<TScoreAlgorithm: ChildScoreAlgorithm> MonteCarloAlgorithm<TScoreAlgorithm> 
             i += 1;
         }
 
-        let (action, _) =
-            self.best_child(&graph, root, node.legal_actions()?.collect(), SelectionMode::Best)?;
+        let (action, _) = self.best_child(
+            &graph,
+            root,
+            node.legal_actions(player)?.collect(),
+            SelectionMode::Best,
+        )?;
         Ok(action)
     }
 
@@ -187,7 +191,7 @@ impl<TScoreAlgorithm: ChildScoreAlgorithm> MonteCarloAlgorithm<TScoreAlgorithm> 
         mut node: NodeIndex,
     ) -> Result<NodeIndex> {
         while let GameStatus::InProgress { current_turn } = game.status() {
-            let actions = game.legal_actions()?.collect::<HashSet<_>>();
+            let actions = game.legal_actions(current_turn)?.collect::<HashSet<_>>();
             let explored = graph.edges(node).map(|e| e.weight().action).collect::<HashSet<_>>();
             if let Some(action) = actions.iter().find(|a| !explored.contains(a)) {
                 // An action exists which has not yet been tried

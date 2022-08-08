@@ -126,7 +126,7 @@ fn tree_policy(
     game: &mut GameState,
     mut node: NodeIndex,
 ) -> Result<NodeIndex> {
-    while !matches!(game.data.phase, GamePhase::GameOver(_)) {
+    while !matches!(game.data.phase, GamePhase::GameOver { .. }) {
         let actions =
             legal_actions::evaluate(game, current_priority(game)?)?.collect::<HashSet<_>>();
         let explored = graph.edges(node).map(|e| e.weight().action).collect::<HashSet<_>>();
@@ -213,8 +213,8 @@ fn best_child(
 /// ```
 fn default_policy(mut game: GameState, side: Side) -> Result<RewardValue> {
     for _ in 0..60 {
-        if let GamePhase::GameOver(data) = game.data.phase {
-            return Ok(notnan(if data.winner == side { 10.0 } else { -10.0 }));
+        if let GamePhase::GameOver { winner } = game.data.phase {
+            return Ok(notnan(if winner == side { 10.0 } else { -10.0 }));
         }
 
         let side = current_priority(&game)?;

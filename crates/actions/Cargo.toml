@@ -12,6 +12,7 @@ test = false
 [dependencies]
 anyhow = "1.0.58"
 tracing = { version = "0.1.35", features = ["max_level_debug", "release_max_level_warn"] }
+enum-iterator = "1.1.3"
 
 data = { path = "../data", version = "0.0.0" }
 raids = { path = "../raids", version = "0.0.0" }

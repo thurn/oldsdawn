@@ -67,7 +67,7 @@ where
         GameStatus::Completed { .. } => ScoredAction::new(evaluator.evaluate(node, player)?),
         GameStatus::InProgress { current_turn } if current_turn == player => {
             let mut result = ScoredAction::new(i32::MIN);
-            for action in node.legal_actions()? {
+            for action in node.legal_actions(current_turn)? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
@@ -86,7 +86,7 @@ where
         }
         GameStatus::InProgress { current_turn } => {
             let mut result = ScoredAction::new(i32::MAX);
-            for action in node.legal_actions()? {
+            for action in node.legal_actions(current_turn)? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }

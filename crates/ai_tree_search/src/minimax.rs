@@ -63,7 +63,7 @@ where
             // I was worried about creating a ScoredAction and tracking the action
             // unnecessarily for children, but it makes no performance
             // difference in benchmark tests.
-            for action in node.legal_actions()? {
+            for action in node.legal_actions(current_turn)? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
@@ -78,7 +78,7 @@ where
         }
         GameStatus::InProgress { current_turn } => {
             let mut result = ScoredAction::new(i32::MAX);
-            for action in node.legal_actions()? {
+            for action in node.legal_actions(current_turn)? {
                 if deadline_exceeded(deadline, depth) {
                     return Ok(result.with_fallback_action(action));
                 }

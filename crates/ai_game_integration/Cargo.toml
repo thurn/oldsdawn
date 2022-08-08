@@ -1,0 +1,23 @@
+[package]
+name = "ai_game_integration"
+version = "0.0.0"
+description = "Implements generic game AI algorithms specifically for spelldawn"
+license = "Apache-2.0"
+edition = "2021"
+
+[lib]
+doctest = false
+test = false
+
+[dependencies]
+anyhow = "1.0.58"
+
+ai_core = { path = "../ai_core", version = "0.0.0" }
+ai_monte_carlo = { path = "../ai_monte_carlo", version = "0.0.0" }
+ai_tree_search = { path = "../ai_tree_search", version = "0.0.0" }
+actions = { path = "../actions", version = "0.0.0" }
+cards = { path = "../cards", version = "0.0.0" }
+data = { path = "../data", version = "0.0.0" }
+raids = { path = "../raids", version = "0.0.0" }
+rules = { path = "../rules", version = "0.0.0" }
+with_error = { path = "../with_error", version = "0.0.0" }

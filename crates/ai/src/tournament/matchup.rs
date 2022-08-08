@@ -56,17 +56,17 @@ impl Display for MatchOutcome {
 pub fn run(mut game: GameState, config: RunGames) -> Result<MatchOutcome> {
     loop {
         for side in enum_iterator::all::<Side>() {
-            if let GamePhase::GameOver(data) = &game.data.phase {
+            if let GamePhase::GameOver { winner } = &game.data.phase {
                 return Ok(MatchOutcome {
                     winner: OutcomePlayer {
-                        agent: game.player(data.winner).agent.unwrap().name,
-                        side: data.winner,
-                        score: game.player(data.winner).score,
+                        agent: game.player(*winner).agent.unwrap().name,
+                        side: *winner,
+                        score: game.player(*winner).score,
                     },
                     loser: OutcomePlayer {
-                        agent: game.player(data.winner.opponent()).agent.unwrap().name,
-                        side: data.winner.opponent(),
-                        score: game.player(data.winner.opponent()).score,
+                        agent: game.player(winner.opponent()).agent.unwrap().name,
+                        side: winner.opponent(),
+                        score: game.player(winner.opponent()).score,
                     },
                     turn_count: game.data.turn.turn_number,
                 });

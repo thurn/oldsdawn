@@ -174,7 +174,10 @@ impl GameStateNode for NimState {
         }
     }
 
-    fn legal_actions<'a>(&'a self) -> Result<Box<dyn Iterator<Item = NimAction> + 'a>> {
+    fn legal_actions<'a>(
+        &'a self,
+        _: NimPlayer,
+    ) -> Result<Box<dyn Iterator<Item = NimAction> + 'a>> {
         Ok(Box::new(all_piles().into_iter().flat_map(|pile| {
             (1..=self.piles[&pile]).map(move |amount| NimAction { pile, amount })
         })))

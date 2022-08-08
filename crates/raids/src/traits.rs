@@ -39,7 +39,11 @@ pub trait RaidPhase {
     /// action is required.
     fn enter(&self, game: &mut GameState) -> Result<Option<InternalRaidPhase>>;
 
-    /// Identifies the player who can currently act in the current phase.
+    /// Identifies the player who can act in the current raid phase.
+    ///
+    /// At time of writing, the Overlord player can never act during a raid,
+    /// making this largely irrelevant. Keeping it around for now in case that
+    /// changes.
     fn active_side(&self) -> Side;
 
     /// Describes how the current phase should be represented in the UI.

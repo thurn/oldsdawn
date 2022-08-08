@@ -32,11 +32,11 @@ pub enum GameStatus<TPlayer: Eq> {
 /// strategy (the game of Nim) to sanity-check that the AI implementations are
 /// doing broadly correct things.
 pub trait GameStateNode {
-    /// A player in the game.
-    type PlayerName: Eq + Copy;
-
     /// A game action to transition the game to a new state.
     type Action: Eq + Copy + Hash;
+
+    /// A player in the game.
+    type PlayerName: Eq + Copy;
 
     /// Create a copy of this search node to be mutated by selection algorithms.
     /// A basic implementation of this would be to simply call `.clone()`, but
@@ -57,9 +57,14 @@ pub trait GameStateNode {
         }
     }
 
-    /// Returns an iterator over actions that the current player can legally
+    /// Returns an iterator over actions that the provided `player` can legally
     /// take in the current game state.
-    fn legal_actions<'a>(&'a self) -> Result<Box<dyn Iterator<Item = Self::Action> + 'a>>;
+    ///
+    /// Should return no actions if the game has ended.
+    fn legal_actions<'a>(
+        &'a self,
+        player: Self::PlayerName,
+    ) -> Result<Box<dyn Iterator<Item = Self::Action> + 'a>>;
 
     /// Apply the result of a given action to this game state.
     fn execute_action(&mut self, player: Self::PlayerName, action: Self::Action) -> Result<()>;

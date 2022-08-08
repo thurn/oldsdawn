@@ -30,7 +30,7 @@ use data::delegates::{
     RaidSuccessEvent, Scope, ScoreCard, ScoreCardEvent, StoredManaTakenEvent, SummonMinionEvent,
     UnveilProjectEvent,
 };
-use data::game::{GameOverData, GamePhase, GameState, TurnData};
+use data::game::{GamePhase, GameState, TurnData};
 use data::game_actions::{CardPromptAction, GamePrompt};
 use data::primitives::{
     ActionCount, BoostData, CardId, HasAbilityId, ManaValue, PointsValue, RoomId, RoomLocation,
@@ -178,7 +178,7 @@ pub fn score_points(game: &mut GameState, side: Side, amount: PointsValue) -> Re
 
 /// Mark the game as won by the `winner` player.
 pub fn game_over(game: &mut GameState, winner: Side) -> Result<()> {
-    game.data.phase = GamePhase::GameOver(GameOverData { winner });
+    game.data.phase = GamePhase::GameOver { winner };
     game.record_update(|| GameUpdate::GameOver(winner));
     Ok(())
 }

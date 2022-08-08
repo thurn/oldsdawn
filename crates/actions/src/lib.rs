@@ -16,6 +16,8 @@
 //! from the client. The `handle_user_action` function is the primary
 //! entry-point into the rules engine.
 
+pub mod legal_actions;
+
 use anyhow::Result;
 use data::card_definition::AbilityType;
 use data::card_state::CardPosition;
@@ -59,7 +61,7 @@ pub fn handle_user_action(game: &mut GameState, user_side: Side, action: UserAct
 pub fn can_take_action(game: &GameState, side: Side) -> bool {
     match &game.data.phase {
         GamePhase::ResolveMulligans(mulligans) => return mulligans.decision(side).is_none(),
-        GamePhase::GameOver(_) => return false,
+        GamePhase::GameOver { .. } => return false,
         _ => {}
     };
 
