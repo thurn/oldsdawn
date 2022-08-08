@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! An implementation of Monte Carlo Tree Search.
-//!
-//! This implementation is based on the pseudocode given in "A Survey of Monte
-//! Carlo Tree Search Methods" by Browne et al. in IEEE Transactions on
-//! Computational Intelligence and AI in Games, Vol. 4, No. 1, March 2012.
-
 use std::collections::HashSet;
 use std::f64::consts;
 
@@ -180,19 +174,6 @@ fn expand(
 
 /// Picks the most promising child node to explore, returning its associated
 /// action and node identifier.
-///
-/// This implementation is using the UCT1 algorithm, a standard approach for
-/// selecting children and solution to the 'multi-armed bandit' problem.
-///
-/// Pseudocode:
-/// ```text
-/// 𝐟𝐮𝐧𝐜𝐭𝐢𝐨𝐧 BESTCHILD(v,c)
-///   𝐫𝐞𝐭𝐮𝐫𝐧 argmax(
-///     v′ ∈ children of v:
-///     Q(v′) / N(v′) +
-///     c * √ [ 2 * ln(N(v)) / N(v′) ]
-///   )
-/// ```
 fn best_child(
     graph: &SearchGraph,
     node: NodeIndex,

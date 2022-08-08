@@ -17,12 +17,17 @@ use std::time::Instant;
 use ai_core::agent;
 use ai_core::agent::{Agent, AgentData};
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
+use ai_monte_carlo::uct1::Uct1;
 use ai_testing::nim;
 use ai_testing::nim::NimState;
 
 #[test]
 pub fn uct1() {
-    let agent = AgentData::omniscient("UCT1", MonteCarloAlgorithm {}, RandomPlayoutEvaluator {});
+    let agent = AgentData::omniscient(
+        "UCT1",
+        MonteCarloAlgorithm { child_score_algorithm: Uct1 {} },
+        RandomPlayoutEvaluator {},
+    );
 
     nim::assert_perfect_short(&NimState::new(2), &agent);
     nim::assert_perfect_short(&NimState::new_with_piles(2, 2, 3), &agent);
@@ -33,7 +38,11 @@ pub fn uct1() {
 
 #[test]
 pub fn uct1_deadline_exceeded() {
-    let agent = AgentData::omniscient("UCT1", MonteCarloAlgorithm {}, RandomPlayoutEvaluator {});
+    let agent = AgentData::omniscient(
+        "UCT1",
+        MonteCarloAlgorithm { child_score_algorithm: Uct1 {} },
+        RandomPlayoutEvaluator {},
+    );
     let state = NimState::new(100);
     let start_time = Instant::now();
     let action = agent.pick_action(agent::deadline(1), &state);

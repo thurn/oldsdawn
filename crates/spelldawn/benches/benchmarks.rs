@@ -19,8 +19,8 @@ use ai::tournament::run_tournament;
 use ai::tournament::run_tournament::RunGames;
 use ai_core::agent;
 use ai_core::agent::{Agent, AgentData};
-use ai_monte_carlo::monte_carlo;
-use ai_monte_carlo::monte_carlo::RandomPlayoutEvaluator;
+use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
+use ai_monte_carlo::uct1::Uct1;
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
 use ai_tree_search::alpha_beta::AlphaBetaAlgorithm;
 use ai_tree_search::minimax::MinimaxAlgorithm;
@@ -116,10 +116,12 @@ pub fn uct1_nim(c: &mut Criterion) {
     let state = NimState::new(5);
     let evaluator = RandomPlayoutEvaluator {};
     let player = state.turn;
+    let monte_carlo = MonteCarloAlgorithm { child_score_algorithm: Uct1 {} };
 
     group.bench_function("uct1_nim", |b| {
         b.iter(|| {
-            monte_carlo::run_search(|i| i == 10_000, &state, &evaluator, player)
+            monte_carlo
+                .run_search(|i| i == 10_000, &state, &evaluator, player)
                 .expect("run_search() Error");
         })
     });

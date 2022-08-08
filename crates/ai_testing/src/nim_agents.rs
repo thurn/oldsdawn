@@ -14,6 +14,7 @@
 
 use ai_core::agent::AgentData;
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
+use ai_monte_carlo::uct1::Uct1;
 use ai_tree_search::alpha_beta::AlphaBetaAlgorithm;
 use ai_tree_search::minimax::MinimaxAlgorithm;
 use ai_tree_search::single_level::SingleLevel;
@@ -34,5 +35,9 @@ pub const NIM_ALPHA_BETA_AGENT: AgentData<AlphaBetaAlgorithm, NimWinLossEvaluato
         NimWinLossEvaluator {},
     );
 
-pub const NIM_UCT1_AGENT: AgentData<MonteCarloAlgorithm, RandomPlayoutEvaluator, NimState> =
-    AgentData::omniscient("UCT1", MonteCarloAlgorithm {}, RandomPlayoutEvaluator {});
+pub const NIM_UCT1_AGENT: AgentData<MonteCarloAlgorithm<Uct1>, RandomPlayoutEvaluator, NimState> =
+    AgentData::omniscient(
+        "UCT1",
+        MonteCarloAlgorithm { child_score_algorithm: Uct1 {} },
+        RandomPlayoutEvaluator {},
+    );
