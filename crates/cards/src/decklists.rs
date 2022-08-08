@@ -26,7 +26,7 @@ use rules::{dispatch, mutations};
 
 /// Standard Overlord deck for use in tests
 pub static CANONICAL_OVERLORD: Lazy<Deck> = Lazy::new(|| Deck {
-    owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
+    owner_id: PlayerId::Named(NamedPlayer::TestNoAction),
     side: Side::Overlord,
     identity: CardName::TestOverlordIdentity,
     cards: hashmap! {
@@ -51,7 +51,7 @@ pub static CANONICAL_OVERLORD: Lazy<Deck> = Lazy::new(|| Deck {
 
 /// Standard Champion deck for use in tests
 pub static CANONICAL_CHAMPION: Lazy<Deck> = Lazy::new(|| Deck {
-    owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
+    owner_id: PlayerId::Named(NamedPlayer::TestNoAction),
     side: Side::Champion,
     identity: CardName::TestChampionIdentity,
     cards: hashmap! {

@@ -17,13 +17,14 @@ use std::time::{Duration, Instant};
 
 use ai_core::agent::Agent;
 use ai_core::game_state_node::{GameStateNode, GameStatus};
-use ai_testing::nim::{nim_sum, NimAction, NimPile, NimPlayer, NimState};
-use ai_testing::nim_agents::{
-    NIM_ALPHA_BETA_AGENT, NIM_MINIMAX_AGENT, NIM_PERFECT_AGENT, NIM_UCT1_AGENT,
-};
 use anyhow::Result;
 use clap::{ArgEnum, Parser};
 use with_error::WithError;
+
+use crate::nim::{nim_sum, NimAction, NimPile, NimPlayer, NimState};
+use crate::nim_agents::{
+    NIM_ALPHA_BETA_AGENT, NIM_MINIMAX_AGENT, NIM_PERFECT_AGENT, NIM_UCT1_AGENT,
+};
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]

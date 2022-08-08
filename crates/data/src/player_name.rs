@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use anyhow::Result;
+use clap::ArgEnum;
 use serde::{Deserialize, Serialize};
 use with_error::fail;
 
@@ -21,7 +22,7 @@ use with_error::fail;
 pub enum PlayerId {
     /// ID stored in the database, i.e. a human player
     Database(u64),
-    /// Known named player, i.e. an AI player
+    /// Known player, i.e. an AI agent
     Named(NamedPlayer),
 }
 
@@ -37,8 +38,9 @@ impl PlayerId {
 }
 
 /// Identifies a named AI player
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, ArgEnum)]
 pub enum NamedPlayer {
     /// Uses canonical decklists, does not take any actions
-    TestCanonicalDeckNoAction,
+    TestNoAction,
+    TestAlphaBeta,
 }

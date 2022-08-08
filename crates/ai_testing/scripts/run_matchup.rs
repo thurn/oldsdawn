@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Tools for testing AI implementations
+use ai_testing::run_matchup_impl;
+use anyhow::Result;
 
-pub mod nim;
-pub mod nim_agents;
-pub mod run_matchup_impl;
-pub mod run_nim_impl;
+pub fn main() -> Result<()> {
+    run_matchup_impl::main()
+}

@@ -653,13 +653,13 @@ mod tests {
             GameId::new(0),
             Deck {
                 side: Side::Overlord,
-                owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
+                owner_id: PlayerId::Named(NamedPlayer::TestNoAction),
                 identity: CardName::TestOverlordIdentity,
                 cards: overlord.into_iter().map(|name| (name, 1)).collect(),
             },
             Deck {
                 side: Side::Champion,
-                owner_id: PlayerId::Named(NamedPlayer::TestCanonicalDeckNoAction),
+                owner_id: PlayerId::Named(NamedPlayer::TestNoAction),
                 identity: CardName::TestOverlordIdentity,
                 cards: champion.into_iter().map(|name| (name, 1)).collect(),
             },

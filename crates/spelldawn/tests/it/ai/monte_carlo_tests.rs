@@ -20,20 +20,26 @@ use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
 use ai_monte_carlo::uct1::Uct1;
 use ai_testing::nim;
 use ai_testing::nim::NimState;
+use ai_testing::nim_agents::NIM_UCT1_AGENT;
 
 #[test]
-pub fn uct1() {
-    let agent = AgentData::omniscient(
-        "UCT1",
-        MonteCarloAlgorithm { child_score_algorithm: Uct1 {} },
-        RandomPlayoutEvaluator {},
-    );
+pub fn uct1_222() {
+    nim::assert_perfect_short(&NimState::new(2), &NIM_UCT1_AGENT);
+}
 
-    nim::assert_perfect_short(&NimState::new(2), &agent);
-    nim::assert_perfect_short(&NimState::new_with_piles(2, 2, 3), &agent);
-    nim::assert_perfect_short(&NimState::new(3), &agent);
-    nim::assert_perfect_short(&NimState::new_with_piles(1, 1, 3), &agent);
-    nim::assert_perfect_short(&NimState::new_with_piles(4, 3, 2), &agent);
+#[test]
+pub fn uct1_223() {
+    nim::assert_perfect_short(&NimState::new_with_piles(2, 2, 3), &NIM_UCT1_AGENT);
+}
+
+#[test]
+pub fn uct1_333() {
+    nim::assert_perfect_short(&NimState::new(3), &NIM_UCT1_AGENT);
+}
+
+#[test]
+pub fn uct1_432() {
+    nim::assert_perfect_short(&NimState::new_with_piles(4, 3, 2), &NIM_UCT1_AGENT);
 }
 
 #[test]

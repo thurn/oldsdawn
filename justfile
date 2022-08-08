@@ -281,7 +281,7 @@ snapshots:
 update-cards:
     cargo run --bin update_cards
 
-benchmark:
+benchmark *args='':
     cargo criterion --no-run -p spelldawn
     codesign -f -s - `find target/release/deps -name '*benchmarks*'`
     cargo criterion -p spelldawn -- "$@"
@@ -291,8 +291,8 @@ benchmark:
 check-docs:
     #!/usr/bin/env sh
     set -euxo pipefail
-    # Cargo rusdoc fails if there are no library targets, should figure out how to skip them properly
-    for file in `ls crates | grep -v 'spelldawn' | grep -v 'print_test_results'`; do
+    # Cargo rustdoc fails if there are no library targets, should figure out how to skip them properly
+    for file in `ls crates | grep -v 'spelldawn'` ; do
         echo "Checking rustdoc for $file";
         cargo rustdoc --lib -p $file -- \
             -D rustdoc::broken-intra-doc-links \
@@ -363,3 +363,9 @@ git-amend2:
 
 git-amend3:
     git commit -a --amend -C HEAD
+
+@nim *args='':
+    cargo run --bin run_nim -- $@
+
+@matchup *args='':
+    cargo run --bin run_matchup -- $@

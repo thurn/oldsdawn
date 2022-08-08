@@ -10,8 +10,13 @@ doctest = false
 test = false
 
 [[bin]]
-name = "nim"
-path = "src/run_nim.rs"
+name = "run_nim"
+path = "scripts/run_nim.rs"
+test = false
+
+[[bin]]
+name = "run_matchup"
+path = "scripts/run_matchup.rs"
 test = false
 
 [dependencies]

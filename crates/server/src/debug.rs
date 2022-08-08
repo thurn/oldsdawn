@@ -55,7 +55,7 @@ pub fn handle_debug_action(
                             debug_command: Some(DebugCommand::InvokeAction(GameAction {
                                 action: Some(Action::NewGame(NewGameAction {
                                     opponent_id: Some(adapters::named_player_identifier(
-                                        NamedPlayer::TestCanonicalDeckNoAction,
+                                        NamedPlayer::TestNoAction,
                                     )?),
                                     deck: Some(adapters::deck_identifier(match side {
                                         Side::Overlord => OVERLORD_DECK_ID,

@@ -619,6 +619,7 @@ name = "data"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "clap 3.2.16",
  "convert_case",
  "enum-iterator",
  "enum-kinds",
