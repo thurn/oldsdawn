@@ -108,3 +108,10 @@ pub fn canonical_game() -> Result<GameState> {
 
     Ok(game)
 }
+
+/// Looks up the [Deck] for a named player.
+pub fn deck_for_player(player: NamedPlayer, side: Side) -> Deck {
+    // (Eventually different named players will have different decks)
+    let id = PlayerId::Named(player);
+    canonical_deck(id, side)
+}

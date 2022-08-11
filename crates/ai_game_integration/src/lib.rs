@@ -14,4 +14,6 @@
 
 //! Implements generic game AI algorithms specifically for spelldawn
 
+pub mod agents;
+pub mod evaluators;
 pub mod state_node;

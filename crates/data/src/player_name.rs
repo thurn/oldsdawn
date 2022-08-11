@@ -22,7 +22,9 @@ use with_error::fail;
 pub enum PlayerId {
     /// ID stored in the database, i.e. a human player
     Database(u64),
-    /// Known player, i.e. an AI agent
+    /// Known player, i.e. an AI agent.
+    ///
+    /// In the future these might be characters in a single-player story?
     Named(NamedPlayer),
 }
 
@@ -40,7 +42,8 @@ impl PlayerId {
 /// Identifies a named AI player
 #[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, ArgEnum)]
 pub enum NamedPlayer {
-    /// Uses canonical decklists, does not take any actions
     TestNoAction,
+    TestMinimax,
     TestAlphaBeta,
+    TestUct1,
 }
