@@ -18,8 +18,8 @@
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
+use actions::legal_actions;
 use adapters;
-use ai::core::legal_actions;
 use anyhow::Result;
 use data::card_name::CardName;
 use data::card_state::{CardPosition, CardState};
@@ -337,6 +337,13 @@ impl TestSession {
         target: RoomId,
     ) {
         self.activate_ability_impl(card_id, index, Some(target))
+    }
+
+    pub fn legal_actions_result<'a>(
+        &'a self,
+        side: Side,
+    ) -> Result<Box<dyn Iterator<Item = UserAction> + 'a>> {
+        legal_actions::evaluate(self.database.game.as_ref().expect("game"), side)
     }
 
     /// Evaluates legal actions for the [Side] player in the current game state.

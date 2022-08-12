@@ -14,7 +14,7 @@
 
 use std::time::Duration;
 
-use ai::core::legal_actions;
+use actions::legal_actions;
 use ai_core::agent::{Agent, AgentConfig, AgentData};
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
 use ai_monte_carlo::uct1::Uct1;

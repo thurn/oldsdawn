@@ -422,7 +422,7 @@ fn triggered_ability_take_all_mana() {
 #[test]
 fn legal_actions() {
     let mut g = new_game(Side::Overlord, Args::default());
-    assert_eq!(g.legal_actions(Side::Champion), vec![]);
+    assert!(g.legal_actions_result(Side::Champion).is_err());
     assert_contents_equal(
         g.legal_actions(Side::Overlord),
         vec![UserAction::GainMana, UserAction::DrawCard],
@@ -472,7 +472,7 @@ fn legal_actions_level_up_room() {
 #[test]
 fn champion_legal_actions() {
     let g = new_game(Side::Champion, Args::default());
-    assert_eq!(g.legal_actions(Side::Overlord), vec![]);
+    assert!(g.legal_actions_result(Side::Overlord).is_err());
     assert_contents_equal(
         g.legal_actions(Side::Champion),
         vec![

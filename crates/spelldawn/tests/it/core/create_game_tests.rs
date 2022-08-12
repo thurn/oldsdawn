@@ -91,7 +91,7 @@ fn mulligan_legal_actions() {
     );
 
     session.click_on(overlord_id, "Keep");
-    assert_contents_equal(session.legal_actions(Side::Overlord), vec![]);
+    assert!(session.legal_actions_result(Side::Overlord).is_err());
     assert_contents_equal(
         session.legal_actions(Side::Champion),
         vec![

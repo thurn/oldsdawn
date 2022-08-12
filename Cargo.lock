@@ -42,23 +42,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ai"
-version = "0.0.0"
-dependencies = [
- "actions",
- "anyhow",
- "cards",
- "data",
- "enum-iterator",
- "ordered-float",
- "petgraph",
- "raids",
- "rand",
- "rules",
- "with_error",
-]
-
-[[package]]
 name = "ai_core"
 version = "0.0.0"
 dependencies = [
@@ -1722,7 +1705,6 @@ version = "0.0.0"
 dependencies = [
  "actions",
  "adapters",
- "ai",
  "ai_core",
  "ai_game_integration",
  "anyhow",
@@ -1803,7 +1785,7 @@ dependencies = [
 name = "spelldawn"
 version = "0.0.0"
 dependencies = [
- "ai",
+ "actions",
  "ai_core",
  "ai_monte_carlo",
  "ai_testing",
@@ -1900,8 +1882,8 @@ dependencies = [
 name = "test_utils"
 version = "0.0.0"
 dependencies = [
+ "actions",
  "adapters",
- "ai",
  "anyhow",
  "cards",
  "data",
