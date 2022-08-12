@@ -15,9 +15,8 @@
 use std::collections::HashMap;
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use std::time::{Duration, Instant};
 
-use ai_core::agent::Agent;
+use ai_core::agent::{Agent, AgentConfig};
 use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_core::state_evaluator::StateEvaluator;
 use anyhow::Result;
@@ -38,9 +37,8 @@ pub fn assert_perfect_short(state: &NimState, agent: &impl Agent<NimState>) {
 /// seconds.
 pub fn assert_perfect_in_seconds(state: &NimState, agent: &impl Agent<NimState>, seconds: u64) {
     let current = state.current_turn().unwrap();
-    let result = agent
-        .pick_action(Instant::now() + Duration::from_secs(seconds), state)
-        .expect("Error running agent");
+    let result =
+        agent.pick_action(AgentConfig::with_deadline(seconds), state).expect("Error running agent");
     let mut copy = state.make_copy();
     copy.execute_action(current, result).unwrap();
     assert_eq!(1, NimPerfectEvaluator {}.evaluate(&copy, current).unwrap());

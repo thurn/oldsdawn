@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::time::Instant;
-
-use ai_core::agent::{Agent, AgentData};
+use ai_core::agent::{Agent, AgentConfig, AgentData};
+use ai_core::compound_evaluator::CompoundEvaluator;
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
 use ai_monte_carlo::uct1::Uct1;
 use ai_tree_search::alpha_beta::AlphaBetaAlgorithm;
@@ -24,32 +23,45 @@ use data::game_actions::UserAction;
 use data::player_name::NamedPlayer;
 use with_error::fail;
 
-use crate::evaluators::ScoreEvaluator;
+use crate::evaluators::{
+    CardsInHandEvaluator, CardsInPlayEvaluator, LevelCountersEvaluator, ManaDifferenceEvaluator,
+    ScoreEvaluator,
+};
 use crate::state_node::SpelldawnState;
 
 pub fn get(name: NamedPlayer) -> Box<dyn Agent<SpelldawnState>> {
     match name {
-        NamedPlayer::TestNoAction => Box::new(NO_ACTION_AGENT),
-        NamedPlayer::TestMinimax => Box::new(MINIMAX_AGENT),
-        NamedPlayer::TestAlphaBeta => Box::new(ALPHA_BETA_AGENT),
-        NamedPlayer::TestUct1 => Box::new(UCT1_AGENT),
+        NamedPlayer::TestNoAction => Box::new(NoActionAgent {}),
+        NamedPlayer::TestMinimax => Box::new(AgentData::omniscient(
+            "MINIMAX",
+            MinimaxAlgorithm { search_depth: 4 },
+            ScoreEvaluator {},
+        )),
+        NamedPlayer::TestAlphaBetaScores => Box::new(AgentData::omniscient(
+            "ALPHA_BETA_SCORES",
+            AlphaBetaAlgorithm { search_depth: 4 },
+            CompoundEvaluator { evaluators: vec![(1, Box::new(ScoreEvaluator {}))] },
+        )),
+        NamedPlayer::TestAlphaBetaHeuristics => Box::new(AgentData::omniscient(
+            "ALPHA_BETA_HEURISTICS",
+            AlphaBetaAlgorithm { search_depth: 4 },
+            CompoundEvaluator {
+                evaluators: vec![
+                    (100_000, Box::new(ScoreEvaluator {})),
+                    (10, Box::new(ManaDifferenceEvaluator {})),
+                    (5, Box::new(CardsInHandEvaluator {})),
+                    (15, Box::new(CardsInPlayEvaluator {})),
+                    (20, Box::new(LevelCountersEvaluator {})),
+                ],
+            },
+        )),
+        NamedPlayer::TestUct1 => Box::new(AgentData::omniscient(
+            "UCT1",
+            MonteCarloAlgorithm { child_score_algorithm: Uct1 {} },
+            RandomPlayoutEvaluator {},
+        )),
     }
 }
-
-pub const NO_ACTION_AGENT: NoActionAgent = NoActionAgent {};
-
-pub const MINIMAX_AGENT: AgentData<MinimaxAlgorithm, ScoreEvaluator, SpelldawnState> =
-    AgentData::omniscient("MINIMAX", MinimaxAlgorithm { search_depth: 4 }, ScoreEvaluator {});
-
-pub const ALPHA_BETA_AGENT: AgentData<AlphaBetaAlgorithm, ScoreEvaluator, SpelldawnState> =
-    AgentData::omniscient("ALPHA_BETA", AlphaBetaAlgorithm { search_depth: 4 }, ScoreEvaluator {});
-
-pub const UCT1_AGENT: AgentData<MonteCarloAlgorithm<Uct1>, RandomPlayoutEvaluator, SpelldawnState> =
-    AgentData::omniscient(
-        "UCT1",
-        MonteCarloAlgorithm { child_score_algorithm: Uct1 {} },
-        RandomPlayoutEvaluator {},
-    );
 
 pub struct NoActionAgent {}
 
@@ -58,7 +70,7 @@ impl Agent<SpelldawnState> for NoActionAgent {
         "NO_ACTION"
     }
 
-    fn pick_action(&self, _: Instant, _: &SpelldawnState) -> Result<UserAction> {
+    fn pick_action(&self, _: AgentConfig, _: &SpelldawnState) -> Result<UserAction> {
         fail!("No Action")
     }
 }

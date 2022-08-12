@@ -60,7 +60,7 @@ pub trait GameStateNode {
     /// Returns an iterator over actions that the provided `player` can legally
     /// take in the current game state.
     ///
-    /// Should return no actions if the game has ended.
+    /// Should an error if no actions are available.
     fn legal_actions<'a>(
         &'a self,
         player: Self::PlayerName,

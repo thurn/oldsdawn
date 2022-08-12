@@ -21,6 +21,7 @@
 use std::collections::HashSet;
 use std::time::Instant;
 
+use ai_core::agent::AgentConfig;
 use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_core::selection_algorithm::SelectionAlgorithm;
 use ai_core::state_evaluator::StateEvaluator;
@@ -115,7 +116,7 @@ impl<TScoreAlgorithm: ChildScoreAlgorithm> SelectionAlgorithm
 {
     fn pick_action<TStateNode, TEvaluator>(
         &self,
-        deadline: Instant,
+        config: AgentConfig,
         node: &TStateNode,
         evaluator: &TEvaluator,
         player: TStateNode::PlayerName,
@@ -124,7 +125,12 @@ impl<TScoreAlgorithm: ChildScoreAlgorithm> SelectionAlgorithm
         TStateNode: GameStateNode,
         TEvaluator: StateEvaluator<TStateNode>,
     {
-        self.run_search(|i| i % 100 == 0 && deadline < Instant::now(), node, evaluator, player)
+        self.run_search(
+            |i| i % 100 == 0 && config.deadline < Instant::now(),
+            node,
+            evaluator,
+            player,
+        )
     }
 }
 

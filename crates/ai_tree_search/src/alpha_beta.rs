@@ -15,6 +15,7 @@
 use std::cmp;
 use std::time::Instant;
 
+use ai_core::agent::AgentConfig;
 use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_core::selection_algorithm::SelectionAlgorithm;
 use ai_core::state_evaluator::StateEvaluator;
@@ -35,7 +36,7 @@ pub struct AlphaBetaAlgorithm {
 impl SelectionAlgorithm for AlphaBetaAlgorithm {
     fn pick_action<N, E>(
         &self,
-        deadline: Instant,
+        config: AgentConfig,
         node: &N,
         evaluator: &E,
         player: N::PlayerName,
@@ -44,13 +45,14 @@ impl SelectionAlgorithm for AlphaBetaAlgorithm {
         N: GameStateNode,
         E: StateEvaluator<N>,
     {
-        run_internal(deadline, node, evaluator, self.search_depth, player, i32::MIN, i32::MAX)?
+        assert!(matches!(node.status(), GameStatus::InProgress { .. }));
+        run_internal(config, node, evaluator, self.search_depth, player, i32::MIN, i32::MAX)?
             .action()
     }
 }
 
 fn run_internal<N, E>(
-    deadline: Instant,
+    config: AgentConfig,
     node: &N,
     evaluator: &E,
     depth: u32,
@@ -68,13 +70,13 @@ where
         GameStatus::InProgress { current_turn } if current_turn == player => {
             let mut result = ScoredAction::new(i32::MIN);
             for action in node.legal_actions(current_turn)? {
-                if deadline_exceeded(deadline, depth) {
+                if deadline_exceeded(config, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
                 let mut child = node.make_copy();
                 child.execute_action(current_turn, action)?;
                 let score =
-                    run_internal(deadline, &child, evaluator, depth - 1, player, alpha, beta)?
+                    run_internal(config, &child, evaluator, depth - 1, player, alpha, beta)?
                         .score();
                 alpha = cmp::max(alpha, score);
                 result.insert_max(action, score);
@@ -87,13 +89,13 @@ where
         GameStatus::InProgress { current_turn } => {
             let mut result = ScoredAction::new(i32::MAX);
             for action in node.legal_actions(current_turn)? {
-                if deadline_exceeded(deadline, depth) {
+                if deadline_exceeded(config, depth) {
                     return Ok(result.with_fallback_action(action));
                 }
                 let mut child = node.make_copy();
                 child.execute_action(current_turn, action)?;
                 let score =
-                    run_internal(deadline, &child, evaluator, depth - 1, player, alpha, beta)?
+                    run_internal(config, &child, evaluator, depth - 1, player, alpha, beta)?
                         .score();
                 beta = cmp::min(beta, score);
                 result.insert_min(action, score);
@@ -101,6 +103,7 @@ where
                     break; // Alpha cutoff
                 }
             }
+            assert!(result.has_action());
             result
         }
     })
@@ -108,6 +111,10 @@ where
 
 /// Check whether `deadline` has been exceeded. Only checks deadlines for higher
 /// parts of the tree to avoid excessive calls to Instant::now().
-fn deadline_exceeded(deadline: Instant, depth: u32) -> bool {
-    depth > 1 && deadline < Instant::now()
+fn deadline_exceeded(config: AgentConfig, depth: u32) -> bool {
+    let exceeded = depth > 1 && config.deadline < Instant::now();
+    if exceeded && config.panic_on_search_timeout {
+        panic!("Search deadline exceeded!");
+    }
+    exceeded
 }

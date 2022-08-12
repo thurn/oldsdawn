@@ -73,11 +73,17 @@ impl Component for DebugPanel {
                     .child(debug_button(format!("{} 3", icons::RESTORE), DebugAction::LoadState(3)))
                     .child(debug_button(
                         "Overlord AI",
-                        DebugAction::SetNamedPlayer(Side::Overlord, NamedPlayer::TestAlphaBeta),
+                        DebugAction::SetNamedPlayer(
+                            Side::Overlord,
+                            NamedPlayer::TestAlphaBetaHeuristics,
+                        ),
                     ))
                     .child(debug_button(
                         "Champion AI",
-                        DebugAction::SetNamedPlayer(Side::Champion, NamedPlayer::TestAlphaBeta),
+                        DebugAction::SetNamedPlayer(
+                            Side::Champion,
+                            NamedPlayer::TestAlphaBetaHeuristics,
+                        ),
                     )),
             )
             .build()

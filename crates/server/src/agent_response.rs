@@ -16,8 +16,7 @@
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use ai_core::agent;
-use ai_core::agent::Agent;
+use ai_core::agent::{Agent, AgentConfig};
 use ai_game_integration::agents;
 use ai_game_integration::state_node::SpelldawnState;
 use anyhow::Result;
@@ -94,7 +93,7 @@ async fn run_agent_loop(
     loop {
         let game = SpelldawnState(database.game(game_id)?);
         let commands = if let Some((side, agent)) = active_agent(&game) {
-            let action = agent.pick_action(agent::deadline(3), &game)?;
+            let action = agent.pick_action(AgentConfig::with_deadline(3), &game)?;
             let response = requests::handle_action(
                 &mut database,
                 game.player(side).id,

@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_core::state_evaluator::StateEvaluator;
 use anyhow::Result;
 use data::primitives::Side;
+use rules::mana;
+use rules::mana::ManaPurpose;
 
 use crate::state_node::SpelldawnState;
 
@@ -23,17 +24,48 @@ pub struct ScoreEvaluator {}
 
 impl StateEvaluator<SpelldawnState> for ScoreEvaluator {
     fn evaluate(&self, node: &SpelldawnState, side: Side) -> Result<i32> {
-        match node.status() {
-            GameStatus::Completed { winner } => {
-                if winner == side {
-                    Ok(i32::MAX)
-                } else {
-                    Ok(i32::MIN)
-                }
-            }
-            GameStatus::InProgress { .. } => {
-                Ok((node.player(side).score as i32) - (node.player(side.opponent()).score as i32))
-            }
+        Ok(node.player(side).score as i32 - (node.player(side.opponent()).score as i32))
+    }
+}
+
+pub struct ManaDifferenceEvaluator {}
+
+impl StateEvaluator<SpelldawnState> for ManaDifferenceEvaluator {
+    fn evaluate(&self, game: &SpelldawnState, side: Side) -> Result<i32> {
+        Ok(mana::get(game, side, ManaPurpose::AllSources) as i32
+            - mana::get(game, side.opponent(), ManaPurpose::AllSources) as i32)
+    }
+}
+
+pub struct CardsInHandEvaluator {}
+
+impl StateEvaluator<SpelldawnState> for CardsInHandEvaluator {
+    fn evaluate(&self, game: &SpelldawnState, side: Side) -> Result<i32> {
+        Ok(game.hand(side).count() as i32)
+    }
+}
+
+pub struct CardsInPlayEvaluator {}
+
+impl StateEvaluator<SpelldawnState> for CardsInPlayEvaluator {
+    fn evaluate(&self, game: &SpelldawnState, side: Side) -> Result<i32> {
+        Ok(game.cards(side).iter().filter(|c| c.position().in_play()).count() as i32)
+    }
+}
+
+pub struct LevelCountersEvaluator {}
+
+impl StateEvaluator<SpelldawnState> for LevelCountersEvaluator {
+    fn evaluate(&self, game: &SpelldawnState, side: Side) -> Result<i32> {
+        if side == Side::Champion {
+            return Ok(0);
         }
+
+        Ok(game
+            .cards(side)
+            .iter()
+            .filter(|c| c.position().in_play())
+            .map(|c| c.data.card_level)
+            .sum::<u32>() as i32)
     }
 }

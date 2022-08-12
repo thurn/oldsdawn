@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ai_core::agent;
-use ai_core::agent::{Agent, AgentData};
+use ai_core::agent::{Agent, AgentConfig, AgentData};
 use ai_testing::nim;
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
 use ai_tree_search::alpha_beta::AlphaBetaAlgorithm;
@@ -45,7 +44,7 @@ pub fn minimax_deadline_exceeded() {
     );
     let state = NimState::new(100);
     let start_time = Instant::now();
-    let action = agent.pick_action(agent::deadline(1), &state);
+    let action = agent.pick_action(AgentConfig::with_deadline(1), &state);
     assert!(action.is_ok());
     assert!(start_time.elapsed().as_secs() < 2);
 }
@@ -76,7 +75,7 @@ pub fn alpha_beta_deadline_exceeded() {
     );
     let state = NimState::new(100);
     let start_time = Instant::now();
-    let action = agent.pick_action(agent::deadline(1), &state);
+    let action = agent.pick_action(AgentConfig::with_deadline(1), &state);
     assert!(action.is_ok());
     assert!(start_time.elapsed().as_secs() < 2);
 }

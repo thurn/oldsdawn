@@ -14,8 +14,7 @@
 
 use std::time::Instant;
 
-use ai_core::agent;
-use ai_core::agent::{Agent, AgentData};
+use ai_core::agent::{Agent, AgentConfig, AgentData};
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
 use ai_monte_carlo::uct1::Uct1;
 use ai_testing::nim;
@@ -51,7 +50,7 @@ pub fn uct1_deadline_exceeded() {
     );
     let state = NimState::new(100);
     let start_time = Instant::now();
-    let action = agent.pick_action(agent::deadline(1), &state);
+    let action = agent.pick_action(AgentConfig::with_deadline(1), &state);
     assert!(action.is_ok());
     assert!(start_time.elapsed().as_secs() < 2);
 }

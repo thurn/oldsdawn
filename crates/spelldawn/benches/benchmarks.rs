@@ -15,8 +15,7 @@
 use std::time::Duration;
 
 use ai::core::legal_actions;
-use ai_core::agent;
-use ai_core::agent::{Agent, AgentData};
+use ai_core::agent::{Agent, AgentConfig, AgentData};
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
 use ai_monte_carlo::uct1::Uct1;
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
@@ -60,7 +59,7 @@ pub fn minimax_nim(c: &mut Criterion) {
 
     group.bench_function("minimax_nim", |b| {
         b.iter(|| {
-            agent.pick_action(agent::deadline(10), &state).expect("Error running agent");
+            agent.pick_action(AgentConfig::with_deadline(10), &state).expect("Error running agent");
         })
     });
     group.finish();
@@ -78,7 +77,7 @@ pub fn alpha_beta_nim(c: &mut Criterion) {
 
     group.bench_function("alpha_beta_nim", |b| {
         b.iter(|| {
-            agent.pick_action(agent::deadline(10), &state).expect("Error running agent");
+            agent.pick_action(AgentConfig::with_deadline(10), &state).expect("Error running agent");
         })
     });
     group.finish();

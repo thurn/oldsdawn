@@ -13,9 +13,8 @@
 // limitations under the License.
 
 use std::io;
-use std::time::{Duration, Instant};
 
-use ai_core::agent::Agent;
+use ai_core::agent::{Agent, AgentConfig};
 use ai_core::game_state_node::{GameStateNode, GameStatus};
 use anyhow::Result;
 use clap::{ArgEnum, Parser};
@@ -74,7 +73,7 @@ fn run_game_loop(
     loop {
         print_optimal_action(&nim, player_one.name())?;
         println!("{}", nim);
-        let p1_action = player_one.pick_action(deadline(move_time), &nim)?;
+        let p1_action = player_one.pick_action(AgentConfig::with_deadline(move_time), &nim)?;
         println!("<<{}>> takes {} from {}", player_one.name(), p1_action.amount, p1_action.pile);
         nim.execute_action(NimPlayer::One, p1_action)?;
         check_game_over(&nim, player_one.name(), player_two.name());
@@ -82,22 +81,18 @@ fn run_game_loop(
         print_optimal_action(&nim, player_two.name())?;
         println!("{}", nim);
 
-        let p2_action = player_two.pick_action(deadline(move_time), &nim)?;
+        let p2_action = player_two.pick_action(AgentConfig::with_deadline(move_time), &nim)?;
         println!("<<{}>> takes {} from {}", player_two.name(), p2_action.amount, p2_action.pile);
         nim.execute_action(NimPlayer::Two, p2_action)?;
         check_game_over(&nim, player_one.name(), player_two.name());
     }
 }
 
-fn deadline(move_time: u64) -> Instant {
-    Instant::now() + Duration::from_secs(move_time)
-}
-
 fn print_optimal_action(state: &NimState, player_name: &str) -> Result<()> {
     if nim_sum(state) == 0 {
         println!("  (Game is unwinnable for {} with optimal play)", player_name);
     } else {
-        let action = NIM_PERFECT_AGENT.pick_action(deadline(5), state)?;
+        let action = NIM_PERFECT_AGENT.pick_action(AgentConfig::with_deadline(5), state)?;
         println!("  (Optimal play for {} is {} take {})", player_name, action.pile, action.amount);
     }
 
@@ -124,7 +119,7 @@ impl Agent<NimState> for NimHumanAgent {
         "HUMAN"
     }
 
-    fn pick_action(&self, _deadline: Instant, state: &NimState) -> Result<NimAction> {
+    fn pick_action(&self, _: AgentConfig, state: &NimState) -> Result<NimAction> {
         println!("\n>>> Input your action, e.g. 'a2' or 'b3'");
 
         let mut input_text = String::new();

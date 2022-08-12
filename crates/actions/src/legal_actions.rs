@@ -22,6 +22,7 @@ use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{CardTarget, CardTargetKind, PromptAction, UserAction};
 use data::primitives::{AbilityId, CardId, RoomId, Side};
 use rules::{flags, queries};
+use with_error::fail;
 
 /// Returns an iterator over currently-legal [UserAction]s for the `side` player
 /// in the given [GameState].
@@ -29,14 +30,10 @@ pub fn evaluate<'a>(
     game: &'a GameState,
     side: Side,
 ) -> Result<Box<dyn Iterator<Item = UserAction> + 'a>> {
-    if let GamePhase::GameOver { .. } = &game.data.phase {
-        return Ok(Box::new(iter::empty()));
-    }
-
     match &game.data.phase {
         GamePhase::ResolveMulligans(data) => {
             return Ok(if data.decision(side).is_some() {
-                Box::new(iter::empty())
+                fail!("Error: Mulligan decision already submitted")
             } else {
                 Box::new(
                     iter::once(UserAction::PromptAction(PromptAction::MulliganDecision(
@@ -49,7 +46,7 @@ pub fn evaluate<'a>(
             });
         }
         GamePhase::Play => {}
-        GamePhase::GameOver { .. } => return Ok(Box::new(iter::empty())),
+        GamePhase::GameOver { .. } => fail!("Game has ended"),
     }
 
     if let Some(prompt) = &game.player(side).prompt {
@@ -79,7 +76,7 @@ pub fn evaluate<'a>(
                 .chain(flags::can_take_gain_mana_action(game, side).then(|| UserAction::GainMana)),
         ))
     } else {
-        Ok(Box::new(iter::empty()))
+        fail!("Error: player cannot currently act")
     }
 }
 

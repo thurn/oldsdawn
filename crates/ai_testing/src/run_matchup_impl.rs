@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ai_core::agent;
+use std::time::{Duration, Instant};
+
+use ai_core::agent::AgentConfig;
 use ai_core::game_state_node::{GameStateNode, GameStatus};
 use ai_game_integration::agents;
 use ai_game_integration::state_node::SpelldawnState;
@@ -50,6 +52,9 @@ pub struct Args {
     #[clap(long, value_parser, default_value_t = false)]
     /// Whether to use a deterministic random number generator
     pub deterministic: bool,
+    /// Whether to crash the program if a search timeout is exceeded.
+    #[clap(long, value_parser, default_value_t = false)]
+    pub panic_on_search_timeout: bool,
 }
 
 pub fn main() -> Result<()> {
@@ -78,7 +83,11 @@ pub fn main() -> Result<()> {
             match state.status() {
                 GameStatus::InProgress { current_turn } => {
                     let agent = if current_turn == Side::Overlord { &overlord } else { &champion };
-                    let action = agent.pick_action(agent::deadline(args.move_time), &state)?;
+                    let config = AgentConfig {
+                        panic_on_search_timeout: args.panic_on_search_timeout,
+                        deadline: Instant::now() + Duration::from_secs(args.move_time),
+                    };
+                    let action = agent.pick_action(config, &state)?;
                     state.execute_action(current_turn, action)?;
                     clear_action_line(args.verbosity);
                     println!("{} performs action {:?}", agent.name(), action);

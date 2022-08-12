@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::time::Instant;
-
 use anyhow::Result;
 
+use crate::agent::AgentConfig;
 use crate::game_state_node::GameStateNode;
 use crate::state_evaluator::StateEvaluator;
 
@@ -26,11 +25,12 @@ pub trait SelectionAlgorithm {
     /// to take in the provided `node` game state, using the provided
     /// `evaluator` to evaluate different game outcomes.
     ///
-    /// Implementations are expected to return a result before the `deadline`
-    /// time by periodically comparing it to `Instant::now()`.
+    /// Implementations are expected to return a result before the
+    /// `config.deadline` time by periodically comparing it to
+    /// `Instant::now()`.
     fn pick_action<TStateNode, TEvaluator>(
         &self,
-        deadline: Instant,
+        config: AgentConfig,
         node: &TStateNode,
         evaluator: &TEvaluator,
         player: TStateNode::PlayerName,

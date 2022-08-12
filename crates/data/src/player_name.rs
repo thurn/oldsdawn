@@ -44,6 +44,7 @@ impl PlayerId {
 pub enum NamedPlayer {
     TestNoAction,
     TestMinimax,
-    TestAlphaBeta,
+    TestAlphaBetaScores,
+    TestAlphaBetaHeuristics,
     TestUct1,
 }

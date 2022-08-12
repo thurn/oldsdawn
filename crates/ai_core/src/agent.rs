@@ -24,9 +24,22 @@ use crate::state_evaluator::StateEvaluator;
 use crate::state_predictor::StatePredictor;
 use crate::{state_combiner, state_predictor};
 
-/// Create a new agent deadline `seconds` seconds from now.
-pub fn deadline(seconds: u64) -> Instant {
-    Instant::now() + Duration::from_secs(seconds)
+#[derive(Debug, Clone, Copy)]
+pub struct AgentConfig {
+    /// Time at which the agent should complete its move selection.
+    pub deadline: Instant,
+    /// If true, the agent should panic if it has not completed its search after
+    /// the deadline is exceeded
+    pub panic_on_search_timeout: bool,
+}
+
+impl AgentConfig {
+    pub fn with_deadline(seconds: u64) -> Self {
+        Self {
+            deadline: Instant::now() + Duration::from_secs(seconds),
+            panic_on_search_timeout: false,
+        }
+    }
 }
 
 /// An AI Agent for a given game state, any system capable of selecting valid
@@ -44,7 +57,7 @@ where
 
     /// Select an action for the current player to take in the `node` game
     /// state. Should attempt to return a result before time `deadline`.
-    fn pick_action(&self, deadline: Instant, node: &TNode) -> Result<TNode::Action>;
+    fn pick_action(&self, config: AgentConfig, node: &TNode) -> Result<TNode::Action>;
 }
 
 /// A tuple of various pieces needed to perform agent action selection.
@@ -108,7 +121,7 @@ where
         self.name
     }
 
-    fn pick_action(&self, deadline: Instant, node: &TNode) -> Result<TNode::Action> {
+    fn pick_action(&self, deadline: AgentConfig, node: &TNode) -> Result<TNode::Action> {
         let player = match node.status() {
             GameStatus::InProgress { current_turn } => current_turn,
             _ => fail!("Game is over"),

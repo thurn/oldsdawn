@@ -30,6 +30,10 @@ where
         Self { score, action: None }
     }
 
+    pub fn has_action(&self) -> bool {
+        self.action.is_some()
+    }
+
     pub fn action(&self) -> Result<T> {
         self.action.with_error(|| "No action found for ScoredAction")
     }
@@ -50,7 +54,7 @@ where
 
     /// Insert this action & score if they are greater than the current score.
     pub fn insert_max(&mut self, action: T, score: i32) {
-        if score > self.score {
+        if !self.has_action() || score > self.score {
             self.score = score;
             self.action = Some(action);
         }
@@ -58,7 +62,7 @@ where
 
     /// Insert this action & score if they are lower than the current score.
     pub fn insert_min(&mut self, action: T, score: i32) {
-        if score < self.score {
+        if !self.has_action() || score < self.score {
             self.score = score;
             self.action = Some(action);
         }
