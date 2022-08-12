@@ -15,8 +15,6 @@
 use std::time::Duration;
 
 use ai::core::legal_actions;
-use ai::tournament::run_tournament;
-use ai::tournament::run_tournament::RunGames;
 use ai_core::agent;
 use ai_core::agent::{Agent, AgentData};
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
@@ -27,10 +25,9 @@ use ai_tree_search::minimax::MinimaxAlgorithm;
 use cards::{decklists, initialize};
 use criterion::measurement::WallTime;
 use criterion::{criterion_group, criterion_main, BenchmarkGroup, Criterion};
-use data::agent_definition::AgentName;
 use data::primitives::Side;
 
-criterion_group!(benches, legal_actions, random_actions, minimax_nim, alpha_beta_nim, uct1_nim);
+criterion_group!(benches, legal_actions, minimax_nim, alpha_beta_nim, uct1_nim);
 criterion_main!(benches);
 
 fn configure(group: &mut BenchmarkGroup<WallTime>) {
@@ -46,29 +43,6 @@ pub fn legal_actions(c: &mut Criterion) {
         b.iter(|| {
             let _actions =
                 legal_actions::evaluate(&game, Side::Overlord).unwrap().collect::<Vec<_>>();
-        })
-    });
-    group.finish();
-}
-
-pub fn random_actions(c: &mut Criterion) {
-    // NOTE: Keep in mind that if the behavior of legal_actions() changes, you
-    // can't meaningfully compare benchmark results before and after. The games will
-    // take a completely different path, meaning the games might end more quickly
-    // even if all the code is slower.
-    let mut group = c.benchmark_group("random_actions");
-    configure(&mut group);
-    group.bench_function("random_actions", |b| {
-        b.iter(|| {
-            let mut game = decklists::canonical_game().unwrap();
-            run_tournament::run_games(
-                &mut game,
-                10,
-                AgentName::PickRandom,
-                AgentName::PickRandom,
-                RunGames::NoPrint,
-            )
-            .expect("Error running games");
         })
     });
     group.finish();

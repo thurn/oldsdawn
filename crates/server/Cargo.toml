@@ -26,6 +26,8 @@ tracing = "0.1.35"
 actions = { path = "../actions", version = "0.0.0" }
 adapters = { path = "../adapters", version = "0.0.0" }
 ai = { path = "../ai", version = "0.0.0" }
+ai_core = { path = "../ai_core", version = "0.0.0" }
+ai_game_integration = { path = "../ai_game_integration", version = "0.0.0" }
 cards = { path = "../cards", version = "0.0.0" }
 data = { path = "../data", version = "0.0.0" }
 panels = { path = "../panels", version = "0.0.0" }

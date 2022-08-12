@@ -162,8 +162,9 @@ fn can_score_card(game: &GameState, card_id: CardId) -> bool {
 /// Can the Champion player destroy the `card_id` card when accessed during a
 /// raid?
 fn can_destroy_card(game: &GameState, card_id: CardId) -> bool {
-    queries::mana_cost(game, card_id).unwrap_or(0)
-        <= mana::get(game, Side::Champion, ManaPurpose::DestroyCard(card_id))
+    !game.card(card_id).position().in_discard_pile()
+        && queries::mana_cost(game, card_id).unwrap_or(0)
+            <= mana::get(game, Side::Champion, ManaPurpose::DestroyCard(card_id))
 }
 
 fn handle_score_card(game: &mut GameState, card_id: CardId) -> Result<()> {

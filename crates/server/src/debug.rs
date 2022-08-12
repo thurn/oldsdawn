@@ -17,7 +17,6 @@ use std::collections::HashMap;
 use adapters;
 use anyhow::Result;
 use cards::decklists;
-use data::agent_definition::AgentData;
 use data::game::GameState;
 use data::game_actions::DebugAction;
 use data::player_data::{CurrentGame, PlayerData};
@@ -126,9 +125,9 @@ pub fn handle_debug_action(
                 mode: SceneLoadMode::Single.into(),
             })]))
         }
-        DebugAction::SetAgent(side, state_predictor, agent) => {
+        DebugAction::SetNamedPlayer(side, name) => {
             requests::handle_custom_action(database, player_id, game_id, |game, _| {
-                game.player_mut(side).agent = Some(AgentData { name: agent, state_predictor });
+                game.player_mut(side).id = PlayerId::Named(name);
                 Ok(())
             })
         }

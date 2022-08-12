@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ai::tournament::run_tournament;
-use ai::tournament::run_tournament::RunGames;
 use cards::test_cards::{ARTIFACT_COST, MANA_STORED, MANA_TAKEN, UNVEIL_COST};
-use cards::{decklists, initialize};
-use data::agent_definition::AgentName;
 use data::card_name::CardName;
 use data::game_actions;
 use data::game_actions::UserAction;
@@ -487,18 +483,4 @@ fn champion_legal_actions() {
             UserAction::InitiateRaid(RoomId::Crypts),
         ],
     );
-}
-
-#[test]
-fn random_actions() {
-    initialize::run();
-    let mut game = decklists::canonical_game().unwrap();
-    run_tournament::run_games(
-        &mut game,
-        10,
-        AgentName::PickRandom,
-        AgentName::PickRandom,
-        RunGames::NoPrint,
-    )
-    .expect("Error running games");
 }

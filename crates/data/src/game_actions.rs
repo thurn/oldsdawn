@@ -20,8 +20,8 @@ use anyhow::{anyhow, Result};
 use enum_kinds::EnumKind;
 use serde::{Deserialize, Serialize};
 
-use crate::agent_definition::{AgentName, GameStatePredictorName};
 use crate::game::MulliganDecision;
+use crate::player_name::NamedPlayer;
 use crate::primitives::{AbilityId, ActionCount, CardId, ManaValue, PointsValue, RoomId, Side};
 
 #[derive(Eq, PartialEq, Hash, Debug, Copy, Clone, Serialize, Deserialize)]
@@ -118,7 +118,7 @@ pub enum DebugAction {
     AddScore(PointsValue),
     SaveState(u64),
     LoadState(u64),
-    SetAgent(Side, GameStatePredictorName, AgentName),
+    SetNamedPlayer(Side, NamedPlayer),
 }
 
 /// Possible targets for the 'play card' action. Note that many types of targets

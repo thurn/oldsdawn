@@ -78,6 +78,11 @@ impl CardPosition {
         matches!(self.kind(), CardPositionKind::Room | CardPositionKind::ArenaItem)
     }
 
+    /// Returns true if this card is in a room
+    pub fn in_room(&self) -> bool {
+        self.kind() == CardPositionKind::Room
+    }
+
     /// Returns true if this card is in a user's hand
     pub fn in_hand(&self) -> bool {
         self.kind() == CardPositionKind::Hand

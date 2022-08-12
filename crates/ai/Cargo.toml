@@ -9,11 +9,6 @@ edition = "2021"
 doctest = false
 test = false
 
-[[bin]]
-name = "tournament"
-path = "src/tournament/main.rs"
-test = false
-
 [dependencies]
 anyhow = "1.0.58"
 rand = "0.8.5"

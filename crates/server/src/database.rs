@@ -99,11 +99,6 @@ impl Database for SledDatabase {
             .get(id.key())
             .with_error(|| format!("Error reading  game: {:?}", id))?
             .with_error(|| format!("Game not found: {:?}", id))?;
-        let res: std::result::Result<GameState, serde_json::Error> =
-            de::from_slice(content.as_ref());
-        if let Err(e) = res {
-            panic!("ERROR: {:?}", e);
-        }
         let mut game = de::from_slice(content.as_ref())
             .with_error(|| format!("Error deserializing game {:?}", id))?;
         dispatch::populate_delegate_cache(&mut game);

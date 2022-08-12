@@ -16,12 +16,15 @@
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
+use ai_core::agent;
+use ai_core::agent::Agent;
+use ai_game_integration::agents;
+use ai_game_integration::state_node::SpelldawnState;
 use anyhow::Result;
 use concurrent_queue::ConcurrentQueue;
-use data::agent_definition::AgentData;
 use data::game::GameState;
 use data::player_data;
-use data::player_name::PlayerId;
+use data::player_name::{NamedPlayer, PlayerId};
 use data::primitives::{GameId, Side};
 use once_cell::sync::Lazy;
 use protos::spelldawn::{CommandList, GameRequest};
@@ -71,11 +74,11 @@ pub fn handle_request(
 
 /// Returns a ([Side], [AgentData]) tuple for an agent that can currently act in
 /// this game, if one exists.
-fn active_agent(game: &GameState) -> Option<(Side, AgentData)> {
+fn active_agent(game: &GameState) -> Option<(Side, Box<dyn Agent<SpelldawnState>>)> {
     for side in enum_iterator::all::<Side>() {
-        if let Some(data) = game.player(side).agent {
-            if actions::can_take_action(game, side) {
-                return Some((side, data));
+        if let PlayerId::Named(name) = game.player(side).id {
+            if name != NamedPlayer::TestNoAction && actions::can_take_action(game, side) {
+                return Some((side, agents::get(name)));
             }
         }
     }
@@ -89,11 +92,9 @@ async fn run_agent_loop(
     handle_request: HandleRequest,
 ) -> Result<()> {
     loop {
-        let game = database.game(game_id)?;
-        if let Some((side, agent_data)) = active_agent(&game) {
-            let agent = ai::core::get_agent(agent_data.name);
-            let state_predictor = ai::core::get_game_state_predictor(agent_data.state_predictor);
-            let action = agent(state_predictor(&game, side), side)?;
+        let game = SpelldawnState(database.game(game_id)?);
+        let commands = if let Some((side, agent)) = active_agent(&game) {
+            let action = agent.pick_action(agent::deadline(3), &game)?;
             let response = requests::handle_action(
                 &mut database,
                 game.player(side).id,
@@ -101,24 +102,24 @@ async fn run_agent_loop(
                 action,
             )?;
 
-            let commands = match response.opponent_response {
+            match response.opponent_response {
                 Some((oid, response)) if oid == respond_to => response,
                 _ if game.player(side).id == respond_to => response.command_list,
                 _ => {
                     fail!("Unknown PlayerId {:?}", respond_to);
                 }
-            };
-
-            match handle_request {
-                HandleRequest::SendToPlayer => {
-                    requests::send_player_response(Some((respond_to, commands))).await;
-                }
-                HandleRequest::PushQueue => {
-                    RESPONSES.push(commands)?;
-                }
             }
         } else {
             return Ok(());
+        };
+
+        match handle_request {
+            HandleRequest::SendToPlayer => {
+                requests::send_player_response(Some((respond_to, commands))).await;
+            }
+            HandleRequest::PushQueue => {
+                RESPONSES.push(commands)?;
+            }
         }
     }
 }

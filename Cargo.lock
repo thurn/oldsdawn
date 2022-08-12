@@ -1723,6 +1723,8 @@ dependencies = [
  "actions",
  "adapters",
  "ai",
+ "ai_core",
+ "ai_game_integration",
  "anyhow",
  "cards",
  "concurrent-queue",

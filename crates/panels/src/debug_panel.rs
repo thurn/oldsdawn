@@ -21,8 +21,8 @@ use core_ui::button::Button;
 use core_ui::panel::Panel;
 use core_ui::prelude::*;
 use core_ui::{icons, panel};
-use data::agent_definition::{AgentName, GameStatePredictorName};
 use data::game_actions::DebugAction;
+use data::player_name::NamedPlayer;
 use data::primitives::Side;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_command::Command;
@@ -73,19 +73,11 @@ impl Component for DebugPanel {
                     .child(debug_button(format!("{} 3", icons::RESTORE), DebugAction::LoadState(3)))
                     .child(debug_button(
                         "Overlord AI",
-                        DebugAction::SetAgent(
-                            Side::Overlord,
-                            GameStatePredictorName::Omniscient,
-                            AgentName::AlphaBeta,
-                        ),
+                        DebugAction::SetNamedPlayer(Side::Overlord, NamedPlayer::TestAlphaBeta),
                     ))
                     .child(debug_button(
                         "Champion AI",
-                        DebugAction::SetAgent(
-                            Side::Champion,
-                            GameStatePredictorName::Omniscient,
-                            AgentName::AlphaBeta,
-                        ),
+                        DebugAction::SetNamedPlayer(Side::Champion, NamedPlayer::TestAlphaBeta),
                     )),
             )
             .build()

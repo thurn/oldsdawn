@@ -25,7 +25,6 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use with_error::WithError;
 
-use crate::agent_definition::AgentData;
 use crate::card_state::{AbilityState, CardPosition, CardPositionKind, CardState};
 use crate::deck::Deck;
 use crate::delegates::DelegateCache;
@@ -64,10 +63,6 @@ pub struct PlayerState {
     pub actions: ActionCount,
     pub score: PointsValue,
 
-    /// Optionally, an AI Agent for this player. If provided, this agent will be
-    /// used to determine game actions instead of prompting for UI input.
-    pub agent: Option<AgentData>,
-
     /// A choice this player is facing in resolving a card ability. Takes
     /// precedence over other choices such as raid actions.
     pub prompt: Option<GamePrompt>,
@@ -76,14 +71,7 @@ pub struct PlayerState {
 impl PlayerState {
     /// Create an empty player state.
     pub fn new(id: PlayerId) -> Self {
-        Self {
-            id,
-            agent: None,
-            mana_state: ManaState::default(),
-            actions: 0,
-            score: 0,
-            prompt: None,
-        }
+        Self { id, mana_state: ManaState::default(), actions: 0, score: 0, prompt: None }
     }
 }
 

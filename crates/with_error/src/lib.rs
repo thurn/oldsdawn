@@ -21,6 +21,9 @@ use std::fmt::Display;
 use anyhow::{Context, Error};
 
 /// Should the system panic when an error is encountered?
+///
+/// (this used to be a cfg value, but changing that makes build times much
+/// longer)
 pub const ERROR_PANIC: bool = false;
 
 /// Wrapper around [anyhow::ensure] which can be configured to panic on error.
