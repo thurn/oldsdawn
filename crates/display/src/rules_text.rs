@@ -24,7 +24,7 @@ use data::primitives::{AbilityId, AbilityIndex, CardSubtype, CardType, Lineage};
 use data::text::{
     AbilityText, DamageWord, Keyword, KeywordKind, NumericOperator, Sentence, TextToken,
 };
-use game_ui::card_info::SupplementalCardInfo;
+use prompts::card_info::SupplementalCardInfo;
 use protos::spelldawn::{Node, RulesText};
 
 /// Primary function which turns the current state of a card into its client

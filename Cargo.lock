@@ -628,7 +628,7 @@ dependencies = [
  "data",
  "enum-iterator",
  "fallible-iterator",
- "game_ui",
+ "prompts",
  "protos",
  "raids",
  "rules",
@@ -787,19 +787,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
 dependencies = [
  "byteorder",
-]
-
-[[package]]
-name = "game_ui"
-version = "0.0.0"
-dependencies = [
- "adapters",
- "anyhow",
- "core_ui",
- "data",
- "protos",
- "rules",
- "with_error",
 ]
 
 [[package]]
@@ -1367,6 +1354,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dd96a1e8ed2596c337f8eae5f24924ec83f5ad5ab21ea8e455d3566c69fbcaf7"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "prompts"
+version = "0.0.0"
+dependencies = [
+ "adapters",
+ "anyhow",
+ "core_ui",
+ "data",
+ "protos",
+ "rules",
+ "with_error",
 ]
 
 [[package]]

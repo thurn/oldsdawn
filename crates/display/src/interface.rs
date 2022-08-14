@@ -16,7 +16,7 @@ use anyhow::Result;
 use data::game::{GamePhase, GameState, MulliganDecision};
 use data::game_actions::{GamePrompt, PromptAction};
 use data::primitives::Side;
-use game_ui::prompts;
+use prompts::prompts;
 use protos::spelldawn::InterfaceMainControls;
 
 /// Returns a [InterfaceMainControls] to render the interface state for the
