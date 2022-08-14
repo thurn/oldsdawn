@@ -31,6 +31,41 @@ test:
 disallowed:
     ! grep -r --include '*.rs' 'ERROR_PANIC: bool = true'
 
+protos:
+    cargo run --bin gen_protos
+    rm crates/protos/src/google.protobuf.rs
+
+    - rm proto/*.cs
+    - rm -r proto/bin
+    - rm -r proto/obj
+    dotnet clean proto/protos.csproj
+    dotnet build proto/protos.csproj
+    mv proto/*.cs Assets/Spelldawn/Protos/
+    dotnet clean proto/protos.csproj
+    rm -r proto/bin
+    rm -r proto/obj
+
+@dropbox-ignore:
+    find . -name '*conflicted*' -delete
+    mkdir -p Library
+    mkdir -p Logs
+    mkdir -p obj
+    mkdir -p UserSettings
+    mkdir -p Temp
+    mkdir -p out
+    mkdir -p out_BurstDebugInformation_DoNotShip/
+    xattr -w com.dropbox.ignored 1 Library/
+    xattr -w com.dropbox.ignored 1 Logs/
+    xattr -w com.dropbox.ignored 1 obj/
+    xattr -w com.dropbox.ignored 1 UserSettings/
+    xattr -w com.dropbox.ignored 1 Temp/
+    xattr -w com.dropbox.ignored 1 out/
+    xattr -w com.dropbox.ignored 1 out_BurstDebugInformation_DoNotShip/
+    xattr -w com.dropbox.ignored 1 target/
+    xattr -w com.dropbox.ignored 1 db/
+    - rm -r 'Temp (Ignored Item Conflict)'
+    - rm -r 'out (Ignored Item Conflict)'
+
 screenshots-message:
     @ echo "\nRunning Screenshot Tests"
     @ sleep 1
