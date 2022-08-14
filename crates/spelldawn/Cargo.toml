@@ -20,8 +20,6 @@ harness = false
 tokio = { version = "1.19.2", features = ["macros", "rt-multi-thread", "sync", "time"] }
 tonic = { version = "0.7.2", features = ["compression"] }
 tonic-web = "0.3.0"
-tower = { version = "0.4.13", features = ["make"] }
-tower-http = { version = "0.3.4", features = ["fs"] }
 tracing = "0.1.35"
 tracing-subscriber = "0.3.14"
 
