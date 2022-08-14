@@ -25,6 +25,7 @@ tracing-subscriber = "0.3.14"
 
 actions = { path = "../actions", version = "0.0.0" }
 ai_core = { path = "../ai_core", version = "0.0.0" }
+ai_game_integration = { path = "../ai_game_integration", version = "0.0.0" }
 ai_monte_carlo = { path = "../ai_monte_carlo", version = "0.0.0" }
 ai_testing = { path = "../ai_testing", version = "0.0.0" }
 ai_tree_search = { path = "../ai_tree_search", version = "0.0.0" }

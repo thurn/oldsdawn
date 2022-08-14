@@ -16,6 +16,8 @@ use std::time::Duration;
 
 use actions::legal_actions;
 use ai_core::agent::{Agent, AgentConfig, AgentData};
+use ai_game_integration::evaluators::ScoreEvaluator;
+use ai_game_integration::state_node::SpelldawnState;
 use ai_monte_carlo::monte_carlo::{MonteCarloAlgorithm, RandomPlayoutEvaluator};
 use ai_monte_carlo::uct1::Uct1;
 use ai_testing::nim::{NimState, NimWinLossEvaluator};
@@ -26,7 +28,15 @@ use criterion::measurement::WallTime;
 use criterion::{criterion_group, criterion_main, BenchmarkGroup, Criterion};
 use data::primitives::Side;
 
-criterion_group!(benches, legal_actions, minimax_nim, alpha_beta_nim, uct1_nim);
+criterion_group!(
+    benches,
+    legal_actions,
+    minimax_nim,
+    alpha_beta_nim,
+    uct1_nim,
+    uct1_search,
+    alpha_beta_search
+);
 criterion_main!(benches);
 
 fn configure(group: &mut BenchmarkGroup<WallTime>) {
@@ -101,20 +111,36 @@ pub fn uct1_nim(c: &mut Criterion) {
     group.finish();
 }
 
-// pub fn uct_search(c: &mut Criterion) {
-//     let mut group = c.benchmark_group("uct_search");
-//     configure(&mut group);
-//     let game = decklists::canonical_game().unwrap();
-//     group.bench_function("uct_search", |b| {
-//         b.iter(|| monte_carlo::uct_search(&game, Side::Overlord, 1000))
-//     });
-// }
-//
-// pub fn alpha_beta_search(c: &mut Criterion) {
-//     let mut group = c.benchmark_group("alpha_beta_search");
-//     configure(&mut group);
-//     let game = decklists::canonical_game().unwrap();
-//     group.bench_function("alpha_beta_search", |b| {
-//         b.iter(|| alpha_beta::run_search(&game, Side::Overlord, 4).unwrap())
-//     });
-// }
+pub fn uct1_search(c: &mut Criterion) {
+    let mut group = c.benchmark_group("uct1_search");
+    configure(&mut group);
+    let game = SpelldawnState(decklists::canonical_game().unwrap());
+    let evaluator = RandomPlayoutEvaluator {};
+    let monte_carlo = MonteCarloAlgorithm { child_score_algorithm: Uct1 {} };
+
+    group.bench_function("uct1_search", |b| {
+        b.iter(|| {
+            monte_carlo
+                .run_search(|i| i == 1000, &game, &evaluator, Side::Overlord)
+                .expect("run_search() Error");
+        })
+    });
+}
+
+pub fn alpha_beta_search(c: &mut Criterion) {
+    let mut group = c.benchmark_group("alpha_beta_search");
+    configure(&mut group);
+    let game = SpelldawnState(decklists::canonical_game().unwrap());
+    let agent = AgentData::omniscient(
+        "ALPHA_BETA",
+        AlphaBetaAlgorithm { search_depth: 3 },
+        ScoreEvaluator {},
+    );
+
+    group.bench_function("alpha_beta_search", |b| {
+        b.iter(|| {
+            agent.pick_action(AgentConfig::with_deadline(10), &game).expect("Error running agent");
+        })
+    });
+    group.finish();
+}
