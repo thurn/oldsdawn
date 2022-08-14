@@ -14,6 +14,8 @@
 
 //! Tools for rendering the text on a card
 
+use std::fmt::Write as _;
+
 use core_ui::design::FontColor;
 use core_ui::{design, icons, rendering};
 use data::card_definition::{Ability, AbilityType, CardDefinition, Cost};
@@ -101,11 +103,11 @@ fn ability_cost_string(cost: &Cost<AbilityId>) -> String {
 
     if let Some(mana) = cost.mana {
         if mana > 0 {
-            actions.push_str(&format!(",{}{}", mana, icons::MANA));
+            let _err = write!(actions, ",{}{}", mana, icons::MANA);
         }
     }
 
-    actions.push_str(&format!(" {} ", icons::ARROW));
+    let _err = write!(actions, " {} ", icons::ARROW);
     actions
 }
 

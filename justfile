@@ -196,11 +196,14 @@ tournament:
     cargo run --bin tournament
 
 clippy:
+    # 'Unused Lifetime' incorrectly raised in rust 1.63
+    # https://github.com/rust-lang/rust-clippy/issues/9014
     cargo clippy --workspace --exclude "protos" -- \
         -D warnings \
         -D clippy::all \
         -A clippy::needless_update \
         -A clippy::needless_collect \
+        -A clippy::extra-unused-lifetimes \
         -A clippy::unit-arg \
         -D clippy::cast_lossless \
         -D clippy::cloned_instead_of_copied \
@@ -234,6 +237,7 @@ clippy-fix:
         -D clippy::all \
         -A clippy::needless_update \
         -A clippy::needless_collect \
+        -A clippy::extra-unused-lifetimes \
         -A clippy::unit-arg \
         -D clippy::cast_lossless \
         -D clippy::cloned_instead_of_copied \

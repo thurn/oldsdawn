@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::fmt::Debug;
+use std::fmt::{Debug, Write as _};
 
 use adapters;
 use adapters::ServerCardId;
@@ -70,7 +70,7 @@ impl Summary {
     }
 
     pub fn primitive(&mut self, string: impl Debug) {
-        self.value.push_str(&format!("{:?}", string));
+        let _err = write!(self.value, "{:?}", string);
     }
 
     pub fn child(&mut self, name: &'static str, value: Option<impl Summarize>) {
@@ -190,7 +190,7 @@ impl Summarize for GameObjectIdentifier {
 impl Summarize for Id {
     fn summarize(self, summary: &mut Summary) {
         match self {
-            Id::CardId(id) => summary.value_node(id),
+            Self::CardId(id) => summary.value_node(id),
             _ => summary.primitive(self),
         }
     }
@@ -256,22 +256,22 @@ impl Summarize for GameCommand {
 impl Summarize for Command {
     fn summarize(self, summary: &mut Summary) {
         match self {
-            Command::Debug(_) => summary.primitive("Debug!"),
-            Command::Delay(v) => summary.child_node("Delay", v),
-            Command::UpdatePanels(v) => summary.child_node("UpdatePanels", v),
-            Command::TogglePanel(v) => summary.child_node("TogglePanel", v),
-            Command::UpdateGameView(v) => summary.child_node("UpdateGameView", v),
-            Command::VisitRoom(v) => summary.child_node("VisitRoom", v),
-            Command::MoveGameObjects(v) => summary.child_node("MoveGameObjects", v),
-            Command::PlaySound(v) => summary.child_node("PlaySound", v),
-            Command::SetMusic(v) => summary.child_node("SetMusic", v),
-            Command::FireProjectile(v) => summary.child_node("FireProjectile", v),
-            Command::PlayEffect(v) => summary.child_node("PlayEffect", v),
-            Command::DisplayGameMessage(v) => summary.child_node("DisplayGameMessage", v),
-            Command::SetGameObjectsEnabled(v) => summary.child_node("SetGameObjectsEnabled", v),
-            Command::DisplayRewards(v) => summary.child_node("DisplayRewards", v),
-            Command::LoadScene(v) => summary.child_node("LoadScene", v),
-            Command::CreateTokenCard(v) => summary.child_node("CreateTokenCard", v),
+            Self::Debug(_) => summary.primitive("Debug!"),
+            Self::Delay(v) => summary.child_node("Delay", v),
+            Self::UpdatePanels(v) => summary.child_node("UpdatePanels", v),
+            Self::TogglePanel(v) => summary.child_node("TogglePanel", v),
+            Self::UpdateGameView(v) => summary.child_node("UpdateGameView", v),
+            Self::VisitRoom(v) => summary.child_node("VisitRoom", v),
+            Self::MoveGameObjects(v) => summary.child_node("MoveGameObjects", v),
+            Self::PlaySound(v) => summary.child_node("PlaySound", v),
+            Self::SetMusic(v) => summary.child_node("SetMusic", v),
+            Self::FireProjectile(v) => summary.child_node("FireProjectile", v),
+            Self::PlayEffect(v) => summary.child_node("PlayEffect", v),
+            Self::DisplayGameMessage(v) => summary.child_node("DisplayGameMessage", v),
+            Self::SetGameObjectsEnabled(v) => summary.child_node("SetGameObjectsEnabled", v),
+            Self::DisplayRewards(v) => summary.child_node("DisplayRewards", v),
+            Self::LoadScene(v) => summary.child_node("LoadScene", v),
+            Self::CreateTokenCard(v) => summary.child_node("CreateTokenCard", v),
         }
     }
 }
@@ -504,10 +504,8 @@ impl Summarize for CardTargeting {
 impl Summarize for Targeting {
     fn summarize(self, summary: &mut Summary) {
         match self {
-            Targeting::NoTargeting(NoTargeting { can_play }) => {
-                summary.child_node("can_play", can_play)
-            }
-            Targeting::PlayInRoom(PlayInRoom { valid_rooms }) => {
+            Self::NoTargeting(NoTargeting { can_play }) => summary.child_node("can_play", can_play),
+            Self::PlayInRoom(PlayInRoom { valid_rooms }) => {
                 summary.children(
                     "valid_rooms",
                     valid_rooms
@@ -516,7 +514,7 @@ impl Summarize for Targeting {
                         .collect(),
                 );
             }
-            Targeting::ArrowTargetRoom(ArrowTargetRoom { valid_rooms, .. }) => {
+            Self::ArrowTargetRoom(ArrowTargetRoom { valid_rooms, .. }) => {
                 summary.children(
                     "valid_rooms",
                     valid_rooms
@@ -539,21 +537,21 @@ impl Summarize for ObjectPosition {
 impl Summarize for Position {
     fn summarize(self, summary: &mut Summary) {
         match self {
-            Position::Offscreen(v) => summary.primitive(v),
-            Position::Room(v) => summary.primitive(v),
-            Position::Item(v) => summary.primitive(v),
-            Position::Staging(v) => summary.primitive(v),
-            Position::Hand(v) => summary.primitive(v),
-            Position::Deck(v) => summary.primitive(v),
-            Position::DeckContainer(v) => summary.primitive(v),
-            Position::DiscardPile(v) => summary.primitive(v),
-            Position::DiscardPileContainer(v) => summary.primitive(v),
-            Position::Raid(v) => summary.primitive(v),
-            Position::Browser(v) => summary.primitive(v),
-            Position::Identity(v) => summary.primitive(v),
-            Position::IdentityContainer(v) => summary.primitive(v),
-            Position::IntoCard(v) => summary.primitive(v),
-            Position::Revealed(v) => summary.primitive(v),
+            Self::Offscreen(v) => summary.primitive(v),
+            Self::Room(v) => summary.primitive(v),
+            Self::Item(v) => summary.primitive(v),
+            Self::Staging(v) => summary.primitive(v),
+            Self::Hand(v) => summary.primitive(v),
+            Self::Deck(v) => summary.primitive(v),
+            Self::DeckContainer(v) => summary.primitive(v),
+            Self::DiscardPile(v) => summary.primitive(v),
+            Self::DiscardPileContainer(v) => summary.primitive(v),
+            Self::Raid(v) => summary.primitive(v),
+            Self::Browser(v) => summary.primitive(v),
+            Self::Identity(v) => summary.primitive(v),
+            Self::IdentityContainer(v) => summary.primitive(v),
+            Self::IntoCard(v) => summary.primitive(v),
+            Self::Revealed(v) => summary.primitive(v),
         }
     }
 }
