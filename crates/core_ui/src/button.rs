@@ -18,6 +18,7 @@ use crate::actions::{InterfaceAction, NoAction};
 use crate::design::{Font, FontColor, FontSize};
 use crate::prelude::*;
 use crate::style;
+use crate::style::WidthMode;
 use crate::text::Text;
 
 #[derive(Debug, Clone, Copy)]
@@ -42,6 +43,7 @@ pub struct Button {
     button_type: ButtonType,
     action: Box<dyn InterfaceAction>,
     two_lines: bool,
+    width_mode: WidthMode,
 }
 
 impl Button {
@@ -52,6 +54,7 @@ impl Button {
             button_type: ButtonType::Primary,
             action: Box::new(NoAction {}),
             two_lines: false,
+            width_mode: WidthMode::Constrained,
         }
     }
 
@@ -72,6 +75,11 @@ impl Button {
 
     pub fn two_lines(mut self, is_two_lines: bool) -> Self {
         self.two_lines = is_two_lines;
+        self
+    }
+
+    pub fn width_mode(mut self, width_mode: WidthMode) -> Self {
+        self.width_mode = width_mode;
         self
     }
 }
@@ -96,6 +104,7 @@ impl Component for Button {
                     .justify_content(FlexJustify::Center)
                     .align_items(FlexAlign::Center)
                     .flex_shrink(0.0)
+                    .flex_grow(if self.width_mode == WidthMode::Constrained { 0.0 } else { 1.0 })
                     .background_image(background)
                     .image_slice(Edge::Horizontal, 16.px()),
             )

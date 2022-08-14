@@ -159,7 +159,15 @@ impl<D: FlexboxDirection> Flexbox<D> {
         self
     }
 
-    pub fn children(mut self, children: Vec<Box<dyn Component>>) -> Self {
+    pub fn children(mut self, children: impl Iterator<Item = impl Component + 'static>) -> Self {
+        self.children.extend(children.map(|child| {
+            let result: Box<dyn Component> = Box::new(child);
+            result
+        }));
+        self
+    }
+
+    pub fn children_boxed(mut self, children: Vec<Box<dyn Component>>) -> Self {
         self.children.extend(children);
         self
     }

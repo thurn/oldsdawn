@@ -98,6 +98,15 @@ pub fn sprite(string: impl Into<String>) -> SpriteAddress {
     SpriteAddress { address: string.into() }
 }
 
+/// Controls the growth behavior of a component.
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum WidthMode {
+    /// Grow to fit container, i.e. flex-grow 1
+    Flexible,
+    /// Size to fit contents, i.e. flex-grow 0
+    Constrained,
+}
+
 /// Identifies one or more edges of a flexbox to be styled.
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Edge {

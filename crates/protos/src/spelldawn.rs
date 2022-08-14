@@ -831,7 +831,7 @@ pub struct InitiateRaidAction {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FetchPanelAction {
     #[prost(message, optional, tag = "1")]
-    pub panel_address: ::core::option::Option<PanelAddress>,
+    pub panel_address: ::core::option::Option<InterfacePanelAddress>,
 }
 /// Test/debug options for the new game action
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -940,18 +940,18 @@ pub struct DelayCommand {
 }
 /// Identifies an InterfacePanel.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct PanelAddress {
-    #[prost(oneof = "panel_address::AddressType", tags = "1, 2")]
-    pub address_type: ::core::option::Option<panel_address::AddressType>,
+pub struct InterfacePanelAddress {
+    #[prost(oneof = "interface_panel_address::AddressType", tags = "1, 2")]
+    pub address_type: ::core::option::Option<interface_panel_address::AddressType>,
 }
-/// Nested message and enum types in `PanelAddress`.
-pub mod panel_address {
+/// Nested message and enum types in `InterfacePanelAddress`.
+pub mod interface_panel_address {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum AddressType {
         #[prost(bytes, tag = "1")]
         Serialized(::prost::alloc::vec::Vec<u8>),
-        #[prost(enumeration = "super::KnownPanelAddress", tag = "2")]
-        KnownPanel(i32),
+        #[prost(enumeration = "super::ClientPanelAddress", tag = "2")]
+        ClientPanel(i32),
     }
 }
 /// A 'panel' is an independently addressable block of UI. The contents
@@ -960,7 +960,7 @@ pub mod panel_address {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InterfacePanel {
     #[prost(message, optional, tag = "1")]
-    pub address: ::core::option::Option<PanelAddress>,
+    pub address: ::core::option::Option<InterfacePanelAddress>,
     #[prost(message, optional, tag = "2")]
     pub node: ::core::option::Option<Node>,
 }
@@ -1007,7 +1007,7 @@ pub struct UpdatePanelsCommand {
 pub struct TogglePanelCommand {
     /// Panel to modify
     #[prost(message, optional, tag = "1")]
-    pub panel_address: ::core::option::Option<PanelAddress>,
+    pub panel_address: ::core::option::Option<InterfacePanelAddress>,
     /// Should the panel be opened or closed?
     #[prost(bool, tag = "2")]
     pub open: bool,
@@ -1500,7 +1500,7 @@ pub enum CardPrefab {
 /// Panels that are directly fetched by client code.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum KnownPanelAddress {
+pub enum ClientPanelAddress {
     Unspecified = 0,
     DebugPanel = 1,
 }

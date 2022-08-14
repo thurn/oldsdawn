@@ -47,7 +47,7 @@ impl Component for PromptContainer {
                     .wrap(FlexWrap::WrapReverse)
                     .margin(Edge::Horizontal, 16.px()),
             )
-            .children(self.children)
+            .children_boxed(self.children)
             .build()
     }
 }

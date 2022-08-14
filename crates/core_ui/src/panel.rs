@@ -13,11 +13,16 @@
 // limitations under the License.
 
 use protos::spelldawn::game_command::Command;
-use protos::spelldawn::panel_address::AddressType;
 use protos::spelldawn::{
-    FlexAlign, FlexJustify, FlexPosition, ImageScaleMode, KnownPanelAddress, PanelAddress,
-    TextAlign, TogglePanelCommand,
+    interface_panel_address, ClientPanelAddress, FlexAlign, FlexJustify, FlexPosition,
+    ImageScaleMode, InterfacePanelAddress, TextAlign, TogglePanelCommand,
 };
+
+pub fn client(address: ClientPanelAddress) -> InterfacePanelAddress {
+    InterfacePanelAddress {
+        address_type: Some(interface_panel_address::AddressType::ClientPanel(address as i32)),
+    }
+}
 
 use crate::button::IconButton;
 use crate::component::EmptyComponent;
@@ -27,16 +32,11 @@ use crate::style::Pixels;
 use crate::text::Text;
 use crate::{icons, style};
 
-/// Wraps a [KnownPanelAddress] in a [PanelAddress].
-pub fn known(address: KnownPanelAddress) -> PanelAddress {
-    PanelAddress { address_type: Some(AddressType::KnownPanel(address as i32)) }
-}
-
 /// A rectangular interface element that displays content centered on-screen,
 /// optionally including a title or close button.
 #[derive(Debug)]
 pub struct Panel {
-    address: PanelAddress,
+    address: InterfacePanelAddress,
     width: Pixels,
     height: Pixels,
     layout: Layout,
@@ -46,9 +46,13 @@ pub struct Panel {
 }
 
 impl Panel {
-    pub fn new(address: PanelAddress, width: impl Into<Pixels>, height: impl Into<Pixels>) -> Self {
+    pub fn new(
+        address: impl Into<InterfacePanelAddress>,
+        width: impl Into<Pixels>,
+        height: impl Into<Pixels>,
+    ) -> Self {
         Self {
-            address,
+            address: address.into(),
             width: width.into(),
             height: height.into(),
             layout: Layout::default(),
@@ -91,7 +95,9 @@ impl Component for Panel {
                     .translate((-50).pct(), (-50).pct())
                     .width(self.width)
                     .height(self.height)
-                    .padding(Edge::All, 32.px())
+                    .padding(Edge::Horizontal, 32.px())
+                    .padding(Edge::Bottom, 32.px())
+                    .padding(Edge::Top, 48.px())
                     .align_items(FlexAlign::Center)
                     .justify_content(FlexJustify::Center)
                     .background_image(background)

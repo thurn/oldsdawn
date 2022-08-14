@@ -1188,7 +1188,10 @@ dependencies = [
  "anyhow",
  "core_ui",
  "data",
+ "enum-iterator",
  "protos",
+ "serde",
+ "serde_json",
  "with_error",
 ]
 

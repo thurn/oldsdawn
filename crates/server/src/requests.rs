@@ -198,7 +198,7 @@ pub fn handle_request(database: &mut impl Database, request: &GameRequest) -> Re
         }
         Action::FetchPanel(fetch_panel) => {
             Ok(GameResponse::from_commands(vec![Command::UpdatePanels(panels::render_panel(
-                fetch_panel.panel_address.as_ref().with_error(|| "missing address")?,
+                fetch_panel.panel_address.clone().with_error(|| "missing address")?,
             )?)]))
         }
         Action::NewGame(create_game) => handle_new_game(database, player_id, create_game),
@@ -243,7 +243,7 @@ pub fn handle_connect(database: &mut impl Database, player_id: PlayerId) -> Resu
             let game = database.game(game_id)?;
             let side = user_side(player_id, &game)?;
             let mut commands = render::connect(&game, side)?;
-            panels::render_standard_panels(&mut commands)?;
+            panels::append_standard_panels(&mut commands)?;
             Ok(command_list(commands))
         } else {
             fail!("Game not found: {:?}", game_id)

@@ -36,12 +36,12 @@ namespace Spelldawn.Game
     {
       _registry.StaticAssets.PlayButtonSound();
 
-      var address = new PanelAddress
+      var address = new InterfacePanelAddress
       {
-        KnownPanel = _panel switch
+        ClientPanel = _panel switch
         {
           Panel.GameMenu => throw new NotImplementedException(),
-          Panel.Feedback => KnownPanelAddress.DebugPanel,
+          Panel.Feedback => ClientPanelAddress.DebugPanel,
           _ => throw new ArgumentOutOfRangeException()
         }
       };

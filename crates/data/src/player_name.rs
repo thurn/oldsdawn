@@ -14,7 +14,10 @@
 
 use anyhow::Result;
 use clap::ArgEnum;
+use convert_case::{Case, Casing};
+use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
+use strum_macros::Display;
 use with_error::fail;
 
 /// Identifies a player across different games
@@ -40,11 +43,19 @@ impl PlayerId {
 }
 
 /// Identifies a named AI player
-#[derive(PartialEq, Eq, Hash, Debug, Copy, Clone, Serialize, Deserialize, ArgEnum)]
+#[derive(
+    PartialEq, Eq, Hash, Debug, Display, Copy, Clone, Serialize, Deserialize, ArgEnum, Sequence,
+)]
 pub enum NamedPlayer {
     TestNoAction,
     TestMinimax,
     TestAlphaBetaScores,
     TestAlphaBetaHeuristics,
     TestUct1,
+}
+
+impl NamedPlayer {
+    pub fn displayed_name(&self) -> String {
+        format!("{}", self).from_case(Case::Pascal).to_case(Case::Title)
+    }
 }

@@ -39,8 +39,8 @@ namespace Spelldawn.Services
   {
     [SerializeField] Registry _registry = null!;
     [SerializeField] UIDocument _document = null!;
-    readonly List<PanelAddress> _openPanels = new();
-    readonly Dictionary<PanelAddress, Node> _panelCache = new();
+    readonly List<InterfacePanelAddress> _openPanels = new();
+    readonly Dictionary<InterfacePanelAddress, Node> _panelCache = new();
 
     VisualElement _fullScreen = null!;
     Node _fullScreenNode = null!;
@@ -83,7 +83,7 @@ namespace Spelldawn.Services
     public ElementPosition TransformPositionToElementPosition(Transform t)
       => ScreenPositionToElementPosition(_registry.MainCamera.WorldToScreenPoint(t.position));
 
-    public void TogglePanel(bool open, PanelAddress address)
+    public void TogglePanel(bool open, InterfacePanelAddress address)
     {
       if (open)
       {
@@ -104,7 +104,7 @@ namespace Spelldawn.Services
       RenderPanels();
     }
 
-    public bool IsOpen(PanelAddress address) => _openPanels.Contains(address);
+    public bool IsOpen(InterfacePanelAddress address) => _openPanels.Contains(address);
 
     public bool IsAnyPanelOpen() => _openPanels.Count > 0;
 

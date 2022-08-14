@@ -20,6 +20,7 @@ pub mod component;
 pub mod design;
 pub mod flexbox;
 pub mod icons;
+pub mod list_cell;
 pub mod panel;
 pub mod prelude;
 pub mod rendering;

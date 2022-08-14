@@ -850,7 +850,7 @@ message InitiateRaidAction {
 
 // Fetch the contents of a given interface panel.
 message FetchPanelAction {
-    PanelAddress panel_address = 1;
+    InterfacePanelAddress panel_address = 1;
 }
 
 // Test/debug options for the new game action
@@ -938,16 +938,16 @@ message DelayCommand {
 }
 
 // Panels that are directly fetched by client code.
-enum KnownPanelAddress {
-    KNOWN_PANEL_ADDRESS_UNSPECIFIED = 0;
-    KNOWN_PANEL_ADDRESS_DEBUG_PANEL = 1;
+enum ClientPanelAddress {
+    CLIENT_PANEL_ADDRESS_UNSPECIFIED = 0;
+    CLIENT_PANEL_ADDRESS_DEBUG_PANEL = 1;
 }
 
 // Identifies an InterfacePanel.
-message PanelAddress {
+message InterfacePanelAddress {
     oneof address_type {
         bytes serialized = 1;
-        KnownPanelAddress known_panel = 2;
+        ClientPanelAddress client_panel = 2;
     }
 }
 
@@ -955,7 +955,7 @@ message PanelAddress {
 // of each known panel are cached and can then be opened immediately
 // by the client, without waiting for a server response.
 message InterfacePanel {
-    PanelAddress address = 1;
+    InterfacePanelAddress address = 1;
     Node node = 2;
 }
 
@@ -1003,7 +1003,7 @@ message UpdatePanelsCommand {
 // Requests to open or close the given interface panel.
 message TogglePanelCommand {
     // Panel to modify
-    PanelAddress panel_address = 1;
+    InterfacePanelAddress panel_address = 1;
 
     // Should the panel be opened or closed?
     bool open = 2;

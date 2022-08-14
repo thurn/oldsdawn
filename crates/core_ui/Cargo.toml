@@ -10,7 +10,7 @@ doctest = false
 test = false
 
 [dependencies]
-serde_json = "1.0.82"
-
 data = { path = "../data", version = "0.0.0" }
 protos = { path = "../protos", version = "0.0.0" }
+
+serde_json = "1.0.82"

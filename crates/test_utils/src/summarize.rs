@@ -28,8 +28,8 @@ use protos::spelldawn::{
     CardTitle, CardView, CommandList, CreateTokenCardCommand, DelayCommand,
     DisplayGameMessageCommand, DisplayRewardsCommand, EffectAddress, FireProjectileCommand,
     GameCommand, GameMessageType, GameObjectIdentifier, GameObjectMove, GameObjectPositions,
-    GameView, InterfaceMainControls, InterfacePanel, LoadSceneCommand, ManaView,
-    MoveGameObjectsCommand, MusicState, NoTargeting, Node, NodeType, ObjectPosition, PanelAddress,
+    GameView, InterfaceMainControls, InterfacePanel, InterfacePanelAddress, LoadSceneCommand,
+    ManaView, MoveGameObjectsCommand, MusicState, NoTargeting, Node, NodeType, ObjectPosition,
     PlayEffectCommand, PlayEffectPosition, PlayInRoom, PlaySoundCommand, PlayerInfo, PlayerName,
     PlayerSide, PlayerView, ProjectileAddress, RevealedCardView, RoomIdentifier, RoomVisitType,
     RulesText, RunInParallelCommand, SceneLoadMode, ScoreView, SetGameObjectsEnabledCommand,
@@ -220,7 +220,7 @@ impl Summarize for ProjectileAddress {
     }
 }
 
-impl Summarize for PanelAddress {
+impl Summarize for InterfacePanelAddress {
     fn summarize(self, summary: &mut Summary) {
         summary.primitive(self)
     }

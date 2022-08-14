@@ -107,6 +107,7 @@ pub enum FontSize {
     PanelTitle,
     PromptContext,
     SupplementalInfo,
+    Headline,
 }
 
 impl From<FontSize> for Dimension {
@@ -118,6 +119,7 @@ impl From<FontSize> for Dimension {
             FontSize::PanelTitle => 48,
             FontSize::PromptContext => 48,
             FontSize::SupplementalInfo => 28,
+            FontSize::Headline => 36,
         })
         .px()
         .into()

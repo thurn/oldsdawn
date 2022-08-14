@@ -16,6 +16,7 @@ use protos::spelldawn::{node_type, FontStyle, Node, NodeType, TextAlign, WhiteSp
 
 use crate::design::{Font, FontColor, FontSize};
 use crate::prelude::*;
+use crate::style::WidthMode;
 
 /// Standard design-system-aware text-rendering component
 #[derive(Debug)]
@@ -28,6 +29,7 @@ pub struct Text {
     font_style: FontStyle,
     text_align: TextAlign,
     white_space: WhiteSpace,
+    width_mode: WidthMode,
 }
 
 impl Text {
@@ -41,6 +43,7 @@ impl Text {
             font_style: FontStyle::Unspecified,
             text_align: TextAlign::Unspecified,
             white_space: WhiteSpace::Unspecified,
+            width_mode: WidthMode::Constrained,
         }
     }
 
@@ -73,6 +76,11 @@ impl Text {
         self.white_space = white_space;
         self
     }
+
+    pub fn width_mode(mut self, width_mode: WidthMode) -> Self {
+        self.width_mode = width_mode;
+        self
+    }
 }
 
 impl Component for Text {
@@ -87,7 +95,8 @@ impl Component for Text {
                     .font(self.font)
                     .font_style(self.font_style)
                     .text_align(self.text_align)
-                    .white_space(self.white_space),
+                    .white_space(self.white_space)
+                    .flex_grow(if self.width_mode == WidthMode::Constrained { 0.0 } else { 1.0 }),
             )
             .build()
     }

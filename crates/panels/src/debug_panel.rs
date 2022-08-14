@@ -22,13 +22,14 @@ use core_ui::panel::Panel;
 use core_ui::prelude::*;
 use core_ui::{icons, panel};
 use data::game_actions::DebugAction;
-use data::player_name::NamedPlayer;
 use data::primitives::Side;
 use protos::spelldawn::client_debug_command::DebugCommand;
 use protos::spelldawn::game_command::Command;
 use protos::spelldawn::{
-    ClientDebugCommand, FlexAlign, FlexJustify, FlexWrap, KnownPanelAddress, TogglePanelCommand,
+    ClientDebugCommand, ClientPanelAddress, FlexAlign, FlexJustify, FlexWrap, TogglePanelCommand,
 };
+
+use crate::panel_address::PanelAddress;
 
 #[derive(Debug)]
 pub struct DebugPanel {}
@@ -36,11 +37,11 @@ pub struct DebugPanel {}
 impl Component for DebugPanel {
     fn build(self) -> RenderResult {
         let close = Command::TogglePanel(TogglePanelCommand {
-            panel_address: Some(panel::known(KnownPanelAddress::DebugPanel)),
+            panel_address: Some(panel::client(ClientPanelAddress::DebugPanel)),
             open: false,
         });
 
-        Panel::new(panel::known(KnownPanelAddress::DebugPanel), 1024.px(), 600.px())
+        Panel::new(panel::client(ClientPanelAddress::DebugPanel), 1024.px(), 600.px())
             .title("Debug Controls")
             .show_close_button(true)
             .content(
@@ -73,17 +74,17 @@ impl Component for DebugPanel {
                     .child(debug_button(format!("{} 3", icons::RESTORE), DebugAction::LoadState(3)))
                     .child(debug_button(
                         "Overlord AI",
-                        DebugAction::SetNamedPlayer(
-                            Side::Overlord,
-                            NamedPlayer::TestAlphaBetaHeuristics,
-                        ),
+                        Command::TogglePanel(TogglePanelCommand {
+                            panel_address: Some(PanelAddress::SetPlayerName(Side::Overlord).into()),
+                            open: true,
+                        }),
                     ))
                     .child(debug_button(
                         "Champion AI",
-                        DebugAction::SetNamedPlayer(
-                            Side::Champion,
-                            NamedPlayer::TestAlphaBetaHeuristics,
-                        ),
+                        Command::TogglePanel(TogglePanelCommand {
+                            panel_address: Some(PanelAddress::SetPlayerName(Side::Champion).into()),
+                            open: true,
+                        }),
                     )),
             )
             .build()
