@@ -1,6 +1,6 @@
 set positional-arguments
 
-code-review: git-status disallowed check-format build clippy test check-docs git-status screenshot-tests
+code-review: git-status disallowed check-format build clippy test check-docs git-status
 
 unity := if os() == "macos" {
     "/Applications/Unity/Hub/Editor/2021.3.3f1/Unity.app/Contents/MacOS/Unity"
@@ -138,7 +138,7 @@ target_android := "aarch64-linux-android"
 # Android NDK path
 # e.g. /Users/name/Library/Android/sdk/ndk/24.0.8215888
 # e.g. /Applications/Unity/Hub/Editor/2021.3.3f1/PlaybackEngines/AndroidPlayer/NDK
-android_ndk := env_var("ANDROID_NDK")
+android_ndk := env_var_or_default("ANDROID_NDK", "")
 
 llvm_toolchain := if os() == "macos" {
         "darwin-x86_64"
@@ -181,19 +181,12 @@ ios-plugin:
 
 plugin: mac-plugin windows-plugin ios-plugin ios-simulator-plugin android-plugin
 
-test-backtrace:
-    # Use +nightly in order to get backtraces for anyhow errors
-    RUST_BACKTRACE=1 && cargo +nightly test
-
 doc:
     cargo doc
 
 fix: git-status fix-lints fmt clippy-fix
 
 fix-amend: git-status fix-lints git-amend1 fmt git-amend2 clippy-fix git-amend3
-
-tournament:
-    cargo run --bin tournament
 
 clippy:
     # 'Unused Lifetime' incorrectly raised in rust 1.63
