@@ -9,6 +9,8 @@
 /[Ll]ogs/
 /[Oo]ut/
 
+ScreenshotTests/
+
 UIElementsSchema/
 HostedData/
 Assets/StreamingAssets/

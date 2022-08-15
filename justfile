@@ -5,7 +5,7 @@ code-review: git-status disallowed check-format build clippy test check-docs git
 unity := if os() == "macos" {
     "/Applications/Unity/Hub/Editor/2021.3.3f1/Unity.app/Contents/MacOS/Unity"
   } else {
-    error("Please add unity path")
+    "ERROR: Add unity path"
   }
 
 clean:
@@ -22,8 +22,7 @@ build:
     cargo build --all-targets --all-features
 
 run:
-    # Crash on error during development
-    RUSTFLAGS="--cfg errorpanic" cargo run
+    cargo run --bin spelldawn
 
 test:
     cargo test
@@ -81,25 +80,25 @@ rsync:
 build_flag := if os() == "macos" {
     "-buildOSXUniversalPlayer"
   } else {
-    error("OS not supported")
+    "OS not supported"
   }
 
 app_path := if os() == "macos" {
     "/tmp/spelldawn/out/spelldawn.app"
   } else {
-    error("OS not supported")
+    "OS not supported"
   }
 
 bin_path := if os() == "macos" {
     "/tmp/spelldawn/out/spelldawn.app/Contents/MacOS/Spelldawn"
   } else {
-    error("OS not supported")
+    "OS not supported"
   }
 
 screenshot_path := if os() == "macos" {
     join(app_path, "Contents", "Screenshots")
   } else {
-    error("OS not supported")
+    "OS not supported"
   }
 
 # You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
@@ -180,7 +179,7 @@ llvm_toolchain := if os() == "macos" {
     } else if os() == "linux" {
         "linux-x86_64"
     } else {
-        error("unsupported os")
+        "OS not supported"
     }
 
 # If you get an error about libgcc not being found, see here:
@@ -315,7 +314,10 @@ update-cards:
 
 benchmark *args='':
     cargo criterion --no-run -p spelldawn
-    codesign -f -s - `find target/release/deps -name '*benchmarks*'`
+    if [[ "$OSTYPE" == "darwin"* ]]; then \
+      echo "Signing benchmark binary"; \
+      codesign -f -s - `find target/release/deps -name '*benchmarks*'`; \
+    fi
     cargo criterion -p spelldawn -- "$@"
     /bin/rm -r \~
 
