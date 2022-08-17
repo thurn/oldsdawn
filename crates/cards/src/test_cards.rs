@@ -37,7 +37,7 @@ pub fn test_overlord_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestOverlordIdentity,
         cost: identity_cost(),
-        image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/3"),
+        image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/3.png"),
         card_type: CardType::Identity,
         side: Side::Overlord,
         school: School::Law,
@@ -51,7 +51,7 @@ pub fn test_champion_identity() -> CardDefinition {
     CardDefinition {
         name: CardName::TestChampionIdentity,
         cost: identity_cost(),
-        image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/2"),
+        image: Sprite::new("Enixion/Fantasy Art Pack 2/Resized/2.png"),
         card_type: CardType::Identity,
         side: Side::Champion,
         school: School::Primal,

@@ -127,11 +127,11 @@ impl From<FontSize> for Dimension {
 }
 
 fn roboto() -> FontAddress {
-    FontAddress { address: "Fonts/Roboto".to_string() }
+    FontAddress { address: "Fonts/Roboto.ttf".to_string() }
 }
 
 fn bluu_next() -> FontAddress {
-    FontAddress { address: "Fonts/BluuNext-Bold".to_string() }
+    FontAddress { address: "Fonts/BluuNext-Bold.otf".to_string() }
 }
 
 #[derive(Debug, Clone, Copy)]

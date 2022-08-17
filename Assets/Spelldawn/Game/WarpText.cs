@@ -49,7 +49,7 @@ namespace Spelldawn.Game
 
     public IEnumerator Warp()
     {
-      for (var i = 0; i < 4; ++i)
+      for (var i = 0; i < 10; ++i)
       {
         // TextMeshPro mesh updates basically just take an arbitrary number of frames to take effect,
         // and I don't think there's really a callback when it's done.

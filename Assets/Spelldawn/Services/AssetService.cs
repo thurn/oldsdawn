@@ -19,6 +19,8 @@ using Spelldawn.Game;
 using Spelldawn.Protos;
 using Spelldawn.Utils;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using Object = UnityEngine.Object;
 
 #nullable enable
@@ -91,7 +93,7 @@ namespace Spelldawn.Services
 
     public IEnumerator LoadAssets(CommandList commandList)
     {
-      var requests = new Dictionary<string, ResourceRequest>();
+      var requests = new Dictionary<string, AsyncOperationHandle>();
 
       foreach (var command in commandList.Commands)
       {
@@ -133,22 +135,23 @@ namespace Spelldawn.Services
 
     public IEnumerator LoadAssetsForNode(Node node)
     {
-      var requests = new Dictionary<string, ResourceRequest>();
+      var requests = new Dictionary<string, AsyncOperationHandle>();
       LoadNodeAssets(requests, node);
       yield return WaitForRequests(requests);
     }
 
-    public IEnumerator WaitForRequests(IDictionary<string, ResourceRequest> requests)
+    public IEnumerator WaitForRequests(IDictionary<string, AsyncOperationHandle> requests)
     {
       if (requests.Count > 0)
       {
-        yield return new WaitUntil(() => requests.Values.All(r => r.isDone));
+        yield return new WaitUntil(() => requests.Values.All(r => r.Status == AsyncOperationStatus.Succeeded));
 
         foreach (var (address, request) in requests)
         {
-          if (request.asset)
+          var result = request.Result as Object;
+          if (result)
           {
-            _assets[address] = request.asset;
+            _assets[address] = result;
           }
           else
           {
@@ -158,7 +161,7 @@ namespace Spelldawn.Services
       }    
     }
 
-    void LoadUpdatePanelsAssets(IDictionary<string, ResourceRequest> requests, UpdatePanelsCommand command)
+    void LoadUpdatePanelsAssets(IDictionary<string, AsyncOperationHandle> requests, UpdatePanelsCommand command)
     {
       foreach (var panel in command.Panels)
       {
@@ -166,7 +169,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadInterfaceMainControlsAssets(IDictionary<string, ResourceRequest> requests,
+    void LoadInterfaceMainControlsAssets(IDictionary<string, AsyncOperationHandle> requests,
       InterfaceMainControls? mainControls)
     {
       if (mainControls != null)
@@ -180,7 +183,7 @@ namespace Spelldawn.Services
       }
     }
     
-    void LoadNodeAssets(IDictionary<string, ResourceRequest> requests, Node? node)
+    void LoadNodeAssets(IDictionary<string, AsyncOperationHandle> requests, Node? node)
     {
       if (node != null)
       {
@@ -195,7 +198,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadStyleAssets(IDictionary<string, ResourceRequest> requests, FlexStyle? style)
+    void LoadStyleAssets(IDictionary<string, AsyncOperationHandle> requests, FlexStyle? style)
     {
       if (style != null)
       {
@@ -204,7 +207,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadGameAssets(IDictionary<string, ResourceRequest> requests, GameView? game)
+    void LoadGameAssets(IDictionary<string, AsyncOperationHandle> requests, GameView? game)
     {
       if (game != null)
       {
@@ -215,7 +218,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadPlayerAssets(IDictionary<string, ResourceRequest> requests, PlayerView? playerView)
+    void LoadPlayerAssets(IDictionary<string, AsyncOperationHandle> requests, PlayerView? playerView)
     {
       if (playerView != null)
       {
@@ -223,7 +226,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadCardListAssets(IDictionary<string, ResourceRequest> requests, IEnumerable<CardView>? cards)
+    void LoadCardListAssets(IDictionary<string, AsyncOperationHandle> requests, IEnumerable<CardView>? cards)
     {
       if (cards != null)
       {
@@ -234,7 +237,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadCardAssets(IDictionary<string, ResourceRequest> requests, CardView? card)
+    void LoadCardAssets(IDictionary<string, AsyncOperationHandle> requests, CardView? card)
     {
       if (card != null)
       {
@@ -244,7 +247,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadRevealedCardAssets(IDictionary<string, ResourceRequest> requests, RevealedCardView? card)
+    void LoadRevealedCardAssets(IDictionary<string, AsyncOperationHandle> requests, RevealedCardView? card)
     {
       if (card != null)
       {
@@ -256,7 +259,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadCardIconsAssets(IDictionary<string, ResourceRequest> requests, CardIcons? cardIcons)
+    void LoadCardIconsAssets(IDictionary<string, AsyncOperationHandle> requests, CardIcons? cardIcons)
     {
       if (cardIcons != null)
       {
@@ -268,7 +271,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadCardIconAssets(IDictionary<string, ResourceRequest> requests, CardIcon? cardIcon)
+    void LoadCardIconAssets(IDictionary<string, AsyncOperationHandle> requests, CardIcon? cardIcon)
     {
       if (cardIcon != null)
       {
@@ -276,7 +279,7 @@ namespace Spelldawn.Services
       }
     }
 
-    void LoadPlayerInfoAssets(IDictionary<string, ResourceRequest> requests, PlayerInfo? playerInfo)
+    void LoadPlayerInfoAssets(IDictionary<string, AsyncOperationHandle> requests, PlayerInfo? playerInfo)
     {
       if (playerInfo != null)
       {
@@ -285,7 +288,7 @@ namespace Spelldawn.Services
       }
     }
     
-    void LoadBackground(IDictionary<string, ResourceRequest> requests, NodeBackground? background)
+    void LoadBackground(IDictionary<string, AsyncOperationHandle> requests, NodeBackground? background)
     {
       if (background != null)
       {
@@ -301,51 +304,51 @@ namespace Spelldawn.Services
       }
     }
 
-    void Load<T>(IDictionary<string, ResourceRequest> requests, string? address) where T : Object
+    void Load<T>(IDictionary<string, AsyncOperationHandle> requests, string? address) where T : Object
     {
       if (!string.IsNullOrWhiteSpace(address) && !_assets.ContainsKey(address))
       {
-        requests[address] = Resources.LoadAsync<T>(address);
+        requests[address] = Addressables.LoadAssetAsync<T>(address);
       }
     }    
     
-    void LoadSprite(IDictionary<string, ResourceRequest> requests, SpriteAddress? address)
+    void LoadSprite(IDictionary<string, AsyncOperationHandle> requests, SpriteAddress? address)
     {
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
-        requests[address.Address] = Resources.LoadAsync<Sprite>(address.Address);
+        requests[address.Address] = Addressables.LoadAssetAsync<Sprite>(address.Address);
       }
     }
 
-    void LoadFont(IDictionary<string, ResourceRequest> requests, FontAddress? address)
+    void LoadFont(IDictionary<string, AsyncOperationHandle> requests, FontAddress? address)
     {
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
-        requests[address.Address] = Resources.LoadAsync<Font>(address.Address);
+        requests[address.Address] = Addressables.LoadAssetAsync<Font>(address.Address);
       }
     }
 
-    void LoadProjectile(IDictionary<string, ResourceRequest> requests, ProjectileAddress? address)
+    void LoadProjectile(IDictionary<string, AsyncOperationHandle> requests, ProjectileAddress? address)
     {
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
-        requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
+        requests[address.Address] = Addressables.LoadAssetAsync<GameObject>(address.Address);
       }
     }
 
-    void LoadEffect(IDictionary<string, ResourceRequest> requests, EffectAddress? address)
+    void LoadEffect(IDictionary<string, AsyncOperationHandle> requests, EffectAddress? address)
     {
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
-        requests[address.Address] = Resources.LoadAsync<GameObject>(address.Address);
+        requests[address.Address] = Addressables.LoadAssetAsync<GameObject>(address.Address);
       }
     }
 
-    void LoadAudioClip(IDictionary<string, ResourceRequest> requests, AudioClipAddress? address)
+    void LoadAudioClip(IDictionary<string, AsyncOperationHandle> requests, AudioClipAddress? address)
     {
       if (!string.IsNullOrWhiteSpace(address?.Address) && !_assets.ContainsKey(address.Address))
       {
-        requests[address.Address] = Resources.LoadAsync<AudioClip>(address.Address);
+        requests[address.Address] = Addressables.LoadAssetAsync<AudioClip>(address.Address);
       }
     }
   }

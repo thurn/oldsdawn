@@ -95,7 +95,7 @@ impl DimensionExt for f32 {
 
 /// Turns a string into a [SpriteAddress].
 pub fn sprite(string: impl Into<String>) -> SpriteAddress {
-    SpriteAddress { address: string.into() }
+    SpriteAddress { address: format!("{}.png", string.into()) }
 }
 
 /// Controls the growth behavior of a component.

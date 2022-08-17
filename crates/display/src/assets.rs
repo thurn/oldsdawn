@@ -49,36 +49,38 @@ pub fn background_scale(icon_type: CardIconType) -> Option<f32> {
 /// Address for a given [CardIconType]
 pub fn card_icon(icon_type: CardIconType) -> SpriteAddress {
     SpriteAddress {
-        address: match icon_type {
-            CardIconType::LevelCounter => {
-                "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Icons/Number_Icons_Color_3"
+        address: format!(
+            "{}.png",
+            match icon_type {
+                CardIconType::LevelCounter => {
+                    "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Icons/Number_Icons_Color_3"
+                }
+                CardIconType::Mana => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"
+                }
+                CardIconType::Health => {
+                    "LittleSweetDaemon/TCG_Card_Elemental_Design/Heart_Icons/Heart_Icons_Color_5"
+                }
+                CardIconType::Attack => {
+                    "LittleSweetDaemon/TCG_Card_Elemental_Design/Attack_Icons/Attack_Icons_Color_4"
+                }
+                CardIconType::Shield => {
+                    "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Icons/Number_Icons_Color_6"
+                }
+                CardIconType::LevelRequirement => {
+                    "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Back/Number_Back_Color_3"
+                }
+                CardIconType::Points => {
+                    "LittleSweetDaemon/TCG_Card_Elemental_Design/Card_Color_07/Back_Card_Color_07/Back_Card_Color_07_Logo_Crystal"
+                }
             }
-            CardIconType::Mana => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Icons/Icon_Mana_Color_01"
-            }
-            CardIconType::Health => {
-                "LittleSweetDaemon/TCG_Card_Elemental_Design/Heart_Icons/Heart_Icons_Color_5"
-            }
-            CardIconType::Attack => {
-                "LittleSweetDaemon/TCG_Card_Elemental_Design/Attack_Icons/Attack_Icons_Color_4"
-            }
-            CardIconType::Shield => {
-                "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Icons/Number_Icons_Color_6"
-            }
-            CardIconType::LevelRequirement => {
-                "LittleSweetDaemon/TCG_Card_Elemental_Design/Number_Back/Number_Back_Color_3"
-            }
-            CardIconType::Points => {
-                "LittleSweetDaemon/TCG_Card_Elemental_Design/Card_Color_07/Back_Card_Color_07/Back_Card_Color_07_Logo_Crystal"
-            }
-        }
-        .to_string(),
+        ),
     }
 }
 
 /// Address for the frame of a player's identity card image
 pub fn identity_card_frame(side: Side) -> SpriteAddress {
-    SpriteAddress { address: identity_card_frame_string(side).to_string() }
+    SpriteAddress { address: format!("{}.png", identity_card_frame_string(side)) }
 }
 
 fn identity_card_frame_string(side: Side) -> &'static str {
@@ -91,52 +93,58 @@ fn identity_card_frame_string(side: Side) -> &'static str {
 /// Address for the back of a card of a given [School]
 pub fn card_back(school: School) -> SpriteAddress {
     SpriteAddress {
-        address: match school {
-            School::Law => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"
+        address: format!(
+            "{}.png",
+            match school {
+                School::Law => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Steampunk_Style_Color_1"
+                }
+                School::Neutral => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Lovecraft_Style_Color_1"
+                }
+                School::Shadow => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Daemon_Style_Color_1"
+                }
+                School::Primal => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"
+                }
             }
-            School::Neutral => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Lovecraft_Style_Color_1"
-            }
-            School::Shadow => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Daemon_Style_Color_1"
-            }
-            School::Primal => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Backs/Back_Elf_Style_Color_1"
-            }
-        }
-        .to_string(),
+        ),
     }
 }
 
 /// Address for the frame of a card of a given [School]
 pub fn card_frame(school: School) -> SpriteAddress {
     SpriteAddress {
-        address: match school {
-            School::Law => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"
+        address: format!(
+            "{}.png",
+            match school {
+                School::Law => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Steampunk_Style_Color_1"
+                }
+                School::Neutral => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Lovecraft_Style_Color_1"
+                }
+                School::Shadow => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Daemon_Style_Color_1"
+                }
+                School::Primal => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Elf_Style_Color_1"
+                }
             }
-            School::Neutral => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Lovecraft_Style_Color_1"
-            }
-            School::Shadow => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Daemon_Style_Color_1"
-            }
-            School::Primal => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Cards/Card_Elf_Style_Color_1"
-            }
-        }
-        .to_string(),
+        ),
     }
 }
 
 pub fn ability_card_frame(side: Side) -> SpriteAddress {
     SpriteAddress {
-        address: match side {
-            Side::Overlord => "LittleSweetDaemon/TCG_Card_Design/Custom/OverlordFront",
-            Side::Champion => "LittleSweetDaemon/TCG_Card_Design/Custom/ChampionFront",
-        }
-        .to_string(),
+        address: format!(
+            "{}.png",
+            match side {
+                Side::Overlord => "LittleSweetDaemon/TCG_Card_Design/Custom/OverlordFront",
+                Side::Champion => "LittleSweetDaemon/TCG_Card_Design/Custom/ChampionFront",
+            }
+        ),
     }
 }
 
@@ -157,49 +165,54 @@ pub fn title_color(lineage: Option<Lineage>) -> FlexColor {
 /// [Lineage].
 pub fn title_background(_: Option<Lineage>) -> SpriteAddress {
     SpriteAddress {
-        address: "LittleSweetDaemon/TCG_Card_Design/Custom/Title/BlackWhiteFaceTape".to_string(),
+        address: "LittleSweetDaemon/TCG_Card_Design/Custom/Title/BlackWhiteFaceTape.png"
+            .to_string(),
     }
 }
 
 /// Address for the frame of a card in the arena
 pub fn arena_frame(side: Side, card_type: CardType, lineage: Option<Lineage>) -> SpriteAddress {
     SpriteAddress {
-        address: match lineage {
-            Some(Lineage::Mortal) => "SpriteWay/Icons/Clean Frames/9048",
-            Some(Lineage::Infernal) => "SpriteWay/Icons/Clean Frames/9054",
-            Some(Lineage::Abyssal) => "SpriteWay/Icons/Clean Frames/9020",
-            Some(Lineage::Prismatic) => "SpriteWay/Icons/Clean Frames/9047",
-            Some(Lineage::Construct) => "SpriteWay/Icons/Clean Frames/9003",
-            None => match card_type {
-                CardType::Identity => identity_card_frame_string(side),
-                CardType::Artifact => "SpriteWay/Icons/Clean Frames/9013",
-                CardType::Scheme => "SpriteWay/Icons/Clean Frames/9032",
-                CardType::Project => "SpriteWay/Icons/Clean Frames/9025",
-                _ => "SpriteWay/Icons/Clean Frames/9062",
-            },
-        }
-        .to_string(),
+        address: format!(
+            "{}.png",
+            match lineage {
+                Some(Lineage::Mortal) => "SpriteWay/Icons/Clean Frames/9048",
+                Some(Lineage::Infernal) => "SpriteWay/Icons/Clean Frames/9054",
+                Some(Lineage::Abyssal) => "SpriteWay/Icons/Clean Frames/9020",
+                Some(Lineage::Prismatic) => "SpriteWay/Icons/Clean Frames/9047",
+                Some(Lineage::Construct) => "SpriteWay/Icons/Clean Frames/9003",
+                None => match card_type {
+                    CardType::Identity => identity_card_frame_string(side),
+                    CardType::Artifact => "SpriteWay/Icons/Clean Frames/9013",
+                    CardType::Scheme => "SpriteWay/Icons/Clean Frames/9032",
+                    CardType::Project => "SpriteWay/Icons/Clean Frames/9025",
+                    _ => "SpriteWay/Icons/Clean Frames/9062",
+                },
+            }
+        ),
     }
 }
 
 /// Address for the rarity jewel to display on a card
 pub fn jewel(rarity: Rarity) -> SpriteAddress {
     SpriteAddress {
-        address: match rarity {
-            Rarity::Common | Rarity::None => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01"
+        address: format!(
+            "{}.png",
+            match rarity {
+                Rarity::Common | Rarity::None => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_01"
+                }
+                Rarity::Rare => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"
+                }
+                Rarity::Exalted => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_02"
+                }
+                Rarity::Epic => {
+                    "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_02"
+                }
             }
-            Rarity::Rare => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_01"
-            }
-            Rarity::Exalted => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Elf_Color_02"
-            }
-            Rarity::Epic => {
-                "LittleSweetDaemon/TCG_Card_Fantasy_Design/Jewels/Jewel_Steampunk_Color_02"
-            }
-        }
-        .to_string(),
+        ),
     }
 }
 
@@ -207,7 +220,7 @@ pub fn projectile(projectile: Projectile) -> ProjectileAddress {
     ProjectileAddress {
         address: match projectile {
             Projectile::Hovl(number) => format!(
-                "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile {}",
+                "Hovl Studio/AAA Projectiles Vol 1/Prefabs/Projectiles/Projectile {}.prefab",
                 number
             ),
         },
@@ -218,10 +231,10 @@ pub fn timed_effect(effect: TimedEffect) -> EffectAddress {
     EffectAddress {
         address: match effect {
             TimedEffect::HovlMagicHit(number) => {
-                format!("Hovl Studio/Magic hits/Prefabs/Hit {}", number)
+                format!("Hovl Studio/Magic hits/Prefabs/Hit {}.prefab", number)
             }
             TimedEffect::HovlSwordSlash(number) => {
-                format!("Hovl Studio/Sword slash VFX/Prefabs/Sword Slash {}", number)
+                format!("Hovl Studio/Sword slash VFX/Prefabs/Sword Slash {}.prefab", number)
             }
         },
     }
@@ -229,21 +242,23 @@ pub fn timed_effect(effect: TimedEffect) -> EffectAddress {
 
 pub fn sound_effect(effect: SoundEffect) -> AudioClipAddress {
     AudioClipAddress {
-        address: match effect {
-            SoundEffect::FantasyEvents(events) => match events {
-                FantasyEventSounds::Positive1 => {
-                    "Cafofo/Fantasy Music Pack Vol 1/Events/Positive Event 01".to_string()
-                }
-            },
-            SoundEffect::Fireworks(firework) => match firework {
-                FireworksSound::RocketExplodeLarge => {
-                    "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_Large_RR1_mono"
-                        .to_string()
-                }
-                FireworksSound::RocketExplode => {
-                    "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_RR1_mono".to_string()
-                }
-            },
-        },
+        address: format!(
+            "{}.wav",
+            match effect {
+                SoundEffect::FantasyEvents(events) => match events {
+                    FantasyEventSounds::Positive1 => {
+                        "Cafofo/Fantasy Music Pack Vol 1/Events/Positive Event 01"
+                    }
+                },
+                SoundEffect::Fireworks(firework) => match firework {
+                    FireworksSound::RocketExplodeLarge => {
+                        "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_Large_RR1_mono"
+                    }
+                    FireworksSound::RocketExplode => {
+                        "Universal Sound FX/FIREWORKS/FIREWORKS_Rocket_Explode_RR1_mono"
+                    }
+                },
+            }
+        ),
     }
 }
