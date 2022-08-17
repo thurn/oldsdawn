@@ -8,13 +8,6 @@ unity := if os() == "macos" {
     "ERROR: Add unity path"
   }
 
-clean:
-    rm -f target/.rustc_info.json
-    cargo clean
-    mkdir target
-    xattr -w com.dropbox.ignored 1 target
-    find . -name "*.profraw" -delete
-
 check:
     cargo check --all-targets --all-features
 
@@ -354,14 +347,14 @@ machete:
 
 remove-unused-deps: machete
 
-time-passes: clean
+time-passes: clean-dropbox
     cargo +nightly rustc -p spelldawn --bin spelldawn -- -Z time-passes
 
-timings: clean
+timings: clean-dropbox
     cargo build --timings
 
 # Builds .gcda files used for code coverage
-gen-gcda: clean
+gen-gcda: clean-dropbox
     #!/usr/bin/env sh
     set -euxo pipefail
     export LLVM_PROFILE_FILE='spelldawn-%p-%m.profraw'
@@ -403,3 +396,10 @@ git-amend3:
 
 @matchup *args='':
     cargo run --bin run_matchup -- $@
+
+clean-dropbox:
+    rm -f target/.rustc_info.json
+    cargo clean
+    mkdir target
+    xattr -w com.dropbox.ignored 1 target
+    find . -name "*.profraw" -delete
