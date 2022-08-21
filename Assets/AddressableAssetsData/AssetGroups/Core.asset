@@ -17,52 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 50c9ed8689f944f5f9e72db51c798eb0
   m_SerializeEntries:
-  - m_GUID: 09deee4d17477455998a19fcb1f6fa96
-    m_Address: Cafofo
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 09494c1ff8803430da3f79003c9a27a9
-    m_Address: Enixion
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: bbde52325fd4b4106928a96a0733891d
     m_Address: Fonts
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 8cfd6fbe2b87d4f85b0203917929abac
-    m_Address: Hovl Studio
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 39427bdc56e0c4df090820bc0a1d7047
-    m_Address: LittleSweetDaemon
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: c3e129328ec4b42889e782e8737c5b0a
-    m_Address: OurMusicBox
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 70d827d048c704948a3522988495aaf8
-    m_Address: Poneti
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: cebc7a30272994d30922c34528f68600
-    m_Address: Rexard
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: e4fc7c961e95f48d4824a63467499d80
-    m_Address: SpriteWay
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 251eaad2dee5f4c00a969f38de8168ca
-    m_Address: Ultimate Game Music Collection
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: bf973efcd1a2d43108d15b1255397086
-    m_Address: Universal Sound FX
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 5db80f60599d046868fc4555af4f09fa
-    m_Address: WowSound
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

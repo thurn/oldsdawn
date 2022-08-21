@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: LootIcons
+  m_EditorClassIdentifier: 
+  m_GroupName: LootIcons
+  m_Data:
+    m_SerializedData: []
+  m_GUID: f050dce2f0433495a877db9ae40a672c
+  m_SerializeEntries:
+  - m_GUID: 73c04c09b71c6654dbd061987a3d9191
+    m_Address: Rexard/FantasyIconsMegaPack/LootIcons
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8c1b10ec577254edfa3cefff6f6e4873, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 09f5a4fdef28b479cb02f7b63971bafd, type: 2}
+    - {fileID: 11400000, guid: 6addaeb484a2441adb8c1a41dfce4119, type: 2}

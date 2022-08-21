@@ -33,7 +33,7 @@ namespace Spelldawn.Services
 
     IEnumerator Start()
     {
-      Debug.Log($"Start: Starting download");
+      Debug.Log($"Start: Starting pre-fetch download");
       var startTime = Time.time;
       yield return Addressables.DownloadDependenciesAsync("Fonts/Roboto.ttf");
       Debug.Log($"Start: Done download in {Time.time - startTime} seconds");
@@ -101,6 +101,8 @@ namespace Spelldawn.Services
 
     public IEnumerator LoadAssets(CommandList commandList)
     {
+      Debug.Log($"Start: Starting LoadAssets download");
+      var startTime = Time.time;      
       var requests = new Dictionary<string, AsyncOperationHandle>();
 
       foreach (var command in commandList.Commands)
@@ -139,6 +141,7 @@ namespace Spelldawn.Services
       }
 
       yield return WaitForRequests(requests);
+      Debug.Log($"Done LoadAssets downloads in {Time.time - startTime} seconds");
     }
 
     public IEnumerator LoadAssetsForNode(Node node)

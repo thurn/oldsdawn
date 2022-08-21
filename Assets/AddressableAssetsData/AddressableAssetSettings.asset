@@ -43,6 +43,31 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: 7b98f2321d711471f816aa96ca1da752, type: 2}
   - {fileID: 11400000, guid: 9f03ca19dca434e2c93da4c9f888486f, type: 2}
+  - {fileID: 11400000, guid: ba1d8fad0b5884ab4aa52173ea40db27, type: 2}
+  - {fileID: 11400000, guid: 88c05bd41ad8542909e8ee0847ed8aff, type: 2}
+  - {fileID: 11400000, guid: b9d5f84fa00d348dcbbf954bf6fe9ca1, type: 2}
+  - {fileID: 11400000, guid: 5cb4070896af74317a26fb11a9d6247e, type: 2}
+  - {fileID: 11400000, guid: 1d96cd026a26c4ed89ec8f1589f3fdc6, type: 2}
+  - {fileID: 11400000, guid: f04e8bd942cca4bf496f3ecf38858f66, type: 2}
+  - {fileID: 11400000, guid: bea7407d0ba184d2a8d466ffd3cfc721, type: 2}
+  - {fileID: 11400000, guid: df5180762d57343d3b6ae0de28b0037d, type: 2}
+  - {fileID: 11400000, guid: bc516df9368c1468ea185f98e9f3a03d, type: 2}
+  - {fileID: 11400000, guid: b478bb4771bcb46f5a407a2423828f3e, type: 2}
+  - {fileID: 11400000, guid: 9d0fe117f064b4042b3339dbb13e3027, type: 2}
+  - {fileID: 11400000, guid: 2b9b1839e440549699986d4d4d7b05ff, type: 2}
+  - {fileID: 11400000, guid: 1ee4dcae0ccb7479d897435c22e127e6, type: 2}
+  - {fileID: 11400000, guid: 887afc5c27f1c4118a75587c3b3d9395, type: 2}
+  - {fileID: 11400000, guid: c59473b759a4843c78edc0496497d071, type: 2}
+  - {fileID: 11400000, guid: 485c2634acf8b4b43b0f40a48da078ec, type: 2}
+  - {fileID: 11400000, guid: 8f148dab35d3341d59cb92b065e72e84, type: 2}
+  - {fileID: 11400000, guid: 7562789dcf16c47b99b96796f72df4ee, type: 2}
+  - {fileID: 11400000, guid: 0d6b3dd65ed254660a28983e7992004c, type: 2}
+  - {fileID: 11400000, guid: d4283de299eea4dfc83b279d150d8a87, type: 2}
+  - {fileID: 11400000, guid: af53f1c5aec174014a23994d019f82b7, type: 2}
+  - {fileID: 11400000, guid: d2020e47871404121b4b0817aa0d9842, type: 2}
+  - {fileID: 11400000, guid: d5609ff89db4d463e85a5c2286b28e6b, type: 2}
+  - {fileID: 11400000, guid: a494b19debf55450fa05c1b305e46360, type: 2}
+  - {fileID: 11400000, guid: effe74d3ad480489d815c393c5bd27b2, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -61,9 +86,9 @@ MonoBehaviour:
       - m_Id: acec921a8924f4dde8ca0ca47958cf60
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: 40919f125a92748f1bf4b1d3d7468864
-        m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
+        m_Value: ServerData/[BuildTarget]
       - m_Id: 181cfd462a0ee49bb8a286cbda00d4bb
-        m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
+        m_Value: http://127.0.0.1:8080/
     m_ProfileEntryNames:
     - m_Id: ef793609f299f47a1b04ed33172ec0fd
       m_Name: BuildTarget

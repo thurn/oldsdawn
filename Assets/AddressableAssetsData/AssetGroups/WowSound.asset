@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: WowSound
+  m_EditorClassIdentifier: 
+  m_GroupName: WowSound
+  m_Data:
+    m_SerializedData: []
+  m_GUID: bc53d94214dc94b47852c3f7cd348ccf
+  m_SerializeEntries:
+  - m_GUID: 5db80f60599d046868fc4555af4f09fa
+    m_Address: WowSound
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8c1b10ec577254edfa3cefff6f6e4873, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 3985bcf6b2af84ded91670fb74c05f7d, type: 2}
+    - {fileID: 11400000, guid: fbda413563b98473ca4bf28ce6c0b039, type: 2}

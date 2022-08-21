@@ -20,15 +20,6 @@
     <type fullname="UnityEngine.Rendering.PostProcessing.PostProcessProfile" preserve="all" />
     <type fullname="UnityEngine.Rendering.PostProcessing.PostProcessResources" preserve="all" />
     <type fullname="UnityEngine.Rendering.PostProcessing.PostProcessVolume" preserve="all" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.BoolParameter" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.ColorParameter" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.FloatParameter" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.GradingModeParameter" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.Spline" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.SplineParameter" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.TextureParameter" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.TonemapperParameter" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Rendering.PostProcessing.Vector4Parameter" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.PostProcessing.FastApproximateAntialiasing" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.PostProcessing.Fog" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.PostProcessing.HistogramMonitor" preserve="nothing" serialized="true" />
@@ -42,6 +33,15 @@
     <type fullname="UnityEngine.Rendering.PostProcessing.TemporalAntialiasing" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.PostProcessing.VectorscopeMonitor" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.PostProcessing.WaveformMonitor" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.BoolParameter" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.ColorParameter" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.FloatParameter" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.GradingModeParameter" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.Spline" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.SplineParameter" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.TextureParameter" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.TonemapperParameter" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Rendering.PostProcessing.Vector4Parameter" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
@@ -99,8 +99,8 @@
     <type fullname="UnityEngine.TextAsset" preserve="all" />
     <type fullname="UnityEngine.Texture2D" preserve="all" />
     <type fullname="UnityEngine.Transform" preserve="all" />
-    <type fullname="UnityEngine.Events.ArgumentCache" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Events.PersistentCallGroup" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Events.ArgumentCache" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Events.PersistentListenerMode" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.RectOffset" preserve="nothing" serialized="true" />
   </assembly>
@@ -151,6 +151,7 @@
     <type fullname="UnityEngine.UI.Text" preserve="all" />
     <type fullname="UnityEngine.UI.Toggle" preserve="all" />
     <type fullname="UnityEngine.UI.ToggleGroup" preserve="all" />
+    <type fullname="UnityEngine.UI.MaskableGraphic/CullStateChangedEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.AnimationTriggers" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Button/ButtonClickedEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.ColorBlock" preserve="nothing" serialized="true" />
@@ -161,7 +162,6 @@
     <type fullname="UnityEngine.UI.InputField/EndEditEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.InputField/OnChangeEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.InputField/SubmitEvent" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.MaskableGraphic/CullStateChangedEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Navigation" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.ScrollRect/ScrollRectEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Slider/SliderEvent" preserve="nothing" serialized="true" />

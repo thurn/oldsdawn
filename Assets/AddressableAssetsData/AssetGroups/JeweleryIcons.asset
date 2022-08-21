@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: JeweleryIcons
+  m_EditorClassIdentifier: 
+  m_GroupName: JeweleryIcons
+  m_Data:
+    m_SerializedData: []
+  m_GUID: fc1fec0f3caa04598b807c7d4ff249cc
+  m_SerializeEntries:
+  - m_GUID: f1fc0b024e30a31408d0d2f9c6ae50d5
+    m_Address: Rexard/FairytaleIconsMegapack/JewelryIcons
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8c1b10ec577254edfa3cefff6f6e4873, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 8c17df4fba2cf4e0eb92e0dd7d946e31, type: 2}
+    - {fileID: 11400000, guid: a5288813a60464021a90bed368646490, type: 2}
