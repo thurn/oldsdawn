@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: HovlSlashes
+  m_EditorClassIdentifier: 
+  m_GroupName: HovlSlashes
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 01f39ec7f0ef24ef697f16d4872574bd
+  m_SerializeEntries:
+  - m_GUID: cbba91f99d0b94d2f92d0a0b035d12fb
+    m_Address: Hovl Studio/Sword slash VFX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8c1b10ec577254edfa3cefff6f6e4873, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b70ecd931281147a09fd96b7b4e167a4, type: 2}
+    - {fileID: 11400000, guid: f876cef4103f043a58e314cf20258871, type: 2}

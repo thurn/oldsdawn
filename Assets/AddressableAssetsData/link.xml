@@ -1,14 +1,81 @@
 <linker>
   <assembly fullname="Spelldawn, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Spelldawn.Game.ActionDisplay" preserve="all" />
+    <type fullname="Spelldawn.Game.ActionSymbol" preserve="all" />
+    <type fullname="Spelldawn.Game.ApplySortingOrder" preserve="all" />
+    <type fullname="Spelldawn.Game.BackgroundOverlay" preserve="all" />
+    <type fullname="Spelldawn.Game.Card" preserve="all" />
+    <type fullname="Spelldawn.Game.CardBrowser" preserve="all" />
+    <type fullname="Spelldawn.Game.CurveObjectDisplay" preserve="all" />
+    <type fullname="Spelldawn.Game.CustomDisplayable" preserve="all" />
+    <type fullname="Spelldawn.Game.Deck" preserve="all" />
+    <type fullname="Spelldawn.Game.DefaultStackObjectDisplay" preserve="all" />
+    <type fullname="Spelldawn.Game.DiscardPile" preserve="all" />
+    <type fullname="Spelldawn.Game.GameMessage" preserve="all" />
+    <type fullname="Spelldawn.Game.HiddenObjectDisplay" preserve="all" />
+    <type fullname="Spelldawn.Game.IdentityCard" preserve="all" />
+    <type fullname="Spelldawn.Game.LinearObjectDisplay" preserve="all" />
+    <type fullname="Spelldawn.Game.LongPressCardBrowser" preserve="all" />
+    <type fullname="Spelldawn.Game.LongPressCardBrowserClose" preserve="all" />
+    <type fullname="Spelldawn.Game.ManaDisplay" preserve="all" />
     <type fullname="Spelldawn.Game.Projectile" preserve="all" />
+    <type fullname="Spelldawn.Game.RaidParticipantsObjectDisplay" preserve="all" />
+    <type fullname="Spelldawn.Game.RectangularObjectDisplay" preserve="all" />
+    <type fullname="Spelldawn.Game.RewardChest" preserve="all" />
+    <type fullname="Spelldawn.Game.Room" preserve="all" />
+    <type fullname="Spelldawn.Game.SceneBackground" preserve="all" />
+    <type fullname="Spelldawn.Game.Studio" preserve="all" />
     <type fullname="Spelldawn.Game.TimedEffect" preserve="all" />
+    <type fullname="Spelldawn.Game.TogglePanelButton" preserve="all" />
+    <type fullname="Spelldawn.Game.WarpText" preserve="all" />
+    <type fullname="Spelldawn.Services.ActionService" preserve="all" />
+    <type fullname="Spelldawn.Services.ArenaService" preserve="all" />
+    <type fullname="Spelldawn.Services.ArrowService" preserve="all" />
+    <type fullname="Spelldawn.Services.AssetPoolService" preserve="all" />
+    <type fullname="Spelldawn.Services.AssetService" preserve="all" />
+    <type fullname="Spelldawn.Services.CapabilityService" preserve="all" />
+    <type fullname="Spelldawn.Services.CardService" preserve="all" />
+    <type fullname="Spelldawn.Services.CommandService" preserve="all" />
+    <type fullname="Spelldawn.Services.DocumentService" preserve="all" />
+    <type fullname="Spelldawn.Services.GameService" preserve="all" />
+    <type fullname="Spelldawn.Services.InputService" preserve="all" />
+    <type fullname="Spelldawn.Services.MusicService" preserve="all" />
+    <type fullname="Spelldawn.Services.ObjectPositionService" preserve="all" />
+    <type fullname="Spelldawn.Services.RaidService" preserve="all" />
+    <type fullname="Spelldawn.Services.Registry" preserve="all" />
+    <type fullname="Spelldawn.Services.StaticAssets" preserve="all" />
+    <type fullname="Spelldawn.Game.Card/Icon" preserve="nothing" serialized="true" />
+    <type fullname="Spelldawn.Game.GameMessage/MessageContent" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="Tayx.Graphy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Tayx.Graphy.Advanced.G_AdvancedData" preserve="all" />
+    <type fullname="Tayx.Graphy.Audio.G_AudioGraph" preserve="all" />
+    <type fullname="Tayx.Graphy.Audio.G_AudioManager" preserve="all" />
+    <type fullname="Tayx.Graphy.Audio.G_AudioMonitor" preserve="all" />
+    <type fullname="Tayx.Graphy.Audio.G_AudioText" preserve="all" />
+    <type fullname="Tayx.Graphy.Fps.G_FpsGraph" preserve="all" />
+    <type fullname="Tayx.Graphy.Fps.G_FpsManager" preserve="all" />
+    <type fullname="Tayx.Graphy.Fps.G_FpsMonitor" preserve="all" />
+    <type fullname="Tayx.Graphy.Fps.G_FpsText" preserve="all" />
+    <type fullname="Tayx.Graphy.GraphyDebugger" preserve="all" />
+    <type fullname="Tayx.Graphy.GraphyManager" preserve="all" />
+    <type fullname="Tayx.Graphy.Ram.G_RamGraph" preserve="all" />
+    <type fullname="Tayx.Graphy.Ram.G_RamManager" preserve="all" />
+    <type fullname="Tayx.Graphy.Ram.G_RamMonitor" preserve="all" />
+    <type fullname="Tayx.Graphy.Ram.G_RamText" preserve="all" />
+    <type fullname="Tayx.Graphy.GraphyDebugger/DebugCondition" preserve="nothing" serialized="true" />
+    <type fullname="Tayx.Graphy.GraphyDebugger/DebugPacket" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="ThirdParty, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="ArrowRenderer" preserve="all" />
     <type fullname="AutoDestroyPS" preserve="all" />
     <type fullname="CameraHolder" preserve="all" />
     <type fullname="DemoShooting" preserve="all" />
     <type fullname="ParticleCollisionInstance" preserve="all" />
     <type fullname="ProjectileMover" preserve="all" />
+    <type fullname="Reporter" preserve="all" />
+    <type fullname="ReporterMessageReceiver" preserve="all" />
+    <type fullname="Images" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
@@ -51,7 +118,9 @@
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
   </assembly>
   <assembly fullname="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="TMPro.TextMeshPro" preserve="all" />
     <type fullname="TMPro.TMP_FontAsset" preserve="all" />
+    <type fullname="TMPro.TMP_SpriteAsset" preserve="all" />
     <type fullname="TMPro.FaceInfo_Legacy" preserve="nothing" serialized="true" />
     <type fullname="TMPro.FontAssetCreationSettings" preserve="nothing" serialized="true" />
     <type fullname="TMPro.KerningTable" preserve="nothing" serialized="true" />
@@ -61,11 +130,15 @@
     <type fullname="TMPro.TMP_GlyphAdjustmentRecord" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_GlyphPairAdjustmentRecord" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_GlyphValueRecord" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.TMP_SpriteCharacter" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.TMP_SpriteGlyph" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.VertexGradient" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Animation" preserve="all" />
     <type fullname="UnityEngine.AnimationClip" preserve="all" />
     <type fullname="UnityEngine.Animator" preserve="all" />
+    <type fullname="UnityEngine.Avatar" preserve="all" />
     <type fullname="UnityEngine.RuntimeAnimatorController" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -92,8 +165,11 @@
     <type fullname="UnityEngine.Object" preserve="all" />
     <type fullname="UnityEngine.RectTransform" preserve="all" />
     <type fullname="UnityEngine.ReflectionProbe" preserve="all" />
+    <type fullname="UnityEngine.Rendering.SortingGroup" preserve="all" />
     <type fullname="UnityEngine.RenderSettings" preserve="all" />
+    <type fullname="UnityEngine.RenderTexture" preserve="all" />
     <type fullname="UnityEngine.Shader" preserve="all" />
+    <type fullname="UnityEngine.SkinnedMeshRenderer" preserve="all" />
     <type fullname="UnityEngine.Sprite" preserve="all" />
     <type fullname="UnityEngine.SpriteRenderer" preserve="all" />
     <type fullname="UnityEngine.TextAsset" preserve="all" />
@@ -103,6 +179,12 @@
     <type fullname="UnityEngine.Events.ArgumentCache" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Events.PersistentListenerMode" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.RectOffset" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Events.UnityEvent" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.GUISkin" preserve="all" />
+    <type fullname="UnityEngine.GUISettings" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.GUIStyle" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.ParticleSystem" preserve="all" />
@@ -123,12 +205,16 @@
     <type fullname="UnityEngine.Rigidbody" preserve="all" />
     <type fullname="UnityEngine.SphereCollider" preserve="all" />
   </assembly>
+  <assembly fullname="UnityEngine.SpriteMaskModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.SpriteMask" preserve="all" />
+  </assembly>
   <assembly fullname="UnityEngine.TextCoreTextEngineModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.TextCore.Text.FontAsset" preserve="all" />
     <type fullname="UnityEngine.TextCore.Text.Character" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.TextCore.Text.FontAssetCreationEditorSettings" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.TextCore.Text.FontFeatureTable" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.TextCore.Text.FontWeightPair" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.TextCore.Text.UnicodeLineBreakingRules" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Font" preserve="all" />
@@ -147,6 +233,7 @@
     <type fullname="UnityEngine.UI.InputField" preserve="all" />
     <type fullname="UnityEngine.UI.Mask" preserve="all" />
     <type fullname="UnityEngine.UI.ScrollRect" preserve="all" />
+    <type fullname="UnityEngine.UI.Shadow" preserve="all" />
     <type fullname="UnityEngine.UI.Slider" preserve="all" />
     <type fullname="UnityEngine.UI.Text" preserve="all" />
     <type fullname="UnityEngine.UI.Toggle" preserve="all" />
@@ -169,6 +256,22 @@
     <type fullname="UnityEngine.UI.Toggle/ToggleEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.EventSystems.EventTrigger/Entry" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.EventSystems.EventTrigger/TriggerEvent" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="UnityEngine.UIElementsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.UIElements.PanelSettings" preserve="all" />
+    <type fullname="UnityEngine.UIElements.PanelTextSettings" preserve="all" />
+    <type fullname="UnityEngine.UIElements.ThemeStyleSheet" preserve="all" />
+    <type fullname="UnityEngine.UIElements.UIDocument" preserve="all" />
+    <type fullname="UnityEngine.UIElements.DynamicAtlasSettings" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleComplexSelector" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleProperty" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleRule" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSelector" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSelectorPart" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSheet/ImportStruct" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSheets.Dimension" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSheets.ScalableImage" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleValueHandle" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Canvas" preserve="all" />

@@ -2,12 +2,6 @@ set positional-arguments
 
 code-review: git-status disallowed check-format build clippy test check-docs git-status
 
-unity := if os() == "macos" {
-    "/Applications/Unity/Hub/Editor/2021.3.3f1/Unity.app/Contents/MacOS/Unity"
-  } else {
-    "ERROR: Add unity path"
-  }
-
 check:
     cargo check --all-targets --all-features
 
@@ -94,6 +88,12 @@ screenshot_path := if os() == "macos" {
     join(app_path, "Contents", "Screenshots")
   } else {
     "OS not supported"
+  }
+
+unity := if os() == "macos" {
+    "/Applications/Unity/Hub/Editor/2021.3.3f1/Unity.app/Contents/MacOS/Unity"
+  } else {
+    "ERROR: Add unity path"
   }
 
 # You can't run tests on a project you have open in Unity, so we rsync the project to a tmp dir
