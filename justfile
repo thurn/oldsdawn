@@ -46,6 +46,7 @@ protos:
     mkdir -p Temp
     mkdir -p out
     mkdir -p out_BurstDebugInformation_DoNotShip/
+    mkdir -p ServerData
     xattr -w com.dropbox.ignored 1 Library/
     xattr -w com.dropbox.ignored 1 Logs/
     xattr -w com.dropbox.ignored 1 obj/
@@ -55,6 +56,7 @@ protos:
     xattr -w com.dropbox.ignored 1 out_BurstDebugInformation_DoNotShip/
     xattr -w com.dropbox.ignored 1 target/
     xattr -w com.dropbox.ignored 1 db/
+    xattr -w com.dropbox.ignored 1 ServerData/
     - rm -r 'Temp (Ignored Item Conflict)'
     - rm -r 'out (Ignored Item Conflict)'
 
@@ -403,3 +405,8 @@ clean-dropbox:
     mkdir target
     xattr -w com.dropbox.ignored 1 target
     find . -name "*.profraw" -delete
+
+just paths:
+    echo "Asset Bundle Downloads: ~/Library/Caches/com.spelldawn.Spelldawn/"
+    echo "Log Files: ~/Library/Logs/Spelldawn/Spelldawn"
+    echo "Game Data: ~/Library/Application Support/Spelldawn/Spelldawn"

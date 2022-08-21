@@ -30,6 +30,14 @@ namespace Spelldawn.Services
   public sealed class AssetService : MonoBehaviour
   {
     readonly Dictionary<string, Object> _assets = new();
+
+    IEnumerator Start()
+    {
+      Debug.Log($"Start: Starting download");
+      var startTime = Time.time;
+      yield return Addressables.DownloadDependenciesAsync("Fonts/Roboto.ttf");
+      Debug.Log($"Start: Done download in {Time.time - startTime} seconds");
+    }
     
     public TResult Get<TResult>(string address) where TResult: Object
     {
