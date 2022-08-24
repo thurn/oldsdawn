@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if FULL_EDITOR_ASSETS
+
 using Spelldawn.Game;
 using UnityEditor;
 using UnityEngine;
@@ -53,3 +55,5 @@ namespace Spelldawn.Editors
     }
   }
 }
+
+#endif

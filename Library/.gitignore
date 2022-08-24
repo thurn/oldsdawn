@@ -1,0 +1,11 @@
+# This is not supposed to be version controlled, but the Unity addressables
+# team doesn't really understand the concept of 'reproducible builds' so they
+# sometimes put important stuff in here
+
+*
+!*/
+!/com.unity.addressables/**
+/com.unity.addressables/**/*.DS_Store
+!.gitignore 
+com.unity.addressables/AddressablesBuildTEP.json
+com.unity.addressables/SceneManagerState.json

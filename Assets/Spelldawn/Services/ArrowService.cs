@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Spelldawn.Game;
 using UnityEngine;
 
 #nullable enable
@@ -36,11 +37,11 @@ namespace Spelldawn.Services
     }
 
     [SerializeField] Registry _registry = null!;
-    [SerializeField] ArrowRenderer _redArrow = null!;
-    [SerializeField] ArrowRenderer _greenArrow = null!;
-    [SerializeField] ArrowRenderer _blueArrow = null!;
+    [SerializeField] Arrow _redArrow = null!;
+    [SerializeField] Arrow _greenArrow = null!;
+    [SerializeField] Arrow _blueArrow = null!;
 
-    [SerializeField] ArrowRenderer? _currentArrow;
+    [SerializeField] Arrow? _currentArrow;
     [SerializeField] Vector3 _startPosition;
     [SerializeField] float _dragStartScreenZ;
     IArrowDelegate? _delegate;
@@ -70,7 +71,8 @@ namespace Spelldawn.Services
           else
           {
             _currentArrow.gameObject.SetActive(true);
-            _currentArrow.SetPositions(_startPosition, mousePosition);
+            _currentArrow.Source = _startPosition;
+            _currentArrow.Target = mousePosition;
             _delegate?.OnArrowMoved(mousePosition);
           }
         }
@@ -91,7 +93,7 @@ namespace Spelldawn.Services
       _blueArrow.gameObject.SetActive(false);
     }
 
-    ArrowRenderer ArrowForType(Type type) => type switch
+    Arrow ArrowForType(Type type) => type switch
     {
       Type.Red => _redArrow,
       Type.Green => _greenArrow,

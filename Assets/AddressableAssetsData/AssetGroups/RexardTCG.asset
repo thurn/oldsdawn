@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: RexardTCG
+  m_EditorClassIdentifier: 
+  m_GroupName: RexardTCG
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 579b117b14898450d989f97090b32d6f
+  m_SerializeEntries:
+  - m_GUID: 7aeacfeb27db143e2b0fcc1bdcea1081
+    m_Address: Rexard/TCG_cards
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8c1b10ec577254edfa3cefff6f6e4873, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 681ef64f666e94a67a46188b70e5d2d7, type: 2}
+    - {fileID: 11400000, guid: 18cc3d3133d9947f8b0c1b93b92ccb53, type: 2}

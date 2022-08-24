@@ -1,13 +1,12 @@
 /target
 /dist
 
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Oo]ut/
+/Temp/
+/obj/
+/Build/
+/Builds/
+/Logs/
+/out/
 
 ScreenshotTests/
 ServerData/

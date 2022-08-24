@@ -1,0 +1,7 @@
+TextMeshPro is an asset which was purchased by Unity and is now shipped as a
+default Unity package. This directory contains the additional resources that
+aren't bundled through the Unity package system, obtained via selecting
+
+Window > TextMeshPro > Import TMP Essential Resources
+
+in the Unity editor.

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Spellbook7
+  m_EditorClassIdentifier: 
+  m_GroupName: Spellbook7
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 3a484494b9b3d429ab9042a92af968ca
+  m_SerializeEntries:
+  - m_GUID: 5a9600ca536a6114d933c0281473906c
+    m_Address: Rexard/SpellBookMegapack/SpellBookPage07
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8c1b10ec577254edfa3cefff6f6e4873, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: cd0023303fe0b4bdd93cc7d29518264d, type: 2}
+    - {fileID: 11400000, guid: 8c233b486f9ce44c3a614889f589980b, type: 2}
